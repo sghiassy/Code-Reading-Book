@@ -1,0 +1,25 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/lynxos/Imakefile,v 3.2 1996/12/23 06:50:06 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = lynx_init.c lynx_video.c IO_utils.c lynx_io.c lynx_mmap.c mapVT_noop.c \
+       VTsw_usl.c std_kbdEv.c sysv_tty.c std_mouse.c std_mseEv.c ioperm_noop.c
+
+OBJS = lynx_init.o lynx_video.o IO_utils.o lynx_io.o lynx_mmap.o mapVT_noop.o \
+       VTsw_usl.o std_kbdEv.o sysv_tty.o std_mouse.o std_mseEv.o ioperm_noop.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+
+ObjectFromSpecialSource(ioperm_noop,../shared/ioperm_noop,/**/)
+ObjectFromSpecialSource(IO_utils,../shared/IO_utils,/**/)
+ObjectFromSpecialSource(mapVT_noop,../shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(VTsw_usl,../shared/VTsw_usl,/**/)
+ObjectFromSpecialSource(std_kbdEv,../shared/std_kbdEv,/**/)
+ObjectFromSpecialSource(sysv_tty,../shared/sysv_tty,/**/)
+ObjectFromSpecialSource(std_mouse,../shared/std_mouse,/**/)
+ObjectFromSpecialSource(std_mseEv,../shared/std_mseEv,/**/)
+
+DependTarget()

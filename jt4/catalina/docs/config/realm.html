@@ -1,0 +1,308 @@
+<html>
+<head>
+<title>The 'Realm' Component</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>The <u>Realm</u> Component</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Common Attributes">[Common Attributes]</a>
+<a href="#Standard Implementation Attributes">[Standard Implementation Attributes]</a>
+<a href="#Special Features">[Special Features]</a>
+<br>
+</div>
+
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>A <strong>Realm</strong> component represents a mechanism by which a
+"database" of usernames, passwords, and their associated security roles can
+be linked into Catalina, for the purpose of authenticating users and validating
+security constraints.  A variety of standard implementations is available,
+or you can implement your own to customize Tomcat's behavior to utilize your
+own security infrastructure.</p>
+
+<p>If you attach a <strong>Realm</strong> to an outer Container (such as an
+<strong>Engine</strong>, that Realm will be used for all nested Containers
+(<strong>Host</strong> and <strong>Context</strong> components), unless you
+specifically nest a different Realm inside the nested Container.  If you are
+using the Single Sign On capability (see <a href="#Special Features">Special
+Features</a>), you <strong>must</strong> share a Realm at either the
+Engine or Host level.</p>
+
+<br>
+
+
+<a name="Common Attributes"></a>
+<h2>Common Attributes</h2>
+
+<p>All implementations of the <strong>Realm</strong> component support the
+following attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>className</code></td>
+    <td>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.catalina.Realm</code> interface.
+        Because there is no single standard implementation, this attribute
+        is required.  See <a href="#Standard Implementation Attributes">
+        Standard Implementation Attributes</a> for the names of the
+        supported classes.
+    </td>
+  </tr>
+
+</table>
+
+<br>
+
+
+<a name="Standard Implementation Attributes"></a>
+<h2>Standard Implementation Attributes</h2>
+
+<p>Unlike most other Catalina components, there is not a single standard
+implementation of the <strong>Realm</strong> component available.  Instead,
+a variety of standard implementations are available for your use.  To select
+one, use the specified value for the <code>className</code> attribute, and
+configure the remaining attributes as described below.</p>
+
+
+<a name="JDBCRealm"></a>
+<h3> JDBC Database Realm (<code>org.apache.catalina.realm.JDBCRealm</code>)</h3>
+
+<p>The <strong>JDBC Database Realm</strong> connects Catalina to a relational
+database, accessed through an appropriate JDBC driver, to perform lookups of
+usernames, passwords, and their associated roles.  Because the lookup is done
+each time it is required, changes to the database will be immediately reflected
+in the information used to authenticate new logins.  A rich set of
+configuration attributes lets you customize the database to which Catalina will
+connect, as well as the names of relevant tables and columns within the
+database that contains the information of interest.</p>
+
+<p>The JDBC Database Realm supports the following additional attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td>connectionName</td>
+    <td>The database username to use when establishing the JDBC connection.
+        This attribute is required.
+    </td>
+  </tr>
+
+  <tr>
+    <td>connectionPassword</td>
+    <td>The database password to use when establishing the JDBC connection.
+        This attribute is required.
+  </tr>
+
+  <tr>
+    <td>connectionURL</td>
+    <td>The connection URL to be passed to the JDBC driver.  This attribute
+        is required.
+    </td>
+  </tr>
+
+  <tr>
+    <td>digest</td>
+    <td>The name of the MessageDigest algorithm to be used to encode passwords
+        in the database, or a zero-length string for no encoding.  If not
+        specified, no encoding is the default.
+    </td>
+  </tr>
+
+  <tr>
+    <td>driverName</td>
+    <td>The fully qualified Java class name of the JDBC driver to be used.
+        This attribute is required.  (Note that the corresponding driver's
+        JAR file needs to be placed in the $CATALINA_HOME/server directory
+        in order to be accessible.
+    </td>
+  </tr>
+
+  <tr>
+    <td>roleNameCol</td>
+    <td>The name of the column, in the "user roles" table, which contains
+        the role name to be compared to.  This attribute is required.
+    </td>    
+  </tr>
+
+  <tr>
+    <td>userCredCol</td>
+    <td>The name of the column, in the "users" table, which contains the
+        user's credentials (i.e. password).  This attribute is required.
+    </td>
+  </tr>
+
+  <tr>
+    <td>userNameCol</td>
+    <td>The name of the column, in the "users" and "user roles" tables,
+        which contains the username of the user being looked up.  This
+        attribute is required.
+    </td>
+  </tr>
+
+  <tr>
+    <td>userRoleTable</td>
+    <td>The name of the table, in the associated database, containing the
+        "user roles" information.  This attribute is required.
+    </td>
+  </tr>
+
+  <tr>
+    <td>userTable</td>
+    <td>The name of the table, in the associated database, containing the
+        "users" information.  This attribute is required.
+    </td>
+  </tr>
+
+</table>
+
+<p>In order to be used by the JDBC Database Realm, your database must conform
+to the following rules:</p>
+<ul>
+<li>It must be possible for Catalina to establish a JDBC connection to this
+    database, using the configuration parameters described above.
+<li>The database must contain a table containing "users" information, which
+    must conform to the following rules:
+    <ul>
+    <li>There must be exactly one row for each valid user.</li>
+    <li>There must be a column, named by the <code>userNameCol</code>
+        attribute, that contains the username of the user represented
+        by this row.</li>
+    <li>There must be a column, named by the <code>userCredCol</code>
+        attribute, that contains the credentials (password) of the user
+        represented by this row.</li>
+    <li>The credentials must be encoded by the MessageDigest algorithm
+        configured by the <code>digest</code> attribute.
+    <li>There must be at most one row for any specific username value.</li>
+    </ul></li>
+<li>The database must contain a table containing "user roles" information,
+    which must conform to the following rules:
+    <ul>
+    <li>There must be exactly one row for each valid role that is assigned
+        to a particular valid user.</li>
+    <li>There may be more than one row for each valid user, one for each
+        role assigned to that user.</li>
+    <li>A valid user may have zero rows in this table, if that user is not
+        assigned to any roles.</li>
+    <li>There must be a column, named by the <code>userNameCol</code>
+        attribute, that contains the username of the user whose role
+        assignment is represented by this row.</li>
+    <li>There must be a column, named by the <code>userRoleCol</code>
+        attribute, that contains the role name assigned to this user.</li>
+    </ul></li>
+</ul>
+
+<p>Once a user is successfully authenticated, the following methods of the
+<code>HttpServletRequest</code> interface will return useful values:</p>
+<ul>
+<li><strong>getRemoteUser()</strong> - Will return the username of the user
+    who was authenticated.</li>
+<li><strong>getUserPrincipal()</strong> - Will return a synthesized
+    <code>java.security.Principal</code> implementation object representing
+    the user who was authenticated.</li>
+<li><strong>isUserInRole(String)</strong> - Will return <code>true</code> if
+    the currently authenticated user has a valid assignment to the
+    specified role.</li>
+</ul>
+
+<br>
+
+
+<a name="MemoryRealm"></a>
+<h3>Memory Based Realm (<code>org.apache.catalina.realm.MemoryRealm</code>)</h3>
+
+<p>The <strong>Memory Based Realm</strong> initializes a simple memory-based
+database from an XML configuration file (by default,
+<code>$CATALINA_HOME/conf/tomcat-users.xml</code>) when Tomcat is first
+initialized.  The format of this file is consistent with the format of the
+corresponding file used in Tomcat 3.x versions.  An instance of a Memory
+Based Realm is used in the example application that is shipped with Catalina.
+</p>
+
+<p>The Memory Based Realm supports the following additional attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>pathname</code></td>
+    <td>Relative or absolute pathname of the configuration file used to
+        initialize the contents of this Realm.  If a relative path is
+        specified, it is interpreted as relative to $CATALINA_HOME.  If
+        no pathname is specified the default value is "conf/tomcat-users.xml"
+        (relative to the Catalina home directory).
+    </td>
+  </tr>
+
+</table>
+
+<p>The configuration file specified by the <code>pathname</code> attribute must
+be in XML format.  It consists of an outer element named
+<code>&lt;tomcat-users&gt;</code>, along with one nested
+<code>&lt;user&gt;</code> element for each defined user.  Each user element
+supports the following attributes:</p>
+<ul>
+<li><strong>name</strong> - The username of this user (must be unique among
+    all users defined in this configuration file)</li>
+<li><strong>password</strong> - The corresponding login password, in clear
+    text</li>
+<li><strong>roles</strong> - A comma-delimited list of the roles to which
+    this user belongs, or a zero-length string for no role assignments</li>
+</ul>
+
+<p>Once a user is successfully authenticated, the following methods of the
+<code>HttpServletRequest</code> interface will return useful values:</p>
+<ul>
+<li><strong>getRemoteUser()</strong> - Will return the username of the user
+    who was authenticated.</li>
+<li><strong>getUserPrincipal()</strong> - Will return a synthesized
+    <code>java.security.Principal</code> implementation object representing
+    the user who was authenticated.</li>
+<li><strong>isUserInRole(String)</strong> - Will return <code>true</code> if
+    the currently authenticated user has a valid assignment to the
+    specified role.</li>
+</ul>
+
+<br>
+
+
+<a name="Special Features"></a>
+<h2>Special Features</h2>
+
+<h3>Single Sign On Support</h3>
+
+<p>Normally, an individual user will need to authenticate himself or herself
+to each web application individually, even if the underlying Realm is being
+shared across an entire virtual host.  Often, it is desirable for the user
+to be required to authenticate only once, and have that identity recognized
+across all of the web applications for this host.</p>
+
+<p>Tomcat includes <em>Single Sign On</em> support to enable this.  The
+detailed configuration requirements can be found
+<a href="../singlesignon.html" target="_new">here</a>.
+
+
+<br>
+
+
+</body>
+</html>

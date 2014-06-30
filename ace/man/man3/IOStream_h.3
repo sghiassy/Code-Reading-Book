@@ -1,0 +1,244 @@
+.TH IOStream_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+IOStream_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/OS.h"\fR
+.br
+\fC#include "ace/streams.h"\fR
+.br
+\fC#include "ace/IOStream_T.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Streambuf\fR"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBGET_SIG\fR(MT,DT)            inline virtual MT& operator>> (DT v)"
+.br
+.ti -1c
+.RI "#define \fBGET_CODE\fR"
+.br
+.ti -1c
+.RI "#define \fBGET_PROT\fR(MT,DT,CODE)      GET_SIG(MT,DT)  CODE"
+.br
+.ti -1c
+.RI "#define \fBGET_FUNC\fR(MT,DT)           GET_PROT(MT,DT,GET_CODE)"
+.br
+.ti -1c
+.RI "#define \fBPUT_SIG\fR(MT,DT)            inline virtual MT& operator<< (DT v)"
+.br
+.ti -1c
+.RI "#define \fBPUT_CODE\fR"
+.br
+.ti -1c
+.RI "#define \fBPUT_PROT\fR(MT,DT,CODE)      PUT_SIG(MT,DT)  CODE"
+.br
+.ti -1c
+.RI "#define \fBPUT_FUNC\fR(MT,DT)           PUT_PROT(MT,DT,PUT_CODE)"
+.br
+.ti -1c
+.RI "#define \fBGET_FUNC_SET0\fR(MT,CODE,CODE2) "
+.br
+.ti -1c
+.RI "#define \fBPUT_FUNC_SET0\fR(MT,CODE,CODE2) "
+.br
+.ti -1c
+.RI "#define \fBGET_FUNC_SET1\fR(MT,CODE,CODE2) "
+.br
+.ti -1c
+.RI "#define \fBPUT_FUNC_SET1\fR(MT,CODE,CODE2) "
+.br
+.ti -1c
+.RI "#define \fBGET_MANIP_CODE\fR  { if (ipfx ()) { (*func) (*this); } isfx (); return *this; }"
+.br
+.ti -1c
+.RI "#define \fBPUT_MANIP_CODE\fR  { if (opfx ()) { (*func) (*this); } osfx (); return *this; }"
+.br
+.ti -1c
+.RI "#define \fBGET_FUNC_SET\fR(MT)          GET_FUNC_SET1(MT,GET_CODE,GET_MANIP_CODE)"
+.br
+.ti -1c
+.RI "#define \fBPUT_FUNC_SET\fR(MT)          PUT_FUNC_SET1(MT,PUT_CODE,PUT_MANIP_CODE)"
+.br
+.ti -1c
+.RI "#define \fBGETPUT_FUNC_SET\fR(MT)       GET_FUNC_SET(MT) PUT_FUNC_SET(MT)"
+.br
+.ti -1c
+.RI "#define \fBGET_SIG_SET\fR(MT)           GET_FUNC_SET1(MT,= 0;,= 0;)"
+.br
+.ti -1c
+.RI "#define \fBPUT_SIG_SET\fR(MT)           PUT_FUNC_SET1(MT,= 0;,= 0;)"
+.br
+.ti -1c
+.RI "#define \fBGETPUT_SIG_SET\fR(MT)        GET_SIG_SET(MT) PUT_SIG_SET(MT)"
+.br
+.in -1c
+.SS Typedefs
+
+.in +1c
+.ti -1c
+.RI "typedef ios& (* \fB__manip_\fR )(ios&)"
+.br
+.ti -1c
+.RI "typedef istream& (* \fB__imanip_\fR )(istream&)"
+.br
+.ti -1c
+.RI "typedef ostream& (* \fB__omanip_\fR )(ostream&)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBIOStream.h\fR,v 4.60 2001/05/11 18:44:50 schmidt Exp
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ James CE Johnson <jcej@lads.com> ,  Jim Crossley <jim@lads.com>
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define GETPUT_FUNC_SET(MT)  GET_FUNC_SET(MT) PUT_FUNC_SET(MT)
+.PP
+.SS #define GETPUT_SIG_SET(MT)  GET_SIG_SET(MT) PUT_SIG_SET(MT)
+.PP
+.SS #define GET_CODE
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+{                      \
+        if (ipfx (0))                                   \
+        {                                               \
+                iostream::operator>> (v);               \
+        }                                               \
+        isfx ();                                        \
+        return *this;                                   \
+        }
+.fi
+.SS #define GET_FUNC(MT, DT)  GET_PROT(MT,DT,GET_CODE)
+.PP
+.SS #define GET_FUNC_SET(MT)  GET_FUNC_SET1(MT,GET_CODE,GET_MANIP_CODE)
+.PP
+.SS #define GET_FUNC_SET0(MT, CODE, CODE2)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+        GET_PROT(MT,short &,CODE) \
+        GET_PROT(MT,u_short &,CODE) \
+        GET_PROT(MT,int &,CODE) \
+        GET_PROT(MT,u_int &,CODE) \
+        GET_PROT(MT,long &,CODE) \
+        GET_PROT(MT,u_long &,CODE) \
+        GET_PROT(MT,float &,CODE) \
+        GET_PROT(MT,double &,CODE) \
+        GET_PROT(MT,char &,CODE) \
+        GET_PROT(MT,u_char &,CODE) \
+        GET_PROT(MT,char *,CODE) \
+        GET_PROT(MT,u_char *,CODE) \
+        inline virtual MT& operator>>(__omanip_ func) CODE2 \
+        inline virtual MT& operator>>(__manip_ func)  CODE2
+.fi
+.SS #define GET_FUNC_SET1(MT, CODE, CODE2)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+          GET_PROT(MT,signed char &,CODE) \
+          GET_PROT(MT,signed char *,CODE) \
+          GET_FUNC_SET0(MT,CODE,CODE2)
+.fi
+.SS #define GET_MANIP_CODE  { if (ipfx ()) { (*func) (*this); } isfx (); return *this; }
+.PP
+.SS #define GET_PROT(MT, DT, CODE)  GET_SIG(MT,DT)  CODE
+.PP
+.SS #define GET_SIG(MT, DT)  inline virtual MT& operator>> (DT v)
+.PP
+.SS #define GET_SIG_SET(MT)  GET_FUNC_SET1(MT,= 0;,= 0;)
+.PP
+.SS #define PUT_CODE
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+{                      \
+        if (opfx ())                                    \
+        {                                               \
+                iostream::operator<< (v);               \
+        }                                               \
+        osfx ();                                        \
+        return *this;                                   \
+        }
+.fi
+.SS #define PUT_FUNC(MT, DT)  PUT_PROT(MT,DT,PUT_CODE)
+.PP
+.SS #define PUT_FUNC_SET(MT)  PUT_FUNC_SET1(MT,PUT_CODE,PUT_MANIP_CODE)
+.PP
+.SS #define PUT_FUNC_SET0(MT, CODE, CODE2)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+        PUT_PROT(MT,short,CODE) \
+        PUT_PROT(MT,u_short,CODE) \
+        PUT_PROT(MT,int,CODE) \
+        PUT_PROT(MT,u_int,CODE) \
+        PUT_PROT(MT,long,CODE) \
+        PUT_PROT(MT,u_long,CODE) \
+        PUT_PROT(MT,float,CODE) \
+        PUT_PROT(MT,double,CODE) \
+        PUT_PROT(MT,char,CODE) \
+        PUT_PROT(MT,u_char,CODE) \
+        PUT_PROT(MT,const char *,CODE) \
+        PUT_PROT(MT,u_char *,CODE) \
+        PUT_PROT(MT,void *,CODE) \
+        inline virtual MT& operator<<(__omanip_ func) CODE2 \
+        inline virtual MT& operator<<(__manip_ func)  CODE2
+.fi
+.SS #define PUT_FUNC_SET1(MT, CODE, CODE2)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+          PUT_FUNC(MT,signed char) \
+          PUT_FUNC(MT,const signed char *) \
+          PUT_FUNC_SET0(MT,CODE,CODE2)
+.fi
+.SS #define PUT_MANIP_CODE  { if (opfx ()) { (*func) (*this); } osfx (); return *this; }
+.PP
+.SS #define PUT_PROT(MT, DT, CODE)  PUT_SIG(MT,DT)  CODE
+.PP
+.SS #define PUT_SIG(MT, DT)  inline virtual MT& operator<< (DT v)
+.PP
+.SS #define PUT_SIG_SET(MT)  PUT_FUNC_SET1(MT,= 0;,= 0;)
+.PP
+.SH TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef istream& (* __imanip_)(istream&)
+.PP
+.SS typedef ios& (* __manip_)(ios&)
+.PP
+.SS typedef ostream& (* __omanip_)(ostream&)
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

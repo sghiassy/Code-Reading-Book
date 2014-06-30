@@ -1,0 +1,34 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/s3_virge/drivers/s3_virge/Imakefile,v 3.3 1996/12/27 07:03:36 dawes Exp $
+
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/4 1996/10/25 15:38:19 kaleb $
+
+#include <Server.tmpl>
+
+SRCS = s3_virge.c
+
+OBJS = s3_virge.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I../.. -I$(XF86COMSRC) -I$(XF86HWSRC) \
+	   -I$(XF86OSSRC) -I$(SERVERSRC)/mi \
+           -I$(XF86SRC)/vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
+	   -I$(XF86SRC)/accel/cache
+#endif
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+all:: s3_virge.o
+
+InstallLinkKitNonExecFile(s3_virge.c,$(LINKKITDIR)/drivers/s3_virge/s3_virge)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/s3_virge/s3_virge)
+
+DependTarget()
+

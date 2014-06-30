@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+
+<project name="HSQLDB" default="help" basedir="../">
+   <property name="src" value="${basedir}/src"/>
+   <target name="init">
+   </target>
+
+   <target name="help">
+      <echo>
+usage:
+   ant -help            display ant help screen
+   ant help             display this message
+   ant jar              build the hsqldb.jar file in the /lib directory
+   ant clean            delete the /classes directory created by other ant tasks
+   ant cleanall         same as clean but delete the jar file as well
+   ant switchtojdk12    processe and rewrite source files for jdk1.2 and above
+   ant switchtojdk11    processe and rewrite source files for jdk1.1.x
+
+example:
+   ant jar
+   ant clean
+      </echo>      
+   </target>
+
+
+   <target name="prepare" depends="init">
+	   <mkdir dir="classes" />
+   </target>
+
+   <target name="clean" >
+		<delete dir="classes" />
+   </target>
+
+   <target name="cleanall" depends="clean">
+		<delete file="lib/hsqldb.jar" />
+   </target>
+
+	<target name="codeswitcher" depends="prepare">
+      <javac destdir="classes">
+         <src path="${src}"/>
+         <include name="org/hsqldb/util/CodeSwitcher.java"/>
+	   </javac>
+	</target>
+
+	<target name="switchtojdk11" depends="codeswitcher">
+      <java classname="org.hsqldb.util.CodeSwitcher" classpath= "classes" >
+         <arg line="${src}/ -JAVA2 -TRACE -TRACESYSTEMOUT"/>
+	   </java>
+	</target>
+
+	<target name="switchtojdk12" depends="codeswitcher">
+      <java classname="org.hsqldb.util.CodeSwitcher" classpath= "classes" >
+         <arg line="${src}/ +JAVA2 -TRACE -TRACESYSTEMOUT"/>
+	   </java>
+	</target>
+
+<!-- CodeSwitcher.class does not work correctly for these (fredt@sourceforge.net 15 April 2000)
+	<target name="switchtoprofile" depends="codeswitcher">
+      <java classname="org.hsqldb.util.CodeSwitcher" classpath= "classes" >
+         <arg line="${src}/org/hsqldb +"/>
+	   </java>
+	</target>
+
+	<target name="switchtoruntime" depends="codeswitcher">
+      <java classname="org.hsqldb.util.CodeSwitcher" classpath= "classes" >
+         <arg line="${src}/org/hsqldb -"/>
+	   </java>
+	</target>
+-->
+	<target name="classes" depends="prepare">
+      <javac srcdir="${src}"
+             destdir="classes"
+				 debug="${build.debug}"
+				 optimize="${build.optimize}"
+	   >
+		   <classpath>
+            <pathelement location="."/>
+            <pathelement location="lib"/>
+         </classpath>            
+         <include name="*.java"/>
+         <include name="org/hsqldb/*.java"/>
+         <include name="org/hsqldb/util/*.java"/>
+      </javac>
+	</target>
+
+	<target name="jar" depends="classes">
+		<jar jarfile="lib/hsqldb.jar" basedir="classes">
+         <include name="*.class"/>
+         <include name="org/hsqldb/*.class"/>
+         <include name="org/hsqldb/util/*.class"/>
+      </jar>
+	</target>
+</project>

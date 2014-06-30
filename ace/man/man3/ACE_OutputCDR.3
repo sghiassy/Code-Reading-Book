@@ -1,0 +1,614 @@
+.TH ACE_OutputCDR 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_OutputCDR \- A CDR stream for writing, i.e. for marshalling. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <CDR_Stream.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_OutputCDR\fR (size_t size = 0, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_Allocator\fR* buffer_allocator = 0, \fBACE_Allocator\fR* data_block_allocator = 0, \fBACE_Allocator\fR* message_block_allocator = 0, size_t memcpy_tradeoff = ACE_DEFAULT_CDR_MEMCPY_TRADEOFF, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.RI "\fIDefault constructor, allocates <size> bytes in the internal buffer, if <size> == 0 it allocates the default size.\fR"
+.ti -1c
+.RI "\fBACE_OutputCDR\fR (char *data, size_t size, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_Allocator\fR* buffer_allocator = 0, \fBACE_Allocator\fR* data_block_allocator = 0, \fBACE_Allocator\fR* message_block_allocator = 0, size_t memcpy_tradeoff= ACE_DEFAULT_CDR_MEMCPY_TRADEOFF, \fBACE_CDR::Octet\fR giop_major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR giop_minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.RI "\fIBuild a CDR stream with an initial buffer, it will *not* remove <data>, since it did not allocated it. It's important to be careful with the alignment of <data>.\fR"
+.ti -1c
+.RI "\fBACE_OutputCDR\fR (\fBACE_Message_Block\fR *data, int byte_order = ACE_CDR_BYTE_ORDER, size_t memcpy_tradeoff= ACE_DEFAULT_CDR_MEMCPY_TRADEOFF, \fBACE_CDR::Octet\fR giop_major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR giop_minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.RI "\fIBuild a CDR stream with an initial Message_Block chain, it will *not* remove <data>, since it did not allocate it.\fR"
+.ti -1c
+.RI "\fB~ACE_OutputCDR\fR (void)"
+.br
+.RI "\fIdestructor.\fR"
+.ti -1c
+.RI "int \fBgood_bit\fR (void) const"
+.br
+.RI "\fIReturns 0 if an error has ocurred, the only expected error is to run out of memory.\fR"
+.ti -1c
+.RI "void \fBreset\fR (void)"
+.br
+.RI "\fIReuse the CDR stream to write on the old buffer.\fR"
+.ti -1c
+.RI "size_t \fBtotal_length\fR (void) const"
+.br
+.RI "\fIAdd the length of each message block in the chain.\fR"
+.ti -1c
+.RI "const \fBACE_Message_Block\fR* \fBbegin\fR (void) const"
+.br
+.ti -1c
+.RI "const \fBACE_Message_Block\fR* \fBend\fR (void) const"
+.br
+.RI "\fIReturn the last message in the chain that is is use.\fR"
+.ti -1c
+.RI "const \fBACE_Message_Block\fR* \fBcurrent\fR (void) const"
+.br
+.RI "\fIReturn the <current_> message block in chain.\fR"
+.ti -1c
+.RI "const char* \fBbuffer\fR (void) const"
+.br
+.ti -1c
+.RI "size_t \fBlength\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBalign_write_ptr\fR (size_t alignment)"
+.br
+.ti -1c
+.RI "\fBACE_Char_Codeset_Translator\fR* \fBchar_translator\fR (void) const"
+.br
+.RI "\fIAccess the codeset translators. They can be nil!\fR"
+.ti -1c
+.RI "\fBACE_WChar_Codeset_Translator\fR* \fBwchar_translator\fR (void) const"
+.br
+.ti -1c
+.RI "size_t \fBcurrent_alignment\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBadjust\fR (size_t size, char *&buf)"
+.br
+.ti -1c
+.RI "int \fBadjust\fR (size_t size, size_t align, char *&buf)"
+.br
+.RI "\fIAs above, but now the size and alignment requirements may be different.\fR"
+.ti -1c
+.RI "int \fBdo_byte_swap\fR (void) const"
+.br
+.RI "\fIIf non-zero then this stream is writing in non-native byte order, this is only meaningful if ACE_ENABLE_SWAP_ON_WRITE is defined.\fR"
+.ti -1c
+.RI "void \fBreset_byte_order\fR (int byte_order)"
+.br
+.RI "\fIFor use by a gateway, which creates the output stream for the reply to the client in its native byte order, but which must send the reply in the byte order of the target's reply to the gateway.\fR"
+.ti -1c
+.RI "int \fBset_version\fR (\fBACE_CDR::Octet\fR major, \fBACE_CDR::Octet\fR minor)"
+.br
+.RI "\fIset GIOP version info.\fR"
+.in -1c
+.PP
+.RI "\fBWrite operations\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_boolean\fR (\fBACE_CDR::Boolean\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_char\fR (\fBACE_CDR::Char\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_wchar\fR (\fBACE_CDR::WChar\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_octet\fR (\fBACE_CDR::Octet\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_short\fR (\fBACE_CDR::Short\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_ushort\fR (\fBACE_CDR::UShort\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_long\fR (\fBACE_CDR::Long\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_ulong\fR (\fBACE_CDR::ULong\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_longlong\fR (const \fBACE_CDR::LongLong\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_ulonglong\fR (const \fBACE_CDR::ULongLong\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_float\fR (\fBACE_CDR::Float\fR x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_double\fR (const \fBACE_CDR::Double\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_longdouble\fR (const \fBACE_CDR::LongDouble\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_string\fR (const \fBACE_CDR::Char\fR *x)"
+.br
+.RI "\fIFor string we offer methods that accept a precomputed length.\fR"
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_string\fR (\fBACE_CDR::ULong\fR len, const \fBACE_CDR::Char\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_string\fR (const \fBACE_CString\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_wstring\fR (const \fBACE_CDR::WChar\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_wstring\fR (\fBACE_CDR::ULong\fR length, const \fBACE_CDR::WChar\fR *x)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBArray write operations\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_boolean_array\fR (const \fBACE_CDR::Boolean\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_char_array\fR (const \fBACE_CDR::Char\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_wchar_array\fR (const \fBACE_CDR::WChar\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_octet_array\fR (const \fBACE_CDR::Octet\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_short_array\fR (const \fBACE_CDR::Short\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_ushort_array\fR (const \fBACE_CDR::UShort\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_long_array\fR (const \fBACE_CDR::Long\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_ulong_array\fR (const \fBACE_CDR::ULong\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_longlong_array\fR (const \fBACE_CDR::LongLong\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_ulonglong_array\fR (const \fBACE_CDR::ULongLong\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_float_array\fR (const \fBACE_CDR::Float\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_double_array\fR (const \fBACE_CDR::Double\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_longdouble_array\fR (const \fBACE_CDR::LongDouble\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_octet_array_mb\fR (const \fBACE_Message_Block\fR* mb)"
+.br
+.RI "\fIWrite an octet array contained inside a MB, this can be optimized to minimize copies.\fR"
+.in -1c
+.in -1c
+.PP
+.RI "\fBAppend contents of own CDR stream to another\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_boolean\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_char\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_wchar\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_octet\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_short\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_ushort\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_long\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_ulong\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_longlong\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_ulonglong\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_float\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_double\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_longdouble\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_wstring\fR (\fBACE_InputCDR\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBappend_string\fR (\fBACE_InputCDR\fR &)"
+.br
+.in -1c
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Char_Codeset_Translator\fR* \fBchar_translator_\fR"
+.br
+.RI "\fIIf not nil, invoke for translation of character and string data.\fR"
+.ti -1c
+.RI "\fBACE_WChar_Codeset_Translator\fR* \fBwchar_translator_\fR"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_OutputCDR\fR (const ACE_OutputCDR& rhs)"
+.br
+.RI "\fIdisallow copying...\fR"
+.ti -1c
+.RI "ACE_OutputCDR& \fBoperator=\fR (const ACE_OutputCDR& rhs)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_1\fR (const \fBACE_CDR::Octet\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_2\fR (const \fBACE_CDR::UShort\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_4\fR (const \fBACE_CDR::ULong\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_8\fR (const \fBACE_CDR::ULongLong\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_16\fR (const \fBACE_CDR::LongDouble\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_array\fR (const void *x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "int \fBgrow_and_adjust\fR (size_t size, size_t align, char *&buf)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block\fR \fBstart_\fR"
+.br
+.RI "\fIThe start of the chain of message blocks.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBcurrent_\fR"
+.br
+.RI "\fIThe current block in the chain were we are writing.\fR"
+.ti -1c
+.RI "int \fBcurrent_is_writable_\fR"
+.br
+.ti -1c
+.RI "size_t \fBcurrent_alignment_\fR"
+.br
+.ti -1c
+.RI "int \fBdo_byte_swap_\fR"
+.br
+.ti -1c
+.RI "int \fBgood_bit_\fR"
+.br
+.RI "\fISet to 0 when an error ocurrs.\fR"
+.ti -1c
+.RI "size_t \fBmemcpy_tradeoff_\fR"
+.br
+.RI "\fIBreak-even point for copying.\fR"
+.ti -1c
+.RI "\fBACE_CDR::Octet\fR \fBmajor_version_\fR"
+.br
+.RI "\fIGIOP version information.\fR"
+.ti -1c
+.RI "\fBACE_CDR::Octet\fR \fBminor_version_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Char_Codeset_Translator\fR"
+.br
+.ti -1c
+.RI "class \fBACE_WChar_Codeset_Translator\fR"
+.br
+.ti -1c
+.RI "class \fBACE_InputCDR\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A CDR stream for writing, i.e. for marshalling.
+.PP
+.PP
+ This class is based on the the CORBA spec for Java (98-02-29), java class omg.org.CORBA.portable.OutputStream. It diverts in a few ways: + Operations taking arrays don't have offsets, because in C++ it is easier to describe an array starting from x+offset. + Operations return an error status, because exceptions are not widely available in C++ (yet). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_OutputCDR::ACE_OutputCDR (size_t size = 0, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_Allocator\fR * buffer_allocator = 0, \fBACE_Allocator\fR * data_block_allocator = 0, \fBACE_Allocator\fR * message_block_allocator = 0, size_t memcpy_tradeoff = ACE_DEFAULT_CDR_MEMCPY_TRADEOFF, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Default constructor, allocates <size> bytes in the internal buffer, if <size> == 0 it allocates the default size.
+.PP
+.SS ACE_OutputCDR::ACE_OutputCDR (char * data, size_t size, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_Allocator\fR * buffer_allocator = 0, \fBACE_Allocator\fR * data_block_allocator = 0, \fBACE_Allocator\fR * message_block_allocator = 0, size_t memcpy_tradeoff = ACE_DEFAULT_CDR_MEMCPY_TRADEOFF, \fBACE_CDR::Octet\fR giop_major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR giop_minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Build a CDR stream with an initial buffer, it will *not* remove <data>, since it did not allocated it. It's important to be careful with the alignment of <data>.
+.PP
+Create an output stream from an arbitrary buffer, care must be exercised with alignment, because this contructor will align if needed. In this case <data> will not point to the start off the output stream. \fBbegin\fR()->rd_prt() points to the start off the output stream. See \fBACE_ptr_align_binary\fR() to properly align a pointer and use \fBACE_CDR::MAX_ALIGNMENT\fR for the correct alignment. 
+.SS ACE_OutputCDR::ACE_OutputCDR (\fBACE_Message_Block\fR * data, int byte_order = ACE_CDR_BYTE_ORDER, size_t memcpy_tradeoff = ACE_DEFAULT_CDR_MEMCPY_TRADEOFF, \fBACE_CDR::Octet\fR giop_major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR giop_minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Build a CDR stream with an initial Message_Block chain, it will *not* remove <data>, since it did not allocate it.
+.PP
+.SS ACE_OutputCDR::~ACE_OutputCDR (void)
+.PP
+destructor.
+.PP
+.SS ACE_OutputCDR::ACE_OutputCDR (const ACE_OutputCDR & rhs)\fC [private]\fR
+.PP
+disallow copying...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_OutputCDR::adjust (size_t size, size_t align, char *& buf)
+.PP
+As above, but now the size and alignment requirements may be different.
+.PP
+.SS int ACE_OutputCDR::adjust (size_t size, char *& buf)
+.PP
+Returns (in <buf>) the next position in the buffer aligned to <size>, it advances the Message_Block wr_ptr past the data (i.e. <buf> + <size>). If necessary it grows the Message_Block buffer. Sets the good_bit to 0 and returns a -1 on failure. 
+.SS int ACE_OutputCDR::align_write_ptr (size_t alignment)
+.PP
+Utility function to allow the user more flexibility. Pads the stream up to the nearest -byte boundary. Argument MUST be a power of 2. Returns 0 on success and -1 on failure. 
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_boolean (\fBACE_InputCDR\fR &)
+.PP
+Return 0 on failure and 1 on success. 
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_char (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_double (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_float (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_long (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_longdouble (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_longlong (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_octet (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_short (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_string (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_ulong (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_ulonglong (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_ushort (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_wchar (\fBACE_InputCDR\fR &)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::append_wstring (\fBACE_InputCDR\fR &)
+.PP
+.SS const \fBACE_Message_Block\fR * ACE_OutputCDR::begin (void) const
+.PP
+Return the start of the message block chain for this CDR stream. NOTE: The complete CDR stream is represented by a chain of message blocks. 
+.SS const char * ACE_OutputCDR::buffer (void) const
+.PP
+Access the underlying buffer (read only). NOTE: This method only returns a pointer to the first block in the chain. 
+.SS \fBACE_Char_Codeset_Translator\fR * ACE_OutputCDR::char_translator (void) const
+.PP
+Access the codeset translators. They can be nil!
+.PP
+.SS const \fBACE_Message_Block\fR * ACE_OutputCDR::current (void) const
+.PP
+Return the <current_> message block in chain.
+.PP
+.SS size_t ACE_OutputCDR::current_alignment (void) const
+.PP
+Return alignment of the wr_ptr(), with respect to the start of the CDR stream. This is not the same as the alignment of current->wr_ptr()! 
+.SS int ACE_OutputCDR::do_byte_swap (void) const
+.PP
+If non-zero then this stream is writing in non-native byte order, this is only meaningful if ACE_ENABLE_SWAP_ON_WRITE is defined.
+.PP
+.SS const \fBACE_Message_Block\fR * ACE_OutputCDR::end (void) const
+.PP
+Return the last message in the chain that is is use.
+.PP
+.SS int ACE_OutputCDR::good_bit (void) const
+.PP
+Returns 0 if an error has ocurred, the only expected error is to run out of memory.
+.PP
+.SS int ACE_OutputCDR::grow_and_adjust (size_t size, size_t align, char *& buf)\fC [private]\fR
+.PP
+Grow the CDR stream. When it returns <buf> contains a pointer to memory in the CDR stream, with at least <size> bytes ahead of it and aligned to an  boundary. It moved the <wr_ptr> to <buf + size>. 
+.SS size_t ACE_OutputCDR::length (void) const
+.PP
+Return the start and size of the internal buffer. NOTE: This method only returns information about the first block in the chain. 
+.SS ACE_OutputCDR& ACE_OutputCDR::operator= (const ACE_OutputCDR & rhs)\fC [private]\fR
+.PP
+.SS void ACE_OutputCDR::reset (void)
+.PP
+Reuse the CDR stream to write on the old buffer.
+.PP
+.SS void ACE_OutputCDR::reset_byte_order (int byte_order)
+.PP
+For use by a gateway, which creates the output stream for the reply to the client in its native byte order, but which must send the reply in the byte order of the target's reply to the gateway.
+.PP
+.SS int ACE_OutputCDR::set_version (\fBACE_CDR::Octet\fR major, \fBACE_CDR::Octet\fR minor)
+.PP
+set GIOP version info.
+.PP
+.SS size_t ACE_OutputCDR::total_length (void) const
+.PP
+Add the length of each message block in the chain.
+.PP
+.SS \fBACE_WChar_Codeset_Translator\fR* ACE_OutputCDR::wchar_translator (void) const
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_1 (const \fBACE_CDR::Octet\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_16 (const \fBACE_CDR::LongDouble\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_2 (const \fBACE_CDR::UShort\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_4 (const \fBACE_CDR::ULong\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_8 (const \fBACE_CDR::ULongLong\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_array (const void * x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)\fC [private]\fR
+.PP
+write an array of <length> elements, each of <size> bytes and the start aligned at a multiple of . The elements are assumed to be packed with the right alignment restrictions. It is mostly designed for buffers of the basic types.
+.PP
+This operation uses <memcpy>; as explained above it is expected that using assignment is faster that <memcpy> for one element, but for several elements <memcpy> should be more efficient, it could be interesting to find the break even point and optimize for that case, but that would be too platform dependent. 
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_boolean (\fBACE_CDR::Boolean\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_boolean_array (const \fBACE_CDR::Boolean\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_char (\fBACE_CDR::Char\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_char_array (const \fBACE_CDR::Char\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_double (const \fBACE_CDR::Double\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_double_array (const \fBACE_CDR::Double\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_float (\fBACE_CDR::Float\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_float_array (const \fBACE_CDR::Float\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_long (\fBACE_CDR::Long\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_long_array (const \fBACE_CDR::Long\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_longdouble (const \fBACE_CDR::LongDouble\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_longdouble_array (const \fBACE_CDR::LongDouble\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_longlong (const \fBACE_CDR::LongLong\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_longlong_array (const \fBACE_CDR::LongLong\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_octet (\fBACE_CDR::Octet\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_octet_array (const \fBACE_CDR::Octet\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_octet_array_mb (const \fBACE_Message_Block\fR * mb)
+.PP
+Write an octet array contained inside a MB, this can be optimized to minimize copies.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_short (\fBACE_CDR::Short\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_short_array (const \fBACE_CDR::Short\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_string (const \fBACE_CString\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_string (\fBACE_CDR::ULong\fR len, const \fBACE_CDR::Char\fR * x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_string (const \fBACE_CDR::Char\fR * x)
+.PP
+For string we offer methods that accept a precomputed length.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_ulong (\fBACE_CDR::ULong\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_ulong_array (const \fBACE_CDR::ULong\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_ulonglong (const \fBACE_CDR::ULongLong\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_ulonglong_array (const \fBACE_CDR::ULongLong\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_ushort (\fBACE_CDR::UShort\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_ushort_array (const \fBACE_CDR::UShort\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_wchar (\fBACE_CDR::WChar\fR x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_wchar_array (const \fBACE_CDR::WChar\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_wstring (\fBACE_CDR::ULong\fR length, const \fBACE_CDR::WChar\fR * x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_OutputCDR::write_wstring (const \fBACE_CDR::WChar\fR * x)
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Char_Codeset_Translator\fC [friend]\fR
+.PP
+The Codeset translators need access to some private members to efficiently marshal arrays For reading from an output CDR stream. 
+.SS class ACE_InputCDR\fC [friend]\fR
+.PP
+.SS class ACE_WChar_Codeset_Translator\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Char_Codeset_Translator\fR * ACE_OutputCDR::char_translator_\fC [protected]\fR
+.PP
+If not nil, invoke for translation of character and string data.
+.PP
+.SS \fBACE_Message_Block\fR * ACE_OutputCDR::current_\fC [private]\fR
+.PP
+The current block in the chain were we are writing.
+.PP
+.SS size_t ACE_OutputCDR::current_alignment_\fC [private]\fR
+.PP
+The current alignment as measured from the start of the buffer. Usually this coincides with the alignment of the buffer in memory, but, when we chain another buffer this "quasi invariant" is broken. The current_alignment is used to readjust the buffer following the stolen message block. 
+.SS int ACE_OutputCDR::current_is_writable_\fC [private]\fR
+.PP
+Is the current block writable. When we steal a buffer from the user and just chain it into the message block we are not supposed to write on it, even if it is past the start and end of the buffer. 
+.SS int ACE_OutputCDR::do_byte_swap_\fC [private]\fR
+.PP
+If not zero swap bytes at writing so the created CDR stream byte order does *not* match the machine byte order. The motivation for such a beast is that in some setting a few (fast) machines can be serving hundreds of slow machines with the opposite byte order, so it makes sense (as a load balancing device) to put the responsability in the writers. THIS IS NOT A STANDARD IN CORBA, USE AT YOUR OWN RISK 
+.SS int ACE_OutputCDR::good_bit_\fC [private]\fR
+.PP
+Set to 0 when an error ocurrs.
+.PP
+.SS \fBACE_CDR::Octet\fR ACE_OutputCDR::major_version_\fC [private]\fR
+.PP
+GIOP version information.
+.PP
+.SS size_t ACE_OutputCDR::memcpy_tradeoff_\fC [private]\fR
+.PP
+Break-even point for copying.
+.PP
+.SS \fBACE_CDR::Octet\fR ACE_OutputCDR::minor_version_\fC [private]\fR
+.PP
+.SS \fBACE_Message_Block\fR ACE_OutputCDR::start_\fC [private]\fR
+.PP
+The start of the chain of message blocks.
+.PP
+.SS \fBACE_WChar_Codeset_Translator\fR * ACE_OutputCDR::wchar_translator_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

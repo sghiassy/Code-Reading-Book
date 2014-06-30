@@ -1,0 +1,68 @@
+XCOMM $XConsortium: Imakefile /main/8 1996/10/27 18:08:34 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/tvga8900/Imakefile,v 3.15.2.1 1997/05/03 09:49:53 dawes Exp $
+#include <Server.tmpl>
+
+#ifdef i386Architecture
+TRIDENTSRCS = t89_bank.s
+TRIDENTOBJS = t89_bank.o
+#else
+TRIDENTSRCS = t89_bank.c
+TRIDENTOBJS = t89_bank.o
+#endif
+
+SRCS = t89_driver.c $(TRIDENTSRCS) tgui_curs.c tgui_accel.c tguimaccel.c \
+       tgui_oldacl.c tguimoldacl.c
+
+OBJS = t89_driver.o $(TRIDENTOBJS) tgui_curs.o tgui_accel.o tguimaccel.o \
+       tgui_oldacl.o tguimoldacl.o
+
+DEFINES = -DPSZ=8
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/cfb \
+           -I../../vga -I../../../xaa -I$(FONTINCSRC) \
+           -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(tvga89_drv,$(OBJS))
+
+#ifdef i386Architecture
+ObjectFromSpecialAsmSource(t89_bank,bank,NullParameter)
+#else
+ObjectFromSpecialSource(t89_bank,bankc,NullParameter)
+#endif
+
+ObjectFromSpecialSource(tguimaccel, tgui_accel, -DTRIDENT_MMIO)
+ObjectFromSpecialSource(tguimoldacl, tgui_oldacl, -DTRIDENT_MMIO)
+
+InstallLinkKitNonExecFile(t89_driver.c,$(LINKKITDIR)/drivers/vga256/tvga8900)
+InstallLinkKitNonExecFile(t89_driver.h,$(LINKKITDIR)/drivers/vga256/tvga8900)
+#ifdef i386Architecture
+InstallLinkKitNonExecFile(bank.s,$(LINKKITDIR)/drivers/vga256/tvga8900)
+#else
+InstallLinkKitNonExecFile(bankc.c,$(LINKKITDIR)/drivers/vga256/tvga8900)
+#endif
+InstallLinkKitNonExecFile(tgui_curs.c,$(LINKKITDIR)/drivers/vga256/tvga8900)
+InstallLinkKitNonExecFile(tgui_drv.h,$(LINKKITDIR)/drivers/vga256/tvga8900)
+InstallLinkKitNonExecFile(tgui_ger.h,$(LINKKITDIR)/drivers/vga256/tvga8900)
+InstallLinkKitNonExecFile(tgui_mmio.h,$(LINKKITDIR)/drivers/vga256/tvga8900)
+InstallLinkKitNonExecFile(tgui_accel.c,$(LINKKITDIR)/drivers/vga256/tvga8900)
+InstallLinkKitNonExecFile(tgui_oldacl.c,$(LINKKITDIR)/drivers/vga256/tvga8900)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/tvga8900)
+
+DependTarget()
+

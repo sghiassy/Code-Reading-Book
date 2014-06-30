@@ -1,0 +1,84 @@
+XCOMM $XConsortium: Imakefile /main/38 1996/11/03 19:32:18 kaleb $
+XCOMM $XFree86: xc/lib/Imakefile,v 3.17.2.1 1997/05/10 07:02:46 hohndel Exp $
+#define IHaveSubdirs
+#define PassCDebugFlags
+
+#ifndef NeedBerklib
+#define NeedBerklib NO
+#endif
+
+#if NeedBerklib
+BERKDIR = Xbsd
+#endif
+
+#if BuildXKBlib
+XKBLIBDIR = xkbfile
+#endif
+
+#if BuildXKBuilib
+XKBUILIBDIR = xkbui
+#endif
+
+#if BuildThreadStubLibrary
+THRSTUBLIB = XThrStub
+#endif
+
+#if BuildScreenSaverLibrary
+SSLIB = Xss
+#endif
+
+#if BuildXF86MiscLibrary
+XF86MISCLIB = Xxf86misc
+#endif
+
+#if BuildXF86VidModeLibrary
+XF86VMLIB = Xxf86vm
+#endif
+
+#if BuildXF86DGALibrary
+XF86DGALIB = Xxf86dga
+#endif
+
+XF86EXTLIBS = $(XF86MISCLIB) $(XF86VMLIB) $(XF86DGALIB)
+
+#if BuildDPMSLibrary
+XDPMSLIBDIR = Xdpms
+#endif
+
+#if BuildLBX
+LBXUTILDIR = lbxutil
+#endif
+
+#if (BuildLBX || GzipFontCompression) && !HasZlib
+ZLIBDIR = zlib
+#endif
+
+#if BuildXAudio
+XALIBDIR = Xa
+#endif
+
+FONTSUBDIR = font
+
+#if !BuildServersOnly
+LINTSUBDIRS = Xau Xdmcp $(THRSTUBLIB) X11 oldX ICE SM Xext Xt \
+	     $(SSLIB) $(XF86MISCLIB) $(XF86VMLIB) $(XF86DGALIB) \
+	     Xmu Xaw XIE Xi Xtst FS \
+	     PEX5 $(XKBLIBDIR) $(XKBUILIBDIR) $(LBXUTILDIR) $(XALIBDIR) \
+	     $(XDPMSLIBDIR) \
+	     Xp $(ZLIBDIR)
+#else
+#if XnestServer
+XEXTDIR = Xext
+#endif
+
+LINTSUBDIRS = Xau Xdmcp X11 $(XEXTDIR) $(XKBLIBDIR) $(XKBUILIBDIR) \
+	      $(LBXUTILDIR) $(XF86EXTLIBS) $(ZLIBDIR)
+#endif
+
+SUBDIRS = $(BERKDIR) xtrans $(LINTSUBDIRS) $(FONTSUBDIR)
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+MakeLintLibSubdirs($(LINTSUBDIRS))
+MakeLintSubdirs($(LINTSUBDIRS),install.ln,install.ln)
+

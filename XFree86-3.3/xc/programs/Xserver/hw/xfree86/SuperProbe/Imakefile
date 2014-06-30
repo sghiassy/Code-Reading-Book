@@ -1,0 +1,94 @@
+XCOMM $XConsortium: Imakefile /main/14 1996/10/27 11:03:56 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/SuperProbe/Imakefile,v 3.23.2.2 1997/05/06 13:24:03 dawes Exp $
+
+#if defined(SVR3Architecture) || defined(SVR4Architecture) || defined(SCOArchitecture)
+# define OSModule OS_SYSV
+#endif
+
+#if defined(SVR4Architecture)
+# include <Server.tmpl>
+#endif
+
+#if defined(SVR4Architecture) && defined(SunArchitecture) && !HasGcc
+  OS_IO_SRC = SolX86IO.s
+  OS_IO_OBJ = SolX86IO.o
+#endif
+#if defined(LinuxArchitecture)
+# define OSModule OS_Linux
+#if defined(AlphaArchitecture) && !UseElfFormat  /* fix/replacement for broken libc-0.43 io.c */
+  OS_IO_SRC = glibcAxpIo.c
+  OS_IO_OBJ = glibcAxpIo.o
+#endif
+#endif
+#if defined(LynxOSArchitecture)
+# define OSModule OS_LynxOS
+#endif
+#if defined(i386BsdArchitecture)
+# define OSModule OS_386BSD
+#endif
+#if defined(MinixArchitecture)
+# define OSModule OS_Minix
+#endif
+#if defined(i386MachArchitecture)
+   SYS_LIBRARIES = /usr/lib/libmach.a
+# define OSModule OS_Mach
+#endif
+#if defined(OS2Architecture)
+# define OSModule OS_Os2
+  CCOPTIONS = -Zmts
+#endif
+#if defined(OpenBSDArchitecture) || defined(NetBSDArchitecture) \
+   && ((OSMajorVersion == 1 && OSMinorVersion >= 1) || OSMajorVersion >= 2)
+#ifdef i386Architecture
+  IOPERMDEFINES = -DUSE_I386_IOPL
+  SYS_LIBRARIES = -li386
+#elif defined(Arm32Architecture)
+# define OSModule OS_386BSD
+  IOPERMDEFINES = -DUSE_ARM32_MMAP
+#endif
+#endif
+OS_SRC = OSModule.c $(OS_IO_SRC)
+OS_OBJ = OSModule.o $(OS_IO_OBJ)
+BASE_SRC = MDA.c Herc.c CGA.c VGA.c RamDac.c MemProbe.c PCI.c
+BASE_OBJ = MDA.o Herc.o CGA.o VGA.o RamDac.o MemProbe.o PCI.o
+SVGA_SRC = Tseng.c WD.c ChipsTech.c Video7.c Genoa.c Trident.c Oak.c \
+	   Cirrus.c Ahead.c ATI.c S3.c AL.c Yamaha.c NCR.c MX.c \
+	   RealTek.c Primus.c Compaq.c HMC.c UMC.c Weitek.c SiS.c \
+	   ARK.c Alliance.c Matrox.c SigmaDesigns.c
+SVGA_OBJ = Tseng.o WD.o ChipsTech.o Video7.o Genoa.o Trident.o Oak.o \
+	   Cirrus.o Ahead.o ATI.o S3.o AL.o Yamaha.o NCR.o MX.o \
+	   RealTek.o Primus.o Compaq.o HMC.o UMC.o Weitek.o SiS.o \
+	   ARK.o Alliance.o Matrox.o SigmaDesigns.o
+COPROC_SRC = 8514.c ATIMach.c I128.c GLINT.c
+COPROC_OBJ = 8514.o ATIMach.o I128.o GLINT.o
+SRCS = Main.c $(SVGA_SRC) $(COPROC_SRC) $(BASE_SRC) Print.c Utils.c $(OS_SRC)
+OBJS = Main.o $(SVGA_OBJ) $(COPROC_OBJ) $(BASE_OBJ) Print.o Utils.o $(OS_OBJ)
+
+#ifdef GccGasOption
+GASDEFINES = GccGasOption
+#endif
+CONSDEFINES = XFree86ConsoleDefines
+
+#ifdef OS2Architecture
+SPECIALS= sprobe.def
+#endif
+
+DEFINES = $(GASDEFINES) $(CONSDEFINES) $(IOPERMDEFINES)
+
+PROG = SuperProbe
+
+AllTarget(ProgramTargetName($(PROG)))
+NormalProgramTarget($(PROG),$(OBJS),NullParameter,$(SPECIALS),NullParameter)
+InstallProgram($(PROG),$(BINDIR))
+InstallManPage($(PROG),$(MANDIR))
+
+#if defined(LinuxArchitecture) && defined(AlphaArchitecture) && !UseElfFormat
+LinkSourceFile(glibcAxpIo.c,../common_hw)
+#endif
+
+DependTarget()

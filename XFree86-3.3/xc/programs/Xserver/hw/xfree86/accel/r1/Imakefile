@@ -1,0 +1,26 @@
+
+#include <Server.tmpl>
+
+SRCS = 	r1.c r1cmap.c r1accel.c
+
+OBJS = 	r1.o r1cmap.o r1accel.o
+
+INCLUDES = -I$(XF86SRC) -I. -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/include -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) \
+	   -I$(FONTSRC)/include -I$(XF86SRC)/vga256/vga -I$(XF86COMSRC) \
+	   -I$(XF86HWSRC) -I$(FONTINCSRC) -I$(XF86OSSRC) \
+	   -I$(XF86SRC)/accel/cache -I$(XF86SRC)/xaa
+
+DEFINES = -DPSZ=8
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(r1,$(OBJS))
+
+InstallLinkKitLibrary(r1,$(LINKKITDIR)/drivers)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

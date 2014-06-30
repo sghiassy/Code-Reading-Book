@@ -1,0 +1,174 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/etc/Imakefile,v 3.17 1997/01/04 12:19:54 dawes Exp $
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/14 1996/10/28 04:48:41 kaleb $
+
+#include <Server.tmpl>
+
+#if SystemV
+ CONFIGFILES = ldterm.sdevice ptem.sdevice ptm.sdevice pts.node \
+               pts.sdevice sp.node sp.sdevice
+    INSTPROG = install.sv3
+#ifdef i386ScoArchitecture
+   MISCFILES = dmmap.shar 
+#else
+   MISCFILES = mmapSVR3.shar
+#endif
+#endif
+
+#if SystemV4
+    INSTPROG = install.sv4
+     XDMCONF = XdmConf.svr4
+#ifdef SunArchitecture
+   MISCFILES = apSolx86.shar xcode.xfree86
+#else
+   MISCFILES = 2key.c xcode.xfree86
+#endif
+#endif
+
+#ifdef LynxOSArchitecture
+ CONFIGFILES = pty.cfg
+   MISCFILES = BM-Lynx.shar 
+#endif
+
+/* Are these really needed? */
+#if 0
+# ifdef FreeBSDArchitecture
+    INSTPROG = inst.freebsd
+# endif
+# ifdef NetBSDArchitecture
+    INSTPROG = inst.netbsd
+# endif
+#endif
+
+#if !BuildServersOnly
+#ifdef SunArchitecture
+   TERMFILES = xterm.termcap xterm.terminfo
+#else
+   TERMFILES = sun.termcap sun.terminfo xterm.termcap xterm.terminfo
+#endif
+#endif
+
+PREINST = preinst.sh
+POSTINST = postinst.sh
+
+       FILES = $(CONFIGFILES) $(TERMFILES) \
+               $(PATCHFILES) $(XDMCONF) \
+               et4000clock.c xmodmap.std $(MISCFILES) $(POSTINST) $(PREINST)
+    INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+	       -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+all:: $(FILES)
+
+#if defined(FreeBSDArchitecture) || defined(NetBSDArchitecture)
+       SRCS1 = kbd_mode.c
+     DEFINES = XFree86ConsoleDefines
+
+all:: kbd_mode
+
+SingleProgramTarget(kbd_mode,kbd_mode.o,NullParameter,NullParameter)
+
+#ifndef DontInstallPC98Version
+InstallProgram(kbd_mode,$(BINDIR))
+InstallManPage(kbd_mode,$(MANDIR))
+#endif
+#endif
+
+#if BuildScanpci
+       SRCS2 = scanpci.c
+
+#if defined(NetBSDArchitecture) \
+    && ((OSMajorVersion == 1 && OSMinorVersion >= 1) || OSMajorVersion >= 2)
+DEFINES = -DUSE_I386_IOPL
+SYS_LIBRARIES = -li386
+#endif
+
+AllTarget(ProgramTargetName(scanpci))
+
+NormalProgramTarget(scanpci,scanpci.o,NullParameter,NullParameter,NullParameter)
+#ifndef DontInstallPC98Version
+InstallProgram(scanpci,$(BINDIR))
+#endif
+#endif
+
+#if JoystickSupport || Joystick2Support
+       SRCS3 = joycal.c
+
+AllTarget(ProgramTargetName(joycal))
+
+NormalProgramTarget(joycal,joycal.o,NullParameter,NullParameter,NullParameter)
+InstallProgram(joycal,$(BINDIR))
+#endif
+
+        SRCS = $(SRCS1) $(SRCS2) $(SRCS3)
+
+#ifndef DontInstallPC98Version
+#if (SystemV && !defined(i386ScoArchitecture)) || SystemV4
+InstallNamedProg($(INSTPROG),xf86install,$(LIBDIR)/etc)
+#endif
+
+InstallMultipleDestFlags(install,$(FILES),$(LIBDIR)/etc,$(INSTDATFLAGS))
+
+#if SystemV
+InstallNamedProg(svr3_patch,svr3_patch,$(LIBDIR)/etc)
+InstallNamedProg(svr3_rem_pch,svr3_patch_rem,$(LIBDIR)/etc)
+#endif
+#if SystemV4 && !defined(SunArchitecture)
+InstallNamedProg(svr4_patch,svr4_patch,$(LIBDIR)/etc)
+InstallNamedProg(svr4_rem_pch,svr4_patch_rem,$(LIBDIR)/etc)
+#endif
+#if defined(LynxOSArchitecture) && OSMinorVersion < 3
+NormalProgramTarget(ld-wrapper,ld-wrapper.o,NullParameter,NullParameter,NullParameter)
+InstallProgram(ld-wrapper,$(LIBDIR)/etc)
+#endif
+#endif
+
+#if !BuildServersOnly
+LinkFile(xterm.termcap,$(PROGRAMSRC)/xterm/termcap)
+LinkFile(xterm.terminfo,$(PROGRAMSRC)/xterm/terminfo)
+#endif
+
+LinkSourceFile(2key.c,$(XF86SRC)/etc)
+LinkSourceFile(BM-Lynx.shar,$(XF86SRC)/etc)
+LinkSourceFile(XdmConf.svr4,$(XF86SRC)/etc)
+LinkSourceFile(apNetBSD.shar,$(XF86SRC)/etc)
+LinkSourceFile(apSolx86.shar,$(XF86SRC)/etc)
+LinkSourceFile(dmmap.shar,$(XF86SRC)/etc)
+LinkSourceFile(et4000clock.c,$(XF86SRC)/etc)
+LinkSourceFile(install.sv3,$(XF86SRC)/etc)
+LinkSourceFile(install.sv4,$(XF86SRC)/etc)
+LinkSourceFile(ioctl_pc.h,$(XF86SRC)/etc)
+LinkSourceFile(joycal.c,$(XF86SRC)/etc)
+LinkSourceFile(kbd_mode.c,$(XF86SRC)/etc)
+LinkSourceFile(kbd_mode.man,$(XF86SRC)/etc)
+LinkSourceFile(ld-wrapper.c,$(XF86SRC)/etc)
+LinkSourceFile(ldterm.sdevice,$(XF86SRC)/etc)
+LinkSourceFile(mmapSVR3.shar,$(XF86SRC)/etc)
+LinkSourceFile(postinst.sh,$(XF86SRC)/etc)
+LinkSourceFile(preinst.sh,$(XF86SRC)/etc)
+LinkSourceFile(ptem.sdevice,$(XF86SRC)/etc)
+LinkSourceFile(ptm.sdevice,$(XF86SRC)/etc)
+LinkSourceFile(pts.node,$(XF86SRC)/etc)
+LinkSourceFile(pts.sdevice,$(XF86SRC)/etc)
+LinkSourceFile(pty.cfg,$(XF86SRC)/etc)
+LinkSourceFile(scanpci.c,$(XF86SRC)/etc)
+LinkSourceFile(sp.node,$(XF86SRC)/etc)
+LinkSourceFile(sp.sdevice,$(XF86SRC)/etc)
+LinkSourceFile(sun.tcap,$(XF86SRC)/etc)
+LinkSourceFile(sun.tinfo,$(XF86SRC)/etc)
+LinkSourceFile(svr3_patch,$(XF86SRC)/etc)
+LinkSourceFile(svr3_rem_pch,$(XF86SRC)/etc)
+LinkSourceFile(svr4_patch,$(XF86SRC)/etc)
+LinkSourceFile(svr4_rem_pch,$(XF86SRC)/etc)
+LinkSourceFile(vga.bdf,$(XF86SRC)/etc)
+LinkSourceFile(xcode.xfree86,$(XF86SRC)/etc)
+LinkSourceFile(xmodmap.std,$(XF86SRC)/etc)
+
+LinkFile(sun.termcap,sun.tcap)
+LinkFile(sun.terminfo,sun.tinfo)
+
+NormalLibraryObjectRule()
+DependTarget()
+

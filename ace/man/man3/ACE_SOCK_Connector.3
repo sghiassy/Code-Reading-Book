@@ -1,0 +1,163 @@
+.TH ACE_SOCK_Connector 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SOCK_Connector \- Defines a factory that creates new s actively. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SOCK_Connector.h>\fR
+.PP
+Inherited by \fBACE_LSOCK_Connector\fR, and \fBACE_MEM_Connector\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_INET_Addr\fR \fBPEER_ADDR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_SOCK_Stream\fR \fBPEER_STREAM\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SOCK_Connector\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_SOCK_Connector\fR (\fBACE_SOCK_Stream\fR &new_stream, const \fBACE_Addr\fR &remote_sap, const \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)"
+.br
+.ti -1c
+.RI "\fBACE_SOCK_Connector\fR (\fBACE_SOCK_Stream\fR &new_stream, const \fBACE_Addr\fR &remote_sap, \fBACE_QoS_Params\fR qos_params, const \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, \fBACE_Protocol_Info\fR *protocolinfo = 0, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)"
+.br
+.ti -1c
+.RI "int \fBconnect\fR (\fBACE_SOCK_Stream\fR &new_stream, const \fBACE_Addr\fR &remote_sap, const \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)"
+.br
+.ti -1c
+.RI "int \fBconnect\fR (\fBACE_SOCK_Stream\fR &new_stream, const \fBACE_Addr\fR &remote_sap, \fBACE_QoS_Params\fR qos_params, const \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, \fBACE_Protocol_Info\fR *protocolinfo = 0, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_SOCK_Connector\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBcomplete\fR (\fBACE_SOCK_Stream\fR &new_stream, \fBACE_Addr\fR *remote_sap = 0, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "int \fBreset_new_handle\fR (ACE_HANDLE handle)"
+.br
+.RI "\fIResets any event associations on this handle.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBshared_open\fR (\fBACE_SOCK_Stream\fR &new_stream, int protocol_family, int protocol, int reuse_addr)"
+.br
+.RI "\fIPerform operations that ensure the socket is opened using BSD-style semantics (no QoS).\fR"
+.ti -1c
+.RI "int \fBshared_open\fR (\fBACE_SOCK_Stream\fR &new_stream, int protocol_family, int protocol, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr)"
+.br
+.RI "\fIPerform operations that ensure the socket is opened using QoS-enabled semantics.\fR"
+.ti -1c
+.RI "int \fBshared_connect_start\fR (\fBACE_SOCK_Stream\fR &new_stream, const \fBACE_Time_Value\fR *timeout, const \fBACE_Addr\fR &local_sap)"
+.br
+.RI "\fIPerform operations that must be called before .\fR"
+.ti -1c
+.RI "int \fBshared_connect_finish\fR (\fBACE_SOCK_Stream\fR &new_stream, const \fBACE_Time_Value\fR *timeout, int result)"
+.br
+.RI "\fIPerform operations that must be called after .\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines a factory that creates new s actively.
+.PP
+.PP
+ The  doesn't have a socket of its own, i.e., it simply "borrows" the one from the \fBACE_SOCK_Stream\fR that's being connected. The reason for this is that the underlying socket API doesn't use a "factory" socket to connect "data-mode" sockets. Therefore, there's no need to inherit  from . A nice side-effect of this is that 's do not store state so they can be used reentrantly in multi-threaded programs. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_INET_Addr\fR ACE_SOCK_Connector::PEER_ADDR
+.PP
+Reimplemented in \fBACE_LSOCK_Connector\fR, and \fBACE_MEM_Connector\fR.
+.SS typedef \fBACE_SOCK_Stream\fR ACE_SOCK_Connector::PEER_STREAM
+.PP
+Reimplemented in \fBACE_LSOCK_Connector\fR, and \fBACE_MEM_Connector\fR.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Connector::ACE_SOCK_Connector (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_SOCK_Connector::ACE_SOCK_Connector (\fBACE_SOCK_Stream\fR & new_stream, const \fBACE_Addr\fR & remote_sap, const \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the maximum amount of time to wait before timing out; if the time expires before the connection is made <errno == ETIME>. Note the difference between this case and when a blocking connect is attmpted that TCP times out - in the latter case, errno will be ETIMEDOUT. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleanedup yet. The <protocol_family> and <protocol> parameters are passed down to the <socket> call, whereas <flags> and <perms> are ignored. 
+.SS ACE_SOCK_Connector::ACE_SOCK_Connector (\fBACE_SOCK_Stream\fR & new_stream, const \fBACE_Addr\fR & remote_sap, \fBACE_QoS_Params\fR qos_params, const \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, \fBACE_Protocol_Info\fR * protocolinfo = 0, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <qos_params> contains QoS parameters that are passed to the IntServ (RSVP) and DiffServ protocols. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the amount of time to wait before timing out; if the time expires before the connection is made <errno == ETIME>. Note the difference between this case and when a blocking connect is attmpted that TCP times out - in the latter case, errno will be ETIMEDOUT. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleaned up yet. The <protocol_family> and <protocol> parameters are passed down to the <socket> call, whereas <flags> and <perms> are ignored. 
+.SS ACE_SOCK_Connector::~ACE_SOCK_Connector (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SOCK_Connector::complete (\fBACE_SOCK_Stream\fR & new_stream, \fBACE_Addr\fR * remote_sap = 0, const \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Try to complete a non-blocking connection. If connection completion is successful then <new_stream> contains the connected \fBACE_SOCK_Stream\fR. If <remote_sap> is non-NULL then it will contain the address of the connected peer. 
+.SS int ACE_SOCK_Connector::connect (\fBACE_SOCK_Stream\fR & new_stream, const \fBACE_Addr\fR & remote_sap, \fBACE_QoS_Params\fR qos_params, const \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, \fBACE_Protocol_Info\fR * protocolinfo = 0, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <qos_params> contains QoS parameters that are passed to the IntServ (RSVP) and DiffServ protocols. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the amount of time to wait before timing out; if the time expires before the connection is made <errno == ETIME>. Note the difference between this case and when a blocking connect is attmpted that TCP times out - in the latter case, errno will be ETIMEDOUT. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleanedup yet. 
+.SS int ACE_SOCK_Connector::connect (\fBACE_SOCK_Stream\fR & new_stream, const \fBACE_Addr\fR & remote_sap, const \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = 0, int perms = 0, int protocol_family = PF_INET, int protocol = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the maximum amount of time to wait before timing out; if the time expires before the connection is made <errno == ETIME>. Note the difference between this case and when a blocking connect is attmpted that TCP times out - in the latter case, errno will be ETIMEDOUT. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleanedup yet. Note that the <new_stream> always starts out in blocking mode. The <protocol_family> and <protocol> parameters are passed down to the <socket> call, whereas <flags> and <perms> are ignored. 
+.SS void ACE_SOCK_Connector::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_LSOCK_Connector\fR, and \fBACE_MEM_Connector\fR.
+.SS int ACE_SOCK_Connector::reset_new_handle (ACE_HANDLE handle)
+.PP
+Resets any event associations on this handle.
+.PP
+.SS int ACE_SOCK_Connector::shared_connect_finish (\fBACE_SOCK_Stream\fR & new_stream, const \fBACE_Time_Value\fR * timeout, int result)\fC [protected]\fR
+.PP
+Perform operations that must be called after .
+.PP
+.SS int ACE_SOCK_Connector::shared_connect_start (\fBACE_SOCK_Stream\fR & new_stream, const \fBACE_Time_Value\fR * timeout, const \fBACE_Addr\fR & local_sap)\fC [protected]\fR
+.PP
+Perform operations that must be called before .
+.PP
+.SS int ACE_SOCK_Connector::shared_open (\fBACE_SOCK_Stream\fR & new_stream, int protocol_family, int protocol, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr)\fC [protected]\fR
+.PP
+Perform operations that ensure the socket is opened using QoS-enabled semantics.
+.PP
+.SS int ACE_SOCK_Connector::shared_open (\fBACE_SOCK_Stream\fR & new_stream, int protocol_family, int protocol, int reuse_addr)\fC [protected]\fR
+.PP
+Perform operations that ensure the socket is opened using BSD-style semantics (no QoS).
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Connector::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_LSOCK_Connector\fR, and \fBACE_MEM_Connector\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

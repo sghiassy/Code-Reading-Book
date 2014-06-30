@@ -1,0 +1,101 @@
+.TH ACE_TP_Token_Guard 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_TP_Token_Guard \- A helper class that helps grabbing, releasing and waiting on tokens for a thread that tries calling handle_events (). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <TP_Reactor.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TP_Token_Guard\fR (\fBACE_Select_Reactor_Token\fR &token)"
+.br
+.RI "\fIConstructor that will grab the token for us.\fR"
+.ti -1c
+.RI "\fB~ACE_TP_Token_Guard\fR (void)"
+.br
+.RI "\fIDestructor. This will release the token if it hasnt been released till this point.\fR"
+.ti -1c
+.RI "void \fBrelease_token\fR (void)"
+.br
+.RI "\fIRelease the token ..\fR"
+.ti -1c
+.RI "int \fBis_owner\fR (void)"
+.br
+.RI "\fIReturns whether the thread that created this object ownes the token or not.\fR"
+.ti -1c
+.RI "int \fBgrab_token\fR (\fBACE_Time_Value\fR *max_wait_time)"
+.br
+.RI "\fIA helper method that grabs the token for us, after which the thread that owns that can do some actual work.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TP_Token_Guard\fR (void)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Token\fR& \fBtoken_\fR"
+.br
+.RI "\fIThe Select Reactor token.\fR"
+.ti -1c
+.RI "int \fBowner_\fR"
+.br
+.RI "\fIFlag that indicate whether the thread that created this object owns the token or not. A value of 0 indicates that this class hasnt got the token (and hence the thread) and a value of 1 vice-versa.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A helper class that helps grabbing, releasing and waiting on tokens for a thread that tries calling handle_events ().
+.PP
+.PP
+ In short, this class will be owned by one thread by creating on the stack. This class gives the status of the ownership of the token and manages the ownership 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_TP_Token_Guard::ACE_TP_Token_Guard (\fBACE_Select_Reactor_Token\fR & token)
+.PP
+Constructor that will grab the token for us.
+.PP
+.SS ACE_TP_Token_Guard::~ACE_TP_Token_Guard (void)
+.PP
+Destructor. This will release the token if it hasnt been released till this point.
+.PP
+.SS ACE_TP_Token_Guard::ACE_TP_Token_Guard (void)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_TP_Token_Guard::grab_token (\fBACE_Time_Value\fR * max_wait_time)
+.PP
+A helper method that grabs the token for us, after which the thread that owns that can do some actual work.
+.PP
+.SS int ACE_TP_Token_Guard::is_owner (void)
+.PP
+Returns whether the thread that created this object ownes the token or not.
+.PP
+.SS void ACE_TP_Token_Guard::release_token (void)
+.PP
+Release the token ..
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_TP_Token_Guard::owner_\fC [private]\fR
+.PP
+Flag that indicate whether the thread that created this object owns the token or not. A value of 0 indicates that this class hasnt got the token (and hence the thread) and a value of 1 vice-versa.
+.PP
+.SS \fBACE_Select_Reactor_Token\fR & ACE_TP_Token_Guard::token_\fC [private]\fR
+.PP
+The Select Reactor token.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

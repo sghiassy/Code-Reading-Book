@@ -1,0 +1,1418 @@
+<HTML>
+<HEAD>
+<TITLE>
+	Source Description of the DemoGL v1.3x sourcecode.
+</TITLE>
+</HEAD>
+<BODY bgColor=White link=Blue text=Black vlink=Maroon>
+<TABLE WIDTH="`100%" BORDER=1>
+<TR>
+	<TD WIDTH="30%">
+		<font face="courier" size=2>File</FONT>
+	</TD>
+	<TD WIDTH="70%">
+		<font face="courier" size=2>srcdescr.htm</font>
+	</td>
+</TR>
+<TR>
+	<TD WIDTH="30%">
+		<font face="courier" size=2>Purpose</FONT>
+	</TD>
+	<TD WIDTH="70%">
+		<font face="courier" size=2>Explaining the sourcecode</font>
+	</td>
+</TR>
+<TR>
+	<TD WIDTH="30%">
+		<font face="courier" size=2>For</FONT>
+	</TD>
+	<TD WIDTH="70%">
+		<font face="courier" size=2>
+			Readers/users of the DemoGL sourcecode, DemoGL Developers.
+		</font>
+	</td>
+</TR>
+<TR>
+	<TD WIDTH="30%">
+		<font face="courier" size=2>Last changed</FONT>
+	</TD>
+	<TD WIDTH="70%">
+		<font face="courier" size=2>02-jun-2001</font>
+	</td>
+</TR>
+<TR>
+	<TD WIDTH="30%">
+		<font face="courier" size=2>Last changed by</FONT>
+	</TD>
+	<TD WIDTH="70%">
+		<font face="courier" size=2>Frans Bouma ([FB])</font>
+	</td>
+</TR>
+</TABLE>
+<BR CLEAR="ALL">
+<BR CLEAR="ALL">
+<TABLE WIDTH=100% BORDER=0>
+<TR>
+	<TD>
+	<font face="Arial" size=2">
+<!-- text here -->
+<A NAME="CH0">
+<H4>0. Contents. </H4>
+<DL>
+	<DT>
+	<DD><OL>
+		<LI><A HREF="#CH1">Preface.</A>
+		<LI><A HREF="#CH2">DemoGL Goals.</A>
+		<LI><A HREF="#CH3">DemoGL internals.</A>
+		<LI><A HREF="#CH4">The C vs C++ dilemma.</A>
+		<LI><A HREF="#CH5">Rules used inside the code.</A>
+		<LI><A HREF="#CH6">The DemoGL_DLL VC++ project.</A>
+		<LI><A HREF="#CH7">Small last things to think about.</A>
+		</UL>
+</DL>
+<p ALIGN=RIGHT>
+<A HREF="#CH0">Top</A>
+<BR>
+<A NAME="CH1">
+<H4>1. Preface.</H4>
+In this document the inner workings of the library are explained, why they are set
+up the way they are, why the code is written the way it is now and how to interpret
+the sourcecode. This document is ment to be read from top to bottom, not as a reference.
+(But of course you could use it as a reference). This way you don't need to hop back and
+forth in the document to find the information you need. If you want to skip parts,
+that's fine, when you don't understand something later on, you probably skipped that
+part so you can find it back easily, just browse back in this document.
+<p>
+The goal of this document is to provide all the knowledge needed to work with the
+sourcecode of this library. It also states some hints on what you should do to keep
+your code fitting into the library. These hints can sometimes be hard to follow and
+you probably will just give them the finger and do it your way. Everybody is free in
+what to decide what to do with the code, that was one reason why the BSD license was chosen,
+but understand that an update of the library can generate conflicts with your new
+code that doesn't follow the rules stated below. When that happens you're facing the
+dilemma: "keep my old code but also the old functionality" vs "porting my additions to
+fit into the new library code". Tough question. Try to avoid it. 
+<p ALIGN=RIGHT>
+<A HREF="#CH0">Top</A>
+<BR>
+<A NAME="CH2">
+<h4>2. DemoGL Goals.</h4>
+The goals for DemoGL were and are still the same and give it a reason it's useful and
+needed and why it was build in the first place. It's likely that these goals will get
+adjusted during time, and will be removed when, over time, a goal is no longer an
+issue. When there are no goals left, the library is dead and the developers should
+do other things with their time. That's not a scentence ment to be funny but a 
+reality check. Too much software is written and maintained that is already dead for
+years and should be burried and replaced with newer software that still has goals which
+are valid. 
+<p>
+<b>The goals:</b>
+<UL>
+	<LI>It should provide a platform for developers so that all overhead
+ 	    required to create a framework that will be able to run the graphical effects is
+	    taken out of their hands and is done by DemoGL. <BR>
+		<BR>
+        --> <B>reduce overhead.</b><BR>
+		--> <B>keep developers focussed on what they have to do.</b><BR>
+		<BR>
+        Met how? <BR>
+        <UL>
+			<LI>DemoGL performs all the window, sound, I/O and OS related related actions
+			<LI>DemoGL lets developers run effect objects that are separate blocks, and those
+	            effects are the only codeblocks the developer has to write
+	    </UL>
+	    <BR>
+	<LI>It should make it easy for developers to make screensavers using their graphical
+	    effects, developed on top of the DemoGL platform. <BR>
+		<BR>
+	    --> <b>make difficult tasks easy.</b><BR>
+	    <BR>
+		Met how? <BR>
+		<UL>
+			<LI>DemoGL can run an application as a normal windows application or as a windows
+		 		screensaver. The developer just has to add a few simple lines of code.
+		 </UL>
+		<BR>
+	<LI>It should provide a black box to the developer so that machine specifics are not
+	    influencing the code the developer has to write. The developer should be able to
+	    write just 1 application that can run on a large list of resolutions, using graphic-
+	    card specific features or can do without them, use soundcard specific features or
+	    do without them, without including additional code to support these different
+	    target platform specifics. <BR>
+		<BR>
+		--> <B>increase application flexibility and decrease usage of complex requirements.</B><BR>
+		<BR>
+		Met how? <BR>
+		<UL>
+			<LI>DemoGL does all the resolution handling, display bitdepth handling, texture
+			    bitdepth handling, sound specific requirements handling, texture scale handling
+			    etc. The developer just programs effects using OpenGL depending, resolution
+			    independant arguments, and uses the soundcard independant soundsystem to
+			    perform sound.
+		</UL>
+		<BR>
+	<LI>It should provide an easy way designers, programmers and contentproviders can work
+	    together on one project and work on their own without having to consult others in
+	    the project team. It should be possible that programmers create functionality
+	    designers and contentproviders can use to build applications they want.<BR>
+		<BR>
+		--> <b>increase team productivity.</b><br>
+		<BR>
+		Met how? <br>
+		<UL>
+			<li>DemoGL provides the team a set of tools and functionality to work together
+			more succesful: a scripting system that controls the application flow and
+			behaviour, a common used datafile system so contentproviders can add data
+			easily, a range of functionality so developers can handle and content providers
+			can supply data in a lot of different commonly used formats, sound AND images.
+			Developers can easily program handlers that can be controlled by designers using
+			the scripting system, so designers can actually design the application the way
+			it was planned beforehand.
+		</UL>
+		<BR>
+	<LI>It should be easy for a developer to add the functionality the DemoGL Demosystem
+     	provides, plus the interface to DemoGL should be easy to understand and flexible
+	    to use.<BR>
+		<BR>
+		--> <B>short learning curve and maximum flexibility when using DemoGL.</b><BR>
+		<BR>
+		Met how?<BR>
+		<UL>
+			<LI>DemoGL is a library with functions and a simple baseclass. Including it into
+			  a project is done in seconds.
+			<LI>DemoGL's API is set up in a way that a lot of functionality can be done in 1 
+			  call, but also gives the developer enough room to set/adjust/tweak/use
+			  functionality so that numerous situations can be handled.
+			<LI> DemoGL comes with documentation that not only documents the complete interface
+			  but also documents the background of the library, limits and technical details,
+			  gives hints and tips and overviews of the different parts of the system.
+		</UL>
+		<BR>
+	<LI>It should not limit the developer in using the supported 3D API nor force a certain
+	  way of usage of the 3D API supported.<BR>
+		<BR>
+		--> <b>abstraction of work without obstruction.</b><BR>
+		<BR>
+		Met how?<BR>
+		<UL>
+			<LI>DemoGL uses OpenGL, but lets the user free how to use OpenGL. OpenGL is not
+			  incapsulated in an abstract layer nor limited by DemoGL's encapsulation of
+			  the OS dependant overhead. 
+		</UL>
+</UL>
+<P>
+These are the main goals set for DemoGL v1.3. Because every developer thinks different
+in ways to solve a problem, or better: to satisfy a goal set for the project, it's 
+likely some readers of this document and the sourcecode will disagree with the list
+of how DemoGL v1.3 meets the goals set.
+<p ALIGN=RIGHT>
+<A HREF="#CH0">Top</A>
+<BR>
+<A NAME="CH3">
+<H4>3. DemoGL internals.</H4>
+<P>
+DemoGL relies internally on a couple of building blocks. These cornerstones of the
+system are the following:
+<P>
+<OL type=1>
+	<LI><A HREF="#AD31">Application life phase</A>
+	<LI><A HREF="#AD32">System State</A>
+	<LI><A HREF="#AD33">Runtype</A>
+	<LI><A HREF="#AD34">Main message handler and the message pump</A>
+	<LI><A HREF="#AD35">Time-line</A>
+	<LI><A HREF="#AD36">Effectstore</A>
+	<LI><A HREF="#AD37">DemoDat internal data storage</A>
+	<LI><A HREF="#AD38">Texturestore</A>
+</OL>
+<P>
+<BR>
+<A Name="AD31">
+<B>3.1. Application life phase.</B>
+<P>
+When the application starts the DemoGL system by calling DEMOGL_AppRun(), the application
+and thus the system, will live through a couple of phases. These are semantic groups of
+system states, explained in ad 2. Below are the phases the application and the system will
+go through plus their short 2/3 character wide abbreviation. When DemoGL logs a line in the
+console it is prefixed with the abbreviation for the current phase.
+<BR CLEAR=ALL><BR CLEAR=ALL>
+<TABLE ALIGN=CENTER BORDER=1 WIDTH=70%>
+<TR bgcolor=Silver>
+	<TD><FONT face="courier" size="2">Phase name</FONT></TD>
+	<TD><FONT face="courier" size="2">Abbreviation</FONT></TD>
+</TR>
+<TR>
+	<TD>
+		<FONT face="courier" size="2">Pre-Boot Phase</FONT>
+	</TD>
+	<TD><FONT face="courier" size="2">[PBP]</FONT></TD>
+</TR>
+<TR>
+	<TD>
+		<FONT face="courier" size="2">Boot Phase</FONT>
+	</TD>
+	<TD><FONT face="courier" size="2">[BP ]</FONT></TD>
+</TR>
+<TR>
+	<TD>
+		<FONT face="courier" size="2">Application Initialisation Phase</FONT>
+	</TD>
+	<TD><FONT face="courier" size="2">[AIP]</FONT></TD>
+</TR>
+<TR>
+	<TD>
+		<FONT face="courier" size="2">Application Run Phase</FONT>
+	</TD>
+	<TD><FONT face="courier" size="2">[ARP]</FONT></TD>
+</TR>
+<TR>
+	<TD>
+		<FONT face="courier" size="2">Post Run Phase</FONT>
+	</TD>
+	<TD><FONT face="courier" size="2">[PRP]</FONT></TD>
+</TR>
+<TR>
+	<TD>
+		<FONT face="courier" size="2">System Cleanup Phase</FONT>
+	</TD>
+	<TD><FONT face="courier" size="2">[SCP]</FONT></TD>
+</TR>
+</TABLE>
+<BR CLEAR=ALL><BR CLEAR=ALL>
+<P>
+As said, these phases are semantic, they are not physically stored inside the system. DemoGL
+uses system states to store the current state of the system. To know where in the lifetime of
+the application a certain state should be, these semantic phases were introduced, to illustrate
+the timespot of a system state in the application lifetime cycle (i.e. 1 run of the application)
+<P>
+<BR>
+<A Name="AD32">
+<B>3.2. System state.</B>
+<P>
+DemoGL is a <I>statemachine</I>. When an application invokes DemoGL, f.e. via <I>DEMOGL_AppRun()</I>, 
+the state machine starts and ticks from state to state when events occur (states complete,
+errors occur etc). Below are all currently defined system states, a description of the state
+and when the system moves on to another state. With every state the abbreviation for the 
+phase the state belongs to is also mentioned.
+<p>
+<b>Note:</b> when an error occures during a state's execution or the user exits the application, 
+the system will automatically invoke SSTATE_AEND_SYSTEMCLEANUP.
+<p>
+<DL>
+	<DT><b>All system states:</b>
+	<DD><DL>
+		<DT><B>SSTATE_PREBOOT</B>
+		<DD>Phase: PBP<BR>
+			This is the startstate. <BR>
+			<BR>
+			Will move to:<BR>
+			<UL>
+				<LI><B>SSTATE_BOOT_STARTUPDIALOG</B> when the DEMOGL_AppRun() call was of a normal runtype.
+				<LI><B>SSTATE_BOOT_MAINWNDCREATION</B> when the DEMOGL_AppRun()	call was of a NoDialog runtype 
+				    or a normal/preview screensaver runtype
+			</UL>
+			<BR>
+		<DT><B>SSTATE_BOOT_STARTUPDIALOG</B>
+		<DD>Phase: BP<BR>
+			When the startup dialog is opened, the state of the system moves to this
+			state and stays in this state until the startup dialog is closed.<BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_BOOT_MAINWNDCREATION</B> when the user clicked "Ok" in the startup dialog.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_BOOT_MAINWNDCREATION</B>
+		<DD>Phase: BP<BR>
+			When the user clicks "Ok" in the startup dialog, the system will move towards
+			the creation of the platform for the application to run on. To let the building
+			block that pumps the life around inside the system, the main message handler, start
+			to live, the window is created. This is done when the system is moved into this state.<BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_BOOT_MESSAGEPUMPSTART</B> when the window is created. 
+			</UL>
+			<BR>
+		<DT><B>SSTATE_BOOT_MESSAGEPUMPSTART</B>
+		<DD>Phase: BP<BR>
+			When the window and it's OpenGL rendercontext is created, the application is ready
+			to receive messages. To receive and handle these, DemoGL dives into the message pump.
+			From this state on, control lies with the message pump. Because the message pump can
+			only live from the moment the window is up and running, we needed to handle state
+			changes differently in the states before SSTATE_BOOT_MESSAGEPUMPSTART, i.e. more
+			sequencial. When the message pump is up, messages will be send to let the system tick
+			to other states. The message pump is called the KernelLoop.<BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_BOOT_INITSTART</B> when the window setup routine was successful and the
+				        message WM_DEMOGL_INITSYSTEM was sent and handled by the main message
+						handler. When the main message handler doesn't receive this message the
+						system will not continue.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_BOOT_INITSTART</B>
+		<DD>Phase: BP<BR>
+			Short state that signals the initialisation start of vital parts of DemoGL. Will set up
+			the high resolution timer.<BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_BOOT_SYSOBJECTSINIT</B> when the high resolution timer is succesfully created
+				        and initialized.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_BOOT_SYSOBJECTSINIT</B>
+		<DD>Phase: BP<BR>
+			When this state is active the system objects of DemoGL are initialized, f.e. the
+			console, the sound system etc. When these initialisations are completed the console
+			is ready to display content and DemoGL spawns a thread (InitSystem()) that will 
+			continue the system	object initialisation. <BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_AINIT_SCRIPTPARSING</B> when the InitSystem() thread spawned in the 
+					SSTATE_BOOT_SYSOBJECTSINIT phase succesfully completes its work. When 
+					the thread ends, it will send a WM_DEMOGL_INITAPP message that will result in 
+					the creation of another	thread (InitApp()) that will do the application initialisation 
+					and thus will move into SSTATE_AINIT_SCRIPTPARSING at the start.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_AINIT_SCRIPTPARSING</B>
+		<DD>Phase: AIP<BR>
+			The InitApp() thread will first load and parse the application specific script which
+			will result in the internal timeline event chain (in short: the timeline).<BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_AINIT_EFFECTSINIT</B>when the script is succesfully loaded.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_AINIT_EFFECTSINIT</B>
+		<DD>Phase: AIP<BR>
+			When the InitApp() thread is done with the scriptparsing, it will
+			initialize all registered effectobjects using their Init() method. When an error
+			occured that would abort the system, this thread will post a WM_DEMOGL_ABORT message
+			that will automatically abort the system, when handled by the main message handler.<BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_AINIT_PRESTARTEVENTEXEC</B> when the initialisation was succesful. This state
+				    is invoked in another workerthread, Prepare(), that is spawned when the
+					message WM_DEMOGL_PREPARE is received by the main message handler, which is
+					sent by the InitApp() thread when it succesfully completes its work.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_AINIT_PRESTARTEVENTEXEC</B>
+		<DD>Phase: AIP<BR>
+			When the Prepare() worker thread is spawned by the main message handler, that thread
+			will tick the system into the state SSTATE_AINIT_PRESTARTEVENTEXEC, which mainly will
+			execute all timeline events with a timespot below the starting point of the application,
+			timespot 0. This workerthread will work in tandem with the main message handler (which
+			is in fact our main thread). When a Prepare command is found in the timeline events
+			to be executed, it will place that timeline event in a FIFO queue and will sent a
+			message to the main message handler that an effect should be prepared. This is done
+			this way because when an effect's Prepare method wants to upload textures to OpenGL
+			it should be executed by a thread that owns the OpenGL rendercontext that will be
+			used by the application. The Prepare() workerthread doesn't own that rendercontext,
+			the main message handler thread does. <BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_ARUN_KERNELLOOP</B> when the Prepare() thread finishes it will send a 
+				    WM_DEMOGL_STARTKERNELLOOP message which will cause a move to the
+					SSTATE_ARUN_KERNELLOOP system state, once it's handled by the main
+					message handler.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_ARUN_KERNELLOOP</B>
+		<DD>Phase: ARP<BR>
+			This is the state wherein the application will be when it's running as planned. Once
+			the setup/boot states are all walked through, the application will find itself in this
+			state and will be here as long as the application runs. <BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_ARUN_POSTKERNELLOOP</B> when the application ends by a script command or an 
+				    unrecoverable error occurs or the user exits the application. This state is
+					also illustrating the abandoning of the message pump. This state is invoked
+					when the message pump is left, and thus the unavoidable termination of the
+					application, and thus the DemoGL system is started.
+			</UL>
+			<BR>
+		<DT><B>SSTATE_ARUN_POSTKERNELLOOP</B>
+		<DD>Phase: PRP<BR>
+			When the system is in this state, it's cleaning up kernel internal left overs and it's
+			preparing the system to give control back to the application WinMain() routine. Once
+			the cleanup is completed, control is passed back to the caller, the application WinMain()
+			routine.<BR>
+			<BR>
+			Will move to:
+			<UL>
+				<LI><B>SSTATE_AEND_SYSTEMCLEANUP</B> when the WinMain calls DEMOGL_AppEnd().
+			</UL>
+			<BR>
+		<DT><B>SSTATE_AEND_SYSTEMCLEANUP</B>
+		<DD>Phase: SCP</BR>
+			In this state all system internal data is cleaned up, data the application has loaded
+			and not freed is cleaned up and everything that was started by DemoGL is closed and 
+			freed. After this is completed, the control is again passed back to the caller, the
+			WinMain routine of the application. The system is completely demolished internally
+			after this state, the caller should end itself, by ending WinMain properly. That will
+			result in a clean detach from the DemoGL DLL in core which will result in the last
+			removal of internal objects from core memory. 
+			<BR>
+	</DL>
+</DL>
+<P>
+<br>
+<A NAME="AD33">
+<B>3.3. Runtype.</B>
+<P>
+DemoGL can run an application in several ways, each way is called a <I>Runtype</I>. Each Runtype
+needs it's own special threatment and actions so it will be easy for the library user to
+run his application as a certain Runtype. Once specified (as parameter to DEMOGL_AppRun()), 
+the internal logic of DemoGL will test which Runtype it's in and behave like it. For example 
+when the runtype is RUNTYPE_SAVER_NORMAL, pressing a key or moving the mouse will exit the 
+application, because DemoGL thinks it's run as a screensaver. 
+<P>
+<DL>
+	<DT>Below are the defined runtypes inside DemoGL, their description and specifics.
+	<DD><BR>
+		<DL>
+		<DT><B>RUNTYPE_NORMAL</B>
+		<DD>This is the normal runtype. It will open a startup dialog and once the user clicks "Start!"
+			the application runs as a normal win32 application, full screen or windowed. It ends when
+			the pre-compiled script executes an exit command or the user closes the application. The 
+			developer of the application can tweak the settings available to the user of the application
+			by pre-selecting options in the startup dialog, but the developer can't pre-select a set of
+			start options the application should always use. The application runs standalone, without
+			a parent.
+			<BR><BR>
+		<DT><B>RUNTYPE_NODIALOG</B>
+		<DD>This is similar to RUNTYPE_NORMAL except that there is no startup dialog, the system starts
+			where in RUNTYPE_NORMAL the closure of the startup dialog with clicking "Start!" would 
+			continue. The user is not able to select any option how the application should run. The 
+			developer can pre-select any option that is available by the startup dialog, and thus 
+			create his own startup dialog. The application runs standalone, without a parent.
+			<BR><BR>
+		<DT><B>RUNTYPE_SAVER_CONFIG</B>
+		<DD>This is a screensaver runtype and is executed when you create a screensaver with DemoGL and
+			you click "Settings" in the screensaver tab in Display Properties. The startup dialog is
+			opened, allowing the user of the screensaver to pre-select all kinds of options how the screensaver
+			should run. The selected options are stored in the registry and the application execution ends.
+			A developer could also manually invoke this runtype after pre-testing if the user clicked
+			"Settings" on the screensaver tab. This way the developer could first open a dialog that sets
+			screensaver specific settings and with a button open the DemoGL screensaver config dialog to
+			let the user set the display properties of the screensaver. The developer should take care of
+			the settings he offers on the custom dialog, DemoGL takes care of the settings set on the
+			config dialog.
+			<BR><BR>
+		<DT><B>RUNTYPE_SAVER_NORMAL</B>
+		<DD>This is the normal screensaver runtype. When the screensaver is executed by windows because the
+			delay set on the screensaver tab in Display Properties has passed, the screensaver is run using
+			this runtype. The screensaver is ran like a normal application but it listens to more messages
+			than a normal application. DemoGL will abort execution when the mouse is moved or a key is pressed.
+			Just like a screensaver should do. The application runs standalone, without a parent.
+			<BR><BR>
+		<DT><B>RUNTYPE_SAVER_PREVIEW</B>
+		<DD>This is the runtype that is used when the screensaver is run in the small window on the 
+			screensaver tab in Display Properties. It's basicly the same as RUNTYPE_NORMAL, except it can't 
+			exit by user interaction. The window runs as a child of the supplied window by Windows, which is
+			the area on the screensaver tab. 
+			<BR><BR>
+		<DT><B>RUNTYPE_SAVER_PASSWORD</B>
+		<DD>This is the runtype when the user has ordered the screensaver to use password protection. 
+			Because only in windows95 and windows98 without pluspack this is an issue, this runtype is
+			not further implemented. Under windows98SE, windowsME and windows2000 and future windows
+			variants, the password protection is handled by the OS, so the screensaver itself doesn't have
+			to check passwords.
+		</DL>
+</DL>
+<P>
+<br>
+<A NAME="AD34">
+<B>3.4. Main message handler and the message pump.</B>
+<P>
+The main message handler is the central routine where all messages received by the application are 
+handled. DemoGL defines several custom windows messages, which are used to signal the occurance of 
+several events. Together with the windows messages these messages have their own handler code inside 
+the main message handler. 
+<P>
+The message pump is the heart of the running application. Allthough very small, it drives the 
+application by picking up all received messages from the message queue of the application window and 
+make sure the message gets handled by directing the win32 API to deliver it to the main message handler. 
+This is the reason it's called a pump: it pumps messages around. 
+<p>
+The main message handler checks which message is to be handled and executes the handler code of that
+message. Not all messages received by DemoGL are handled by the main message handler, only the messages
+that have to be handled. Other messages are passed on to the win32 API for handling by windows itself. 
+<p>
+The message pump is the routine where, when properly started, the application lives in until it is 
+terminated. When no message has to be passed on to the handler using win32, the message pump directs
+the control first to the timeline event executor to execute any timeline events if these have to be
+executed according to the elapsed time since the start of the application and the timespot set with the
+timeline event (see also <A HREF="#AD35">3.5. Timeline</A>), and after that to the render logic to 
+render a frame. When that finishes, control is regained and the message queue is checked again. 
+This way, DemoGL powered applications can still gain maximum speed and at the same time make it 
+possible to handle messages send by the OS. This is important because win32 wants feedback for 
+several messages send to applications: 
+if a message is send and not handled by an application, some application related 
+actions can put on hold if win32 doesn't receive a value back. When handling messages during execution 
+of an application, DemoGL assures the developers that the application will be running without conflicts 
+with the OS. A useful side effect of this is that parts of DemoGL, like the soundsystem, can send 
+messages to the messagequeue which are then further handled by for example effects. Effects can also 
+receive messages originally send to the application window, thus are able to react on mouse events 
+for example, or send messages to other effects, using the main message handler and the message pump. 
+<P>
+<BR>
+<A NAME="AD35">
+<B>3.5. Timeline</B>
+<P>
+The timeline is an abstract term for the bar on which all scripted events are placed, based on their
+timespot. All scripted events, i.e. command lines in the script that is accompanying every DemoGL 
+powered application, are called Timeline events interally. A timeline event has a timespot, which is 
+in fact the amount of milliseconds (ms) <i>after</i> the timeline origin, which is 0 ms, when the 
+timeline event should be <i>executed</i>. A DemoGL application starts normally at the timeline origin, 
+which is 0 ms. Because a developer can define timeline events with a timespot smaller than 0 ms, 
+i.e. negative timespots, there are two kinds of timeline events: pre-execution timeline events and 
+execution timeline events. Pre-execution timeline events are executed before the execution of the 
+application starts. Execution timeline events are executed during the application execution. DemoGL 
+uses an internal high resolution timer to calculate how many milliseconds have passed since a certain 
+point in time. This way it's easy to determine when a certain timeline event should be executed: 
+if the current spot in time, i.e. a certain amount of milliseconds <i>after</i> the timeline origin, 
+is larger than the timespot set with a given timeline event. If that's the case, the timeline event 
+is executed. This is done by a timeline event executor which interprets the command given with the 
+timeline event and executes code to realise the functionality of the command. When a timeline event 
+is executed, it's left in the timeline. This is done to support restarting of the application by a 
+timeline event, for example a screensaver that should run over and over again. 
+<p>
+<BR>
+<A NAME="AD36">
+<b>3.6. Effect store</b>
+<p>
+All effectobjects that are in the application and are used in the execution of the application, are 
+registered with DemoGL before the control is passed on to DemoGL. These effectobjects are placed in 
+the effect store. These store is the central point where effectobjects can be accessed by render 
+logic or timeline event execution code. When an effectobject has to be accessed, it will be looked 
+up in the store, and the object is then handled as a single object. All effectobjects stay in the 
+effectstore until a timeline event is executed that will remove the effectobject from DemoGL and 
+thus from the effectstore.
+<p>
+<BR>
+<A NAME="AD37">
+<B>3.7. DemoDat internal data storage</B>
+<p>
+DemoGL uses internally all kinds of variables and objects. Some of them have global system scope, 
+others have a smaller scope. For the variables that are not stored into objects nor are defined in 
+cpp files and have then filescope, a central object is defined to avoid a lot of global variables. 
+This object is the DemoDat object. DemoDat contains not all data which has global scope. Some data 
+stores or objects are not stored inside the DemoDat object for performance reasons: references to 
+the soundsystem, the timeline store etc. Later in this document the C-C++ tradeoffs are discussed,
+the DemoDat vs some global declarations of some data is one of the topics. 
+<p>
+<BR>
+<A NAME="AD38">
+<B>3.8. Texture store</B>
+<P>
+The texture store is the central storage where all the created textures are stored. It offers basic 
+texture management facilities and texture sharing among effectobjects. The texture store stores 
+texture objects, which are created when the developer loads a texture from disk or creates a 
+texture using framebuffer data or a supplied buffer. With the texturestore are defined all the 
+functions needed to manage the textureobjects, upload and unupload them with OpenGL, load textures 
+with different kinds of formats from disk etc. 
+<p ALIGN=RIGHT>
+<A HREF="#CH0">Top</A>
+<BR>
+<A NAME="CH4">
+<H4>4. The C vs C++ dilemma.</H4>
+<p>
+DemoGL was started as a functionset for GLUT, a C library with basic functionality to run an effect 
+using OpenGL. After some weeks, GLUT was replaced with own code to setup and do OS specific functions. 
+It's this start that makes DemoGL also a library that has legacy code in it, like many others. 
+Because DemoGL is a library that is a functionset, an API, it was not easy to design DemoGL using 
+plain C++, thus making DemoGL in fact an object that was instantiated and what spawned other objects 
+when requested. Because DemoGL was kept closed source, it was harder to make it work only by using 
+C++ than it would be when a hybrid was chosen between C and C++: where function-oriented programming 
+was done, C was chosen, where data-oriented programming was done, C++ was chosen. When you'll read 
+the code, and you're a die hard C++ fan, you'll probably wonder why there isn't more C++ specific 
+code inside the library. This is partly due to the fact that the main developer, Frans Bouma, was 
+mainly a C programmer, not a C++ programmer. Because the library, being an add-on API, contains a 
+lot function oriented code, it was easier to go for C, because that was proven and known territory,
+while C++ was new. Still, newer parts are C++ only, like the soundsystem.
+<p>
+It will always be a discussion when and why to choose a function oriented programming model or a data
+oriented programming model. Fact is, that code will be more readable by more people when it's kept 
+simple, and written in a language that fits the algoritm it forms. Using plain C in the function 
+oriented parts was and still is a good choice. It fits better with the win32 API, DemoGL's function 
+oriented API and the C oriented OpenGL API. 
+<p>
+When you'll read the code, keep that in mind. No matter how today's software industry finds C++ 
+<i>better</i> than C, it's not. It's just a different language, usable in a different situation. 
+Therefor, situations where data oriented code was at stake, C++ is used, except in some legacy 
+parts of DemoGL. Examples are the texturemanager functionality, the timeline functionality and 
+the effectstore functionality. These data stores are made using objects, but the store that contains 
+these objects is not an object, but just a datastructure and a set of functions, forming the 
+functionality. These storages plus functionality could be transformed to C++ classes with the 
+functions as methods. Nothing would change though. No extra functionality would be created, though 
+some conflicts would arise. Because of the C-nature of OpenGL and the win32 API, functions targeting 
+those API's are not data oriented, but just functions in a function oriented piece of code. Placing 
+these as methods of the store-classes is wrong. So even with these classes, you'll keep functions 
+who won't fit in and keep parts function oriented and thus C-based.
+<p>
+Another, not often discussed topic, is the difference between C++ and C: the C preprocessor. C++ should
+do without it, according to Straustrupp, but you won't find any const or template definition in DemoGL, 
+only #defines and typedefs. It was decided it was making the code more readable by more people if the
+code was setup using #defines, structs, unions and typedefs instead of const, class templates etc. Of
+course where classes are used instead of structs, classes are defined, not structs. 
+<p>
+This small C vs C++ topic is not ment to heaten up a discussion between the two languages. It's ment 
+as a guide to understand why DemoGL contains some functionality written in plain C and other 
+functionality written in C++. If are offended by the way some functionality is written in DemoGL, 
+don't be. Even if we re-read code we've put in the library a year ago we are offended sometimes :). 
+We did everything we could to produce nice, clean, easy to read code that is well documented, well 
+written, extensible and without bugs. To do this best is to use the right tool for the job. Sometimes 
+<p ALIGN=RIGHT>
+<A HREF="#CH0">Top</A>
+<BR>
+<A NAME="CH5">
+<H4>5. Rules used inside the code.</H4>
+<P>
+Several rules were used during DemoGL development. It's recommended you follow these rules when 
+you want to add code to the library or want to let us add your additions to the codebase. Some are 
+basic coding practises, others are not that common and can be sounding a little over the top. These rules
+are very important when you want to contribute code to the codebase. 
+<p>
+<DL>
+	<DT><B>Programming rules</B>
+	<DD><BR>
+		<DL>
+		<DT><B>Header file usage</b>
+		<DD><UL>
+			<LI>Every .cpp file should have a comparing header file, .h. All declarations, defines,
+		        typedefs etc are made in that headerfile. 
+			<LI>No #defines, class definitions, struct definitions and declarations of types are 
+			    allowed in .cpp files. Use the .h file for that. Exceptions are #defines of macro's,
+				however try to avoid macro's.
+			<LI>Preferably include header files in a global include file so it can be pre-compiled,
+			    plus this solves include loop errors.
+			<LI>Sections in the headerfile should be properly separated by commentblocks. 
+			<LI>Place only headerfile information of related material in the same headerfile. 
+			<LI>Name the headerfile after the .cpp name.
+			<LI>Sort class methods ascending.
+			<LI>Always use a #ifndef _HEADERNAME #define _HEADERNAME #endif construction to avoid
+			    multiple includes of the same file. 
+			</UL>
+			<BR>
+		<DT><B>Source file usage</b>
+		<DD><UL>
+			<LI>Don't put code in headerfiles, no matter how small the code is, even in class definitions.
+			    Place code in .cpp files, the source files. 
+			<LI>Sections in the sourcefile should be properly separated by commentblocks.
+			<LI>Place only code related to eachother in one single .cpp file. Split up files if code is not
+			    tight related. 
+			<LI>Choose a good name for the .cpp file, related to the code inside. Prefix every filename with
+			    'dgl_dll'.
+			</UL>
+			<BR>
+		<DT><B>Classes</B>
+		<DD><UL>
+			<LI>No public members are allowed. Use only private members. When you need a fast 'object'
+			    with just variables, use a struct.
+			<LI>No initialisation of members is allowed in the constructor declaration. Initialise members
+			    inside the constructor body. This way it's more extensible, and more readable because you
+				can add comments.
+			<LI>Keep Get/Set methods related to the values they get/set. 
+			<LI>Use classes when you want to code a topic that is best served with OO programming.
+			    Don't use classes when a functional approach would be better.
+			<LI>Always implement virtual functions in base classes.
+			</UL>
+			<BR>
+		<DT><B>Comments</B>
+		<DD><UL>
+			<LI>Add lots of comments and keep them accurate and describing. A reader can interpret what
+			    for() does, not why it's there and why it's constructed that way.
+			<LI>Every method/function should have a commentheader that describes what the function/method does,
+			    even if the method is only one or two lines big. If possible, describe the parameters sent and 
+				returnvalues possible. If possible describe key functionality so the reader of the code is
+				not overwhelmed by the code.
+			<LI>Add comments with preprocessor directives.
+			</UL>
+			<BR>
+		<DT><B>Functions / methods</B>
+		<DD><UL>
+			<LI>Functions and methods can have multiple exit points. Some people think multiple exit points 
+			    in a function is bad, but opinions differ on this. A function/method should eliminate cases
+				when the caller shouldn't be executing the core functionality of the function/method. Always
+				ask you the question: should the caller still be in this function? if not: exit. 
+			<LI>Functions and methods should follow the following order of codeblocks:
+				<P>
+				<UL>
+					<LI>Function/method header
+					<LI>Local variable <b>declaration</b>
+					<LI>Local variable <b>initialisation</b>
+					<LI>codeblocks
+				</UL>
+				<P>
+				This way you always know where to look when a local variable is not initialized etc. Of course it's
+				not always necessary to initialise variables at the top of the function/method. But it keeps 
+				logical blocks together in a function so less puzzling has to be done when a reader wants to find
+				out what's going on.
+			<LI>No block locals are allowed. Always declare your variables with function scope, not block scope
+			    inside your function/methods. 
+			<LI>No direct initialisation of variables is allowed. First declare, then initialize. This way you
+			    can keep logical parts of a function separated from each other, even if this is slightly less
+				efficient. 
+			<LI>Don't return pointers to local declared memory blocks. Concern the following:
+				<P>
+				<PRE><CODE>
+	{
+		char	sFoo[MAX_STRING_LENGTH];
+
+		sprintf(sFoo,"bla");
+		...
+		return sFoo;
+	}
+				</CODE></PRE>
+				sFoo is declared on the stack in the stackframe of this method/function. Returning it to the
+				caller will cause trouble, when the caller stores this pointer in another variable. Always
+				return pointers to allocated memory. 
+			<LI>Copy structures which are passed by reference into local structs when using the data, so caller
+			    always frees the data passed, and is responsible for the data passed, never the callee. People who
+				write COM objects are used to this. 
+			<LI>Keep methods/functions atomic in error handling. Allthough it seems nice to report errors back to
+			    the caller, you don't know which method/function will call you in the future, don't create a
+				system that depends on the caller. Report success/failed signals, using SYS_OK and SYS_NOK flags,
+				like in COM and eventually an errorcode if necessary, but keep errorcode general and not caller specific.
+			<LI>It's not always bad to keep a long function in tact, as long as the code is generic and just a lot of
+			    the same. DemoGL contains a few long, but boring functions. Not a lot is going on, just a lot of the
+				same. Message handlers are longer than you'd expect and the timeline event execution routine is very
+				long. The functions could have been split up in a lot of smaller functions, but that would create 
+				extra overhead and not that much more readability, due to the fact that the overview of what's going
+				on is gone when using a lot of small, albeit the same, functions who are only used by one other function.
+				It's wise to split up functions that tend to do a lot of work which is not a repetitive collection of
+				the same actions over and over again. You might now think that there is no loop whatsoever in the source
+				but the code I'm refering to is a long list of command handler routines, which are semantically a lot
+				alike but differ in syntax and errorreporting.
+			<LI>Place the type of the returnvalue of a function/method on the line above the method/function header.
+				<P>
+				Example:
+				<p>
+				<PRE><CODE>
+	char
+	*CClass::Foo(int iBar)
+	{
+		// some code
+		return pszBla;
+	}
+				</CODE></PRE>
+			<LI>Place function header declarations in the headerfile and extern functionheaders which should be included in
+			    more than one .cpp file. 
+			<LI>Don't use extern "C" {} when exporting API functions. The API functions exported that way are v1.2 functions, 
+			    and declared that way for backwards compatibility.
+			<LI>Never return a pointer to a block of memory to a caller that is not inside the library, and there is no free
+			    function. Because memory allocated inside the dll cannot be freed by code outside the dll, you can't pass back
+				pointers to memory, allocated inside the dll, that should be cleaned up by the caller, outside the dll. Include
+				a mechanism to free the memory when doing so, as is done with the filepointer return/freeing in the DemoGL
+				API.
+			</UL>
+			<BR>
+		<DT><B>Statement layout</B>
+		<DD><UL>
+			<LI>It's not bad to include more curly brackets than official necessary. This will increase readability and 
+			    excludes codingscheme related assumptions.
+				<p>
+				Example:
+				<p>
+				<PRE><CODE>
+	if(foo)
+		bla();
+				</CODE></PRE>
+				vs.
+				<PRE><CODE>
+	if(foo)
+	{
+		bla();
+	}
+				</CODE></PRE>
+				The latter is more readable, plus allowes a person to type comments more easily and add other statements
+				more easily. Less obvious, but also helpful are curly brackets with case: clauses.:
+				<p>
+				<PRE><CODE>
+	switch(foo)
+	{
+		case BLA1:
+			// some code
+			break;
+		case BLA2:
+			// some more code
+			break;
+	}
+				</CODE></PRE>
+				vs.
+				<PRE><CODE>
+	switch(foo)
+	{
+		case BLA1:
+		{
+			// some code
+		}; break;
+		case BLA2:
+		{
+			// some more code
+		}; break;
+	}
+				</CODE></PRE>
+				It will be a matter of taste in most cases, but keep in mind that if you want to contribute code to the
+				library it should fit in the code that is already there. 
+			<LI>Place the start curly bracket of a block on the next line. 
+				<P>
+				Example:
+				<p>
+				<PRE><CODE>
+	if(foo) {
+		bla();
+	}
+				</CODE></PRE>
+				vs.
+				<PRE><CODE>
+	if(foo)
+	{
+		bla();
+	}
+				</CODE></PRE>
+				This seems like a small deal but it isn't. This issue is dividing C programmers into 2 groups that hardly
+				mix.
+			<LI>Indent the code. Use the TAB key to indent the lines. Always indent when possible. 
+			<LI>Use the defined naming scheme whenever possible. 
+			<LI>Use typedef when possible. 
+			<LI>Do not reuse constants, even when they have the same value as what you want to return, when the name of
+			    the constant is not related to what you semantically are returning.
+			</UL>
+			<BR>
+		<DT><B>Naming scheme</B>
+		<DD>The code is written using a namingscheme for all variables, class definitions, structs and constants. 
+			This scheme is adjusted a bit over time, so some inconsistencies can still be in the sourcecode. Be
+			sure you adapt this coding scheme to all your code you want to add to the library. It might be a hell
+			at first when using this coding scheme, but after a while it will pay off. Of course this naming scheme
+			can be less good than the one you probably use yourself for ages, however it's not the quality of the
+			naming scheme that matters, but the presence of it. Too much code is written without any naming scheme
+			and for Open Source software it's very important to keep one consistent naming scheme that is mandatory
+			for all developers. This scheme is by no means complete. If you think it should be adjusted or it lacks
+			some definitions, step forward and suggest the addition/modification. 
+			<p>
+			The following naming scheme is defined. If you wonder why variables and code is written the way it is,
+			you'll find your anwsers probably here. It's a subset of Hungarian coding, with modifications. 
+			<P>
+			<UL>
+			<LI><B>#defines are capitalized.</B> Example: REGKEY_CURRENTUSER_SUB
+			<LI><B>API methods are prefixed with DEMOGL_.</B> Example: DEMOGL_ConsoleLogLineV()
+			<LI><B>API functionnames should be build up like: DEMOGL_[objectaffected][action].</B> Example: DEMOGL_TextureLoad().
+			<LI><B>API constants are prefixed with DGL_.</B> Example: DGL_VF_VSYNC
+			<LI><B>Class names are prefixed with 'C'.</B> Example: CEffect
+			<LI><B>Struct names are prefixed with 'S'.</B> Example: SSoundElement3DAttributes
+			<LI><B>Enum names are prefixed with 'E'.</B> Example: ECmdToken
+			<LI><B>Class en struct member variables are prefixed with 'm_'.</B> Example: m_iToken
+			<LI><B>Global (library scope) variables are prefixed with 'm_g'.</B> Example: m_gpDemoDat
+			<LI><B>All member variables and local variables are prefixed with a character string in lowercase
+			    reflecting the type.</B> This prefix is placed after the member variable prefix 'm_' and 
+				after the global prefix 'm_g'. The list of type prefixes is:
+				<P>
+				<UL>
+					<LI><B>'i'</B> for integer. Example: int iCounter;
+					<LI><B>'f'</B> for float. Example: float fX;
+					<LI><B>'dw'</B> for DWORD. Example: DWORD dwBassFlags;
+					<LI><B>'l'</B> for long. Example: long lFileLength;
+					<LI><B>'p'</B> for pointer. Example: char *pCurrent;
+					<LI><B>'s'</B> for charstring. Example: char sFoo[MAX_STRING_LENGTH];
+					<LI><B>'psz'</B> for pointer to zero terminated charstring. Example: char *pszName;
+					<LI><B>'b'</B> for boolean. Example: bool bHasTexture;
+					<LI><B>'h'</B> for handle. Example: HWND hWnd;
+					<LI><B>'by'</B> for byte. Example: byte m_byKey1;
+					<LI><B>'cs'</B> for Critical Section Mutex. Example: CRITICAL_SECTION m_csSystemStateMutex;
+				</UL>
+				<P>
+				There are legacy declarations of pointers to strings that should be declared as psz's instead of just
+				'p's. Besides these definitions, you can combine them. For example a pointer to integer can be
+				declared as 'piFoo', instead of just 'p'. You will also notice the several custom types declared
+				in DemoGL's sourcecode. For example the channel objects in the soundsystem are prefixed with 'ch'. 
+				Most arrays, when declared local or as member, are prefixed with 'arr'. An array of channelobjects
+				which is a member will then become: m_arrchFoo[MAXVALUES].
+			<LI><B>All names of membervariables and other variables should start with a capitol character after the prefixes.</B>
+			    Also put a capitol at every wordstart in the variable name. Thus: m_csSystemStateMutex, instead of
+				m_csSystemstatemutex. 
+			<LI><B>Avoid understores in variable names and function/methodnames.</B> Use them only as separator to exclude parts
+			    in the name.
+			<LI><B>Use C++ commenting syntax when possible.</B>
+			<LI><B>In API functionheaders, define variables as 'const' when possible. </B> Keep in mind that caller should be
+			    able to modify objects passed to a function. 
+			<LI><B>Never use hardcoded values in the code.</B> Always define a constant using the right scheme.
+			<LI><B>Adjust the scheme, don't alter it.</B> Custom types ask for custom prefixes. Add these prefixes to the
+			    scheme, like a pointer to a SSoundElement3DAttributes struct should be called: m_psea3DAttributes. Keep these
+				adjustments consistent, that's the reason why they should be added to the scheme when used. 
+			<LI><B>Dont include type info in the name.</B> Because the prefix already tells the reader the type of the variable,
+			    it's not necessary to include also words like 'String' or 'Str' as the 's' or 'psz' will already indicate
+				it's a string. 
+			<LI><B>Keep names of variables descriptive of what they contain.</B> If possible, always make the name as descriptive
+			    as can be. 'bFlag' is nice, but what kind of flag? 
+			<LI><B>Keep method and functionnames descriptive of what they do.</B> A reader should understand what a function or
+			    method does when he sees the name of the method/function. If the function does more than that, it should be 
+				split up or the name should change.
+			<LI><B>Don't be afraid of long names</B>. Some people avoid long variablenames and end up using complete unworkable
+			    names for variables. One of the longes names used is: m_iDeltaVolumeOutsideOuterProjectionCone, a member of
+				SSoundElement3DAttributes. Making this name shorter wouldn't tell the reader what's inside the name.
+			<LI><B>Use i, j, k and l for loopcounters</B>. By unwritten definition, in C and C++, loopcounters in for loops and
+			    whileloops are named 'i' and nested loops use variablenames one larger as the parent loop, like 'j' or 'k'.
+			</UL>
+			<BR>
+		<DT><B>Internal functionality Usage</B>
+		<DD>"Eat your own dogfood!". Well, when possible. When you have the choice to call a library API method or an internal
+		    function that is called by the API method, choose the API method. This way you keep the internal code more bugfree.
+			The API is not going to change that often, if it will ever change, code that relies on internal functions will
+			probably become unstable and buggy when the internal workings of an API method will change (i.e.: how the API
+			method works. It still provides the same functionality). You also have the possibility to test API code right
+			away.
+			<P>
+			DemoGL contains some handy pieces of code that are very useable for developers of the library and need explanation
+			when you want to read and/or modify the code. Below is a list of codepieces and what they do. Some are 3rd party,
+			some are developed from scratch for DemoGL. Use these as much as possible instead of your own code. These codepieces
+			are tested thouroughly. When a piece of code is limited to your needs, adjust it. Don't include another piece of
+			code that does almost the same but something more, adjust the current codepiece.
+			<P>
+			<UL>
+				<LI><B>CStdString</B>. This is a 3rd party stringclass written by Joe O'Leary. It's used often inside DemoGL
+				    and it should be used instead of char sFoo[value] <i>when possible</i>. There are several occasions when
+					CStdString is not useful, for example when exporting a struct with a char buffer to a caller outside the
+					library. CStdString is a C++ class similar to CString in MFC but more efficient. 
+				<LI><B>Low level debugger</B>. DemoGL contains it's own low level debugger. When you include the _DGLDEBUG 
+				    constant in the C++ preprocessor definitions in Project Settings, code will be generated using the
+					low level debugger functions. The low level debugger will open a file and write strings to that file
+					when ordered. The open/close functionality is included in the DllMain function, but commented out.
+					If you want to debug parts of the library and you want to use the low level debugger, uncomment these
+					lines and call the low level debug function of your needs. This low level debugger can be adjusted
+					with a console instead of a file logger. The win32 API contains code to open a console window for
+					logging purposes. The low level debugger is not thread safe at the moment but flushes data directly
+					to disk when ordered to write data to the file. Keep in mind when using CreateThread() instead of
+					the _beginthreadex() calls as DemoGL uses now, the CRT functions used in the low level debugger can
+					be thread unsafe and can cause corruption of data. See CreateThread() documentation for details.
+				<LI><B>CSysConsole</B>. DemoGL contains a console for debugging purposes. You can log data to the console,
+				    which can scroll back and forth inside a buffer of userdefinable length and width, or retrieve system
+					info like timeline status, running effects etc. Use the API functions DEMOGL_ConsoleLogLine() and 
+					DEMOGL_ConsoleLogLineV() to log debuginformation in the console. This method is very fast, as the
+					low level debugger is not. The console debugging method can be a little tricky when you are debugging
+					a screensaver you wrote with DemoGL, because any keypress will exit DemoGL when running as a screensaver.
+					The systemconsole contains also the debugoverlay that is useable during runtime which displays a subset
+					of the contents of the console. DemoGL uses the console to log systeminformation. When you specify 
+					QUICKBOOT as true when starting your application, DemoGL will however only log errors, and no system
+					information is logged. 
+			</UL>
+	</DL>
+</DL>
+<p ALIGN=RIGHT>
+<A HREF="#CH0">Top</A>
+<BR>
+<A NAME="CH6">
+<H4>6. The DemoGL_DLL VC++ project.</H4>
+<P>
+The project contains several directories in the project fileview explorer, which we will call 'folders' to avoid conflicts with
+'directory' on disk. The folders are:
+<P>
+<UL>
+	<LI><B>Source Files</B>. This folder contains all .cpp files
+	<LI><B>Header Files</B>. This folder contains all .h files
+	<LI><B>Resource Files</B>. This folder contains all files included as resources in the library. See the Resources Tab.
+	<LI><B>Libs</B>. This folder contains all .lib files linked with the library. This is done so a change of a lib 
+		to a newer version will cause a recompile of the library.
+	<LI><B>Source docs</B>. This folder contains all documentation about the sourcecode
+	<LI><B>External Dependencies</B>. This folder is added by VC++ and contains all files needed for compilation.
+</UL>
+<P>
+The folders 'Source Files' and 'Header Files' contain besides the DemoGL sourcefiles, also a '3rdParty_H' (in Header Files)
+and '3rdParty_CPP' (in Source Files), folder, which contain the 3rd party code included in DemoGL. All code inside these
+folders is written by others and contains and should keep the names of the authors. 
+<P>
+On disk, the directory structure is slightly different. In the rootdirectory of the project are the necessary project files
+for VC++, a makefile plus several directories with the files. Below is a list with eventually subdirs and what they contain:
+<P>
+<UL>
+	<LI><B>CPP</B>. The root directory for the directories that contain the .cpp files. This directory contains the following
+		directories:
+		<UL>
+			<LI><B>DemoGL</B>, where all .cpp files written for DemoGL are placed.
+			<LI><B>Misc</B>, where all 3rd party .cpp files are placed.
+		</UL>
+		<P>
+	<LI><B>Debug</B>. The directory where the result of a 'debug' build is placed by VC++.
+	<LI><B>Files needed for distribution</B>. In here are the files needed for the SDK. These files are not
+	    included in the project, but are necessary to run DemoGL applications. 
+	<LI><B>Include</B>. The root directory for the directories that contain the .h files. This directory contains the
+		following directories:
+		<UL>
+			<LI><B>DemoGL</B>, where all .h files written for DemoGL are placed.
+			<LI><B>Distribution</B>, where all the .h files, needed for the SDK are placed, like DemoGL_DLL.h etc. 
+			<LI><B>JpegLib</B>, where all files for the jpeglib are placed. Could be moved to Misc.
+			<LI><B>Misc</B>, where all 3rd party .h files are placed.
+		</UL>
+		<P>
+	<LI><B>Libs</B>. The directory for all .lib files needed to build the DemoGL library.
+	<LI><B>Release</B>. The directory where the result of a 'release' build is placed by VC++.
+	<LI><B>ReleaseVC50</B>. The directory where the result of a 'WIn32 VC50' build is placed by VC++. VC++ 6.0 has the
+	    feature to build .lib import libraries for VC++ 5.0. If you want to build an importlib for VC++ 5.0, build the
+		'Win32 VC50' build using 'Set active configuration' in VC++ in the Build menu. 
+	<LI><B>Resources</B>. The directory where all files included as resources are stored. 
+	<LI><B>Source docs</B>. The directory where the documentation of the source code is stored.
+</UL>
+<P>
+<H5>6.1. Resources</H5>
+DemoGL contains several resources. These resources are dialog templates and binary files. Select the 'Resources' tab in the
+project explorer inside VC++ to view the list of resources available. These resources are stored in resources.rc, the 
+file that will be compiled by VC++ which will result in a binary blob that will be linked with the DLL. In resource.h, the
+controls used in the dialogs are defined with #defines. This file is generated by VC++ and altered to define two standard
+values for two elements: IDI_ICON, the application's icon, and IDB_APPLOGO, the grey bar at the left of the startup dialog 
+which can be customized to a provided picture. These two elements have standarized values and shouldn't be altered.
+<P>
+The resources contained in DemoGL are the following:
+<P>
+<UL>
+	<LI><B>"JPG"</B>. This is a custom resourcetype and contains one object, a lensflare in JPG format, which is used in the
+	    About dialog. Total size is 13KB.
+	<LI><B>"ZIPPEDTGA"</B>. This is a custom resourcetype and contains one object, a 'compressed' TGA image of the DemoGL logo.
+	    This TGA image contains an alpha channel and is used in the About dialog. It's compressed with ZLib to keep the size 
+		small. Total size is 11.4KB.
+	<LI><B>Bitmap</B>. This resourcetype contains one object, a bitmap that is placed as the application logo in the grey bar
+	    when the application itself isn't providing a resource with ID IDB_APPLOGO (i.e. 140). Total size is 5KB.
+	<LI><B>Dialog</B>. This resourcetype contains two objects: the About dialog template and the Startup dialog template. 
+	<LI><B>Icon</B>. This resourcetype contains one object, the default Icon for the application if the application itself
+	    isn't providing a valid icon with ID IDI_ICON (i.e. 110).
+</UL>
+<P>
+Some will now argue that 13 + 11.4 + 5 = 29.4KB could have been saved by eliminating the image resources. These resources are
+included for the About dialog to show off something special. The 5KB for the bitmap in the applogo image holder is needed 
+otherwise the control will not show up in the dialog template. 
+<P>
+<H5>6.2. File descriptions</H5>
+Below are descriptions of all the files in the project written for DemoGL, the dgl_dll*.* files. Each file contains
+a short description of its contents plus some key information about the logic of the code stored in the file. These 
+descriptions are by no means an intention to be an in depth view of how every detail works. The code contains enough
+comments and the code itself is set up as clean as possible so these descriptions are helping you where to take off
+when reading the sourcecode. 
+<P>
+<H5>6.2.1. Source Files.</H5>
+<DL>
+	<DT><B>dgl_dllbootutilfuncs.cpp</B>
+	<DD>This file contains all functions that are doing several blocks of the booting process of a DemoGL powered
+	    application. Among the several OpenGL window setup related routines are also the decrypting routines to 
+		decrypt data crypted with Cryde. No extra information is needed, every routine is explained in detail in
+		the sourcecode.
+	<DT><B>dgl_dlldemodat.cpp</B>
+	<DD>This file contains the implementation of the CDemoDat class. Because this class is mainly an internal datastore,
+	    it's quite big with a lot of small get/set methodcombinations. It's wise to use the File Outline functionality
+		of VC++ 6.0 in this file. (browse toolbar). Keep an eye on the ticker routines, which are stored here and set
+		up the system high resolution timer, which is kept inside CDemoDat, plus the overlay switch on/off routines.
+		When a user toggles an overlay (console, debug overlay, FPS counter), the console has to clean the buffer 
+		using no scissoring otherwise a demo with scissoring will contain flickering elements of the overlay.
+	<DT><B>dgl_dlleffectbase.cpp</B>
+	<DD>This file contains the base class implementation of the CEffect class which is used by applications to derive
+	    their effect classes from and is used internally as reference class to access effectobjects. The class itself
+		only contains implementations of the virtual functions.
+	<DT><B>dgl_dlleffectstore.cpp</B>
+	<DD>This file contains the implementation of the CEffectStore class. This class is used to store an effect object
+	    reference plus related information inside DemoGL. When an application calls DEMOGL_EffectRegister(), a new
+		instance of CEffectStore is created and filled with the information provided. CEffectStore objects are stored
+		as a single linked list with a head and tail pointer, stored and defined in dgl_dllmain.cpp.
+	<DT><B>dgl_dllendsystem.cpp</B>
+	<DD>This file contains the code that is executed to clean up all the left overs when DEMOGL_AppRun() returns. 
+	    The routine cleans up all data allocated after DEMOGL_AppRun() was called. Data allocated in DllMain() is not
+		deallocated because that is deallocated when the process itself detaches itself from the library, see DllMain()
+		in dgl_dllmain.cpp for details.
+	<DT><B>dgl_dllextensions.cpp</B>
+	<DD>This file contains the implementation of the CExtensions class. This class contains at runtime booleans for
+	    a long list of extensions, reflecting their presence in the ICD used.
+	<DT><B>dgl_dllfifoqueue.cpp</B>
+	<DD>This file contains the implementation of the CFifo queue class. This class implements a first-in-first-out
+	    queue for CEffect references. This queue is used by the Prepare thread when it finds an effect has to be
+		prepared. Because in the Prepare thread, the OpenGL rendercontext is not available so calling these effect's
+		Prepare() method is useless or will render the code inside that method useless when it does something with
+		OpenGL, so the Prepare() thread places the effect in the Fifo queue instead. The actual placement of the
+		effect inside the queue is done inside DoExecuteTimelineEvent(), when it's called by the Prepare thread. 
+		When DoExecuteTimeLineEvent places an effect inside the fifo queue, it will send a message, WM_DEMOGL_PREPAREEFFECT,
+		to the main thread. The main thread will, when receiving the message, pick up the stored effects in the
+		fifo prepare queue and will actually call the Prepare() methods of the effects stored in the queue. The queue
+		has a fixed length of 100 slots which should be more than enough, when the main thread and the Prepare thread
+		work in tandem and get equal amount of CPU time.
+	<DT><B>dgl_dllguicontrol.cpp</B>
+	<DD>This file contains the implementation of the base class CGuiControl that is useable as a baseclass to derive
+	    guicontrols from, like the progressbar is a derived class from CGuiControl. The class doesn't contain any render
+		logic, just data and get/set pairs.
+	<DT><B>dgl_dllkernel.cpp</B>
+	<DD>This file contains the core control functions of the system when it's running and starting. In this file you'll find
+	    the Main message handler and the message pump, the effect register routine and the frame render routines. The message
+		pump is called 'KernelLoop()'. The main message handler is called 'MainMsgHandler()'. These two routines are key 
+		elements in the system. The MainMsgHandler routine contains key code how the system state is controlled and how
+		to react on external- or internal generated events. The frame render routines are RenderFrame() and RenderLayerFrames().
+		RenderFrame is the main routine which controls rendering of frames. It's called by KernelLoop whenever possible, to
+		get the highest framerate possible. RenderFrame decides what to render: console or effects. When effects have to be
+		rendered it calls RenderLayerFrames() to render all effects on all layers using the effects's RenderFrame() methods.
+	<DT><B>dgl_dlllayer.cpp</B>
+	<DD>This file contains the implementation of the CLayer class. This class contains all data of a layer in DemoGL. 
+	    When an effect is started on a layer, an instance of the CLayer class is created to represent that layer. All
+		layer objects are stored in a double linked list with a head pointer, stored and defined in dgl_dllmain.cpp
+	<DT><B>dgl_dlllayerutilfuncs.cpp</B>
+	<DD>This file contains all utility functions that work on the layer store. All layer store manager functions are stored
+	    in this file. Also the per layer object functions are stored here like hide or show a layer. The tricky code is in
+		the double linked list logic.
+	<DT><B>dgl_dlllowleveldebugger.cpp</B>
+	<DD>This file contains the low level debugger implemented in the library. The low level debugger is a set of utility
+	    functions that work with a logfile. This logfile is initially opened in the DllMain() function in dgl_main.cpp.
+		When you uncomment the open/close calls of the logfile, DemoGL will log data in the logfile which is placed in the
+		current directory of the application. You can call a utilty function of the low level debugger from anywhere in
+		the library code. Be sure to include _DGLDEBUG with the preprocessor directives in the project settings: when 
+		_DGLDEBUG is defined, all functions of the low level debugger have functionbodies and will thus be executed when
+		called. When you include calls to the low level debugger functions in the library source code and _DGLDEBUG is
+		not specified with the build, for example with a release build, the calls to the low level debugger will be calls
+		to empty function bodies and will be removed by the optimizer in VC++. The low level debugger contains functions
+		to convert a window message to text, log strings and other miscellaneous functions that come in handy when doing
+		logging during runtime.
+	<DT><B>dgl_dllmain.cpp</B>
+	<DD>This file contains one function, the DllMain() function. This function is the entrance function for win32 to <i>attach</i>
+		the DLL to the process or thread that loaded the library, directly or indirectly. DllMain() contains code for the four
+		situations that this function can be called: attach to thread or process or detach from thread or process. Only attachment
+		and detachment to a process is implemented, since this is what we want: an application using DemoGL is loading the DemoGL
+		DLL, most likely by VC++ generated stubcode, and will attach to it after the DLL is loaded. When an attachment happens,
+		the DLL can do initial setup of objects and internal structures. DemoGL will create it's internal objects and stores
+		and do very basic initialisation. After the application ends, thus after the WinMain() function is exited, DllMain() is
+		called again, now for the detachment from the application process. DemoGL will then remove the internal structures and
+		objects created in the attachment handler. After that call there shouldn't be any memory left that is still allocated.
+		When you monitor memory leaks using the win32 heap monitor functions be aware that when DEMOGL_AppEnd() is finished 
+		the memory occupied by the elements allocated in the attachment of the library is still not freed and your memleak
+		sniffers will alert for memory leaks. You should place your sniffers after the detachment code in DllMain() to have
+		accurate memleak sniffing. This file contains besides DllMain() also the declaration of all the objects and structures
+		that have library scope. Place all library scope variable declarations in this file. 
+	<DT><B>dgl_dllprogressbar.cpp</B>
+	<DD>This file contains the implementation of the CProgressBar class. This class is derived from CGuiControl and the instance
+	    of this class is used as the progress bar during boot/initialisation. DemoGL contains one progress bar object, declared
+		in DllMain(). It's declared with global scope to have any eventhandler in the system be able to make the bar move forward
+		when a certain task is completed. CProgressBar implements several visual types. It uses a mutex to protect it's internal
+		value it reflects in the bar for mutations by multiple threads. CProgressBar contains its own rendercode and this code
+		is called by the system console. Because the system console is an object on itself, it is not relying on system wide
+		global variables and gets a reference to the instance of the CProgressBar class when it's initialized. This is a slight
+		inconsistency when compared to the CDemoDat situation which is referenced throughout the system, also from the SoundSystem
+		object. 
+	<DT><B>dgl_dllscriptfuncs.cpp</B>
+	<DD>This file contains all script related functions. In this file are stored the lexical analyzer and the token parser plus
+	    utility functions to ease parsing of the script. The code uses a token array with token objects which are filled by the
+		lexical analyzer Lex(). When Lex() has tokenized a line, this line is parsed and if possible transformed into a timeline
+		event and stored in the timeline at the right spot. The lex-parser tandem is very basic, for example the parser doesn't do
+		any syntax checking, this is done at runtime.
+	<DT><B>dgl_dllsoundsystem.cpp</B>
+	<DD>This file contains the implementation of the CSoundSystem class, the CSoundChannel class, the CSoundElement class, the
+	    CMP3Element class, the CMODElement class and the CSampleElement class. Besides these classes it contains all soundsystem
+		related utility functions and initialisation functions. DemoGL 1.3 uses BASS to produce sound and the soundsystem is
+		written to work as good as possible with BASS. To the outside world the soundsystem is a black box and the code that uses
+		the soundsystem is not aware BASS is used. This way other libraries, besides BASS, can be used to power the soundsystem
+		if BASS doesn't fulfil your needs. DllMain() will create an instance of CSoundSystem so DemoGL can produce sound using
+		this instance. Internally the sound system uses sound elements. Sound elements are instances of CMP3Element, CSampleElement
+		or CMODElement. These three classes are derived from the CSoundElement, which is the base class for sound elements inside the
+		sound system. These three classes contain the sound data of their type, which is MP3, Sample (wave) or MOD/S3M/IT/XM data.
+		All interaction on these elements is done by the sound system object. Inside the sound system, all sound elements are
+		stored in the sound element store. When a sound element is started, thus it is playing, an instance of the CSoundChannel
+		class is created. This instance is placed in the sound channel store. This sound channel object is the controlling instance
+		of the played sound. Thus, CSoundElement derived classes control the <i>to be played</i> sounddata, the CSoundChannel class
+		controls the <i>playing</i> sounddata. 
+	<DT><B>dgl_dllstartsystem.cpp</B>
+	<DD>This file contains the startroutines needed to start the application. It contains DEMOGL_AppRun() and related routines
+	    plus the initialisation and prepare routines of the system which are called or started as a thread in the several phases
+		prior to the SSTATE_ARUN_KERNELLOOP state. DemoGL_AppRun calls routines that actually do the startup of the application
+		depending on the runtype DemoGL should run in. Depending on the runtype, the routine starts a startup dialog, opens
+		the main window and dives into the kernelloop. Keep in mind that InitApp(), InitSystem() and Prepare() are started as
+		threads by messagehandlers in MainMsgHandler() in dgl_dllkernel.cpp, to activate a state. 
+	<DT><B>dgl_dllstartupdialog.cpp</B>
+	<DD>This file contains the code for the startup/screensaver config dialog and the about dialog. The startup/screenaver config
+	    dialog will read the settings from the registry if present, and fill the dialog with the settings provided by the developer.
+		It exits, filling the startup dat structure with the settings set and eventually calling the routine which stores the
+		settings in the registry. See the messagehandler of this dialog for details. The about dialog contains an OpenGL canvas
+		and rotates a quad with a DemoGL texture and is envmapped with a flare to give it some shine. 
+	<DT><B>dgl_dllsysconsole.cpp</B>
+	<DD>This file contains the implementation of the system console class CSysConsole. An instance of this console is created in
+	    DllMain() in dgl_dllmain.cpp. The CSysConsole class controlls the console buffer, the rendering of the console buffer, the
+		header above the console buffer when the console is displayed, the rendering of the input prompt, the rendering of the
+		FPS overlay and the rendering of the debug overlay. The CSysConsole uses two textures with a font to render the characters
+		using two vertexarrays for every font texture one. There are two textures to have a 512x256 wide texture and still keep
+		the details on voodoo3's. The CSysConsole class does not contain the contents of the input prompt, it only renders it.
+		This is because the datainput is received outsite the console, in the message handler of DemoGL. CSysConsole uses a cyclic
+		buffer technique to store the console lines. This means that the current line where to write text on moves through the buffer
+		and wraps around at the end to start at the beginning. This way the buffer doesn't have to be copied when the window scrolls
+		up. The console contents depends on the position of the topline visible on screen. When the user scrolls in the console, this
+		topline moves up or down. It depends on this line if a newly logged line is visible or not. When the screen has to be redrawn,
+		the vertexarrays are refilled and rendered, otherwise the already filled arrays are rendered. The cyclic buffer logic can be
+		quite complex at first, especially in the calculations for the scrollbar in the console and which line is visible and which
+		isn't. Everything is commented as best as possible, but it might take a while to get through.
+	<DT><B>dgl_dlltexture.cpp</B>
+	<DD>This file contains the implementation of the CPixelStore class and the CTexture class. The CTexture class contains all the 
+	    information for a texture inside DemoGL. All textures created with DemoGL are placed in the texture store. This is an 
+		array with pointers to CTexture objects	and contains MAXTEXTURES (defined in dgl_dllmain.h) slots and defined in dgl_dllmain.cpp 
+		and initialized in DllMain(). 
+		This store is not a linked list to keep it as fast as possible because texture access is done very often in a 3D application 
+		and it should be smooth and not be blocked by sloppy linked list search routines. The array lets code access a texture 
+		object immediately. The CTexture class is mainly ment for storage and is prepared for texture compression and 3D textures. 
+		This code is not implemented in v1.3x due to lack of OpenGL 1.2 support in Windows. 
+	<DT><B>dgl_dlltextureutilfuncs.cpp</B>
+	<DD>This file contains all utility functions related to the texture store or the texture object. It contains general texture
+	    management functions and texture import routines to convert a loaded block of data into an RGBA bitmap. All functions are 
+		prepared, when necessary, for 3D textures and texture compression. As said above, this is not yet implemented. 
+		Currently JPEG, TGA BMP and DDS (DirectX Compressed) texture files are supported. When you add more formats, add your 
+		import code to this file.
+	<DT><B>dgl_dlltimelineevent.cpp</B>
+	<DD>This file contains the implementation of the CTimeLineEvent class and the CTLEParameter class. The CTLEParameter class is
+	    used to hold script command parameter data. CTimeLineEvent classes are emited objects by the script parser and contain
+		the parsed script commands as data. Each CTimeLineEvent class contains all the script command parameters as CTLEParameter
+		objects in a datastore. All CTimeLineEvent objects are stored in a single linked list, the timeline event store, 
+		ordered by TimeSpot Ascending, with a single head pointer, m_gpTimeLineHead, stored in dgl_dllmain.cpp. 
+	<DT><B>dgl_dlltimelineutilfuncs.cpp</B>
+	<DD>This file contains all the functions related to timeline events and the timeline event store. Besides the general add/delete
+	    and other similar functions this file contains the largest routine inside DemoGL, the TimeLine Event executor routine
+		DoExecuteTimeLine(). This is in fact the runtime command executor for all objects and all commands. The routine contains
+		a note why the routine isn't split up in a couple of dozen smaller routines. It probably should be recoded with a pre-execution
+		syntax checker to eliminate runtime syntax checking as that's used now. Keep in mind that the massive amount of redundancy
+		has a reason: now every command is flexible in it's own execution without worrying the programmer about other commands sharing
+		this code. Because all code is stored in one routine, the overview is still very good, because nothing is splattered around
+		and because no code should be reused in other commands, splitting up the routine will not bring that of an much advantage. 
+	<DT><B>dgl_dlltoken.cpp</B>
+	<DD>This file contains the implementation of the CToken class. This class is used to store information about a single token
+	    recognized by the Lex() routine in dgl_dllscriptfuncs.cpp. Lex will place every part of a script line between two ';' into
+		one CToken object. These objects are stored in an array with file scope inside dgl_dllscriptfuncs.cpp. 
+	<DT><B>dgl_dllutilfuncs.cpp</B>
+	<DD>This file contains the miscellaneous functions that couldn't be stored elsewhere. Most of the functions are helper functions
+	    for objects inside DemoGL but are too small to get an own file. In this file are also the file I/O routines which could have
+		been split out of this file and should probably get their own file. 
+</DL>
+<P>
+<H5>6.2.2. Header Files.</H5>
+Below are the descriptions of the headerfiles used in the DemoGL sourcecode. Keep in mind that the DemoGL_*.h files are stored
+in the Include\Distribution directory to keep them separated to make constructions of SDK's easier.
+<DL>
+	<DT><B>DemoGL_Bass.h</B>
+	<DD>Sound system related header file for distribution purposes. Contains BASS specific flag definitions and structures
+	    used by BASS. Use them with certain specific soundsystem related API routines. The reason for the BASS flags and not
+		a conversion of them to DemoGL own flags, and thus keep the stuff more sound library independant, is that when the
+		BASS api changes, the DemoGL own flags have to change as well. To avoid that, these flags and structs are kept in tact,
+		but the amount of them is kept to a minimum. When you port the CSoundSystem class to for example FMod, you should replace
+		this file with an FMod equivalent, which should be too hard.
+	<DT><B>DemoGL_DLL.h</B>
+	<DD>The DLL include header to use DemoGL inside an application. Keep in mind that all API definitions are copied from the
+	    library header files, as this file is not used in the compilation of the library. Keep in mind to copy modifications to
+		API functions or additions to the API functions to this file.
+	<DT><B>DemoGL_Effect.h</B>
+	<DD>This file is the include file for using CEffect as a baseclass for effectclasses in applications. It's a copy of 
+	    dgl_dlleffect.h, but now usable for including in user applications. Keep the order of the methods the same in both
+		files. (read: don't alter them, unless you know what you're doing)
+	<DT><B>DemoGL_Extensions.h</B>
+	<DD>This file contains the definitions of internal constants for all the OpenGL extensions recognized by DemoGL. Allthough
+	    as much extensions as possible are added, still some are missing. The constants are used to check if an extension is
+		available and found by DemoGl.
+	<DT><B>DemoGL_glext.h</B>
+	<DD>This file contains as much extension definitions as known today. All extensions from all popular card vendors are included.
+	    This file is useful when you want to bind a functionpointer to an extension or use constants defined by an extension.
+	<DT><B>dgl_dllbootutilfuncs.h</B>
+	<DD>Header file for dgl_bootutilfuncs.cpp. 
+	<DT><B>dgl_dlldemodat.h</B>
+	<DD>Header file for dgl_dlldemodat.h. Contains CDemoDat class declaration. 
+	<DT><B>dgl_dlleffect.h</B>
+	<DD>Header file for dgl_dlleffectbase.cpp. DemoGL_Effect.h is copied from this file. Contains CEffect class declaration.
+	<DT><B>dgl_dlleffectstore.h</B>
+	<DD>Header file for dgl_dlleffectstore.cpp. Contains CEffectStore class declaration.
+	<DT><B>dgl_dllendsystem.h</B>
+	<DD>Header file for dgl_dllendsystem.cpp
+	<DT><B>dgl_dllextensions.h</B>
+	<DD>Header file for dgl_dllextensions.cpp. Contains CExtensions class declaration.
+	<DT><B>dgl_dllfifoqueue.h</B>
+	<DD>Header file for dgl_dllfifoqueue.cpp. Contains CFifo class declaration.
+	<DT><B>dgl_dllguicontrol.h</B>
+	<DD>Header file for dgl_dllguicontrol.cpp. Contains CGuiControl class declaration.
+	<DT><B>dgl_dllkernel.h</B>
+	<DD>Header file for dgl_dllkernel.cpp.</B>
+	<DT><B>dgl_dlllayer.h</B>
+	<DD>Header file for dgl_dlllayer.cpp. Contains CLayer class declaration.
+	<DT><B>dgl_dlllayerutilfuncs.h</B>
+	<DD>Header file for dgl_dlllayerutilfuncs.cpp.
+	<DT><B>dgl_dlllowleveldebugger.h</B>
+	<DD>Header file for dgl_dlllowleveldebugger.cpp. Contains definitions for the logfile name and how deep the nesting of calllevels
+	    can be for indenting in the logfile.
+	<DT><B>dgl_dllmain.h</B>
+	<DD>Header file for dgl_dllmain.cpp. Contains all global scope constants definitions. Because DemoGL uses a lot of constants
+	    instead of hard coded numeric values, most of these values are stored in this file. When you want to tweak or adjust something
+		in DemoGL, this is the place to start.
+	<DT><B>dgl_dllprogressbar.h</B>
+	<DD>Header file for dgl_dllprogressbar.cpp. Contains CProgressBar class declaration.
+	<DT><B>dgl_dllscriptfuncs.h</B>
+	<DD>Header file for dgl_dllscriptfuncs.cpp. Contains all command definitions and script related constants.
+	<DT><B>dgl_dllsoundsystem.h</B>
+	<DD>Header file for dgl_dllsoundsystem.cpp. Contains CSoundSystem, CSoundChannel, CSoundElement, CMP3Element, CMODElement and
+	    CSampleElement classes definitions. It also contains the structure definitions for sound system related structures used
+		in the API (and also stored in DemoGL_DLL.h) and internally in the CSoundSystem class.
+	<DT><B>dgl_dllstartsystem.h</B>
+	<DD>Header file for dgl_dllstartsystem.cpp. Contains the structure definitions for the startup dat structure used in the API
+	    calls and internally and the structure to pass parsed commandparameter values for screensaver runtypes.
+	<DT><B>dgl_dllstartupdialog.h</B>
+	<DD>Header file for dgl_dllstartupdialog.cpp. Contains the about dialog animation related constants.
+	<DT><B>dgl_dllstdafx.h</B>
+	<DD>Global include file. This file is used to include all .h files. When you add a .h file, simply add it to this file.
+	<DT><B>dgl_dllsysconsole.h</B>
+	<DD>Header file for dgl_dllsysconsole.cpp. Contains the CSysConsole class declaration and all internal used constants and
+	    structure declarations.
+	<DT><B>dgl_dlltexture.h</B>
+	<DD>Header file for dgl_dlltexture.cpp. Contains the CPixelStore class and CTexture class declarations.
+	<DT><B>dgl_dlltextureutilfuncs.h</B>
+	<DD>Header file for dgl_dlltextureutilfuncs.cpp.
+	<DT><B>dgl_dlltimelineevent.h</B>
+	<DD>Header file for dgl_dlltimelineevent.cpp. Contains the CTimeLineEvent and CTLEParameter classes declarations.
+	<DT><B>dgl_dlltimelineutilfuncs.h</B>
+	<DD>Header file for dgl_dlltimelineutilfuncs.cpp.
+	<DT><B>dgl_dlltoken.h</B>
+	<DD>Header file for dgl_dlltoken.cpp. Contains the CToken class declaration.
+	<DT><B>dgl_dllutilfuncs.h</B>
+	<DD>Header file for dgl_dllutilfuncs.cpp.
+	<DT><B>resource.h</B>
+	<DD>This file is generated by VC++. Do not alter this file. Keep in mind that by definition IDI_ICON is equal to 110 and
+	    IDB_APPLOGO is equal to 140.
+	<DT><B>src_beautifiers.h</B>
+	<DD>A header file with some macro's to easy include TODO, FIXME and QUOTE texts that also appear as a warning in the compiler
+	    output. Very handy because you don't have to search the code for all your TODO's. See the header file for usage details
+		and credits.
+</DL>
+<p ALIGN=RIGHT>
+<A HREF="#CH0">Top</A>
+<BR>
+<A NAME="CH7">
+<H4>7. Small last things to think about.</H4>
+<P>
+The library is not perfect and perhaps never will be. Even at release point there are several things that should have been
+changed, removed, recoded or added. They're not. Some inconsistencies are documented here, others are not and the reason they're
+still in the code is because some line has to be drawn when it's time to quit tweaking and fiddling with the code and release it.
+One of the benefits of Open Source is that others, with different views on problems can find perhaps much easier solutions to
+algorithms implemented in the library. These people are especially encouraged to modify, or better: increase the quality, of 
+DemoGL's sourcecode to submit changes and fixes. 
+<p>
+DemoGL contains a sloppy, "because you don't know how, you can't crack it" crypting algorithm. With DemoGL this crypting algorithm
+is exposed to the public, and makes your crypted material decryptable by others. However you can easily adjust the algo to keep
+your own keys safe, to some point. With DemoGL's sourcecode is also the source of Cryde released, the crypter/packer for DemoGL
+datafiles. Cryde's sourcecode, an MFC application, is not documented as detailed as DemoGL's code, but still contains lots of
+comments to get you started. It's easy to add your own crypting algorithm both to Cryde and to DemoGL to keep your data safe
+for copycats.
+<P>
+The DemoGL version 1.3 will be the first of a perhaps long line of releases based on this initial codebase. We hope you will 
+enjoy the sourcecode and the library's functionality as much as we enjoyed writing the library and cooking up all the ideas and
+features.
+<p>
+Now, dive into it!
+<p>
+<b>The DemoGL development team.
+
+<!-- end text -->
+	</TD>
+</TR>
+</TABLE>
+</BODY>
+</HTML>
+
+	

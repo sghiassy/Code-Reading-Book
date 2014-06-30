@@ -1,0 +1,305 @@
+.TH ACE_Local_Name_Space 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Local_Name_Space \- Maintaining accesses Local Name Server Database. Allows to add NameBindings, change them, remove them and resolve NameBindings. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Local_Name_Space_T.h>\fR
+.PP
+Inherits \fBACE_Name_Space\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Allocator_Adapter\fR<\fBACE_Malloc\fR <ACE_MEM_POOL_2, ACE_LOCK> > \fBALLOCATOR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Local_Name_Space\fR (void)"
+.br
+.RI "\fI"Do-nothing" constructor.\fR"
+.ti -1c
+.RI "\fBACE_Local_Name_Space\fR (\fBACE_Naming_Context::Context_Scope_Type\fR scope_in, \fBACE_Name_Options\fR *name_options)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Naming_Context::Context_Scope_Type\fR scope_in)"
+.br
+.ti -1c
+.RI "\fB~ACE_Local_Name_Space\fR (void)"
+.br
+.RI "\fIdestructor, do some cleanup :TBD: last dtor should "compress" file.\fR"
+.ti -1c
+.RI "virtual int \fBbind\fR (const \fBACE_WString\fR &name, const \fBACE_WString\fR &value, const char *type = "")"
+.br
+.RI "\fIBind a new name to a naming context (Wide character strings).\fR"
+.ti -1c
+.RI "virtual int \fBrebind\fR (const \fBACE_WString\fR &name, const \fBACE_WString\fR &value, const char *type = "")"
+.br
+.ti -1c
+.RI "virtual int \fBunbind\fR (const \fBACE_WString\fR &name)"
+.br
+.RI "\fIDelete a name from a ACE_Local_Name_Space (Wide charcter strings Interface).\fR"
+.ti -1c
+.RI "virtual int \fBunbind_i\fR (const \fBACE_WString\fR &name)"
+.br
+.ti -1c
+.RI "virtual int \fBresolve\fR (const \fBACE_WString\fR &name, \fBACE_WString\fR &value, char *&type)"
+.br
+.RI "\fIGet value and type of a given name binding (Wide chars). The caller is responsible for deleting <type>!\fR"
+.ti -1c
+.RI "virtual int \fBresolve_i\fR (const \fBACE_WString\fR &name, \fBACE_WString\fR &value, char *&type)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_names\fR (\fBACE_WSTRING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.RI "\fIGet a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string.\fR"
+.ti -1c
+.RI "virtual int \fBlist_names_i\fR (\fBACE_WSTRING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_values\fR (\fBACE_WSTRING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.RI "\fIGet a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string.\fR"
+.ti -1c
+.RI "virtual int \fBlist_values_i\fR (\fBACE_WSTRING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_types\fR (\fBACE_WSTRING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.RI "\fIGet a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string.\fR"
+.ti -1c
+.RI "virtual int \fBlist_types_i\fR (\fBACE_WSTRING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_name_entries\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_name_entries_i\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_value_entries\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_value_entries_i\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_type_entries\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_type_entries_i\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern)"
+.br
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the object.\fR"
+.ti -1c
+.RI "virtual void \fBdump_i\fR (void) const"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBremap\fR (EXCEPTION_POINTERS *ep)"
+.br
+.RI "\fIRemap the backing store.\fR"
+.ti -1c
+.RI "int \fBshared_bind\fR (const \fBACE_WString\fR &name, const \fBACE_WString\fR &value, const char *type, int rebind)"
+.br
+.RI "\fIFactor out code from <bind> and <rebind>.\fR"
+.ti -1c
+.RI "int \fBshared_bind_i\fR (const \fBACE_WString\fR &name, const \fBACE_WString\fR &value, const char *type, int rebind)"
+.br
+.ti -1c
+.RI "int \fBcreate_manager\fR (void)"
+.br
+.RI "\fIAllocate the appropriate type of map manager that stores the key/value binding.\fR"
+.ti -1c
+.RI "int \fBcreate_manager_i\fR (void)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBALLOCATOR\fR* \fBallocator_\fR"
+.br
+.RI "\fIPointer to the allocator.\fR"
+.ti -1c
+.RI "\fBACE_Name_Space_Map\fR<\fBALLOCATOR\fR>* \fBname_space_map_\fR"
+.br
+.RI "\fIPointer to the allocated map manager.\fR"
+.ti -1c
+.RI "\fBACE_Naming_Context::Context_Scope_Type\fR \fBns_scope_\fR"
+.br
+.RI "\fIScope of this naming context (e.g., PROC_LOCAL, NODE_LOCAL, or NET_LOCAL).\fR"
+.ti -1c
+.RI "\fBACE_Name_Options\fR* \fBname_options_\fR"
+.br
+.RI "\fIKeep track of the options such as database name etc.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBcontext_file_\fR [MAXPATHLEN + MAXNAMELEN]"
+.br
+.RI "\fIName of the file used as the backing store.\fR"
+.ti -1c
+.RI "ACE_LOCK* \fBlock_\fR"
+.br
+.RI "\fISynchronization variable.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_MEM_POOL_1, class ACE_LOCK>  template class ACE_Local_Name_Space
+Maintaining accesses Local Name Server Database. Allows to add NameBindings, change them, remove them and resolve NameBindings.
+.PP
+.PP
+ Manages a Naming Service for a local name space which includes bindings for node_local and host_local naming contexts. All strings are stored in wide character format. A Name Binding consists of a name (that's the key), a value string and an optional type string (no wide chars). 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> typedef \fBACE_Allocator_Adapter\fR<\fBACE_Malloc\fR <ACE_MEM_POOL_2, ACE_LOCK> > ACE_Local_Name_Space<, ACE_LOCK>::ALLOCATOR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> ACE_Local_Name_Space<, ACE_LOCK>::ACE_Local_Name_Space<, ACE_LOCK> (void)
+.PP
+"Do-nothing" constructor.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> ACE_Local_Name_Space<, ACE_LOCK>::ACE_Local_Name_Space<, ACE_LOCK> (\fBACE_Naming_Context::Context_Scope_Type\fR scope_in, \fBACE_Name_Options\fR * name_options)
+.PP
+Specifies the scope of this namespace, opens and memory-maps the associated file (if accessible) or contacts the dedicated name server process for NET_LOCAL namespace. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> ACE_Local_Name_Space<, ACE_LOCK>::~ACE_Local_Name_Space<, ACE_LOCK> (void)
+.PP
+destructor, do some cleanup :TBD: last dtor should "compress" file.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::bind (const \fBACE_WString\fR & name, const \fBACE_WString\fR & value, const char * type = "")\fC [virtual]\fR
+.PP
+Bind a new name to a naming context (Wide character strings).
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::create_manager (void)\fC [private]\fR
+.PP
+Allocate the appropriate type of map manager that stores the key/value binding.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::create_manager_i (void)\fC [private]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> void ACE_Local_Name_Space<, ACE_LOCK>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of the object.
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual void ACE_Local_Name_Space<, ACE_LOCK>::dump_i (void) const\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::list_name_entries (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+Get a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::list_name_entries_i (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::list_names (\fBACE_WSTRING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+Get a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string.
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::list_names_i (\fBACE_WSTRING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::list_type_entries (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+Get a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::list_type_entries_i (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::list_types (\fBACE_WSTRING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+Get a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string.
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::list_types_i (\fBACE_WSTRING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::list_value_entries (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+Get a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::list_value_entries_i (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::list_values (\fBACE_WSTRING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+Get a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string.
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::list_values_i (\fBACE_WSTRING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::open (\fBACE_Naming_Context::Context_Scope_Type\fR scope_in)
+.PP
+Specifies the scope of this namespace, opens and memory-maps the associated file (if accessible) or contacts the dedicated name server process for NET_LOCAL namespace. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::rebind (const \fBACE_WString\fR & name, const \fBACE_WString\fR & value, const char * type = "")\fC [virtual]\fR
+.PP
+Overwrite the value or type of an existing name in a ACE_Local_Name_Space or bind a new name to the context, if it didn't exist yet. (Wide charcter strings interface). 
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::remap (EXCEPTION_POINTERS * ep)\fC [private]\fR
+.PP
+Remap the backing store.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::resolve (const \fBACE_WString\fR & name, \fBACE_WString\fR & value, char *& type)\fC [virtual]\fR
+.PP
+Get value and type of a given name binding (Wide chars). The caller is responsible for deleting <type>!
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::resolve_i (const \fBACE_WString\fR & name, \fBACE_WString\fR & value, char *& type)\fC [virtual]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::shared_bind (const \fBACE_WString\fR & name, const \fBACE_WString\fR & value, const char * type, int rebind)\fC [private]\fR
+.PP
+Factor out code from <bind> and <rebind>.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::shared_bind_i (const \fBACE_WString\fR & name, const \fBACE_WString\fR & value, const char * type, int rebind)\fC [private]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> int ACE_Local_Name_Space<, ACE_LOCK>::unbind (const \fBACE_WString\fR & name)\fC [virtual]\fR
+.PP
+Delete a name from a ACE_Local_Name_Space (Wide charcter strings Interface).
+.PP
+Reimplemented from \fBACE_Name_Space\fR.
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> virtual int ACE_Local_Name_Space<, ACE_LOCK>::unbind_i (const \fBACE_WString\fR & name)\fC [virtual]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> \fBALLOCATOR\fR * ACE_Local_Name_Space<, ACE_LOCK>::allocator_\fC [private]\fR
+.PP
+Pointer to the allocator.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> \fBACE_TCHAR\fR ACE_Local_Name_Space<, ACE_LOCK>::context_file_[MAXPATHLEN+MAXNAMELEN]\fC [private]\fR
+.PP
+Name of the file used as the backing store.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> ACE_LOCK * ACE_Local_Name_Space<, ACE_LOCK>::lock_\fC [private]\fR
+.PP
+Synchronization variable.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> \fBACE_Name_Options\fR * ACE_Local_Name_Space<, ACE_LOCK>::name_options_\fC [private]\fR
+.PP
+Keep track of the options such as database name etc.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> \fBACE_Name_Space_Map\fR< \fBALLOCATOR\fR >* ACE_Local_Name_Space<, ACE_LOCK>::name_space_map_\fC [private]\fR
+.PP
+Pointer to the allocated map manager.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK> \fBACE_Naming_Context::Context_Scope_Type\fR ACE_Local_Name_Space<, ACE_LOCK>::ns_scope_\fC [private]\fR
+.PP
+Scope of this naming context (e.g., PROC_LOCAL, NODE_LOCAL, or NET_LOCAL).
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

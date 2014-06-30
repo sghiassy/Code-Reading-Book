@@ -1,0 +1,236 @@
+.TH ACE_Allocator 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Allocator \- Interface for a dynamic memory allocator that uses inheritance and dynamic binding to provide extensible mechanisms for allocating and deallocating memory. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Malloc_Base.h>\fR
+.PP
+Inherited by \fBACE_Allocator_Adapter\fR, \fBACE_New_Allocator\fR, and \fBACE_Static_Allocator_Base\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator\fR (void)"
+.br
+.RI "\fI"No-op" constructor (needed to make certain compilers happy).\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Allocator\fR (void)"
+.br
+.RI "\fIVirtual destructor.\fR"
+.ti -1c
+.RI "virtual void* \fBmalloc\fR (size_t nbytes) = 0"
+.br
+.RI "\fIAllocate <nbytes>, but don't give them any initial value.\fR"
+.ti -1c
+.RI "virtual void* \fBcalloc\fR (size_t nbytes, char initial_value = '\\0') = 0"
+.br
+.RI "\fIAllocate <nbytes>, giving them <initial_value>.\fR"
+.ti -1c
+.RI "virtual void* \fBcalloc\fR (size_t n_elem, size_t elem_size, char initial_value = '\\0') = 0"
+.br
+.RI "\fIAllocate <n_elem> each of size <elem_size>, giving them <initial_value>.\fR"
+.ti -1c
+.RI "virtual void \fBfree\fR (void *ptr) = 0"
+.br
+.RI "\fIFree <ptr> (must have been allocated by ).\fR"
+.ti -1c
+.RI "virtual int \fBremove\fR (void) = 0"
+.br
+.RI "\fIRemove any resources associated with this memory manager.\fR"
+.ti -1c
+.RI "virtual int \fBbind\fR (const char *name, void *pointer, int duplicates = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBtrybind\fR (const char *name, void *&pointer) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBfind\fR (const char *name, void *&pointer) = 0"
+.br
+.RI "\fILocate <name> and pass out parameter via pointer. If found, return 0, Returns -1 if failure occurs.\fR"
+.ti -1c
+.RI "virtual int \fBfind\fR (const char *name) = 0"
+.br
+.RI "\fIreturns 0 if the name is in the mapping. -1, otherwise.\fR"
+.ti -1c
+.RI "virtual int \fBunbind\fR (const char *name) = 0"
+.br
+.RI "\fIUnbind (remove) the name from the map. Don't return the pointer to the caller.\fR"
+.ti -1c
+.RI "virtual int \fBunbind\fR (const char *name, void *&pointer) = 0"
+.br
+.RI "\fIBreak any association of name. Returns the value of pointer in case the caller needs to deallocate memory.\fR"
+.ti -1c
+.RI "virtual int \fBsync\fR (\fBssize_t\fR len = -1, int flags = MS_SYNC) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBsync\fR (void *addr, size_t len, int flags = MS_SYNC) = 0"
+.br
+.RI "\fISync <len> bytes of the memory region to the backing store starting at .\fR"
+.ti -1c
+.RI "virtual int \fBprotect\fR (\fBssize_t\fR len = -1, int prot = PROT_RDWR) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBprotect\fR (void *addr, size_t len, int prot = PROT_RDWR) = 0"
+.br
+.RI "\fIChange the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const = 0"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Allocator* \fBinstance\fR (void)"
+.br
+.RI "\fIGet pointer to a default .\fR"
+.ti -1c
+.RI "ACE_Allocator* \fBinstance\fR (ACE_Allocator *)"
+.br
+.RI "\fISet pointer to a process-wide  and return existing pointer.\fR"
+.ti -1c
+.RI "void \fBclose_singleton\fR (void)"
+.br
+.RI "\fIDelete the dynamically allocated Singleton.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Allocator* \fBallocator_\fR"
+.br
+.RI "\fIPointer to a process-wide  instance.\fR"
+.ti -1c
+.RI "int \fBdelete_allocator_\fR"
+.br
+.RI "\fIMust delete the  if non-0.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Interface for a dynamic memory allocator that uses inheritance and dynamic binding to provide extensible mechanisms for allocating and deallocating memory.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Allocator::ACE_Allocator (void)
+.PP
+"No-op" constructor (needed to make certain compilers happy).
+.PP
+.SS ACE_Allocator::~ACE_Allocator (void)\fC [virtual]\fR
+.PP
+Virtual destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Allocator::bind (const char * name, void * pointer, int duplicates = 0)\fC [pure virtual]\fR
+.PP
+Associate <name> with <pointer>. If <duplicates> == 0 then do not allow duplicate <name>/<pointer> associations, else if <duplicates> != 0 then allow duplicate <name>/<pointer> assocations. Returns 0 if successfully binds (1) a previously unbound <name> or (2) <duplicates> != 0, returns 1 if trying to bind a previously bound <name> and <duplicates> == 0, else returns -1 if a resource failure occurs. 
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS void * ACE_Allocator::calloc (size_t n_elem, size_t elem_size, char initial_value = '\\0')\fC [pure virtual]\fR
+.PP
+Allocate <n_elem> each of size <elem_size>, giving them <initial_value>.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, \fBACE_Cached_Allocator\fR, and \fBACE_Allocator_Adapter\fR.
+.SS void * ACE_Allocator::calloc (size_t nbytes, char initial_value = '\\0')\fC [pure virtual]\fR
+.PP
+Allocate <nbytes>, giving them <initial_value>.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, \fBACE_Cached_Allocator\fR, and \fBACE_Allocator_Adapter\fR.
+.SS void ACE_Allocator::close_singleton (void)\fC [static]\fR
+.PP
+Delete the dynamically allocated Singleton.
+.PP
+.SS void ACE_Allocator::dump (void) const\fC [pure virtual]\fR
+.PP
+Dump the state of the object.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::find (const char * name)\fC [pure virtual]\fR
+.PP
+returns 0 if the name is in the mapping. -1, otherwise.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::find (const char * name, void *& pointer)\fC [pure virtual]\fR
+.PP
+Locate <name> and pass out parameter via pointer. If found, return 0, Returns -1 if failure occurs.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS void ACE_Allocator::free (void * ptr)\fC [pure virtual]\fR
+.PP
+Free <ptr> (must have been allocated by ).
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, \fBACE_Cached_Allocator\fR, and \fBACE_Allocator_Adapter\fR.
+.SS ACE_Allocator * ACE_Allocator::instance (ACE_Allocator *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer.
+.PP
+.SS ACE_Allocator * ACE_Allocator::instance (void)\fC [static]\fR
+.PP
+Get pointer to a default .
+.PP
+.SS void * ACE_Allocator::malloc (size_t nbytes)\fC [pure virtual]\fR
+.PP
+Allocate <nbytes>, but don't give them any initial value.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, \fBACE_Cached_Allocator\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::protect (void * addr, size_t len, int prot = PROT_RDWR)\fC [pure virtual]\fR
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::protect (\fBssize_t\fR len = -1, int prot = PROT_RDWR)\fC [pure virtual]\fR
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at <this->base_addr_> up to <len> bytes. If <len> == -1 then change protection of all pages in the mapped region. 
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::remove (void)\fC [pure virtual]\fR
+.PP
+Remove any resources associated with this memory manager.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::sync (void * addr, size_t len, int flags = MS_SYNC)\fC [pure virtual]\fR
+.PP
+Sync <len> bytes of the memory region to the backing store starting at .
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::sync (\fBssize_t\fR len = -1, int flags = MS_SYNC)\fC [pure virtual]\fR
+.PP
+Sync <len> bytes of the memory region to the backing store starting at <this->base_addr_>. If <len> == -1 then sync the whole region. 
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::trybind (const char * name, void *& pointer)\fC [pure virtual]\fR
+.PP
+Associate <name> with <pointer>. Does not allow duplicate <name>/<pointer> associations. Returns 0 if successfully binds (1) a previously unbound <name>, 1 if trying to bind a previously bound <name>, or returns -1 if a resource failure occurs. When this call returns <pointer>'s value will always reference the void * that <name> is associated with. Thus, if the caller needs to use <pointer> (e.g., to free it) a copy must be maintained by the caller. 
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::unbind (const char * name, void *& pointer)\fC [pure virtual]\fR
+.PP
+Break any association of name. Returns the value of pointer in case the caller needs to deallocate memory.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::unbind (const char * name)\fC [pure virtual]\fR
+.PP
+Unbind (remove) the name from the map. Don't return the pointer to the caller.
+.PP
+Reimplemented in \fBACE_New_Allocator\fR, \fBACE_Static_Allocator_Base\fR, and \fBACE_Allocator_Adapter\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Allocator * ACE_Allocator::allocator_\fC [static, private]\fR
+.PP
+Pointer to a process-wide  instance.
+.PP
+Reimplemented in \fBACE_Allocator_Adapter\fR.
+.SS int ACE_Allocator::delete_allocator_\fC [static, private]\fR
+.PP
+Must delete the  if non-0.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

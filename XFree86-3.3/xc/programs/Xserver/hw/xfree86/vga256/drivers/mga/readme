@@ -1,0 +1,194 @@
+
+
+$XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/mga/README,v 3.6.2.4 1997/05/23 12:19:45 dawes Exp $
+
+MGA Millennium (MGA2064W) with TVP3026 RAMDAC Driver v1.2
+=========================================================
+MGA Mystique (MGA1064W) with integrated RAMDAC Driver v1.2
+=========================================================
+
+NOTE: This driver is fairly new, and not everything works like you expect
+it to. It shouldn't crash your machine, and there are problems with 24 bpp,
+but it should work pretty well. Please report any and all problems to
+XFree86@Xfree86.org using the appropriate bug report sheet. 
+
+This is the first release of Mystique driver and, for this board, acceleration
+functions might not work. 
+
+
+Features:
+---------
+
+* Fairly complete support for the Matrox Millennium video adapter.
+* First release of support for Matrox Mystique
+* Can only use a linear frame buffer
+* It should be possible to reach resolutions up to 1920x1024.
+* It should be possible to use pixel depths of:
+   -  8 bits per pixel (256 pseudo colour)
+   - 16 bits per pixel (high colour)
+   - 24 bits per pixel (packed true colour) **
+   - 32 bits per pixel (true colour)
+
+There are some 24 bpp mode problems - tiling doesn't work properly, so for some 
+programs, notably Netscape, gimp, xsetroot, etc, you may see corrupted images.
+
+
+Planned Features
+----------------
+
+In order from highest to lowest priority:
+
+* More hardware acceleration.
+* Support for more chipsets and RAMDACs.
+* 3D acceleration
+* other depths (16,24,32 bits) and acceleration features for Mystique board
+
+Technical Notes:
+----------------
+
+Hardware Supported:
+-------------------
+
+This driver supports the Matrox Storm (MGA2064W) chipset with the
+Texas Instruments TVP3026 RAMDAC  and (MGA1064SG). Matrox has so far only shipped boards with:
+- for Millenium board:
+- - - - - - - - - - - 
+175 MHz, 220 MHz and 250 MHz components. We are looking at 3030 support 
+(the Genesis), so hang in there.
+
+- for Mystique board:
+- - - - - - - - - - -
+up to 170 MHz,
+
+This driver auto-detects the amount of installed WRAM and the RAMDAC speed,
+so you don't need to probe or specify these. Same goes for the clocks, which
+are fully progrmamable on the RAMDAC. The driver takes care of everything
+for you!
+
+Support for other Matrox cards is planned, pending the receipt of documentation
+from Matrox.
+
+Configuration:
+--------------
+
+The driver auto-detects all device info included memory size, so use the following device
+section in your XF86Config file:
+
+- for Millenium board:
+----------------------
+	Section "Device"
+		Identifier	"Matrox Millennium"
+		VendorName	"Matrox"
+		BoardName	"Millennium"
+	EndSection
+
+- for Mystique board:
+- - - - - - - - - - -
+	Section "Device"
+    		Identifier  "Mystique"
+    		VendorName  "Matrox"
+    		BoardName   "mga1064sg"
+	EndSection
+
+or let xf86config or XF86Setup do this for you.
+
+But if you have problems with auto-detection, you can specify:
+
+    VideoRam  - in kilobytes
+    DacSpeed  - in MHz
+    MemBase   - physical address of the linear framebuffer 
+    IoBase    - physical address of the memory mapped IO registers
+    BiosBase  - physical address of BIOS
+
+
+Driver Options:
+---------------
+
+"noaccel"	- turns off Drawing Engine (mandatory for Mystique)
+"sw_cursor"     - turns hardware cursor off
+"xaa_benchmark" - do some benchmarks during startup
+
+- for Mystique board:
+- - - - - - - - - - -
+Interleaved features are not available
+ 
+Memory Clock Hack
+-----------------
+
+- for Millenium board:
+- - - - - - - - - - - 
+
+It seems some Millenniums have a BIOS that defines the memory clock
+for 2 MB and 4 MB cards to be 50 MHz, while others define it to be
+60 MHz. Using the faster clock speeds up drawing operations a good
+amount, so a hack has been put in place to set MCLK from XF86Config.
+
+In the file mga_dac3026.c, simply change the following line:
+   #define MCLK_FROM_XCONFIG 0
+to this:
+   #define MCLK_FROM_XCONFIG 1
+
+and specify in XF86Config:
+
+    Set_Mclk  - in MHz
+
+USE THIS HACK ENTIRELY AT YOUR OWN RISK!!!!!!!!!!!!
+
+Using memory clocks from 40 to 50 MHz should be completely safe. Setting
+the memory clock higher than 50 MHz, up to 65 MHz has been tested, and
+seems to work. DO NOT EXCEED 65 MHz, or the video memory contents will
+become corrupted and you may damage the card!
+
+- for Mystique board:
+- - - - - - - - - - -
+MCLK_FROM_XCONFIG flag has no effect.
+
+Main author:
+------------
+
+Radoslaw Kapitan, Tarnow, Poland
+kapitan@student.uci.agh.edu.pl
+
+Code, Additions and Testing:
+----------------------------
+
+Andrew E. Mileski, Ottawa, Canada
+aem@ott.hookup.net
+
+Andrew Vanderstock, Melbourne, Australia
+vanderaj@mail2.svhm.org.au
+
+Angsar Hockmann
+Ansgar.Hockmann@hrz.uni-dortmund.de
+
+A Joseph Koshy, Tester
+koshy@india.hp.com
+
+Leonard N. Zubkoff
+lnz@dandelion.com
+
+Mark Vojkovich
+mvojkovi@sdcc10.ucsd.edu
+
+Michael Will
+zxmgv07@student.uni-tuebingen.de
+
+Guy DESBIEF
+g.desbief@aix.pacwan.net
+
+XAA
+---
+
+Harm Hanemaayer
+mailto:H.Hanemaayer@inter.nl.net
+
+Various hacks, features and patcher
+-----------------------------------
+
+Dirk Hohndel
+hohndel@XFree86.Org
+
+Visit the Matrox Millennium XServer for XFree86 Home Page:
+    http://www.bf.rmit.edu.au/~ajv/xf86-matrox.html
+to keep upto date with the latest news, new sources, etc.
+

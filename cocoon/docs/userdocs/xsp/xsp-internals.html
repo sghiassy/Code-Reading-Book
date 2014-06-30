@@ -1,0 +1,3428 @@
+<html xmlns:NetUtils="org.apache.cocoon.util.NetUtils">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>XSP Internals</title>
+<script type="text/javascript" src="resources/script.js" language="JavaScript"></script>
+</head>
+<body bgcolor="#ffffff" marginheight="4" marginwidth="4" leftmargin="4" topmargin="4" alink="#cc0000" vlink="#0086b2" link="#039acc" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" rowspan="3" height="60" width="135"><img border="0" vspace="0" hspace="0" src="images/logo.gif" height="60" width="135"></td><td background="images/line.gif" colspan="2" align="left" valign="top" height="5" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/line.gif" height="5" width="1"></td><td align="left" valign="top" rowspan="3" height="60" width="29"><img border="0" vspace="0" hspace="0" src="images/right.gif" height="60" width="29"></td>
+</tr>
+<tr>
+<td bgcolor="#0086b2" colspan="2" align="right" valign="top" height="35" width="100%"><img align="right" alt="XSP Internals" border="0" vspace="0" hspace="0" src="graphics/xsp-internals-header.jpg_label=XSP%20Internals.jpg"></td>
+</tr>
+<tr>
+<td background="images/bottom.gif" bgcolor="#0086b2" align="left" valign="top" height="20" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/bottom.gif" height="20" width="3"></td><td background="images/bottom.gif" width="288" valign="top" height="20" bgcolor="#0086b2" align="right">
+<table width="288" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('xml');" onMouseOut="rolloverOff('xml');" target="new" href="http://xml.apache.org/"><img onLoad="rolloverLoad('xml', 'images/button-xml-hi.gif', 'images/button-xml-lo.gif');" border="0" vspace="0" hspace="0" name="xml" src="images/button-xml-lo.gif" height="20" width="96" alt="http://xml.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('asf');" onMouseOut="rolloverOff('asf');" target="new" href="http://www.apache.org/"><img onLoad="rolloverLoad('asf', 'images/button-asf-hi.gif', 'images/button-asf-lo.gif');" border="0" vspace="0" hspace="0" name="asf" src="images/button-asf-lo.gif" height="20" width="96" alt="http://www.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('w3c');" onMouseOut="rolloverOff('w3c');" target="new" href="http://www.w3.org/"><img onLoad="rolloverLoad('w3c', 'images/button-w3c-hi.gif', 'images/button-w3c-lo.gif');" border="0" vspace="0" hspace="0" name="w3c" src="images/button-w3c-lo.gif" height="20" width="96" alt="http://www.w3.org/"></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr width="100%">
+<td valign="top" width="120">
+<table width="120" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td valign="top" align="left"><img width="120" vspace="0" src="images/join.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Main')" onMouseOut="rolloverOff('Main')" href="../../index.html"><img onLoad="rolloverLoad('Main', 'graphics/Main-label_over.jpg', 'graphics/Main-label.jpg');" vspace="0" hspace="0" name="Main" width="120" height="12" border="0" src="graphics/Main-label.jpg" alt="Main"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('User Documentation')" onMouseOut="rolloverOff('User Documentation')" href="../index.html"><img onLoad="rolloverLoad('User Documentation', 'graphics/User%20Documentation-label_over.jpg', 'graphics/User%20Documentation-label.jpg');" vspace="0" hspace="0" name="User Documentation" width="120" height="12" border="0" src="graphics/User%20Documentation-label.jpg" alt="User Documentation"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><img alt="XSP" width="120" vspace="0" src="graphics/XSP-separator.jpg" hspace="0" height="20" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP')" onMouseOut="rolloverOff('XSP')" href="xsp.html"><img onLoad="rolloverLoad('XSP', 'graphics/XSP-label_over.jpg', 'graphics/XSP-label.jpg');" vspace="0" hspace="0" name="XSP" width="120" height="12" border="0" src="graphics/XSP-label.jpg" alt="XSP"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP Internals')" onMouseOut="rolloverOff('XSP Internals')" href="xsp-internals.html"><img onLoad="rolloverLoad('XSP Internals', 'graphics/XSP%20Internals-label_over.jpg', 'graphics/XSP%20Internals-label.jpg');" vspace="0" hspace="0" name="XSP Internals" width="120" height="12" border="0" src="graphics/XSP%20Internals-label.jpg" alt="XSP Internals"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP Logicsheets')" onMouseOut="rolloverOff('XSP Logicsheets')" href="logicsheet-concepts.html"><img onLoad="rolloverLoad('XSP Logicsheets', 'graphics/XSP%20Logicsheets-label_over.jpg', 'graphics/XSP%20Logicsheets-label.jpg');" vspace="0" hspace="0" name="XSP Logicsheets" width="120" height="12" border="0" src="graphics/XSP%20Logicsheets-label.jpg" alt="XSP Logicsheets"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP Guide')" onMouseOut="rolloverOff('XSP Guide')" href="logicsheet.html"><img onLoad="rolloverLoad('XSP Guide', 'graphics/XSP%20Guide-label_over.jpg', 'graphics/XSP%20Guide-label.jpg');" vspace="0" hspace="0" name="XSP Guide" width="120" height="12" border="0" src="graphics/XSP%20Guide-label.jpg" alt="XSP Guide"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Session Logicsheet')" onMouseOut="rolloverOff('Session Logicsheet')" href="session.html"><img onLoad="rolloverLoad('Session Logicsheet', 'graphics/Session%20Logicsheet-label_over.jpg', 'graphics/Session%20Logicsheet-label.jpg');" vspace="0" hspace="0" name="Session Logicsheet" width="120" height="12" border="0" src="graphics/Session%20Logicsheet-label.jpg" alt="Session Logicsheet"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Sessions')" onMouseOut="rolloverOff('Sessions')" href="sessions.html"><img onLoad="rolloverLoad('Sessions', 'graphics/Sessions-label_over.jpg', 'graphics/Sessions-label.jpg');" vspace="0" hspace="0" name="Sessions" width="120" height="12" border="0" src="graphics/Sessions-label.jpg" alt="Sessions"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Request Logicsheet')" onMouseOut="rolloverOff('Request Logicsheet')" href="request.html"><img onLoad="rolloverLoad('Request Logicsheet', 'graphics/Request%20Logicsheet-label_over.jpg', 'graphics/Request%20Logicsheet-label.jpg');" vspace="0" hspace="0" name="Request Logicsheet" width="120" height="12" border="0" src="graphics/Request%20Logicsheet-label.jpg" alt="Request Logicsheet"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('ESQL Logicsheet')" onMouseOut="rolloverOff('ESQL Logicsheet')" href="esql.html"><img onLoad="rolloverLoad('ESQL Logicsheet', 'graphics/ESQL%20Logicsheet-label_over.jpg', 'graphics/ESQL%20Logicsheet-label.jpg');" vspace="0" hspace="0" name="ESQL Logicsheet" width="120" height="12" border="0" src="graphics/ESQL%20Logicsheet-label.jpg" alt="ESQL Logicsheet"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Forms')" onMouseOut="rolloverOff('Forms')" href="logicsheet-forms.html"><img onLoad="rolloverLoad('Forms', 'graphics/Forms-label_over.jpg', 'graphics/Forms-label.jpg');" vspace="0" hspace="0" name="Forms" width="120" height="12" border="0" src="graphics/Forms-label.jpg" alt="Forms"></a></td>
+</tr>
+<tr>
+<td align="left" valign="top"><img width="120" vspace="0" src="images/close.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+</table>
+</td><td>
+<table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td height="10" width="100%"></td>
+</tr>
+<tr>
+<td>
+ 
+
+ 
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Index</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       This document presents Apache Cocoon's dynamic markup language
+       framework and its use in implementing XSP:
+     </p>
+
+     
+<blockquote>
+<ul>
+       
+<li>
+         
+<a href="#markup-to-code">
+           Markup-to-code Transformation
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#cocoon-generators">
+           XSP and Cocoon Generators
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#programming-language">
+           The Programming Language Processor
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#compiled-languages">
+           Compiled Languages
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#interpreted-languages">
+           Interpreted Languages
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#markup-language">
+           The Markup Language Processor
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#xsp-language">
+           The XSP Markup Language
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#dom-xsp">
+           The DOM-XSP Markup Language
+         </a>
+       
+</li>
+       
+<li>
+        
+<a href="#program-generator">
+          The Program Generator
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#named-components">
+           Named Components
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#sitemap-configuration">
+           XSP Sitemap Configuration
+         </a>
+       
+</li>
+     
+</ul>
+</blockquote>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="markup-to-code">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Markup-to-code Transformation</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+    XSP is based on a general-purpose markup-to-code transformation engine
+    built around three key abstractions:
+  </p>
+
+  
+<blockquote>
+<ul>
+   
+<li>
+<b>Dynamic Markup Language</b>.
+       An namespace-qualified XML vocabulary providing
+       <i>code embedding</i>
+       directives.
+
+       An associated
+       <i>dynamic markup language processor</i>
+       transforms static markup interspersed with code embedding directives
+       into an equivalent
+       <i>source program string</i>
+       written in a
+       <i>target programming language</i>.
+
+       Upon execution, the generated program will rebuild the original XML
+       document as augmented by dynamic content emitted by the embedded code.
+   </li>
+   
+<li>
+<b>Programming Language</b>.
+       A procedural language in which the dynamic markup processor generates
+       source code from an input XML document. Its associated
+       <i>programming language processor</i>
+       is responsible for compiling, loading and executing the generated code
+       within the boundaries of its calling environment.
+   </li>
+   
+<li>
+<b>Program Generator</b>.
+       A component that integrates markup and programming language processors
+       to build and execute markup-generating programs derived from XML
+       documents. Beyond this "glue" role, this component is responsible for
+       persistently storing generated programs as well as automatically
+       rebuilding them should their source XML documents change on disk after
+       program generation.
+   </li>
+  
+</ul>
+</blockquote>
+
+  
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+    Despite its particular usage for XSP,
+    <a href="../../apidocs/org/apache/cocoon/components/language/generator/ProgramGenerator.html">
+      <code><font face="courier, monospaced">ProgramGenerator</font></code>
+    </a>
+    is not restricted to run in a server pages environment.
+  </i></font></td>
+</tr>
+</table>
+</p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="cocoon-generators">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>XSP and Cocoon Generators</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+    As a rule, XSP pages are translated into Cocoon
+    <a href="../../apidocs/org/apache/cocoon/generation/Generator.html">
+      <code><font face="courier, monospaced">Generator</font></code>'s.
+    </a>
+  
+</p>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Server Pages Generator Proxy</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">
+      
+<code><font face="courier, monospaced">Generator</font></code>'s created by XSP are invoked exclusively through
+      <a href="../../apidocs/org/apache/cocoon/generation/ServerPagesGenerator.html">
+        <code><font face="courier, monospaced">ServerPagesGenerator</font></code>,
+      </a>
+      a proxy that uses Cocoon's
+      <a href="#program-generator"><code><font face="courier, monospaced">ProgramGenerator</font></code></a>
+      component to load pages and subsequently delegates actual SAX event
+      generation to them.
+    </p>
+  
+    
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+      The terms <code><font face="courier, monospaced">Generator</font></code> and <code><font face="courier, monospaced">ProgramGenerator</font></code> are
+      somewhat confusing. Here, <code><font face="courier, monospaced">Generator</font></code> refers to a Cocoon
+      <code><font face="courier, monospaced">org.apache.cocoon.generation.Generator</font></code> instance responsible
+      for the initial feeding of Cocoon's SAX pipeline.
+      <code><font face="courier, monospaced">ProgramGenerator</font></code>, on the other hand, refers to a Cocoon
+      component responsible for building and executing programs derived from XML
+      documents containing dynamic markup:
+      <a href="../../apidocs/org/apache/cocoon/components/language/generation/ProgramGenerator.html">
+        <code><font face="courier, monospaced">org.apache.cocoon.components.language.generator.ProgramGenerator</font></code>
+      </a>
+    </i></font></td>
+</tr>
+</table>
+</p>
+  
+    
+<p align="justify">
+      
+<code><font face="courier, monospaced">ServerPagesGenerator</font></code>
+      attempts to cope with a not unlikely
+      possibility: <i>premature</i> termination of proxied generator
+      execution.
+      "Premature" here means that the invoked generator may return after
+      starting one or more SAX events but without properly ending them.
+    </p>
+  
+    
+<p align="justify">
+      While this not an expected scenario in "manual" SAX programming, server
+      pages may well need to terminate in the middle of document production:
+    </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+  &lt;page&gt;
+    &lt;title&gt;For Your Eyes Only&lt;/title&gt;
+
+    &lt;xsp:logic&gt;
+      if (!request.getParameter("pet").equals("Cheetah")) {
+        &lt;p&gt;
+          Hey, you're not Tarzan!
+        &lt;/p&gt;
+
+        /*** Unclosed SAX events here! ***/
+        return;
+      }
+    &lt;/xsp:logic&gt;
+    &lt;!-- Multi-racial Jane affair description follows --&gt;
+    . . .
+  &lt;/page&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+ 
+    
+<p align="justify">
+      The server pages generator proxy is defined in the sitemap as follows:
+    </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+. . .
+&lt;map:generator
+  name="serverpages"
+  src="org.apache.cocoon.generation.ServerPagesGenerator"/&gt;
+. . .
+&lt;map:pipelines&gt;
+  &lt;map:pipeline&gt;
+    . . .
+    &lt;map:match pattern="/samples/*.xsp"&gt;
+      &lt;map:generate type="serverpages" src="../samples/documents/{1}.xsp"&gt;
+        &lt;!--
+          &lt;parameter name="markup-language" value="xsp"/&gt;
+          &lt;parameter name="programming-language" value="java"/&gt;
+        --&gt;
+      &lt;/map:generate&gt;
+      &lt;map:transform type="xslt" src="../samples/stalemates/simple-page.xsl"/&gt;
+      &lt;map:serialize type="html" mime-type="text/html"/&gt;
+    &lt;/map:match&gt;
+    . . .
+  &lt;/map:pipeline&gt;
+&lt;/map:pipelines&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+    
+<p align="justify">
+      Note that parameters <code><font face="courier, monospaced">markup-language</font></code> and
+      <code><font face="courier, monospaced">programming-language</font></code> default to
+      <i>xsp</i> and <i>java</i> respectively.
+    </p>
+
+    
+<p align="justify">
+      The complete XSP sitemap configuration is explained
+      <a href="#sitemap-configuration">below</a>.
+    </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>XSP Generators and Compiled Languages</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     For the Java language (and other compiled languages like
+     <a href="http://www.mozilla.org/rhino/"><i>Rhino</i></a>
+     Javascript),
+     XSP pages are translated into classes extending
+     <a href="../../apidocs/org/apache/cocoon/generation/AbstractServerPage.html">
+       <code><font face="courier, monospaced">AbstractServerPage</font></code>
+     </a>.
+     This class, in turn, extends
+     <a href="../../apidocs/org/apache/cocoon/generation/ComposerGenerator.html">
+       <code><font face="courier, monospaced">ComposerGenerator</font></code>
+     </a>,
+     which gives it access to commonly used components such as
+     <i>parser</i> or <i>cocoon</i> itself (typically used as
+     <code><font face="courier, monospaced">EntityResolver</font></code> for request URI's).
+   </p>
+ 
+   
+<p align="justify">
+     
+<code><font face="courier, monospaced">AbstractServerPage</font></code> implements
+     <a href="../../apidocs/org/apache/arch/Modifiable.html">
+       <code><font face="courier, monospaced">Modifiable</font></code>.
+     </a>
+     This
+     is tested by <code><font face="courier, monospaced">ProgramGenerator</font></code> to assert whether the page has
+     been invalidated as a result of files it depends on having changed on disk.
+     These files are typically
+     <a href="#logicsheet"><i>logicsheets</i></a>
+     and template files included by means of XInclude.
+   </p>
+ 
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     As of this writing, XInclude support is still unimplemented but
+     will be based on
+     <a href="mailto:balld@webslingerZ.com">Donald Ball</a>'s
+     (possibly extended)
+     <a href="../../apidocs/org/apache/cocoon/transformation/XIncludeTransformer.html">
+       <code><font face="courier, monospaced">XIncludeTransformer</font></code>.
+     </a>
+   </i></font></td>
+</tr>
+</table>
+</p>
+ 
+   
+<p align="justify">
+     
+<code><font face="courier, monospaced">AbstractServerPage</font></code> implements <code><font face="courier, monospaced">Modifiable</font></code>
+     by means of two <i>static</i> variables:
+     <code><font face="courier, monospaced">dateCreated</font></code> and
+     <code><font face="courier, monospaced">dependencies</font></code> (a, possibly empty, array of
+     <code><font face="courier, monospaced">File</font></code>'s pointing to logicsheets and other files included
+     during the code generation stage).
+   </p>
+ 
+   
+<p align="justify">
+     
+<code><font face="courier, monospaced">AbstractServerPage</font></code> also provides a boolean
+     <code><font face="courier, monospaced">hasContentChanged()</font></code> method that is tested by
+     <code><font face="courier, monospaced">ServerPagesGenerator</font></code> to assert whether dynamic content should
+     not be regenerated for a given request. The default implementation
+     unconditionally returns <code><font face="courier, monospaced">true</font></code>, but can be overridden by XSP
+     pages based on their interpretation of the Cocoon <code><font face="courier, monospaced">request</font></code>
+     object.  This is an <i>experimental</i> feature that will become
+     meaningful only when a SAX-event caching mechanism is added to Cocoon.
+   </p>
+ 
+   
+<p align="justify">
+     Finally, <code><font face="courier, monospaced">AbstractServerPage</font></code> also provides a number of utility
+     methods used to shorten the generation of SAX events not requiring a
+     namespace.
+   </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+
+ 
+<a name="programming-language">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The Programming Language Processor</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     A Cocoon's
+     <a href="../../apidocs/org/apache/cocoon/components/language/programming/ProgrammingLanguage.html">
+       <code><font face="courier, monospaced">ProgrammingLanguage</font></code>
+     </a>
+     processor exposes the
+     following methods:
+   </p>
+
+   
+<blockquote>
+<ul>
+     
+<li>
+<code><font face="courier, monospaced">load</font></code>.
+         Load a program from a file in a given directory,
+         compiling it, if necessary, using a given encoding.
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">instantiate</font></code>
+         Create a new instance of a previously loaded program
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">unload</font></code>
+         Discard a previously loaded program performing any
+         necessary cleanup
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">getSourceExtension</font></code>
+         Return the canonical source file extension used by
+         this programming language
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">getCodeFormatter</font></code>
+         Return an (optional) instance of
+          <a href="../../apidocs/org/apache/cocoon/components/language/programming/CodeFormatter.html">
+           <code><font face="courier, monospaced">CodeFormatter</font></code>
+         </a>
+         used to beautify source code written in this programming language
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">quoteString</font></code>
+         Escape a string constant according to the programming language rules
+     </li>
+   
+</ul>
+</blockquote>
+
+   
+<p align="justify">
+     A default implementation (<a href="../../apidocs/org/apache/cocoon/components/language/programming/AbstractProgrammingLanguage.html">
+       <code><font face="courier, monospaced">AbstractProgrammingLanguage</font></code>
+     </a>) is
+     provided that extends
+     <a href="../../apidocs/org/apache/arch/named/AbstractNamedComponent.html">
+       <code><font face="courier, monospaced">AbstractNamedComponent</font></code>
+     </a>
+     and retrieves language-related sitemap parameters.
+   </p>
+
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Filenames and Encoding</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       
+<code><font face="courier, monospaced">load</font></code> and <code><font face="courier, monospaced">unload</font></code> are passed a file/directory
+       pair used to locate the program.
+     </p>
+  
+     
+<p align="justify">
+       The <code><font face="courier, monospaced">baseDirectory</font></code> should be an absolute pathname
+       pointing to the top-level directory (also known as <i>repository</i>)
+       containing the program file.
+     </p>
+  
+     
+<p align="justify">
+       The <code><font face="courier, monospaced">filename</font></code> is a path, <i>relative to the
+       <code><font face="courier, monospaced">baseDirectory</font></code></i>, pointing to the program file.
+     </p>
+  
+     
+<p align="justify">
+       Source program filenames are built by concatenating the repository's
+       <code><font face="courier, monospaced">baseDirectory</font></code> name, the given <code><font face="courier, monospaced">filename</font></code>,
+       the dot extension separator and the language-specific source or
+       object <i>extensions</i>. The cross-platform
+       <code><font face="courier, monospaced">File.separator</font></code> is used to ensure portability.
+     </p>
+  
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       The <code><font face="courier, monospaced">filename</font></code> must <b>not</b> contain any
+       source or object extension. It may, though, contain subdirectories
+       depending on its position within the repository tree. Also,
+       programming languages <b>must</b> define a source extension
+       even when their actual compilers/interpreters do not enforce this. This
+       is also true of <i>object</i> extensions for compiled languages.
+       Furthermore, the dot character is <i>always</i> used as the
+       extension separator.
+     </i></font></td>
+</tr>
+</table>
+</p>
+  
+     
+<p align="justify">
+       Finally, the (optional) <code><font face="courier, monospaced">encoding</font></code> argument specifies the
+       how the source program file contents are encoded. This argument can be
+       <code><font face="courier, monospaced">null</font></code> to specify the platform's default encoding.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+
+   
+<a name="program-load">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Loading Programs</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       Currently, programs returned by the <code><font face="courier, monospaced">load</font></code> operation are
+       "plain" Java <code><font face="courier, monospaced">Object</font></code>'s and are not required to implement
+       any interface or to extend any particular class.
+     </p>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       This may change in the future so that the loaded program may be
+       required to provide dependency information (for automatic reloading)
+       as well as source code information (for debugging purposes).
+     </i></font></td>
+</tr>
+</table>
+</p>
+
+     
+<p align="justify">
+       Compiled programs attempt to locate the <i>object program</i> first.
+       If found, it's loaded in a language-specific way and then returned to
+       the calling environment.
+       Failing that, the source file is located and the language-specific
+       <a href="#compiler">compiler</a> is invoked prior to actual
+       program loading.
+     </p>
+
+     
+<p align="justify">
+       Of course, it is an error for the source program file not to exist as
+       a readable, regular operating system file.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="program-unload">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Unloading Programs</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       When a previously loaded program is no longer needed (or becomes
+       "outdated" as explained below) the language processor may need to
+       perform cleanup actions, such as releasing memory or (in the case
+       of Java-like compiled languages)
+       <a href="#class-loader-reinstantiation">
+       reinstantiating the class loader</a>.
+     </p>
+
+     
+<p align="justify">
+       Loaded programs may become outdated as a consequence of events external
+       to the programming language processor. In a server pages environment,
+       this is the result of the source XML document (or any of the files
+       it depends on) having changed on disk.
+     </p>
+
+     
+<p align="justify">
+       The base class
+       <code><font face="courier, monospaced">AbstractProgrammingLanguage</font></code>
+       implements
+       this method <i>as <code><font face="courier, monospaced">final</font></code></i> to delete the unloaded
+       <i>source</i> program file and delegate actual unloading to
+       method <code><font face="courier, monospaced">doUnload</font></code>.
+     </p>
+
+     
+<p align="justify">
+       Method <code><font face="courier, monospaced">doUnload</font></code> is <i>not</i> defined as
+       <code><font face="courier, monospaced">abstract</font></code> in order to relieve interpreted subclasses
+       from having to implement an empty method when no cleanup is
+       required.
+     </p>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       Currently, only the <code><font face="courier, monospaced">program</font></code> object is being passed
+       to <code><font face="courier, monospaced">unload</font></code>. It may be possible for some interpreted
+       languages to also require knowing what file the program was originally
+       loaded from. In this case, instantiation should take place through
+       the program object itself, rather than through the language processor
+       (see <i>Program Instantiation</i> below)
+     </i></font></td>
+</tr>
+</table>
+</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="program-instantiation">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Instantiating Programs</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       The <code><font face="courier, monospaced">program</font></code> object returned by <code><font face="courier, monospaced">load</font></code> must
+       act as an factory capable of creating <i>program instance</i>
+       objects on demand.
+     </p>
+
+     
+<p align="justify">
+       Currently, instantiation is performed by the language processor
+       given a previously loaded <code><font face="courier, monospaced">program</font></code>.
+     </p>
+
+     
+<p align="justify">
+       Compiled programs use a language-specified
+       <a href="#class-loader">class loader</a> to create
+       a new program instance.
+     </p>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+      For compiled languages, it is possible to guarantee that a
+      generated program implements a given interface or extends a
+      given class. For interpreted languages, though, it may be
+      necessary to pass an additional <code><font face="courier, monospaced">prototype</font></code> object
+      to <code><font face="courier, monospaced">load</font></code> as to ensure that created instances conform
+      to a given Java type expected behavior.
+     </i></font></td>
+</tr>
+</table>
+</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="source-extension">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Source Extensions</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       All languages are required to return a <i>source extension</i>.
+       This extension is used to locate source files for subsequent
+       interpretation or compilation.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="code-formatting">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Code Formatting</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       Programming languages may provide a
+       <a href="../../apidocs/org/apache/cocoon/components/language/programming/CodeFormatter.html">
+         <code><font face="courier, monospaced">CodeFormatter</font></code>
+       </a>
+       instance used by code generators to beautify source code.
+     </p>
+
+     
+<p align="justify">
+       Interface
+       <code><font face="courier, monospaced">CodeFormatter</font></code>
+       exposes a single method:
+       <code><font face="courier, monospaced">formatCode</font></code>. <code><font face="courier, monospaced">formatCode</font></code> takes as
+       arguments a <code><font face="courier, monospaced">String</font></code> containing the source code to
+       be beautified and an <code><font face="courier, monospaced">encoding</font></code> to be preserved
+       during string conversions.
+     </p>
+
+     
+<p align="justify">
+       Code formatters can be associated with a programming language
+       by specifying a <code><font face="courier, monospaced">code-formatter</font></code> parameter in its
+       sitemap configuration:
+     </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;parameter name="code-formatter"
+  value="org.apache.cocoon.components.language.programming.java.JstyleFormatter"/&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       Currently,
+       <a href="http://www.bigfoot.com/~davidsont/jstyle">Jstyle</a>
+       is being used for Java source formatting. This open source project
+       appears to be stagnated and lacks advanced formatting options
+       present in other (unfortunately, not open-sourced) products like
+       <a href="http://home.wtal.de/software-solutions/jindent/">
+         Jindent
+       </a>.
+     </i></font></td>
+</tr>
+</table>
+</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="string-quoting">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>String Quoting</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       Method <code><font face="courier, monospaced">quoteString</font></code> applies the programming language string
+       constant escaping rules to its input argument.
+     </p>
+
+     
+<p align="justify">
+       This method exists to assist markup language code generators in
+       escaping <code><font face="courier, monospaced">Text</font></code> XML nodes.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="compiled-languages">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Compiled Languages</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     Compiled languages extend the <code><font face="courier, monospaced">ProgrammingLanguage</font></code>
+     abstraction by introducing the notions of <i>compilation</i>
+     and <i>object extension</i>.
+   </p>
+
+   
+<p align="justify">
+     A base implementation
+    <a href="../../apidocs/org/apache/cocoon/components/language/programming/CompiledProgrammingLanguage.html">
+       (<code><font face="courier, monospaced">CompiledProgrammingLanguage</font></code>)
+     </a>
+     is provided that adds the following protected variables and
+     abstract/overridable methods:
+   </p>
+
+   
+<blockquote>
+<ul>
+     
+<li>Variable <code><font face="courier, monospaced">compilerClass</font></code>. Used to create instances
+         of the language's
+         <a href="#compiler">compiler</a>.
+     </li>
+     
+<li>Variable <code><font face="courier, monospaced">deleteSources</font></code>. Used to state whether
+         intermediate source files should be deleted after successful
+         compilation
+     </li>
+     
+<li>Method <code><font face="courier, monospaced">getObjectExtension</font></code>. Used to build object
+         filenames
+     </li>
+     
+<li>Method <code><font face="courier, monospaced">loadProgram</font></code>. Used to perform actual program
+         load after source and (possibly) object files have been located
+     </li>
+     
+<li>Method <code><font face="courier, monospaced">doUnload</font></code>. Used to perform cleanup after
+         program unloading
+     </li>
+   
+</ul>
+</blockquote>
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     Object files are not required to be <i>Java class files</i>.
+     It's up the the compiled programming language processor to handle
+     object files.
+   </i></font></td>
+</tr>
+</table>
+</p>
+
+   
+<p align="justify">
+     Compiled programming languages must specify their preferred compiler
+     as a sitemap parameter:
+   </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;component-instance name="java"
+  class="org.apache.cocoon.components.language.programming.java.JavaLanguage"&gt;
+  . . .
+  &lt;parameter name="compiler"
+    value="org.apache.cocoon.components.language.programming.java.Jikes"/&gt;
+  . . .
+&lt;/component-instance&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+   
+<a name="object-extension">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Object Extensions</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">All compiled languages are required to return a <i>source extension</i>.
+     This extension is used to locate object files for subsequent loading.</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="object-load">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Object Program Loading</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       Concrete compiled programming languages must implement the abstract
+       method <code><font face="courier, monospaced">loadProgram</font></code> to actually load an <i>object</i>
+       program resulting from compilation.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="compilation">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Program Compilation</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       Compilation is delegated to a sitemap-specified
+       <code><font face="courier, monospaced">LanguageCompiler</font></code> instance, as explained below.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="compiler">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Compilers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       Interface
+      <a href="../../apidocs/org/apache/cocoon/components/language/programming/LanguageCompiler.html">
+         <code><font face="courier, monospaced">LanguageCompiler</font></code>
+       </a>
+       defines the
+       initialization and behavior for all compilers.
+     </p>
+
+     
+<p align="justify">
+       Methods exposed by this interface are:
+     </p>
+
+     
+<blockquote>
+<ul>
+       
+<li>
+<code><font face="courier, monospaced">setFile</font></code>. Used to specify the source file to
+           be compiled. This should be an absolute filename
+       </li>
+       
+<li>
+<code><font face="courier, monospaced">setSource</font></code>. Used to specify the directory where
+           dependent source files (if any) are stored
+       </li>
+       
+<li>
+<code><font face="courier, monospaced">setDestination</font></code>. Used to specify the directory where
+           the generated object files should be placed
+       </li>
+       
+<li>
+<code><font face="courier, monospaced">setClasspath</font></code>. Used to specify the class loading
+           path used by the compiler. While this option is named after
+           Java's <i>classpath</i> system variable, its semantics are
+           language-independent
+       </li>
+       
+<li>
+<code><font face="courier, monospaced">setEncoding</font></code>. Used to specify the encoding used
+           by the input source file
+       </li>
+       
+<li>
+<code><font face="courier, monospaced">compile</font></code>. The compiler's workhorse (boolean)
+       </li>
+       
+<li>
+<code><font face="courier, monospaced">getErrors</font></code>. Used to retrieve a list of compilation
+           error messages should compilation fail
+       </li>
+     
+</ul>
+</blockquote>
+
+     
+<a name="compiler-error">
+<!--anchor--></a>
+     
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="-1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Compiler Errors</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+       
+<p align="justify">
+         Error message producer by the compiler must be collected and
+         massaged by the <code><font face="courier, monospaced">LanguageCompiler</font></code> in order to
+         wrap each of them as a <code><font face="courier, monospaced">CompilerError</font></code> instance.
+       </p>
+
+       
+<p align="justify">
+         Class
+         <a href="../../apidocs/org/apache/cocoon/components/language/programming/CompilerError.html">
+           <code><font face="courier, monospaced">CompilerError</font></code>
+         </a>
+         exposes the following
+         methods:
+       </p>
+
+       
+<blockquote>
+<ul>
+         
+<li>
+<code><font face="courier, monospaced">getFile</font></code>. Returns the program filename originating
+             the error
+         </li>
+         
+<li>
+<code><font face="courier, monospaced">isError</font></code>. Asserts whether the error is a server
+             error or simply a warning
+         </li>
+         
+<li>
+<code><font face="courier, monospaced">getStartLine</font></code>. Returns the starting line of the
+             offending code
+         </li>
+         
+<li>
+<code><font face="courier, monospaced">getStartColumn</font></code>. Returns the starting column (within
+              the starting line) of the offending code
+         </li>
+         
+<li>
+<code><font face="courier, monospaced">getEndLine</font></code>. Returns the ending line of the
+             offending code
+         </li>
+         
+<li>
+<code><font face="courier, monospaced">getEndColumn</font></code>. Returns the ending column (within
+              the ending line) of the offending code
+         </li>
+         
+<li>
+<code><font face="courier, monospaced">getMessage</font></code>. Returns the actual error message text
+         </li>
+       
+</ul>
+</blockquote>
+     
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+     
+<a name="java-compilers">
+<!--anchor--></a>
+     
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="-1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Java Compilers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+       
+<p align="justify">
+         For the Java language, 2 pluggable compilers are available:
+       </p>
+
+         
+<blockquote>
+<ul>
+           
+<li>
+<i>Javac</i>. A wrapper to Sun's builtin compiler
+           </li>
+           
+<li>
+<i>Jikes</i>. A wrapper to IBM's <i>Jikes</i> compiler
+           </li>
+         
+</ul>
+</blockquote>
+
+         
+<p align="justify">
+           Both of these compilers are based on
+           <a href="../../apidocs/org/apache/cocoon/components/language/programming/java/AbstractJavaCompiler.html">
+             <code><font face="courier, monospaced">AbstractJavaCompiler</font></code>.
+           </a>
+         
+</p>
+     
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+     
+<a name="other-compilers">
+<!--anchor--></a>
+     
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="-1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Other Compilers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+       
+<p align="justify">
+         Since
+         <a href="http://www.mozilla.org/rhino/"><i>Rhino</i></a>
+         Javascript provides its own, only compiler (<i>jsc</i>),
+         class <code><font face="courier, monospaced">JavascriptLanguage</font></code> doesn't use the compiler
+         class initialized by <code><font face="courier, monospaced">CompiledProgrammingLanguage</font></code>.
+       </p>
+     
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="object-unload">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Object Program Unloading</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       
+<code><font face="courier, monospaced">CompiledProgrammingLanguage</font></code> extends the default
+       implementation provided by
+       <code><font face="courier, monospaced">AbstractProgrammingLanguage</font></code>
+       by deleting the <i>object</i> program file and
+       delegating actual unloading to the
+       <code><font face="courier, monospaced">doUnload</font></code> method.
+     </p>
+
+     
+<p align="justify">
+       Method <code><font face="courier, monospaced">doUnload</font></code> provides an empty default implementation
+       that can be overridden by derived compiled languages should unloading
+       cleanup be actually required.
+     </p>
+
+     
+<a name="class-loader-reinstantiation">
+<!--anchor--></a>
+     
+<p align="justify">
+       For Java-based compiled languages (i.e., those using
+       <i>class files</i> as their object format, unloading implies
+       reinstantiating their
+       <a href="#class-loader">class loader</a>
+       such that it "forgets" about previously loaded classes thus
+       becoming able to refresh class files updates since their last
+       load.
+     </p>
+
+     
+<p align="justify">
+       This is a commonly-used workaround for the (somewhat buggy)
+       standard Java class loader, which doesn't provide for an
+       explicit method for reloading class files.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="class-loader">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The Cocoon Class Loader</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       To circumvent standard Java class loaders limitation, Cocoon provides a
+       simple customized class loader
+       <a href="../../apidocs/org/apache/cocoon/components/classloader/RepositoryClassLoader.html">
+       (<code><font face="courier, monospaced">RepositoryClassLoader</font></code>)
+     </a>
+       that features:
+     </p>
+
+     
+<blockquote>
+<ul>
+       
+<li>A directory-based extensible classpath that can grow at execution
+           time
+       </li>
+       
+<li>Class reloading by means of reinstantiation
+       </li>
+     
+</ul>
+</blockquote>
+
+     
+<p align="justify">
+       
+<code><font face="courier, monospaced">RepositoryClassLoader</font></code> extends
+       <code><font face="courier, monospaced">java.lang.ClassLoader</font></code> adding an
+       <code><font face="courier, monospaced">addDirectory</font></code> method that adds the directory pointed to
+       by its <code><font face="courier, monospaced">String</font></code> argument to its local classpath.
+     </p>
+
+     
+<p align="justify">
+       Access to <i>protected</i> <code><font face="courier, monospaced">RepositoryClassLoader</font></code> class
+       is proxied through interface
+       <a href="../../apidocs/org/apache/cocoon/components/classloader/ClassLoaderManager.html">
+         <code><font face="courier, monospaced">ClassLoaderManager</font></code>.
+       </a>
+       This interface exposes the following methods:
+     </p>
+
+     
+<blockquote>
+<ul>
+       
+<li>
+<code><font face="courier, monospaced">addDirectory</font></code>. Passed to the proxied
+           <code><font face="courier, monospaced">RepositoryClassLoader</font></code>
+       
+</li>
+       
+<li>
+<code><font face="courier, monospaced">loadClass</font></code>. Passed to the proxied
+           <code><font face="courier, monospaced">RepositortyClassLoader</font></code>
+       
+</li>
+       
+<li>
+<code><font face="courier, monospaced">reinstantiate</font></code>. Used to discard the previous
+           class loader and create a new one
+       </li>
+     
+</ul>
+</blockquote>
+
+     
+<p align="justify">
+       Class
+       <a href="../../apidocs/org/apache/cocoon/components/classloader/ClassLoaderManagerImpl.html">
+         <code><font face="courier, monospaced">ClassLoaderManagerImpl</font></code>
+       </a>
+       implements
+       <code><font face="courier, monospaced">ClassLoaderManager</font></code> in a singleton-like fashion that
+       ensures that only one instance of this class loader exists,
+       thus ensuring the reinstantiation mechanism works properly.
+     </p>
+
+     
+<p align="justify">
+       The class loader can be specified in the sitemap on a per-language
+       basis:
+     </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;component-instance name="java"
+  class="org.apache.cocoon.components.language.programming.java.JavaLanguage"&gt;
+  . . .
+  &lt;parameter name="class-loader"
+    value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/&gt;
+&lt;/component-instance&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+     
+<p align="justify">
+       Alternatively, the class loader can be specified in the sitemap as
+       a global component:
+     </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;component
+  role="class-loader"
+  class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="interpreted-languages">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Interpreted Languages</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     Interpreted languages for which a Java-based interpreter exists
+     are supported by means of IBM's outstanding
+     <a href="http://www.alphaworks.ibm.com/tech/bsf">
+       Bean Scripting Framework
+     </a> (BSF).
+   </p>
+
+   
+<p align="justify">
+     Currently, BSF supports:
+   </p>
+
+   
+<blockquote>
+<ul>
+     
+<li>Mozilla Rhino</li>
+     
+<li>NetRexx</li>
+     
+<li>Jacl</li>
+     
+<li>JPython</li>
+     
+<li>VBScript (Win32 only)</li>
+     
+<li>JScript (Win32 only)</li>
+     
+<li>PerlScript (Win32 only)</li>
+     
+<li>BML (Not applicable to server pages)</li>
+     
+<li>LotusXSL (Not applicable to server pages)</li>
+   
+</ul>
+</blockquote>
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     Interpreted language support is still unimplemented!<br>
+     While BSF is extremely easy to use and very stable, there's still
+     a challenge in writing code-generation logicsheets for each of this
+     languages; this task requires familiarity with XSP internals, XSLT
+     and, above all, the programming language at hand...
+   </i></font></td>
+</tr>
+</table>
+</p>
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     Despite being supported by BSF, Rhino Javascript is separately
+     supported by Cocoon as a compiled language in order to take
+     advantage of automatic class reloading and persistent class file
+     storage.
+   </i></font></td>
+</tr>
+</table>
+</p>
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     Since <code><font face="courier, monospaced">ProgramGenerator</font></code> clients will typically require
+     that program instances implement a given interface or extend a given
+     class, method <code><font face="courier, monospaced">instantiate</font></code> in interface
+     <code><font face="courier, monospaced">ProgrammingLanguage</font></code> may need to be augmented with a
+     <code><font face="courier, monospaced">prototype</font></code> interface that can be used by each language
+     processor to ensure that the program instance can act as a Java
+     object of the given type.
+   </i></font></td>
+</tr>
+</table>
+</p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="markup-language">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The Markup Language Processor</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     A Cocoon's
+     <a href="../../apidocs/org/apache/cocoon/components/language/markup/MarkupLanguage.html">
+       <code><font face="courier, monospaced">MarkupLanguage</font></code>
+     </a>
+     processor exposes the
+     following methods:
+   </p>
+
+   
+<blockquote>
+<ul>
+     
+<li>
+<code><font face="courier, monospaced">getEncoding</font></code>.
+         Return the encoding to be used in program generation and
+         compilation or <code><font face="courier, monospaced">null</font></code> to use the platform's
+         default encoding
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">generateCode</font></code>.
+         Given a DOM <code><font face="courier, monospaced">Document</font></code> written in a given
+         <i>markup language</i>, generate an equivalent  program in a given
+         <i>programming language</i>)
+     </li>
+   
+</ul>
+</blockquote>
+
+   
+<p align="justify">
+     A base markup language processor implementation is provided in
+     class
+     <a href="../../apidocs/org/apache/cocoon/components/language/markup/AbstractMarkupLanguage.html">
+       <code><font face="courier, monospaced">AbstractMarkupLanguage</font></code>.
+     </a>
+     This class extends
+     <a href="../../apidocs/org/arch/named/AbstractNamedComponent.html">
+       <code><font face="courier, monospaced">AbstractNamedComponent</font></code>
+     </a>
+     to set the markup language's
+     associated namespace using the following required parameters:
+   </p>
+   
+   
+<blockquote>
+<ul>
+     
+<li>
+<code><font face="courier, monospaced">prefix</font></code>.
+         The markup language's namespace prefix
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">uri</font></code>.
+         The markup language's namespace URI
+     </li>
+   
+</ul>
+</blockquote>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;component-instance name="xsp"
+  class="org.apache.cocoon.components.language.markup.xsp.XSPMarkupLanguage"&gt;
+  &lt;parameter name="prefix" value="xsp"/&gt;
+  &lt;parameter name="uri" value="http://xml.apache.org/xsp"/&gt;
+&lt;/component-instance&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+   
+<p align="justify">
+     
+<code><font face="courier, monospaced">AbstractMarkupLanguage</font></code> adds a number of
+     abstract/overridable methods that must be implemented by concrete
+     markup language processors:
+   </p>
+
+   
+<blockquote>
+<ul>
+     
+<li>
+<code><font face="courier, monospaced">preprocessDocument</font></code>.
+         Augment the input DOM <code><font face="courier, monospaced">Document</font></code> to prepare it for
+         simpler, faster logicsheet-based code generation
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">getLogicsheets</font></code>.
+         Return the list of logicsheets declared in the input document
+         according to the syntax of the markup language at hand
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">addDependency</font></code>.
+         Add a dependency on an external file. This is used to inform
+         the concrete markup language processor about XML documents
+         included by means of XInclude as well as any intervening
+         logicsheet
+     </li>
+   
+</ul>
+</blockquote>
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     <code><font face="courier, monospaced">AbstractMarkupLanguage</font></code> is currently tied to
+     logicsheets as the <i>only</i> means of generating source
+     code. While logicsheets provide a very powerful means for
+     code generation, good design dictates that the actual code
+     generation mechanism should be decoupled from the dynamic
+     markup language abstraction.
+   </i></font></td>
+</tr>
+</table>
+</p>
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     The current code generation strategy is DOM-based. In principle,
+     this is adequate because document preprocessing may need random
+     access to document nodes. Code generation is being reconsidered,
+     however, to overcome this and make it possible to reuse Cocoon's
+     SAX-based filtering pipeline.
+   </i></font></td>
+</tr>
+</table>
+</p>
+
+   
+<a name="markup-encoding">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Markup Encoding</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       All markup languages must provide a way to declare the XML
+       document's encoding so that it is preserved during code generation,
+       beautifying and compilation.
+     </p>
+
+     
+<p align="justify">
+       This is required for proper i18n support, where the default
+       encoding usually replaces "exotic" characters with question marks.
+     </p>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       Ideally, it should be possible to determine the source XML document's
+       <code><font face="courier, monospaced">encoding</font></code> from its declaring
+       <code><font face="courier, monospaced">&lt;?xml?&gt;</font></code> processing instruction. Unfortunately,
+       XML parsers (both DOM and SAX) don't seem to provide access to it,
+       thus forcing server pages authors to redundantly specify it.
+     </i></font></td>
+</tr>
+</table>
+</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+    
+<a name="logicsheet-class">
+<!--anchor--></a>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The Logicsheet class</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      <a name="logicsheet">
+<!--anchor--></a>
+      
+<p align="justify">
+        A <i>logicsheet</i> is an XML filter used to translate user-defined
+        dynamic markup into equivalent code embedding directives for a given
+        markup language.
+      </p>
+
+      
+<p align="justify">
+        Logicsheets lie at the core of XSP's promise to separate logic from
+        content and presentation: they make dynamic content generation
+        capabilities available to content authors not familiar with (and
+        not interested in) programming.
+      </p>
+
+      
+<p align="justify">
+        For a detailed description of logicsheets, see
+        <a href="logicsheet-concepts.html">Logicsheet Concepts</a>.
+      </p>
+
+      
+<p align="justify">
+        Logicsheets are represented in class
+        <a href="../../apidocs/org/apache/cocoon/components/language/markup/Logicsheet.html">
+          <code><font face="courier, monospaced">Logicsheet</font></code>.
+        </a>
+        This
+        class exposes the following methods:
+      </p>
+  
+      
+<blockquote>
+<ul>
+        
+<li>
+<code><font face="courier, monospaced">setInputSource</font></code>.
+            Set the <code><font face="courier, monospaced">InputSource</font></code> pointing to the XSLT
+            stylesheet to be used for dynamic tag transformation
+        </li>
+        
+<li>
+<code><font face="courier, monospaced">apply</font></code>.
+            Apply the stylesheet to a given document
+        </li>
+      
+</ul>
+</blockquote>
+  
+      
+<p align="justify">
+        
+<code><font face="courier, monospaced">Logicsheet</font></code> takes care of preserving all namespaces
+        defined in the input document. This is necessary when multiple
+        logicsheets are applied and multiple namespaces are used in the
+        input document.
+      </p>
+
+      
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+        Currently, <code><font face="courier, monospaced">Logicsheet</font></code> is a concrete class. It should
+        be redefined as an interface in order to decouple it from the use
+        of XSLT stylesheets. Again, while stylesheets are the "obvious" way
+        to implement logicsheets, a user-supplied XML filter may also be
+        used in some cases.
+        The current implementation uses an ugly
+        hack where a Xalan stylesheet processor is used to perform
+        the transformation without an intervening stylesheet processor
+        wrapping abstraction.
+      </i></font></td>
+</tr>
+</table>
+</p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+    
+<a name="named-logicsheet">
+<!--anchor--></a>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Named Logicsheets</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">
+        As explained in
+        <a href="logicsheet-concepts.html#logicsheet-object">
+          Logicsheet Concepts,
+        </a>
+        logicsheets are typically associated with a single object type whose
+        methods it wraps to make them available as
+        <i>markup commands</i>.
+      </p>
+
+      
+<p align="justify">
+        Markup commands related to a given object type are grouped under a
+        single namespace.
+      </p>
+
+      
+<p align="justify">
+        Class
+        <a href="../../apidocs/org/apache/cocoon/components/language/markup/NamedLogicsheet.html">
+          <code><font face="courier, monospaced">NamedLogicsheet</font></code>
+        </a>
+        extends <code><font face="courier, monospaced">Logicsheet</font></code>
+        to associate it with a namespace. This class exposes the following
+        additional methods:
+      </p>
+
+      
+<blockquote>
+<ul>
+        
+<li>
+<code><font face="courier, monospaced">setPrefix</font></code>.
+            To set the logicsheet's namespace prefix</li>
+        
+<li>
+<code><font face="courier, monospaced">getPrefix</font></code>.
+            To retrieve the logicsheet's namespace prefix</li>
+        
+<li>
+<code><font face="courier, monospaced">setUri</font></code>.
+            To set the logicsheet's namespace URI</li>
+        
+<li>
+<code><font face="courier, monospaced">getUri</font></code>.
+            To retrieve the logicsheet's namespace URI</li>
+      
+</ul>
+</blockquote>
+
+      
+<p align="justify">
+        Named logicsheets are used as
+        <a href="#builtin-logicsheets">
+          builtin logicsheets
+        </a>
+        by <code><font face="courier, monospaced">AbstractMarkupLanguage</font></code>
+        to preload logicsheets and make them accessible
+        to dynamic XML documents without explicit declaration.
+      </p>
+
+      
+<p align="justify">
+        This feature relieves page authors from the need to explicitly
+        declare commonly used logicsheets in their documents. Builtin
+        logicsheets are automatically applied if the document declares
+        their same namespace URI.
+      </p>
+
+      
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+        The current <code><font face="courier, monospaced">AbstractMarkupLanguage</font></code> implementation
+        wrongly binds named logicsheets based on their namespace
+        <i>prefix</i> instead of their URI!
+      </i></font></td>
+</tr>
+</table>
+</p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+    
+<a name="logicsheet-generator">
+<!--anchor--></a>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Logicsheet Code Generators</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">
+        Logicsheets translate dynamic tags to equivalent code-embedding
+        directives expressed in the markup language at hand. They do not,
+        however, actually emit the final source code program.
+      </p>
+
+      
+<p align="justify">
+        Code generation as such (i.e., the final production of a string
+        containing a source program written in a programming language) is
+        the responsibility of class <code><font face="courier, monospaced">LogicsheetCodeGenerator</font></code>.
+      </p>
+
+      
+<p align="justify">
+        Class
+        <a href="../../apidocs/org/apache/cocoon/components/language/markup/LogicsheetCodeGenerator.html">
+          <code><font face="courier, monospaced">LogicsheetCodeGenerator</font></code>
+        </a>
+        exposes the following methods:
+      </p>
+
+      
+<blockquote>
+<ul>
+        
+<li>
+<code><font face="courier, monospaced">addLogicsheet</font></code>.
+            Add a logicsheet to the generator's logicsheet list.
+            Logicsheets are applied in the order of their addition.
+        </li>
+        
+<li>
+<code><font face="courier, monospaced">generateCode</font></code>.
+            Return a string containing a source program resulting from
+            successively applying added logicsheets.
+        </li>
+      
+</ul>
+</blockquote>
+
+      
+<p align="justify">
+        Though "regular" logicsheets as such do not emit source code,
+        <code><font face="courier, monospaced">LogicsheetCodeGenerator</font></code> expects its <i>last</i>
+        stylesheet to produce <i>a single element</i> containing only
+        a text node.
+      </p>
+
+      
+<p align="justify">
+        This final, programming language-specific logicsheet is
+        responsible for actually expanding code-embedding directives
+        into source code.
+      </p>
+
+      
+<p align="justify">
+        For each supported target programming language, markup languages
+        must provide a <i>core</i> logicsheet.
+      </p>
+
+      
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+        <code><font face="courier, monospaced">LogicsheetCodeGenerator</font></code> is currently implemented as a
+        class.  It should be defined as an interface in order to the decouple
+        the code generator abstraction from its logicsheet-based implementation.
+        This would allow for alternative code-generation strategies to
+        be plugged.
+      </i></font></td>
+</tr>
+</table>
+</p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+    
+<a name="markup-definition">
+<!--anchor--></a>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Markup Language Definition</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">
+        Markup languages are defined in the sitemap as follows:
+      </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;component-type name="markup-language"&gt;
+  &lt;component-instance name="xsp"
+    class="org.apache.cocoon.components.language.markup.xsp.XSPMarkupLanguage"&gt;
+    &lt;parameter name="prefix" value="xsp"/&gt;
+    &lt;parameter name="uri" value="http://xml.apache.org/xsp"/&gt;
+
+    &lt;target-language name="java"&gt;
+      &lt;parameter name="core-logicsheet"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/&gt;
+
+      &lt;builtin-logicsheet&gt;
+        &lt;parameter name="prefix" value="xsp-request"/&gt;
+        &lt;parameter name="uri" value="http://xml.apache.org/xsp/request/2.0"/&gt;
+        &lt;parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/&gt;
+      &lt;/builtin-logicsheet&gt;
+
+      &lt;builtin-logicsheet&gt;
+        &lt;parameter name="prefix" value="xsp-response"/&gt;
+        &lt;parameter name="uri"
+          value="http://xml.apache.org/xsp/response/2.0"/&gt;
+        &lt;parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/&gt;
+      &lt;/builtin-logicsheet&gt;
+    &lt;/target-language&gt;
+  &lt;/component-instance&gt;
+&lt;/component-type&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+      
+<p align="justify">
+        Here, the markup language <i>prefix</i> and <i>uri</i>
+       are defined together with one or more
+       <i>supported programming languages</i>.
+      </p>
+
+      
+<p align="justify">
+        For each supported programming language, a corresponding
+       <i>core logicsheet</i> is defined as a URL pointing to
+       its code-generation stylesheet.
+      </p>
+
+      
+<a name="builtin-logicsheets">
+<!--anchor--></a>
+      
+<p align="justify">
+        Optionally, each supported programming language may define
+       one or more namespace-mapped <i>builtin logicsheets</i>.
+      </p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="xsp-language">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The XSP Markup Language</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     So far, programming and markup languages have been described
+     in general, without explicitly referring to the XSP language.
+   </p>
+
+   
+<p align="justify">
+     This section describes how the above described framework is
+     used to implement XSP in particular. For a description of
+     logicsheet authoring requirements for XSP in Java, see
+     <a href="logicsheet-concepts.html#java-logicsheets">
+       XSLT Logicsheets and XSP for Java.
+     </a>
+   
+</p>
+
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     The XSP syntax is being revised to allow for the omission of the
+     root <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code> element. This is convenient
+     for the (typical) case in which all logic has been conveniently
+     placed in logicsheets so that XSP pages do not need to embed any
+     code. In this case, there should be no need for the
+     <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code> element.
+   </i></font></td>
+</tr>
+</table>
+</p>
+
+   
+<a name="xsp-encoding">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Markup Encoding</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">Method <code><font face="courier, monospaced">getEncoding</font></code> is implemented by class
+     <a href="../../apidocs/org/apache/cocoon/components/language/markup/xsp/XSPMarkupLanguage.html">
+       <code><font face="courier, monospaced">XSPMarkupLanguage</font></code>
+     </a>
+     by retrieving the attribute named
+     <code><font face="courier, monospaced">encoding</font></code> in the root <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code> element.</p>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       In absence of a <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code> root element, the
+       encoding will be retrieved from an attribute named
+       <code><font face="courier, monospaced">xsp:encoding</font></code> present in the "user" root element.
+     </i></font></td>
+</tr>
+</table>
+</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="xsp-preprocessing">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Document Preprocessing</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       
+<code><font face="courier, monospaced">XSPMarkupLanguage</font></code> preprocesses its input document
+       by:
+     </p>
+
+     
+<blockquote>
+<ul>
+       
+<li>
+         Setting the root element <code><font face="courier, monospaced">file-name</font></code> attribute to the
+        <i>base</i> filename of its input source.
+       </li>
+       
+<li>
+         Setting the root element <code><font face="courier, monospaced">file-path</font></code> attribute to the
+        <i>base</i> directory name of its input source.
+       </li>
+       
+<li>
+         Setting the root element <code><font face="courier, monospaced">creation-date</font></code> attribute to the
+        current system time
+       </li>
+       
+<li>
+         Escaping text nodes according to the rules dictated by the
+        target programming language. This excludes text nodes enclosed
+        in <code><font face="courier, monospaced">&lt;xsp:logic&gt;</font></code> and <code><font face="courier, monospaced">&lt;xsp:expr&gt;</font></code>
+        elements, as they are to be output as code.
+       </li>
+     
+</ul>
+</blockquote>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       A feature to be added is collecting all text nodes under the document's
+       root element and replacing them by references to their relative index
+       position. This will allow for the generation of
+       <code><font face="courier, monospaced">contentHandler.characters</font></code> method calls that reference
+       <code><font face="courier, monospaced">char</font></code> arrays instead of constant <code><font face="courier, monospaced">String</font></code>'s.
+       In addition to saving execution time, this will result in decreased
+       program size because common substrings can be output by "reusing"
+       their containing character arrays along with their corresponding
+       offsets and lengths.
+     </i></font></td>
+</tr>
+</table>
+</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="xsp-dependencies">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Dependency Tracking</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       File dependencies passed to <code><font face="courier, monospaced">XSPMarkupLanguage</font></code> by
+       its <code><font face="courier, monospaced">AbstractMarkupLanguage</font></code> superclass are stored
+       in top-level <code><font face="courier, monospaced">&lt;xsp:dependency&gt;</font></code> elements.
+     </p>
+
+     
+<p align="justify">
+       These elements are used by XSP code-generation logicsheets to
+       populate the <code><font face="courier, monospaced">File</font></code> array defined by the generated
+       classes' <code><font face="courier, monospaced">AbstractServerPage</font></code> superclass.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="xsp-builtin">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>XSP Builtin Logicsheets</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       XSP for Java currently provides only 2 builtin logicsheets:
+       <code><font face="courier, monospaced">request</font></code> and <code><font face="courier, monospaced">response</font></code>, associated
+       with their corresponding Cocoon counterparts.
+     </p>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       A mechanism is needed for Cocoon to pass additional objects
+       to XSP pages. In particular, for the servlet execution
+       environment, access to servlet objects is a must.
+     </i></font></td>
+</tr>
+</table>
+</p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="dom-xsp">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The DOM-XSP Markup Language</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     The new, SAX-based XSP version for Cocoon is not backwards
+     compatible with its DOM-based former self.
+   </p>
+
+   
+<p align="justify">
+     In order to protect the existing DOM-based XSP code base,
+     a "new" markup language will be added that simply wraps
+     existing XSP version 1 pages, postprocessing their generated
+     documents to convert them into SAX events.
+   </p>
+
+   
+<p align="justify">
+     While this solution implies additional overhead, it provides
+     a simple path for migrating existing XSP pages.
+   </p>
+
+   
+<p align="justify">
+     In addition to this straight-forward mechanism, the new,
+     SAX-based XSP version will overload the <code><font face="courier, monospaced">xspExpr</font></code>
+     method to accept as argument a <code><font face="courier, monospaced">Node</font></code> expression
+     and transform it to equivalent SAX events.
+   </p>
+
+   
+<p align="justify">
+     For the long run, though, developers are strongly encouraged
+     to replace their "legacy" DOM pages and classes with equivalent,
+     faster SAX counterparts.
+   </p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="program-generator">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The Program Generator</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     The
+     <a href="../../apidocs/org/apache/cocoon/components/language/generator/ProgramGenerator.html">
+       <code><font face="courier, monospaced">ProgramGenerator</font></code>
+     </a>
+     interface exposes a single
+     <code><font face="courier, monospaced">load</font></code> method that takes as arguments a <code><font face="courier, monospaced">File</font></code>
+     pointing to a source XML document, as well as a <i>markup</i> and
+     <i>programming</i> language name pair.
+   </p>
+
+   
+<p align="justify">
+     This method is responsible for locating, loading and instantiating
+     a program derived from the given source document. Failing this,
+     the program is generated and stored in an external, persistent
+     <i>repository</i>.
+   </p>
+
+   
+<p align="justify">
+     Once instantiated, the program is kept in an in-memory cache for
+     speeding up subsequent requests.
+   </p>
+
+   
+<p align="justify">
+     For each request, the source XML document is checked for changes
+     and the program instance is queried for dependency changes so that
+     the program can be automatically regenerated and reloaded if needed.
+     This default behavior can be disabled by means of a sitemap
+     parameter.
+   </p>
+
+   
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+     Currently, the program <i>instance</i> (as opposed to the
+     program object itself) is queried for invalidating changes.
+     This should change as a consequence of defining a separate
+     <code><font face="courier, monospaced">Program</font></code> abstraction as part of the upcoming
+     addition of debugging support.
+   </i></font></td>
+</tr>
+</table>
+</p>
+
+   
+<p align="justify">
+     A default implementation of <code><font face="courier, monospaced">ProgramGenerator</font></code>
+     is provided that uses a
+     <a href="../../apidocs/org/apache/cocoon/components/store/FilesystemStore.html">
+       <code><font face="courier, monospaced">FilesystemStore</font></code>
+     </a>
+     as
+     repository:
+     <a href="../../apidocs/org/apache/cocoon/components/language/generator/ProgramGeneratorImpl.html">
+       <code><font face="courier, monospaced">ProgramGeneratorImpl</font></code>.
+     </a>
+   
+</p>
+
+   
+<a name="program-repository">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Program Repository</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       
+<code><font face="courier, monospaced">FilesystemStore</font></code> is an implementation of the
+       <code><font face="courier, monospaced">Store</font></code> interface that uses a filesystem,
+       hierarchical <i>directory</i> as its persistence
+       mechanism.
+     </p>
+
+     
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+       <code><font face="courier, monospaced">FilesystemStore</font></code> implements <code><font face="courier, monospaced">Store</font></code>
+       directly. A higher-level interface (<code><font face="courier, monospaced">PersistentStore</font></code>)
+       should be defined to accommodate other sensible persistent
+       storage mechanisms such as relational databases or object
+       databases like
+       <a href="http://www.ozone-db.org/">Ozone</a>.
+     </i></font></td>
+</tr>
+</table>
+</p>
+
+     
+<p align="justify">
+       
+<code><font face="courier, monospaced">FilesystemStore</font></code> expects the <code><font face="courier, monospaced">String</font></code>
+       representation of its <code><font face="courier, monospaced">key</font></code>'s to be <i>filenames</i>
+       relative to its directory root.
+     </p>
+
+     
+<p align="justify">
+       Objects returned by <code><font face="courier, monospaced">FilesystemStore</font></code>'s
+       <code><font face="courier, monospaced">get</font></code> method are <code><font face="courier, monospaced">File</font></code>'s pointing to
+       their corresponding entries (or <code><font face="courier, monospaced">null</font></code> if their
+       associated file doesn't exit).
+     </p>
+
+     
+<p align="justify">
+       
+<code><font face="courier, monospaced">FilesystemStore</font></code> stores Java objects according
+       to the following rules:
+     </p>
+
+     
+<blockquote>
+<ul>
+       
+<li>
+<code><font face="courier, monospaced">null</font></code> values generate empty directories</li>
+       
+<li>
+<code><font face="courier, monospaced">String</font></code> values are dumped to text files</li>
+       
+<li>All other <code><font face="courier, monospaced">Object</font></code>'s are serialized</li>
+     
+</ul>
+</blockquote>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+   
+<a name="program-reloading">
+<!--anchor--></a>
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Program Reloading</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+       Unless the <code><font face="courier, monospaced">auto-reload</font></code> sitemap option is in effect,
+       <code><font face="courier, monospaced">ProgramGeneratorImpl</font></code> will check whether program
+       instances implement interface <code><font face="courier, monospaced">Modifiable</font></code> in order
+       to assert whether they should be regenerated and reloaded.
+     </p>
+
+     
+<p align="justify">
+       Method <code><font face="courier, monospaced">load</font></code> uses its <code><font face="courier, monospaced">markupLanguageName</font></code> and
+       <code><font face="courier, monospaced">programmingLanguage</font></code> arguments to retrieve the corresponding
+       <a href="#named-components"><code><font face="courier, monospaced">NamedComponent</font></code></a>
+       instances.
+     </p>
+
+     
+<p align="justify">
+       In server pages mode, these parameters are set by the calling
+       <code><font face="courier, monospaced">ServerPagesGenerator</font></code> from parameters passed via
+       the sitemap <code><font face="courier, monospaced">&lt;process&gt;</font></code> section.
+     </p>
+
+     
+<p align="justify">
+       The appropriate <code><font face="courier, monospaced">MarkupLanguage</font></code> and
+       <code><font face="courier, monospaced">ProgrammingLanguage</font></code> instances are used to generate and
+       load a program for which an instance is created and then returned to
+       the calling environment.
+     </p>
+   
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="named-components">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Named Components</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+     In order to support pluggable markup and programming languages,
+     a new abstraction was added to Cocoon's <code><font face="courier, monospaced">arch</font></code>
+     core interfaces:
+     <a href="../../apidocs/org/apache/arch/named/NamedComponent.html">
+       <code><font face="courier, monospaced">NamedComponent</font></code>.
+     </a>
+   
+</p>
+
+   
+<p align="justify">
+     Interface <code><font face="courier, monospaced">NamedComponent</font></code> is simply an extension to
+     <a href="../../apidocs/org/apache/arch/Component.html">
+       <code><font face="courier, monospaced">Component</font></code>
+     </a>
+     that exposes a <code><font face="courier, monospaced">getName()</font></code>
+     method.
+   </p>
+
+   
+<p align="justify">
+     
+<code><font face="courier, monospaced">NamedComponent</font></code>'s belong to a collection of components
+     sharing the same Java type and are individually identified by a
+     name unique within each collection.
+   </p>
+
+   
+<p align="justify">
+     A
+     <a href="../../apidocs/org/apache/arch/named/NamedComponentManager.html">
+       <code><font face="courier, monospaced">NamedComponentManager</font></code>
+     </a>
+     is a component responsible
+     for storing and locating <code><font face="courier, monospaced">NamedComponent</font></code> instances.
+     This interface exposes the following methods:
+   </p>
+
+   
+<blockquote>
+<ul>
+     
+<li>
+<code><font face="courier, monospaced">getComponent</font></code>. Retrieve a <code><font face="courier, monospaced">NamedComponent</font></code>
+         instance given its <code><font face="courier, monospaced">type</font></code> and <code><font face="courier, monospaced">name</font></code>.
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">getTypes</font></code>. Return an <code><font face="courier, monospaced">Enumeration</font></code> of all
+         known <code><font face="courier, monospaced">NamedComponent</font></code> types.
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">getComponents</font></code>. Return an <code><font face="courier, monospaced">Enumeration</font></code> of
+         all <code><font face="courier, monospaced">NamedComponents</font></code> within a given <code><font face="courier, monospaced">type</font></code>.
+     </li>
+   
+</ul>
+</blockquote>
+
+   
+<p align="justify">
+     A default implementation is provided for this interface:
+     <a href="../../apidocs/org/apache/arch/named/NamedComponentImpl.html">
+       <code><font face="courier, monospaced">NamedComponentManagerImpl</font></code>.
+     </a>
+   
+</p>
+
+   
+<p align="justify">
+     Class
+     <a href="../../apidocs/org/apache/named/AbstractNamedComponent.html">
+       <code><font face="courier, monospaced">AbstractNamedComponent</font></code>
+     </a>
+     provides a base implementation
+     for <code><font face="courier, monospaced">NamedComponent</font></code> that extends
+     <a href="../../apidocs/org/apache/arch/Configurable.html">
+       <code><font face="courier, monospaced">Configurable</font></code>.
+     </a>
+     This class exposes the following methods:
+   </p>
+   
+   
+<blockquote>
+<ul>
+     
+<li>
+<code><font face="courier, monospaced">setConfiguration</font></code>.
+         Retrieve named-component sitemap configuration values
+         converting parameter name/value pairs into <code><font face="courier, monospaced">Parameters</font></code>
+         passed to subclasses for easier initialization
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">setParameters</font></code>.
+         An empty method to be overridden by subclasses for parameter-based
+         initialization
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">setAdditionalConfiguration</font></code>.
+         An empty method to be overridden by subclasses when parameter-based
+         initialization is not sufficient because there are nested
+         configuration elements in the corresponding sitemap entry
+     </li>
+     
+<li>
+<code><font face="courier, monospaced">getRequiredParameter</font></code>.
+         A static convenience method that returns a named parameter as
+         a <code><font face="courier, monospaced">String</font></code> throwing an
+         <code><font face="courier, monospaced">IllegalArgumentException</font></code>
+         if the parameter was not specified in the sitemap configuration
+     </li>
+   
+</ul>
+</blockquote>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="sitemap-configuration">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>XSP Sitemap Configuration</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>
+      The sitemap configuration shown here is likely to change in the
+      near future.
+    </i></font></td>
+</tr>
+</table>
+</p>
+
+    
+<p align="justify">
+      A (rather verbose) sitemap definition for XSP follows:
+    </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;component role="factory"
+           class="org.apache.avalon.NamedComponentManagerImpl"&gt;
+
+  &lt;component-type name="programming-language"&gt;
+    &lt;component-instance name="java"
+    class="org.apache.cocoon.components.language.programming.java.JavaLanguage"&gt;
+      &lt;parameter name="compiler"
+      value="org.apache.cocoon.components.language.programming.java.Javac"/&gt;
+      &lt;parameter name="code-formatter"
+      value="org.apache.cocoon.components.language.programming.java.JstyleFormatter"/&gt;
+      &lt;parameter name="class-loader"
+      value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/&gt;
+      &lt;parameter name="delete-sources" value="false"/&gt;
+    &lt;/component-instance&gt;
+  &lt;/component-type&gt;
+
+  &lt;component-type name="markup-language"&gt;
+    &lt;component-instance name="xsp"
+    class="org.apache.cocoon.components.language.markup.xsp.XSPMarkupLanguage"&gt;
+      &lt;parameter name="prefix" value="xsp"/&gt;
+      &lt;parameter name="uri" value="http://xml.apache.org/xsp"/&gt;
+
+      &lt;target-language name="java"&gt;
+        &lt;parameter name="core-logicsheet"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/&gt;
+
+        &lt;builtin-logicsheet&gt;
+          &lt;parameter name="prefix" value="xsp-request"/&gt;
+          &lt;parameter name="uri" value="http://xml.apache.org/xsp/request/2.0"/&gt;
+          &lt;parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/&gt;
+        &lt;/builtin-logicsheet&gt;
+
+        &lt;builtin-logicsheet&gt;
+          &lt;parameter name="prefix" value="xsp-response"/&gt;
+          &lt;parameter name="uri"
+          value="http://xml.apache.org/xsp/response/2.0"/&gt;
+          &lt;parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/&gt;
+        &lt;/builtin-logicsheet&gt;
+      &lt;/target-language&gt;
+    &lt;/component-instance&gt;
+  &lt;/component-type&gt;
+&lt;/component&gt;
+
+&lt;component role="program-generator"
+  class="org.apache.cocoon.components.language.generator.ProgramGeneratorImpl"&gt;
+  &lt;parameter name="repository" value="/tmp/repository"/&gt;
+  &lt;parameter name="auto-reload" value="true"/&gt;
+&lt;/component&gt;
+
+&lt;generator  name="serverpages"
+            class="org.apache.cocoon.generation.ServerPagesGenerator"/&gt;
+
+&lt;!--
+&lt;component
+  role="class-loader"
+  class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"
+/&gt;
+--&gt;
+
+&lt;sitemap&gt;
+  &lt;partition&gt;
+    &lt;process uri="simple-page.xsp" source="../samples/documents/simple-page.xsp"&gt;
+      &lt;generator name="serverpages"&gt;
+        &lt;!--
+        &lt;parameter name="markup-language" value="xsp"/&gt;
+        &lt;parameter name="programming-language" value="java"/&gt;
+        --&gt;
+      &lt;/generator&gt;
+      &lt;filter name="xslt"&gt;
+        &lt;parameter name="stylesheet" value="../samples/documents/simple-page.xsl"/&gt;
+      &lt;/filter&gt;
+      &lt;serializer name="html"&gt;
+        &lt;parameter name="contentType" value="text/html"/&gt;
+      &lt;/serializer&gt;
+    &lt;/process&gt;
+  &lt;/partition&gt;
+&lt;/sitemap&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td bgcolor="#0086b2"><img width="1" src="images/dot.gif" height="1"></td>
+</tr>
+<tr>
+<td align="center"><font size="-1" face="arial,helvetica,sanserif" color="#0086b2"><i>Copyright &copy; 1999-2002 The Apache Software Foundation. All Rights Reserved.</i></font></td>
+</tr>
+</table>
+</body>
+</html>

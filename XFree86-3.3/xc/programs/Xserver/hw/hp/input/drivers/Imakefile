@@ -1,0 +1,36 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/12/26 09:00:56 kaleb $
+
+#include <Server.tmpl>
+
+.c.o:
+	$(RM) $@
+	$(CC) -c $(CFLAGS) $(PICFLAGS) $*.c
+
+DRVRLIBDIR = $(LIBDIR)/extensions
+PICFLAGS = PositionIndependentCFlags
+SRCS = hp7lc2k.c hp7lc2m.c hil_driver.c
+INCLUDES = -I. -I.. -I../../../../../../include \
+           -I../../../../../../include/extensions
+
+#define DriverTarget(name)						@@\
+AllTarget(name.sl)							@@\
+									@@\
+name.sl:  name.o							@@\
+	$(RM) $@~							@@\
+	$(LD) -o $@~ -b name.o						@@\
+	chmod a-w $@~							@@\
+	$(RM) $@ 							@@\
+	$(MV) $@~ $@							@@\
+									@@\
+InstallTarget(install,name.sl,$(INSTPGMFLAGS),$(DRVRLIBDIR))		@@\
+InstallTarget(install,XHPKeymaps,$(INSTPGMFLAGS),$(LIBDIR))		@@\
+InstallTarget(install,X0screens,$(INSTPGMFLAGS),$(LIBDIR))		@@\
+									@@\
+clean::									@@\
+	$(RM) name.sl
+
+DriverTarget(hp7lc2k)
+DriverTarget(hp7lc2m)
+DriverTarget(hil_driver)
+
+DependTarget()

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1"?><!-- -*- sgml -*- -->
+<xsp:page
+   language="java"
+   xmlns:xsp="http://apache.org/xsp"
+   xmlns:xsp-formval="http://apache.org/xsp/form-validator/2.0"
+   xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+>
+
+   <page>
+
+      <title>Car Reservation</title>
+      <content>
+
+      <para>
+         Informal validation results <xsp:expr><xsp-formval:results/></xsp:expr>
+      </para>
+
+       <form action="test" method="POST">
+       <!-- use this to get a clue if the user had a chance to fill in
+            any date already -->
+       <input type="hidden" name="visited" value="true"/>
+       <xsp:logic>
+          boolean userHasSeenForm = (<xsp-request:get-parameter name="visited"/>!=null);
+       </xsp:logic>
+      <para>
+	  How many persons should the car seat? 
+	  <input type="TEXT" name="persons" size="2">
+	     <xsp:attribute name="value"><xsp-request:get-parameter name="persons" default=""/></xsp:attribute>
+	  </input>
+	  <xsp-formval:descriptor name="context:///docs/samples/formvalidation/descriptor.xml" constraint-set="car-reservation">
+	     <xsp:logic>
+	         if (userHasSeenForm) {
+		   if (<xsp-formval:is-toosmall name="persons"/> ) {
+		 	<b> The smallest available car seats <xsp-formval:get-attribute parameter="persons" name="min"/></b>
+	           } else if ( <xsp-formval:is-toolarge name="persons"/> ) {
+		 	<b> The largest available car seats <xsp-formval:get-attribute parameter="persons" name="max"/></b>
+	           } else if (<xsp-formval:is-error name="persons"/> ) {
+		 	<b> Some error occured. Your input is not correct. </b>
+                   };
+		 };
+	     </xsp:logic>
+	  </xsp-formval:descriptor>
+      </para>
+
+	  <xsp-formval:descriptor name="context:///docs/samples/formvalidation/descriptor.xml" constraint-set="car-reservation">
+      <para>
+	     <xsp-formval:validate name="deposit">
+	     	Please enter your deposit EUR 
+		<input type="TEXT" name="deposit" size="10">
+		  <xsp:attribute
+		  name="value"><xsp-request:get-parameter name="deposit" default=""/></xsp:attribute>
+		</input>
+		<xsp:logic>
+	         if (userHasSeenForm) {
+		    if ( <xsp-formval:is-null/>) {
+		 	 <b> You need to specify a deposit </b>
+	            } else if ( <xsp-formval:is-toosmall/> ) {
+		 	 <b> The deposit has to be at least EUR <xsp-formval:get-attribute name="min"/></b>
+	            } else if ( <xsp-formval:is-toolarge/> ) {
+		 	 <b> The deposit has to be at most EUR <xsp-formval:get-attribute name="max"/></b>
+	            } else if (<xsp-formval:is-notpresent/> ) {
+		 	 <b></b>
+	            } else if ( <xsp-formval:is-error/>) {
+		 	 <b> Some error occured. Your input is not correct. </b>
+                    };
+		 };
+	     </xsp:logic>
+	     </xsp-formval:validate><br/>
+      </para>
+
+      <para>
+	     <xsp-formval:validate name="email">
+	     	Please enter your email
+		<input type="TEXT" name="email" size="50">
+		  <xsp:attribute
+		  name="value"><xsp-request:get-parameter name="email" default=""/></xsp:attribute>
+		</input>
+
+		<xsp:logic>
+	         if (userHasSeenForm) {
+		    if ( <xsp-formval:is-nomatch/> ) {
+		 	 <b> This does not seem to be a valid email
+		    address. Expected <pre><xsp-formval:get-attribute
+		    parameter="email" name="matches-regex"/></pre></b>
+	            } else if ( <xsp-formval:is-toolarge/> ) {
+		 	 <b> Only addresses with up to <xsp-formval:get-attribute parameter="email" name="max-len"/> characters are accepted</b>
+	            } else if (<xsp-formval:is-notpresent/> ) {
+		 	 <b></b>
+	            } else if ( <xsp-formval:is-error/>) {
+		 	 <b> Some error occured. Your input is not correct. </b>
+                    };
+                  };
+	     </xsp:logic>
+	     </xsp-formval:validate><br/>
+      </para>
+	     
+	  </xsp-formval:descriptor>
+	  <input type="submit" name="submit" value="submit"/>
+      </form>
+
+      </content>
+   </page>
+</xsp:page>

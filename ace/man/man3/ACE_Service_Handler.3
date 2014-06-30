@@ -1,0 +1,83 @@
+.TH ACE_Service_Handler 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Service_Handler \- This base class defines the interface for the \fBACE_Asynch_Acceptor\fR to call into when new connection are accepted. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Handler\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Service_Handler\fR (void)"
+.br
+.RI "\fIA do nothing constructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Service_Handler\fR (void)"
+.br
+.RI "\fIVirtual destruction.\fR"
+.ti -1c
+.RI "virtual void \fBopen\fR (ACE_HANDLE new_handle, \fBACE_Message_Block\fR &message_block)"
+.br
+.ti -1c
+.RI "virtual void \fBaddresses\fR (const \fBACE_INET_Addr\fR &remote_address, const \fBACE_INET_Addr\fR &local_address)"
+.br
+.RI "\fICalled by \fBACE_Asynch_Acceptor\fR to pass the addresses of the new connections.\fR"
+.ti -1c
+.RI "virtual void \fBact\fR (const void *)"
+.br
+.RI "\fICalled by \fBACE_Asynch_Acceptor\fR to pass the act.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Asynch_Acceptor< ACE_Service_Handler >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This base class defines the interface for the \fBACE_Asynch_Acceptor\fR to call into when new connection are accepted.
+.PP
+.PP
+ Subclasses of this class will fill in appropriate methods to define application specific behavior. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Service_Handler::ACE_Service_Handler (void)
+.PP
+A do nothing constructor.
+.PP
+.SS ACE_Service_Handler::~ACE_Service_Handler (void)\fC [virtual]\fR
+.PP
+Virtual destruction.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Service_Handler::act (const void *)\fC [virtual]\fR
+.PP
+Called by \fBACE_Asynch_Acceptor\fR to pass the act.
+.PP
+.SS void ACE_Service_Handler::addresses (const \fBACE_INET_Addr\fR & remote_address, const \fBACE_INET_Addr\fR & local_address)\fC [virtual]\fR
+.PP
+Called by \fBACE_Asynch_Acceptor\fR to pass the addresses of the new connections.
+.PP
+.SS void ACE_Service_Handler::open (ACE_HANDLE new_handle, \fBACE_Message_Block\fR & message_block)\fC [virtual]\fR
+.PP
+<open> is called by \fBACE_Asynch_Acceptor\fR to initialize a new instance of ACE_Service_Handler that has been created after the a new connection is accepted. The handle for the new connection is passed along with an initial data that may have shown up. 
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class \fBACE_Asynch_Acceptor\fR\fC [friend]\fR
+.PP
+The Acceptor is the factory and therefore should have special privileges.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

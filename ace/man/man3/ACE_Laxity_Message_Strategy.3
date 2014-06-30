@@ -1,0 +1,65 @@
+.TH ACE_Laxity_Message_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Laxity_Message_Strategy \- Laxity based message priority strategy. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Message_Block.h>\fR
+.PP
+Inherits \fBACE_Dynamic_Message_Strategy\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Laxity_Message_Strategy\fR (u_long static_bit_field_mask = 0x3FFUL, u_long static_bit_field_shift = 10, u_long dynamic_priority_max = 0x3FFFFFUL, u_long dynamic_priority_offset = 0x200000UL)"
+.br
+.RI "\fICtor, with all arguments defaulted.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Laxity_Message_Strategy\fR (void)"
+.br
+.RI "\fIvirtual dtor.\fR"
+.ti -1c
+.RI "virtual void \fBconvert_priority\fR (\fBACE_Time_Value\fR &priority, const \fBACE_Message_Block\fR &mb)"
+.br
+.RI "\fIDynamic priority conversion function based on laxity.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the strategy.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Laxity based message priority strategy.
+.PP
+.PP
+ Assigns dynamic message priority according to laxity (time to deadline minus worst case execution time). The message priority is divided into high and low order bit fields. The high order bit field is used for dynamic message priority, which is updated whenever the convert_priority (...) method is called. The low order bit field is used for static message priority and is left unchanged. The partitioning of the priority value into high and low order bit fields is done according to the arguments passed to the strategy object's constructor. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Laxity_Message_Strategy::ACE_Laxity_Message_Strategy (u_long static_bit_field_mask = 0x3FFUL, u_long static_bit_field_shift = 10, u_long dynamic_priority_max = 0x3FFFFFUL, u_long dynamic_priority_offset = 0x200000UL)
+.PP
+Ctor, with all arguments defaulted.
+.PP
+.SS ACE_Laxity_Message_Strategy::~ACE_Laxity_Message_Strategy (void)\fC [virtual]\fR
+.PP
+virtual dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Laxity_Message_Strategy::convert_priority (\fBACE_Time_Value\fR & priority, const \fBACE_Message_Block\fR & mb)\fC [virtual]\fR
+.PP
+Dynamic priority conversion function based on laxity.
+.PP
+Reimplemented from \fBACE_Dynamic_Message_Strategy\fR.
+.SS void ACE_Laxity_Message_Strategy::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of the strategy.
+.PP
+Reimplemented from \fBACE_Dynamic_Message_Strategy\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

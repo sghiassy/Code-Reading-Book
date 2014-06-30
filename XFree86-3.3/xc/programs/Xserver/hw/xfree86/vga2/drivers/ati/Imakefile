@@ -1,0 +1,40 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/09/28 17:26:22 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga2/drivers/ati/Imakefile,v 3.7 1996/12/23 06:54:19 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = ati_driver.c ati_bank.s
+
+OBJS = ati_driver.o ati_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) -I$(XF86SRC) \
+           -I../../../vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if XF86Vga2Banked
+BANKEDDEFINES = -DBANKEDMONOVGA
+#endif
+
+DEFINES = -DMONOVGA $(BANKEDDEFINES)
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+
+NormalRelocatableTarget(ati_drv, $(OBJS))
+
+LinkSourceFile(regati.h,$(VGADRIVERSRC)/ati)
+LinkSourceFile(ati_driver.c,$(VGADRIVERSRC)/ati)
+ObjectFromSpecialAsmSource(ati_bank,$(VGADRIVERSRC)/ati/bank,NullParameter)
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga2/ati)
+
+DependTarget()

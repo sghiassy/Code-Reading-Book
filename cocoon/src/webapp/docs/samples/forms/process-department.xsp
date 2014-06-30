@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:esql="http://apache.org/cocoon/SQL/v2"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+>
+  <xsp:logic>
+    String process = null;
+    String name = null;
+    int currId = -1;
+  </xsp:logic>
+  <page>
+    <xsp:logic>
+      process = <xsp-request:get-parameter name="process"/>;
+      name = <xsp-request:get-parameter name="name"/>;
+    </xsp:logic>
+    <title><xsp:expr>process</xsp:expr> Department Processed</title>
+    <content>
+      <esql:connection>
+        <esql:pool>personnel</esql:pool>
+        <esql:execute-query>
+          <esql:query>
+	    select max(id) as maxid from department
+	  </esql:query>
+          <esql:results>
+	    <esql:row-results>
+	      <xsp:logic>
+                currId = <esql:get-int column="maxid"/>;
+	      </xsp:logic>
+              <esql:execute-query>
+                <esql:query>
+                  insert into department (id, name) values (
+                    (<esql:parameter><xsp:expr>currId</xsp:expr></esql:parameter> + 1),
+                    <esql:parameter><xsp:expr>name</xsp:expr></esql:parameter>
+                  )
+                </esql:query>
+              </esql:execute-query>
+	    </esql:row-results>
+          </esql:results>
+        </esql:execute-query>
+      </esql:connection>
+
+      <para><xsp:expr>name</xsp:expr> added</para>
+      <a href="../welcome">Back to the welcome page</a>
+    </content>
+  </page>
+</xsp:page>

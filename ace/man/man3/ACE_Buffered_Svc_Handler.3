@@ -1,0 +1,128 @@
+.TH ACE_Buffered_Svc_Handler 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Buffered_Svc_Handler \- Defines the interface for a service that exchanges data with its connected peer and supports buffering. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Svc_Handler.h>\fR
+.PP
+Inherits \fBACE_Svc_Handler< ACE_PEER_STREAM_2,ACE_SYNCH_USE >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Buffered_Svc_Handler\fR (\fBACE_Thread_Manager\fR *thr_mgr = 0, \fBACE_Message_Queue\fR<ACE_SYNCH_USE> *mq = 0, \fBACE_Reactor\fR *reactor = ACE_Reactor::instance (), size_t max_buffer_size = 0, \fBACE_Time_Value\fR *relative_timeout = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Buffered_Svc_Handler\fR (void)"
+.br
+.RI "\fIDestructor, which calls <flush>.\fR"
+.ti -1c
+.RI "virtual int \fBput\fR (\fBACE_Message_Block\fR *message_block, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBflush\fR (void)"
+.br
+.RI "\fIFlush the , which writes all the queued s to the <PEER_STREAM>.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_timeout\fR (\fBconst\fR \fBACE_Time_Value\fR &time, \fBconst\fR void *)"
+.br
+.RI "\fIThis method is not currently implemented -- this is where the integration with the <Reactor> would occur.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) \fBconst\fR"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBmaximum_buffer_size_\fR"
+.br
+.RI "\fIMaximum size the <Message_Queue> can be before we have to flush the buffer.\fR"
+.ti -1c
+.RI "size_t \fBcurrent_buffer_size_\fR"
+.br
+.RI "\fICurrent size in bytes of the <Message_Queue> contents.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBnext_timeout_\fR"
+.br
+.RI "\fITimeout value used to control when the buffer is flushed.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBinterval_\fR"
+.br
+.RI "\fIInterval of the timeout.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR* \fBtimeoutp_\fR"
+.br
+.RI "\fITimeout pointer.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL>  template class ACE_Buffered_Svc_Handler
+Defines the interface for a service that exchanges data with its connected peer and supports buffering.
+.PP
+.PP
+ The buffering feature makes it possible to queue up  in an  until (1) the queue is "full" or (2) a period of time elapses, at which point the queue is "flushed" via <sendv_n> to the peer. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> ACE_Buffered_Svc_Handler<, >::ACE_Buffered_Svc_Handler<, > (\fBACE_Thread_Manager\fR * thr_mgr = 0, \fBACE_Message_Queue\fR< ACE_SYNCH_USE >* mq = 0, \fBACE_Reactor\fR * reactor = ACE_Reactor::instance (), size_t max_buffer_size = 0, \fBACE_Time_Value\fR * relative_timeout = 0)
+.PP
+Constructor initializes the <thr_mgr> and <mq> by passing them down to the  base class. The <reactor> is passed to the . The <max_buffer_size> and <relative_timeout> are used to determine at what point to flush the <mq>. By default, there's no buffering at all. The <relative_timeout> value is interpreted to be in a unit that's relative to the current time returned by . 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> ACE_Buffered_Svc_Handler<, >::~ACE_Buffered_Svc_Handler<, > (void)\fC [virtual]\fR
+.PP
+Destructor, which calls <flush>.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Buffered_Svc_Handler<, >::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Svc_Handler\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Buffered_Svc_Handler<, >::flush (void)\fC [virtual]\fR
+.PP
+Flush the , which writes all the queued s to the <PEER_STREAM>.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Buffered_Svc_Handler<, >::handle_timeout (\fBconst\fR \fBACE_Time_Value\fR & time, \fBconst\fR void * arg)\fC [virtual]\fR
+.PP
+This method is not currently implemented -- this is where the integration with the <Reactor> would occur.
+.PP
+Reimplemented from \fBACE_Svc_Handler\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Buffered_Svc_Handler<, >::put (\fBACE_Message_Block\fR * message_block, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Insert the  chain rooted at <message_block> into the  with the designated <timeout>. The <flush> method will be called if this <put> causes the number of bytes to exceed the maximum buffer size or if the timeout period has elapsed. 
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> size_t ACE_Buffered_Svc_Handler<, >::current_buffer_size_\fC [protected]\fR
+.PP
+Current size in bytes of the <Message_Queue> contents.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBACE_Time_Value\fR ACE_Buffered_Svc_Handler<, >::interval_\fC [protected]\fR
+.PP
+Interval of the timeout.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> size_t ACE_Buffered_Svc_Handler<, >::maximum_buffer_size_\fC [protected]\fR
+.PP
+Maximum size the <Message_Queue> can be before we have to flush the buffer.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBACE_Time_Value\fR ACE_Buffered_Svc_Handler<, >::next_timeout_\fC [protected]\fR
+.PP
+Timeout value used to control when the buffer is flushed.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBACE_Time_Value\fR * ACE_Buffered_Svc_Handler<, >::timeoutp_\fC [protected]\fR
+.PP
+Timeout pointer.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

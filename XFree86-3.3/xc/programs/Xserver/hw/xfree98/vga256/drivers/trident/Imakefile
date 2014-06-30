@@ -1,0 +1,76 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/vga256/drivers/trident/Imakefile,v 3.6.2.1 1997/05/03 09:50:42 dawes Exp $
+#include <Server.tmpl>
+
+#ifdef i386Architecture
+TRIDENTSRCS = t89_bank.s
+TRIDENTOBJS = t89_bank.o
+#else
+TRIDENTSRCS = t89_bank.c
+TRIDENTOBJS = t89_bank.o
+#endif
+
+SRCS = t89_driver.c $(TRIDENTSRCS) tgui_curs.c tgui_accel.c tguimaccel.c \
+	tgui_oldacl.c tguimoldacl.c pc98_tgui.c
+
+OBJS = t89_driver.o $(TRIDENTOBJS) tgui_curs.o tgui_accel.o tguimaccel.o \
+	tgui_oldacl.o tguimoldacl.o pc98_tgui.o
+
+DEFINES = -DPSZ=8 -DPC98 -DPC98_TGUI
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/cfb \
+           -I../../trident -I../../../xaa -I$(FONTINCSRC) \
+           -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(tvga89_drv,$(OBJS))
+
+#if !XF86LinkKit
+LinkSourceFile(bank.s,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(t89_driver.c,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(t89_driver.h,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(tgui_curs.c,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(tgui_accel.c,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(tgui_drv.h,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(tgui_ger.h,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(tgui_mmio.h,$(XF86SRC)/vga256/drivers/tvga8900)
+LinkSourceFile(tgui_oldacl.c,$(XF86SRC)/vga256/drivers/tvga8900)
+#endif
+
+#ifdef i386Architecture
+ObjectFromSpecialAsmSource(t89_bank,bank,NullParameter)
+#else
+ObjectFromSpecialSource(t89_bank,bankc,NullParameter)
+#endif
+
+ObjectFromSpecialSource(tguimaccel, tgui_accel, -DTRIDENT_MMIO)
+ObjectFromSpecialSource(tguimoldacl, tgui_oldacl, -DTRIDENT_MMIO)
+
+InstallLinkKitNonExecFile(t89_driver.c,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(t89_driver.h,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+#ifdef i386Architecture
+InstallLinkKitNonExecFile(bank.s,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+#else
+InstallLinkKitNonExecFile(bankc.c,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+#endif
+InstallLinkKitNonExecFile(tgui_curs.c,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(tgui_accel.c,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(tgui_oldacl.c,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(tgui_drv.h,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(tgui_ger.h,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(tgui_mmio.h,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(Imakefile,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(pc98_tgui.h,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+InstallLinkKitNonExecFile(pc98_tgui.c,$(XF98LINKKITDIR)/drivers98/vga256/trident)
+
+DependTarget()
+

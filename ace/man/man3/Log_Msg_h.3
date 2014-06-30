@@ -1,0 +1,167 @@
+.TH Log_Msg_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Log_Msg_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/config-all.h"\fR
+.br
+\fC#include "ace/Log_Record.h"\fR
+.br
+\fC#include "ace/OS_Log_Msg_Attributes.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Log_Msg\fR"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBACE_ASSERT\fR(X) "
+.br
+.ti -1c
+.RI "#define \fBACE_HEX_DUMP\fR(X) "
+.br
+.ti -1c
+.RI "#define \fBACE_RETURN\fR(Y) "
+.br
+.ti -1c
+.RI "#define \fBACE_ERROR_RETURN\fR(X, Y) "
+.br
+.ti -1c
+.RI "#define \fBACE_ERROR\fR(X) "
+.br
+.ti -1c
+.RI "#define \fBACE_DEBUG\fR(X) "
+.br
+.ti -1c
+.RI "#define \fBACE_ERROR_INIT\fR(VALUE, FLAGS) "
+.br
+.ti -1c
+.RI "#define \fBACE_ERROR_BREAK\fR(X)   { ACE_ERROR (X); break; }"
+.br
+.ti -1c
+.RI "#define \fBACE_LOG_MSG\fR  ACE_Log_Msg::instance ()"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBLog_Msg.h\fR,v 4.96 2001/08/25 15:29:37 schmidt Exp
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Douglas C. Schmidt <schmidt@cs.wustl.edu>
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define ACE_ASSERT(X)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  do { if(!(X)) { \
+  int __ace_error = ACE_OS::last_error (); \
+  ACE_Log_Msg *ace___ = ACE_Log_Msg::instance (); \
+  ace___->set (__FILE__, __LINE__, -1, __ace_error, ace___->restart (), \
+               ace___->msg_ostream (), ace___->msg_callback ()); \
+  ace___->log (LM_ERROR, ACE_LIB_TEXT ("ACE_ASSERT: file %N, line %l assertion failed for '%s'.%a\n"), #X, -1); \
+  } } while (0)
+.fi
+.SS #define ACE_DEBUG(X)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  do { \
+    int __ace_error = ACE_OS::last_error (); \
+    ACE_Log_Msg *ace___ = ACE_Log_Msg::instance (); \
+    ace___->conditional_set (__FILE__, __LINE__, 0, __ace_error); \
+    ace___->log X; \
+  } while (0)
+.fi
+.SS #define ACE_ERROR(X)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  do { \
+    int __ace_error = ACE_OS::last_error (); \
+    ACE_Log_Msg *ace___ = ACE_Log_Msg::instance (); \
+    ace___->conditional_set (__FILE__, __LINE__, -1, __ace_error); \
+    ace___->log X; \
+  } while (0)
+.fi
+.SS #define ACE_ERROR_BREAK(X)  { ACE_ERROR (X); break; }
+.PP
+.SS #define ACE_ERROR_INIT(VALUE, FLAGS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  do { \
+    ACE_Log_Msg *ace___ = ACE_Log_Msg::instance (); \
+    ace___->set_flags (FLAGS); ace___->op_status (VALUE); \
+  } while (0)
+.fi
+.SS #define ACE_ERROR_RETURN(X, Y)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  do { \
+    int __ace_error = ACE_OS::last_error (); \
+    ACE_Log_Msg *ace___ = ACE_Log_Msg::instance (); \
+    ace___->conditional_set (__FILE__, __LINE__, Y, __ace_error); \
+    ace___->log X; \
+    return Y; \
+  } while (0)
+.fi
+.SS #define ACE_HEX_DUMP(X)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  do { \
+    int __ace_error = ACE_OS::last_error (); \
+    ACE_Log_Msg *ace___ = ACE_Log_Msg::instance (); \
+    ace___->conditional_set (__FILE__, __LINE__, 0, __ace_error); \
+    ace___->log_hexdump X; \
+  } while (0)
+.fi
+.SS #define ACE_LOG_MSG  ACE_Log_Msg::instance ()
+.PP
+.SS #define ACE_RETURN(Y)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  do { \
+    int __ace_error = ACE_OS::last_error (); \
+    ACE_Log_Msg *ace___ = ACE_Log_Msg::instance (); \
+    ace___->set (__FILE__, __LINE__, Y, __ace_error, ace___->restart (), \
+                 ace___->msg_ostream (), ace___->msg_callback ()); \
+    return Y; \
+  } while (0)
+.fi
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

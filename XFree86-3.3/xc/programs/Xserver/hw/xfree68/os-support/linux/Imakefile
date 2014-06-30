@@ -1,0 +1,60 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/10/19 19:10:59 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree68/os-support/linux/Imakefile,v 3.2 1996/12/27 06:52:58 dawes Exp $
+#include <Server.tmpl>
+
+#if BuildXInputExt
+# if JoystickSupport
+	JOYSTICK_SRC = lnx_jstk.c
+# endif
+# if BuildDynamicLoading
+SHARED_CFLAGS = PositionIndependentCFlags
+# else
+#  if JoystickSupport
+	JOYSTICK_OBJ = lnx_jstk.o
+#  endif
+# endif
+#endif
+
+SRCS = lnx_init.c lnx_video.c IO_utils.c lnx_io.c bios_devmem.c mapVT_noop.c \
+       VTsw_usl.c std_kbdEv.c posix_tty.c std_mouse.c std_mseEv.c $(JOYSTICK_SRC)
+
+OBJS = lnx_init.o lnx_video.o IO_utils.o lnx_io.o bios_devmem.o mapVT_noop.o \
+       VTsw_usl.o std_kbdEv.o posix_tty.o std_mouse.o std_mseEv.o $(JOYSTICK_OBJ)
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+INIT_DEFINES = -DUSE_DEV_FB
+
+SpecialCObjectRule(lnx_init,NullParameter,$(INIT_DEFINES))
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+
+#if BuildXInputExt
+# if BuildDynamicLoading
+#  if JoystickSupport
+AllTarget(lnx_jstk.o)
+SpecialObjectRule(lnx_jstk.o,lnx_jstk.c,$(SHARED_CFLAGS))
+#  endif
+# endif
+#endif
+
+LinkSourceFile(lnx_init.c,$(XF86OSSRC)/linux)
+LinkSourceFile(lnx_io.c,$(XF86OSSRC)/linux)
+LinkSourceFile(lnx_jstk.c,$(XF86OSSRC)/linux)
+LinkSourceFile(lnx_video.c,$(XF86OSSRC)/linux)
+
+ObjectFromSpecialSource(bios_devmem,$(XF86OSSRC)/shared/bios_devmem,/**/)
+ObjectFromSpecialSource(IO_utils,$(XF86OSSRC)/shared/IO_utils,/**/)
+ObjectFromSpecialSource(mapVT_noop,$(XF86OSSRC)/shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(VTsw_usl,$(XF86OSSRC)/shared/VTsw_usl,/**/)
+ObjectFromSpecialSource(std_kbdEv,$(XF86OSSRC)/shared/std_kbdEv,/**/)
+ObjectFromSpecialSource(posix_tty,$(XF86OSSRC)/shared/posix_tty,/**/)
+ObjectFromSpecialSource(std_mouse,$(XF86OSSRC)/shared/std_mouse,/**/)
+ObjectFromSpecialSource(std_mseEv,$(XF86OSSRC)/shared/std_mseEv,/**/)
+
+DependTarget()

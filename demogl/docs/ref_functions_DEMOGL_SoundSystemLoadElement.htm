@@ -1,0 +1,142 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemLoadElement</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemLoadElement</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemLoadElement</h4>
+<dd>DEMOGL_SoundSystemLoadElement loads a sound element into the sound system so it can be used for playing sound.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemLoadElement(
+	<b>const char</b> *<i>pszFilename</i>,
+	<b>const int</b> <i>iElementType</i>,
+	<b>const char</b> *<i>pszElementScriptID</i>,
+	<b>const bool</b> <i>bUses3D</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>pszFilename</i>
+	<dd>Pointer to a zero-terminated string which contains the filename, inclusive path, of the file which contains the sound element
+		data. When constructing the path, keep in mind the datafile/datadir specific settings of DemoGL, see:
+		<a HREF="ref_functions_DEMOGL_SetVariable.htm" target="main">DEMOGL_SetVariable(3)</a>.
+	<dt><i>iElementType</i>
+	<dd>Specifies of which type the to be loaded sound element is so the sound system can use the correct logic to play the sound.
+		iElementType can be one of the following sound element types:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Sound element type</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_MP3ELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element stored in the MP3 standard, i.e. MPEG v1.0 and v2.0 layer3.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_MODELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element stored in one of the following formats: MOD, XM, IT, S3M or MTM.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_SAMPLEELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">
+				Sound element stored in the standard windows PCM format, or compressed with a custom CODEC.
+				When you use a custom CODEC, this CODEC is required to be installed on the user's computer for 
+				the WAV to be decoded. So, you should either distribute the CODEC with your 
+				software, or use a CODEC that comes with Windows (eg. Microsoft ADPCM).
+			</td>
+		</tr>
+		</table>
+		<p>
+	<dt><i>pszElementScriptID</i>
+	<dd>Pointer to a zero-terminated string which contains the ElementScriptID that should be associated with the
+		sound element that should be loaded. When <b>DEMOGL_SoundSystemLoadElement</b> succeeds, script commands
+		can interact with the loaded sound element, refering to it by using <i>pszElementScriptID</i>. The ElementScriptID is
+		very important as it is used as a global reference to the sound element both in the script and from code. By specifying
+		the same ElementScriptID for a sound element as a previous loaded, but not freed, sound element, the reference counter
+		of that already loaded element will be increased and no loading takes place, but the caller will receive the ElementCodeID
+		of that previous loaded sound element. When you specify a <i>different</i> ElementScriptID as a sound element previously
+		loaded, but <i>pszFilename</i> is identical to that of the previously loaded soundelement, the filedata will still be
+		loaded and threated as a new sound element. This way, you can load the same data more than once with for example with
+		and without 3D support, specifying different <i>bUses3D</i> values and different <i>pszElementScriptID</i> values.
+	<dt><i>bUses3D</i>
+	<dd>Specifies if this sound element will be usable with 3D sound functionality (true) or not (false). When <i>bUses3D</i>
+		is <i>true</i>, panning and volume are related to the 3D position of the sound element and the listener and simple
+		panning and volume functions will not have any effect on the sound element. The element is then 'loaded with 3D enabled'.
+		When <i>bUses3D</i> is <i>false</i>	you can set panning and volume with the simple channel API functions for setting 
+		panning and volume, but 3D functionality will not have any effect on the sound element's play, it will generate an error. 
+		Once set, this can't be changed.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns the ElementCodeID.<br>
+	If the function fails, it returns one of the following error codes:
+	<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Error code</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_COULDNTLOAD</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element couldn't be loaded, probably filename related.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_ELEMENTSTOREFULL</td>
+			<td WIDTH="70%" VALIGN="TOP">
+				The internal store for sound elements is full. See
+				<a HREF="ref_definitionsanddefaults.htm" target="main">Definitions and defaults</a> for the maximum amount of loadable
+				sound elements at one time.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_INITOFELEMENTFAILED</td>
+			<td WIDTH="70%" VALIGN="TOP">The initialisation of the sound element failed. Errorcode of the underlying sound library
+				is logged on the system console for in depth details. These errorcodes are defined in DemoGL_Bass.h.
+			</td>
+		</tr>
+		</table>	
+	<p>
+<dt><b>Remarks.</b>
+<dd>Pay attention which sound element type you specify when you try to load a sound element. ElementCodeID's are unique and can be used
+	to refer to a sound element in the DemoGL API calls related to sound elements. When you don't need a sound element anymore, remove
+	it from the system by <a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm" target="main">DEMOGL_SoundSystemFreeElement</a>.
+	Do not load sound elements with <a HREF="ref_functions_DEMOGL_FileLoad.htm" target="main">DEMOGL_FileLoad</a>. When you have specified
+	<i>bUses3D</i> as true with a sound element and you want to use that sound data also as a non-3D sound, load the file again as a
+	different sound element, and specify a different <i>pszElementScriptID</i> with the new sound element. References to the same
+	sound element, caused by loading the same data specifying the same <i>pszElementScriptID</i> will be decreased when
+	<a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm" target="main">DEMOGL_SoundSystemFreeElement</a> is called or the
+	FREE[elementtype] command is used with the _SOUNDSYSTEM object in the script.
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_FileLoad.htm" target="main">DEMOGL_FileLoad</a>, 
+	<a HREF="ref_functions_DEMOGL_SetVariable.htm" target="main">DEMOGL_SetVariable(3)</a>,
+	<a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm" target="main">DEMOGL_SoundSystemFreeElement</a>,
+	<a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm" target="main">_SOUNDSYSTEM commands</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 18-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

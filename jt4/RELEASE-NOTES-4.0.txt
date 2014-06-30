@@ -1,0 +1,218 @@
+                     Apache Tomcat Version 4.0
+                     =========================
+                            Release Notes
+                            =============
+
+$Id: RELEASE-NOTES-4.0.txt,v 1.6 2001/09/18 01:09:37 craigmcc Exp $
+
+
+============
+INTRODUCTION:
+============
+
+
+This document describes the changes that have been made in the current
+release candidate release of Apache Tomcat, relative to the previous release.
+The release notes for all prior releases of Tomcat 4.0 are also included, for
+your reference.
+
+Bug reports should be entered at the bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please report bugs and feature requests under product name "Tomcat 4".
+
+
+
+============
+NEW FEATURES:
+============
+
+
+--------------------
+General New Features:
+--------------------
+
+The 1.4 release of Ant is now required in order to build Tomcat 4.0
+from source.  Previous versions relied on Ant 1.3.  Please read the
+"BUILDING.txt" file in the top-level directory of the source distribution
+for more information about building Tomcat 4.0 from source.
+
+Tomcat 4.0 now makes an XML parser, as well as other API classes, available
+to web applications by default.  This behavior is consistent with that of
+previous versions of Tomcat, and will make porting apps much less painful.
+See "Tomcat 4.0 Standard APIs Available", below, for more information.
+
+The "build.xml" example file included in the Application Developer's Guide now
+creates a compilation classpath that automatically includes all of the classes
+that Tomcat 4.0 exposes to web applications.  You should not need to customize
+this file unless you need to add additional application-specific classes into
+"/WEB-INF/lib".
+
+
+---------------------
+Catalina New Features:
+---------------------
+
+
+-------------------
+Jasper New Features:
+-------------------
+
+
+--------------------
+Webapps New Features:
+--------------------
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+
+------------------
+Generic Bug Fixes:
+------------------
+
+
+------------------
+Catalina Bug Fixes:
+------------------
+
+WebdavServlet:  The protocol name is no longer hard coded when parsing a
+destination header, which fixes problems when using https.
+
+StandardManager:  Catch and log exceptions thrown by session.expire() when
+sessions are being timed out.  Previously, any such exception would terminate
+the thread that checks for timed out sessions.
+
+StandardWrapperValve:  Do not set a character encoding on the default page
+created for an HTTP status code.  This was causing problems for Netscape
+Navigator when handling 302 redirects.
+
+StandardContext:  If a problem occurs during application startup (the start()
+method), call stop() so that a web application is not left in a partly started
+state.  Among other things, this allows you to restart the app from the
+Manager web application after correcting the problem that caused the startup
+to fail.
+
+
+----------------
+Jasper Bug Fixes:
+----------------
+
+Parser:  Fix a bug that was causing null pointer exceptions in
+JakartaCommentGenerator.
+
+Compiler:  Remove a spurious "null" in an error message when no mapping back
+to the original source file can be performed.
+
+JspC:  Fix bugs that made it impossible to precompile JSP pages that referenced
+custom tag libraries with the "jspc" command line tool.
+
+Compiler:  If the user specifies a "name" attribute on the <jsp:plugin> tag,
+carry this through to the generated <embed> and <object> tags.
+
+
+-----------------
+Webapps Bug Fixes:
+-----------------
+
+The form-based login example will now operate correctly even if cookies are
+turned off.  Note that this is an extension to the servlet specification's
+requirements, which only require form-based login to work if either cookies
+or SSL sessions are used to maintain session identity.
+
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+
+---------------------
+Tomcat 4.0 and Apache:
+---------------------
+
+The binary distribution for Tomcat 4.0 includes the most recent stable version
+of the WARP connector, which is the Tomcat component that talks to mod_webapp
+inside Apache 1.3.  The current state of this support is summarized as follows:
+
+* The mod_webapp connector is configured based on the contents of the
+  web.xml file for your web application.  See the documentation included
+  with the connector for configuration requirements.
+
+* The version of the connector to be published with Tomcat 4.0 final has
+  the following known issues:
+
+    http://nagoya.apache.org/bugzilla/show_bug.cgi?id=3509
+
+    http://nagoya.apache.org/bugzilla/show_bug.cgi?id=3534
+
+  These problems will be addressed in a future release of the connector.
+
+
+-------------------------------------
+Tomcat 4.0 and JNI Based Applications:
+-------------------------------------
+
+Applications that require native libraries must ensure that the libraries have
+been loaded prior to use.  Typically, this is done with a call like:
+
+  static {
+    System.loadLibrary("path-to-library-file");
+  }
+
+in some class.  However, the application must also ensure that the library is
+not loaded more than once.  If the above code were placed in a class inside
+the web application (i.e. under /WEB-INF/classes or /WEB-INF/lib), and the
+application were reloaded, the loadLibrary() call would be attempted a second
+time.
+
+To avoid this problem, place classes that load native libraries outside of the
+web application, and ensure that the loadLibrary() call is executed only once
+during the lifetime of a particular JVM.
+
+
+----------------------------------
+Tomcat 4.0 Standard APIs Available:
+----------------------------------
+
+A standard installation of Tomcat 4 makes all of the following APIs available
+for use by web applications (by placing them in "common/lib" or "lib"):
+* activation.jar (Java Activation Framework)
+* crimson.jar (Unsealed version of JAXP/1.1 parser)
+* jaxp.jar (Unsealed version of JAXP/1.1 API classes)
+* jdbc2_0-stdext.jar (JDBC 2.0 Optional Package, javax.sql.*)
+* jndi.jar (JNDI 1.2 base API classes)
+* jta-spec1_0_1 (Java Transacation APIs)
+* ldap.jar (JNDI LDAP provider required by JNDIRealm)
+* mail.jar (JavaMail 1.2)
+* servlet.jar (Servlet 2.3 and JSP 1.2 APIs)
+* tyrex-0.9.7.0.jar (Tyrex XA-compatible data source from tyrex.exolab.org)
+
+You can make additional APIs available to all of your web applications by
+putting unpacked classes into a "classes" directory (not created by default),
+or by placing them in JAR files in the "lib" directory.
+
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+As described above, Tomcat 4.0 makes an XML parser (and many other standard
+APIs) available to web applications.  This parser is also used internally
+to parse web.xml files and the server.xml configuration file.  If you wish,
+you may replace the "jaxp.jar" and "crimson.jar" files in "common/lib" with
+another XML parser, as long as it is compatible with the JAXP/1.1 APIs.
+
+WARNING:  Tomcat 4.0 ships with a modified version of the JAXP/1.1
+"jaxp.jar" and "crimson.jar" files from JAXP/1.1 final release.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.
+
+

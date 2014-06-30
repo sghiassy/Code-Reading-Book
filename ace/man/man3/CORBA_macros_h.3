@@ -1,0 +1,368 @@
+.TH CORBA_macros_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+CORBA_macros_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/OS.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBACE_TRY_ENV\fR  _ACE_CORBA_Environment_variable"
+.br
+.ti -1c
+.RI "#define \fBACE_ANY_EXCEPTION\fR  ex"
+.br
+.ti -1c
+.RI "#define \fBACE_CORBA_HAS_EXCEPTIONS\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_DECLARE_NEW_CORBA_ENV\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_ADOPT_CORBA_ENV\fR(ENV)   ACE_UNUSED_ARG(ENV)"
+.br
+.ti -1c
+.RI "#define \fBACE_CHECK\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_CHECK_RETURN\fR(RETV)"
+.br
+.ti -1c
+.RI "#define \fBACE_THROW_INT\fR(EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_THROW\fR(EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_THROW_RETURN\fR(EXCEPTION,RETV) "
+.br
+.ti -1c
+.RI "#define \fBACE_TRY\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TRY_NEW_ENV\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TRY_EX\fR(LABEL) "
+.br
+.ti -1c
+.RI "#define \fBACE_TRY_CHECK\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TRY_CHECK_EX\fR(LABEL)"
+.br
+.ti -1c
+.RI "#define \fBACE_TRY_THROW\fR(EXCEPTION)   throw EXCEPTION"
+.br
+.ti -1c
+.RI "#define \fBACE_TRY_THROW_EX\fR(EXCEPTION,LABEL)   throw EXCEPTION"
+.br
+.ti -1c
+.RI "#define \fBACE_CATCH\fR(EXCEPTION,VAR) "
+.br
+.ti -1c
+.RI "#define \fBACE_CATCHANY\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_CATCHALL\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_RE_THROW\fR  throw"
+.br
+.ti -1c
+.RI "#define \fBACE_RE_THROW_EX\fR(LABEL)   throw"
+.br
+.ti -1c
+.RI "#define \fBACE_ENDTRY\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_NEW_THROW_EX\fR(POINTER,CONSTRUCTOR,EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_NEW_THROW\fR(POINTER,CONSTRUCTOR,EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_NEW_THROW_RETURN\fR(POINTER,CONSTRUCTOR,EXCEPTION,RET_VAL) "
+.br
+.ti -1c
+.RI "#define \fBACE_NEW_TRY_THROW\fR(POINTER,CONSTRUCTOR,EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_GUARD_THROW_EX\fR(MUTEX,OBJ,LOCK,EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_READ_GUARD_THROW_EX\fR(MUTEX,OBJ,LOCK,EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_WRITE_GUARD_THROW_EX\fR(MUTEX,OBJ,LOCK,EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_GUARD_THROW\fR(MUTEX,OBJ,LOCK,EXCEPTION) "
+.br
+.ti -1c
+.RI "#define \fBACE_GUARD_THROW_RETURN\fR(MUTEX,OBJ,LOCK,EXCEPTION,RETURN) "
+.br
+.ti -1c
+.RI "#define \fBACE_PRINT_TAO_EXCEPTION\fR(EX,INFO) "
+.br
+.ti -1c
+.RI "#define \fBACE_PRINT_EXCEPTION\fR(EX,INFO)   ACE_PRINT_TAO_EXCEPTION(EX,INFO)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+Writing code that is portable between platforms with or without native C++ exceptions is hard. The following macros offer some help on this task, mostly oriented to making the ORB code and the IDL generated code portable.
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Nanbor Wang <nanbor@cs.wustl.edu> ,  Based on the original <tao/try_macros.h> implementation by ,  Aniruddha Gokhale <gokhale@sahyadri.research.bell-labs.com> ,  Carlos O'Ryan <coryan@cs.wustl.edu>, et al.
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define ACE_ADOPT_CORBA_ENV(ENV)  ACE_UNUSED_ARG(ENV)
+.PP
+.SS #define ACE_ANY_EXCEPTION  ex
+.PP
+.SS #define ACE_CATCH(EXCEPTION, VAR)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+         } \
+       catch (EXCEPTION & VAR) \
+         { \
+           ACE_UNUSED_ARG (VAR);
+.fi
+.SS #define ACE_CATCHALL
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+         } \
+       catch (...) \
+         {
+.fi
+.SS #define ACE_CATCHANY
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+       ACE_CATCH(CORBA::Exception, ACE_ANY_EXCEPTION)
+.fi
+.SS #define ACE_CHECK
+.PP
+.SS #define ACE_CHECK_RETURN(RETV)
+.PP
+.SS #define ACE_CORBA_HAS_EXCEPTIONS
+.PP
+.SS #define ACE_DECLARE_NEW_CORBA_ENV
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  CORBA::Environment ACE_TRY_ENV
+.fi
+.SS #define ACE_ENDTRY
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+         } \
+     } while (0)
+.fi
+.SS #define ACE_GUARD_THROW(MUTEX, OBJ, LOCK, EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) TAO_THROW (EXCEPTION);
+.fi
+.SS #define ACE_GUARD_THROW_EX(MUTEX, OBJ, LOCK, EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) ACE_THROW_INT (EXCEPTION);
+.fi
+.SS #define ACE_GUARD_THROW_RETURN(MUTEX, OBJ, LOCK, EXCEPTION, RETURN)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) TAO_THROW_RETURN (EXCEPTION, RETURN);
+.fi
+.SS #define ACE_NEW_THROW(POINTER, CONSTRUCTOR, EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+     do { POINTER = new CONSTRUCTOR; \
+       if (POINTER == 0) { errno = ENOMEM; TAO_THROW (EXCEPTION); } \
+     } while (0)
+.fi
+.SS #define ACE_NEW_THROW_EX(POINTER, CONSTRUCTOR, EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+     do { POINTER = new CONSTRUCTOR; \
+       if (POINTER == 0) { errno = ENOMEM; ACE_THROW_INT (EXCEPTION); } \
+     } while (0)
+.fi
+.SS #define ACE_NEW_THROW_RETURN(POINTER, CONSTRUCTOR, EXCEPTION, RET_VAL)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+     do { POINTER = new CONSTRUCTOR; \
+        if (POINTER == 0)\
+        { errno = ENOMEM; TAO_THROW_RETURN (EXCEPTION,RET_VAL); } \
+     } while (0)
+.fi
+.SS #define ACE_NEW_TRY_THROW(POINTER, CONSTRUCTOR, EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+     do { POINTER = new CONSTRUCTOR; \
+       if (POINTER == 0) { errno = ENOMEM; TAO_TRY_THROW (EXCEPTION); } \
+     } while (0)
+.fi
+.SS #define ACE_PRINT_EXCEPTION(EX, INFO)  ACE_PRINT_TAO_EXCEPTION(EX,INFO)
+.PP
+.SS #define ACE_PRINT_TAO_EXCEPTION(EX, INFO)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  EX._tao_print_exception (INFO)
+.fi
+.SS #define ACE_READ_GUARD_THROW_EX(MUTEX, OBJ, LOCK, EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Read_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) ACE_THROW_INT (EXCEPTION);
+.fi
+.SS #define ACE_RE_THROW  throw
+.PP
+.SS #define ACE_RE_THROW_EX(LABEL)  throw
+.PP
+.SS #define ACE_THROW(EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+    do { \
+      ACE_UNUSED_ARG(ACE_TRY_ENV); \
+      throw EXCEPTION; \
+    } while (0)
+.fi
+.SS #define ACE_THROW_INT(EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+    do { \
+      ACE_UNUSED_ARG(ACE_TRY_ENV); \
+      throw EXCEPTION; \
+    } while (0)
+.fi
+.SS #define ACE_THROW_RETURN(EXCEPTION, RETV)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+      do { \
+        ACE_UNUSED_ARG(ACE_TRY_ENV); \
+        throw EXCEPTION; \
+      } while (0)
+.fi
+.SS #define ACE_TRY
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do \
+     { \
+       try \
+         {
+.fi
+.SS #define ACE_TRY_CHECK
+.PP
+.SS #define ACE_TRY_CHECK_EX(LABEL)
+.PP
+.SS #define ACE_TRY_ENV  _ACE_CORBA_Environment_variable
+.PP
+.SS #define ACE_TRY_EX(LABEL)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do \
+     { \
+       try \
+         {
+.fi
+.SS #define ACE_TRY_NEW_ENV
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do \
+     { \
+       CORBA::Environment ACE_TRY_ENV; \
+       try \
+         {
+.fi
+.SS #define ACE_TRY_THROW(EXCEPTION)  throw EXCEPTION
+.PP
+.SS #define ACE_TRY_THROW_EX(EXCEPTION, LABEL)  throw EXCEPTION
+.PP
+.SS #define ACE_WRITE_GUARD_THROW_EX(MUTEX, OBJ, LOCK, EXCEPTION)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Write_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) ACE_THROW_INT (EXCEPTION);
+.fi
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

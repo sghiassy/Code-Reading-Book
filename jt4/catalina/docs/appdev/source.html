@@ -1,0 +1,261 @@
+<html>
+
+<head>
+<title>Developing Applications With Tomcat -- Source</title>
+</head>
+
+<body bgcolor="white">
+
+<!-- Navigation Links -->
+<table border=0 width="100%">
+<tr>
+<td align="left" width="25%">
+  <a href="deployment.html">Previous</a>
+</td>
+<td align="center" width="50%">
+  <a href="contents.html">Top</a>
+</td>
+<td align="right" width="25%">
+  <a href="processes.html">Next</a>
+</td>
+</tr>
+<tr>
+<td align="center" colspan=3>
+  <a href="#Directory">Directory</a>
+  <a href="#CVS">CVS</a>
+  <a href="#Build">BUILD.XML</a>
+  <a href="#Scripts">Scripts</a>
+</td>
+</tr>
+</table>
+
+<h1>4. SOURCE ORGANIZATION</h1>
+
+
+<!-- 4.1 Directory -->
+<a name="Directory"></a>
+<h2>4.1 Directory Structure</h2>
+
+<p>A key recommendation of this manual is to separate the directory
+hierarchy containing your source code (described in this section) from
+the directory hierarchy containing your deployable application
+(described in the preceding section).  Maintaining this separation has
+the following advantages:
+<ul>
+<li>The contents of the source directories can be more easily administered,
+    moved, and backed up if the "executable" version of the application
+    is not intermixed.
+    <br><br>
+<li>Source code control is easier to manage on directories that contain
+    only source files.
+    <br><br>
+<li>The files that make up an installable distribution of your
+    application are much easier to select when the deployment
+    hierarchy is separate.
+</ul>
+
+<p>As we will see, the <code>ant</code> development tool makes the creation
+and processing of such directory hierarchies nearly painless.
+
+<p>The actual directory and file hierarchy used to contain the source code
+of an application can be pretty much anything you like.  However, the
+following organization has proven to be quite generally applicable, and is
+expected by the example <code>build.xml</code> configuration file that
+is discussed below.  All of these components exist under a top level
+<i>project source directory</i> for your application:
+<ul>
+<li><b>etc/</b> - Directory containing special files related to your
+    application that will be copied to the <code>WEB-INF</code> directory.
+    In all cases, this will include the application deployment
+    descriptor file (<code>web.xml</code>), but may include others as well.
+    <br><br>
+<li><b>lib/</b> - Directory containing JAR files that will be copied to
+    the <code>WEB-INF/lib</code> deployment directory.
+    <br><br>
+<li><b>src/</b> - Java source files that generate the servlets, beans,
+    and other Java classes required by your application.  If your source
+    code is organized into packages (highly recommended for large projects),
+    the package hierarchy should be reflected as a directory structure
+    underneath this directory.
+    <br><br>
+<li><b>web/</b> - Directory containing the HTML files, JSP pages, and other
+    resource files (such as JavaScript and stylesheet files) that will be
+    accessible to browser clients.  The entire hierarchy underneath this
+    directory will be copied to the document root directory of your
+    deployment home.
+</ul>
+
+
+<!-- 4.2 CVS -->
+<a name="CVS"></a>
+<h2>4.2 Source Code Control</h2>
+
+<p>As mentioned earlier, it is highly recommended that you place all of the
+source files that comprise your application under the management of a
+source code control system like the Concurrent Version System (CVS).  If you
+elect to do this, every directory and file in the source hierarchy should be
+registered and saved -- but none of the generated files.  If you register
+binary format files (such as images or JAR libraries), be sure to indicate
+this to your source code control system.
+
+<p>Detailed instructions for your source code control environment are beyond
+the scope of this manual.  However, the following steps are followed when
+using a command-line CVS client:
+<ul>
+<li>To refresh the state of your source code to that stored in the
+    the source repository, go to your project source directory, and
+    execute <code>cvs update -d</code>.
+    <br><br>
+<li>When you create a new subdirectory in the source code hierarchy, register
+    it in CVS with a command like <code>cvs add {subdirname}</code>.
+    <br><br>
+<li>When you first create a new source code file, navigate to the directory
+    that contains it, and register the new file with a command like
+    <code>cvs add {filename}</code>.
+    <br><br>
+<li>If you no longer need a particular source code file, navigate to the
+    containing directory and remove the file.  Then, deregister it in CVS
+    with a command like <code>cvs remove {filename}</code>.
+    <br><br>
+<li>While you are creating, modifying, and deleting source files, changes
+    are not yet reflected in the server repository.  To save your changes in
+    their current state, go to the project source directory
+    and execute <code>cvs commit</code>.  You will be asked to write a brief
+    description of the changes you have just completed, which will be stored
+    with the new version of any updated source file.
+</ul>
+
+<p>CVS, like other source code control systems, has many additional features
+(such as the ability to tag the files that made up a particular release, and
+support for multiple development branches that can later be merged).  See the
+links and references in the <a href="introduction.html">Introduction</a> for
+more information.
+
+
+<!-- 4.3 Build -->
+<a name="Build"></a>
+<h2>4.3 BUILD.XML Configuration File</h2>
+
+<p>We will be using the <code>ant</code> tool to manage the compilation of
+our Java source code files, and creation of the deployment hierarchy.  Ant
+operates under the control of a build file, normally called
+<code>build.xml</code>, that defines the processing steps required.  Like a
+Makefile, the <code>build.xml</code> file provides several "targets" that
+support optional development activities (such as creating the associated
+Javadoc documentation, erasing the deployment home directory so you can build
+your project from scratch, or creating the web application archive file so
+you can distribute your application.
+
+<p>To give you a head start, a
+<a href="build.xml.txt" target="_new">basic build.xml file</a> is provided
+that you can customize and install in the project source directory for your
+application.  This file includes comments that describe the various
+targets that can be executed.  Briefly, the following targets are generally
+provided:
+<ul>
+<li><b>prepare</b> - This target "prepares" the deployment directory,
+    creating subdirectories as required.  A common use of this target is
+    to copy static files (documentation, HTML pages, and JSP pages)
+    from the source directory to the deployment directory.  When
+    executed, this target will only create directories if they do not
+    exist, and only copy files if the destination file does not exist,
+    or the source version of the file is newer.  This target is generally
+    invoked indirectly, by virtue of a <code>depends</code> attribute on
+    some other task.
+<li><b>compile</b> - This target is used to compile any source code that
+    has been changed since the last time compilation took place.  The
+    resulting class files are created in the deployment directory, so
+    that they can be directly executed when Tomcat is run.
+    <strong>NOTE</strong> - Previous versions of Ant copied properties files
+    and other resource files for you as part of the execution of the
+    <code>&lt;javac&gt;</code> task.  You must now do this explicitly.
+<li><b>javadoc</b> - This target creates Javadoc API documentation for the
+    Java classes in this web application.  The example <code>build.xml</code>
+    file assumes you want to include the API documentation with your app,
+    so it generates the docs in a subdirectory of the deployment directory.
+<li><b>all</b> - This target deletes the entire deployment directory and
+    then recreates everything.  It is a good habit to do this after you've
+    made a bunch of changes, and before you check them in to your source
+    code repository.  In particular, you should perform <code>build all</code>
+    before you use the "dist" target to create a distribution of your
+    application, to ensure that the distribution contains no unwanted files.
+<li><b>dist</b> - This target creates a web application archive (WAR) file
+    containing your application, and a JAR file containing all of the
+    source code.  In the example <code>build.xml</code> file, the contents
+    of the WAR file are based on the most recent build in the deployment
+    directory.
+</ul>
+
+<p>In the following section, scripts will be described that use Ant to
+compile your project, based on the contents of the <code>build.xml</code>
+file defined here.
+
+
+<!-- 4.4 Scripts -->
+<a name="Scripts"</a>
+<h2>4.4 Shell and Batch Scripts</h2>
+
+<p>The primary script we will utilize is generically called the <i>build</i>
+script.  It executes Ant, which reads and processes the <code>build.xml</code>
+file discussed above.  Each time you execute the build script, you will
+specify the build "target" that you wish to execute.  Users of a command
+line MAKE tool (which processes a makefile) will recognize this approach.
+
+<p>On UNIX-based systems, the following script should be saved as file
+<code>build.sh</code> in the project source directory, with file permissions
+that make it executable, and customized as required:
+
+<pre>
+#!/bin/sh
+# build -- Build Script for the "Hello, World" Application
+# $Id: source.html,v 1.2 2001/08/14 18:50:09 pier Exp $
+
+# Identify the custom class path components we need
+CP=$CATALINA_HOME/lib/ant.jar:$CATALINA_HOME/lib/servlet.jar
+CP=$CP:$CATALINA_HOME/lib/jaxp.jar:$CATALINA_HOME/lib/parser.jar
+CP=$CP:$JAVA_HOME/lib/tools.jar
+
+# Execute ANT to perform the requested build target
+java -classpath $CP:$CLASSPATH org.apache.tools.ant.Main \
+  -Dtomcat.home=$CATALINA_HOME "$@"
+</pre>
+
+<p>On Windows-based systems, the following script should be saved as file
+<code>build.bat</code> in the project source directory, and customized
+as required:
+
+<pre>
+@echo off
+rem build.bat -- Build Script for the "Hello, World" Application
+rem $Id: source.html,v 1.2 2001/08/14 18:50:09 pier Exp $
+
+set _CP=%CP%
+
+rem Identify the custom class path components we need
+set CP=%CATALINA_HOME%\lib\ant.jar;%CATALINA_HOME%\lib\servlet.jar
+set CP=%CATALINA_HOME%\lib\jaxp.jar;%CATALINA_HOME%\lib\parser.jar
+set CP=%CP%;%JAVA_HOME%\lib\tools.jar
+
+rem Execute ANT to perform the requird build target
+java -classpath %CP%;%CLASSPATH% org.apache.tools.ant.Main -Dtomcat.home=%CATALINA_HOME% %1 %2 %3 %4 %5 %6 %7 %8 %9
+
+set CP=%_CP%
+set _CP=
+</pre>
+
+<p>Build script customizations you might consider include:
+<ul>
+<li>Setting the JAVA_HOME and CATALINA_HOME environment variables (probably
+    near the top of the script) if they are not defined already.
+    <br><br>
+<li>Overriding properties defined in the <code>build.xml</code> file
+    with default values.  For example, to change the distribution home
+    directory (property <code>dist.home</code>), you would include the
+    following command line option after the word "java":
+    <b>-Ddist.home=xxxxx</b>.
+    <br><br>
+</ul>
+
+</body>
+
+</html>

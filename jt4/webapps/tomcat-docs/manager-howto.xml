@@ -1,0 +1,466 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document>
+
+    &project;
+
+    <properties>
+        <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+        <title>Manager App HOW-TO</title>
+    </properties>
+
+<body>
+
+
+<section name="Introduction">
+
+<p>In many production environments, it is very useful to have the capability
+to deploy a new web application, or undeploy an existing one, without having
+to shut down and restart the entire container.  In addition, you can request
+an existing application to reload itself, even if you have not declared it
+to be <code>reloadable</code> in the Tomcat 4 server
+configuration file.</p>
+
+<p>To support these capabilities, Tomcat 4 includes a web application
+(installed by default on context path <code>/manager</code>) that supports
+the following functions:</p>
+<ul>
+<li>Deploy a new web application, on a specified context path, from a
+    specified directory or WAR file pathname.</li>
+<li>List the currently deployed web applications, as well as the
+    sessions that are currently active for those web apps.</li>
+<li>Cause an existing application to be reloaded.</li>
+<li>Undeploy an existing web application.</li>
+<li>Stop an existing application (so that it becomes unavailable), but
+    do not undeploy it.</li>
+<li>Start a stopped application (thus making it available again).</li>
+</ul>
+
+<p>Since <code>Manager</code> is itself a web application, it interacts with
+you using standard HTTP requests and responses.  However, it's "user interface"
+is minimal, because it is intended to be accessed from scripts set up by the
+system administrator.  For this reason, commands are given as part of the
+request URI, and responses are in the form of simple text that can be easily
+parsed and processed.</p>
+
+<p>Future versions of Tomcat 4 will include administrative functionality that
+is presented in (at least) the following forms:</p>
+<ul>
+<li>As web services, so that Tomcat administration can be easily integrated
+    into remote and/or non-Java mnagement environments.</li>
+<li>As a web application with a nice user interface (built on top of the
+    web services processing layer) for easy Tomcat administration via a
+    web browser.</li>
+</ul>
+
+</section>
+
+<section name="Configuring Manager Application Access">
+
+    <blockquote><em>
+    <p>The description below uses the variable name $CATALINA_HOME
+    to refer to the directory into which you have installed Tomcat 4,
+    and is the base directory against which most relative paths are
+    resolved.  However, if you have configured Tomcat 4 for multiple
+    instances by setting a CATALINA_BASE directory, you should use
+    $CATALINA_BASE instead of $CATALINA_HOME for each of these
+    references.</p>
+    </em></blockquote>
+
+<p>It would be quite unsafe to ship Tomcat with default settings that allowed
+anyone on the Internet to execute the Manager application on your server.
+Therefore, the Manager application is shipped with the requirement that anyone
+who attempts to use it must authenticate themselves, using a username and
+password that have the role <strong>manager</strong> associated with them.
+Further, there is no username in the default users file
+(<conf>$CATALINA_HOME/conf/tomcat-users.xml</conf>) that is assigned this
+role.  Therefore, access to the Manager application is completely disabled
+by default.</p>
+
+<p>To enable access to the Manager web application, you must either create
+a new username/password combination and associate the role name
+<strong>manager</strong> with it, or add the <strong>manager</strong> role
+to some existing username/password combination.  Exactly where this is done
+depends on which <code>Realm</code> implementation you are using:</p>
+<ul>
+<li><em>MemoryRealm</em> - If you have not customized your
+    <code>$CATALINA_HOME/conf/server.xml</code> to select a different one,
+    Tomcat 4 defaults to an XML-format file stored at
+    <code>$CATALINA_HOME/conf/tomcat-users.xml</code>, which can be
+    edited with any text editor.  This file contains an XML
+    <code>&lt;user&gt;</code> for each individual user, which might
+    look something like this:
+<source>
+&lt;user name="craigmcc" password="secret" roles="standard,manager"&gt;
+</source>
+    which defines the username and password used by this individual to
+    log on, and the role names he or she is associated with.  You can
+    add the <strong>manager</strong> role to the comma-delimited
+    <code>roles</code> attriute for one or more existing users, and/or
+    create new users with that assigned role.</li>
+<li><em>JDBCRealm</em> - Your user and role information is stored in
+    a database accessed via JDBC.  Add the <strong>manager</strong> role
+    to one or more existing users, and/or create one or more new users
+    with this role assigned, following the standard procedures for your
+    environment.</li>
+<li><em>JNDIRealm</em> - Your user and role information is stored in
+    a directory server accessed via LDAP.  Add the <strong>manager</strong>
+    role to one or more existing users, and/or create one or more new users
+    with this role assigned, following the standard procedures for your
+    environment.</li>
+</ul>
+
+<p>The first time you attempt to issue one of the Manager commands
+described in the next section, you will be challenged to logn on, using
+BASIC authentication.  The username and password you enter do not matter,
+as long as they identify a valid user in the users database who possesses
+the role <strong>manager</strong>.</p>
+
+</section>
+
+
+<section name="Supported Manager Commands">
+
+<p>All commands that the Manager application knows how to process are
+specified in a single request URI like this:</p>
+<source>
+http://{host}:{port}/manager/{command}?{parameters}
+</source>
+<p>where <code>{host}</code> and <code>{port}</code> represent the hostname
+and port number on which Tomcat is running, <code>{command}</code>
+represents the Manager command you wish to execute, and
+<code>{parameters}</code> represents the query parameters
+that are specific to that command.  In the illustrations below, customize
+the host and port appropriately for your installation.</p>
+
+<p>Most commands accept one or more of the following query parameters:</p>
+<ul>
+<li><strong>path</strong> - The context path (including the leading slash)
+    of the web application you are dealing with.  To select the ROOT web
+    application, specify a zero-length string.  <strong>NOTE</strong> -
+    It is not possible to perform administrative commands on the
+    Manager application itself.</li>
+<li><strong>war</strong> - URL of a web application archive (WAR) file,
+    or pathname of a directory, that contains the web application.
+    You can use URLs in any of the following formats:
+    <ul>
+    <li><strong>file:/absolute/path/to/a/directory</strong> - The absolute
+        path of a directory that contains the unpacked version of a web
+        application.  This directory will be attached to the context path
+        you specify without any changes.</li>
+    <li><strong>jar:file:/absolute/path/to/a/warfile.war!/</strong> - The
+        URL to a local web application archive (WAR) file.  You can use any
+        syntax that is valid for the <code>JarURLConnection</code> class
+        for reference to an entire JAR file.</li>
+    <li><strong>jar:http://hostname:port/path/to/a/warfile.war!/</strong> -
+        You can also deploy web applications from a remote JAR file.  You can
+        use any syntax that is valid for the <code>JarURLConnection</code>
+        class for reference to an entire JAR file.</li>
+    </ul></li>
+</ul>
+
+<p>Each command will return a response in <code>text/plain</code> format
+(i.e. plain ASCII with no HTML markup), making it easy for both humans and
+programs to read).  The first line of the response wil begin with either
+<code>OK</code> or <code>FAIL</code>, indicating whether the requested
+command was successful or not.  In the case of failure, the rest of the first
+line will contain a description of the problem that was encountered.  Some
+commands include additional lines of information as described below.</p>
+
+<p><em>Internationalization Note</em> - The Manager application looks up
+its message strings in resource bundles, so it is possible that the strings
+have been translated for your platform.  The examples below show the English
+version of the messages.</p>
+
+<subsection name="Deploy A New Application">
+
+<source>
+http://localhost:8080/manager/install?path=/foo&amp;war=file:/path/to/foo
+
+http://localhost:8080/manager/install?path=/bar&amp;war=jar:file:/path/to/bar.war!/
+</source>
+
+<p>Install and start a new web application, attached to the specified context
+path (which must not be in use by any other web application).  The
+<code>war</code> parameter specifies a URL (including the <code>file:</code>
+scheme) for either a directory or a web application archive (WAR) file.
+The supported syntax for a URL referring to a WAR file is described on the
+Javadocs page for the <code>java.net.JarURLConnection</code> class.  Use
+only URLs that refer to the entire WAR file.</p>
+
+<p>If installation and startup is successful, you will receive a response
+like this:</p>
+<source>
+OK - Installed application at context path /foo
+</source>
+
+<p>Otherwise, the response will start with <code>FAIL</code> and include an
+error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Application already exists at path /foo</em>
+    <blockquote>
+    <p>The context paths for all currently running web applications must be
+    unique.  Therefore, you must either undeploy the existing web application
+    using this context path, or choose a different context path for the
+    new one.</p>
+    </blockquote></li>
+<li><em>Document base does not exist or is not a readable directory</em>
+    <blockquote>
+    <p>The URL specified by the <code>war</code> parameter must identify a
+    directory on this server that contains the "unpacked" version of a
+    web application, or the absolute URL of a web application archive (WAR)
+    file that contains this application.  Correct the value specified by
+    the <code>war</code> parameter.</p>
+    </blockquote></li>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to start the new web application.
+    Check the Tomcat 4 logs for the details, but likely explanations include
+    problems parsing your <code>/WEB-INF/web.xml</code> file, or missing
+    classes encountered when initializing application event listeners and
+    filters.</p>
+    </blockquote></li>
+<li><em>Invalid application URL was specified</em>
+    <blockquote>
+    <p>The URL for the directory or web application that you specified
+    was not valid.  Such URLs must start with <code>file:</code>, and URLs
+    for a WAR file must end in ".war".</p>
+    </blockquote></li>
+<li><em>Invalid context path was specified</em>
+    <blockquote>
+    <p>The context path must start with a slash character, unless you are
+    referencing the ROOT web application -- in which case the context path
+    must be a zero-length string.</p>
+    </blockquote></li>
+<li><em>No context path was specified</em>
+    <blockquote>
+    The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+<subsection name="List Currently Deployed Applications">
+
+<source>
+http://localhost:8080/manager/list
+</source>
+
+<p>List the context paths, current status (<code>running</code> or
+<code>stopped</code>), and number of active sessions for all currently
+deployed web applications.  A typical response immediately after starting
+Tomcat might look like this:</p>
+<source>
+OK - Listed applications for virtual host localhost
+/webdav:running:0
+/examples:running:0
+/manager:running:0
+/:running:0
+</source>
+
+</subsection>
+
+<subsection name="Reload An Existing Application">
+
+<source>
+http://localhost:8080/manager/reload?path=/examples
+</source>
+
+<p>Signal an existing application to shut itself down and reload.  This can
+be useful when you've recompiled classes on an application that is not
+configured with the <code>reloadable="true"</code> attribute in its
+<code>&lt;Context&gt;</code> entry in
+<code>$CATALINA_HOME/conf/server.xml</code>, or when you've made other
+changes (such as to <code>conf/web.xml</code>) that are not automatically
+recognized by Tomcat.</p>
+
+<p>If this command succeeds, you will see a response like this:</p>
+<source>
+OK - Reloaded application at context path /examples
+</source>
+
+<p>Otherwise, the response will start with <code>FAIL</code> and include an
+error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to restart the web application.
+    Check the Tomcat 4 logs for the details.</p>
+    </blockquote></li>
+<li><em>Invalid context path was specified</em>
+    <blockquote>
+    <p>The context path must start with a slash character, unless you are
+    referencing the ROOT web application -- in which case the context path
+    must be a zero-length string.</p>
+    </blockquote></li>
+<li><em>No context exists for path /foo</em>
+    <blockquote>
+    <p>There is no deployed application on the context path that you
+    specified.</p>
+    </blockquote></li>
+<li><em>No context path was specified</em>
+    <blockquote>
+    The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+<subsection name="Session Statistics">
+
+<source>
+http://localhost:8080/manager/sessions?path=/examples
+</source>
+
+<p>Display the default session timeout for a web application, and the
+number of currently active sessions that fall within ten-minute ranges of
+their actual timeout times.  For example, after restarting Tomcat and then
+executing one of the JSP samples in the <code>/examples</code> web app,
+you might get something like this:</p>
+<source>
+OK - Session information for application at context path /examples
+Default maximum session inactive interval 30 minutes
+30 - &lt;40 minutes:1 sessions
+</source>
+
+</subsection>
+
+
+<subsection name="Start an Existing Application">
+
+<source>
+http://localhost:8080/manager/start?path=/examples
+</source>
+
+<p>Signal a stopped application to restart, and make itself available again.
+Stopping and starting is useful, for example, if the database required by
+your application becomes temporarily unavailable.  It is usually better to
+stop the web application that relies on this database, rather than letting
+users continuously encounter database exceptions.</p>
+
+<p>If this command succeeds, you will see a response like this:</p>
+<source>
+OK - Started application at context path /examples
+</source>
+
+<p>Otherwise, the response will start with <code>FAIL</code> and include an
+error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to undeploy the web application.
+    Check the Tomcat 4 logs for the details.</p>
+    </blockquote></li>
+<li><em>Invalid context path was specified</em>
+    <blockquote>
+    <p>The context path must start with a slash character, unless you are
+    referencing the ROOT web application -- in which case the context path
+    must be a zero-length string.</p>
+    </blockquote></li>
+<li><em>No context exists for path /foo</em>
+    <blockquote>
+    <p>There is no deployed application on the context path that you
+    specified.</p>
+    </blockquote></li>
+<li><em>No context path was specified</em>
+    <blockquote>
+    The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+<subsection name="Stop an Existing Application">
+
+<source>
+http://localhost:8080/manager/stop?path=/examples
+</source>
+
+<p>Signal an existing application to make itself unavailable, but leave it
+deployed.  Any request that comes in while an application is stopped will
+see an HTTP error 404, and this application will show as "stopped" on a
+list applications command.</p>
+
+<p>If this command succeeds, you will see a response like this:</p>
+<source>
+OK - Stopped application at context path /examples
+</source>
+
+<p>Otherwise, the response will start with <code>FAIL</code> and include an
+error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to undeploy the web application.
+    Check the Tomcat 4 logs for the details.</p>
+    </blockquote></li>
+<li><em>Invalid context path was specified</em>
+    <blockquote>
+    <p>The context path must start with a slash character, unless you are
+    referencing the ROOT web application -- in which case the context path
+    must be a zero-length string.</p>
+    </blockquote></li>
+<li><em>No context exists for path /foo</em>
+    <blockquote>
+    <p>There is no deployed application on the context path that you
+    specified.</p>
+    </blockquote></li>
+<li><em>No context path was specified</em>
+    <blockquote>
+    The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+
+<subsection name="Undeploy an Existing Application">
+
+<source>
+http://localhost:8080/manager/remove?path=/examples
+</source>
+
+<p>Signal an existing application to gracefully shut itself down, and then
+remove it from Tomcat (which also makes this context path available for
+reuse later).</p>
+
+<p>If this command succeeds, you will see a response like this:</p>
+<source>
+OK - Removed application at context path /examples
+</source>
+
+<p>Otherwise, the response will start with <code>FAIL</code> and include an
+error message.  Possible causes for problems include:</p>
+<ul>
+<li><em>Encountered exception</em>
+    <blockquote>
+    <p>An exception was encountered trying to undeploy the web application.
+    Check the Tomcat 4 logs for the details.</p>
+    </blockquote></li>
+<li><em>Invalid context path was specified</em>
+    <blockquote>
+    <p>The context path must start with a slash character, unless you are
+    referencing the ROOT web application -- in which case the context path
+    must be a zero-length string.</p>
+    </blockquote></li>
+<li><em>No context exists for path /foo</em>
+    <blockquote>
+    <p>There is no deployed application on the context path that you
+    specified.</p>
+    </blockquote></li>
+<li><em>No context path was specified</em>
+    <blockquote>
+    The <code>path</code> parameter is required.
+    </blockquote></li>
+</ul>
+
+</subsection>
+
+</section>
+
+
+</body>
+
+</document>

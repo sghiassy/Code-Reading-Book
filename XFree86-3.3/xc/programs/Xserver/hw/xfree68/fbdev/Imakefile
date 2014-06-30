@@ -1,0 +1,52 @@
+XCOMM $XConsortium: Imakefile /main/3 1996/10/25 11:32:44 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree68/fbdev/Imakefile,v 3.3 1996/12/27 06:52:43 dawes Exp $
+#include <Server.tmpl>
+
+
+SRCS = fbdev.c
+OBJS = fbdev.o
+
+#if XF68FBDevIPLAN2p2
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_IPLAN2p2
+#endif
+#if XF68FBDevIPLAN2p4
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_IPLAN2p4
+#endif
+#if XF68FBDevIPLAN2p8
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_IPLAN2p8
+#endif
+#if XF68FBDevILBM
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_ILBM
+#endif
+#if XF68FBDevAFB
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_AFB
+#endif
+#if XF68FBDevCFB8
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_CFB8
+#endif
+#if XF68FBDevCFB16
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_CFB16
+#endif
+#if XF68FBDevCFB32
+FB_DEFINES:= $(FB_DEFINES) -DCONFIG_CFB32
+#endif
+
+
+INCLUDES = -I../common -I../os-support -I$(XF86COMSRC) -I$(XF86OSSRC) -I. \
+	   -I$(SERVERSRC)/mfb -I$(SERVERSRC)/ilbm -I$(SERVERSRC)/afb \
+	   -I$(SERVERSRC)/mi -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(fbdev,$(OBJS))
+LintLibraryTarget(fbdev,$(SRCS))
+NormalLintTarget($(SRCS))
+SpecialCObjectRule(fbdev,NullParameter,$(FB_DEFINES))
+
+InstallLinkKitLibrary(fbdev,$(LINKKITDIR)/drivers)
+
+DependTarget()

@@ -1,0 +1,95 @@
+.TH ACE_TSS_Keys 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_TSS_Keys \- Collection of in-use flags for a thread's TSS keys. For internal use only by ACE_TSS_Cleanup; it is public because some compilers can't use nested classes for template instantiation parameters. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TSS_Keys\fR (void)"
+.br
+.RI "\fIDefault constructor, to initialize all bits to zero (unused).\fR"
+.ti -1c
+.RI "int \fBtest_and_set\fR (const \fBACE_thread_key_t\fR key)"
+.br
+.RI "\fIMark the specified key as being in use, if it was not already so marked. Returns 1 if the had already been marked, 0 if not.\fR"
+.ti -1c
+.RI "int \fBtest_and_clear\fR (const \fBACE_thread_key_t\fR key)"
+.br
+.RI "\fIMark the specified key as not being in use, if it was not already so cleared. Returns 1 if the had already been cleared, 0 if not.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBACE_WORDS\fR = (ACE_DEFAULT_THREAD_KEYS - 1) / ACE_BITS_PER_WORD + 1 }"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "u_long \fBkey_bit_words_\fR [ACE_WORDS]"
+.br
+.RI "\fIBit flag collection. A bit value of 1 indicates that the key is in use by this thread.\fR"
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBfind\fR (const u_int key, u_int &word, u_int &bit)"
+.br
+.RI "\fIFor a given key, find the word and bit number that represent it.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Collection of in-use flags for a thread's TSS keys. For internal use only by ACE_TSS_Cleanup; it is public because some compilers can't use nested classes for template instantiation parameters.
+.PP
+.PP
+ Wrapper around array of whether each key is in use. A simple typedef doesn't work with Sun C++ 4.2. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum\fC [private]\fR
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_WORDS\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_TSS_Keys::ACE_TSS_Keys (void)
+.PP
+Default constructor, to initialize all bits to zero (unused).
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_TSS_Keys::find (const u_int key, u_int & word, u_int & bit)\fC [static, private]\fR
+.PP
+For a given key, find the word and bit number that represent it.
+.PP
+.SS int ACE_TSS_Keys::test_and_clear (const \fBACE_thread_key_t\fR key)
+.PP
+Mark the specified key as not being in use, if it was not already so cleared. Returns 1 if the had already been cleared, 0 if not.
+.PP
+.SS int ACE_TSS_Keys::test_and_set (const \fBACE_thread_key_t\fR key)
+.PP
+Mark the specified key as being in use, if it was not already so marked. Returns 1 if the had already been marked, 0 if not.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS u_long ACE_TSS_Keys::key_bit_words_[ACE_WORDS]\fC [private]\fR
+.PP
+Bit flag collection. A bit value of 1 indicates that the key is in use by this thread.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

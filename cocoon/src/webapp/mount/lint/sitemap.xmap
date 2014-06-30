@@ -1,0 +1,273 @@
+<?xml version="1.0"?>
+
+<!-- This sitemap shows what is possible and what is not allowed. -->
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+  <map:components>
+    <map:generators default="file"/>
+    <map:transformers default="xslt"/>
+    <map:readers default="resource"/>
+    <map:serializers default="html"/>
+    <map:matchers default="wildcard"/>
+    <map:selectors default="parameter">
+      <map:selector name="parameter" logger="sitemap.selector.parameter"
+                    src="org.apache.cocoon.selection.ParameterSelector">
+        <!-- component configuration may have any tags -->
+        <unknown-tag/>
+      </map:selector>
+    </map:selectors>
+  </map:components>
+
+  <map:pipelines>
+    <!-- The only working pipeline here -->
+    <map:pipeline>
+      <map:generate src="sitemap.xmap">
+      <!-- parameter element is deprecated, and its usage will result in error.
+      <parameter name="deprecated" value="error"/>
+      -->
+      </map:generate>
+      <map:transform src="../../stylesheets/simple-xml2html.xsl"/>
+      <map:serialize/>
+      <!-- any unsupported tag will result in error
+      <unknown-tag/>
+      -->
+    </map:pipeline>
+
+    <!-- Pipeline with no map:generate|read|mount|redirect-to|call is illegal
+    <map:pipeline>
+      <map:transform src="../../stylesheets/simple-xml2html.xsl"/>
+      <map:serialize/>
+    </map:pipeline>
+    -->
+
+    <!-- Pipeline with map:generate|transform must have serialize
+    <map:pipeline>
+      <map:generate src="sitemap.xmap"/>
+      <map:transform src="../../stylesheets/simple-xml2html.xsl"/>
+    </map:pipeline>
+    -->
+
+    <!-- Pipeline with component after map:serialize|read|mount|redirect-to|call is illegal
+    <map:pipeline>
+      <map:read src="sitemap.xmap"/>
+      <map:act type="request"/>
+    </map:pipeline>
+    -->
+
+    <!-- map:match|select without direct components are illegal
+    <map:pipeline>
+      <map:match pattern="oops">
+        <map:act type="request">
+          <map:parameter name="x" value="x"/>
+        </map:act>
+      </map:match>
+    </map:pipeline>
+    -->
+
+    <!-- More invalid pipelines
+    <map:pipeline>
+      <map:handle-errors>
+        <map:generate src="sitemap.xmap"/>
+        <map:serialize/>
+      </map:handle-errors>
+    </map:pipeline>
+
+    <map:pipeline>
+      <map:generate src="sitemap.xmap"/>
+      <map:handle-errors>
+        <map:serialize/>
+      </map:handle-errors>
+    </map:pipeline>
+
+    <map:pipeline>
+      <map:generate src="sitemap.xmap"/>
+      <map:serialize/>
+      <map:handle-errors>
+      </map:handle-errors>
+    </map:pipeline>
+
+    <map:pipeline>
+      <map:generate src="sitemap.xmap"/>
+      <map:serialize/>
+      <map:handle-errors>
+        <map:generate src="sitemap.xmap"/>
+      </map:handle-errors>
+    </map:pipeline>
+    -->
+
+    <map:pipeline>
+      <!-- 1. matchers allow any nested components -->
+      <map:match pattern="test-one-1">
+        <map:generate src="one"/>
+        <map:match pattern="test-one-2-nested">
+          <map:transform src="two"/>
+        </map:match>
+        <map:act type="request">
+          <map:transform src="three"/>
+        </map:act>
+        <map:select>
+          <map:when test="one">
+            <map:transform src="four"/>
+          </map:when>
+          <map:otherwise>
+            <map:transform src="five"/>
+          </map:otherwise>
+        </map:select>
+        <map:transform src="six"/>
+        <map:serialize/>
+      </map:match>
+
+      <map:match pattern="test-one-2">
+        <map:mount uri-prefix="one/" src="one/" check-reload="yes"/>
+      </map:match>
+
+      <map:match pattern="test-one-3">
+        <map:read src="one"/>
+      </map:match>
+
+      <!-- 2. selectors allow any nested components -->
+      <map:select>
+        <map:when test="one">
+          <map:generate src="one"/>
+          <map:transform src="two"/>
+          <map:serialize/>
+        </map:when>
+        <map:when test="two">
+          <map:act type="request">
+            <map:read src="one"/>
+          </map:act>
+        </map:when>
+        <map:when test="three">
+          <map:match pattern="one">
+            <map:read src="one"/>
+          </map:match>
+        </map:when>
+        <map:when test="four">
+          <map:select>
+            <map:when test="one-one">
+              <map:transform src="five"/>
+            </map:when>
+            <map:otherwise>
+              <map:transform src="six"/>
+            </map:otherwise>
+          </map:select>
+        </map:when>
+        <map:when test="five">
+          <map:mount uri-prefix="one/" src="one/" check-reload="yes"/>
+        </map:when>
+        <map:otherwise>
+          <map:read src="one"/>
+        </map:otherwise>
+      </map:select>
+
+      <!-- 3. actions allow any nested components -->
+      <map:act type="request">
+        <map:generate src="one"/>
+        <map:match pattern="test-one-2-nested">
+          <map:transform src="two"/>
+        </map:match>
+        <map:act type="request">
+          <map:transform src="three"/>
+        </map:act>
+        <map:select>
+          <map:when test="one">
+            <map:transform src="four"/>
+          </map:when>
+          <map:otherwise>
+            <map:transform src="five"/>
+          </map:otherwise>
+        </map:select>
+        <map:transform src="six"/>
+        <map:serialize/>
+      </map:act>
+
+      <map:act type="request">
+        <map:mount uri-prefix="one/" src="one/" check-reload="yes"/>
+      </map:act>
+
+      <map:act type="request">
+        <map:read src="one"/>
+      </map:act>
+
+      <!-- 4. direct components are also allowed at the top level -->
+      <map:generate src="test-four"/>
+      <map:transform src="test-four"/>
+      <map:serialize/>
+
+      <!-- can put nothing after serialize|read|mount|redirect-to
+        <map:mount uri-prefix="one/" src="one/" check-reload="yes"/>
+        <map:read src="one"/>
+      -->
+
+      <map:handle-errors>
+        <map:match pattern="error-one">
+          <map:transform src="one"/>
+        </map:match>
+        <map:act type="request">
+          <map:transform src="two"/>
+        </map:act>
+        <map:select>
+          <map:when test="one">
+            <map:transform src="three"/>
+          </map:when>
+          <map:otherwise>
+            <map:transform src="four"/>
+          </map:otherwise>
+        </map:select>
+        <map:transform src="five"/>
+        <map:serialize/>
+      </map:handle-errors>
+
+    </map:pipeline>
+
+    <!-- Test substitutions -->
+    <map:pipeline>
+      <map:match type="not-substituted" pattern="substitute-match-pattern-{dummy}">
+        <map:generate type="not-substituted" 
+            src="substitute-generate-src-{dummy}" label="not-substituted"/>
+        <map:transform type="not-substituted" src="substitute-transform-src-{dummy}"/>
+
+        <map:act type="not-substituted" src="substitute-act-src-{dummy}"/>
+
+        <map:select type="not-substituted">
+          <map:when test="substitute-when-test-{dummy}">
+            <map:transform src="dummy"/>
+          </map:when>
+          <map:otherwise>
+          </map:otherwise>
+        </map:select>
+        <map:serialize type="not-substituted" src="substitute-serialize-src-{dummy}"/>
+      </map:match>
+
+      <map:match pattern="dummy">
+        <map:mount
+          uri-prefix="substitute-mount-uri-prefix-{dummy}"
+          src="substitute-mount-src-{dummy}"
+          check-reload="yes"/> <!-- no substitution -->
+      </map:match>
+
+      <map:match pattern="dummy">
+        <map:read type="not-substituted" src="substitute-read-src-{dummy}"/>
+      </map:match>
+
+      <map:match pattern="dummy">
+        <map:redirect-to uri="substitute-redirect-uri-{dummy}"/>
+      </map:match>
+
+      <map:aggregate 
+        element="substitute-aggregate-element-{dummy}" 
+        ns="substitute-aggregate-ns-{dummy}"
+        prefix="substitute-aggregate-prefix-{dummy}">
+        <map:part
+          src="substitute-part-src-{dummy}"
+          element="substitute-part-element-{dummy}"
+          ns="substitute-part-ns-{dummy}"
+          prefix="substitute-part-prefix-{dummy}"
+          strip-root="substitute-part-strip-root-{dummy}"/>
+      </map:aggregate>
+      <map:call resource="substitute-call-src-{dummy}"/>
+
+    </map:pipeline>
+  </map:pipelines>
+</map:sitemap>
+
+<!-- end of file -->

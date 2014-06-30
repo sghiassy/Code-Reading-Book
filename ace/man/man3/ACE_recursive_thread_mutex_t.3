@@ -1,0 +1,60 @@
+.TH ACE_recursive_thread_mutex_t 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_recursive_thread_mutex_t \- Implement a thin C++ wrapper that allows nested acquisition and release of a mutex that occurs in the same thread. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS.h>\fR
+.PP
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_thread_mutex_t \fBnesting_mutex_\fR"
+.br
+.RI "\fIGuards the state of the nesting level and thread id.\fR"
+.ti -1c
+.RI "ACE_cond_t \fBlock_available_\fR"
+.br
+.RI "\fIThis condition variable suspends other waiting threads until the mutex is available.\fR"
+.ti -1c
+.RI "int \fBnesting_level_\fR"
+.br
+.RI "\fICurrent nesting level of the recursion.\fR"
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBowner_id_\fR"
+.br
+.RI "\fICurrent owner of the lock.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Implement a thin C++ wrapper that allows nested acquisition and release of a mutex that occurs in the same thread.
+.PP
+.PP
+ This implementation is based on an algorithm sketched by Dave Butenhof <butenhof@zko.dec.com>. Naturally, I take the credit for any mistakes ;-) 
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_cond_t ACE_recursive_thread_mutex_t::lock_available_
+.PP
+This condition variable suspends other waiting threads until the mutex is available.
+.PP
+.SS int ACE_recursive_thread_mutex_t::nesting_level_
+.PP
+Current nesting level of the recursion.
+.PP
+.SS ACE_thread_mutex_t ACE_recursive_thread_mutex_t::nesting_mutex_
+.PP
+Guards the state of the nesting level and thread id.
+.PP
+.SS \fBACE_thread_t\fR ACE_recursive_thread_mutex_t::owner_id_
+.PP
+Current owner of the lock.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

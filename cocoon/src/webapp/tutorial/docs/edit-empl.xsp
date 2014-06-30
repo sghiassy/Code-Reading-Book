@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+
+<xsp:page xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-formval="http://apache.org/xsp/form-validator/2.0"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+          xmlns:esql="http://apache.org/cocoon/SQL/v2">
+<document>
+  <header>
+    <title>Employee</title>
+  </header>
+  <body>
+    <s1 title="Edit an Employee">
+      <form handler="edit-empl.html">
+        <p>
+          You can edit an employee by changing the
+          name and department and pressing the "Update Employee" button.
+        </p>
+        <parameter name="id">
+          <xsp:attribute name="value"><xsp-request:get-parameter name="id"/></xsp:attribute>
+        </parameter>
+        <esql:connection>
+          <esql:pool>personnel</esql:pool>
+          <esql:execute-query>
+            <esql:query>
+              SELECT employee, department_id FROM employee
+              WHERE employee = <esql:parameter><xsp-request:get-parameter name="id"/></esql:parameter>
+            </esql:query>
+            <esql:results>
+              <esql:row-results>
+                <p>
+                  Name: <text name="name" size="30" required="true">
+                  <xsp:attribute name="value"><esql:get-string column="name"/></xsp:attribute>
+                  </text><br />
+                  <xsp:logic>int deptId = <esql:get-int column="department_id"/>;</xsp:logic>
+                  <xsp-formval:on-toosmall name="name">
+                    Name must be at least 5 characters.
+                  </xsp-formval:on-toosmall>
+                  <xsp-formval:on-toolarge name="name">
+                    Name must be less than 64 characters.
+                  </xsp-formval:on-toolarge>
+                </p>
+                <p>
+                  Department:
+                  <select name="department">
+                  <!-- query execution blocks can be repeated -->
+                  <esql:execute-query>
+
+                    <!-- Find all departments and order them -->
+                    <esql:query>
+                      SELECT id, name
+                      FROM department ORDER BY name
+                    </esql:query>
+
+                    <!-- What to do with the results -->
+                    <esql:results>
+                      <!--
+                         A successful query that returns results
+                         executes this block.  You can also embed
+                         more "execute-query" blocks inside the
+                         row-results.  That way you can have queries
+                         that filter information based on the results
+                         of other queries.
+                      -->
+                      <esql:row-results>
+                        <xsp:logic>
+                          if (<esql:get-int column="id"/> == deptId) {
+                              xspAttr.addAttribute("", "selected", "selected", "CDATA", "");
+                          }
+                        </xsp:logic>
+                        <option>
+                          <xsp:attribute name="value"><esql:get-string column="id"/></xsp:attribute>
+                          <esql:get-string column="name"/>
+                        </option>
+                      </esql:row-results>
+                    <!--
+                      Other result types are "no-results" and
+                      "error-results".  A successful query that
+                      does not return results (an empty resultset)
+                      will use the XML embedded in the "no-results"
+                      section.  An unsuccessful query that throws
+                      an exception will use the XML embedded in
+                      the "error-results" section.
+                    -->
+                    </esql:results>
+                  </esql:execute-query>
+                  </select><br/>
+                  <xsp-formval:on-null name="department">
+                    You must select a department.
+                  </xsp-formval:on-null>
+                </p>
+              </esql:row-results>
+            </esql:results>
+          </esql:execute-query>
+        </esql:connection>
+        <submit name="Update Employee"/><submit name="Delete Employee"/>
+        <note>
+          * These fields are required.
+        </note>
+      </form>
+    </s1>
+  </body>
+</document>
+</xsp:page>

@@ -1,0 +1,107 @@
+.TH ACE_POSIX_Asynch_Operation 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_POSIX_Asynch_Operation \- This class abstracts out the common things needed for implementing  for POSIX platforms. Specific implementations such as <POSIX_AIOCB_Asynch_Operation> can derive from this class. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <POSIX_Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Operation_Impl\fR.
+.PP
+Inherited by \fBACE_POSIX_AIOCB_Asynch_Operation\fR\fC [virtual]\fR, and \fBACE_POSIX_Asynch_Accept\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, const void *completion_key, \fBACE_Proactor\fR *proactor = 0)"
+.br
+.ti -1c
+.RI "int \fBcancel\fR (void)"
+.br
+.RI "\fICheck the documentation for .\fR"
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor\fR (void) const"
+.br
+.RI "\fIReturn the underlying proactor.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_POSIX_Asynch_Operation\fR (void)"
+.br
+.RI "\fINo op contructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_POSIX_Asynch_Operation\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor_\fR"
+.br
+.RI "\fIProactor that this Asynch IO will be registered with.\fR"
+.ti -1c
+.RI "\fBACE_Handler\fR* \fBhandler_\fR"
+.br
+.RI "\fIHandler that will receive the callback.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle_\fR"
+.br
+.RI "\fII/O handle used for reading.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class abstracts out the common things needed for implementing  for POSIX platforms. Specific implementations such as <POSIX_AIOCB_Asynch_Operation> can derive from this class.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_POSIX_Asynch_Operation::ACE_POSIX_Asynch_Operation (void)\fC [protected]\fR
+.PP
+No op contructor.
+.PP
+.SS ACE_POSIX_Asynch_Operation::~ACE_POSIX_Asynch_Operation (void)\fC [protected, virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_POSIX_Asynch_Operation::cancel (void)
+.PP
+Check the documentation for .
+.PP
+Reimplemented in \fBACE_POSIX_AIOCB_Asynch_Read_Stream\fR, \fBACE_POSIX_AIOCB_Asynch_Write_Stream\fR, \fBACE_POSIX_AIOCB_Asynch_Read_File\fR, \fBACE_POSIX_AIOCB_Asynch_Write_File\fR, \fBACE_POSIX_Asynch_Accept\fR, \fBACE_POSIX_AIOCB_Asynch_Transmit_File\fR, \fBACE_POSIX_AIOCB_Asynch_Read_Dgram\fR, and \fBACE_POSIX_AIOCB_Asynch_Write_Dgram\fR.
+.SS int ACE_POSIX_Asynch_Operation::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle, const void * completion_key, \fBACE_Proactor\fR * proactor = 0)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. No need for the Proactor since the sub classes will know the correct implementation Proactor class, since this Operation class itself was created by the correct implementation Proactor class. 
+.PP
+Reimplemented in \fBACE_POSIX_AIOCB_Asynch_Read_Stream\fR, \fBACE_POSIX_AIOCB_Asynch_Write_Stream\fR, \fBACE_POSIX_AIOCB_Asynch_Read_File\fR, \fBACE_POSIX_AIOCB_Asynch_Write_File\fR, \fBACE_POSIX_Asynch_Accept\fR, \fBACE_POSIX_AIOCB_Asynch_Transmit_File\fR, \fBACE_POSIX_AIOCB_Asynch_Read_Dgram\fR, and \fBACE_POSIX_AIOCB_Asynch_Write_Dgram\fR.
+.SS \fBACE_Proactor\fR * ACE_POSIX_Asynch_Operation::proactor (void) const
+.PP
+Return the underlying proactor.
+.PP
+Reimplemented in \fBACE_POSIX_AIOCB_Asynch_Read_Stream\fR, \fBACE_POSIX_AIOCB_Asynch_Write_Stream\fR, \fBACE_POSIX_AIOCB_Asynch_Read_File\fR, \fBACE_POSIX_AIOCB_Asynch_Write_File\fR, \fBACE_POSIX_Asynch_Accept\fR, \fBACE_POSIX_AIOCB_Asynch_Transmit_File\fR, \fBACE_POSIX_AIOCB_Asynch_Read_Dgram\fR, and \fBACE_POSIX_AIOCB_Asynch_Write_Dgram\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_HANDLE ACE_POSIX_Asynch_Operation::handle_\fC [protected]\fR
+.PP
+I/O handle used for reading.
+.PP
+.SS \fBACE_Handler\fR * ACE_POSIX_Asynch_Operation::handler_\fC [protected]\fR
+.PP
+Handler that will receive the callback.
+.PP
+.SS \fBACE_Proactor\fR * ACE_POSIX_Asynch_Operation::proactor_\fC [protected]\fR
+.PP
+Proactor that this Asynch IO will be registered with.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

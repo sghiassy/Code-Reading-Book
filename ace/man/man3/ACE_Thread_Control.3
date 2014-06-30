@@ -1,0 +1,136 @@
+.TH ACE_Thread_Control 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Thread_Control \- Used to keep track of a thread's activities within its entry point function. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Thread_Control.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Control\fR (\fBACE_Thread_Manager\fR *tm = 0, int insert = 0)"
+.br
+.RI "\fIInitialize the thread control object. If <insert> != 0, then register the thread with the Thread_Manager.\fR"
+.ti -1c
+.RI "\fB~ACE_Thread_Control\fR (void)"
+.br
+.RI "\fIRemove the thread from its associated <Thread_Manager> and exit the thread if <do_thr_exit> is enabled.\fR"
+.ti -1c
+.RI "void* \fBexit\fR (void *status, int do_thr_exit)"
+.br
+.RI "\fIRemove this thread from its associated <Thread_Manager> and exit the thread if <do_thr_exit> is enabled.\fR"
+.ti -1c
+.RI "int \fBinsert\fR (\fBACE_Thread_Manager\fR *tm, int insert = 0)"
+.br
+.RI "\fIStore the <Thread_Manager> and use it to register ourselves for correct shutdown.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBthr_mgr\fR (void)"
+.br
+.RI "\fIReturns the current <Thread_Manager>.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBthr_mgr\fR (\fBACE_Thread_Manager\fR *)"
+.br
+.RI "\fIAtomically set a new <Thread_Manager> and return the old <Thread_Manager>.\fR"
+.ti -1c
+.RI "void* \fBstatus\fR (void *status)"
+.br
+.RI "\fISet the exit status (and return existing status).\fR"
+.ti -1c
+.RI "void* \fBstatus\fR (void)"
+.br
+.RI "\fIGet the current exit status.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBtm_\fR"
+.br
+.RI "\fIPointer to the thread manager for this block of code.\fR"
+.ti -1c
+.RI "void* \fBstatus_\fR"
+.br
+.RI "\fIKeeps track of the exit status for the thread.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Used to keep track of a thread's activities within its entry point function.
+.PP
+.PP
+ A  uses this class to ensure that threads it spawns automatically register and unregister themselves with it. This class can be stored in thread-specific storage using the  wrapper. When a thread exits the  function deletes this object, thereby ensuring that it gets removed from its associated . 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Thread_Control::ACE_Thread_Control (\fBACE_Thread_Manager\fR * tm = 0, int insert = 0)
+.PP
+Initialize the thread control object. If <insert> != 0, then register the thread with the Thread_Manager.
+.PP
+.SS ACE_Thread_Control::~ACE_Thread_Control (void)
+.PP
+Remove the thread from its associated <Thread_Manager> and exit the thread if <do_thr_exit> is enabled.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Thread_Control::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS void * ACE_Thread_Control::exit (void * status, int do_thr_exit)
+.PP
+Remove this thread from its associated <Thread_Manager> and exit the thread if <do_thr_exit> is enabled.
+.PP
+.SS int ACE_Thread_Control::insert (\fBACE_Thread_Manager\fR * tm, int insert = 0)
+.PP
+Store the <Thread_Manager> and use it to register ourselves for correct shutdown.
+.PP
+.SS void * ACE_Thread_Control::status (void)
+.PP
+Get the current exit status.
+.PP
+.SS void * ACE_Thread_Control::status (void * status)
+.PP
+Set the exit status (and return existing status).
+.PP
+.SS \fBACE_Thread_Manager\fR * ACE_Thread_Control::thr_mgr (\fBACE_Thread_Manager\fR *)
+.PP
+Atomically set a new <Thread_Manager> and return the old <Thread_Manager>.
+.PP
+.SS \fBACE_Thread_Manager\fR * ACE_Thread_Control::thr_mgr (void)
+.PP
+Returns the current <Thread_Manager>.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Thread_Control::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS void * ACE_Thread_Control::status_\fC [private]\fR
+.PP
+Keeps track of the exit status for the thread.
+.PP
+.SS \fBACE_Thread_Manager\fR * ACE_Thread_Control::tm_\fC [private]\fR
+.PP
+Pointer to the thread manager for this block of code.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

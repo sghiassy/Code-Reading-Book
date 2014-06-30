@@ -1,0 +1,500 @@
+                  Apache Tomcat Version 4.0 Beta 6
+                  =================================
+                            Release Notes
+                            =============
+
+$Id: RELEASE-NOTES-4.0-B6.txt,v 1.3 2001/07/20 06:13:49 craigmcc Exp $
+
+
+============
+INTRODUCTION:
+============
+
+
+This document describes the changes that have been made in the current
+beta release of Apache Tomcat, relative to the previous release.
+
+Bug reports should be entered at the bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please report bugs and feature requests under product name "Tomcat 4".
+
+
+----> SECURITY NOTE:  This version of Tomcat fixes a security vulnerability
+----> that was first reported on July 16, 2001, related to unnormalized request
+----> URI paths bypassing security constraints defined in the web application
+----> deployment descriptor.  Users who rely on container managed security are
+----> *strongly* urged to update to this release of Tomcat 4.0.
+
+
+----> UPCOMING CHANGE NOTICE:  In a future beta release of Tomcat 4.0, it
+----> is likely that the default operational mode will be to run Tomcat
+----> under a security manager (rather than the current default of not
+----> using one).  This may necessitate editing the policy permissions
+----> file ($CATALINA_HOME/conf/catalina.policy) if your web applications
+----> require permissions that are not enabled by default (such as connecting
+----> to network ports).  You are urged to test your applications with
+----> Tomcat 4.0-b5 running under the security manager now, so that this
+----> upcoming change will not be disruptive.  To do so, start Tomcat 4.0
+----> with the command "$CATALINA_HOME/bin/catalina.sh start -security"
+----> (Unix) or "%CATALINA_HOME%\bin\catalina start -security" (Windows).
+
+
+============
+NEW FEATURES:
+============
+
+
+--------------------
+General New Features:
+--------------------
+
+Tomcat 4.0-beta-6 includes a new, experimental, installer for the Windows
+platform.  This installer operates in a manner similar to installers for other
+applications on Windows, and also lets you install support for executing
+Tomcat as a Service under Windows NT.  This version of the download is packaged
+as a ".exe" file, and contains the same contents as a standard Tomcat binary
+distribution.  Please try this new installer out and give us your feedback.
+--> NOTE:  A known issue with this capability is that stopping Tomcat
+--> service can take so long that it fails and logs an error in the
+--> NT event log.  The solution to this problem will be to make the
+--> server shutdown time shorter so that the timeout is not exceeded.
+
+Tomcat 4.0-beta-6 now includes an updated version of the Java side of the
+MOD_WEBAPP connector, used to run Tomcat behind Apache.  Binary versions of
+the MOD_WEBAPP connector for various platforms will be published (in the same
+directory where you downloaded Tomcat-4.0-beta-6 shortly).
+
+Catalina and Jasper now utilize copies of the web application deployment
+descriptor and tag library descriptor from the servlet.jar file that is
+included (generated from the "jakarta-servletapi-4" repository) instead of
+including their own copies.  This avoids the risk of having Tomcat use versions
+of the DTDs that are out of synchronization with the servlet API classes.
+
+Updated the build process to make it easier to build Tomcat 4.0 from the
+source distribution.  Rather than requiring environment variables to be
+created, the new scheme allows the use of "build.properties" files (in either
+the Tomcat source directory or the user home directory) to define property
+values.  You can use all standard Ant property replacement expressions in
+these definitions.  As a result, the "build.bat" and "build.sh" scripts are
+no longer necessary; simply run the "ant" command directly.  See the install
+instructions for more information.
+
+The build scripts have been enhanced to support the compilation and execution
+of unit tests for the JUnit unit testing framework <http://www.junit.org>.
+A small set of initial tests have been checked in to illustrate the use of
+this new feature.
+
+
+---------------------
+Catalina New Features:
+---------------------
+
+Catalina is now in conformance to the requirements of the Servlet 2.3
+Proposed Final Draft 3 Specification, available at:
+  http://java.sun.com/products/servlet/download.html
+
+Created a new Java SecurityManager permission called JndiPermission
+for use in setting security policy for file based JNDI named resources.
+
+Started creating developer-oriented documentation for Catalina in an XML
+format that should be compatible with whatever presentation technology
+that we select.  Initial effort is to create "functional specification"
+documents that capture the functionality of the default file-serving
+servlet, the "invoker" servlet that handles anonymous servlet requests
+(/servlet/*), JDBCRealm, and JNDIRealm.
+
+You can now optionally specify that DNS lookups should be performed when an
+application servlet calls request.getRemoteHost().  To enable the lookup,
+set the enableLookups property on the corresponding <Connector> element to
+"true" (which is also the default).  To disable lookups, set this attribute
+to "false" instead.
+
+A new Loader, and corresponding class loader, for web applications
+(org.apache.catalina.loader.WebappLoader and
+org.apache.catalina.loader.WebappClassLoader) has been created and made the
+default, replacing StandardLoader and StandardClassLoader.  It implements
+the following new features:
+* Supports reloading of classes in /WEB-INF/lib/*.jar as well as
+  /WEB-INF/classes.
+* Recognizes JAR files added to /WEB-INF/lib while the web app is running.
+* Substantially improved efficiency (and therefore faster class loading
+  performance).
+* Correctly scans /WEB-INF/classes before /WEB-INF/lib/*.jar in all cases,
+  as required by the Servlet 2.3 PFD3 specification.
+
+-------------------
+Jasper New Features:
+-------------------
+
+Jasper is now in conformance to the requirements of the JSP 1.2 Proposed
+Final Draft 3 Specification
+  http://java.sun.com/products/jsp/download.html
+
+All remaining areas where Jasper (or Jasper-generated code) refered to
+java.io.File objects have been removed, so that JSP-based applications can
+be run directly from a WAR file.
+
+The JSP page compiler now has enhanced compile-time error reporting.  If
+Jasper detects a Java compilation error on the generated page, it will include
+information highlighting the line(s) within your source page where the actual
+error actually occurred.
+
+
+--------------------
+Webapps New Features:
+--------------------
+
+Created a version of the Manager servlet that supports an HTML interface
+for easier administration.  To use it, change the <servlet> definition (in
+the web.xml file of the Manager application) from
+org.apache.catalina.servlets.ManagerServlet to
+org.apache.catalina.servlets.HTMLManagerServlet.
+
+Included support for executing external CGI scripts.  To execute them,
+create scripts (or executable programs) inside your web application, and
+map them to org.apache.catalina.servlets.CGIServlet.  By default, the url
+pattern "*.cgi" is mapped to this servlet.
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+
+------------------
+Catalina Bug Fixes:
+------------------
+
+org.apache.catalina.authenticator.FormAuthenticator:  Update form based login
+processing to be consistent with the requirements of the 2.3 PFD3 spec.
+Previously, Catalina did an "internal forward" to display the form login page,
+and an "internal forward" to display the originally requested page after
+successful authentication.  Now, Catalina does HTTP redirects in both cases
+(the former is optional but makes relative references in the login page work
+correctly; the latter is required by the spec).
+
+org.apache.catalina.connector.http.*:  Replace calls to indexOf("x") by
+indexOf('x') and lastIndexOf("x") by lastIndexOf('x') to improve performance.
+
+org.apache.catalina.connector.http.HttpConnector:  Set the TCPNoDelay
+property on incoming connections, to avoid unnecessary delays on HTTP/1.1
+persistent connections.
+
+org.apache.catalina.connector.http.HttpConnector:  Implement the documented
+behavior that a negative value for the "maxProcessors" property means that
+there will be no limit on the total number of processors created.
+
+org.apache.catalina.connector.http.HttpProcessor:  Correctly handle requests
+with absolute (instead of server-relative) URLs, as required by the
+HTTP/1.1 specification.
+
+org.apache.catalina.connector.http.HttpProcessor:  Skip any leftover bytes
+before closing a socket on a connection that has been aborted.
+
+org.apache.catalina.connector.http.HttpRequestBase:  Add a doPrivileged()
+block around getSession(), to avoid security exceptions when running under
+a security manager.
+
+org.apache.catalina.connector.http.HttpRequestLine:  Correct a buffer size,
+which was much larger than necessary.
+
+org.apache.catalina.connector.http.HttpRequestStream:  Correct a potential
+NullPointerException where readLineFromStream() might return null because of
+network errors and other transient conditions.
+
+org.apache.catalina.connector.http.HttpResponseBase:  Do not send response
+headers on an HTTP/0.9 request, as required by the HTTP specification.
+
+org.apache.catalina.connector.http.SocketInputStream:  Correctly handle
+HTTP/0.9 requests, as required by the HTTP/1.1 specification.
+
+org.apache.catalina.core.ApplicationContext:  When an "attribute replaced"
+event is fired, correctly send the *old* value in the event, not the *new*
+value.
+
+org.apache.catalina.core.ApplicationDispatcher:  Modify the way that a
+servlet's service() method is invoked to remove compiler complaints on
+Win2k/Forte2.0/JDK1.0.0_01.
+
+org.apache.catalina.core.ApplicationDispatcher:  Modify the way that request
+dispatching is performed.  Previously, Catalina would create request and/or
+response wrappers (as needed) around the application-specified request and
+response objects, which might themselves be wrappers.  This behavior is
+prohibited in the Servlet 2.3 PFD3 specification, so it is now implemented
+in a different way.  Filters and Servlets can now assume that any request or
+response wrappers they create will be the same object instances passed to the
+service() method of a servlet, unless later wrapped by other application
+components.
+
+org.apache.catalina.core.ApplicationFilterChain:  Remove unnecessary
+synchronization around the call to the service() method of a
+SingleThreadModel servlet, since the wrapper.allocate() method already
+guarantees that the same instance will not be allocated to more than one
+request at the same time.
+
+org.apache.catalina.core.StandardContext:  Correct the order of operations
+during a reload that caused problems reinitializing filters, listeners, and
+the manager servlet.
+
+org.apache.catalina.core.StandardContext:  Make the naming context name
+unique, to avoid conflicts when multiple engines use the same host and
+context names.
+
+org.apache.catalina.core.StandardContext:  When processing an application
+restart, erase all application-originated servlet context attributes to avoid
+dangling references to object instances created by the old class loader.
+
+org.apache.catalina.core.StandardContext:  When processing an application
+restart, reinitialize all <load-on-startup> servlets defined in web.xml, in
+the same order that they were called at application startup.
+
+org.apache.catalina.core.StandardContext:  When processing an application
+restart, reinitialize the Jasper class loader so that bean references after
+the reload work correctly.
+
+org.apache.catalina.core.StandardContextValve:  Bind and unbind the request
+processing thread (as well as the class loader), to fix problems with JBoss
+and optimized VM-local RMI servers that may replace the context class loader
+with their own.
+
+org.apache.catalina.core.StandardHost:  Correct handling of the <alias>
+element for assigning host name aliases, which was not being properly
+recorded during configuration.
+
+org.apache.catalina.core.StandardWrapperValve:  Correct the invocation of
+servlets defined using the <jsp-file> element in the web.xml file.  Previously,
+the request URI (and therefore the servlet path and path info) seen by the
+invoked page was being modified by the container.
+
+org.apache.catalina.realm.JDBCRealm:  Restore a static Digest() method, and
+a corresponding static main() method, that was accidentally removed when this
+class was refactored.
+
+org.apache.catalina.loader.StandardClassLoader:  Synchronize put() calls that
+modify the class cache to avoid ConcurrentModificationException errors in the
+background task running the modified() method.
+
+org.apache.catalina.loader.StandardLoader:  Remove useless thread binding
+and unbinding during the creation of a Loader.
+
+org.apache.catalina.loader.StandardLoader:  Trickle down any non-zero setting
+for the "debug" property to the ClassLoader implementation we create.
+
+org.apache.catalina.loader.StandardLoader:  Copy JAR files from /WEB-INF/lib
+to the work directory if the web application is *not* filesystem based,
+rather than if it *is* filesystem based.
+
+org.apache.catalina.servlets.InvokerServlet:  Instead of using a request
+dispatcher to execute the anonymous servlet on the first invocation, call the
+service() method directly.  This avoids problems when the invoked servlet is
+executed through a RequestDispatcher.forward() call, which would cause the
+response to be committed and closed at unexpected times.
+
+org.apache.catalina.servlets.InvokerServlet:  Correct the behavior of the
+invoker servlet that caused incorrect 404 errors when invoked servlets were
+accessed through a request dispatcher in a chain of two or more forwards or
+includes.
+
+org.apache.catalina.session.StandardManager:  Delete the persistent sessions
+file, even if there was an error during loading.  Also, make sure that the
+persistent sessions file is closed during unloading, even if an error occurs.
+
+org.apache.catalina.sesison.StandardManager:  Log an exception and stack trace
+when problems occur serializing or deserializing sessions to or from persistent
+store during a restart.  Previously, such errors would be silently ignored but
+would terminate attempts to unload or reload sessions.
+
+org.apache.catalina.session.StandardSession:  When an "attribute replaced"
+event is fired, correctly send the *old* value in the event, not the
+*new* value.
+
+org.apache.catalina.session.StandardSession:  Log an exception and stack trace
+if problems occur during serialization of sessions to persistent store.
+
+org.apache.catalina.session.StandardSession:  If a null attribute name is
+specified, throw IllegalArgumentException as documented in the Javadocs.
+
+org.apache.catalina.startup.Catalina:  When no command line arguments at all
+are included, print a usage message and exit.
+
+org.apache.catalina.startup.ContextConfig:  Remove useless thread binding
+and unbinding, which is now done in StandardContext.
+
+org.apache.catalina.startup.ContextConfig:  Refactor code used to start and
+stop subcomponents of a Context into StandardContext, because they are
+required when processing web application restarts as well.
+
+org.apache.catalina.util.xml.XmlMapper:  Do not print double debug messages
+when processing a method setter that reads its argument from an element body.
+
+org.apache.catalina.valves.AccessLogValve:  Fix the time format used in
+access logs to use 00-23 for hours, rather than 01-24.
+
+org.apache.naming.ContextAccessController:  Fix a bug on the access controller
+when stopping and restarting a Context.
+
+org.apache.naming.ContextBindings:  Correct an unbindThread() call that was
+inadvertently calling itself.
+
+org.apache.naming.JndiPermission:  Create a new permission, rather than using
+FilePermission, for access to JNDI based resources.
+
+org.apache.naming.factory.TyrexDataSourceFactory:  The JNDI factory for
+JDBC connections now supports Tyrex 0.9.7 as well as Tyrex 0.9.6.
+
+org.apache.naming.resources.DirContextURLConnection:  Fix several possible
+NullPointerExceptions when calling getLastModified() and getHeaderField().
+
+org.apache.naming.resources.FileDirContext:  Deal correctly with Windows
+file separators.
+
+org.apache.naming.resources.ResourceAttributes:  Make property setters
+public, which makes it possible to plug a directory context external to
+Catalina without having to reimplement something like ResourceAttributes,
+or having to use BaseAttributes (which would be slower).
+
+org.apache.naming.resources.jndi.Handler:  Create a URLStreamHandler that
+respects the package naming conventions of the JDK.
+
+
+----------------
+Jasper Bug Fixes:
+----------------
+
+org.apache.jasper.JspEngineContext:  Make Jasper dynamically retrieve the
+web application class loader, instead of doing so only at initialization
+time.  This avoids problems when reloading a web app, where Jasper would
+mistakenly maintain references to the old versions of the loaded classes.
+
+org.apache.jasper.compiler.CharDataGenerator:  Do not generate indentation
+in println(), which caused problems when rendering runtime expressions.
+
+org.apache.jasper.compiler.Compiler:  Correct a Windows-specific problem in
+performing the error line mappinng from the generated Java code back to the
+source JSP page.
+
+org.apache.jasper.compiler.JspCompiler: Remove a case where java.io.File was
+used, which prevented correct operation in a web app executed directly from
+the WAR file.
+
+org.apache.jasper.compiler.JspUtil:  Correct delimiter and quote escaping in
+generated expressions.
+
+org.apache.jasper.compiler.Parser:  Correctly reject a <jsp:params> element
+nested inside <jsp:forward> or <jsp:include>.
+
+org.apache.jasper.compiler.ParserController:  Correctly process include
+directives and actions with relative URLs, in accordance with the spec.
+
+org.apache.jasper.compiler.TagEndGenerator:  Change the variable name
+generated for an exception handling block to avoid potential conflicts with
+user-defined variable names.
+
+org.apache.jasper.compiler.TldLocationsCache:  Update TLD parsing code so
+that it uses ServletContext.getResourcePaths(), rather than direct filesystem
+access.
+
+org.apache.jasper.compiler.XmlOutputter: Correct a syntax error in the XML
+output, by properly checking for and closing an element with no body.
+
+org.apache.jasper.runtime.JspException:  Migrate this class from
+org.apache.jasper to increase the granularity of package access permissions
+when running under a security manager.
+
+org.apache.jasper.runtime.JspRuntimeLibrary:  Fix a class comparison that
+caused problems with the generated code when a custom tag property of
+type Object was referenced.
+
+org.apache.jasper.runtime.PageContextImpl:  Add a missing "break"
+statement on a REQUEST_SCOPE case.
+
+org.apache.jasper.runtime.PageContextImpl:  Fix an "infinite loop" bug when
+doing an include followed by a forward, to a page that has an error in it.
+
+org.apache.jasper.servlet.JasperLoader:  Use the context class loader as the
+parent class loader for individual JSP pages.
+
+org.apache.jasper.servlet.JasperLoader:  Add a doPrivileged() block around
+getContextClassLoader(), to avoid security exceptions when running under
+a security manager.
+
+org.apache.jasper.servlet.JspServlet:  Correctly check for modified JSP pages
+and cause them to be recompiled (was broken in "beta 5").
+
+org.apache.jasper.servlet.JspServlet:  Use the thread context class loader,
+rather than the class loader ServletContext attribute, to retrieve the web
+application class loader.
+
+
+-----------------
+Webapps Bug Fixes:
+-----------------
+
+Several incorrect hyperlinks in the "examples" web application have been
+corrected.
+
+CookieExample:  Deal with the fact that request.getCookies() can return null.
+
+filters.RequestDumperFilter:  Deal with the fact that request.getCookies()
+can return null.
+
+org.apache.catalina.servlets.ManagerServlet:  Make it possible to subclass
+this servlet.
+
+org.apache.catalina.valves.RequestDumperValve:  Deal with the fact that
+request.getCookies() can return null.
+
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
+JAXP/1.1 reference implementation) to web applications.  This is no longer
+the case, because Jasper loads its parser with a new class loader instead.
+Keep the following points in mind when considering how to use XML parsers
+in Tomcat 4.0 and your web applications:
+
+* If you wish to make the JAXP/1.1 RI XML parser available to all web
+  applications, simply move the "jaxp.jar" and "crimson.jar" files from
+  the "$TOMCAT_HOME/jasper" directory to the "$TOMCAT_HOME/lib" directory.
+
+* If you wish to make another XML parser that is JAXP/1.1-compatible
+  available to all web applications, install that parser into the
+  "$TOMCAT_HOME/lib" directory and remove "jaxp.jar" and "crimson.jar"
+  from the "$TOMCAT_HOME/jasper" directory.  It has been reported that
+  Xerces 1.3.1 can be used in this fashion, but 2.x alpha releases
+  can not be.
+
+* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
+  directory of your web application, this should now be possible, because
+  of the modified JAXP 1.1 parser mentioned below.
+
+WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
+(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.
+
+
+--------------------
+MOD_WEBAPP Connector:
+--------------------
+
+A new version of the Apache 1.3 side of the MOD_WEBAPP connector is included
+in this release, in the "connectors" directory.  It has not been tested
+heavily yet, so it should be considered experimental.
+
+
+

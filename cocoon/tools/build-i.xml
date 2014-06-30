@@ -1,0 +1,43 @@
+<project default="interactive" basedir="../" name="Test build">
+
+  <!-- =================================================================== -->
+  <!-- Interactive build                                                   -->
+  <!-- =================================================================== -->
+  <target name="interactive" description="Interactive Build">
+    <echo message="--------------------------------------------------------------"/>
+    <echo message=" "/>    
+    <echo message="          ${fullname} ${version} [${year}]"/>
+    <echo message=" "/>    
+    <echo message="--------------------------------------------------------------"/>
+    <echo message="Building with ${ant.version}"/>
+    <echo message="using build file ${ant.file}"/>
+    <echo message="--------------------------------------------------------------"/>
+    <echo message=" "/>    
+    <echo message=" These are the most common build targets."/>
+    <echo message=" You can also invoke them directly; see build.xml for more info. "/>
+    <echo message=" "/>
+    <echo message=" installwar --- installs war package"/>
+    <echo message=" docs --------- generates the docs"/>
+    <echo message=" javadocs ----- generates the API documentation"/>
+    <echo message=" printer-docs - generates the printer friendly docs"/>
+    <echo message=" test --------- performes the jUnit tests"/>
+    <echo message=" compile ------ compiles the source code "/>
+    <echo message=" clean -------- cleans the build directory"/>
+    <echo message=" "/>
+    <echo message=" "/>
+    <taskdef name="user-input" classname="UserInputTask"
+        classpath="./tools/anttasks"/>
+
+    <property name="input.selection" value="compile"/>
+    <user-input name="input.selection">Please select a target </user-input>
+
+    <!-- to be used if targets are in the same file
+       <antcall target="${input.selection}"/>-->
+
+    <ant target="${input.selection}" antfile="./build.xml"/>
+
+  </target>
+
+</project>
+
+<!-- End of file -->

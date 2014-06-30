@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<xsp:page xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-formval="http://apache.org/xsp/form-validator/2.0"
+	  xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+	  xmlns:esql="http://apache.org/cocoon/SQL/v2">
+<document>
+  <header>
+    <title>Department</title>
+  </header>
+  <body>
+    <s1 title="Create a Department">
+      <form handler="edit-dept.html">
+        <p>
+          You can create a department by typing in the
+          name and pressing the "submit" button.
+        </p>
+        <p>
+          <parameter name="id">
+            <xsp:attribute name="value"><xsp-request:get-parameter name="id"/></xsp:attribute>
+          </parameter>
+          <esql:connection>
+            <esql:pool>personnel</esql:pool>
+            <esql:execute-query>
+              <esql:query>
+                SELECT name FROM department
+                WHERE id = <esql:parameter><xsp-request:get-parameter name="id"/></esql:parameter>
+              </esql:query>
+              <esql:results>
+                <esql:row-results>
+                  Name: <text name="name" size="30" required="true">
+                  <xsp:attribute name="value"><esql:get-string column="name"/></xsp:attribute>
+                  </text><br />
+                  <xsp-formval:on-toosmall name="name">
+                    Name must be at least 5 characters.
+                  </xsp-formval:on-toosmall>
+                  <xsp-formval:on-toolarge name="name">
+                    Name must be less than 64 characters.
+                  </xsp-formval:on-toolarge>
+                </esql:row-results>
+              </esql:results>
+            </esql:execute-query>
+          </esql:connection>
+        </p>
+        <submit name="Update Department"/><submit name="Delete Department"/>
+        <note>
+          * These fields are required.
+        </note>
+      </form>
+    </s1>
+  </body>
+</document>
+</xsp:page>

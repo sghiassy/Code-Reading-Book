@@ -1,0 +1,257 @@
+.TH ACE_MMAP_Memory_Pool 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_MMAP_Memory_Pool \- Make a memory pool that is based on <mmap(2)>. This implementation allows memory to be shared between processes. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Memory_Pool.h>\fR
+.PP
+Inherits \fBACE_Event_Handler\fR.
+.PP
+Inherited by \fBACE_Lite_MMAP_Memory_Pool\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_MMAP_Memory_Pool_Options\fR \fBOPTIONS\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_MMAP_Memory_Pool\fR (const \fBACE_TCHAR\fR *backing_store_name = 0, const \fBOPTIONS\fR *options = 0)"
+.br
+.RI "\fIInitialize the pool.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_MMAP_Memory_Pool\fR (void)"
+.br
+.ti -1c
+.RI "virtual void* \fBinit_acquire\fR (size_t nbytes, size_t &rounded_bytes, int &first_time)"
+.br
+.RI "\fIAsk system for initial chunk of shared memory.\fR"
+.ti -1c
+.RI "virtual void* \fBacquire\fR (size_t nbytes, size_t &rounded_bytes)"
+.br
+.ti -1c
+.RI "virtual int \fBrelease\fR (void)"
+.br
+.RI "\fIInstruct the memory pool to release all of its resources.\fR"
+.ti -1c
+.RI "virtual int \fBsync\fR (\fBssize_t\fR len = -1, int flags = MS_SYNC)"
+.br
+.RI "\fISync the memory region to the backing store starting at <this->base_addr_>.\fR"
+.ti -1c
+.RI "virtual int \fBsync\fR (void *addr, size_t len, int flags = MS_SYNC)"
+.br
+.RI "\fISync the memory region to the backing store starting at .\fR"
+.ti -1c
+.RI "virtual int \fBprotect\fR (\fBssize_t\fR len = -1, int prot = PROT_RDWR)"
+.br
+.ti -1c
+.RI "virtual int \fBprotect\fR (void *addr, size_t len, int prot = PROT_RDWR)"
+.br
+.RI "\fIChange the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.\fR"
+.ti -1c
+.RI "virtual int \fBseh_selector\fR (void *)"
+.br
+.ti -1c
+.RI "virtual int \fBremap\fR (void *addr)"
+.br
+.ti -1c
+.RI "virtual void* \fBbase_addr\fR (void) const"
+.br
+.RI "\fIReturn the base address of this memory pool.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual size_t \fBround_up\fR (size_t nbytes)"
+.br
+.ti -1c
+.RI "virtual int \fBcommit_backing_store_name\fR (size_t rounded_bytes, off_t &map_size)"
+.br
+.RI "\fICompute the new <map_size> of the backing store and commit the memory.\fR"
+.ti -1c
+.RI "virtual int \fBmap_file\fR (off_t map_size)"
+.br
+.RI "\fIMemory map the file up to <map_size> bytes.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_signal\fR (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)"
+.br
+.RI "\fIHandle SIGSEGV and SIGBUS signals to remap shared memory properly.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Sig_Handler\fR \fBsignal_handler_\fR"
+.br
+.RI "\fIHandles SIGSEGV.\fR"
+.ti -1c
+.RI "\fBACE_Mem_Map\fR \fBmmap_\fR"
+.br
+.RI "\fIMemory-mapping object.\fR"
+.ti -1c
+.RI "void* \fBbase_addr_\fR"
+.br
+.ti -1c
+.RI "int \fBflags_\fR"
+.br
+.RI "\fIFlags passed into .\fR"
+.ti -1c
+.RI "int \fBwrite_each_page_\fR"
+.br
+.RI "\fIShould we write a byte to each page to forceably allocate memory for this backing store?\fR"
+.ti -1c
+.RI "off_t \fBminimum_bytes_\fR"
+.br
+.RI "\fIWhat the minimum bytes of the initial segment should be.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBbacking_store_name_\fR [MAXPATHLEN + 1]"
+.br
+.RI "\fIName of the backing store where the shared memory pool is kept.\fR"
+.ti -1c
+.RI "int \fBguess_on_fault_\fR"
+.br
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBsa_\fR"
+.br
+.RI "\fISecurity attributes object, only used on NT.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Make a memory pool that is based on <mmap(2)>. This implementation allows memory to be shared between processes.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_MMAP_Memory_Pool_Options\fR ACE_MMAP_Memory_Pool::OPTIONS
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_MMAP_Memory_Pool::ACE_MMAP_Memory_Pool (const \fBACE_TCHAR\fR * backing_store_name = 0, const \fBOPTIONS\fR * options = 0)
+.PP
+Initialize the pool.
+.PP
+.SS virtual ACE_MMAP_Memory_Pool::~ACE_MMAP_Memory_Pool (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void * ACE_MMAP_Memory_Pool::acquire (size_t nbytes, size_t & rounded_bytes)\fC [virtual]\fR
+.PP
+Acquire at least <nbytes> from the memory pool. <rounded_bytes> is the actual number of bytes allocated. Also acquires an internal semaphore that ensures proper serialization of  initialization across processes. 
+.SS void * ACE_MMAP_Memory_Pool::base_addr (void) const\fC [virtual]\fR
+.PP
+Return the base address of this memory pool.
+.PP
+.SS int ACE_MMAP_Memory_Pool::commit_backing_store_name (size_t rounded_bytes, off_t & map_size)\fC [protected, virtual]\fR
+.PP
+Compute the new <map_size> of the backing store and commit the memory.
+.PP
+.SS void ACE_MMAP_Memory_Pool::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_MMAP_Memory_Pool::handle_signal (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)\fC [protected, virtual]\fR
+.PP
+Handle SIGSEGV and SIGBUS signals to remap shared memory properly.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS void * ACE_MMAP_Memory_Pool::init_acquire (size_t nbytes, size_t & rounded_bytes, int & first_time)\fC [virtual]\fR
+.PP
+Ask system for initial chunk of shared memory.
+.PP
+.SS int ACE_MMAP_Memory_Pool::map_file (off_t map_size)\fC [protected, virtual]\fR
+.PP
+Memory map the file up to <map_size> bytes.
+.PP
+.SS int ACE_MMAP_Memory_Pool::protect (void * addr, size_t len, int prot = PROT_RDWR)\fC [virtual]\fR
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.
+.PP
+.SS int ACE_MMAP_Memory_Pool::protect (\fBssize_t\fR len = -1, int prot = PROT_RDWR)\fC [virtual]\fR
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at <this->base_addr_> up to <len> bytes. If <len> == -1 then change protection of all pages in the mapped region. 
+.SS int ACE_MMAP_Memory_Pool::release (void)\fC [virtual]\fR
+.PP
+Instruct the memory pool to release all of its resources.
+.PP
+.SS int ACE_MMAP_Memory_Pool::remap (void * addr)\fC [virtual]\fR
+.PP
+Try to extend the virtual address space so that  is now covered by the address mapping. The method succeeds and returns 0 if the backing store has adequate memory to cover this address. Otherwise, it returns -1. This method is typically called by a UNIX signal handler for SIGSEGV or a Win32 structured exception when another process has grown the backing store (and its mapping) and our process now incurs a fault because our mapping isn't in range (yet). 
+.SS virtual size_t ACE_MMAP_Memory_Pool::round_up (size_t nbytes)\fC [protected, virtual]\fR
+.PP
+.SS int ACE_MMAP_Memory_Pool::seh_selector (void *)\fC [virtual]\fR
+.PP
+Win32 Structural exception selector. The return value decides how to handle memory pool related structural exceptions. Returns 1, 0, or , -1. 
+.SS int ACE_MMAP_Memory_Pool::sync (void * addr, size_t len, int flags = MS_SYNC)\fC [virtual]\fR
+.PP
+Sync the memory region to the backing store starting at .
+.PP
+Reimplemented in \fBACE_Lite_MMAP_Memory_Pool\fR.
+.SS int ACE_MMAP_Memory_Pool::sync (\fBssize_t\fR len = -1, int flags = MS_SYNC)\fC [virtual]\fR
+.PP
+Sync the memory region to the backing store starting at <this->base_addr_>.
+.PP
+Reimplemented in \fBACE_Lite_MMAP_Memory_Pool\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_MMAP_Memory_Pool::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS \fBACE_TCHAR\fR ACE_MMAP_Memory_Pool::backing_store_name_[MAXPATHLEN+1]\fC [protected]\fR
+.PP
+Name of the backing store where the shared memory pool is kept.
+.PP
+.SS void * ACE_MMAP_Memory_Pool::base_addr_\fC [protected]\fR
+.PP
+Base of mapped region. If this has the value of 0 then the OS is free to select any address to map the file, otherwise this value is what the OS must try to use to mmap the file. 
+.SS int ACE_MMAP_Memory_Pool::flags_\fC [protected]\fR
+.PP
+Flags passed into .
+.PP
+.SS int ACE_MMAP_Memory_Pool::guess_on_fault_\fC [protected]\fR
+.PP
+Try to remap without knowing the faulting address. This parameter is ignored on platforms that know the faulting address (UNIX with SI_ADDR and Win32). 
+.SS off_t ACE_MMAP_Memory_Pool::minimum_bytes_\fC [protected]\fR
+.PP
+What the minimum bytes of the initial segment should be.
+.PP
+.SS \fBACE_Mem_Map\fR ACE_MMAP_Memory_Pool::mmap_\fC [protected]\fR
+.PP
+Memory-mapping object.
+.PP
+.SS LPSECURITY_ATTRIBUTES ACE_MMAP_Memory_Pool::sa_\fC [protected]\fR
+.PP
+Security attributes object, only used on NT.
+.PP
+.SS \fBACE_Sig_Handler\fR ACE_MMAP_Memory_Pool::signal_handler_\fC [protected]\fR
+.PP
+Handles SIGSEGV.
+.PP
+.SS int ACE_MMAP_Memory_Pool::write_each_page_\fC [protected]\fR
+.PP
+Should we write a byte to each page to forceably allocate memory for this backing store?
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

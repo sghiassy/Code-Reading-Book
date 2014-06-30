@@ -1,0 +1,48 @@
+XCOMM $XConsortium: Imakefile /main/10 1996/09/28 17:29:32 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/et4000/Imakefile,v 3.10.2.2 1997/05/09 13:49:45 hohndel Exp $
+#include <Server.tmpl>
+
+SRCS = et4_driver.c et4_accel.c et4_bank.s tseng_acl.c tseng_ramdac.c tseng_clock.c tseng_cursor.c
+
+OBJS = et4_driver.o et4_accel.o et4_bank.o tseng_acl.o tseng_ramdac.o tseng_clock.o tseng_cursor.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../.. -I../../../xaa
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/cfb -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+           -I../../vga -I../../../xaa -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC) -I$(FONTINCSRC)
+#endif
+
+DEFINES = -DPSZ=8 -DW32_SUPPORT
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(et4_drv, $(OBJS))
+
+ObjectFromSpecialAsmSource(et4_bank,bank,NullParameter)
+
+InstallLinkKitNonExecFile(et4_driver.c,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(et4_accel.c,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(tseng_acl.c,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(tseng_acl.h,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(tseng_ramdac.c,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(tseng_clock.c,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(tseng_cursor.c,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(tseng_cursor.h,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(tseng.h,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(bank.s,$(LINKKITDIR)/drivers/vga256/et4000)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/et4000)
+
+DependTarget()
+

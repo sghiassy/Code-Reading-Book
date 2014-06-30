@@ -1,0 +1,62 @@
+.TH ACE_Lite_MMAP_Memory_Pool 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Lite_MMAP_Memory_Pool \- Make a ``lighter-weight'' memory pool based . 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Memory_Pool.h>\fR
+.PP
+Inherits \fBACE_MMAP_Memory_Pool\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Lite_MMAP_Memory_Pool\fR (const \fBACE_TCHAR\fR *backing_store_name = 0, const \fBOPTIONS\fR *options = 0)"
+.br
+.RI "\fIInitialize the pool.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Lite_MMAP_Memory_Pool\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBsync\fR (\fBssize_t\fR len = -1, int flags = MS_SYNC)"
+.br
+.RI "\fIOverwrite the default sync behavior with no-op.\fR"
+.ti -1c
+.RI "virtual int \fBsync\fR (void *addr, size_t len, int flags = MS_SYNC)"
+.br
+.RI "\fIOverwrite the default sync behavior with no-op.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Make a ``lighter-weight'' memory pool based .
+.PP
+.PP
+ This implementation allows memory to be shared between processes. However, unlike the  the <sync> methods are no-ops, which means that we don't pay for the price of flushing the memory to the backing store on every update. Naturally, this trades off increased performance for less reliability if the machine crashes. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Lite_MMAP_Memory_Pool::ACE_Lite_MMAP_Memory_Pool (const \fBACE_TCHAR\fR * backing_store_name = 0, const \fBOPTIONS\fR * options = 0)
+.PP
+Initialize the pool.
+.PP
+.SS virtual ACE_Lite_MMAP_Memory_Pool::~ACE_Lite_MMAP_Memory_Pool (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Lite_MMAP_Memory_Pool::sync (void * addr, size_t len, int flags = MS_SYNC)\fC [virtual]\fR
+.PP
+Overwrite the default sync behavior with no-op.
+.PP
+Reimplemented from \fBACE_MMAP_Memory_Pool\fR.
+.SS int ACE_Lite_MMAP_Memory_Pool::sync (\fBssize_t\fR len = -1, int flags = MS_SYNC)\fC [virtual]\fR
+.PP
+Overwrite the default sync behavior with no-op.
+.PP
+Reimplemented from \fBACE_MMAP_Memory_Pool\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

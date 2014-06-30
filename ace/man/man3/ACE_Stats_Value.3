@@ -1,0 +1,135 @@
+.TH ACE_Stats_Value 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Stats_Value \- Helper class for \fBACE_Stats\fR. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Stats.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Stats_Value\fR (const u_int precision)"
+.br
+.ti -1c
+.RI "u_int \fBprecision\fR (void) const"
+.br
+.RI "\fIAccessor for precision.\fR"
+.ti -1c
+.RI "void \fBwhole\fR (const ACE_UINT32)"
+.br
+.RI "\fISet the whole_ field.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBwhole\fR (void) const"
+.br
+.RI "\fIAccessor for the whole_ field.\fR"
+.ti -1c
+.RI "void \fBfractional\fR (const ACE_UINT32)"
+.br
+.RI "\fISet the fractional_ field.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBfractional\fR (void) const"
+.br
+.RI "\fIAccessor for the fractional_ field.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBfractional_field\fR (void) const"
+.br
+.RI "\fICalculates the maximum value of the fractional portion, given its precision.\fR"
+.ti -1c
+.RI "void \fBscaled_value\fR (\fBACE_UINT64\fR &) const"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIPrint to stdout.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Stats_Value\fR (void)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_UINT32 \fBwhole_\fR"
+.br
+.RI "\fIThe integer portion of the value.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBfractional_\fR"
+.br
+.RI "\fIThe fractional portion of the value.\fR"
+.ti -1c
+.RI "u_int \fBprecision_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Helper class for \fBACE_Stats\fR.
+.PP
+.PP
+ Container struct for 64-bit signed quantity and its precision. It would be nicer to use a fixed-point class, but this is sufficient. Users typically don't need to use this class directly; see \fBACE_Stats\fR below. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Stats_Value::ACE_Stats_Value (const u_int precision)
+.PP
+Constructor, which requires precision in terms of number of decimal digits. The more variation in the data, and the greater the data values, the smaller the precision must be to avoid overflow in the standard deviation calculation. 3 might be a good value, or maybe 4. 5 will probably be too large for non-trivial data sets. 
+.SS ACE_Stats_Value::ACE_Stats_Value (void)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Stats_Value::dump (void) const
+.PP
+Print to stdout.
+.PP
+.SS ACE_UINT32 ACE_Stats_Value::fractional (void) const
+.PP
+Accessor for the fractional_ field.
+.PP
+.SS void ACE_Stats_Value::fractional (const ACE_UINT32)
+.PP
+Set the fractional_ field.
+.PP
+.SS ACE_UINT32 ACE_Stats_Value::fractional_field (void) const
+.PP
+Calculates the maximum value of the fractional portion, given its precision.
+.PP
+.SS u_int ACE_Stats_Value::precision (void) const
+.PP
+Accessor for precision.
+.PP
+.SS void ACE_Stats_Value::scaled_value (\fBACE_UINT64\fR &) const
+.PP
+Access the value as an _unsigned_ 64 bit quantity. It scales the value up by <precision> decimal digits, so that no precision will be lost. It assumes that <whole_> is >= 0. 
+.SS ACE_UINT32 ACE_Stats_Value::whole (void) const
+.PP
+Accessor for the whole_ field.
+.PP
+.SS void ACE_Stats_Value::whole (const ACE_UINT32)
+.PP
+Set the whole_ field.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_UINT32 ACE_Stats_Value::fractional_\fC [private]\fR
+.PP
+The fractional portion of the value.
+.PP
+.SS u_int ACE_Stats_Value::precision_\fC [private]\fR
+.PP
+The number of decimal digits of precision represented by <fractional_>. Not declared const, so the only way to change it is via the assignment operator. 
+.SS ACE_UINT32 ACE_Stats_Value::whole_\fC [private]\fR
+.PP
+The integer portion of the value.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,505 @@
+<!DOCTYPE linuxdoc PUBLIC "-//XFree86//DTD linuxdoc//EN">
+<article>
+ 
+<!-- made up title -->
+<title> Information for ISC Users
+<author> Michael Rohleder
+<date> 13 January 1997
+<toc>
+
+<sect> X11R6/XFree86&tm; on Interactive Unix <p>
+
+This document provides some additional information about
+compiling and using X11R6 and XFree86 on your
+Interactive Unix, also referred to as ISC.
+
+If you have any suggestions, comments, fixes or ideas regarding
+X11R6/XFree86 on Interactive Unix, send e-mail to
+
+<htmlurl url="mailto:michael.rohleder@stadt-frankfurt.de" 
+    name="michael.rohleder@stadt-frankfurt.de"><p>
+Bug Reports should be sent to<p>
+<em>XFree86@XFree86.Org</em><p>
+Questions or anything else should be posted to the NewsGroup<p>
+<em>comp.windows.x.i386unix</em><p>
+
+There is currently no support for shared Libraries so it will be filespace
+consuming if you want to build X11-clients with X11R6. Best you mix X11R6
+Server with X11R5 and X11R4 clients. And only compile clients who need the 
+new facilities provided in the X11R6 Libraries against them.
+
+<sect> Things needed for compiling the sources<p>
+
+<descrip>
+    <tag> gcc-2.x.x </tag>
+          Use the highest number for x you found.
+          Fresco will only build 2.6.3 and later.
+	  I'd tried gcc Version 2.5.8, 2.6.0, 2.6.2 and 2.6.3.
+          I'm currently using 2.7.2.
+          <p>
+          Since 2.6.3 the current source tree should be able to compile
+          with a little bit more Optimization:
+          <tt> &num;define DefaultCDebugFlags -O3 -fomit-frame-pointer</tt>
+          inside xf86site.def to overwrite the default -O2.
+          <p>
+          With 2.7.x you must specify 
+          <tt>&num;define UsePosix               YES</tt> inside xf86site.def.
+          This is necessary to build the sources successfully.
+          Versions prior to 2.7.0 could define it, but don't need it for a
+          clean build.
+    <tag> libg++-2.x.x </tag>
+          The needed g++ Libraries for use with g++ 2.x.x. As this is only 
+          necessary for Fresco, it isn't needed anymore since X11R6.1.
+    <tag> binutils-2.5.2 </tag>
+          You could use the assembler and linker
+          the assembler is most preferred,and the linker is needed
+          at least if you want to link libFresco.a within a Program.
+          Don't use strip and ar/ranlib, the first generates buggy binaries
+          when stripping (at least on my machines) and the last requires 
+          the use of ranlib after creating an archive, this is not configured.
+    <tag> gnu-malloc </tag>
+          Due to better memory usage we should use GNU's malloc library
+          on systems where possible. 
+
+          Enable <tt>&num;define UseGnuMalloc YES</tt>
+	  inside xf86site.def or within the Linkkit site.def. 
+
+          Enable and set <tt>&num;define GnuMallocLibrary</tt>
+	  to your needs, if it isn't like the default 
+          <tt>-L/usr/local/lib -lgmalloc</tt>.
+
+</descrip>          
+
+<sect> Changes to the System Header Files<p>
+
+You have to change some of the standard header files supplied with
+your version of Interactive. You also need to change some of the include
+files in the gcc-lib/include directory.
+
+Let us say the gcc-files are in directory 
+
+<tt>/usr/local/lib/gcc-lib/i[345]86-isc[34].[0-9]/2.6.x</tt>
+
+referred to as <tt>"gcc-lib"</tt>
+
+     <sect1><tt>/usr/include/sys/limits.h</tt><p>
+	and <tt>gcc-lib/include/sys/limits.h</tt> 
+
+          <verb>
+          #ifndef OPEN_MAX
+          #ifdef ISC
+          #define OPEN_MAX        256
+          #else
+          #define OPEN_MAX        20
+          #endif
+          #endif
+          </verb>
+          <tt>OPEN_MAX</tt> had to be increased to prevent
+          Xlib Errors (max no. of clients reached).
+<p>
+     <sect1><tt>/usr/include/sys/ioctl.h</tt><p>
+        surrounded by 
+        <verb>
+        #ifndef _IOCTL_H 
+        #define _IOCTL_H
+        ...
+        #endif
+        </verb>
+        to prevent multiple includes.
+<p>
+     <sect1><tt>/usr/include/errno.h</tt><p>
+        (and the corresponding gcc-include-file)
+        add <verb>
+        #include <net/errno.h>
+        </verb>
+        because of <bf>EWOULDBLOCK</bf> undefined in several places 
+        regarding lbx.
+        Surround <tt>/usr/include/net/errno.h</tt> with
+
+        <verb>
+        #ifndef _NET_ERRNO_H
+        #define _NET_ERRNO_H
+        ...
+        #endif
+        </verb>
+
+        to prevent multiple includes were <tt>&lt;net/errno.h&gt;</tt>
+        is explicit included from the sources.
+<p>
+      <sect1><tt>/usr/include/rpc/types.h</tt><p>
+         copy this file to <tt>gcc-lib/include/rpc/types.h</tt>
+         and change the declaration of <bf>malloc()</bf> to
+
+         <verb>
+         #if !defined(__cplusplus)
+         extern char *malloc();
+         #endif
+         </verb>
+
+         Note that this is only necessary if you want to build Fresco
+<p>
+      <sect1><tt>/usr/include/sys/un.h</tt><p>
+         such a file does not exist on Interactive. You may like to generate
+         it, if you don't like a warning from depend. It isn't needed to compile
+         the sources successfully.
+          
+         You could use the following to produce it:
+         <verb>
+         #ifndef X_NO_SYS_UN
+         struct  sockaddr_un {
+                 short   sun_family;             /* AF_UNIX */
+                 char    sun_path[108];          /* path name (gag) */
+         };
+         #endif
+         </verb>
+         
+
+<sect> make World <p>
+<code>
+BOOTSTRAPCFLAGS="-DISC [-DISC30 | -DISC40] -DSYSV [-Di386]"
+</code>
+
+<descrip>
+<tag>-DISC -DISC30</tag>
+	these two defines are necessary to build the release
+        I don't know if the build will succeed for ISC versions 
+        prior than 3.x
+
+<tag>-DISC40</tag>
+	are only for getting the ISC version and therefore
+        set the HasSymLinks to Yes ('cause symbolic linking
+        were only supported from Version 4.x using the S5L Filesystem)<p>
+        If you could use long filenames, you could enable
+        the installation of expanded Manual Pages by including
+        <tt> &num;define ExpandManNames	YES </tt>
+        inside xf86site.def.<p>
+	A build on ISC 4.x only needs -DISC40 defined in the BOOTSTRAPCFLAGS 
+        ( -DISC30 will be included automatically ).<p>
+        Note: if you still use Version 4.0, or you want to build
+        binaries on Version 4.1 which should run on 4.0, you have 
+        to set <tt> &num;define UseChmod	YES </tt> inside your
+        host.def.<p>
+        (the fchmod function isn't available on 4.0, so it won't compile,
+        and binaries from 4.1 won't run cause of the unsupported System call)
+        On Versions less 4.0 this will be the default.
+
+<tag>-DSYSV &lsqb;-Di386&rsqb;</tag>
+	standard defines for SystemV Release3 on x86 platform.
+	You don't need to explicitly define -Di386 because
+	this is pre-defined in /lib/cpp.
+
+</descrip>
+
+<sect> linear Addressing <p>
+
+<itemize>
+<item>Compiling &hellip; <p>
+If you want to include support for linear addressing into the server binaries,
+you have to define 
+<verb>
+#define HasSVR3mmapDrv		YES
+</verb>
+in xf86site.def.
+This is necessary to get the correct setup to be defined for the build.
+
+You need the mmap-2.2.3 driver installed on your system.
+If you don't have the mmap-2.2.3 driver installed, you could use the driver
+source in the file 
+<verb>
+xc/programs/Xserver/hw/xfree86/etc/mmapSVR3.shar
+</verb>
+or
+<verb>
+/usr/X11R6/lib/X11/etc/mmapSVR3.shar
+</verb>
+Build and install the driver as instructed. You'll need the file
+/usr/include/sys/mmap.h for compiling the X11R6/XFree86 source tree,
+with linear addressing enabled.
+
+<item>Using &hellip; <p>
+
+To use the linear address-mapping of the framebuffer you need the mmap Driver
+by Thomas Wolfram (Version 2.2.3) installed in your Kernel.
+If you have installed it, most servers will use linear addressing by default.
+Others may require
+setting the 
+<verb>
+Option "linear"
+</verb>
+in your XF86Config.   Check the appropriate manual pages for details.
+Maybe you need also the MemBase specified in XF86Config. Please refer to the 
+appropriate README of your Card/Server, for 
+<bf>How to use..</bf>.
+Note that the P9000 server will not work at all unless linear addressing
+is available.
+
+I could only test these cards against the linear addressing.
+<itemize>
+	<item>Spea/V7 Vega - clgd5428 - VLB<p>
+	   with 32MB MainMemory installed I couldn't use it.
+           My tests with different mappings into the address space
+           results in no Graphics displayed or a spontaneous reboot.<p>
+	<item>ATI GUP      - mach32   - VLB<p>
+           with 32MB MainMemory installed I could map the CardMemory
+           at MemBase 0x07c00000. I could work with all clients
+           until I try to activate a Motif 1.1.1 InputField inside a 
+           Motif Client like Mosaic-2.4 or xplan. This results in a 
+           crash of the XServer. <p>
+           <verb>
+           !!! You could work around this !!!
+           </verb>
+           Expand your .Xdefaults with
+           <verb>
+           *blinkRate:			0
+           *cursorPositionVisible:	false
+           </verb>
+
+           This bug seems to be fixed since 3.1.2, and therefore the 
+           workaround is not needed anymore.
+	<item>ELSA Winner 2000PRO/X Revision G<p>
+           if you experience a Problem with this Card you could try to
+           use the older Chipset Driver instead "newmmio".
+           <p>If you declare 
+           <verb>
+           Chipset "mmio_928"
+           </verb>
+           inside your XF86Config, it may be alright again.<p>
+           With the current XF86_S3 I don't encounter any problem.
+
+</itemize>
+
+</itemize>
+
+<sect>XKeyboard Extension<p>
+
+<itemize>
+<item>Sample Setup &hellip; <p>
+Here is a sample XKeyboard Definition to include inside the Keyboard Section
+of your XF86Config File.
+<verb>
+    Xkbkeycodes "xfree86"
+/*    XkbSymbols  "us(pc101)+de_nodead"  */
+/*    This has changed between 3.1.2E and 3.1.2F */
+/*    it is now:                                 */
+    XkbSymbols  "us(pc102)+de(nodeadkeys)"
+    XkbTypes    "default"
+    XkbCompat   "default"
+    XkbGeometry "pc"
+</verb>
+
+or you could use this one with the new Options:
+<verb>
+   XkbRules        "xfree86"
+   XkbModel        "pc102"
+   XkbLayout       "de"
+   XkbVariant      "nodeadkeys"
+</verb>
+
+</itemize>
+
+<sect> Multibuffer Extension <p>
+
+This is an obsolete Extension. Anyway, if you want to include this Extension 
+inside your build, you have to add:
+ <tt>&num;define BuildMultibuffer        YES</tt> inside xf86site.def
+
+<sect> Sample Definitions <p>
+
+This is my current host.def, if I build the sources. (So no more changes were
+necessary in xf86site.def, either it isn't to bad to have a look inside it ;-)
+<verb>
+
+#ifdef BeforeVendorCF
+
+/* Only when building official binaries*/
+/*
+#define InstallJapaneseDocs     YES
+#define InstallEmptyHostDef 
+*/
+
+
+/* Try MultiBuffer Extension */
+#define BuildMultibuffer        YES
+
+/* Build all Contrib SW */
+#ifdef XF86Contrib
+#undef XF86Contrib
+#endif
+
+/* gcc 2.6.3 tested Optimization Flags                               */
+# define DefaultGcc2i386Opt	-O2 -fstrength-reduce -malign-loops=2 -malign-jumps=2 -malign-functions=2
+
+/* binaries which should run on ISC 4.0 or for the build on a real 4.0 System */
+# define UseChmod		YES
+
+/* For a POSIXized build on Interactive maybe needed to use gcc2.7.2 */
+# define UsePosix		YES
+
+/* Use GNUs MallocLibrary (and the Location for the Lib)             */
+# define UseGnuMalloc		YES
+# define GnuMallocLibrary	-L/usr/local/lib -lgnumalloc
+
+/* Build Xvfb                                                        */
+# define XVirtualFramebufferServer	YES
+
+/* Use mmap Driver                                                   */
+# define HasSVR3mmapDrv		YES
+
+/* Expand Manual Pages (needs S5L)                                   */
+# define ExpandManNames		YES
+
+/* Has LinuxDoc (and the Location for LinuxDoc / only HTML and Text) */
+# define HasLinuxDoc		YES
+# define BuildLinuxDocHtml	YES
+# define BuildAllDocs		YES
+# define LinuxDocDir		/usr/local/lib/linuxdoc-sgml
+
+/* Install Config's for xdm, xfs, and xinit */
+# define InstallXinitConfig    YES
+# define InstallXdmConfig      YES
+# define InstallFSConfig               YES
+
+#define BuildChooser		YES
+
+/* for the new XF86Setup Util */
+#define HasTk			YES
+#define HasTcl			YES
+
+
+#endif /* BeforeVendorCF */
+</verb>
+<sect> Installation <p>
+
+After your <bf>make World BOOTSTRAPCFLAGS="&hellip;</bf> succeed, 
+<verb>
+make install
+</verb>
+to install in /usr/X11R6. Make sure you have enough space, and /usr/X11R6 
+exists either as a directory or a symlink to another directory maybe in another
+filesystem.
+<verb>
+make install.man
+</verb>
+to install the compressed nroff versions of the manual pages into 
+/usr/X11R6/man. This directory will be generated if it doesn't exist.
+<verb>
+make install.linkkit
+</verb>
+to install the server binary LinkKit into /usr/X11R6/lib/Server.
+
+<code>
+       You could tune the Kernel using the command-file
+       
+       /usr/X11R6/lib/X11/etc/xf86install
+       
+       This will increase the available pseudo devices, 
+       some Tunable Parameters and install some files 
+       to use inside sysadm. You could also install 
+       some additional Fonts and Terminal files.
+</code>
+
+<sect>Using &hellip; <p>
+
+<itemize>
+<item>Xprt:<p>
+       The new Xprint Server is configured to use lpr as its print helper
+       so you have to install and configure lpr to use Xprt.<p>
+
+<item>Keyboard:<p>
+       You don't need any modmap-File to get your keyboard
+       working with any iso-8859-1 Font. Simply enable 
+
+   <itemize>
+	<item>LeftAlt  Meta
+
+	<item>RightAlt ModeShift
+
+	<item>RightCtl Compose
+   </itemize>
+
+        in your XF86Config - Section "Keyboard"
+
+<item>xpcterm: <p>
+        if you want to get the German 'Umlaut' inside your ISC X11R4 client
+        xpcterm when you are using the ega/vga font. Set up the
+        user's .Xdefaults to contain:
+        <verb>
+         XEga*AT386.Translations: #override \
+                   Shift<Key>odiaeresis: string(0x99) \n\
+                        <Key>odiaeresis: string(0x94) \n\
+                   Shift<Key>adiaeresis: string(0x8e) \n\
+                        <Key>adiaeresis: string(0x84) \n\
+                   Shift<Key>udiaeresis: string(0x9a) \n\
+                        <Key>udiaeresis: string(0x81) \n\
+                   Shift<Key>ssharp: string(0x3f) \n\
+                    Meta<Key>ssharp: string(0x5c)  \n\
+                        <Key>ssharp: string(0xe1)
+         </verb>
+
+         The only disadvantage is that you have to use <tt>Alt</tt> instead of
+         <tt>AltGr</tt> to get the <tt>&bsol;</tt> Backslash (on a German
+         Keyboard)
+
+        You have to call your xpcterm with the option 
+        <tt>-name XEga -fn ega</tt>
+         
+<item>Switching between X11R5 and X11R6 configuration<p>
+          to compile X11-Clients as either R6 or R5 clients,
+          should be as easy as you only switch the PATH components
+          so that either <tt>/usr/X11R6/bin/xmkmf</tt> or 
+          <tt>/usr/X386/bin/xmkmf</tt> would make the new Makefile.
+
+<item>ISC Streams Pipes <p>
+	      The old path to the pipes on ISC's R4 <tt>/tmp/.X11-unix</tt>
+	      has changed to <tt>/dev/X/ISCCONN</tt>. For compatibility 
+	      reasons on ISC, the pipes in the new directory will be
+	      linked to a file inside the old. 
+	      This will normally be a hard link, so it can't go across
+	      filesystems. On ISC Version 4.x this is now allowed. But
+	      you should use the new S5L on both filesystems.
+	      ISC30 systems should take care that the two directories
+	      are on the same FS. Else if you are using a ISC40 compiled
+	      binary, the Server could maybe abort due to a SIGSYS.
+              We tried to catch this signal, so if it dumps please send
+              me a note.
+          
+<item>Warnings you may see: <p>
+   <itemize>
+      <item>
+           Since 3.2A, you could see a warning from pre X11R6.3 clients.<p>
+           <verb>
+           Warning: Unable to load any usable fontset
+           </verb>
+           The case are the new gzipped fonts, but the Warning isn't serious.<p>
+      <item>
+           If you start a server you may see the following message:<p>
+           <verb>
+        _XSERVTransOpen: transport open failed for named/enigma:0
+        _XSERVTransMakeAllCOTSServerListeners: failed to open listener for named
+           </verb>
+           This message either isn't critical. Interactive doesn't support this
+           kind of connection.<p>
+   </itemize>
+
+</itemize>
+
+                 
+<sect> Acknowledgements <p>
+
+All thanks should go to the members of the 
+<bf>XFree86 Team</bf> for their great work 
+and the <bf>X Consortium</bf> for their Public Release of X11R6, 
+as to all who contribute to this excellent piece of free software.
+
+
+<verb>
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/isc.sgml,v 3.18 1997/01/25 03:22:23 dawes Exp $
+
+
+
+
+
+$XConsortium: isc.sgml /main/8 1996/10/23 11:45:58 kaleb $
+</verb>
+
+</article>

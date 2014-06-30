@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+
+<logkit>
+  <factories>
+    <factory type="priority-filter" class="org.apache.avalon.excalibur.logger.factory.PriorityFilterTargetFactory"/>
+    <factory type="servlet" class="org.apache.avalon.excalibur.logger.factory.ServletTargetFactory"/>
+    <factory type="cocoon" class="org.apache.cocoon.util.log.CocoonTargetFactory"/>
+  </factories>
+
+  <targets>
+    <cocoon id="core">
+      <filename>${context-root}/WEB-INF/logs/core.log</filename>
+      <format type="cocoon">
+        %7.7{priority} %{time}   [%{category}] (%{uri}) %{thread}/%{class:short}: %{message}\n%{throwable}
+      </format>
+      <append>true</append>
+      <rotation type="revolving" init="1" max="4">
+        <or>
+          <size>100m</size>
+          <time>01:00:00</time>
+        </or>
+      </rotation>
+    </cocoon>
+
+    <cocoon id="sitemap">
+      <filename>${context-root}/WEB-INF/logs/sitemap.log</filename>
+     
+      <format type="cocoon">
+        %7.7{priority} %{time}   [%{category}] (%{uri}) %{thread}/%{class:short}: %{message}\n%{throwable}
+      </format>
+      <append>true</append>
+      <rotation type="revolving" init="1" max="4">
+        <or>
+          <size>100m</size>
+          <time>01:00:00</time>
+        </or>
+      </rotation>
+    </cocoon>
+
+    <cocoon id="access">
+      <filename>${context-root}/WEB-INF/logs/access.log</filename>
+      <format type="cocoon">
+        %7.7{priority} %{time}   [%{category}] (%{uri}) %{thread}/%{class:short}: %{message}\n%{throwable}
+      </format>
+      <append>true</append>
+      <rotation type="revolving" init="1" max="4">
+        <or>
+          <size>100m</size>
+          <time>01:00:00</time>
+        </or>
+      </rotation>
+    </cocoon>
+   
+    <priority-filter id="error" log-level="ERROR">
+      <cocoon>
+        <filename>${context-root}/WEB-INF/logs/error.log</filename>
+        <format type="cocoon">
+          %7.7{priority} %{time}   [%{category}] (%{uri}) %{thread}/%{class:short}: %{message}\n%{throwable}
+        </format>
+        <append>true</append>
+        <rotation type="revolving" init="1" max="4">
+          <or>
+            <size>100m</size>
+            <time>01:00:00</time>
+          </or>
+        </rotation>
+      </cocoon>
+    </priority-filter>
+  </targets>
+
+  <categories>
+    <category name="core" log-level="DEBUG">
+      <log-target id-ref="core"/>
+      <log-target id-ref="error"/>
+    </category>
+    <category name="sitemap" log-level="DEBUG">
+      <log-target id-ref="sitemap"/>
+      <log-target id-ref="error"/>
+    </category>
+    <category name="access" log-level="DEBUG">
+      <log-target id-ref="access"/>
+      <log-target id-ref="error"/>
+    </category> 
+  </categories>
+</logkit>

@@ -1,0 +1,68 @@
+------------------
+Purenum 0.4e alpha
+------------------
+integer.txt
+------------------
+
+
+ALPHA VERSION 
+
+Some features may not work at all or may not work properly, even if they are
+described later in this document as working properly.
+
+
+INTRODUCTION
+
+See the file 'purenum.txt' for an overview of the features of class Integer.
+
+
+INSTALLATION
+
+The file 'integer.h' must be configured correctly before compiling.  At least
+the value INTEGER_H_BITS must be set to the number of bits in an 'unsigned int'
+hardware value.  Most modern computers are 32-bit, as of November 2000, so that
+is the default.
+
+For the other options the defaults can usually be left alone.
+
+'make final' will compile the entire package, with high compiler optimizations
+'make debug' will compile only modified source files, with the -g option to gcc
+
+Also, if you change the name of this software's directory you must also change
+the 'directory' value inside the 'makefile'.
+
+
+PORTABILITY
+
+The main version of class Integer (contained in the files 'integer.c' and
+'integer.h') is designed to be portable at all costs.  It should compile and
+work on all computers with a working ANSI C++ compiler.  There may be other,
+differently optimized versions of class Integer available which are less
+portable but which run at a faster speed.  They should all produce exactly
+the same mathematical and logical results.
+
+
+CONVERTING TO CLASS INTEGER
+
+Most existing programs should be able to be converted to using class Integer
+simply by replacing all "int", "short", and "long" declarations (both "signed"
+and "unsigned") with a similar "Integer" declaration.  In general this will work
+on any programs which do not "know" about the storage format of the integers
+they use.  Some things which should probably be avoided are:
+
+- expecting the most positive allowable integer value to be a particular value
+- expecting the most negative allowable integer value to be a particular value
+- using the bitwise operators: ~ << >> & ^ | <<= >>= &= |= ^=
+- depending on a sizeof() value for any integer to be a particular size
+
+Some programs carefully check the available maximum and/or minimum values
+available to use for calculations.  This generally indicates good, careful,
+programming style, but it does not work with class Integer.  The whole point of
+class Integer is to let the programmer completely ignore irritating details like
+the bit-width of the CPU, and to allow code to be written with the assumption
+that there will always be enough room to hold any needed values.  If class
+Integer ever does run out of room it will throw an out-of-memory exception and
+give up gracefully.  (A "bug" that can be fixed by installing more RAM!  A much
+better result than that given by a traditional hardware overflow... crashing or
+even silently corrupting data).
+

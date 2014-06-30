@@ -1,0 +1,239 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_AppRun</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_AppRun</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_AppRun</h4>
+<dd>DEMOGL_AppRun starts the DemoGL powered part of your application. This part can be a normal execution of the 
+	Timeline events scripted in the application script as a normal win32 program, as a screensaver or as a screensaver
+	preview. It can also start the configuration part of your application when that application is a screensaver.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_AppRun(
+	<b>const HINSTANCE</b> <i>hInstance</i>,
+	<b>const <a HREF="ref_structures_SStartupDat.htm">SStartupDat</a></b> *<i>psdStartupDat</i>,
+	<b>const char</b> *<i>pszWindowTitle</i>,
+	<b>const bool</b> <i>bUseCrypting</i>, 
+	<b>const byte</b> <i>byKey1</i>, 
+	<b>const byte</b> <i>byKey2</i>, 
+	<b>const int</b> <i>iRunType</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>hInstance</i>
+	<dd>The instance of the application. This value is passed to WinMain() by windows. This value is needed
+		to let DemoGL access resources stored in your application, for example an icon or a bitmap that should
+		show up on the startup dialog. See <A HREF="ref_definitionsanddefaults.htm">Definitions and Defaults</A>
+		for more details.
+	<dt><i>psdStartupDat</i>
+	<dd>Pointer to a <a HREF="ref_structures_SStartupDat.htm">SStartupDat</a> structure, which contains all the
+		data DemoGL needs to startup and run your application succesfully. Can be NULL, which results in the
+		usage of the values stored in the registry, if present, or if not present the default build in values. 
+		When you pass a <a HREF="ref_structures_SStartupDat.htm">SStartupDat</a>
+		structure to <b>DEMOGL_AppRun</b>, you should set every value of the structure.
+	<dt><i>pszWindowTitle</i>
+	<dd>Pointer to a zero-terminated string which will result in the title of the application's window, when 
+		applicable. This title is displayed in the dragbar/titlebar of the window, when the application runs in
+		windowed mode. 
+	<dt><i>bUseCrypting</i>
+	<dd>Specifies whether to enable or disable decryption. If this parameter is <i>true</i>, decryption is enabled
+		and DemoGL will decrypt all the data loaded before it's passed back to the caller. As decryption keys
+		are used the values specified in <i>byKey1</i> and <i>byKey2</i>. If this parameter is <i>false</i>, these
+		variables are ignored.
+	<dt><i>byKey1</i>
+	<dd>Specifies the first decryption key for the decryption process. Only valid when <i>bUseCrypting</i> is <i>true</i>.
+		You crypt your data with Cryde.
+	<dt><i>byKey2</i>
+	<dd>Specifies the second decryption key for the decryption process. Only valid when <i>bUseCrypting</i> is <i>true</i>.
+		You crypt your data with Cryde.
+	<dt><i>iRunType</i>
+	<dd>Specifies how your application should run. <i>iRunType</i> can be one of the following values:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>RunType</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">RUNTYPE_NORMAL</td>
+			<td WIDTH="70%">
+				The default. Your application will run like a normal win32 application. DemoGL will open a startup
+				dialog so the user can select runtime specific options, and when the user selects to start the
+				application, the execution will continue by opening a window and run the application script. The
+				values specified in <i>psdStartupDat</i>&nbsp; are used to preset options in the startup dialog, but
+				are overruled by the eventually stored values in the registry. When the
+				user selected this, the options selected are stored in the registry when the application is actually
+				started, when the user clicks the start button. <b>DEMOGL_AppRun</b> will exit when the script is
+				terminating the application or the user terminates the application. DemoGL will recover from errors
+				during the startup of the application if the user selected runtime specific options that are not
+				valid (for example a resolution that is not supported by the video adapter)
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">RUNTYPE_NODIALOG</td>
+			<td WIDTH="70%">As RUNTYPE_NORMAL, but no startup dialog is shown and DemoGL will use the values specified 
+				in <i>psdStartupDat</i> as specific runtime options. The user is not able to select an option how to run the
+				application. No options are stored nor read from the registry. <b>DEMOGL_AppRun</b> will exit when the script is
+				terminating the application or the user terminates the application. Any error during the startup of the
+				application will result in application termination. DemoGL can't recover from errors caused by options set in
+				<i>psdStartupDat/i&gt;, which are not valid during runtime. 
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">RUNTYPE_SAVER_CONFIG</td>
+			<td WIDTH="70%">
+				DemoGL will open the startup dialog of RUNTYPE_NORMAL, but now the user is able to set runtime specific
+				options for the application when it's ran as a screensaver. <b>DEMOGL_AppRun</b> will exit as soon as the
+				user clicks Save or Cancel. When the user set runtime specific options using this RunType, these options
+				are used to run the application as a screensaver at every run.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">RUNTYPE_SAVER_NORMAL</td>
+			<td WIDTH="70%">
+				As RUNTYPE_NODIALOG, but DemoGL will now read the settings set by the user when the application was ran in
+				RUNTYPE_SAVER_CONFIG, plus the application is ran as a screensaver, thus called by windows. Windows will call
+				your application as a normal screensaver when you select your application as the windows screensaver and
+				press <i>Preview</i> on the Screensaver tab in display properties, or when the time-out occurs set with the
+				screensaver properties in display properties. <b>DEMOGL_AppRun</b> exits when the user moves the mouse or
+				presses a key or when the script terminates DemoGL.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">RUNTYPE_SAVER_PREVIEW</td>
+			<td WIDTH="70%">
+				As RUNTYPE_SAVER_NORMAL, but now the application runs inside the small area on the screensaver tab. Windows will
+				block all keyboard messages to the application, but mouse messages are still sent. Runtime specific settings are
+				used, but not for windowsize, as the application runs inside an area specified by windows.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">RUNTYPE_SAVER_PASSWORD</td>
+			<td WIDTH="70%">
+				Not implemented. DemoGL will exit immediately. All successors of windows95 will do their own password unlocking
+				when it comes to screensavers, as also WinNT/Windows2000, only windows95 does not but relies on the unlocking
+				code inside the screensaver, controlled with this RunType, but it's not implemented inside DemoGL.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">RUNTYPE_UNKNOWN</td>
+			<td WIDTH="70%">
+				Used when the RunType could not be determined, it will result in a clean exit of <b>DEMOGL_AppRun</b>.
+			</td>
+		</tr>
+		</table>
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns <i>SYS_NOK</i>.
+	<p>
+<dt><b>Remarks.</b>
+<dd>After you've registered your effectobjects with <a HREF="ref_functions_DEMOGL_EffectRegister.htm">DEMOGL_EffectRegister</a>, you
+	can start the application by calling <b>DEMOGL_AppRun</b>, specifying startup properties and the RunType DemoGL should use. For
+	normal win32 application runtimes, like RUNTYPE_NORMAL and RUNTYPE_NODIALOG, you know what runtype to run your application in.
+	This is not the case when it comes to a screensaver application, powered by DemoGL. Windows will specify on the command line
+	how the screensaver should behave: as a preview window, as a normal screensaver, as a configuration window or as a password
+	unlock instance (not implemented in DemoGL, see RUNTYPE_SAVER_PASSWORD). To determine which RunType you should specify
+	when your screensaver application is ran, call <a HREF="ref_functions_DEMOGL_ParseScreenSaverCL.htm">DEMOGL_ParseScreenSaverCL</a>
+	and pass the commandline received by WinMain() to the function.	<b>DEMOGL_ParseScreenSaverCL</b> will then fill a
+	<a HREF="ref_structures_SScreenSaverCLParams.htm">SScreenSaverCLParams</a> structure for you which contains the type of
+	screensaver runtype you should use. Your application can now determine if it first should open it's own configuration 
+	dialog, or for example if it should start the screensaver normally. You can first program your screensaver as a normal
+	application using RUNTYPE_NORMAL or RUNTYPE_NODIALOG, and when the application runs as planned you can include the 
+	commandline parsing logic to actually run the application as a screensaver. After you've done that you should rename
+	the executable to a name with the extension .scr and the screensaver is finished.
+	See the example below.
+	<p>
+	The values specified in <i>psdStartupDat</i>&nbsp; are always overruled by the values eventually stored in the registry, except when 
+	you specify RUNTYPE_NODIALOG as RunType. <i>psdStartupDat</i>&nbsp; values are used as hints to set options in the startup dialog
+	or the config dialog and as execution specific values when a startup dialog or config dialog is not applicable. The values set in the
+	startup dialog and the config dialog are stored in different places in the registry. For RUNTYPE_NORMAL applications, the values
+	are stored in the registry key HKCU/Software/DemoGL/Application/<i>Application title</i>/AppData. For RUNTYPE_SAVER_* applications,
+	the values are stored in the registry key HKCU/Software/DemoGL/Screensaver/<i>Application title</i>/AppData, by using the RUNTYPE_SAVER_CONFIG
+	RunType. It's recommended you should store custom application parameters inside these registry keys, depending on the RunType.
+	<p>
+	When you call <b>DEMOGL_AppRun</b> DemoGL will take over control of your application. The only code in your application that is called
+	is the code inside the registered effectobjects. You should call <a HREF="ref_functions_DEMOGL_AppEnd.htm">DEMOGL_AppEnd</a> after
+	<b>DEMOGL_AppRun</b> returns, no matter what returnvalue it will return.
+	<p>
+<dt><b>Example.</b>
+<dd>Below you'll find an example which shows how to determine the RunType of the current instance of the application and how to
+	use it succesfully. It also shows where you should place your own config dialog startcode when you've written a screensaver using
+	DemoGL which relies on settable parameters. You can add a button to that config dialog that calls <b>DEMOGL_AppRun</b> with the
+	RunType RUNTYPE_SAVER_CONFIG to let the user set runtime specific settings like screendepth, resolution, sound etc.
+	<p>
+	<pre>
+// Declare a pointer to the screensaver command line parameter structure
+SScreenSaverCLParams	*pSSCLParams;
+	
+// Parse commandline for screensaver exectype
+pSSCLParams=DEMOGL_ParseScreenSaverCL(lpCmdLine);
+
+iRunType=RUNTYPE_NORMAL;
+
+// start as a screensaver
+switch(pSSCLParams-&gt;iSaverExecType)
+{
+	case DGL_SSAVERET_CONFIG:
+	{
+		/////////////////////////
+		// Insert your own configwindow initialisation and start up code HERE
+		// If you do you shouldn't enter DEMOGL_AppRun() below but include it
+		// in your dialog with a button.
+		/////////////////////////
+		iRunType=RUNTYPE_SAVER_CONFIG;
+	}; break;
+	case DGL_SSAVERET_NORMAL:
+	{
+		iRunType=RUNTYPE_SAVER_NORMAL;
+	}; break;
+	case DGL_SSAVERET_PREVIEW:
+	{
+		iRunType=RUNTYPE_SAVER_PREVIEW;
+	}; break;
+	default:
+	{
+		// should not run, unknown or unsupported screensaver type.
+		iRunType=RUNTYPE_UNKNOWN;	// will return immediately
+	}; break;
+}
+// Start the application. We won't return until the demo ends (by userinteraction or by script) or 
+// when a fatal error occurs.
+DEMOGL_AppRun(hInstance, &amp;sdStartupDatValues, &quot;My title&quot;, false,0,0,iRunType);
+
+// End it. Call this routine to signal DemoGL it's all over and it should release
+// claimed resources.
+DEMOGL_AppEnd();
+	</pre>
+	<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_AppEnd.htm">DEMOGL_AppEnd</a>, <a HREF="ref_functions_DEMOGL_EffectRegister.htm">DEMOGL_EffectRegister</a>,
+	<a HREF="ref_functions_DEMOGL_ParseScreenSaverCL.htm">DEMOGL_ParseScreenSaverCL</a>, <a HREF="ref_structures_SStartupDat.htm">SStartupDat</a>,
+	<a HREF="ref_structures_SScreenSaverCLParams.htm">SScreenSaverCLParams</a>, <A HREF="ref_definitionsanddefaults.htm">Definitions and Defaults</A>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 16-feb-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

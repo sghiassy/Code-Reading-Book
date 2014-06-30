@@ -1,0 +1,130 @@
+.TH ACE_POSIX_Asynch_Accept 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_POSIX_Asynch_Accept \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <POSIX_Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Accept_Impl\fR, and \fBACE_POSIX_Asynch_Operation\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_POSIX_Asynch_Accept\fR (\fBACE_POSIX_Proactor\fR * posix_proactor)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, const void *completion_key, \fBACE_Proactor\fR *proactor = 0)"
+.br
+.ti -1c
+.RI "int \fBaccept\fR (\fBACE_Message_Block\fR &message_block, u_long bytes_to_read, ACE_HANDLE accept_handle, const void *act, int priority, int signal_number = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_POSIX_Asynch_Accept\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBcancel\fR (void)"
+.br
+.ti -1c
+.RI "int \fBclose\fR ( int flg_notify)"
+.br
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor\fR (void) const"
+.br
+.RI "\fIReturn the underlying proactor.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Reactor\fR \fBreactor_\fR"
+.br
+.RI "\fIReactor to wait on the <listen_handle>.\fR"
+.ti -1c
+.RI "\fBACE_POSIX_Asynch_Accept_Handler\fR* \fBaccept_handler_\fR"
+.br
+.RI "\fIThe Event Handler to do handle_input.\fR"
+.ti -1c
+.RI "int \fBgrp_id_\fR"
+.br
+.RI "\fIgroup id for the thread that we create for accepts.\fR"
+.ti -1c
+.RI "\fBACE_POSIX_Proactor\fR* \fBposix_proactor_\fR"
+.br
+.RI "\fIPOSIX Proactor implementation.\fR"
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "void* \fBthread_function\fR (void* reactor)"
+.br
+.RI "\fIThe thread function that does handle events.\fR"
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_POSIX_Asynch_Accept::ACE_POSIX_Asynch_Accept (\fBACE_POSIX_Proactor\fR * posix_proactor)
+.PP
+Constructor.
+.PP
+.SS ACE_POSIX_Asynch_Accept::~ACE_POSIX_Asynch_Accept (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_POSIX_Asynch_Accept::accept (\fBACE_Message_Block\fR & message_block, u_long bytes_to_read, ACE_HANDLE accept_handle, const void * act, int priority, int signal_number = 0)
+.PP
+This starts off an asynchronous accept. The asynchronous accept call also allows any initial data to be returned to the <handler>. Upto <bytes_to_read> will be read and stored in the <message_block>. The  will be used for the  call. If ( == INVALID_HANDLE), a new handle will be created.
+.PP
+<message_block> must be specified. This is because the address of the new connection is placed at the end of this buffer. 
+.SS int ACE_POSIX_Asynch_Accept::cancel (void)
+.PP
+Cancel all pending pseudo-asynchronus requests Behavior as usual AIO request 
+.PP
+Reimplemented from \fBACE_POSIX_Asynch_Operation\fR.
+.SS int ACE_POSIX_Asynch_Accept::close (int flg_notify)
+.PP
+Close performs cancellation of all pending requests Parameter flg_notify can be  0 - don't send notifications about canceled accepts 1 - notify user about canceled accepts according POSIX standards we should receive notifications on canceled AIO requests 
+.SS int ACE_POSIX_Asynch_Accept::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle, const void * completion_key, \fBACE_Proactor\fR * proactor = 0)
+.PP
+This <open> belongs to ACE_AIOCB_Asynch_Operation. We forward this call to that method. We have put this here to avoid the compiler warnings. 
+.PP
+Reimplemented from \fBACE_POSIX_Asynch_Operation\fR.
+.SS \fBACE_Proactor\fR * ACE_POSIX_Asynch_Accept::proactor (void) const
+.PP
+Return the underlying proactor.
+.PP
+Reimplemented from \fBACE_POSIX_Asynch_Operation\fR.
+.SS void * ACE_POSIX_Asynch_Accept::thread_function (void * reactor)\fC [static, private]\fR
+.PP
+The thread function that does handle events.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_POSIX_Asynch_Accept_Handler\fR * ACE_POSIX_Asynch_Accept::accept_handler_\fC [private]\fR
+.PP
+The Event Handler to do handle_input.
+.PP
+.SS int ACE_POSIX_Asynch_Accept::grp_id_\fC [private]\fR
+.PP
+group id for the thread that we create for accepts.
+.PP
+.SS \fBACE_POSIX_Proactor\fR * ACE_POSIX_Asynch_Accept::posix_proactor_\fC [private]\fR
+.PP
+POSIX Proactor implementation.
+.PP
+.SS \fBACE_Reactor\fR ACE_POSIX_Asynch_Accept::reactor_\fC [private]\fR
+.PP
+Reactor to wait on the <listen_handle>.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

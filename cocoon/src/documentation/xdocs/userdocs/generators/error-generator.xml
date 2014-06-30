@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Error Generator</title>
+  <version>0.9</version>
+  <type>Technical document</type>
+  <authors>
+  <person name="Bernhard Huber" email="berni_huber@a1.net"/>
+  </authors>
+  <abstract>This document describes the error generator of Cocoon.</abstract>
+ </header>
+ <body>
+  <s1 title="Error Generator">
+   <p>
+    The error generator creates xml content describing an error condition.
+    This generator is activated by the sitemap manager in case of an 
+    error condition.
+   </p>
+   <p>
+    If a pipeline has defined an error handler, and an error occurs the
+    sitemap manager activates an error generator, feeding the cause of
+    the error into the error generator. 
+   </p>
+   <ul>
+    <li>Name : !error-notifier!</li>
+    <li>Class: org.apache.cocoon.sitemap.ErrorNotifier</li>
+    <li>Cacheable: no.</li>
+    <li>Mode: sitemap internal</li>
+   </ul>
+  </s1>
+  <s1 title="DTD">
+   <p>
+    The error generator generates xml content, having
+    namespace <code>http://apache.org/cocoon/error/2.0</code>, and
+    prefix <code>error</code>.
+   </p>
+   <p>
+    Usually the error condition is described by an throwable object.
+    The information of this throwable object is used by the
+    error generator producing the xml content.
+    The various elements of the xml content:
+   </p>
+   <ul>
+    <li>
+     The element <code>notify</code> is the root element, having.
+     attribute <code>type</code>, and <code>sender</code>.
+     The attribute <code>type</code> has fixed value <code>error</code>.
+     The attribute <code>sender</code> describes the sender of the
+     error notification object, in the current implementation it has 
+     fixed value <code>org.apache.cocoon.sitemap.ErrorNotifier</code>.
+    </li>
+    <li>
+     The element <code>title</code> stores some title of this eror notification.
+     In the current implementation it has fixed value <code>Cocoon error</code>.
+    </li>
+    <li>
+     The source element stores the class name of the throwable object
+     of the error notification.
+    </li>
+    <li>
+     The message element stores the <code>getMessage()</code> result 
+     of the throwable object of the error notification, and maybe empty.
+    </li>
+    <li>
+     The description element stores the <code>toString()</code> result 
+     of the throwable object of the error notification.
+    </li>
+    <li>
+     The optional extra elements stores optional nested exceptions
+     of the throwable object of the error notification.
+    </li>
+   </ul>
+   <source><![CDATA[
+<!ELEMENT notify (title, source, message, description, extra*)>
+<!ATTLIST notiy 
+  type CDATA #REQUIRED
+  sender CDATA #REQUIRED
+>
+<!ELEMENT title #PCDATA>
+<!ELEMENT source #PCDATA>
+<!ELEMENT message #PCDATA>
+<!ELEMENT description #PCDATA>
+<!ELEMENT extra #PCDATA>
+<!ATTLIST extra description #CDATA>
+<!ELEMENT statusinfo (group|value)*>
+]]></source>
+  </s1>
+  <s1 title="Example">
+   <p>
+    The following example outputs the xml content of 
+    an error generator:
+   </p>
+   <source><![CDATA[
+<?xml version="1.0"
+ xmlns:error="http://apache.org/cocoon/error/2.0
+ encoding="UTF-8"?>
+ 
+<error:notify
+ error:type="error" 
+ error:sender="org.apache.cocoon.sitemap.ErrorNotifier">
+ 
+ <error:title>Cocoon error</error:title>
+ <error:source>java.lang.NullPointerException</error:source>
+ <error:message></error:message>
+ <error:description></error:description>
+ <error:extra description=""></error:extra>
+</error:notify>
+]]></source>
+  </s1>
+ </body>
+</document>
+
+

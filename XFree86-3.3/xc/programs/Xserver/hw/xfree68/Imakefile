@@ -1,0 +1,90 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/10/25 11:32:34 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree68/Imakefile,v 3.3 1996/12/27 06:51:49 dawes Exp $
+
+#include <Server.tmpl>
+#define IHaveSubdirs
+
+SCREENS = fbdev
+
+SUBDIRS = os-support common $(SCREENS) doc $(XF86SETUPDIR) etc LinkKit
+
+XF86CONFIG = XF86Config
+
+all:: $(XF86CONFIG)
+
+MANPAGE=Concat3(FileManDir,/XF86Config.,FileManSuffix)
+
+RGBPATH=\"DefaultRGBDatabase\"
+MISCFONTPATH=\"$(LIBDIR)/fonts/misc/\"
+T1FONTPATH=\"$(LIBDIR)/fonts/Type1/\"
+SPFONTPATH=\"$(LIBDIR)/fonts/Speedo/\"
+DPI75FONTPATH=\"$(LIBDIR)/fonts/75dpi/\"
+DPI100FONTPATH=\"$(LIBDIR)/fonts/100dpi/\"
+DPI75USFONTPATH=\"$(LIBDIR)/fonts/75dpi/:unscaled\"
+DPI100USFONTPATH=\"$(LIBDIR)/fonts/100dpi/:unscaled\"
+
+#if Build75DpiFonts
+  USE_75FONTS="    FontPath"
+#else
+  USE_75FONTS="XCOMM    FontPath"
+#endif
+#if Build100DpiFonts
+  USE_100FONTS=FontPath
+#else
+  USE_100FONTS="XCOMM    FontPath"
+#endif
+#if BuildSpeedoFonts
+  USE_SPFONTS="    FontPath"
+#else
+  USE_SPFONTS="XCOMM    FontPath"
+#endif
+#if BuildType1Fonts
+  USE_T1FONTS="    FontPath"
+#else
+  USE_T1FONTS="XCOMM    FontPath"
+#endif
+
+#ifdef FreeBSDArchitecture
+  MOUSEDEV=\"/dev/mouse\"
+#else
+# if defined(i386BsdArchitecture)
+  MOUSEDEV=\"/dev/com1\"
+# else
+#  ifdef LinuxArchitecture
+  MOUSEDEV=\"/dev/mouse\"
+#  else
+#   ifdef i386ScoArchitecture
+  MOUSEDEV=\"/dev/tty1a\"
+#   else
+  MOUSEDEV=\"/dev/tty00\"
+#   endif
+#  endif
+# endif
+#endif
+
+CppFileTarget($(XF86CONFIG), XF68Conf.cpp, \
+    -DRGBPATH=$(RGBPATH) -DMISCFONTPATH=$(MISCFONTPATH) \
+    -DUSE_T1FONTS=$(USE_T1FONTS) -DT1FONTPATH=$(T1FONTPATH) \
+    -DUSE_SPFONTS=$(USE_SPFONTS) -DSPFONTPATH=$(SPFONTPATH) \
+    -DUSE_75FONTS=$(USE_75FONTS) -DDPI75FONTPATH=$(DPI75FONTPATH) \
+    -DUSE_100FONTS=$(USE_100FONTS) -DDPI100FONTPATH=$(DPI100FONTPATH) \
+    -DDPI75USFONTPATH=$(DPI75USFONTPATH) \
+    -DDPI100USFONTPATH=$(DPI100USFONTPATH) \
+    -DMOUSEDEV=$(MOUSEDEV) -DMANPAGE=$(MANPAGE) -DMODULEPATH=\"$(MODULEDIR)\", \
+    $(ICONFIGFILES))
+
+InstallManPage(XFree86,$(MANDIR))
+InstallGenManPageLong(XF86Conf,$(FILEMANDIR),XF86Config,$(FILEMANSUFFIX))
+InstallManPage(XF68_FBDev,$(MANDIR))
+InstallNamedNonExec($(XF86CONFIG),XF86Config.eg,$(LIBDIR))
+
+LinkSourceFile(XF86Conf.man,$(XF86SRC))
+LinkSourceFile(XFree86.man,$(XF86SRC))
+LinkSourceFile(xf86Version.h,$(XF86SRC))
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

@@ -1,0 +1,321 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig McClanahan</author>
+    <title>Building Catalina</title>
+    <revision>$Id: building.xml,v 1.3 2001/08/14 18:50:10 pier Exp $</revision>
+  </properties>
+
+<body>
+
+
+<section name="Building Catalina">
+
+
+  <p>This document outlines the procedures necessary to build Tomcat 4.0
+  container from source code.  Tomcat includes the following major
+  components:</p>
+
+  <ul>
+  <li><strong>Catalina</strong> - Servlet container conforming to the
+      Servlet Specification, version 2.3 (Proposed Final Draft 2)</li>
+  <li><strong>Connectors</strong> - Connectors for web servers</li>
+  <li><strong>Jasper</strong> - JSP compiler and runtime environment
+      conforming to the JavaServer Pages (JSP) Specification, version
+      1.2 (Proposed Final Draft 2)</li>
+  <li><strong>Tester</strong> - Unit test web application, with tests
+      that focus on Tomcat-specific features as well as specification
+      compliance.</li>
+  <li><strong>Webapps</strong> - Example web applications, and associated
+      documentation, that are packaged with Tomcat.</li>
+  </ul>
+
+  <p>The overall process of building Tomcat involves the following major
+  steps:</p>
+  <ul>
+  <li>Download and install external prerequisites</li>
+  <li>Download and install Jakarta package prerequisites</li>
+  <li>Download and install Tomcat source code</li>
+  <li>Set environment variables</li>
+  <li>Build Tomcat components</li>
+  <li>Test and execute your build</li>
+  <li>Create binary and source distributions (optional)</li>
+  </ul>
+
+</section>
+
+
+<section name="Download External Prerequisites">
+
+  <p>You must download and install all of the following external software
+  components in order to build Tomcat:</p>
+
+  <ul>
+  <li><strong>Java Development Kit</strong>:
+      <ul>
+      <li>Download and install a version of the Java Development Kit
+          (version 1.2 or later, version 1.3.1 is recommended) from
+          <a href="http://java.sun.com/j2se">http://java.sun.com/j2se</a>.</li>
+      <li>Set an environment variable <code>JAVA_HOME</code> containing the
+          full pathname of the directory in which Java is installed.</li>
+      <li>Make the Java commands available from your shell command line,
+          by adding <code>$JAVA_HOME/bin</code> to your <code>PATH</code>
+          environment variable.</li>
+      </ul></li>
+  <li><strong>Java Database Connectors (JDBC) Optional Package</strong>:
+      <ul>
+      <li>These steps are required <strong>only</strong> if you want to build
+          support for the Tyrex JNDI-accessed data source resources.</li>
+      <li>Download the JDBC 2.0 Optional Extensions package from
+          <a href="http://java.sun.com/products/jdbc">http://java.sun.com/products/jdbc</a>
+          and install it.</li>
+      <li>Add the full pathname of the <code>jdbc2_0-stdext.jar</code> file
+          to your <code>CLASSPATH</code> environment variable.</li>
+      </ul></li>
+  <li><strong>JavaMail</strong>:
+      <ul>
+      <li>These steps are required <strong>only</strong> if you want to build
+          the object factories for supporting mail-releated resource entries
+          in your web application deployment descriptors.</li>
+      <li>Download the JavaMail from
+          <a href="http://java.sun.com/products/javamail">http://java.sun.com/products/javamail</a>
+          and install it.</li>
+      <li>Download the JavaBeans Activation Framework (JAF) from
+          <a href="http://java.sun.com/beans/glasgow/jaf.html">http://java.sun.com/beans/glasgow/jaf.html</a>
+          and install it.</li>
+      <li>Add the full pathnames of the <code>mail.jar</code> and
+          <code>activation.jar</code> files from these downloads to
+          your <code>CLASSPATH</code> environment variable.</li>
+      </ul></li>
+  <li><strong>Java Management Extensions (JMX)</strong>:
+      <ul>
+      <li>Download the JMX "Instrumentation and Agent Reference Implementation"
+          (version 1.0 or later) from
+          <a href="http://java.sun.com/products/JavaManagement/download.html">http://java.sun.com/products/JavaManagement/download.html</a>
+          and install it.</li>
+      <li>Set an environment variable <code>JMX_HOME</code> containing the
+          full pathname of the directory in which JMX is installed.</li>
+      </ul></li>
+  <li><strong>Java Naming and Directory Interface (JNDI)</strong>:
+      <ul>
+      <li>These steps are required <strong>only</strong> if you have
+          installed JDK 1.2.  The required JNDI packages are already
+          included in JDK 1.3 or later.</li>
+      <li>Download the base package of JNDI (version 1.2.1 or later) from
+          <a href="http://java.sun.com/products/jndi">http://java.sun.com/products/jndi"</a>.</li>
+      <li>Set an environment variable <code>JNDI_HOME</code> containing the
+          full pathname of the directory in which JNDI is installed.</li>
+      <li>If you wish to compile the JNDIRealm class (which allows users and
+          roles to be retrieved from an LDAP-based directory server), you will
+          also need to download the corresponding <code>ldap.jar</code> file
+          and place it in <code>$JNDI_HOME/lib</code>.</li>
+      <li>Add the full pathnames of the <code>jndi.jar</code> and
+          (optional) <code>ldap.jar</code> files to your
+          <code>CLASSPATH</code> environment variable.</li>
+      </ul></li>
+  <li><strong>Java Secure Sockets Extension (JSSE)</strong>
+      <ul>
+      <li>These steps are required <strong>only</strong> if you want to build
+          support for SSL connections into Tomcat.</li>
+      <li>Download the JSSE package (version 1.0.2 or later) from
+          <a href="http://java.sun.com/products/jsse">http://java.sun.com/products/jsse</a>
+          and install it.</li>
+      <li>Create an environment variable <code>JSSE_HOME</code> containing the
+          full pathname of the directory in which JSSE is installed.</li>
+      </ul></li>
+  <li><strong>Java Transaction Architecture</strong>
+      <ul>
+      <li>These steps are required <strong>only</strong> if you want to build
+          support for the Tyrex JNDI-accessed data source resources.</li>
+      <li>Download the JTA package from
+          <a href="http://java.sun.com/products/jta">http://java.sun.com/products/jta</a>
+          and install it.</li>
+      <li>Add the full pathname of the <code>jta-spec1_0_1.jar</code> file
+          (or equivalent) to your <code>CLASSPATH</code> environment
+          variable.</li>
+      </ul></li>
+  <li><strong>Tyrex</strong>
+      <ul>
+      <li>These steps are required <strong>only</strong> if you want to build
+          support for the Tyrex JNDI-accessed data source resources.</li>
+      <li>Download the Tyrex package from
+          <a href="http://tyrex.exolab.org">http://tyrex.exolab.org</a>
+          and install it.</li>
+      <li>Add the full pathname of the <code>tyrex-0.9.7.0.jar</code> file
+          (or equivalent) to your <code>CLASSPATH</code> environment
+          variable.</li>
+      </ul></li>
+  </ul>
+  
+
+</section>
+
+
+<section name="Download Jakarta Prerequisites">
+
+  <p>You must download and install all of the following packages from the
+  <a href="http://jakarta.apache.org">http://jakarta.apache.org</a> web
+  site.  It is generally recommended that you use the most recent production
+  binary distribution of each of these packages.</p>
+
+  <ul>
+  <li><strong>Ant Build Tool</strong>:
+      <ul>
+      <li>Download and install the latest production release of Ant from
+          <a href="http://jakarta.apache.org/site/binindex.html">http://jakarta.apache.org/site/binindex.html</a>.
+          You will need version 1.3 or later.</li>
+      <li>Set an environment variable <code>ANT_HOME</code> containing the
+          full pathname of the directory in which Ant is installed.</li>
+      <li>It is recommended that you make the commands in  Ant's
+          <code>bin</code> directory available from your shell command line,
+          by adding <code>$ANT_HOME/bin</code> to your
+          <code>PATH</code> environment variable.  This
+          is not currently required, but is likely to be required by later
+          changes in the build process.</li>
+      </ul></li>
+  <li><strong>Regular Expressions Library</strong>:
+      <ul>
+      <li>Download and install the REGEXP release (version 1.2 or later) from
+          <a href="http://jakarta.apache.org/site/binindex.html">http://jakarta.apache.org/site/binindex.html</a>.</li>
+      <li>Set an environment variable <code>REGEXP_HOME</code> containing the
+          full pathname of the directory in which REGEXP is installed.</li>
+      </ul></li>
+  <li><strong>Servlet API Classes</strong>:
+      <ul>
+      <li>Download and install a recent nightly build of the
+          <code>jakarta-servletapi-4</code> CVS repository from
+          <a href="http://jakarta.apache.org/builds/jakarta-servletapi-4/nightly">http://jakarta.apache.org/builds/jakarta-servletapi-4/nightly</a></li>
+      <li>Set an environment variable <code>SERVLETAPI_HOME</code> containing
+          the full pathname of the directory where the API classes are
+          installed.</li>
+      </ul></li>
+  </ul>
+
+</section>
+
+
+<section name="Download and Build Tomcat">
+
+  <p>You can download a nightly snapshot of the Tomcat 4.0 source repository at
+  <a href="http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/src">http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/src</a>
+  or follow the directions for
+  <a href="http://jakarta.apache.org/site/cvsindex.html">anonymous CVS access</a>
+  as described on the Jakarta web site.</p>
+
+  <p>After downloading and installing the Tomcat source code, and all of the
+  prerequisites listed above, you can build Tomcat by executing the following
+  commands (assuming that CATALINA_HOME is an environment variable containing
+  the path to the Tomcat 4.0 source repository directory).</p>
+
+  <p>On UNIX platforms:</p>
+  <source>
+  cd $CATALINA_HOME
+  ./build.sh
+  </source>
+
+  <p>On Windows platforms:</p>
+  <source>
+  cd %CATALINA_HOME%
+  build
+  </source>
+
+  <p>On either platform, this script will use the Ant build tool to create
+  a runnable version of Tomcat 4.0 in the <code>CATALINA_HOME/build</code>
+  directory on your computer.</p>
+
+</section>
+
+
+<section name="Executing and Testing Your Build">
+
+  <p>To execute Tomcat once you have built it, issue one of the following
+  commands (assuming that CATALINA_HOME is an environment variable containing
+  the path to the Tomcat 4.0 source repository directory).</p>
+
+  <p>On UNIX platforms:</p>
+  <source>
+  $CATALINA_HOME/build/bin/startup.sh
+  </source>
+
+  <p>On Windows platforms:</p>
+  <source>
+  %CATALINA_HOME%\build\bin\startup
+  </source>
+
+  <p>To shut down Tomcat once you have started it, issue one of the following
+  commands (assuming that CATALINA_HOME is an environment variable containing
+  the path to the Tomcat 4.0 source repository directory).</p>
+
+  <p>On UNIX platforms:</p>
+  <source>
+  $CATALINA_HOME/build/bin/shutdown.sh
+  </source>
+
+  <p>On Windows platforms:</p>
+  <source>
+  %CATALINA_HOME%\build\bin\shutdown
+  </source>
+
+  <p>You can also compile and install the unit test suite by executing one
+  of the following commands (assuming CATALINA_HOME is an environment variable
+  containing the path to the Tomcat 4.0 source repository directory).</p>
+
+  <p>On UNIX platforms:</p>
+  <source>
+  cd $CATALINA_HOME/tester
+  ./build.sh deploy-main
+  </source>
+
+  <p>On Windows platforms:</p>
+  <source>
+  cd %CATALINA_HOME%\tester
+  build deploy-main
+  </source>
+
+  <p>After restarting Tomcat, you can execute the unit test suite by
+  executing one of the following commands (assuming CATALINA_HOME is an
+  environment variable containing the path to the Tomcat 4.0 source
+  repository directory).</p>
+
+  <p>On UNIX platforms:</p>
+  <source>
+  $CATALINA_HOME/build/bin/tester.sh
+  </source>
+
+  <p>On Windows platforms:</p>
+  <source>
+  %CATALINA_HOME%\build\bin\tester
+  </source>
+
+</section>
+
+
+<section name="Creating Binary and Source Distributions">
+
+  <p>To create a complete binary distribution of Tomcat 4.0 (such as for a
+  nightly build or a release), execute one of the following commands
+  (assuming CATALINA_HOME is an environment variable containing the path to
+  the Tomcat 4.0 source repository directory).</p>
+
+  <p>On UNIX platforms:</p>
+  <source>
+  cd $CATALINA_HOME
+  ./build.sh dist
+  </source>
+
+  <p>On Windows platforms:</p>
+  <source>
+  cd %CATALINA_HOME%
+  build dist
+  </source>
+
+  <p>On either platform, this will create a complete binary distribution in
+  the <code>$CATALINA_HOME/dist</code> directory on your computer.</p>
+
+</section>
+
+
+</body>
+
+</document>

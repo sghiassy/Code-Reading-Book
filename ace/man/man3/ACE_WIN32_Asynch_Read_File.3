@@ -1,0 +1,92 @@
+.TH ACE_WIN32_Asynch_Read_File 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WIN32_Asynch_Read_File \- This class is a factory for starting off asynchronous reads on a file. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <WIN32_Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Read_File_Impl\fR, and \fBACE_WIN32_Asynch_Read_Stream\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WIN32_Asynch_Read_File\fR (\fBACE_WIN32_Proactor\fR *win32_proactor)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "int \fBread\fR (\fBACE_Message_Block\fR &message_block, u_long bytes_to_read, u_long offset, u_long offset_high, const void *act, int priority, int signal_number = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_WIN32_Asynch_Read_File\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, const void *completion_key, \fBACE_Proactor\fR *proactor)"
+.br
+.ti -1c
+.RI "int \fBcancel\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor\fR (void) const"
+.br
+.RI "\fIReturn the underlying proactor.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBread\fR (\fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void *act, int priority, int signal_number = 0)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class is a factory for starting off asynchronous reads on a file.
+.PP
+.PP
+ Once <open> is called, multiple asynchronous <read>s can started using this class. A \fBACE_Asynch_Read_File::Result\fR will be passed back to the <handler> when the asynchronous reads completes through the  callback.
+.PP
+This class differs slightly from \fBACE_Asynch_Read_Stream\fR as it allows the user to specify an offset for the read. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WIN32_Asynch_Read_File::ACE_WIN32_Asynch_Read_File (\fBACE_WIN32_Proactor\fR * win32_proactor)
+.PP
+Constructor.
+.PP
+.SS ACE_WIN32_Asynch_Read_File::~ACE_WIN32_Asynch_Read_File (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_WIN32_Asynch_Read_File::cancel (void)
+.PP
+This cancels all pending accepts operations that were issued by the calling thread. The function does not cancel asynchronous operations issued by other threads. 
+.PP
+Reimplemented from \fBACE_WIN32_Asynch_Read_Stream\fR.
+.SS int ACE_WIN32_Asynch_Read_File::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle, const void * completion_key, \fBACE_Proactor\fR * proactor)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. 
+.PP
+Reimplemented from \fBACE_WIN32_Asynch_Read_Stream\fR.
+.SS \fBACE_Proactor\fR * ACE_WIN32_Asynch_Read_File::proactor (void) const
+.PP
+Return the underlying proactor.
+.PP
+Reimplemented from \fBACE_WIN32_Asynch_Read_Stream\fR.
+.SS int ACE_WIN32_Asynch_Read_File::read (\fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, int priority, int signal_number = 0)\fC [private]\fR
+.PP
+This method belongs to \fBACE_WIN32_Asynch_Read_Stream\fR. It is here to avoid the compiler warnings. We forward this call to the \fBACE_WIN32_Asynch_Read_Stream\fR class. 
+.PP
+Reimplemented from \fBACE_WIN32_Asynch_Read_Stream\fR.
+.SS int ACE_WIN32_Asynch_Read_File::read (\fBACE_Message_Block\fR & message_block, u_long bytes_to_read, u_long offset, u_long offset_high, const void * act, int priority, int signal_number = 0)
+.PP
+This starts off an asynchronous read. Upto <bytes_to_read> will be read and stored in the <message_block>. The read will start at <offset> from the beginning of the file. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

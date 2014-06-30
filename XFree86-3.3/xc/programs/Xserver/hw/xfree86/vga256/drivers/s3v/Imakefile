@@ -1,0 +1,42 @@
+/* $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/s3v/Imakefile,v 1.1.2.1 1997/05/14 07:52:55 dawes Exp $ */
+/*
+ *
+ * Copyright 1995-1997 The XFree86 Project, Inc.
+ *
+ */
+
+#include <Server.tmpl>
+
+SRCS = s3v_driver.c s3v_misc.c s3v_accel.c s3v_cursor.c
+
+OBJS = s3v_driver.o s3v_misc.o s3v_accel.o s3v_cursor.o
+
+DEFINES = -DPSZ=8
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+           -I$(SERVERSRC)/cfb -I../../vga -I../../../xaa \
+           -I$(FONTINCSRC) -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(s3v_drv, $(OBJS))
+
+InstallLinkKitNonExecFile(s3v_driver.c,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(s3v_accel.c,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(s3v_misc.c,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(s3v_cursor.c,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(regs3v.h,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(newmmio.h,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(s3v_driver.h,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(s3v_rop.h,$(LINKKITDIR)/drivers/vga256/s3v)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/s3v)
+
+DependTarget()

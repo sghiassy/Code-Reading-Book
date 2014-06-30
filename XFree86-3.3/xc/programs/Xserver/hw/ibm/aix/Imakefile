@@ -1,0 +1,79 @@
+XCOMM $XConsortium: Imakefile /main/8 1996/09/28 17:12:47 rws $
+#include <Server.tmpl>
+
+OSDEP_SRC = AIXV3.c AIXinit.c aixMsg.c aixError.c aixWrap.c
+OSDEP_OBJ = AIXV3.o AIXinit.o aixMsg.o aixError.o aixWrap.o
+
+SRCS =		aixCursor.c	\
+		aixEvents.c	\
+		aixKeybd.c	\
+		aixMouse.c	\
+		hftQueue.c	\
+		hftUtils.c	\
+		lftUtils.c	\
+		$(OSDEP_SRC)
+
+LIBOBJS =	aixCursor.o	\
+		aixEvents.o	\
+		aixKeybd.o	\
+		aixMouse.o	\
+		hftQueue.o	\
+		hftUtils.o	\
+		lftUtils.o	\
+		$(OSDEP_OBJ)
+
+OBJS =		$(OTHROBJS) $(LIBOBJS)
+
+EXT_DEFINES = ExtensionOSDefines
+DEPEND_DEFINES = $(EXT_DEFINES)
+
+#if ibmSpecialMalloc
+DEFINES = -DIBM_SPECIAL_MALLOC
+#else
+DEFINES =
+#endif
+
+#if HasBSD44Sockets
+SOCK_DEFINES = -DBSD44SOCKETS
+#endif
+
+
+INCLUDES = -I. -I../ -I../../../include -I$(XINCLUDESRC) -I../common -I$(EXTINCSRC) -I../../../os
+
+#if DebugServer && ProfileServer
+DebuggedAndProfiledLibraryObjectRule()
+#else
+# if DebugServer
+DebuggedLibraryObjectRule()
+# else
+#  if ProfileServer
+ProfiledLibraryObjectRule()
+#  else
+NormalLibraryObjectRule()
+#  endif
+# endif
+#endif
+
+all::	$(OTHROBJS)
+
+all:: hft.o
+
+SpecialCObjectRule(AIXinit,$(ICONFIGFILES),$(SOCK_DEFINES))
+SpecialCObjectRule(aixEvents,$(ICONFIGFILES),$(EXT_DEFINES))
+
+hft.o:	
+	cp hft.exp hft.o
+
+NormalRelocatableTarget(OPERATING_SYSTEM,$(LIBOBJS))
+
+#if ProfileServer
+ProfiledRelocatableTarget(OPERATING_SYSTEM,$(LIBOBJS))
+#endif
+#if DebugServer
+DebuggedRelocatableTarget(OPERATING_SYSTEM,$(LIBOBJS))
+#endif
+
+DependTarget()
+
+LintLibraryTarget(OPERATING_SYSTEM,$(SRCS))
+NormalLintTarget($(SRCS))

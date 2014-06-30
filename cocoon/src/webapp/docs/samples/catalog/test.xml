@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<!DOCTYPE catalog-demo PUBLIC "-//Indexgeo//DTD Catalog Demo v1.0//EN"
+  "http://www.indexgeo.com.au/dtd/catalog-demo-v10.dtd"
+[
+ <!ENTITY testpub PUBLIC "-//Arbortext//TEXT Test Public Identifier//EN"
+   "bogus-system-identifier.xml">
+ <!ENTITY testsys SYSTEM "urn:x-arbortext:test-system-identifier">
+ <!ENTITY testovr PUBLIC "-//Arbortext//TEXT Test Override//EN"
+   "testovr.xml">
+ <!ENTITY % ISOnum PUBLIC
+   "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+   "ISOnum.pen">
+ %ISOnum;
+ <!ENTITY note "Note:">
+]>
+
+<catalog-demo>
+ <section>
+  <para>This sample application demonstrates the use of catalogs for
+   entity resolution. &note; see the Apache Cocoon documentation
+   <link href="/cocoon/documents/userdocs/concepts/catalog.html">Entity resolution with
+   catalogs</link> for the full background and explanation, and the XML
+   source of this document (test.xml).
+  </para>
+
+  <para>This top-level XML instance document is test.xml - it declares
+   three other XML sub-documents as external entities and then includes
+   them in the sections below. The real system identifiers will be looked
+   up in the catalog, to resolve the actual location of the resource.
+  </para>
+
+  <para>The Document Type Definition (DTD) is declared using both a public
+   identifier and a system identifier. The system identifier for the DTD is
+   a network-based resource (which is deliberately non-existent). However,
+   the catalog overrides that remote DTD to instead use a copy from the
+   local filesystem at the location defined by the catalog entry. Note that
+   it is via the use of a public identifier that we gain this power.
+  </para>
+
+  <para>The internal DTD subset of the top-level document instance goes on
+   to declare the three external sub-document entities using various means.
+   It also declares and includes the ISOnum set of character entities,
+   so that we can use entities like &amp;frac12; (to represent &frac12;).
+   Finally the internal DTD subset declares an internal general entity
+   for &quot;note&quot;.
+  </para>
+ </section>
+
+ <section>
+  <para>testpub ... this entity is declared with a PUBLIC identifier and a
+   bogus system identifier (which will be overridden by the catalog)
+  </para>
+  &testpub;
+ </section>
+
+ <section>
+  <para>testsys ... this entity is declared with a SYSTEM identifier
+   (which will be resolved by the catalog)
+  </para>
+  &testsys;
+ </section>
+
+ <section>
+  <para>testovr ... is declared with a PUBLIC identifier and a system
+   identifier (the catalog is set to not override this one, so the
+   declared system identifier is used)
+  </para>
+  &testovr;
+ </section>
+
+</catalog-demo>

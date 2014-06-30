@@ -1,0 +1,235 @@
+.TH ACE_Object_Manager 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Object_Manager \- Manager for \fBACE\fR library services and singleton cleanup. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Object_Manager.h>\fR
+.PP
+Inherits \fBACE_Object_Manager_Base\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBPreallocated_Object\fR { \fBACE_FILECACHE_LOCK\fR, \fBACE_STATIC_OBJECT_LOCK\fR, \fBACE_PREALLOCATED_OBJECTS\fR }"
+.br
+.ti -1c
+.RI "enum \fBPreallocated_Array\fR { \fBACE_EMPTY_PREALLOCATED_ARRAY\fR, \fBACE_PREALLOCATED_ARRAYS\fR }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBinit\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Object_Manager\fR (void)"
+.br
+.ti -1c
+.RI "\fB~ACE_Object_Manager\fR (void)"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBstarting_up\fR (void)"
+.br
+.ti -1c
+.RI "int \fBshutting_down\fR (void)"
+.br
+.ti -1c
+.RI "int \fBat_exit\fR (\fBACE_Cleanup\fR *object, void *param = 0)"
+.br
+.ti -1c
+.RI "int \fBat_exit\fR (void *object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void *param)"
+.br
+.ti -1c
+.RI "\fBACE_Sig_Set\fR& \fBdefault_mask\fR (void)"
+.br
+.ti -1c
+.RI "ACE_Object_Manager* \fBinstance\fR (void)"
+.br
+.in -1c
+.SS Static Public Attributes
+
+.in +1c
+.ti -1c
+.RI "void* \fBpreallocated_object\fR [ACE_PREALLOCATED_OBJECTS]"
+.br
+.RI "\fITable of preallocated objects.\fR"
+.ti -1c
+.RI "void* \fBpreallocated_array\fR [ACE_PREALLOCATED_ARRAYS]"
+.br
+.RI "\fITable of preallocated arrays.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBat_exit_i\fR (void *object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void *param)"
+.br
+.RI "\fIRegister an object or array for deletion at program termination. See description of static version above for return values.\fR"
+.ti -1c
+.RI "\fBACE_Object_Manager\fR (const ACE_Object_Manager &)"
+.br
+.ti -1c
+.RI "ACE_Object_Manager& \fBoperator=\fR (const ACE_Object_Manager &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_OS_Exit_Info\fR \fBexit_info_\fR"
+.br
+.RI "\fIFor at_exit support.\fR"
+.ti -1c
+.RI "ACE_Object_Manager_Preallocations* \fBpreallocations_\fR"
+.br
+.RI "\fIPreallocated objects collection.\fR"
+.ti -1c
+.RI "\fBACE_Sig_Adapter\fR* \fBace_service_config_sig_handler_\fR"
+.br
+.RI "\fI\fBACE_Service_Config\fR signal handler.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Object_Manager* \fBinstance_\fR"
+.br
+.RI "\fISingleton pointer.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Object_Manager_Manager\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Manager for \fBACE\fR library services and singleton cleanup.
+.PP
+.PP
+ The  manages cleanup of objects, typically singletons, at program termination. In addition to managing the cleanup of the \fBACE\fR library, it provides an interface for application to register objects to be cleaned up. This class also shuts down \fBACE\fR library services, so that they can reclaim their storage, at program termination. It works by creating a static instance whose destructor gets called along with those of all other static objects. Hooks are provided for application code to register objects and arrays for cleanup, e.g., destruction. The order of such cleanup calls is in the reverse order of registration, i.e., that last object/array to register gets cleaned up first. The  API includes . That class is contained in a separate file because it is a template class, and some compilers require that template and non-template class definitions appear in separate files. Please see \fBace/Managed_Object.h\fR for a description of that part of the API. In summary,  provides two adapters, the  and  template classes for adapting objects of any type to be easily managed by the . There are several mechanisms for adapting objects and arrays for cleanup at program termination, in roughly increasing order of ease-of-use: 1) Derive the object's class from . 2) Allow the  to both dynamically allocate and deallocate the object. 3) Provide an  cleanup hook for the object or array. 4) Allow the  to both preallocate the object or array, either statically in global data or dynamically on the heap, when its singleton instance is construction.
+.PP
+There are also several mechanisms for registering objects and arrays for cleanup. In decreasing order of flexibility and complexity (with the exception of the last mechanism):
+.PP
+1) \fBACE_Object_Manager::at_exit\fR (void *object, ACE_CLEANUP_FUNC cleanup_hook, void *param); can be used to register any object or array for any cleanup activity at program termination. 2) \fBACE_Object_Manager::at_exit\fR (\fBACE_Cleanup\fR *object, void *param = 0); can be used to register an  object for any cleanup activity at program termination. The final mechanism is not general purpose, but can only be used to allocate objects and arrays at program startup: 3) \fBACE_Managed_Object::get_preallocated_object\fR (\fBACE_Object_Manager::Preallocated_Object\fR id); and \fBACE_Managed_Object::get_preallocated_array\fR (\fBACE_Object_Manager::Preallocated_Array\fR id); can only be used to allocate objects at program startup, either in global data or on the heap (selected at compile time). These are intended to replace static locks, etc. Instead of creating a static  instance, one can alternatively be created on the stack of the main program thread. It is created just after entry to main (int, char *[]), and before any existing code in that function is executed. To enable this alternative, add define ACE_HAS_NONSTATIC_OBJECT_MANAGER before including the platform specific config-* file in ace/config.h prior to building the \fBACE\fR library and your applications. This define is enabled in some config files that are supplied with \fBACE\fR.
+.PP
+To ensure a static object manager is used, undef ACE_HAS_NONSTATIC_OBJECT_MANAGER *after* including the platform specific config-* file. Note that the ACE_Object_Manager _must_ be created before any threads are spawned by the program. If ACE_HAS_NONSTATIC_OBJECT_MANAGER is not defined, the \fBACE\fR library creates a static, singleton  instance. The instance is placed in global program data, and constructed via a static object constructor. If ACE_HAS_NONSTATIC_OBJECT_MANAGER is defined, the  instance is created on the stack of the main program thread, as noted above.
+.PP
+With ACE_HAS_NONSTATIC_OBJECT_MANAGER enabled, the \fBACE\fR library has no static objects that require destruction. However, there are two drawbacks to using it: 1) main (int, char *[]) must be declared with arguments, even if they're not used. All of \fBACE\fR is converted to this, so just applications have to be concerned with it. 2) If there any static objects that depend on those that are cleaned up by the Object_Manager, they'll get cleaned up too late. The \fBACE\fR tests do not violate this requirement. However, applications may have trouble with it. NOTE on the use of <exit> -- <exit> does not destroy automatic objects. Therefore, if ACE_HAS_NONSTATIC_OBJECT_MANAGER is enabled, the  instance will *not* be destroyed if <exit> is called! However,  will properly destroy the ACE_Object_Manager. It is highly recommended that  be used instead of <exit>.
+.PP
+However, <exit> and  are tricky to use properly, especially in multithread programs. It is much safer to throw an exception (or simulate that effect) that will be caught by <main> instead of calling exit. Then, <main> can perform any necessary application-specific cleanup and return the status value. In addition, it's usually best to avoid calling <exit> and  from threads other than the main thread. Thanks to Jeff Greif <jmg@trivida.com> for pointing out that <exit> doesn't destroy automatic objects, and for developing the recommendations in this paragraph.
+.PP
+Instead of creating a static , or letting \fBACE\fR create it on the stack of <main> for you, another alternative is to define ACE_DOESNT_INSTANTIATE_NONSTATIC_OBJECT_MANAGER. With that define, the application must create the ACE_Object_Manager. The recommended way is to call  at the start of the program, and call  at the end. Alternatively, the application could explicity construct an . 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_Object_Manager::Preallocated_Array
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_EMPTY_PREALLOCATED_ARRAY\fR \fR
+.TP
+\fB\fIACE_PREALLOCATED_ARRAYS\fR \fR
+.SS enum ACE_Object_Manager::Preallocated_Object
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_FILECACHE_LOCK\fR \fR
+.TP
+\fB\fIACE_STATIC_OBJECT_LOCK\fR \fR
+.TP
+\fB\fIACE_PREALLOCATED_OBJECTS\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Object_Manager::ACE_Object_Manager (void)
+.PP
+.SS ACE_Object_Manager::~ACE_Object_Manager (void)
+.PP
+.SS ACE_Object_Manager::ACE_Object_Manager (const ACE_Object_Manager &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Object_Manager::at_exit (void * object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void * param)\fC [static]\fR
+.PP
+Register an object (or array) for cleanup at process termination. "cleanup_hook" points to a (global, or static member) function that is called for the object or array when it to be destroyed. It may perform any necessary cleanup specific for that object or its class. "param" is passed as the second parameter to the "cleanup_hook" function; the first parameter is the object (or array) to be destroyed. "cleanup_hook", for example, may delete the object (or array). For OS's that do not have processes, this function is the same as . Returns 0 on success. On failure, returns -1 and sets errno to: EAGAIN if shutting down, ENOMEM if insufficient virtual memory, or EEXIST if the object (or array) had already been registered. 
+.SS int ACE_Object_Manager::at_exit (\fBACE_Cleanup\fR * object, void * param = 0)\fC [static]\fR
+.PP
+Register an \fBACE_Cleanup\fR object for cleanup at process termination. The object is deleted via the . If you need more flexiblity, see the <other at_exit> method below. For OS's that do not have processes, cleanup takes place at the end of <main>. Returns 0 on success. On failure, returns -1 and sets errno to: EAGAIN if shutting down, ENOMEM if insufficient virtual memory, or EEXIST if the object (or array) had already been registered. 
+.SS int ACE_Object_Manager::at_exit_i (void * object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void * param)\fC [private]\fR
+.PP
+Register an object or array for deletion at program termination. See description of static version above for return values.
+.PP
+.SS \fBACE_Sig_Set\fR & ACE_Object_Manager::default_mask (void)\fC [static]\fR
+.PP
+Accesses a default signal set used, for example, in \fBACE_Sig_Guard\fR methods. Deprecated: use \fBACE_Object_Manager::default_mask\fR () instead. 
+.SS int ACE_Object_Manager::fini (void)\fC [virtual]\fR
+.PP
+Explicitly destroy the singleton instance of the ACE_Object_Manager. Returns 0 on success, -1 on failure, and 1 if it had already been called. 
+.PP
+Reimplemented from \fBACE_Object_Manager_Base\fR.
+.SS int ACE_Object_Manager::init (void)\fC [virtual]\fR
+.PP
+Explicitly initialize (construct the singleton instance of) the ACE_Object_Manager. Returns 0 on success, -1 on failure, and 1 if it had already been called. 
+.PP
+Reimplemented from \fBACE_Object_Manager_Base\fR.
+.SS ACE_Object_Manager * ACE_Object_Manager::instance (void)\fC [static]\fR
+.PP
+Accessor to singleton instance. Because static member functions are provided in the interface, this should not be public. However, it is public so that \fBACE_Managed_Object\fR<TYPE> can access it. 
+.SS ACE_Object_Manager& ACE_Object_Manager::operator= (const ACE_Object_Manager &)\fC [private]\fR
+.PP
+.SS int ACE_Object_Manager::shutting_down (void)\fC [static]\fR
+.PP
+Returns 1 after the ACE_Object_Manager has been destroyed. This flag can be used to determine if the program is in the midst of destroying static objects. (Note that the program might destroy some static objects before this flag can return 1, if ACE_HAS_NONSTATIC_OBJECT_MANAGER is not defined.) 
+.SS int ACE_Object_Manager::starting_up (void)\fC [static]\fR
+.PP
+Returns 1 before the ACE_Object_Manager has been constructed. This flag can be used to determine if the program is constructing static objects. If no static object spawns any threads, the program will be single-threaded when this flag returns 1. (Note that the program still might construct some static objects when this flag returns 0, if ACE_HAS_NONSTATIC_OBJECT_MANAGER is not defined.) 
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Object_Manager_Manager\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Sig_Adapter\fR * ACE_Object_Manager::ace_service_config_sig_handler_\fC [private]\fR
+.PP
+\fBACE_Service_Config\fR signal handler.
+.PP
+.SS \fBACE_OS_Exit_Info\fR ACE_Object_Manager::exit_info_\fC [private]\fR
+.PP
+For at_exit support.
+.PP
+.SS ACE_Object_Manager * ACE_Object_Manager::instance_\fC [static, private]\fR
+.PP
+Singleton pointer.
+.PP
+.SS void * ACE_Object_Manager::preallocated_array[ACE_PREALLOCATED_ARRAYS]\fC [static]\fR
+.PP
+Table of preallocated arrays.
+.PP
+.SS void * ACE_Object_Manager::preallocated_object[ACE_PREALLOCATED_OBJECTS]\fC [static]\fR
+.PP
+Table of preallocated objects.
+.PP
+.SS ACE_Object_Manager_Preallocations * ACE_Object_Manager::preallocations_\fC [private]\fR
+.PP
+Preallocated objects collection.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

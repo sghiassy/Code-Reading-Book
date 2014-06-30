@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+          xmlns:xsp-response="http://apache.org/xsp/response/2.0"
+      xmlns:log="http://apache.org/xsp/log/2.0"
+>
+  <xsp:structure>
+   <xsp:include>org.apache.cocoon.components.language.markup.xsp.XSPUtil</xsp:include>
+   <xsp:include>org.apache.avalon.framework.context.ContextException</xsp:include>
+  </xsp:structure>
+
+  <xsp:logic>
+  File uploadDir = null;
+  /** Contextualize this class */
+  public void contextualize(Context context) throws ContextException {
+    uploadDir = (File) context.get(Constants.CONTEXT_UPLOAD_DIR);
+  }
+  </xsp:logic>
+
+  <page>
+   <title>This form allows you upload files</title>
+   <content>
+     <para>
+       <form method="post" enctype="multipart/form-data" action="upload">
+         File:  <input type="file" name="uploaded_file" size="50" />
+     <p><input type="submit" value="Upload File" /></p>
+       </form>
+     </para>
+     <para>
+     <ul>
+       <xsp:logic>
+        getLogger().debug("Dir=" + uploadDir);
+         String[] filelist = uploadDir.list();
+         <![CDATA[
+         getLogger().debug("List=" + filelist.length);
+         for (int i = 0; i < filelist.length; i++) {
+            getLogger().debug("File [" + i + "]=" + filelist[i]);
+         ]]>
+           <li>
+             <xsp:expr>filelist[i]</xsp:expr>
+           </li>
+         <![CDATA[
+         }
+         ]]>
+       </xsp:logic>
+     </ul>
+     </para>
+     <para>Brought to you by Cocoon at <xsp:expr>new Date()</xsp:expr>.</para>
+
+   </content>
+  </page>
+</xsp:page>
+

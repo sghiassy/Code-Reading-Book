@@ -1,0 +1,360 @@
+.TH ACE_CString 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_CString \- This class provides a wrapper facade for C strings. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SString.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_CString\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_CString\fR (const char *s, \fBACE_Allocator\fR *alloc = 0, int release = 1)"
+.br
+.ti -1c
+.RI "\fBACE_CString\fR (const char *s, size_t len, \fBACE_Allocator\fR *alloc = 0, int release = 1)"
+.br
+.ti -1c
+.RI "\fBACE_CString\fR (const ACE_CString &)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "\fBACE_CString\fR (const \fBACE_WSTRING_TYPE\fR *s, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that copies <s> into dynamically allocated memory. Probable loss of data. Please use with care.\fR"
+.ti -1c
+.RI "\fBACE_CString\fR (char c, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that copies <c> into dynamically allocated memory.\fR"
+.ti -1c
+.RI "\fB~ACE_CString\fR (void)"
+.br
+.RI "\fIDeletes the memory...\fR"
+.ti -1c
+.RI "const char& \fBoperator[]\fR (size_t slot) const"
+.br
+.RI "\fIReturn the <slot'th> character in the string (doesn't perform bounds checking).\fR"
+.ti -1c
+.RI "char& \fBoperator[]\fR (size_t slot)"
+.br
+.RI "\fIReturn the <slot'th> character by reference in the string (doesn't perform bounds checking).\fR"
+.ti -1c
+.RI "ACE_CString& \fBoperator=\fR (const ACE_CString &)"
+.br
+.RI "\fIAssignment operator(does copy memory).\fR"
+.ti -1c
+.RI "void \fBset\fR (const char *s, int release = 1)"
+.br
+.RI "\fICopy <s> into this . Memory is _not_ allocated/freed if <release> is 0.\fR"
+.ti -1c
+.RI "void \fBset\fR (const char *s, size_t len, int release)"
+.br
+.RI "\fICopy <len> bytes of <s> (will NUL terminate the result). Memory is _not_ allocated/freed if <release> is 0.\fR"
+.ti -1c
+.RI "void \fBclear\fR (int release = 0)"
+.br
+.RI "\fIClear this string. Memory is _not_ freed is <release> is 0.\fR"
+.ti -1c
+.RI "ACE_CString \fBsubstring\fR (size_t offset, \fBssize_t\fR length = -1) const"
+.br
+.ti -1c
+.RI "ACE_CString \fBsubstr\fR (size_t offset, \fBssize_t\fR length = -1) const"
+.br
+.RI "\fISame as <substring>.\fR"
+.ti -1c
+.RI "ACE_CString& \fBoperator+=\fR (const ACE_CString &)"
+.br
+.RI "\fIConcat operator(copies memory).\fR"
+.ti -1c
+.RI "u_long \fBhash\fR (void) const"
+.br
+.RI "\fIReturns a hash value for this string.\fR"
+.ti -1c
+.RI "size_t \fBlength\fR (void) const"
+.br
+.RI "\fIReturn the length of the string.\fR"
+.ti -1c
+.RI "char* \fBrep\fR (void) const"
+.br
+.RI "\fIGet a copy of the underlying pointer.\fR"
+.ti -1c
+.RI "const char* \fBfast_rep\fR (void) const"
+.br
+.ti -1c
+.RI "const char* \fBc_str\fR (void) const"
+.br
+.RI "\fISame as STL String's <c_str> and <fast_rep>.\fR"
+.ti -1c
+.RI "int \fBstrstr\fR (const ACE_CString &s) const"
+.br
+.RI "\fIComparison operator that will match substrings. Returns the slot of the first location that matches, else -1.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const ACE_CString &str, int pos = 0) const"
+.br
+.RI "\fIFind <str> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const char *s, int pos = 0) const"
+.br
+.RI "\fIFind <s> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.\fR"
+.ti -1c
+.RI "int \fBfind\fR (char c, int pos = 0) const"
+.br
+.RI "\fIFind <c> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.\fR"
+.ti -1c
+.RI "int \fBrfind\fR (char c, int pos = \fBnpos\fR) const"
+.br
+.RI "\fIFind <c> starting at pos (counting from the end). Returns the slot of the first location that matches, else npos.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_CString &s) const"
+.br
+.RI "\fIEquality comparison operator(must match entire string).\fR"
+.ti -1c
+.RI "int \fBoperator<\fR (const ACE_CString &s) const"
+.br
+.RI "\fILess than comparison operator.\fR"
+.ti -1c
+.RI "int \fBoperator>\fR (const ACE_CString &s) const"
+.br
+.RI "\fIGreater than comparison operator.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_CString &s) const"
+.br
+.RI "\fIInequality comparison operator.\fR"
+.ti -1c
+.RI "int \fBcompare\fR (const ACE_CString &s) const"
+.br
+.RI "\fIPerforms a <strcmp>-style comparison.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Attributes
+
+.in +1c
+.ti -1c
+.RI "const int \fBnpos\fR"
+.br
+.RI "\fINo position constant.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIPointer to a memory allocator.\fR"
+.ti -1c
+.RI "size_t \fBlen_\fR"
+.br
+.RI "\fILength of the ACE_CString data (not counting the trailing '\\0').\fR"
+.ti -1c
+.RI "size_t \fBbuf_len_\fR"
+.br
+.RI "\fILength of the ACE_CString data buffer. Keeping track of the length allows to avoid unnecessary dynamic allocations.\fR"
+.ti -1c
+.RI "char* \fBrep_\fR"
+.br
+.RI "\fIPointer to data.\fR"
+.ti -1c
+.RI "int \fBrelease_\fR"
+.br
+.RI "\fIFlag that indicates if we own the memory.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "char \fBNULL_CString_\fR"
+.br
+.RI "\fIRepresents the "NULL" string to simplify the internal logic.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class provides a wrapper facade for C strings.
+.PP
+.PP
+ This class uses an  to allocate memory. The user can make this a persistant class by providing an \fBACE_Allocator\fR with a persistable memory pool. This class is optimized for efficiency, so it doesn't provide any internal locking. NOTE: if an instance of this class is constructed from or assigned an empty string (with first element of '\\0'), then it is _not_ allocated new space. Instead, its internal representation is set equal to a global empty string. CAUTION: in cases when ACE_CString is constructed from a provided buffer with the release parameter set to 0, ACE_CString is not guaranteed to be '\\0' terminated. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_CString::ACE_CString (\fBACE_Allocator\fR * alloc = 0)
+.PP
+Default constructor.
+.PP
+.SS ACE_CString::ACE_CString (const char * s, \fBACE_Allocator\fR * alloc = 0, int release = 1)
+.PP
+Constructor that copies <s> into dynamically allocated memory. If <release> is non-0 then the  is responsible for freeing this memory. Memory is _not_ allocated/freed if <release> is 0. 
+.SS ACE_CString::ACE_CString (const char * s, size_t len, \fBACE_Allocator\fR * alloc = 0, int release = 1)
+.PP
+Constructor that copies <len> chars of <s> into dynamically allocated memory (will NUL terminate the result). If <release> is non-0 then the  is responsible for freeing this memory. Memory is _not_ allocated/freed if <release> is 0. 
+.SS ACE_CString::ACE_CString (const ACE_CString &)
+.PP
+Copy constructor.
+.PP
+.SS ACE_CString::ACE_CString (const \fBACE_WSTRING_TYPE\fR * s, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that copies <s> into dynamically allocated memory. Probable loss of data. Please use with care.
+.PP
+.SS ACE_CString::ACE_CString (char c, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that copies <c> into dynamically allocated memory.
+.PP
+.SS ACE_CString::~ACE_CString (void)
+.PP
+Deletes the memory...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS const char * ACE_CString::c_str (void) const
+.PP
+Same as STL String's <c_str> and <fast_rep>.
+.PP
+.SS void ACE_CString::clear (int release = 0)
+.PP
+Clear this string. Memory is _not_ freed is <release> is 0.
+.PP
+.SS int ACE_CString::compare (const ACE_CString & s) const
+.PP
+Performs a <strcmp>-style comparison.
+.PP
+.SS void ACE_CString::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS const char * ACE_CString::fast_rep (void) const
+.PP
+Get at the underlying representation directly! _Don't_ even think about casting the result to (char *) and modifying it, if it has length 0! 
+.SS int ACE_CString::find (char c, int pos = 0) const
+.PP
+Find <c> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.
+.PP
+.SS int ACE_CString::find (const char * s, int pos = 0) const
+.PP
+Find <s> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.
+.PP
+.SS int ACE_CString::find (const ACE_CString & str, int pos = 0) const
+.PP
+Find <str> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.
+.PP
+.SS u_long ACE_CString::hash (void) const
+.PP
+Returns a hash value for this string.
+.PP
+.SS size_t ACE_CString::length (void) const
+.PP
+Return the length of the string.
+.PP
+.SS int ACE_CString::operator!= (const ACE_CString & s) const
+.PP
+Inequality comparison operator.
+.PP
+.SS ACE_CString & ACE_CString::operator+= (const ACE_CString &)
+.PP
+Concat operator(copies memory).
+.PP
+.SS int ACE_CString::operator< (const ACE_CString & s) const
+.PP
+Less than comparison operator.
+.PP
+.SS ACE_CString & ACE_CString::operator= (const ACE_CString &)
+.PP
+Assignment operator(does copy memory).
+.PP
+.SS int ACE_CString::operator== (const ACE_CString & s) const
+.PP
+Equality comparison operator(must match entire string).
+.PP
+.SS int ACE_CString::operator> (const ACE_CString & s) const
+.PP
+Greater than comparison operator.
+.PP
+.SS char & ACE_CString::operator[] (size_t slot)
+.PP
+Return the <slot'th> character by reference in the string (doesn't perform bounds checking).
+.PP
+.SS const char & ACE_CString::operator[] (size_t slot) const
+.PP
+Return the <slot'th> character in the string (doesn't perform bounds checking).
+.PP
+.SS char * ACE_CString::rep (void) const
+.PP
+Get a copy of the underlying pointer.
+.PP
+.SS int ACE_CString::rfind (char c, int pos = \fBnpos\fR) const
+.PP
+Find <c> starting at pos (counting from the end). Returns the slot of the first location that matches, else npos.
+.PP
+.SS void ACE_CString::set (const char * s, size_t len, int release)
+.PP
+Copy <len> bytes of <s> (will NUL terminate the result). Memory is _not_ allocated/freed if <release> is 0.
+.PP
+.SS void ACE_CString::set (const char * s, int release = 1)
+.PP
+Copy <s> into this . Memory is _not_ allocated/freed if <release> is 0.
+.PP
+.SS int ACE_CString::strstr (const ACE_CString & s) const
+.PP
+Comparison operator that will match substrings. Returns the slot of the first location that matches, else -1.
+.PP
+.SS ACE_CString ACE_CString::substr (size_t offset, \fBssize_t\fR length = -1) const
+.PP
+Same as <substring>.
+.PP
+.SS ACE_CString ACE_CString::substring (size_t offset, \fBssize_t\fR length = -1) const
+.PP
+Return a substring given an offset and length, if length == -1 use rest of str. Return empty substring if offset or offset/length are invalid. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_CString::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS char ACE_CString::NULL_CString_\fC [static, private]\fR
+.PP
+Represents the "NULL" string to simplify the internal logic.
+.PP
+.SS \fBACE_Allocator\fR * ACE_CString::allocator_\fC [private]\fR
+.PP
+Pointer to a memory allocator.
+.PP
+.SS size_t ACE_CString::buf_len_\fC [private]\fR
+.PP
+Length of the ACE_CString data buffer. Keeping track of the length allows to avoid unnecessary dynamic allocations.
+.PP
+.SS size_t ACE_CString::len_\fC [private]\fR
+.PP
+Length of the ACE_CString data (not counting the trailing '\\0').
+.PP
+.SS const int ACE_CString::npos\fC [static]\fR
+.PP
+No position constant.
+.PP
+.SS int ACE_CString::release_\fC [private]\fR
+.PP
+Flag that indicates if we own the memory.
+.PP
+.SS char * ACE_CString::rep_\fC [private]\fR
+.PP
+Pointer to data.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

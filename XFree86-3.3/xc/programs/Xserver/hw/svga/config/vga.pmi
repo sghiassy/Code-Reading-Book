@@ -1,0 +1,454 @@
+// $XConsortium: vga.pmi,v 1.3 93/09/19 19:38:08 rws Exp $
+// This is a sample SVPMI file usable for every S3 chipset. It contains
+// a textmode and 640x480, 800x600 & 1024 256 colors mode.
+//
+// the line outw(0x3d4, 0x0X42); sets the clock frequency. The normal values
+// for X are:
+//
+//	0	25.175MHz
+//	1	28.322MHz
+//	2	40.000MHz
+//	4	50.000MHz
+//	5	77.000MHz
+//	6	36.000MHz
+//	7	44.900MHz
+//	A	80.000MHz
+//	B	31.500MHz
+//	D	65.000MHz
+//	E	75.000MHz
+//
+
+[VERSION]
+	1.0;
+
+[ACTIVE_ADAPTER]
+	VGA;
+
+[TEXT_MODE]
+	0x03;
+
+[ADAPTER]
+	VGA;
+
+//
+//  Text Mode
+//
+[MODE]
+	0x03;
+
+[MODEINFO]
+	ModeAttributes     = 0x08;
+	WinAAttributes     = 0;
+	WinBAttributes     = 0;
+	WinAGranularity    = 0;
+	WinBGranularity    = 0;
+	WinASize           = 0;
+	WinBSize           = 0;
+	WinABase           = 0;
+	WinBBase           = 0;
+        BytesPerScanLine   = 80;
+	XResolution        = 80;
+	YResolution        = 25;
+	XCharSize          = 9;
+	YCharSize          = 15;
+	ColorModel	   = 3;
+	BitsPerPixel       = 4;
+	NumberOfColors	   = 16;
+	BitsRGB            = 6;
+	NumberOfBanks      = 1;
+	BankSize           = 0;
+	MemoryModel        = 0;
+	NumberOfImagePages = 1;
+
+[ADDRESSES]
+	MEMORY(0xA0000 - 0xAFFFF);
+	PORT(0x3D4, 0x3D5);
+	PORT(0x3C4, 0x3C5);
+	PORT(0x3C2);
+	PORT(0x3DA);
+	PORT(0x3C0);
+	PORT(0x3CE, 0x3CF);
+
+[MODEDETECT]
+	r0 = 1;
+
+[SETMODE]
+	inb(r63, 0x3da);			// reset attr F/F
+	outb(0x3c0, 0);				// disable palette
+	outb(0x3d4, 0x11); outb(0x3d5, 0x00);	// unprotect crtc regs
+	outw(0x3d4, 0x4838);			// unlock the S3 extended regs
+	outw(0x3d4, 0xa539);
+
+	//
+	// reset and set sequencer registers
+	//
+	r0 = 0x01; r1= 0x00; r2 = 0x03; r3 = 0x00;
+	r4 = 0x02;
+	boutb(5, 0x3c4, 0x3c5);
+
+	//
+	// Set misc out register
+	//
+	outb(0x3c2, 0x67);
+
+	r0 = 0x03;
+	boutb(1, 0x3c4, 0x3c5);				// sequencer enable
+
+	//
+	// Set all crtc registers
+	//
+	r0  = 0x5f;  r1  = 0x4f;  r2  = 0x50;  r3  = 0x82;
+	r4  = 0x55;  r5  = 0x81;  r6  = 0xbf;  r7  = 0x1f;
+	r8  = 0x00;  r9  = 0x4f;  r10 = 0x0d;  r11 = 0x0e;
+	r12 = 0x00;  r13 = 0x00;  r14 = 0x00;  r15 = 0x00;
+	r16 = 0x9c;  r17 = 0x8e;  r18 = 0x8f;  r19 = 0x28;
+	r20 = 0x1f;  r21 = 0x96;  r22 = 0xb9;  r23 = 0xa3;
+	r24 = 0xff;
+	boutb(25, 0x3d4, 0x3d5);
+
+	//
+	// Set all graphics controller registers
+	//
+	outb(0x3cc, 00); outb(0x3ca, 0x01);
+	r0 = 0x00;  r1 = 0x00;  r2 = 0x00;  r3 = 0x00;
+	r4 = 0x00;  r5 = 0x10;  r6 = 0x0e;  r7 = 0x00;
+	r8 = 0xff;
+	boutb(9, 0x3ce, 0x3cf);
+
+	//
+	// Set all attribute registers
+	//
+	inb(r63, 0x3da);					// reset F/F
+	r0  = 0x00;  r1  = 0x01;  r2  = 0x02;  r3  = 0x03;
+	r4  = 0x04;  r5  = 0x05;  r6  = 0x14;  r7  = 0x07;
+	r8  = 0x38;  r9  = 0x39;  r10 = 0x3a;  r11 = 0x3b;
+	r12 = 0x3c;  r13 = 0x3d;  r14 = 0x3e;  r15 = 0x3f;
+	r16 = 0x0c;  r17 = 0x00;  r18 = 0x0f;  r19 = 0x08;
+	r20 = 0x00;
+	boutb(21, 0x3c0, 0x3c0);
+
+	outb(0x3c0, 0x20);				// enable plt
+
+
+	outw(0x3d4, 0x8531);				// IBM VGA mapping
+	outw(0x3d4, 0x0033);
+	outw(0x3d4, 0x0034);
+	outw(0x3d4, 0x0035);				// first page
+	outw(0x3d4, 0x853a);
+	outw(0x3d4, 0x5c3b);
+	outw(0x3d4, 0x8858);
+	outw(0x3d4, 0x0760);
+	outw(0x3d4, 0x8061);
+	outw(0x3d4, 0xa162);
+
+[MODE]
+	0x101;
+
+[MODEINFO]
+	ModeAttributes   = 0x10;
+	WinAAttributes   = 0x07;
+	WinBAttributes   = 0x00;
+	WinAGranularity  = 64;
+	WinBGranularity  = 64;
+	WinASize         = 64;
+	WinBSize         = 64;
+	WinABase         = 0xa0000;
+	WinBBase         = 0xa0000;
+        BytesPerScanLine = 640;
+	XResolution      = 640;
+	YResolution      = 480;
+	BitsPerPixel     = 8;
+	BitsRGB          = 6;
+
+	MEMORY(0xA0000 - 0xAFFFF);
+	PORT(0x3D4, 0x3D5);
+	PORT(0x3C4, 0x3C5);
+	PORT(0x3C2);
+	PORT(0x3DA);
+	PORT(0x3C0);
+	PORT(0x3CE, 0x3CF);
+
+[MODEDETECT]
+	r0 = 1;
+
+[SETMODE]
+	inb(r63, 0x3da);			// reset attr F/F
+	outb(0x3c0, 0);				// disable palette
+	outb(0x3d4, 0x11); outb(0x3d5, 0x00);	// unprotect crtc regs
+	outw(0x3d4, 0x4838);			// unlock the S3 extended regs
+	outw(0x3d4, 0xa539);
+
+	//
+	// reset and set sequencer registers
+	//
+	r0 = 0x01; r1= 0x01; r2 = 0x0f; r3 = 0x00;
+	r4 = 0x0e;
+	boutb(5, 0x3c4, 0x3c5);
+
+	//
+	// Set misc out register
+	//
+	outb(0x3c2, 0x67);
+
+	r0 = 0x03;
+	boutb(1, 0x3c4, 0x3c5);				// sequencer enable
+
+	//
+	// Set all crtc registers
+	//
+	r0  = 0x5f;  r1  = 0x4f;  r2  = 0x50;  r3  = 0x82;
+	r4  = 0x54;  r5  = 0x80;  r6  = 0x0b;  r7  = 0x3e;
+	r8  = 0x00;  r9  = 0x40;  r10 = 0x00;  r11 = 0x00;
+	r12 = 0x00;  r13 = 0x00;  r14 = 0x00;  r15 = 0x00;
+	r16 = 0xea;  r17 = 0x8c;  r18 = 0xdf;  r19 = 0x50;
+	r20 = 0x60;  r21 = 0xe7;  r22 = 0x04;  r23 = 0xe3;
+	r24 = 0xff;
+	boutb(25, 0x3d4, 0x3d5);
+
+	//
+	// Set all graphics controller registers
+	//
+	outb(0x3cc, 00); outb(0x3ca, 0x01);
+	r0 = 0x00;  r1 = 0x00;  r2 = 0x00;  r3 = 0x00;
+	r4 = 0x00;  r5 = 0x40;  r6 = 0x05;  r7 = 0x0f;
+	r8 = 0xff;
+	boutb(9, 0x3ce, 0x3cf);
+
+	//
+	// Set all attribute registers
+	//
+	inb(r63, 0x3da);					// reset F/F
+	r0  = 0x00;  r1  = 0x01;  r2  = 0x02;  r3  = 0x03;
+	r4  = 0x04;  r5  = 0x05;  r6  = 0x06;  r7  = 0x07;
+	r8  = 0x08;  r9  = 0x09;  r10 = 0x0a;  r11 = 0x0b;
+	r12 = 0x0c;  r13 = 0x0d;  r14 = 0x0e;  r15 = 0x0f;
+	r16 = 0x01;  r17 = 0x00;  r18 = 0x0f;  r19 = 0x00;
+	r20 = 0x00;
+	boutb(21, 0x3c0, 0x3c0);
+
+	outw(0x3d4, 0x8d31);				// graphics
+	outw(0x3d4, 0x2033);
+	outw(0x3d4, 0x0034);
+	outw(0x3d4, 0x953a);
+	outw(0x3d4, 0x0858);
+	outw(0x3d4, 0x3f60);
+	outw(0x3d4, 0x8161);
+	outw(0x3d4, 0x0062);
+
+	inb(r63, 0x3da);
+	outb(0x3c0, 0x20);				// enable plt
+
+[SETWINDOW]
+
+	outb(0x3d4, 0x35);
+	outb(0x3d5, r0);
+
+
+[MODE]
+	0x103;
+
+[MODEINFO]
+	ModeAttributes   = 0x10;
+	WinAAttributes   = 0x07;
+	WinBAttributes   = 0x00;
+	WinAGranularity  = 64;
+	WinBGranularity  = 64;
+	WinASize         = 64;
+	WinBSize         = 64;
+	WinABase         = 0xa0000;
+	WinBBase         = 0xa0000;
+        BytesPerScanLine = 800;
+	XResolution      = 800;
+	YResolution      = 600;
+	BitsPerPixel     = 8;
+	BitsRGB          = 6;
+
+	MEMORY(0xA0000 - 0xAFFFF);
+	PORT(0x3D4, 0x3D5);
+	PORT(0x3C4, 0x3C5);
+	PORT(0x3C2);
+	PORT(0x3DA);
+	PORT(0x3C0);
+	PORT(0x3CE, 0x3CF);
+
+[MODEDETECT]
+	r0 = 1;
+
+[SETMODE]
+	inb(r63, 0x3da);			// reset attr F/F
+	outb(0x3c0, 0);				// disable palette
+	outb(0x3d4, 0x11); outb(0x3d5, 0x00);	// unprotect crtc regs
+	outw(0x3d4, 0x4838);			// unlock the S3 extended regs
+	outw(0x3d4, 0xa539);
+
+	//
+	// reset and set sequencer registers
+	//
+	r0 = 0x01; r1= 0x01; r2 = 0x0f; r3 = 0x00;
+	r4 = 0x0e;
+	boutb(5, 0x3c4, 0x3c5);
+
+	//
+	// Set misc out register
+	//
+	outb(0x3c2, 0x6f);
+
+	r0 = 0x03;
+	boutb(1, 0x3c4, 0x3c5);				// sequencer enable
+
+	//
+	// Set all crtc registers
+	//
+	r0  = 0x7b;  r1  = 0x63;  r2  = 0x64;  r3  = 0x9e;
+	r4  = 0x66;  r5  = 0x8f;  r6  = 0x6f;  r7  = 0xf0;
+	r8  = 0x00;  r9  = 0x60;  r10 = 0x00;  r11 = 0x00;
+	r12 = 0x00;  r13 = 0x00;  r14 = 0x00;  r15 = 0x00;
+	r16 = 0x58;  r17 = 0x2a;  r18 = 0x57;  r19 = 0x64;
+	r20 = 0x00;  r21 = 0x57;  r22 = 0x6f;  r23 = 0xe3;
+	r24 = 0xff;
+	boutb(25, 0x3d4, 0x3d5);
+
+	//
+	// Set all graphics controller registers
+	//
+	outb(0x3cc, 00); outb(0x3ca, 0x01);
+	r0 = 0x00;  r1 = 0x00;  r2 = 0x00;  r3 = 0x00;
+	r4 = 0x00;  r5 = 0x40;  r6 = 0x05;  r7 = 0x0f;
+	r8 = 0xff;
+	boutb(9, 0x3ce, 0x3cf);
+
+	//
+	// Set all attribute registers
+	//
+	inb(r63, 0x3da);					// reset F/F
+	r0  = 0x00;  r1  = 0x01;  r2  = 0x02;  r3  = 0x03;
+	r4  = 0x04;  r5  = 0x05;  r6  = 0x06;  r7  = 0x07;
+	r8  = 0x08;  r9  = 0x09;  r10 = 0x0a;  r11 = 0x0b;
+	r12 = 0x0c;  r13 = 0x0d;  r14 = 0x0e;  r15 = 0x0f;
+	r16 = 0x01;  r17 = 0x00;  r18 = 0x0f;  r19 = 0x00;
+	r20 = 0x00;
+	boutb(21, 0x3c0, 0x3c0);
+
+	outw(0x3d4, 0x8d31);				// graphics
+	outw(0x3d4, 0x2033);
+	outw(0x3d4, 0x0034);
+	outw(0x3d4, 0x953a);
+	outw(0x3d4, 0x0642);				// clock
+	outw(0x3d4, 0x0858);
+	outw(0x3d4, 0x3f60);
+	outw(0x3d4, 0x8161);
+	outw(0x3d4, 0x0062);
+
+	inb(r63, 0x3da);
+	outb(0x3c0, 0x20);				// enable plt
+
+[SETWINDOW]
+
+	outb(0x3d4, 0x35);
+	outb(0x3d5, r0);
+
+
+
+
+[MODE]
+	0x105;
+
+[MODEINFO]
+	ModeAttributes   = 0x10;
+	WinAAttributes   = 0x07;
+	WinBAttributes   = 0x00;
+	WinAGranularity  = 64;
+	WinBGranularity  = 64;
+	WinASize         = 64;
+	WinBSize         = 64;
+	WinABase         = 0xa0000;
+	WinBBase         = 0xa0000;
+        BytesPerScanLine = 1024;
+	XResolution      = 1024;
+	YResolution      = 768;
+	BitsPerPixel     = 8;
+	BitsRGB          = 6;
+
+	MEMORY(0xA0000 - 0xAFFFF);
+	PORT(0x3D4, 0x3D5);
+	PORT(0x3C4, 0x3C5);
+	PORT(0x3C2);
+	PORT(0x3DA);
+	PORT(0x3C0);
+	PORT(0x3CE, 0x3CF);
+
+[MODEDETECT]
+	r0 = 1;
+
+[SETMODE]
+	inb(r63, 0x3da);			// reset attr F/F
+	outb(0x3c0, 0);				// disable palette
+	outb(0x3d4, 0x11); outb(0x3d5, 0x00);	// unprotect crtc regs
+	outw(0x3d4, 0x4838);			// unlock the S3 extended regs
+	outw(0x3d4, 0xa539);
+
+	//
+	// reset and set sequencer registers
+	//
+	r0 = 0x01; r1= 0x01; r2 = 0x0f; r3 = 0x00;
+	r4 = 0x0e;
+	boutb(5, 0x3c4, 0x3c5);
+
+	//
+	// Set misc out register
+	//
+	outb(0x3c2, 0x6f);
+
+	r0 = 0x03;
+	boutb(1, 0x3c4, 0x3c5);				// sequencer enable
+
+	//
+	// Set all crtc registers
+	//
+	r0  = 0xa3;  r1  = 0x7f;  r2  = 0x80;  r3  = 0x86;
+	r4  = 0x82;  r5  = 0x93;  r6  = 0x24;  r7  = 0xf5;
+	r8  = 0x00;  r9  = 0x60;  r10 = 0x00;  r11 = 0x00;
+	r12 = 0x00;  r13 = 0x00;  r14 = 0x00;  r15 = 0x00;
+	r16 = 0x02;  r17 = 0x28;  r18 = 0xff;  r19 = 0x80;
+	r20 = 0x00;  r21 = 0xff;  r22 = 0x24;  r23 = 0xe3;
+	r24 = 0xff;
+	boutb(25, 0x3d4, 0x3d5);
+
+	//
+	// Set all graphics controller registers
+	//
+	outb(0x3cc, 00); outb(0x3ca, 0x01);
+	r0 = 0x00;  r1 = 0x00;  r2 = 0x00;  r3 = 0x00;
+	r4 = 0x00;  r5 = 0x40;  r6 = 0x05;  r7 = 0x0f;
+	r8 = 0xff;
+	boutb(9, 0x3ce, 0x3cf);
+
+	//
+	// Set all attribute registers
+	//
+	inb(r63, 0x3da);					// reset F/F
+	r0  = 0x00;  r1  = 0x01;  r2  = 0x02;  r3  = 0x03;
+	r4  = 0x04;  r5  = 0x05;  r6  = 0x06;  r7  = 0x07;
+	r8  = 0x08;  r9  = 0x09;  r10 = 0x0a;  r11 = 0x0b;
+	r12 = 0x0c;  r13 = 0x0d;  r14 = 0x0e;  r15 = 0x0f;
+	r16 = 0x01;  r17 = 0x00;  r18 = 0x0f;  r19 = 0x00;
+	r20 = 0x00;
+	boutb(21, 0x3c0, 0x3c0);
+
+	outw(0x3d4, 0x8d31);				// graphics
+	outw(0x3d4, 0x2033);
+	outw(0x3d4, 0x953a);
+	outw(0x3d4, 0x0e42);				// clock
+	outw(0x3d4, 0x0858);
+	outw(0x3d4, 0x3f60);
+	outw(0x3d4, 0x8161);
+	outw(0x3d4, 0x0062);
+
+	inb(r63, 0x3da);
+	outb(0x3c0, 0x20);				// enable plt
+
+[SETWINDOW]
+
+	outb(0x3d4, 0x35);
+	outb(0x3d5, r0);
+

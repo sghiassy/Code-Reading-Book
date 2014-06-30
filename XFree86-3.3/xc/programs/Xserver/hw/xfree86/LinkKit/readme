@@ -1,0 +1,332 @@
+
+
+
+
+
+
+
+
+
+		      Readme for the XFree86 3.3 LinkKit
+
+			   The XFree86 Project, Inc.
+
+				  16 May 1997
+
+
+
+1.  Readme for the XFree86 3.3 LinkKit
+
+  1.  For systems which don't use gcc-2, you may need to install libgcc.a if
+      the binary distribution you are using was built with gcc-2.
+
+  2.  Make sure that you have the XFree86 3.3 libraries installed under
+      /usr/X11R6 if you will be linking Xnest with the LinkKit.  The LinkKit is
+      now self-contained for the other servers.
+
+  3.  Edit the xf86site.def file to define which servers you want to build, and
+      the drivers and extensions you want included.
+
+
+	 o Set HasGcc and HasGcc2 to match the compiler you are using if the
+	   defaults aren't correct.
+
+	 o If the LinkKit was built with gcc-2.x and you are using some other
+	   compiler, you must install libgcc.a and set NeedLibGcc to YES.
+
+	 o To build the 256 colour server: set XF86SVGAServer to YES.
+
+	 o To build the 16 colour server: set XF86VGA16Server to YES.
+
+	 o To build the monochrome server: set XF86MonoServer to YES.
+
+	 o To build the S3 server: set XF86S3Server to YES.
+
+	 o To build the Mach8 server: set XF86Mach8Server to YES.
+
+	 o To build the Mach32 server: set XF86Mach32Server to YES.
+
+	 o To build the Mach64 server: set XF86Mach64Server to YES.
+
+	 o To build the P9000 server: set XF86P9000Server to YES.
+
+	 o To build the AGX server: set XF86AGXServer to YES.
+
+	 o To build the ET4000/W32 server: set XF86W32Server to YES.
+
+	 o To build the IBM 8514/A server: set XF86I8514Server to YES.
+
+	 o To build the I128 server: set XF86I128Server to YES.
+
+
+
+
+Readme for the XFree86 3.3 LinkKit
+
+
+
+
+
+Readme for the XFree86 3.3 LinkKit
+
+
+
+	 o To build the TGA server: set XF86TGAServer to YES.
+
+	 o To build the GA-98NB/WAP server: set XF98GANBServer to YES.
+
+	 o To build the NEC480 server: set XF98NEC480Server to YES.
+
+	 o To build the NEC-CIRRUS/EPSON NKV/NKV2 server: set XF98NKVNECServer
+	   to YES.
+
+	 o To build the WAB-S server: set XF98WABSServer to YES.
+
+	 o To build the WAB-EP server: set XF98WABEPServer to YES.
+
+	 o To build the WSN-A2F server: set XF98WSNAServer to YES.
+
+	 o To build the Trident Cyber9320/9680 server: set XF98TGUIServer to
+	   YES.
+
+	 o To build the EGC server: set XF98EGCServer to YES.
+
+	 o To build the NEC S3 server: set XF98NECS3Server to YES.
+
+	 o To build the S3 PW/PCSKB server: set XF98PWSKBServer to YES.
+
+	 o To build the S3 PW/LB server: set XF98PWLBServer to YES.
+
+	 o To build the S3 GA-968 server: set XF98GA968Server to YES.
+
+	 o To build the Xnest server: set XnestServer to YES.
+
+	 o If you are building more than one Xserver, uncomment the ServerToIn-
+	   stall line and set it to the name of the Xserver you want to be the
+	   default server (i.e., the one that the ``X'' sym-link points to).
+
+	 o Set XF86SvgaDrivers to the list of drivers you want to include in
+	   the SVGA server.
+
+	 o Set XF86Vga16Drivers to the list of drivers you want to include in
+	   the 16 colour server.
+
+	 o Set XF86Vga2Drivers to the list of drivers you want to include in
+	   the monochrome vga server.
+
+	 o Set XF86MonoDrivers to the list of non-vga mono drivers you want to
+	   include in the mono or VGA16 servers (when building dual-headed
+	   servers).
+
+	 o Note: the ordering of drivers determines the order in which the
+	   probing is done.  The `generic' driver should be the last one
+	   included in the Mono and VGA16 and SVGA servers because its probe
+	   always succeeds.
+
+	 o To use dynamically loadable modules(e.g. PEX, XIE): set Extensions-
+	   DynamicModules to YES.
+
+
+
+
+
+
+
+
+Readme for the XFree86 3.3 LinkKit
+
+
+
+	 o To include the PEX extension: set BuildPexExt to YES.
+
+	 o To include the X Image Extension: set BuildXIE to YES.
+
+	 o To include the GLX Extension: set BuildGlxExt to YES.
+
+	 o To exclude the Double Buffer Extension: set BuildDBE to NO.
+
+	 o To exclude the Record Extension: set BuildRECORD to NO.
+
+	 o To exclude the Screen Saver extension: set BuildScreenSaverExt to
+	   NO.
+
+	 o Although it is possible to disable other extensions through this
+	   mechanism, doing so is not recommended because savings in server
+	   size are not appreciable, or the resulting server might even be
+	   crippled in some way.
+
+
+  4.  If you are including a driver that it not part of the standard distribu-
+      tion, make a directory in drivers/vga256 (drivers/vga2 if it is for the
+      VGA2 part of the Mono server, drivers/vga16 if it is for the 16 colour
+      server, or drivers/mono non-VGA part of the Mono and VGA16 servers) and
+      copy either the source or .o file and a suitable Imakefile into that
+      directory.  The name of the directory should be the same as the name of
+      the driver (refer to the documentation in the VGADriverDoc directory for
+      more details).
+
+  5.  To build the Makefile, run
+
+	     ./mkmf
+
+  6.  Run `make' to link the server(s) as configured.
+
+  7.  Run `make install' to install the new server(s).
+
+  8.  Run `make clean' to remove the files that were created by this procedure.
+
+  9.  If you edit the xf86site.def file and change the selection of servers
+      being built or the drivers included in them, repeat the above procedure.
+      If changing the selection of Xserver extensions being included it is suf-
+      ficient to run `make Makefile' instead of `./mkmf'.
+
+ 10.  It is possible to see which drivers are included in the Xserver by run-
+      ning it with the `-showconfig' flag.  To check which extensions are
+      included, start the Xserver and run `xdpyinfo'.
+
+     Generated from XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/LinkKit.sgml,v 3.14.2.1 1997/05/17 12:03:29 dawes Exp $
+
+
+
+
+
+     $XConsortium: LinkKit.sgml /main/8 1996/10/27 11:05:58 kaleb $
+
+
+
+
+
+
+
+
+Readme for the XFree86 3.3 LinkKit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				   CONTENTS
+
+
+
+1. Readme for the XFree86 3.3 LinkKit  ...................................... 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				       i
+
+
+
+$XFree86: xc/programs/Xserver/hw/xfree86/LinkKit/README,v 3.21.2.1 1997/05/17 12:25:09 dawes Exp $

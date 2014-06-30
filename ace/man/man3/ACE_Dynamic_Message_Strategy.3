@@ -1,0 +1,222 @@
+.TH ACE_Dynamic_Message_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Dynamic_Message_Strategy \- An abstract base class which provides dynamic priority evaluation methods for use by the  class or any other class which needs to manage the priorities of a collection of s dynamically. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Message_Block.h>\fR
+.PP
+Inherited by \fBACE_Deadline_Message_Strategy\fR, and \fBACE_Laxity_Message_Strategy\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBPriority_Status\fR { \fBPENDING\fR = 0x01, \fBLATE\fR = 0x02, \fBBEYOND_LATE\fR = 0x04, \fBANY_STATUS\fR = 0x07 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Dynamic_Message_Strategy\fR (u_long static_bit_field_mask, u_long static_bit_field_shift, u_long dynamic_priority_max, u_long dynamic_priority_offset)"
+.br
+.RI "\fIctor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Dynamic_Message_Strategy\fR (void)"
+.br
+.RI "\fIvirtual dtor.\fR"
+.ti -1c
+.RI "\fBPriority_Status\fR \fBpriority_status\fR (\fBACE_Message_Block\fR &mb, const \fBACE_Time_Value\fR &tv)"
+.br
+.RI "\fIUpdates the message's priority and returns its priority status.\fR"
+.ti -1c
+.RI "u_long \fBstatic_bit_field_mask\fR (void) const"
+.br
+.RI "\fIGet static bit field mask.\fR"
+.ti -1c
+.RI "void \fBstatic_bit_field_mask\fR (u_long)"
+.br
+.RI "\fISet static bit field mask.\fR"
+.ti -1c
+.RI "u_long \fBstatic_bit_field_shift\fR (void) const"
+.br
+.RI "\fIGet left shift value to make room for static bit field.\fR"
+.ti -1c
+.RI "void \fBstatic_bit_field_shift\fR (u_long)"
+.br
+.RI "\fISet left shift value to make room for static bit field.\fR"
+.ti -1c
+.RI "u_long \fBdynamic_priority_max\fR (void) const"
+.br
+.RI "\fIGet maximum supported priority value.\fR"
+.ti -1c
+.RI "void \fBdynamic_priority_max\fR (u_long)"
+.br
+.RI "\fISet maximum supported priority value.\fR"
+.ti -1c
+.RI "u_long \fBdynamic_priority_offset\fR (void) const"
+.br
+.RI "\fIGet offset to boundary between signed range and unsigned range.\fR"
+.ti -1c
+.RI "void \fBdynamic_priority_offset\fR (u_long)"
+.br
+.RI "\fISet offset to boundary between signed range and unsigned range.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the strategy.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual void \fBconvert_priority\fR (\fBACE_Time_Value\fR &priority, const \fBACE_Message_Block\fR &mb) = 0"
+.br
+.RI "\fIHook method for dynamic priority conversion.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "u_long \fBstatic_bit_field_mask_\fR"
+.br
+.RI "\fIThis is a bit mask with all ones in the static bit field.\fR"
+.ti -1c
+.RI "u_long \fBstatic_bit_field_shift_\fR"
+.br
+.ti -1c
+.RI "u_long \fBdynamic_priority_max_\fR"
+.br
+.RI "\fIMaximum supported priority value.\fR"
+.ti -1c
+.RI "u_long \fBdynamic_priority_offset_\fR"
+.br
+.RI "\fIOffset to boundary between signed range and unsigned range.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBmax_late_\fR"
+.br
+.RI "\fIMaximum late time value that can be represented.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBmin_pending_\fR"
+.br
+.RI "\fIMinimum pending time value that can be represented.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBpending_shift_\fR"
+.br
+.RI "\fITime value by which to shift pending priority.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An abstract base class which provides dynamic priority evaluation methods for use by the  class or any other class which needs to manage the priorities of a collection of s dynamically.
+.PP
+.PP
+ Methods for deadline and laxity based priority evaluation are provided. These methods assume a specific partitioning of the message priority number into a higher order dynamic bit field and a lower order static priority bit field. The default partitioning assumes an unsigned dynamic message priority field of 22 bits and an unsigned static message priority field of 10 bits. This corresponds to the initial values of the static class members. To provide a different partitioning, assign a different set of values to the static class memebers before using the static member functions. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_Dynamic_Message_Strategy::Priority_Status
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIPENDING\fR \fRmessage can still make its deadline.
+.TP
+\fB\fILATE\fR \fRmessage cannot make its deadline.
+.TP
+\fB\fIBEYOND_LATE\fR \fRmessage is so late its priority is undefined.
+.TP
+\fB\fIANY_STATUS\fR \fRmask to match any priority status.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Dynamic_Message_Strategy::ACE_Dynamic_Message_Strategy (u_long static_bit_field_mask, u_long static_bit_field_shift, u_long dynamic_priority_max, u_long dynamic_priority_offset)
+.PP
+ctor.
+.PP
+.SS ACE_Dynamic_Message_Strategy::~ACE_Dynamic_Message_Strategy (void)\fC [virtual]\fR
+.PP
+virtual dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Dynamic_Message_Strategy::convert_priority (\fBACE_Time_Value\fR & priority, const \fBACE_Message_Block\fR & mb)\fC [protected, pure virtual]\fR
+.PP
+Hook method for dynamic priority conversion.
+.PP
+Reimplemented in \fBACE_Deadline_Message_Strategy\fR, and \fBACE_Laxity_Message_Strategy\fR.
+.SS void ACE_Dynamic_Message_Strategy::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of the strategy.
+.PP
+Reimplemented in \fBACE_Deadline_Message_Strategy\fR, and \fBACE_Laxity_Message_Strategy\fR.
+.SS void ACE_Dynamic_Message_Strategy::dynamic_priority_max (u_long)
+.PP
+Set maximum supported priority value.
+.PP
+.SS u_long ACE_Dynamic_Message_Strategy::dynamic_priority_max (void) const
+.PP
+Get maximum supported priority value.
+.PP
+.SS void ACE_Dynamic_Message_Strategy::dynamic_priority_offset (u_long)
+.PP
+Set offset to boundary between signed range and unsigned range.
+.PP
+.SS u_long ACE_Dynamic_Message_Strategy::dynamic_priority_offset (void) const
+.PP
+Get offset to boundary between signed range and unsigned range.
+.PP
+.SS \fBPriority_Status\fR ACE_Dynamic_Message_Strategy::priority_status (\fBACE_Message_Block\fR & mb, const \fBACE_Time_Value\fR & tv)
+.PP
+Updates the message's priority and returns its priority status.
+.PP
+.SS void ACE_Dynamic_Message_Strategy::static_bit_field_mask (u_long)
+.PP
+Set static bit field mask.
+.PP
+.SS u_long ACE_Dynamic_Message_Strategy::static_bit_field_mask (void) const
+.PP
+Get static bit field mask.
+.PP
+.SS void ACE_Dynamic_Message_Strategy::static_bit_field_shift (u_long)
+.PP
+Set left shift value to make room for static bit field.
+.PP
+.SS u_long ACE_Dynamic_Message_Strategy::static_bit_field_shift (void) const
+.PP
+Get left shift value to make room for static bit field.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS u_long ACE_Dynamic_Message_Strategy::dynamic_priority_max_\fC [protected]\fR
+.PP
+Maximum supported priority value.
+.PP
+.SS u_long ACE_Dynamic_Message_Strategy::dynamic_priority_offset_\fC [protected]\fR
+.PP
+Offset to boundary between signed range and unsigned range.
+.PP
+.SS \fBACE_Time_Value\fR ACE_Dynamic_Message_Strategy::max_late_\fC [protected]\fR
+.PP
+Maximum late time value that can be represented.
+.PP
+.SS \fBACE_Time_Value\fR ACE_Dynamic_Message_Strategy::min_pending_\fC [protected]\fR
+.PP
+Minimum pending time value that can be represented.
+.PP
+.SS \fBACE_Time_Value\fR ACE_Dynamic_Message_Strategy::pending_shift_\fC [protected]\fR
+.PP
+Time value by which to shift pending priority.
+.PP
+.SS u_long ACE_Dynamic_Message_Strategy::static_bit_field_mask_\fC [protected]\fR
+.PP
+This is a bit mask with all ones in the static bit field.
+.PP
+.SS u_long ACE_Dynamic_Message_Strategy::static_bit_field_shift_\fC [protected]\fR
+.PP
+This is a left shift value to make room for static bit field: this value should be the logarithm base 2 of (static_bit_field_mask_ + 1). 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

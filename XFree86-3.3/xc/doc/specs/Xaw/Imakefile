@@ -1,0 +1,25 @@
+XCOMM $XConsortium: Imakefile,v 1.8 94/05/01 20:39:20 gildea Exp $
+EVERYWHERE=strings.mit strings.xaw
+CHAPTER1=CH1
+CHAPTER2=CH2
+CHAPTER3=CH3.intro Command Grip Label List Panner Repeater \
+	 Scrollbar Simple StripChart Toggle
+CHAPTER4=CH4.intro SimpleMenu SmeBSB SmeLine Sme MenuButton
+CHAPTER5=CH5.intro TextActions TextFuncs AsciiText AsciiSource AsciiSink \
+	 TextCustom Text TextSource TextSink
+CHAPTER6=CH6.intro Box Dialog Form Paned Porthole Tree Viewport
+CHAPTER7=CH7.intro Template
+
+SRCS = \
+	$(EVERYWHERE) TPage_Credits \
+	$(CHAPTER1) $(CHAPTER2) $(CHAPTER3) $(CHAPTER4) \
+	$(CHAPTER5) $(CHAPTER6) $(CHAPTER7) 
+
+MakeTblDoc(widgets,$(SRCS))
+
+MakeDocIndex(widg,widg.idxmac.t)
+
+XCOMM Useful for running off part of the manual by hand,
+XCOMM e.g., make part PART=Label
+part: $(PART)
+	$(TBL) $(PART) | $(TROFF) $(MSMACROS) $(XDOCMACROS) $(EVERYWHERE) - > part.PS

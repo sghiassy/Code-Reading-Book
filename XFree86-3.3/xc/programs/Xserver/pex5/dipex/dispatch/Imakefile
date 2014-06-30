@@ -1,0 +1,80 @@
+XCOMM
+XCOMM $XConsortium: Imakefile /main/8 1996/09/28 16:54:48 rws $
+XCOMM $XFree86: xc/programs/Xserver/PEX5/dipex/dispatch/Imakefile,v 3.3.2.1 1997/05/22 14:00:27 dawes Exp $
+XCOMM
+XCOMM 
+XCOMM Copyright 1989, 1990, 1991 by Sun Microsystems, Inc. and the X Consortium.
+XCOMM 
+XCOMM			 All Rights Reserved
+XCOMM 
+XCOMM Permission to use, copy, modify, and distribute this software and its 
+XCOMM documentation for any purpose and without fee is hereby granted, 
+XCOMM provided that the above copyright notice appear in all copies and that
+XCOMM both that copyright notice and this permission notice appear in 
+XCOMM supporting documentation, and that the names of Sun Microsystems,
+XCOMM and the X Consortium not be used in advertising or publicity 
+XCOMM pertaining to distribution of the software without specific, written 
+XCOMM prior permission.  
+XCOMM 
+XCOMM SUN MICROSYSTEMS DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 
+XCOMM INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+XCOMM EVENT SHALL SUN MICROSYSTEMS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+XCOMM CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+XCOMM USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+XCOMM OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+XCOMM PERFORMANCE OF THIS SOFTWARE.
+
+#include <Server.tmpl>
+
+#ifndef PexDipexCDebugFlags
+#define PexDipexCDebugFlags ServerCDebugFlags
+#endif
+
+RDR_STUBS = -DRENDER_CMDS
+ST_STUBS = -DSTORE_CMDS
+DIPEXDEFINES = PexDipexDefines
+#if PexDynamicModule
+#if HasDlsymBug
+MODULEDEFINES =  -DDLSYM_BUG
+#endif
+#define SharedServerLibraryDef -DDYNAMIC_MODULE
+SHAREDINCLUDES = -I$(XF86SRC)
+#endif
+
+
+ CDEBUGFLAGS = PexDipexCDebugFlags
+     DEFINES = $(DIPEXDEFINES) $(MODULEDEFINES)
+
+    LINTLIBS = ../../../dix/llib-ldix.ln \
+		../../../os/llib-los.ln \
+		../../ddpex/mi/level4/llib-ldp4.ln \
+		../../ddpex/mi/shared/llib-ldps.ln \
+		../swap/llib-ldsw.ln \
+		../objects/llib-lobj.ln
+
+   PEXSRVINC = ../../include
+    INCLUDES = -I$(PEXSRVINC) -I$(XINCLUDESRC) -I$(SERVERSRC)/include \
+               $(SHAREDINCLUDES)
+
+
+SRCS = dipexParse.c dipexExt.c pexDump.c pexError.c dipexBuf.c pexUtils.c
+
+OBJS = dipexParse.o dipexExt.o pexDump.o pexError.o dipexBuf.o pexUtils.o
+
+PEX_DI_LIBNAME = libdidipex.a
+
+#define DoSharedLib	PexDynamicModule
+#include <ServerLib.tmpl>
+#if DoSharedLib
+SubdirLibraryRule($(OBJS))
+UnsharedLibraryTarget(didipex,$(OBJS),unshared,..)
+#else
+NormalLibraryTarget(didipex,$(OBJS))
+#endif
+LintLibraryTarget(dsp,$(SRCS))
+NormalLintTarget($(SRCS))
+
+InstallLinkKitLibrary(didipex,$(LINKKITDIR)/lib)
+
+DependTarget()
+

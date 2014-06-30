@@ -1,0 +1,30 @@
+XCOMM $XConsortium: Imakefile /main/17 1996/01/15 12:19:32 gildea $
+
+SERVERSTYPE = XdmServersType
+
+all:: Xservers.ws xdm-config Xservers
+
+CppFileTarget(Xservers.ws,Xserv.ws.cpp,-DBINDIR=$(BINDIR),NullParameter)
+CppFileTarget(xdm-config,xdm-conf.cpp,-DXDMDIR=$(XDMDIR),NullParameter)
+
+LinkFile(Xservers,Xservers.$(SERVERSTYPE))
+
+#if InstallXdmConfig
+InstallNonExecFile(xdm-config,$(XDMDIR))
+InstallNonExecFile(Xresources,$(XDMDIR))
+InstallNonExecFile(Xservers,$(XDMDIR))
+InstallNonExecFile(Xaccess,$(XDMDIR))
+InstallNamedProg(Xsession,Xsession,$(XDMDIR))
+InstallNamedProg(GiveConsole,GiveConsole,$(XDMDIR))
+InstallNamedProg(TakeConsole,TakeConsole,$(XDMDIR))
+InstallNamedProg(Xsetup_0,Xsetup_0,$(XDMDIR))
+#else
+InstallNonExecFileNoClobber(xdm-config,$(XDMDIR))
+InstallNonExecFileNoClobber(Xresources,$(XDMDIR))
+InstallNonExecFileNoClobber(Xservers,$(XDMDIR))
+InstallNonExecFileNoClobber(Xaccess,$(XDMDIR))
+InstallNamedProgNoClobber(Xsession,Xsession,$(XDMDIR))
+InstallNamedProgNoClobber(GiveConsole,GiveConsole,$(XDMDIR))
+InstallNamedProgNoClobber(TakeConsole,TakeConsole,$(XDMDIR))
+InstallNamedProgNoClobber(Xsetup_0,Xsetup_0,$(XDMDIR))
+#endif

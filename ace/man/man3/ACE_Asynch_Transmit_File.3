@@ -1,0 +1,97 @@
+.TH ACE_Asynch_Transmit_File 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Asynch_Transmit_File \- This class is a factory for starting off asynchronous transmit files on a stream. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Operation\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Transmit_File\fR (void)"
+.br
+.RI "\fIA do nothing constructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Asynch_Transmit_File\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle = ACE_INVALID_HANDLE, const void *completion_key = 0, \fBACE_Proactor\fR *proactor = 0)"
+.br
+.ti -1c
+.RI "int \fBtransmit_file\fR (ACE_HANDLE file, \fBHeader_And_Trailer\fR *header_and_trailer = 0, u_long bytes_to_write = 0, u_long offset = 0, u_long offset_high = 0, u_long bytes_per_send = 0, u_long flags = 0, const void *act = 0, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.ti -1c
+.RI "\fBACE_Asynch_Transmit_File_Impl\fR* \fBimplementation\fR (void) const"
+.br
+.RI "\fIReturn the underlying implementation class.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBimplementation\fR (\fBACE_Asynch_Transmit_File_Impl\fR *)"
+.br
+.RI "\fISet the implementation.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Transmit_File_Impl\fR* \fBimplementation_\fR"
+.br
+.RI "\fIThe implementation class.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class is a factory for starting off asynchronous transmit files on a stream.
+.PP
+.PP
+ Once <open> is called, multiple asynchronous <transmit_file>s can started using this class. A \fBACE_Asynch_Transmit_File::Result\fR will be passed back to the <handler> when the asynchronous transmit file completes through the  callback. The transmit_file function transmits file data over a connected network connection. The function uses the operating system's cache manager to retrieve the file data. This function provides high-performance file data transfer over network connections. This function would be of great use in a Web Server, Image Server, etc. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Asynch_Transmit_File::ACE_Asynch_Transmit_File (void)
+.PP
+A do nothing constructor.
+.PP
+.SS ACE_Asynch_Transmit_File::~ACE_Asynch_Transmit_File (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Asynch_Transmit_File::implementation (\fBACE_Asynch_Transmit_File_Impl\fR *)\fC [protected]\fR
+.PP
+Set the implementation.
+.PP
+.SS \fBACE_Asynch_Transmit_File_Impl\fR * ACE_Asynch_Transmit_File::implementation (void) const
+.PP
+Return the underlying implementation class.
+.PP
+Reimplemented from \fBACE_Asynch_Operation\fR.
+.SS int ACE_Asynch_Transmit_File::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle = ACE_INVALID_HANDLE, const void * completion_key = 0, \fBACE_Proactor\fR * proactor = 0)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. 
+.PP
+Reimplemented from \fBACE_Asynch_Operation\fR.
+.SS int ACE_Asynch_Transmit_File::transmit_file (ACE_HANDLE file, \fBHeader_And_Trailer\fR * header_and_trailer = 0, u_long bytes_to_write = 0, u_long offset = 0, u_long offset_high = 0, u_long bytes_per_send = 0, u_long flags = 0, const void * act = 0, int priority = 0, int signal_number = ACE_SIGRTMIN)
+.PP
+This starts off an asynchronous transmit file. The <file> is a handle to an open file. <header_and_trailer> is a pointer to a data structure that contains pointers to data to send before and after the file data is sent. Set this parameter to 0 if you only want to transmit the file data. Upto <bytes_to_write> will be written to the <socket>. If you want to send the entire file, let <bytes_to_write> = 0. <bytes_per_send> is the size of each block of data sent per send operation. Please read the Win32 documentation on what the flags should be. Priority of the operation is specified by <priority>. On POSIX4-Unix, this is supported. Works like <nice> in Unix. Negative values are not allowed. 0 means priority of the operation same as the process priority. 1 means priority of the operation is one less than process. And so forth. On Win32, this is a no-op. <signal_number> is the POSIX4 real-time signal number to be used for the operation. <signal_number> ranges from ACE_SIGRTMIN to ACE_SIGRTMAX. This argument is a no-op on non-POSIX4 systems. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Asynch_Transmit_File_Impl\fR * ACE_Asynch_Transmit_File::implementation_\fC [protected]\fR
+.PP
+The implementation class.
+.PP
+Reimplemented from \fBACE_Asynch_Operation\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

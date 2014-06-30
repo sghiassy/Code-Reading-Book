@@ -1,0 +1,71 @@
+XCOMM $XConsortium: Imakefile /main/9 1996/09/28 17:19:05 rws $
+XCOMM $XFree86: xc/util/memleak/Imakefile,v 3.2 1996/12/23 07:19:34 dawes Exp $
+#define DoNormalLib YES
+#define DoSharedLib NO
+#define DoDebugLib NO
+#define DoProfileLib NO
+#define IncSubdir X11
+#include <Library.tmpl>
+
+#ifdef MipsArchitecture
+#define TopOfStack 0x7fffbbb0
+#define BottomOfData 0x10000000
+#define HasGetReturnAddress 	YES
+GRA_OBJS = getretmips.o mipsstack.o
+GRA_SRCS = getretmips.c
+#endif
+
+#ifdef SparcArchitecture
+#define HasGetReturnAddress	YES
+#define BottomOfData \&environ
+#ifdef SystemV4
+GRA_OBJS = getretspar.o sparcsolstack.o
+#define TopOfStack 0xeffffc70
+#else
+LOCAL_DEFS = -Datexit=on_exit
+GRA_OBJS = getretspar.o sparcstack.o
+#define TopOfStack 0xf7fffbdc
+#endif
+GRA_SRCS = getretspar.c
+#endif
+
+#ifdef i386BsdArchitecture
+#define HasGetReturnAddress	YES
+#define TopOfStack 'GC_get_stack_base()'
+#define BottomOfData \&etext
+GRA_OBJS = getreti386.o stackbottom.o
+GRA_SRCS = getreti386.c stackbottom.c
+#endif
+
+#ifndef HasGetReturnAddress
+#define HasGetReturnAddress NO
+#endif
+
+#if HasGetReturnAddress
+ GRA_DEFS = -DHAS_GET_RETURN_ADDRESS
+#endif
+
+DEFINES = 	-DTOP_OF_STACK=TopOfStack -DBOTTOM_OF_DATA=BottomOfData\
+		$(GRA_DEFS) $(LOCAL_DEFS)
+
+CDEBUGFLAGS = DebuggableCDebugFlags
+
+SRCS =	fmalloc.c $(GRA_SRCS)
+
+OBJS =	fmalloc.o $(GRA_OBJS)
+
+LibraryObjectRule()
+
+#if DoNormalLib
+NormalLibraryTarget(memleak,$(OBJS))
+InstallLibrary(memleak,$(USRLIBDIR))
+#endif
+
+InstallNamedProg(find-rtns.sh,find-routines,$(BINDIR))
+
+LintLibraryTarget(memleak,$(SRCS))
+InstallLintLibrary(memleak,$(LINTLIBDIR))
+
+DependTarget()
+
+NormalLintTarget($(SRCS))

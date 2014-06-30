@@ -1,0 +1,67 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/s3_virge/Imakefile,v 3.5 1997/01/14 22:17:15 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/6 1995/11/12 19:05:21 kaleb $
+
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS = drivers # s3mmio 
+
+SRCS = 	s3.c s3misc.c s3cmap.c s3gc.c s3gc16.c s3gc24.c s3gc32.c s3fs.c s3ss.c \
+	s3gs.c s3win.c s3init.c s3im.c s3bstor.c \
+	s3scrin.c s3blt.c s3plypt.c s3rop.c \
+	s3line.c s3seg.c s3frect.c s3text.c \
+	s3font.c s3fcach.c s3Cursor.c vgaHW.c s3dline.c \
+	s3dseg.c s3bcach.c s3gtimg.c s3ELSA.c
+
+OBJS = 	s3.o s3misc.o s3cmap.o s3gc.o s3gc16.o s3gc24.o s3gc32.o s3fs.o s3ss.o \
+	s3gs.o s3win.o s3init.o s3im.o s3bstor.o \
+	s3scrin.o s3blt.o s3plypt.o s3rop.o \
+	s3line.o s3seg.o s3frect.o s3text.o \
+	s3font.o s3fcach.o s3Cursor.o vgaHW.o s3dline.o \
+	s3dseg.o s3bcach.o s3gtimg.o s3ELSA.o
+
+INCLUDES = -I$(XF86SRC) -I. -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/include -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) \
+	   -I$(FONTSRC)/include -I$(XF86SRC)/vga256/vga -I$(XF86COMSRC) \
+	   -I$(XF86HWSRC) -I$(FONTINCSRC) -I$(XF86OSSRC) \
+	   -I$(XF86SRC)/accel/cache
+
+DEFINES = -DS3_SERVER -DPSZ=8
+
+S3DRIVERS = XF86S3VDrivers
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS))
+#endif
+
+ConfigTarget(s3vConf,$(ICONFIGFILES),confS3V.SHsuf,$(S3DRIVERS))
+
+ObjectFromSpecialSource(s3seg,s3line,-DPOLYSEGMENT)
+ObjectFromSpecialSource(s3dseg,s3dline,-DPOLYSEGMENT)
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(s3v,$(OBJS))
+
+MakeSubdirs($(SUBDIRS))
+
+LinkSourceFile(vgaHW.c,../../vga256/vga)
+
+InstallLinkKitLibrary(s3v,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(confS3V.SHsuf,$(LINKKITDIR))
+InstallLinkKitNonExecFile(s3v.h,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(regs3v.h,$(LINKKITDIR)/drivers)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif
+
+DependSubdirs($(SUBDIRS))

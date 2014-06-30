@@ -1,0 +1,101 @@
+/*************************************************
+* CFB Mode Source File                           *
+* (C) 1999-2001 The OpenCL Project               *
+*************************************************/
+
+#include <opencl/cfb.h>
+
+namespace OpenCL {
+
+/*************************************************
+* CFB Encryption Constructor                     *
+*************************************************/
+template<typename B>
+CFB_Encryption<B>::CFB_Encryption(const BlockCipherKey& key,
+                                  const BlockCipherModeIV& iv, u32bit fback) :
+   CipherMode<B>(name(), key, iv), FEEDBACKSIZE(fback)
+   {
+   if(FEEDBACKSIZE == 0 || FEEDBACKSIZE > BLOCKSIZE)
+      throw Invalid_Argument(name() + ": Invalid feedback size");
+   cipher.encrypt(state, buffer);
+   }
+
+/*************************************************
+* Encrypt data in CFB mode                       *
+*************************************************/
+template<typename B>
+void CFB_Encryption<B>::write(const byte input[], u32bit length)
+   {
+   while(length)
+      {
+      u32bit xored = std::min(FEEDBACKSIZE - position, length);
+      xor_buf(buffer + position, input, xored);
+      send(buffer + position, xored);
+      input += xored;
+      length -= xored;
+      position += xored;
+      if(position == FEEDBACKSIZE)
+         feedback();
+      }
+   }
+
+/*************************************************
+* Do the feedback                                *
+*************************************************/
+template<typename B>
+void CFB_Encryption<B>::feedback()
+   {
+   for(u32bit j = 0; j != BLOCKSIZE - FEEDBACKSIZE; j++)
+      state[j] = state[j + FEEDBACKSIZE];
+   state.copy(BLOCKSIZE - FEEDBACKSIZE, buffer, FEEDBACKSIZE);
+   cipher.encrypt(state, buffer);
+   position = 0;
+   }
+
+/*************************************************
+* CFB Decryption Constructor                     *
+*************************************************/
+template<typename B>
+CFB_Decryption<B>::CFB_Decryption(const BlockCipherKey& key,
+                                  const BlockCipherModeIV& iv, u32bit fback) :
+   CipherMode<B>(name(), key, iv), FEEDBACKSIZE(fback)
+   {
+   if(FEEDBACKSIZE == 0 || FEEDBACKSIZE > BLOCKSIZE)
+      throw Invalid_Argument(name() + ": Invalid feedback size");
+   cipher.encrypt(state, buffer);
+   }
+
+/*************************************************
+* Decrypt data in CFB mode                       *
+*************************************************/
+template<typename B>
+void CFB_Decryption<B>::write(const byte input[], u32bit length)
+   {
+   while(length)
+      {
+      u32bit xored = std::min(FEEDBACKSIZE - position, length);
+      xor_buf(buffer + position, input, xored);
+      send(buffer + position, xored);
+      buffer.copy(position, input, xored);
+      input += xored;
+      length -= xored;
+      position += xored;
+      if(position == FEEDBACKSIZE)
+         feedback();
+      }
+   }
+
+/*************************************************
+* Do the feedback                                *
+*************************************************/
+template<typename B>
+void CFB_Decryption<B>::feedback()
+   {
+   for(u32bit j = 0; j != BLOCKSIZE - FEEDBACKSIZE; j++)
+      state[j] = state[j + FEEDBACKSIZE];
+   state.copy(BLOCKSIZE - FEEDBACKSIZE, buffer, FEEDBACKSIZE);
+   cipher.encrypt(state, buffer);
+   position = 0;
+   }
+
+}

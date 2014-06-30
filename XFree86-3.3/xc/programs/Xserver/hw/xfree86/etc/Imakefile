@@ -1,0 +1,132 @@
+XCOMM $XConsortium: Imakefile /main/24 1996/10/28 04:24:12 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/etc/Imakefile,v 3.23 1996/12/23 06:47:03 dawes Exp $
+#include <Server.tmpl>
+
+#if SystemV
+ CONFIGFILES = ldterm.sdevice ptem.sdevice ptm.sdevice pts.node \
+               pts.sdevice sp.node sp.sdevice
+    INSTPROG = install.sv3
+#ifdef i386ScoArchitecture
+   MISCFILES = dmmap.shar 
+#else
+   MISCFILES = mmapSVR3.shar
+#endif
+#endif
+
+#if SystemV4
+    INSTPROG = install.sv4
+     XDMCONF = XdmConf.svr4
+#ifdef SunArchitecture
+   MISCFILES = apSolx86.shar xcode.xfree86
+#else
+   MISCFILES = 2key.c xcode.xfree86
+#endif
+#endif
+
+#ifdef LynxOSArchitecture
+ CONFIGFILES = pty.cfg
+   MISCFILES = BM-Lynx.shar 
+#endif
+
+/* Are these really needed? */
+#if 0
+# ifdef FreeBSDArchitecture
+    INSTPROG = inst.freebsd
+# endif
+# ifdef NetBSDArchitecture
+    INSTPROG = inst.netbsd
+# endif
+#endif
+
+#if !BuildServersOnly
+#ifdef SunArchitecture
+   TERMFILES = xterm.termcap xterm.terminfo
+#else
+   TERMFILES = sun.termcap sun.terminfo xterm.termcap xterm.terminfo
+#endif
+#endif
+
+PREINST = preinst.sh
+POSTINST = postinst.sh
+
+       FILES = $(CONFIGFILES) $(TERMFILES) \
+               $(PATCHFILES) $(XDMCONF) \
+               et4000clock.c xmodmap.std $(MISCFILES) $(POSTINST) $(PREINST)
+    INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+	       -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+all:: $(FILES)
+
+#if defined(FreeBSDArchitecture) || defined(NetBSDArchitecture) || defined(OpenBSDArchitecture)
+       SRCS1 = kbd_mode.c
+     DEFINES = XFree86ConsoleDefines
+
+all:: kbd_mode
+
+SingleProgramTarget(kbd_mode,kbd_mode.o,NullParameter,NullParameter)
+
+InstallProgram(kbd_mode,$(BINDIR))
+InstallManPage(kbd_mode,$(MANDIR))
+#endif
+
+#if BuildScanpci
+       SRCS2 = scanpci.c
+
+#if defined(OpenBSDArchitecture) || defined(NetBSDArchitecture) \
+    && ((OSMajorVersion == 1 && OSMinorVersion >= 1) || OSMajorVersion >= 2)
+DEFINES = -DUSE_I386_IOPL
+SYS_LIBRARIES = -li386
+#endif
+
+AllTarget(ProgramTargetName(scanpci))
+
+NormalProgramTarget(scanpci,scanpci.o,NullParameter,NullParameter,NullParameter)
+InstallProgram(scanpci,$(BINDIR))
+#endif
+
+#if JoystickSupport || Joystick2Support
+       SRCS3 = joycal.c
+
+AllTarget(ProgramTargetName(joycal))
+
+NormalProgramTarget(joycal,joycal.o,NullParameter,NullParameter,NullParameter)
+InstallProgram(joycal,$(BINDIR))
+#endif
+
+        SRCS = $(SRCS1) $(SRCS2) $(SRCS3)
+
+#if (SystemV && !defined(i386ScoArchitecture)) || SystemV4
+InstallNamedProg($(INSTPROG),xf86install,$(LIBDIR)/etc)
+#endif
+
+InstallMultipleDestFlags(install,$(FILES),$(LIBDIR)/etc,$(INSTDATFLAGS))
+
+#if SystemV
+InstallNamedProg(svr3_patch,svr3_patch,$(LIBDIR)/etc)
+InstallNamedProg(svr3_rem_pch,svr3_patch_rem,$(LIBDIR)/etc)
+#endif
+#if SystemV4 && !defined(SunArchitecture)
+InstallNamedProg(svr4_patch,svr4_patch,$(LIBDIR)/etc)
+InstallNamedProg(svr4_rem_pch,svr4_patch_rem,$(LIBDIR)/etc)
+#endif
+#if defined(LynxOSArchitecture) && OSMinorVersion < 3
+NormalProgramTarget(ld-wrapper,ld-wrapper.o,NullParameter,NullParameter,NullParameter)
+InstallProgram(ld-wrapper,$(LIBDIR)/etc)
+#endif
+
+#if !BuildServersOnly
+LinkFile(xterm.termcap,$(PROGRAMSRC)/xterm/termcap)
+LinkFile(xterm.terminfo,$(PROGRAMSRC)/xterm/terminfo)
+#endif
+
+LinkFile(sun.termcap,sun.tcap)
+LinkFile(sun.terminfo,sun.tinfo)
+
+NormalLibraryObjectRule()
+DependTarget()
+

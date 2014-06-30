@@ -1,0 +1,129 @@
+XCOMM $XConsortium: Imakefile /main/13 1996/10/27 11:49:09 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/chips/Imakefile,v 3.15.2.1 1997/05/03 09:47:55 dawes Exp $
+
+#include <Server.tmpl>
+
+XCOMM To use the old acceleration code you must define OLD_ACCL here.
+XCOMM This allows only the relevant parts of the code to be compiled
+XCOMM
+XCOMM #define OLD_ACCL
+
+#ifdef OLD_ACCL
+SRCS = ct_driver.c ct_bank.s ct_BitBlt.c ct_cursor.c ct_FillRct.c ct_blt16.c \
+       ct_blitter.c ct_blitmm.c ct_blithi.c ct_line.c ct_seg.c ct_linehi.c \
+       ct_seghi.c ct_lline.c ct_lline16.c ct_lline24.c ct_solid.c \
+       ct_solidmm.c ct_solidhi.c ct_FillSt.c ct_alloc.c ct_pci.c ct_teblt8.c \
+       ct_teblt8mm.c ct_teblt8hi.c ct_textblt.s ct_colexp.c ct_colexpmm.c \
+       ct_colexphi.c ct_accel.c ct_accelmm.c ct_accelhi.c
+
+OBJS = ct_driver.o ct_bank.o ct_BitBlt.o ct_cursor.o ct_FillRct.o ct_blt16.o \
+       ct_blitter.o ct_blitmm.o ct_blithi.o ct_line.o ct_seg.o ct_linehi.o \
+       ct_seghi.o ct_lline.o ct_lline16.o ct_lline24.o ct_solid.o \
+       ct_solidmm.o ct_solidhi.o ct_FillSt.o ct_alloc.o ct_pci.o ct_teblt8.o \
+       ct_teblt8mm.o ct_teblt8hi.o ct_textblt.o ct_colexp.o ct_colexpmm.o \
+       ct_colexphi.o ct_accel.o ct_accelmm.o ct_accelhi.o
+#else
+#ifdef i386Architecture
+CHIPSSRCS = ct_bank.s
+CHIPSOBJS = ct_bank.o
+#else
+CHIPSSRCS = ct_bank.c
+CHIPSOBJS = ct_bank.o
+#endif
+SRCS = ct_driver.c $(CHIPSSSRCS) ct_cursor.c ct_alloc.c ct_pci.c ct_accel.c \
+       ct_accelmm.c ct_accelhi.c
+
+OBJS = ct_driver.o $(CHIPSOBJS) ct_cursor.o ct_alloc.o ct_pci.o ct_accel.o \
+       ct_accelmm.o ct_accelhi.o
+#endif
+
+#ifdef OLD_ACCL
+XCOMM The old (pre-XAA) accel code can be used by adding -DCT_OLD_ACCL_CODE
+XCOMM to DEFINES. However only do this if OLD_ACCL is defined
+DEFINES = -DPSZ=8 -DCT_OLD_ACCL_CODE
+#else
+DEFINES = -DPSZ=8
+#endif
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/cfb -I$(SERVERSRC)/mfb \
+           -I$(SERVERSRC)/mi -I../../vga -I../../../xaa \
+           -I$(SERVERSRC)/include \
+	   -I$(XINCLUDESRC) -I$(FONTINCSRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(ct_drv,$(OBJS))
+
+#ifdef OLD_ACCL
+ObjectFromSpecialSource(ct_seg, ct_line, -DPOLYSEGMENT)
+ObjectFromSpecialSource(ct_blitmm, ct_blitter, -DCHIPS_MMIO)
+ObjectFromSpecialSource(ct_solidmm, ct_solid, -DCHIPS_MMIO)
+ObjectFromSpecialSource(ct_lline16, ct_lline, -DPSZ=16)
+ObjectFromSpecialSource(ct_lline24, ct_lline, -DPSZ=24)
+ObjectFromSpecialSource(ct_teblt8mm, ct_teblt8, -DCHIPS_MMIO)
+ObjectFromSpecialSource(ct_colexpmm, ct_colexp, -DCHIPS_MMIO)
+ObjectFromSpecialSource(ct_linehi, ct_line, -DCHIPS_HIQV)
+ObjectFromSpecialSource(ct_seghi, ct_line, -DCHIPS_HIQV -DPOLYSEGMENT)
+ObjectFromSpecialSource(ct_blithi, ct_blitter, -DCHIPS_MMIO -DCHIPS_HIQV)
+ObjectFromSpecialSource(ct_solidhi, ct_solid, -DCHIPS_MMIO -DCHIPS_HIQV)
+ObjectFromSpecialSource(ct_teblt8hi, ct_teblt8, -DCHIPS_MMIO -DCHIPS_HIQV)
+ObjectFromSpecialSource(ct_colexphi, ct_colexp, -DCHIPS_MMIO -DCHIPS_HIQV)
+#else
+#ifdef i386Architecture
+ObjectFromSpecialAsmSource(ct_bank,ct_bank,NullParameter)
+#endif
+ObjectFromSpecialSource(ct_accelmm, ct_accel, -DCHIPS_MMIO)
+ObjectFromSpecialSource(ct_accelhi, ct_accel, -DCHIPS_MMIO -DCHIPS_HIQV)
+#endif
+
+InstallLinkKitNonExecFile(ct_driver.c,$(LINKKITDIR)/drivers/vga256/chips)
+#ifdef OLD_ACCL
+InstallLinkKitNonExecFile(ct_bank.s,$(LINKKITDIR)/drivers/vga256/chips)
+#else
+#ifdef i386Architecture
+InstallLinkKitNonExecFile(ct_bank.s,$(LINKKITDIR)/drivers/vga256/chips)
+#else
+InstallLinkKitNonExecFile(ct_bank.c,$(LINKKITDIR)/drivers/vga256/chips)
+#endif
+#endif
+InstallLinkKitNonExecFile(ct_BitBlt.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_FillRct.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_cursor.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_blt16.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_blitter.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_line.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_lline.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_solid.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_FillSt.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_alloc.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_pci.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_BltHiQV.h,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_BlitMM.h,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_Blitter.h,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_driver.h,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_lline.h,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_teblt8.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_textblt.s,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_colexp.c,$(LINKKITDIR)/drivers/vga256/chips)
+InstallLinkKitNonExecFile(ct_accel.c,$(LINKKITDIR)/drivers/vga256/chips)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif
+

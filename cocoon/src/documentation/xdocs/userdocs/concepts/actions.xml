@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document> 
+  <header> 
+	 <title>Creating and Using Actions</title>
+	 <version>0.3</version> 
+	 <type>Overview document</type> 
+	 <authors>
+           <person name="Berin Loritsch" email="bloritsch@apache.org"/> 
+           <person name="Giacomo Pati" email="giacomo@apache.org"/>
+           <person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+           <person name="Christian Haul" email="haul@apache.org"/>
+	 </authors> 
+  </header> 
+  <body> 
+   <s1 title="The Actions"> 
+   <s2 title="What is an Action?"> 
+    <p>
+     Apache Cocoon has a rich set of tools for publishing web documents, and while
+     XSP and Generators provide alot of functionality, they still mix content
+     and logic to a certain degree.  The Action was created to fill that gap.
+     Because the Cocoon Sitemap provides a mechanism to select the pipeline
+     at run time, we surmised that sometimes we need to adjust the pipeline
+     based on runtime parameters, or even the contents of the Request parameter.
+     Without the use of Actions this would make the sitemap almost
+     incomprehensible. 
+    </p>
+    <p>
+     The quick and dirty definition of an Action is "a Sitemap Component that
+     manipulates runtime parameters".  Actions must be ThreadSafe, and they
+     can be as complex as you need.  The Action is the proper place to handle
+     form processing, and even dynamic navigation.  The Action is
+     differentiated from the other sitemap components (Generator, Transformer,
+     Serializer, and Reader) primarily by the fact that it does not produce
+     any display data. <link href="actions.txt">actions.txt</link> contains 
+     excerpts from discussions on the cocoon-dev@ mailing list regarding Actions.
+    </p>
+    </s2>
+    <s2 title="When to use an Action instead of XSP">
+     <p>
+       Sometimes it is going to be quicker for you to create and handle
+       logic in XSP, because Cocoon recognizes if there have been any
+       changes.  However, many times it is more desirable to have a separation
+       between the logic and the display.  For instance, we will use a
+       multipage form.  In XSP the logic to handle the results for one
+       page have to be implemented in the following page.
+     </p>
+     <source>
+<![CDATA[
+<xsp:logic>
+  // handle the previous page's values.
+  String name = <xsp-request:get-parameter name="name"/>;
+  String password = <xsp-request:get-parameter name="password"/>;
+  int userid;
+
+  <esql:connection>
+    <esql:dbpool>mypool</esql:dbpool>
+    <esql:execute-query>
+      <esql:query>SELECT userid FROM users
+        WHERE name=<esql:parameter>name</esql:parameter>
+        AND password=<esql:parameter>password</esql:parameter></esql:query>
+      <esql:row-results>
+        <xsp:logic>
+          userid = <esql:get-int column="userid"/>
+        </xsp:logic>
+      </esql:row-results>
+      <esql:no-results>
+          <xsp-response:send-redirect url="/home"/>
+      </esql:no-results>
+    </esql:execute-query>
+  </esql:connection>
+</xsp:logic>
+]]>
+     </source>
+     <p>
+      This can get very messy, as you will invariably have alot of processing
+      for things that don't even belong in the context of this page.  When
+      you come back later to add features or someone else starts to maintain
+      the code, you have a mess on your hands.
+     </p>
+     <p>
+      The alternative is to use Actions.  Actions handle the pure logic
+      handling portions of your site.  This allows you to create each page
+      in the multipage form to handle any logic it needs to for display
+      purposes only.  Your form handling information is kept separate, and
+      can even predictably change the pipeline used in the sitemap.
+     </p>
+    </s2>
+   </s1>
+   <s1 title="Actions at Work">
+    <p>
+     Actions are components that allow two way communication between the
+     Sitemap and the Action.  This section describes how to define them
+     in the sitemap, and create one in real life.  We are going to write
+     an Action that is our version of "Hello World".
+    </p>
+    <p>
+     The problem domain is this: we "need" a component that will create
+     an HTTP request parameter named "hello" with a value of "world", and
+     it will create a sitemap parameter named "world" with a value of
+     "hello".  Why?  So we can show you the two manners in which the Action
+     can be used, and let your imagination go from there.
+    </p>
+    <s2 title="Creating the Action">
+     <p>
+      There is nothing like a little sample code to get your feet wet.
+      We are performing something very simple here, but you can get
+      more complex examples from the Cocoon code-base.
+     </p>
+     <source>
+<![CDATA[
+package test;
+
+import org.apache.avalon.framework.parameters.Parameters;
+import org.apache.cocoon.acting.AbstractAction;
+import org.apache.cocoon.Constants;
+import java.util.Map;
+import java.util.HashMap;
+import org.apache.cocoon.environment.Request;
+import org.xml.sax.EntityResolver;
+
+public class HelloWorldAction extends AbstractAction {
+  public Map act (Redirector redirector, 
+                  SourceResolver resolver, 
+                  Map objectModel, 
+                  String source, 
+                  Parameters params) {
+    Map sitemapParams = new HashMap();
+    sitemapParams.put("world", "hello");
+
+    Request request = (Request) objectModel.get(Constants.REQUEST_OBJECT);
+
+    request.setAttribute("hello", "world");
+
+    return sitemapParams;
+  }
+}
+]]>
+     </source>
+    </s2>
+    <s2 title="Using the Action">
+     <p>
+      In order to use the Action we just created, we need to define it
+      in the sitemap.  After it has been defined, we must use it in the
+      sitemap.
+     </p>
+     <s3 title="Defining the Action">
+      <source>
+<![CDATA[
+<map:actions>
+  <map:action name="hello-world" src="test.HelloWorldAction"/>
+</map:actions>
+]]>
+      </source>
+     </s3>
+     <s3 title="Using the Action">
+       <source>
+<![CDATA[
+<map:match pattern="file">
+  <map:act type="hello-world">
+    <map:generate type="serverpages" src="{world}_world.xsp"/>
+  </map:act>
+  <map:serialize/>
+</map:match>
+]]>
+       </source>
+       <p>
+        Using this approach, we will generate the file named "hello_world.xsp"
+        because the value of the Sitemap parameter "{world}" is "hello".  Also,
+        the file "hello_world.xsp" can use the request parameter "hello" to
+        produce the value "world".
+       </p>
+       <source>
+<![CDATA[
+<para>Hello <xsp-request:get-parameter name="hello"/>.</para>
+]]>
+       </source>
+     </s3>
+    </s2>
+    <s2 title="Communication between Sitemap and Action">
+       <p>
+        As stated previously there is a two way communication between the
+        Sitemap and the Action. The Sitemap can pass the parameters
+        and the source attribute to the Action and the Action can return
+        a Map object with new values which can be used in the sitemap.
+       </p>
+       <source>
+<![CDATA[
+<map:match pattern="file">
+  <map:act type="hello-world" src="optional src">
+    <!-- and here come the parameters: -->
+    <map:parameter name="first parameter" value="test"/>
+
+    <map:generate type="serverpages" src="{world}_world.xsp"/>
+  </map:act>
+  <map:serialize/>
+</map:match>
+]]>
+       </source>
+       <p>This Map object does not replace the previous Map object put
+       is stacked on top of it. The other Map objects are still
+       accessible through a path expression.</p>
+<source>
+<![CDATA[
+<map:match pattern="*">
+  <map:act type="validate-session">
+    <map:generate type="serverpages" src="{../1}.xsp"/>
+  </map:act>
+  <map:serialize/>
+</map:match>
+]]>
+</source>
+       <p>The above example shows how to access the next to last map
+       by prefixing the key with "<code>../</code>"</p>
+    </s2>
+    <s2 title="Flow Control">
+       <p>
+        In addition to delivering values to the Sitemap, the Action can
+        also control the flow. If the action returns <code>null</code>
+        all statements inside the <code>map:act</code> element are
+        not executed. So, if in the example above the hello world action
+        would return <code>null</code> the server page generator
+        would not be activated.
+       </p>
+       <p> In other words: The statements within the
+       <code>map:act</code> element are <em>only</em> executed if the
+       action returns at least an empty Map object.</p>
+    </s2>
+   </s1>
+   <s1 title="Action Sets">
+    <p>
+     You can arrange actions in an action set. The sitemap calls the
+     act method of those actions in the sequence they are defined in the 
+     action set. It is possible to signal to the sitemap to
+     call an action only if the Environments getAction method returns
+     a String identical to the value supplied with an action attribute.
+     In the current implementation of the HttpEnvironment the value 
+     returned by the getAction method is determined by a http parameter 
+     called "cocoon-action".</p>
+     <p> Above we have seen that a successfully executed action
+     returns a Map object that can be used to communicate with the
+     sitemap. In case of an action set this is similar. With action
+     sets all returned Map objects are merged into a single Map. Of
+     course a Map can contain only one value per key so that if
+     multiple actions within an action set use the same key to
+     communicate to the sitemap, only the last one "survives".</p>
+     <p>
+      So far let's have a look at at possible action set definition:
+    </p>
+    <source>
+<![CDATA[
+<map:action-sets>
+  <map:action-set name="shop-actions">
+    <map:act type="session-invalidator" action="logoff"/>
+    <map:act type="session-validator"/>
+    <map:act type="cart-add" action="addItem"/>
+    <map:act type="cart-remove" action="removeItem"/>
+    <map:act type="cart-remove-all" action="removeAll"/>
+    <map:act type="cart-update" action="updateQty"/>
+    <map:act type="order-add" action="addOrder"/>
+    <map:act type="order-verify" action="verifyOrder"/>
+    <map:act type="screen-navigator" src="{1}"/>
+  </map:action-set>
+</map:action-sets>
+]]>
+    </source>
+    <p>And this is a possible pipeline snipped which uses this action set:</p>
+    <source>
+<![CDATA[
+   <map:match pattern="*">
+    <map:act set="shop-actions">     <--- HERE -->
+     <map:generate  type="serverpages" src="docs/xsp/{nextpage}.xsp"/>
+     <map:transform src="stylesheets/page2html.xsl"/>
+     <map:serialize type="html"/>
+    </map:act>
+   </map:match>
+]]>
+    </source>
+    <p>
+Let me explain some of those actions in the set first. 
+    </p>
+    <p>
+The "session-invalidator" action gets called when an action of logoff is
+requested (ie. a html submit button named "cocoon-action" with the 
+value "logoff" was pressed). 
+    </p>
+    <p>
+The "session-validator" action is called on every request. It assures that
+an http session is created and available to the other sitemap components
+(other actions and xsp pages selected for resource production).
+    </p>
+    <p>
+The other actions in the set with an action attribute do specific things
+like adding an item to the cart, removing one or all items from the cart
+etc. They are called depending on the value returned by the getAction method
+of the HttpEnvironment object passed to the sitemap engine as described 
+above ( see "session-invalidator" action).
+    </p>
+    <p>
+The screen-navigation action is always called because it has knowledge 
+about the flow/sequence of pages and it knows how/where the preceding actions
+stores their execution status (ie. as an request attribute). Depending on those
+stati the screen-navigation action sets up a Map with an element called 
+"nextpage" with the value of the page that produces the next "view".
+    </p>
+    <p>
+However, one is not limited to specify distinct values at the action attribute.
+It is possible and I think useful to mark several actions with the same
+action attribute value which will then be called in sequence. This allows you
+to choose a granularity of your actions at will.
+    </p>
+   </s1>
+  </body>
+</document>

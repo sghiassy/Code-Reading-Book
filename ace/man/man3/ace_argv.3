@@ -1,0 +1,240 @@
+.TH ACE_ARGV 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_ARGV \- Transforms a string <buf> into an  style vector of strings or an  style vector of string <buf>, performing environment variable substitutions if necessary. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <ARGV.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBStates\fR { \fBTO_STRING\fR = 1, \fBTO_PTR_ARRAY\fR = 2, \fBITERATIVE\fR = 3 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ARGV\fR (const \fBACE_TCHAR\fR buf[], int substitute_env_args = 1)"
+.br
+.ti -1c
+.RI "\fBACE_ARGV\fR (\fBACE_TCHAR\fR *argv[], int substitute_env_args = 1)"
+.br
+.ti -1c
+.RI "\fBACE_ARGV\fR (\fBACE_TCHAR\fR *first_argv[], \fBACE_TCHAR\fR *second_argv[], int substitute_env_args =1)"
+.br
+.ti -1c
+.RI "\fBACE_ARGV\fR (int substitute_env_args = 1)"
+.br
+.ti -1c
+.RI "\fB~ACE_ARGV\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBoperator[]\fR (size_t index)"
+.br
+.RI "\fIReturns the <index>th string in the ARGV array.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR** \fBargv\fR (void)"
+.br
+.ti -1c
+.RI "size_t \fBargc\fR (void) const"
+.br
+.RI "\fIReturns .\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBbuf\fR (void)"
+.br
+.RI "\fIReturns the <buf>. Caller should not delete this memory since the  destructor will delete it.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "int \fBadd\fR (const \fBACE_TCHAR\fR *next_arg)"
+.br
+.RI "\fIAdd another argument. This only works in the <ITERATIVE> state. Note that this method does not copy <next_arg>, but instead assumes ownership of it. Returns -1 on failure and 0 on success.\fR"
+.ti -1c
+.RI "int \fBadd\fR (\fBACE_TCHAR\fR *argv[])"
+.br
+.ti -1c
+.RI "int \fBstate\fR (void) const"
+.br
+.RI "\fIWhat state is this ACE_ARGV in?\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBcreate_buf_from_queue\fR (void)"
+.br
+.RI "\fICreates buf_ from the queue, deletes previous buf_.\fR"
+.ti -1c
+.RI "int \fBstring_to_argv\fR (void)"
+.br
+.RI "\fIConverts buf_ into the ACE_TCHAR *argv[] format.\fR"
+.ti -1c
+.RI "int \fBargv_to_string\fR (\fBACE_TCHAR\fR **argv, \fBACE_TCHAR\fR *&buf)"
+.br
+.RI "\fIReturns the string created from argv in buf and returns the number of arguments.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBsubstitute_env_args_\fR"
+.br
+.RI "\fIReplace args with environment variable values?\fR"
+.ti -1c
+.RI "int \fBstate_\fR"
+.br
+.RI "\fICurrent state marker.\fR"
+.ti -1c
+.RI "size_t \fBargc_\fR"
+.br
+.RI "\fINumber of arguments in the ARGV array.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR** \fBargv_\fR"
+.br
+.RI "\fIThe array of string arguments.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBbuf_\fR"
+.br
+.RI "\fIBuffer containing the  contents.\fR"
+.ti -1c
+.RI "size_t \fBlength_\fR"
+.br
+.RI "\fITotal length of the arguments in the queue, not counting separating spaces.\fR"
+.ti -1c
+.RI "\fBACE_Unbounded_Queue\fR<\fBACE_TCHAR\fR *> \fBqueue_\fR"
+.br
+.RI "\fIQueue which keeps user supplied arguments. This is only active in the "iterative" mode.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Transforms a string <buf> into an  style vector of strings or an  style vector of string <buf>, performing environment variable substitutions if necessary.
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_ARGV::States
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fITO_STRING\fR \fRACE_ARGV converts buf[] to ACE_TCHAR *argv[].
+.TP
+\fB\fITO_PTR_ARRAY\fR \fRACE_ARGV converts ACE_TCHAR *argv[] to buf[].
+.TP
+\fB\fIITERATIVE\fR \fRBuilds buf[] or ACE_TCHAR *argv[] iteratively with .
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_ARGV::ACE_ARGV (const \fBACE_TCHAR\fR buf[], int substitute_env_args = 1)
+.PP
+Converts <buf> into an -style vector of strings. If <substitute_env_args> is enabled then we'll substitute the environment variables for each $ENV encountered in the string. The subscript and  operations are not allowed on an ACE_ARGV created this way. 
+.SS ACE_ARGV::ACE_ARGV (\fBACE_TCHAR\fR * argv[], int substitute_env_args = 1)
+.PP
+Converts  into a linear string. If <substitute_env_args> is enabled then we'll substitute the environment variables for each $ENV encountered in the string. The <buf> operation is not allowed on an ACE_ARGV created this way. 
+.SS ACE_ARGV::ACE_ARGV (\fBACE_TCHAR\fR * first_argv[], \fBACE_TCHAR\fR * second_argv[], int substitute_env_args = 1)
+.PP
+Creates an ACE_ARGV which is the concatenation of the first_argv and the second argv. The argv arguments should be null pointer terminated. 
+.SS ACE_ARGV::ACE_ARGV (int substitute_env_args = 1)
+.PP
+Entry point for creating an ACE_TCHAR *[] command line iteratively via the  method. When this constructor is used, the <ITERATIVE> state is enabled. The  and <buf> methods are allowed, and the result is recreated when called multiple times. The subscript operator is not allowed. 
+.SS ACE_ARGV::~ACE_ARGV (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_ARGV::add (\fBACE_TCHAR\fR * argv[])
+.PP
+Add another  array. The  parameter must be NULL terminated. This only works in the <ITERATIVE> state. Returns -1 on failure and 0 on success. 
+.SS int ACE_ARGV::add (const \fBACE_TCHAR\fR * next_arg)
+.PP
+Add another argument. This only works in the <ITERATIVE> state. Note that this method does not copy <next_arg>, but instead assumes ownership of it. Returns -1 on failure and 0 on success.
+.PP
+.SS size_t ACE_ARGV::argc (void) const
+.PP
+Returns .
+.PP
+.SS \fBACE_TCHAR\fR ** ACE_ARGV::argv (void)
+.PP
+Returns the  array. Caller should not delete this memory since the  destructor will delete it. If the caller modifies the array in the iterative mode, the changes are not saved to the queue. 
+.SS int ACE_ARGV::argv_to_string (\fBACE_TCHAR\fR ** argv, \fBACE_TCHAR\fR *& buf)\fC [private]\fR
+.PP
+Returns the string created from argv in buf and returns the number of arguments.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_ARGV::buf (void)
+.PP
+Returns the <buf>. Caller should not delete this memory since the  destructor will delete it.
+.PP
+.SS int ACE_ARGV::create_buf_from_queue (void)\fC [private]\fR
+.PP
+Creates buf_ from the queue, deletes previous buf_.
+.PP
+.SS void ACE_ARGV::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_ARGV::operator[] (size_t index)
+.PP
+Returns the <index>th string in the ARGV array.
+.PP
+.SS int ACE_ARGV::state (void) const
+.PP
+What state is this ACE_ARGV in?
+.PP
+.SS int ACE_ARGV::string_to_argv (void)\fC [private]\fR
+.PP
+Converts buf_ into the ACE_TCHAR *argv[] format.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_ARGV::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS size_t ACE_ARGV::argc_\fC [private]\fR
+.PP
+Number of arguments in the ARGV array.
+.PP
+.SS \fBACE_TCHAR\fR ** ACE_ARGV::argv_\fC [private]\fR
+.PP
+The array of string arguments.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_ARGV::buf_\fC [private]\fR
+.PP
+Buffer containing the  contents.
+.PP
+.SS size_t ACE_ARGV::length_\fC [private]\fR
+.PP
+Total length of the arguments in the queue, not counting separating spaces.
+.PP
+.SS \fBACE_Unbounded_Queue\fR< \fBACE_TCHAR\fR *> ACE_ARGV::queue_\fC [private]\fR
+.PP
+Queue which keeps user supplied arguments. This is only active in the "iterative" mode.
+.PP
+.SS int ACE_ARGV::state_\fC [private]\fR
+.PP
+Current state marker.
+.PP
+.SS int ACE_ARGV::substitute_env_args_\fC [private]\fR
+.PP
+Replace args with environment variable values?
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<logkit>
+  <factories>
+    <factory type="priority-filter" class="org.apache.avalon.excalibur.logger.factory.PriorityFilterTargetFactory"/>
+    <factory type="servlet" class="org.apache.avalon.excalibur.logger.factory.ServletTargetFactory"/>
+    <factory type="cocoon" class="org.apache.cocoon.util.log.CocoonTargetFactory"/>
+  </factories>
+
+  <targets>
+    <cocoon id="cocoon">
+      <filename>${context-root}/WEB-INF/logs/cocoon.log</filename>
+      <format type="cocoon">
+        %7.7{priority} %{time}   [%8.8{category}] (%{uri}) %{thread}/%{class:short}: %{message}\n%{throwable}
+      </format>
+      <append>true</append>
+      <rotation type="revolving" init="1" max="4">
+        <or>
+          <size>100m</size>
+          <time>01:00:00</time>
+        </or>
+      </rotation>
+    </cocoon>
+
+    <cocoon id="root">
+      <filename>${context-root}/WEB-INF/logs/root.log</filename>
+     
+      <format type="cocoon">
+        %7.7{priority} %{time}   [%8.8{category}] (%{uri}) %{thread}/%{class:short}: %{message}\n%{throwable}
+      </format>
+      <append>true</append>
+      <rotation type="revolving" init="1" max="4">
+        <or>
+          <size>100m</size>
+          <time>01:00:00</time>
+        </or>
+      </rotation>
+    </cocoon>
+
+    <cocoon id="components">
+      <filename>${context-root}/WEB-INF/logs/components.log</filename>
+      <format type="cocoon">
+        %7.7{priority} %{time}   [%8.8{category}] (%{uri}) %{thread}/%{class:short}: %{message}\n%{throwable}
+      </format>
+      <append>true</append>
+      <rotation type="revolving" init="1" max="4">
+        <or>
+          <size>100m</size>
+          <time>01:00:00</time>
+        </or>
+      </rotation>
+    </cocoon>
+
+    <priority-filter id="filter" log-level="ERROR">
+      <servlet>
+        <format type="extended">%7.7{priority} %5.5{time}: %{message}\n%{throwable}</format>
+      </servlet>
+    </priority-filter>
+  </targets>
+
+  <categories>
+    <category name="cocoon" log-level="ERROR">
+      <log-target id-ref="cocoon"/>
+    </category>
+    <category name="root" log-level="ERROR">
+      <log-target id-ref="root"/>
+      <category name="store" log-level="ERROR">
+         <log-target id-ref="components"/>
+         <log-target id-ref="filter"/>
+      </category>
+
+      <category name="xslt" log-level="ERROR">
+         <log-target id-ref="components"/>
+         <log-target id-ref="filter"/>
+      </category>
+    </category>
+  </categories>
+</logkit>

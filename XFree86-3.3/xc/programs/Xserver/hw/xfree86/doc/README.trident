@@ -1,0 +1,398 @@
+
+
+
+
+
+
+
+
+
+		     Information for Trident Chipset Users
+
+			   The XFree86 Project, Inc.
+
+				  20 May 1997
+
+
+
+1.  Supported chipsets
+
+The Trident driver has undergone some more work for XFree86 3.3.  Because of
+this work, all of the Trident SVGA chipsets, except the very first one, are
+supported by both the color and monochrome servers.
+
+     8800CS 8200LX 8900B 8900C 8900CL/D 9000 9000i 9100B 9200CXr 9320LCD
+     9400CXi 9420 9420DGi 9430DGi 9440AGi 9660XGi 9680 9682 9685 Cyber9382
+     Cyber9385 Cyber9385-1
+
+
+It must be noted that the 9000i chipset is treated as a 9000 by the server.
+Additionally the 9100B is treated as a Trident 8900CL. Therefore it is equiva-
+lent to putting `Chipset "tvga8900cl"' or `Chipset "tvga9000"' in the XF86Con-
+fig file.  Also, note that the 9000i, 9100B have not been tested with the
+server, but should work in this way according to the chipset documentation.
+
+ NOTES:
+
+   o Acceleration is now supported for the 9440/96xx and Cyber938x chips.
+
+   o 24bpp is supported for the 9440, 32bpp is supported for the 96xx and
+     Cyber938x based chips.
+
+   o The Cyber 9382/5 chips that have started to appear, have much improved
+     support in XFree86 3.3 and appear to work at 800x600 on the LCD.
+
+   o The TGUI9440 and TGUI96xx based cards are supported by the SVGA server.
+
+   o 16 bits per pixel is now supported for the 8900D, 9200CXr, 9400CXi,
+     9420DGi, 9430DGi, 9440AGi, 96xx, but only the 9440AGi and 9400CXi have
+     been tested.
+
+   o Linear access has been implemented for chipsets that support it.  It is
+     enabled by default for PCI cards, and disabled by default for other cards.
+     Additionally Hardware cursor is implemented for the 9430, 9440, 96xx,
+     although only the 9440 and 9660 have been tested with the hardware cursor.
+
+   o The following options may be specified for the Trident driver:
+
+	   Option "nolinear"
+		 Turn off linear mapping
+
+
+
+
+ Information for Trident Chipset Users
+
+
+
+
+
+ Information for Trident Chipset Users
+
+
+
+	   Option "linear"
+		 Force linear mapping.	Use this if you have a non-PCI card and
+		 require 16bpp support.  Note: ISA cards can only access up to
+		 16MB of memory, so be sure you have less than this or it could
+		 cause a system hang.
+
+	   MemBase "0x???????"
+		 This option may be used to specify the start address of the
+		 linear frame buffer. By default for VLBus/EISA cards it is at
+		 60MB.	For the 8900CL/D, it is at 15MB.
+
+	   Option "no_mmio"
+		 This option turns off Memory Mapped IO support.  MMIO is
+		 enabled by default when acceleration is enabled.  Acceleration
+		 doesn't work well when MMIO is disabled.
+
+	   Option "tgui_pci_read_on"
+		 Turn on PCI burst read mode.
+
+	   Option "tgui_pci_write_on"
+		 Turn on PCI burst write mode.	NOTE: PCI Burst modes are now
+		 OFF by default. The reason for this is the Graphics Accelera-
+		 tor gets upset, but we allow you to turn it back on it may
+		 improve performance, or lock up the chip with Timeouts dis-
+		 played.
+
+	   ClockChip "tgui"
+		 Turn on programmable clocks.  This is the default for TGUIs.
+
+	   Option "no_program_clocks"
+		 Turn off programmable clock. Use fixed VGA clocks only.  Use-
+		 ful for fixed frequency monitors - usually used for VGA moni-
+		 tors - not SVGA.
+
+	   Option "noaccel"
+		 Turn off XAA acceleration.
+
+	   Option "xaa_no_color_exp"
+		 Disable color expansion, which is needed for some 9440 cards
+		 (and maybe others?).
+
+	   Option "no_stretch"
+		 Disable LCD stretching on Cyber 938x based chips.
+
+	   Option "lcd_center"
+		 Enable LCD centering on Cyber 938x based chips.
+
+	   Option "tgui_mclk_66'
+		 Pushes the Memory Clock from its default value to 66MHz.
+		 Increases graphics speed dramatically, but use entirely at
+		 your own risk, as it may damage the video card.  If snow
+		 appears, disable.
+
+The original Trident chipset, 8800BR, cannot be supported as an SVGA chipset by
+
+
+
+
+
+
+
+
+ Information for Trident Chipset Users
+
+
+
+either the color or monochrome servers.  The chip is supported, however, by the
+``generic'' driver for the monochrome server.
+
+
+2.  Special considerations for 512k boards
+
+There are no longer any special considerations for 512k Trident boards.  The
+driver is now configured so that they can use modes with normal timings.  The
+available pixel clocks are halved compared with those specified on the Clocks
+line
+
+Be aware that older Trident chipsets support a maximum clock of 65Mhz.	Hence
+the best actual clock available to the color server is 32.5Mhz.  This means, in
+broad terms, that the color server will require an interlaced mode to be
+defined for resolutions above 640x480.	Newer chipsets (8900CL, 9000, 9000i,
+9100B, 9200CX and 9420) support up to 16 clocks, and can support much higher
+clocks, which will allow 800x600 modes, non-interlaced.
+
+
+3.  Additional Notes
+
+We have had reports of the server failing to detect the amount of installed
+memory and the correct dot-clocks on older TVGA8900 boards.  If the server
+fails to detect the correct amount of memory, use the "Videoram" keyword in
+your XF86Config file to specify it.  (e.g. Videoram 512 or Videoram 1024).  If
+the server has problems detecting the dot-clocks, try adding the following line
+to your XF86Config file:
+
+	     Clocks  25 28 45 36 57 65 50 40
+
+
+This line gives the clock values provided by older Trident clock synthesizer
+chipsets.  This also appears to be the standard first 8 clocks for the newer
+clock synthesizers, but you should have no problems on newer boards.
+
+Some newer Trident 8900B/C boards are apparently being built with the clock
+synthesizers used on the 9000 and 8900CL boards.  If your board has a chip
+labeled "Trident TCK900x" ("x" has been seen as 2 or 4; there may be others),
+your board may actually have a 4th clock select bit.  The 9002 has twelve dis-
+tinct clocks (the other 4 are duplicates); the 9004 has 16 clocks (the same 12
+as the 9002 + 4 others).  If you see such a chip on a board with an 8900B or
+8900C, put the following line in the Device section of your XF86Config file:
+
+	     Option "16clocks"
+
+
+This will cause the same clock selection code as is used for the 8900CL to be
+used for the board.
+
+While developing the Trident driver, an interesting and perturbing hardware
+phenomenon was discovered.  When using the default board jumper configuration,
+dot-clocks above 57Mhz would frequently lock up the machine.  There appear to
+be jumpers on all of the Trident boards that determine whether the board will
+operate in zero-wait-state mode on the ISA bus.  Disabling the zero-wait-state
+
+
+
+
+
+
+
+
+ Information for Trident Chipset Users
+
+
+
+mode via jumpers cured the lockups, but at the expense of performance.	Whether
+or not a given system will experience this problem is likely a combination of
+(a) bus speed, (b) video memory speed, and (c) dot clock speed.  So be prepared
+for this phenomenon to occur, and have the board documentation handy.
+
+NOTE: VLBus cards are also subject to the above. By specifying the Clocks in
+the XF86Config file, these lockups are overcome. But it may be worth checking
+wait states etc. on the card and in the BIOS setup.
+
+     Generated from XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/trident.sgml,v 3.22.2.1 1997/05/21 15:02:40 dawes Exp $
+
+
+
+
+
+
+     $XConsortium: trident.sgml /main/11 1996/10/28 04:24:08 kaleb $
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Information for Trident Chipset Users
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				   CONTENTS
+
+
+
+1. Supported chipsets  ...................................................... 1
+
+2. Special considerations for 512k boards  .................................. 3
+
+3. Additional Notes  ........................................................ 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				       i
+
+
+
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/README.trident,v 3.32.2.1 1997/05/21 15:07:30 dawes Exp $

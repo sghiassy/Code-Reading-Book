@@ -1,0 +1,140 @@
+.TH ACE_Adaptive_Lock 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Adaptive_Lock \- An adaptive general locking class that defers the decision of lock type to run time. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch.h>\fR
+.PP
+Inherits \fBACE_Lock\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Adaptive_Lock\fR (void)"
+.br
+.RI "\fIYou must also override the destructor function to match with how you construct the underneath <lock_>.\fR"
+.ti -1c
+.RI "virtual int \fBremove\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBacquire\fR (void)"
+.br
+.RI "\fIBlock the thread until the lock is acquired. Returns -1 on failure.\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBrelease\fR (void)"
+.br
+.RI "\fIRelease the lock. Returns -1 on failure.\fR"
+.ti -1c
+.RI "virtual int \fBacquire_read\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBacquire_write\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBtryacquire_read\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBtryacquire_write\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBtryacquire_write_upgrade\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Adaptive_Lock\fR (void)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Lock\fR* \fBlock_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An adaptive general locking class that defers the decision of lock type to run time.
+.PP
+.PP
+ This class, as \fBACE_Lock\fR, provide a set of general locking APIs. However, it defers our decision of what kind of lock to use to the run time and delegates all locking operations to the actual lock. Users must define a constructor in their subclass to initialize <lock_>. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Adaptive_Lock::~ACE_Adaptive_Lock (void)\fC [virtual]\fR
+.PP
+You must also override the destructor function to match with how you construct the underneath <lock_>.
+.PP
+.SS ACE_Adaptive_Lock::ACE_Adaptive_Lock (void)\fC [protected]\fR
+.PP
+Create and initialize create the actual lcok used in the class. The default constructor simply set the <lock_> to 0 (null). You must overwrite this method for this class to work. 
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS virtual int ACE_Adaptive_Lock::acquire (void)\fC [virtual]\fR
+.PP
+Block the thread until the lock is acquired. Returns -1 on failure.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS virtual int ACE_Adaptive_Lock::acquire_read (void)\fC [virtual]\fR
+.PP
+Block until the thread acquires a read lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS virtual int ACE_Adaptive_Lock::acquire_write (void)\fC [virtual]\fR
+.PP
+Block until the thread acquires a write lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS void ACE_Adaptive_Lock::dump (void) const
+.PP
+.SS virtual int ACE_Adaptive_Lock::release (void)\fC [virtual]\fR
+.PP
+Release the lock. Returns -1 on failure.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS virtual int ACE_Adaptive_Lock::remove (void)\fC [virtual]\fR
+.PP
+Explicitly destroy the lock. Note that only one thread should call this method since it doesn't protect against race conditions. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS virtual int ACE_Adaptive_Lock::tryacquire (void)\fC [virtual]\fR
+.PP
+Conditionally acquire the lock (i.e., won't block). Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS virtual int ACE_Adaptive_Lock::tryacquire_read (void)\fC [virtual]\fR
+.PP
+Conditionally acquire a read lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS virtual int ACE_Adaptive_Lock::tryacquire_write (void)\fC [virtual]\fR
+.PP
+Conditionally acquire a write lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS virtual int ACE_Adaptive_Lock::tryacquire_write_upgrade (void)\fC [virtual]\fR
+.PP
+Conditionally try to upgrade a lock held for read to a write lock. If the locking mechanism doesn't support read locks then this just calls . Returns 0 on success, -1 on failure. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Lock\fR * ACE_Adaptive_Lock::lock_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+  Author: Ovidiu Predescu "ovidiu@cup.hp.com"
+
+  Date: October 9, 2001
+ -->
+
+<xsp:page
+  language="java"
+  xmlns:xsp="http://apache.org/xsp"
+  xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+  xmlns:xscript="http://apache.org/xsp/xscript/1.0"
+  xmlns:soap="http://apache.org/xsp/soap/3.0"
+  >
+  
+  <page>
+
+   <title>SOAP Stock Quote Example 2</title>
+
+   <content>
+
+   <xsp:logic>
+    String symbol = request.getParameter("symbol");
+
+    if (symbol == null || symbol.equals("")) {
+
+       <para>This page demonstrates the SOAP logicsheet for
+       Cocoon2. It accesses a SOAP service that provides stock quotes
+       and displays the result.</para>
+
+       <para>This example uses an inline XSLT stylesheet and an
+       XScript <code>transform</code> instruction to extract the stock
+       price. Compare this with the approach used in
+       <code>soap-getquote1.xsp</code>, which uses a sitemap XSLT
+       transformer to achieve the same thing.</para>
+
+       <para>Please enter the stock ticker: </para>
+       <form href="soap-getquote">
+         <input name="symbol" type="text" value="HWP"/>
+         <input value="Do it!" type="submit"/>
+       </form>
+    }
+    else {
+      <para>The stock price for <xsp:expr>symbol</xsp:expr> is 
+
+    <xscript:variable name="soap-result">
+      <soap:call url="http://services.xmethods.net:80/soap">
+        <ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes">
+          <soap:enc/>
+          <symbol xsi:type="xsd:string" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:xsd="http://www.w3.org/1999/XMLSchema"><xsp-request:get-parameter name="symbol"/></symbol>
+        </ns1:getQuote>
+      </soap:call>
+    </xscript:variable>
+
+    <xscript:variable name="stylesheet">
+      <xsl:stylesheet
+        version="1.0"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+        xmlns:n="urn:xmethods-delayed-quotes"
+        exclude-result-prefixes="soap n"
+      >
+
+        <xsl:template match="/">
+          <b><xsl:value-of select="/soap:Envelope/soap:Body/n:getQuoteResponse/Result"/></b>
+        </xsl:template>
+      </xsl:stylesheet>
+    </xscript:variable>
+
+    <xscript:transform name="soap-result" stylesheet="stylesheet"/>
+
+      </para>
+
+      <form href="soap-getquote">
+        <input value="Back" type="submit"/>
+      </form>
+    }
+  </xsp:logic>
+
+  </content>
+
+  </page>
+</xsp:page>

@@ -1,0 +1,143 @@
+.TH ACE_Accept_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Accept_Strategy \- Defines the interface for specifying a passive connection acceptance strategy for a SVC_HANDLER. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Strategies_T.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Accept_Strategy\fR (\fBACE_Reactor\fR *reactor = ACE_Reactor::instance ())"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_Accept_Strategy\fR (const ACE_PEER_ACCEPTOR_ADDR &local_addr, int restart = 0, \fBACE_Reactor\fR *reactor = ACE_Reactor::instance ())"
+.br
+.RI "\fIInitialize the <peer_acceptor_> with <local_addr>.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (const ACE_PEER_ACCEPTOR_ADDR &local_addr, int reuse_addr = 0)"
+.br
+.RI "\fIInitialize the <peer_acceptor_> with <local_addr>, indicating whether to <reuse_addr> if it's already in use.\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIReturn the underlying ACE_HANDLE of the <peer_acceptor_>.\fR"
+.ti -1c
+.RI "virtual ACE_PEER_ACCEPTOR& \fBacceptor\fR (void) const"
+.br
+.RI "\fIReturn a reference to the <peer_acceptor_>.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Accept_Strategy\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBaccept_svc_handler\fR (SVC_HANDLER *)"
+.br
+.RI "\fIThe default behavior delegates to the  method of the PEER_ACCEPTOR.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_PEER_ACCEPTOR \fBpeer_acceptor_\fR"
+.br
+.RI "\fIFactory that establishes connections passively.\fR"
+.ti -1c
+.RI "\fBACE_Reactor\fR* \fBreactor_\fR"
+.br
+.RI "\fIPointer to the reactor used by the Acceptor.\fR"
+.ti -1c
+.RI "int \fBreuse_addr_\fR"
+.br
+.RI "\fINeeded to reopen the socket if  fails.\fR"
+.ti -1c
+.RI "ACE_PEER_ACCEPTOR_ADDR \fBpeer_acceptor_addr_\fR"
+.br
+.RI "\fINeeded to reopen the socket if  fails.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER, ACE_PEER_ACCEPTOR_1>  template class ACE_Accept_Strategy
+Defines the interface for specifying a passive connection acceptance strategy for a SVC_HANDLER.
+.PP
+.PP
+ This class provides a strategy that manages passive connection acceptance of a client. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Accept_Strategy<SVC_HANDLER, >::ACE_Accept_Strategy<SVC_HANDLER, > (\fBACE_Reactor\fR * reactor = ACE_Reactor::instance ())
+.PP
+Default constructor.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Accept_Strategy<SVC_HANDLER, >::ACE_Accept_Strategy<SVC_HANDLER, > (const ACE_PEER_ACCEPTOR_ADDR & local_addr, int restart = 0, \fBACE_Reactor\fR * reactor = ACE_Reactor::instance ())
+.PP
+Initialize the <peer_acceptor_> with <local_addr>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> virtual ACE_Accept_Strategy<SVC_HANDLER, >::~ACE_Accept_Strategy<SVC_HANDLER, > (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Accept_Strategy<SVC_HANDLER, >::accept_svc_handler (SVC_HANDLER *)\fC [virtual]\fR
+.PP
+The default behavior delegates to the  method of the PEER_ACCEPTOR.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_PEER_ACCEPTOR & ACE_Accept_Strategy<SVC_HANDLER, >::acceptor (void) const\fC [virtual]\fR
+.PP
+Return a reference to the <peer_acceptor_>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> void ACE_Accept_Strategy<SVC_HANDLER, >::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_HANDLE ACE_Accept_Strategy<SVC_HANDLER, >::get_handle (void) const\fC [virtual]\fR
+.PP
+Return the underlying ACE_HANDLE of the <peer_acceptor_>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Accept_Strategy<SVC_HANDLER, >::open (const ACE_PEER_ACCEPTOR_ADDR & local_addr, int reuse_addr = 0)\fC [virtual]\fR
+.PP
+Initialize the <peer_acceptor_> with <local_addr>, indicating whether to <reuse_addr> if it's already in use.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Accept_Strategy<SVC_HANDLER, >::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_PEER_ACCEPTOR ACE_Accept_Strategy<SVC_HANDLER, >::peer_acceptor_\fC [protected]\fR
+.PP
+Factory that establishes connections passively.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_PEER_ACCEPTOR_ADDR ACE_Accept_Strategy<SVC_HANDLER, >::peer_acceptor_addr_\fC [protected]\fR
+.PP
+Needed to reopen the socket if  fails.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBACE_Reactor\fR * ACE_Accept_Strategy<SVC_HANDLER, >::reactor_\fC [protected]\fR
+.PP
+Pointer to the reactor used by the Acceptor.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Accept_Strategy<SVC_HANDLER, >::reuse_addr_\fC [protected]\fR
+.PP
+Needed to reopen the socket if  fails.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,37 @@
+XCOMM $XConsortium: Imakefile /main/13 1996/09/28 17:12:22 rws $
+#include <Server.tmpl>
+
+XCOMM
+XCOMM Only color frame buffers are currently supported
+XCOMM
+XCOMM ACC=acc_2da
+XCOMM ACC=acc_3d
+ACC=acc_none
+
+#if BuildXInputExt
+XISRC = ext_device.c
+XIOBJ = ext_device.o
+#endif
+
+SRCS = init.c ws_io.c ws_color.c cfbinit.c $(XISRC) $(ACC).c mdepthinit.c
+OFILES = init.o mdepthinit.o sdepthinit.o
+
+OBJS = ws_io.o ws_color.o cfbinit.o $(XIOBJ) $(ACC).o
+INCLUDES = -I../../../mfb -I../../../mi -I../../../include -I$(XINCLUDESRC) \
+		-I$(EXTINCSRC) -I$(FONTINCSRC)
+LINTLIBS = ../../../dix/llib-ldix.ln ../../../os/llib-los.ln \
+	   ../../mfb/llib-lmfb.ln ../../mi/llib-lmi.ln
+
+all:: $(OFILES)
+
+NormalLibraryObjectRule()
+NormalLintTarget($(SRCS))
+
+lintlib:
+
+NormalLibraryTarget(dec,$(OBJS))
+
+ObjectFromSpecialSource(sdepthinit,mdepthinit,-DSINGLEDEPTH)
+
+DependTarget()
+InstallManPage(Xdec,$(MANDIR))

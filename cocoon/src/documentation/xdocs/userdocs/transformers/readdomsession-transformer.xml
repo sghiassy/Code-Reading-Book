@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>Read DOM Session Transformer</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+			<person name="Sven Beauprez" email="Sven.Beauprez@the-ecorp.com"/>
+			<person name="Davanum Srinivas" email="dims@yahoo.com"/>
+		 </authors>
+		 <abstract>This document describes the read dom session transformer of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="Read DOM Session Transformer">
+			<p>With this transformer, a DOM-object that is stored in the session, can be inserted
+  in the SAX stream at a given position.</p>
+			<ul>
+				<li>Name : readDOMsession</li>
+				<li>Class: org.apache.cocoon.transformation.ReadDOMSessionTransformer</li>
+				<li>Cacheable: no.</li>
+			</ul>
+<p>
+Simply transforms a DOM to SAX-events, which can be used further on in the 
+pipeline. Once you stored the result of a query in the session with the 
+WriteDOMSessionTransformer, you can read it again with the 
+ReadDOMSessionTransformer:
+</p>
+
+    <source>
+     <![CDATA[
+      <map:transform type="readDOMsession">
+        <map:parameter name="dom-name" value="DBresult"/>
+        <map:parameter name="trigger-element" value="users"/>
+        <map:parameter name="position" value="after"/>
+      </map:transform>
+     ]]>
+    </source>
+
+<p>
+In this example, the SAX-events that came from the DOM tree that is stored in 
+the session with name DBresult will be added after the users element. This means 
+as soon that the transformer encounters the end-element 'users', it will start 
+to generate SAX-events from the DOM tree. There are three possible positions, 
+'before','in' and 'after':
+</p>
+<ol>
+<li>'before' means that when the transformer encounters the 'users' element, it 
+will FIRST translate the DOM tree to SAX-events and THEN it will continue to 
+forward the other SAX-events (starting with 'users').
+</li>
+<li>'in' means that the transformer will forward the startElement event for 
+'users' and that it IMMEDIATELY starts to generate SAX-events from the DOM-tree. 
+After that, it will continue to forward the child elements of users and then all 
+the other elements.
+</li>
+<li>'after' means that the transformer starts to generate SAX-events from the 
+DOM-tree just after it has forwarded the end-element 'users'.
+</li>
+</ol>
+<p>
+The ReadDOMSessionTransformer is a standalone component, you don't need to use 
+it in combination with the WriteDOMSessionTransformer.
+</p>
+		</s1>
+	</body>
+</document>

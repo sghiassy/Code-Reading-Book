@@ -1,0 +1,38 @@
+XCOMM $XConsortium: Imakefile /main/3 1996/09/28 17:34:03 rws $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/os-support/minix/Imakefile,v 3.3 1996/12/27 07:07:17 dawes Exp $
+
+
+
+#include <Server.tmpl>
+
+SRCS = mnx_init.c mnx_video.c mnx_io.c bios_devmem.c mapVT_noop.c \
+       ioperm_noop.c VTsw_noop.c std_mouse.c posix_tty.c
+
+OBJS = mnx_init.o mnx_video.o mnx_io.o bios_devmem.o mapVT_noop.o \
+       ioperm_noop.o VTsw_noop.o posix_tty.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+DEFINES = -DPC98
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+LinkSourceFile(bios_devmem.c,$(XF86SRC)/os-support/minix)
+LinkSourceFile(local.h,$(XF86SRC)/os-support/minix)
+LinkSourceFile(mnx_init.c,$(XF86SRC)/os-support/minix)
+LinkSourceFile(mnx_io.c,$(XF86SRC)/os-support/minix)
+LinkSourceFile(mnx_video.c,$(XF86SRC)/os-support/minix)
+
+ObjectFromSpecialSource(mapVT_noop,$(XF86SRC)/os-support/shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(ioperm_noop,$(XF86SRC)/os-support/shared/ioperm_noop,/**/)
+ObjectFromSpecialSource(VTsw_noop,$(XF86SRC)/os-support/shared/VTsw_noop,/**/)
+ObjectFromSpecialSource(posix_tty,$(XF86SRC)/os-support/shared/posix_tty,/**/)
+
+DependTarget()

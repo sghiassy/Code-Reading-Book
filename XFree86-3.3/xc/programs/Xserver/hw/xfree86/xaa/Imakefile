@@ -1,0 +1,69 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/xaa/Imakefile,v 3.7.2.1 1997/05/03 09:50:21 dawes Exp $
+
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+BPPSRCS = xaavga256/?*.c xaa8/?*.c xaa16/?*.c xaa24/?*.c xaa32/?*.c
+
+GENSRCS = xf86initac.c \
+	xf86cparea.c xf86frect.c xf86spans.c xf86text.c xf86window.c \
+	xf86defs.c xf86pcache.c xf86farc.c xf86fpoly.c \
+	xf86expblt.c xf86expblM.c xf86bitmap.c xf86plane.c \
+	xf86orect.c xf86line.c xf86seg.c \
+	xf86bench.c xf86line2.c xf86seg2.c \
+	xf86expblF.c xf86expbFM.c xf86tables.c xf86stip.c
+
+BPPOBJS = xaavga256/xaavga256.o xaa8/xaa8.o xaa16/xaa16.o xaa24/xaa24.o \
+	  xaa32/xaa32.o
+
+GENOBJS = xf86initac.o \
+	xf86cparea.o xf86frect.o xf86spans.o xf86text.o xf86window.o \
+	xf86defs.o xf86pcache.o xf86farc.o xf86fpoly.o \
+	xf86expblt.o xf86expblM.o xf86bitmap.o xf86plane.o \
+	xf86orect.o xf86line.o xf86seg.o \
+	xf86bench.o xf86line2.o xf86seg2.o \
+	xf86expblF.o xf86expbFM.o xf86tables.o xf86stip.o
+
+#ifdef i386Architecture
+SRCS = $(GENSRCS) xf86txtblt.s xf86txtblM.s 
+OBJS = $(GENOBJS) xf86txtblt.o xf86txtblM.o
+#else
+SRCS = $(GENSRCS)
+OBJS = $(GENOBJS)
+#endif
+
+SUBDIRS = xaavga256 xaa8 xaa16 xaa24 xaa32
+
+DONES = xaavga256/DONE xaa8/DONE xaa16/DONE xaa24/DONE xaa32/DONE
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) -I../vga256/vga \
+           -I$(SERVERSRC)/cfb -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(FONTINCSRC)
+
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)
+#endif
+
+NormalDepLibraryTarget(xaa,$(OBJS) $(SUBDIRS) $(DONES),$(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+ObjectFromSpecialSource(xf86expblM, xf86expblt, -DMSBFIRST)
+ObjectFromSpecialSource(xf86expblF, xf86expblt, -DFIXEDBASE)
+ObjectFromSpecialSource(xf86expbFM, xf86expblt, -DMSBFIRST -DFIXEDBASE)
+#ifdef i386Architecture
+ObjectFromSpecialAsmSource(xf86txtblM, xf86txtblt, -DMSBFIRST)
+#endif
+ObjectFromSpecialSource(xf86seg, xf86line, -DPOLYSEGMENT)
+ObjectFromSpecialSource(xf86seg2, xf86line2, -DPOLYSEGMENT)
+
+DependTarget()
+
+ForceSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+
+InstallLinkKitLibrary(xaa,$(LINKKITDIR)/lib)
+InstallLinkKitNonExecFile(xf86scrin.h,$(LINKKITDIR)/include)
+InstallLinkKitNonExecFile(xf86xaa.h,$(LINKKITDIR)/include)

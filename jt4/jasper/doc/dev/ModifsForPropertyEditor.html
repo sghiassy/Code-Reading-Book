@@ -1,0 +1,111 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <title>Modifications to support PropertyEditor's in JSP</title>
+</head>
+<body>
+
+<h1>PropertyEditor support</h1>
+<hr>
+<h2>Classes Modified</h2>
+<h3>Compiler</h3>
+<ul>
+<li>now uses ParserController which abstracts the selection of the
+    proper parser.
+</ul>
+<h3>TagBeginGenerator</h3>
+<ul>
+<li>pass the PropertyEditor class in the call to convertString()
+<li>convertString() method 
+<ul>
+<li>now takes into account the PropertyEditor class
+<li>bug fix: now handles short and Short
+</ul>
+</ul>
+
+<h3>TagCache</h3>
+<ul>
+<li>now caches the PropertyEditor classes associated with
+    the properties of a tag
+</ul>
+
+<h3>JspRuntimeLibrary</h3>
+<ul>
+<li>new methods: getValueFromBeanInfoPropertyEditor() and 
+                           getValueFromPropertyEditorManager
+<li>introspecthelper()
+<ul>
+<li>get the PropertyEditor class when doing bean introspection
+<li>pass the PropertyEditor class in the call to convert() and createTypedArray()
+</ul>
+<li>convert() and createTypedArray()
+<ul>
+<li>now take into consideration the PropertyEditor class
+</ul>
+</ul>
+
+<hr>
+<h2>Some Details and Issues</h2>
+<pre>
+Subject: [JSP] Conversion of property value
+   Date: Mon, 25 Sep 2000 17:08:47 -0700
+   From: Pierre Delisle <pierre.delisle@sun.com>
+     To: jsr-053-experts@eng.sun.com
+
+I'm currently working at implementing the new JSP1.2 feature for the
+support of PropertyEditors in Tomcat-4.0.
+
+The 'conversion' algorithm
+(converts the property value so that it matches the setter
+method of the bean property) has been implemented as
+follows:
+
+-----
+This 'conversion' algorithm applies for
+&lt;jsp:setProperty&gt; as well as for attribute values 
+of custom tags.
+
+1. if 'value' is an 'rtexpr'
+       no conversion applied
+
+2. else if a PropertyEditor class is defined for the property
+       conversion is performed via the combination of
+           'PropertyEditor.setAsText(value)' and 
+           'PropertyEditor.getValue()'.
+       IllegalArgumentException may be thrown.
+
+3. else if 'setterMethodParamType' is 'String'
+       No conversion performed
+
+4. else if 'setterMethodParamType' is a primitive type,
+       Conversions specified in table 4-2 of the spec are 
+       applied.
+
+     [*** please note that 'short/'Short' is missing
+      *** from table 4-2.
+      *** Also, java.lang.Character.valueOf(String)
+      *** does not exist]
+       
+5. else 
+       At runtime, try to get a PropertyEditor from the 
+       PropertyEditorManager.
+       5.1 if one exists, perform same conversion as in 2.
+       5.2 else throw an Exception
+
+-----
+One pending issue is what should happen if the
+setterMethodParamType is 'Object'.
+
+Should we change rule 3 so that it reads:
+
+3. else if 'setterMethodParamType' is 'String' or 
+           'setterMethodParamType' is Object:
+       No conversion
+
+Since 'String' is an 'Object', it can be argued (as has been the case 
+on tomcat-dev) that it should be passed 'as is' to the setter method.
+
+Should it?
+
+       -- Pierre
+</pre>

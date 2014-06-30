@@ -1,0 +1,287 @@
+$Id: BUILDING.txt,v 1.5 2001/09/17 06:18:57 ccain Exp $
+
+
+               Building The Tomcat 4.0 Servlet/JSP Container
+               =============================================
+
+This subproject contains the source code Tomcat 4.0, a server that implements
+the Servlet 2.3 and JSP 1.2 Specifications from Java Software.  In order to
+build a binary distribution version of the container from a source
+distribution, you must have a Java Development Kit (JDK) for version 1.2 (or
+later) downloaded and installed (version 1.3.1 recommended), and do the
+following:
+
+
+(0) Download and Install a Java Development Kit
+
+* Download a Java Development Kit (JDK) release (version 1.2 or later) from:
+
+    http://java.sun.com/j2se/
+
+* Install the JDK according to the instructions included with the release.
+
+* Set an environment variable JAVA_HOME to the pathname of the directory
+  into which you installed the JDK release.
+
+
+(1) Download and Install the Ant Binary Distribution
+
+NOTE: Previous versions of Tomcat 4.0 relied on Ant 1.3 for the build
+process. The 1.4 release is now required.
+
+* Download a binary distribution of Ant 1.4 from:
+
+    http://jakarta.apache.org/builds/jakarta-ant/release/v1.4/bin/
+
+  On a Windows platform, you will need:
+    jakarta-ant-1.4-bin.zip
+    jakarta-ant-1.4-optional.jar
+
+  On a Unix platform, you will need:
+    jakarta-ant-1.4-bin.tar.gz
+    jakarta-ant-1.4-optional.jar
+
+* Unpack the binary distribution into a convenient location so that the
+  Ant release resides in its own directory (conventionally named
+  "jakarta-ant-1.4").  For the purposes of the remainder of this document,
+  the symbolic name "${ant.home}" is used to refer to the full pathname of
+  the release directory.
+
+* Copy the file "jakarta-ant-1.4-optional.jar", downloaded above, into
+  the directory "${ant.home}/lib".  This makes available several Ant
+  extension commands that are commonly required when building Jakarta
+  based projects.
+
+* Modify the PATH environment variable to include directory
+  "${ant.home}/bin" in its list.  This makes the "ant" command line script
+  available, which will be used to actually perform the build.
+
+
+(2) Download and Install the JAXP/1.1 Reference Implementation
+
+* Download a binary distribution of JAXP 1.1 (Final Version) from:
+
+    http://java.sun.com/xml/download.html
+
+* Unpack the binary distribution into a convenient location so that the
+  JAXP/1.1 release resides in its own directory (conventionally named
+  "jaxp-1.1".  For the purposes of the remainder of this document, the
+  symbolic name "${jaxp.home}" is used to refer to the full pathname of
+  the release directory.
+
+* Make the "xalan.jar" file of this distribution available to Ant (so that
+  it can be used with the <style> tag) by copying it to "${ant.home}/lib".
+
+
+(3) Download and Install Subproject Source Code
+
+* Use Anonymous CVS (as described on the Jakarta web site at
+  <http://jakarta.apache.org/site/cvsindex.html>, or
+  download a source distribution from:
+
+    http://jakarta.apache.org/builds/jakarta-tomcat-4.0/nightly/src/
+
+  On a Windows platform, you will need:
+    jakarta-tomcat-4.0-src-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    jakarta-tomcat-4.0-src-YYYYMMDD.zip
+
+  (NOTE:  Alternatively, you can grab the source distribution from a
+  formal release, if you wish, by following links on the Jakarta web site).
+
+* Unpack the source distribution into a convenient location so that the
+  distribution resides in its own directory (conventionally named
+  "jakarta-tomcat-4.0").  For the purposes of the remainder of this document,
+  the symbolic name "${tomcat.source}" is used to refer to the full
+  pathname of the release directory.
+
+
+(4) Download and Install the Regular Expressions Binary Distribution
+
+NOTE:  Alternatively, you can download the sources of the
+"jakarta-regexp" subproject, and build a binary distribution yourself.
+
+* Download a binary distribution from:
+
+    http://jakarta.apache.org/builds/jakarta-regexp/release/v1.2/
+
+  On a Windows platform, you will need:
+    jakarta-regexp-1.2.zip
+
+  On a Unix platform, you will need:
+    jakarta-regexp-1.2.tar.gz
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory (conventionally named
+  "jakarta-regexp-x.y").
+
+
+(5) Download and Install the Servlet API Binary Distribution
+
+NOTE:  Alternatively, you can download the sources of the
+"jakarta-servletapi-4" subproject, and build a binary distribution yourself,
+or use the binary distribution that is available with binary distributions
+of Tomcat 4.0.
+
+* Download a binary distribution from:
+
+    http://jakarta.apache.org/builds/jakarta-servletapi-4/nightly/
+
+  On a Windows platform, you will need:
+    jakarta-servletapi-4-YYYYMMDD.zip
+
+  On a Unix platform, you will need:
+    jakarta-servletapi-4-YYYYMMDD.zip
+
+* Unpack the binary distribution into a convenient location so that the
+  distribution resides in its own directory.
+
+
+(6) Download and Install JDBC Optional Package API
+
+* Download the JDBC Optional Pacakge API package (version 2.0) from:
+
+    http://java.sun.com/products/jdbc/download.html
+
+* Unpack the package into a convenient location so that it resides
+  in its own subdirectory.
+
+
+(7) Download and Install the JMX 1.0 Reference Implementation
+
+* Download the JMX Instrumentation and Agent Reference Implementation
+  (version 1.0 or later) from
+
+    http://java.sun.com/products/JavaManagement/download.html
+
+* Unpack the reference implementation into a convenient location so that
+  it resides in its own subdirectory.
+
+
+(8) Download and Install the JNDI 1.2.1 Reference Implementation
+
+* Download the Java Naming and Directory Interface (JNDI) package,
+  (version 1.2.1 or later) from
+
+    http://java.sun.com/products/jndi/
+
+* Unpack the reference implementation into a convenient location so that
+  it resides in its own subdirectory.
+
+* You will also need the "LDAP Provider" (ldap.jar), available on the
+  same download page.  Be sure that you unpack "ldap.jar" into the "lib"
+  subdirectory of the JNDI directory, parallel to "jndi.jar".
+
+(9) Download and Install the Java Activation Framework 1.0.1
+
+* Download the Java Activation Framework package (version 1.0.1 or later) from
+
+    http://java.sun.com/products/javabeans/glasgow/jaf.html
+
+* Unpack the package into a convenient location so that it
+  resised in its own subdirectory.
+
+(10) Download and Install JavaMail 1.2
+
+* Download the JavaMail package (version 1.2 or later) from
+
+    http://java.sun.com/products/javamail/index.html
+
+* Unpack the package into a convenient location so that
+  it resides in its own subdirectory.
+
+
+(11) Download and Install the JSSE 1.0.2 Reference Implementation
+
+* Download the Java Secure Sockets Extension (JSSE) package,
+  (version 1.0.2 or later) from
+
+    http://java.sun.com/products/jsse/
+
+* Unpack the reference implementation into a convenient location so that
+  it resides in its own subdirectory.
+
+
+(12) Download and Install the Java Transaction APIs
+
+* Download the Java Transaction API (JTA) package (version 1.0.1) from:
+
+    http://java.sun.com/products/jta/
+
+* Unpack the package into a convenient location so that it resides in its
+  own subdirectory.
+
+
+(13) Download and Install the Tyrex Data Source Package
+
+NOTE:  This step is only required if you wish to build the Tyrex connection
+pool implementation for JNDI-accessed data sources.
+
+* Download the Tyrex JAR or release (version 0.9.7) from:
+
+    http://tyrex.exolab.org/download.html
+
+* Unpack the package into a convenient location so that it resides in its
+  own subdirectory.
+
+
+(14) Download and Install the JUnit Testing Package (OPTIONAL)
+
+NOTE:  This step is only required if you wish to build and execute the unit
+tests that are part of the Tomcat 4.0 source base.
+
+* Download the JUnit unit test package (version 3.7 or later) from:
+
+    http://www.junit.org/
+
+* Unpack the package into a convenient location so that it resides in its
+  own subdirectory.
+
+
+(15) Customize Build Properties For This Subproject
+
+Most Jakarta subprojects allow you to customize Ant properties (with default
+values defined in the "build.xml" file.  This is done by creating a text file
+named "build.properties" in the source distribution directory (for property
+definitions local to this subproject) and/or your user home directory (for
+property definitions shared across subprojects).  You can use the included
+"build.properties.sample" file as a starting point for this.
+
+Tomcat has many external dependencies that are satisfied by configuring
+appropriate values in your <code>build.properties</code> file.  The easiest
+way to satisfy these dependencies is to copy the "build.properties.sample"
+file (in the top-level Tomcat source directory) to "build.properties", and
+then edit it to suit your environment.  On Unix, this would be done as:
+
+  cd ${tomcat.source}
+  cp build.properties.sample build.properties
+  emacs build.properties
+
+NOTE:  Be *sure* that you do not check "build.properties" in to the CVS
+repository.  This file is local to your own development environment, and
+each developer will have their own version.
+
+
+(16) Build A Binary Distribution
+
+Open a command line shell, and issue the following commands:
+
+  cd ${tomcat.source}
+  ant -projecthelp
+
+If everything is installed correctly, you should see a list of the Ant
+"targets" that represent different commands you might wish to build.  By
+convention, the "dist" target creates a complete binary distribution.  To
+execute it, type the following commands:
+
+  cd ${tomcat.source}
+  ant dist
+
+This will create a complete binary distribution of the subproject (equivalent
+in structure to the corresponding binary distribution downloadable from the
+Jakarta web site), in the "${tomcat.source}/dist" directory.  It will have
+the contents described in the corresponding "README.txt" file.
+
+See the document RUNNING.txt for instructions on how to start up and shut down
+the servlet/JSP container.

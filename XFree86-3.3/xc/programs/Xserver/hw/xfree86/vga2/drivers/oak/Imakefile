@@ -1,0 +1,36 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:27:26 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga2/drivers/oak/Imakefile,v 3.6 1996/12/23 06:54:51 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = oak_driver.c oak_bank.s
+
+OBJS = oak_driver.o oak_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I../../../vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+DEFINES=-DMONOVGA
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(oak_drv,$(OBJS))
+
+LinkSourceFile(oak_driver.c,$(VGADRIVERSRC)/oak)
+LinkSourceFile(oak_bank.s,$(VGADRIVERSRC)/oak)
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga2/oak)
+
+DependTarget()

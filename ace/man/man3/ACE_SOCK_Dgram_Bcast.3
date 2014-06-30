@@ -1,0 +1,157 @@
+.TH ACE_SOCK_Dgram_Bcast 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SOCK_Dgram_Bcast \- Defines the member functions for the \fBACE_SOCK\fR datagram abstraction. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SOCK_Dgram_Bcast.h>\fR
+.PP
+Inherits \fBACE_SOCK_Dgram\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SOCK_Dgram_Bcast\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_SOCK_Dgram_Bcast\fR (const \fBACE_Addr\fR &local, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0, const \fBACE_TCHAR\fR *host_name = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_SOCK_Dgram_Bcast\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_Addr\fR &local, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0, const \fBACE_TCHAR\fR *host_name = 0)"
+.br
+.RI "\fIInitiate a connectionless datagram broadcast endpoint.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose up and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, u_short portnum, int flags = 0) const"
+.br
+.RI "\fIBroadcast the datagram to every interface. Returns the average number of bytes sent.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const \fBiovec\fR iov[], size_t n, u_short portnum, int flags = 0) const"
+.br
+.RI "\fIBroadcast the <\fBiovec\fR> datagrams to every interface. Returns the average number of bytes sent.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, const \fBACE_Addr\fR &addr, int flags = 0) const"
+.br
+.RI "\fIBroadcast an N byte datagram to ADDR (note that addr must be preassigned to the broadcast address of the subnet...).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const \fBiovec\fR iov[], size_t n, const \fBACE_Addr\fR &addr, int flags = 0) const"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBmk_broadcast\fR (const \fBACE_TCHAR\fR *host_name)"
+.br
+.RI "\fIMake broadcast available for Datagram socket.\fR"
+.ti -1c
+.RI "int \fBget_remote_addr\fR (\fBACE_Addr\fR &) const"
+.br
+.RI "\fIDo not allow this function to percolate up to this interface...\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Bcast_Node\fR* \fBif_list_\fR"
+.br
+.RI "\fIPoints to the head of the list of broadcast interfaces.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the member functions for the \fBACE_SOCK\fR datagram abstraction.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Dgram_Bcast::ACE_SOCK_Dgram_Bcast (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_SOCK_Dgram_Bcast::ACE_SOCK_Dgram_Bcast (const \fBACE_Addr\fR & local, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0, const \fBACE_TCHAR\fR * host_name = 0)
+.PP
+.SS ACE_SOCK_Dgram_Bcast::~ACE_SOCK_Dgram_Bcast (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SOCK_Dgram_Bcast::close (void)
+.PP
+Close up and release dynamically allocated resources.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.SS void ACE_SOCK_Dgram_Bcast::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SOCK_Dgram\fR.
+.SS int ACE_SOCK_Dgram_Bcast::get_remote_addr (\fBACE_Addr\fR &) const\fC [private]\fR
+.PP
+Do not allow this function to percolate up to this interface...
+.PP
+Reimplemented from \fBACE_SOCK_Dgram\fR.
+.SS int ACE_SOCK_Dgram_Bcast::mk_broadcast (const \fBACE_TCHAR\fR * host_name)\fC [private]\fR
+.PP
+Make broadcast available for Datagram socket.
+.PP
+.SS int ACE_SOCK_Dgram_Bcast::open (const \fBACE_Addr\fR & local, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0, const \fBACE_TCHAR\fR * host_name = 0)
+.PP
+Initiate a connectionless datagram broadcast endpoint.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram_Bcast::send (const \fBiovec\fR iov[], size_t n, const \fBACE_Addr\fR & addr, int flags = 0) const
+.PP
+Broadcast an <\fBiovec\fR> of size <n> to  as a datagram (note that addr must be preassigned to the broadcast address of the subnet...) 
+.PP
+Reimplemented from \fBACE_SOCK_Dgram\fR.
+.SS \fBssize_t\fR ACE_SOCK_Dgram_Bcast::send (const void * buf, size_t n, const \fBACE_Addr\fR & addr, int flags = 0) const
+.PP
+Broadcast an N byte datagram to ADDR (note that addr must be preassigned to the broadcast address of the subnet...).
+.PP
+Reimplemented from \fBACE_SOCK_Dgram\fR.
+.SS \fBssize_t\fR ACE_SOCK_Dgram_Bcast::send (const \fBiovec\fR iov[], size_t n, u_short portnum, int flags = 0) const
+.PP
+Broadcast the <\fBiovec\fR> datagrams to every interface. Returns the average number of bytes sent.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram_Bcast::send (const void * buf, size_t n, u_short portnum, int flags = 0) const
+.PP
+Broadcast the datagram to every interface. Returns the average number of bytes sent.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Dgram_Bcast::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SOCK_Dgram\fR.
+.SS \fBACE_Bcast_Node\fR * ACE_SOCK_Dgram_Bcast::if_list_\fC [private]\fR
+.PP
+Points to the head of the list of broadcast interfaces.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

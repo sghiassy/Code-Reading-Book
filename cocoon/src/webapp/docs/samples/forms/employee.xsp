@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:esql="http://apache.org/cocoon/SQL/v2"
+>
+  <page>
+    <xsp:logic>
+      String empID = request.getParameter("employee");
+      String depID = request.getParameter("department");
+      String name = request.getParameter("name");
+      String message = (String) request.getAttribute("message");
+    </xsp:logic>
+    <title>Manage Employees</title>
+    <para style="backgroud-color:#ff0000"><xsp:expr>(message == null?"":message)</xsp:expr></para>
+    <content>
+      <form name="EmployeeSelection">
+          <select size="1" name="employee"
+              onChange="top.location.href=window.location.pathname + '?employee=' + document.forms['EmployeeSelection'].employee.options[document.forms['EmployeeSelection'].employee.options.selectedIndex].value">
+            <option value="-1">-- New employee --</option>
+            <esql:connection>
+              <esql:pool>personnel</esql:pool>
+              <esql:execute-query>
+                <esql:query>select id, department_id, name from employee order by name</esql:query>
+                <esql:results>
+                  <esql:row-results>
+                      <xsp:logic>
+                        if (<esql:get-string column="id"/>.equals(empID)) {
+                            depID = <esql:get-string column="department_id"/>;
+			    name = <esql:get-string column="name"/>;
+			    xspAttr.addAttribute("", "selected", "selected", "CDATA", "");
+                        }
+                      </xsp:logic>
+                    <option>
+                      <xsp:attribute name="value"><esql:get-int column="id"/></xsp:attribute>
+                      <esql:get-string column="name"/>
+                    </option>
+                  </esql:row-results>
+                </esql:results>
+              </esql:execute-query>
+            </esql:connection>
+          </select>
+      </form>
+      <form action="" method="POST" name="EmployeeEntry">
+        <script>document.forms["EmployeeEntry"].action = window.location.pathname</script>
+        <input type="hidden" name="employee">
+	  <xsp:attribute name="value"><xsp:expr>((empID != null) ? empID : "")</xsp:expr></xsp:attribute>
+	</input>
+        <para>Employee Name:
+	  <input name="name" type="text">
+	   <xsp:attribute name="value"><xsp:expr>((name != null) ? name : "")</xsp:expr></xsp:attribute>
+	  </input>
+	</para>
+        <para>Department:
+          <select name="department">
+            <option value="-1">-- Select department --</option>
+            <esql:connection>
+              <esql:pool>personnel</esql:pool>
+              <esql:execute-query>
+                <esql:query>select id, name from department order by name</esql:query>
+                <esql:results>
+                  <esql:row-results>
+                      <xsp:logic>
+                        if (<esql:get-string column="id"/>.equals(depID)) {
+			    xspAttr.addAttribute("", "selected", "selected", "CDATA", "");
+                        }
+                      </xsp:logic>
+                    <option>
+                      <xsp:attribute name="value"><esql:get-int column="id"/></xsp:attribute>
+                      <esql:get-string column="name"/>
+                    </option>
+                  </esql:row-results>
+                </esql:results>
+              </esql:execute-query>
+            </esql:connection>
+          </select>
+        </para>
+        <xsp:logic>
+          <![CDATA[
+          if (empID != null && !empID.equals("-1")) {
+          ]]>
+            <input type="submit" name="cocoon-action" value="Update"/>
+            <input type="submit" name="cocoon-action" value="Delete"/>
+          } else {
+            <input type="submit" name="cocoon-action" value="Add"/>
+          }
+        </xsp:logic>
+      </form>
+    </content>
+  </page>
+</xsp:page>

@@ -1,0 +1,194 @@
+.TH ACE_Handler 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Handler \- This base class defines the interface for receiving the results of asynchronous operations. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_IO.h>\fR
+.PP
+Inherited by \fBACE_Asynch_Acceptor\fR, and \fBACE_Service_Handler\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Handler\fR (void)"
+.br
+.RI "\fIA do nothing constructor.\fR"
+.ti -1c
+.RI "\fBACE_Handler\fR (\fBACE_Proactor\fR *p)"
+.br
+.RI "\fIA do nothing constructor which allows proactor to be set to 
+.PP
+.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Handler\fR (void)"
+.br
+.RI "\fIVirtual destruction.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_read_stream\fR (const \fBACE_Asynch_Read_Stream::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous read completes on a stream.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_write_dgram\fR (const \fBACE_Asynch_Write_Dgram::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous write completes on a UDP socket.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_read_dgram\fR (const \fBACE_Asynch_Read_Dgram::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous read completes on a UDP socket.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_write_stream\fR (const \fBACE_Asynch_Write_Stream::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous write completes on a stream.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_read_file\fR (const \fBACE_Asynch_Read_File::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous read completes on a file.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_write_file\fR (const \fBACE_Asynch_Write_File::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous write completes on a file.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_accept\fR (const \fBACE_Asynch_Accept::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous accept completes.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_transmit_file\fR (const \fBACE_Asynch_Transmit_File::Result\fR &result)"
+.br
+.RI "\fIThis method will be called when an asynchronous transmit file completes.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_time_out\fR (const \fBACE_Time_Value\fR &tv, const void *act = 0)"
+.br
+.RI "\fICalled when timer expires. <tv> was the requested time value and  is the ACT passed when scheduling the timer.\fR"
+.ti -1c
+.RI "virtual void \fBhandle_wakeup\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor\fR (void)"
+.br
+.RI "\fIGet the proactor associated with this handler.\fR"
+.ti -1c
+.RI "void \fBproactor\fR (\fBACE_Proactor\fR *p)"
+.br
+.RI "\fISet the proactor.\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBhandle\fR (void) const"
+.br
+.ti -1c
+.RI "virtual void \fBhandle\fR (ACE_HANDLE)"
+.br
+.RI "\fISet the ACE_HANDLE value for this Handler.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor_\fR"
+.br
+.RI "\fIThe proactor associated with this handler.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle_\fR"
+.br
+.RI "\fIThe ACE_HANDLE in use with this handler.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This base class defines the interface for receiving the results of asynchronous operations.
+.PP
+.PP
+ Subclasses of this class will fill in appropriate methods. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Handler::ACE_Handler (void)
+.PP
+A do nothing constructor.
+.PP
+.SS ACE_Handler::ACE_Handler (\fBACE_Proactor\fR * p)
+.PP
+A do nothing constructor which allows proactor to be set to 
+.PP
+.
+.PP
+.SS ACE_Handler::~ACE_Handler (void)\fC [virtual]\fR
+.PP
+Virtual destruction.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Handler::handle (ACE_HANDLE h)\fC [virtual]\fR
+.PP
+Set the ACE_HANDLE value for this Handler.
+.PP
+Reimplemented in \fBACE_Asynch_Acceptor\fR.
+.SS ACE_HANDLE ACE_Handler::handle (void) const\fC [virtual]\fR
+.PP
+Get the I/O handle used by this <handler>. This method will be called by the ACE_Asynch_* classes when an ACE_INVALID_HANDLE is passed to <open>. 
+.PP
+Reimplemented in \fBACE_Asynch_Acceptor\fR.
+.SS void ACE_Handler::handle_accept (const \fBACE_Asynch_Accept::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous accept completes.
+.PP
+Reimplemented in \fBACE_Asynch_Acceptor\fR.
+.SS void ACE_Handler::handle_read_dgram (const \fBACE_Asynch_Read_Dgram::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous read completes on a UDP socket.
+.PP
+.SS void ACE_Handler::handle_read_file (const \fBACE_Asynch_Read_File::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous read completes on a file.
+.PP
+.SS void ACE_Handler::handle_read_stream (const \fBACE_Asynch_Read_Stream::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous read completes on a stream.
+.PP
+.SS void ACE_Handler::handle_time_out (const \fBACE_Time_Value\fR & tv, const void * act = 0)\fC [virtual]\fR
+.PP
+Called when timer expires. <tv> was the requested time value and  is the ACT passed when scheduling the timer.
+.PP
+.SS void ACE_Handler::handle_transmit_file (const \fBACE_Asynch_Transmit_File::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous transmit file completes.
+.PP
+.SS void ACE_Handler::handle_wakeup (void)\fC [virtual]\fR
+.PP
+This is method works with the <run_event_loop> of the \fBACE_Proactor\fR. A special <Wake_Up_Completion> is used to wake up all the threads that are blocking for completions. 
+.SS void ACE_Handler::handle_write_dgram (const \fBACE_Asynch_Write_Dgram::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous write completes on a UDP socket.
+.PP
+.SS void ACE_Handler::handle_write_file (const \fBACE_Asynch_Write_File::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous write completes on a file.
+.PP
+.SS void ACE_Handler::handle_write_stream (const \fBACE_Asynch_Write_Stream::Result\fR & result)\fC [virtual]\fR
+.PP
+This method will be called when an asynchronous write completes on a stream.
+.PP
+.SS void ACE_Handler::proactor (\fBACE_Proactor\fR * p)
+.PP
+Set the proactor.
+.PP
+.SS \fBACE_Proactor\fR * ACE_Handler::proactor (void)
+.PP
+Get the proactor associated with this handler.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_HANDLE ACE_Handler::handle_\fC [protected]\fR
+.PP
+The ACE_HANDLE in use with this handler.
+.PP
+.SS \fBACE_Proactor\fR * ACE_Handler::proactor_\fC [protected]\fR
+.PP
+The proactor associated with this handler.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

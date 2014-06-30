@@ -1,0 +1,1755 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>XSP Internals</title>
+  <authors>
+   <person name="Ricardo Rocha" email="ricardo@apache.org"/>
+  </authors>
+ </header>
+
+ <body>
+   <s1 title="Index">
+     <p>
+       This document presents Apache Cocoon's dynamic markup language
+       framework and its use in implementing XSP:
+     </p>
+
+     <ul>
+       <li>
+         <link href="#markup-to-code">
+           Markup-to-code Transformation
+         </link>
+       </li>
+       <li>
+         <link href="#cocoon-generators">
+           XSP and Cocoon Generators
+         </link>
+       </li>
+       <li>
+         <link href="#programming-language">
+           The Programming Language Processor
+         </link>
+       </li>
+       <li>
+         <link href="#compiled-languages">
+           Compiled Languages
+         </link>
+       </li>
+       <li>
+         <link href="#interpreted-languages">
+           Interpreted Languages
+         </link>
+       </li>
+       <li>
+         <link href="#markup-language">
+           The Markup Language Processor
+         </link>
+       </li>
+       <li>
+         <link href="#xsp-language">
+           The XSP Markup Language
+         </link>
+       </li>
+       <li>
+         <link href="#dom-xsp">
+           The DOM-XSP Markup Language
+         </link>
+       </li>
+       <li>
+        <link href="#program-generator">
+          The Program Generator
+         </link>
+       </li>
+       <li>
+         <link href="#named-components">
+           Named Components
+         </link>
+       </li>
+       <li>
+         <link href="#sitemap-configuration">
+           XSP Sitemap Configuration
+         </link>
+       </li>
+     </ul>
+  </s1>
+
+ <anchor id="markup-to-code"/>
+ <s1 title="Markup-to-code Transformation">
+  <p>
+    XSP is based on a general-purpose markup-to-code transformation engine
+    built around three key abstractions:
+  </p>
+
+  <ul>
+   <li><strong>Dynamic Markup Language</strong>.
+       An namespace-qualified XML vocabulary providing
+       <em>code embedding</em>
+       directives.
+
+       An associated
+       <em>dynamic markup language processor</em>
+       transforms static markup interspersed with code embedding directives
+       into an equivalent
+       <em>source program string</em>
+       written in a
+       <em>target programming language</em>.
+
+       Upon execution, the generated program will rebuild the original XML
+       document as augmented by dynamic content emitted by the embedded code.
+   </li>
+   <li><strong>Programming Language</strong>.
+       A procedural language in which the dynamic markup processor generates
+       source code from an input XML document. Its associated
+       <em>programming language processor</em>
+       is responsible for compiling, loading and executing the generated code
+       within the boundaries of its calling environment.
+   </li>
+   <li><strong>Program Generator</strong>.
+       A component that integrates markup and programming language processors
+       to build and execute markup-generating programs derived from XML
+       documents. Beyond this "glue" role, this component is responsible for
+       persistently storing generated programs as well as automatically
+       rebuilding them should their source XML documents change on disk after
+       program generation.
+   </li>
+  </ul>
+
+  <note>
+    Despite its particular usage for XSP,
+    <link href="../../apidocs/org/apache/cocoon/components/language/generator/ProgramGenerator.html">
+      <code>ProgramGenerator</code>
+    </link>
+    is not restricted to run in a server pages environment.
+  </note>
+ </s1>
+
+ <anchor id="cocoon-generators"/>
+ <s1 title="XSP and Cocoon Generators">
+  <p>
+    As a rule, XSP pages are translated into Cocoon
+    <link href="../../apidocs/org/apache/cocoon/generation/Generator.html">
+      <code>Generator</code>'s.
+    </link>
+  </p>
+
+  <s2 title="Server Pages Generator Proxy">
+    <p>
+      <code>Generator</code>'s created by XSP are invoked exclusively through
+      <link href="../../apidocs/org/apache/cocoon/generation/ServerPagesGenerator.html">
+        <code>ServerPagesGenerator</code>,
+      </link>
+      a proxy that uses Cocoon's
+      <link href="#program-generator"><code>ProgramGenerator</code></link>
+      component to load pages and subsequently delegates actual SAX event
+      generation to them.
+    </p>
+  
+    <note>
+      The terms <code>Generator</code> and <code>ProgramGenerator</code> are
+      somewhat confusing. Here, <code>Generator</code> refers to a Cocoon
+      <code>org.apache.cocoon.generation.Generator</code> instance responsible
+      for the initial feeding of Cocoon's SAX pipeline.
+      <code>ProgramGenerator</code>, on the other hand, refers to a Cocoon
+      component responsible for building and executing programs derived from XML
+      documents containing dynamic markup:
+      <link href="../../apidocs/org/apache/cocoon/components/language/generation/ProgramGenerator.html">
+        <code>org.apache.cocoon.components.language.generator.ProgramGenerator</code>
+      </link>
+    </note>
+  
+    <p>
+      <code>ServerPagesGenerator</code>
+      attempts to cope with a not unlikely
+      possibility: <em>premature</em> termination of proxied generator
+      execution.
+      "Premature" here means that the invoked generator may return after
+      starting one or more SAX events but without properly ending them.
+    </p>
+  
+    <p>
+      While this not an expected scenario in "manual" SAX programming, server
+      pages may well need to terminate in the middle of document production:
+    </p>
+
+<source><![CDATA[
+  <page>
+    <title>For Your Eyes Only</title>
+
+    <xsp:logic>
+      if (!request.getParameter("pet").equals("Cheetah")) {
+        <p>
+          Hey, you're not Tarzan!
+        </p>
+
+        /*** Unclosed SAX events here! ***/
+        return;
+      }
+    </xsp:logic>
+    <!-- Multi-racial Jane affair description follows -->
+    . . .
+  </page>
+]]></source>
+ 
+    <p>
+      The server pages generator proxy is defined in the sitemap as follows:
+    </p>
+
+<source><![CDATA[
+. . .
+<map:generator
+  name="serverpages"
+  src="org.apache.cocoon.generation.ServerPagesGenerator"/>
+. . .
+<map:pipelines>
+  <map:pipeline>
+    . . .
+    <map:match pattern="/samples/*.xsp">
+      <map:generate type="serverpages" src="../samples/documents/{1}.xsp">
+        <!--
+          <parameter name="markup-language" value="xsp"/>
+          <parameter name="programming-language" value="java"/>
+        -->
+      </map:generate>
+      <map:transform type="xslt" src="../samples/stalemates/simple-page.xsl"/>
+      <map:serialize type="html" mime-type="text/html"/>
+    </map:match>
+    . . .
+  </map:pipeline>
+</map:pipelines>
+]]></source>
+
+    <p>
+      Note that parameters <code>markup-language</code> and
+      <code>programming-language</code> default to
+      <em>xsp</em> and <em>java</em> respectively.
+    </p>
+
+    <p>
+      The complete XSP sitemap configuration is explained
+      <link href="#sitemap-configuration">below</link>.
+    </p>
+  </s2>
+
+  <s2 title="XSP Generators and Compiled Languages">
+   <p>
+     For the Java language (and other compiled languages like
+     <link href="http://www.mozilla.org/rhino/"><em>Rhino</em></link>
+     Javascript),
+     XSP pages are translated into classes extending
+     <link href="../../apidocs/org/apache/cocoon/generation/AbstractServerPage.html">
+       <code>AbstractServerPage</code>
+     </link>.
+     This class, in turn, extends
+     <link href="../../apidocs/org/apache/cocoon/generation/ComposerGenerator.html">
+       <code>ComposerGenerator</code>
+     </link>,
+     which gives it access to commonly used components such as
+     <em>parser</em> or <em>cocoon</em> itself (typically used as
+     <code>EntityResolver</code> for request URI's).
+   </p>
+ 
+   <p>
+     <code>AbstractServerPage</code> implements
+     <link href="../../apidocs/org/apache/arch/Modifiable.html">
+       <code>Modifiable</code>.
+     </link>
+     This
+     is tested by <code>ProgramGenerator</code> to assert whether the page has
+     been invalidated as a result of files it depends on having changed on disk.
+     These files are typically
+     <link href="#logicsheet"><em>logicsheets</em></link>
+     and template files included by means of XInclude.
+   </p>
+ 
+   <note>
+     As of this writing, XInclude support is still unimplemented but
+     will be based on
+     <link href="mailto:balld@webslingerZ.com">Donald Ball</link>'s
+     (possibly extended)
+     <link href="../../apidocs/org/apache/cocoon/transformation/XIncludeTransformer.html">
+       <code>XIncludeTransformer</code>.
+     </link>
+   </note>
+ 
+   <p>
+     <code>AbstractServerPage</code> implements <code>Modifiable</code>
+     by means of two <em>static</em> variables:
+     <code>dateCreated</code> and
+     <code>dependencies</code> (a, possibly empty, array of
+     <code>File</code>'s pointing to logicsheets and other files included
+     during the code generation stage).
+   </p>
+ 
+   <p>
+     <code>AbstractServerPage</code> also provides a boolean
+     <code>hasContentChanged()</code> method that is tested by
+     <code>ServerPagesGenerator</code> to assert whether dynamic content should
+     not be regenerated for a given request. The default implementation
+     unconditionally returns <code>true</code>, but can be overridden by XSP
+     pages based on their interpretation of the Cocoon <code>request</code>
+     object.  This is an <em>experimental</em> feature that will become
+     meaningful only when a SAX-event caching mechanism is added to Cocoon.
+   </p>
+ 
+   <p>
+     Finally, <code>AbstractServerPage</code> also provides a number of utility
+     methods used to shorten the generation of SAX events not requiring a
+     namespace.
+   </p>
+  </s2>
+ </s1>
+
+
+ <anchor id="programming-language"/>
+ <s1 title="The Programming Language Processor">
+   <p>
+     A Cocoon's
+     <link href="../../apidocs/org/apache/cocoon/components/language/programming/ProgrammingLanguage.html">
+       <code>ProgrammingLanguage</code>
+     </link>
+     processor exposes the
+     following methods:
+   </p>
+
+   <ul>
+     <li><code>load</code>.
+         Load a program from a file in a given directory,
+         compiling it, if necessary, using a given encoding.
+     </li>
+     <li><code>instantiate</code>
+         Create a new instance of a previously loaded program
+     </li>
+     <li><code>unload</code>
+         Discard a previously loaded program performing any
+         necessary cleanup
+     </li>
+     <li><code>getSourceExtension</code>
+         Return the canonical source file extension used by
+         this programming language
+     </li>
+     <li><code>getCodeFormatter</code>
+         Return an (optional) instance of
+          <link href="../../apidocs/org/apache/cocoon/components/language/programming/CodeFormatter.html">
+           <code>CodeFormatter</code>
+         </link>
+         used to beautify source code written in this programming language
+     </li>
+     <li><code>quoteString</code>
+         Escape a string constant according to the programming language rules
+     </li>
+   </ul>
+
+   <p>
+     A default implementation (<link href="../../apidocs/org/apache/cocoon/components/language/programming/AbstractProgrammingLanguage.html">
+       <code>AbstractProgrammingLanguage</code>
+     </link>) is
+     provided that extends
+     <link href="../../apidocs/org/apache/arch/named/AbstractNamedComponent.html">
+       <code>AbstractNamedComponent</code>
+     </link>
+     and retrieves language-related sitemap parameters.
+   </p>
+
+   <s2 title="Filenames and Encoding">
+     <p>
+       <code>load</code> and <code>unload</code> are passed a file/directory
+       pair used to locate the program.
+     </p>
+  
+     <p>
+       The <code>baseDirectory</code> should be an absolute pathname
+       pointing to the top-level directory (also known as <em>repository</em>)
+       containing the program file.
+     </p>
+  
+     <p>
+       The <code>filename</code> is a path, <em>relative to the
+       <code>baseDirectory</code></em>, pointing to the program file.
+     </p>
+  
+     <p>
+       Source program filenames are built by concatenating the repository's
+       <code>baseDirectory</code> name, the given <code>filename</code>,
+       the dot extension separator and the language-specific source or
+       object <em>extensions</em>. The cross-platform
+       <code>File.separator</code> is used to ensure portability.
+     </p>
+  
+     <note>
+       The <code>filename</code> must <strong>not</strong> contain any
+       source or object extension. It may, though, contain subdirectories
+       depending on its position within the repository tree. Also,
+       programming languages <strong>must</strong> define a source extension
+       even when their actual compilers/interpreters do not enforce this. This
+       is also true of <em>object</em> extensions for compiled languages.
+       Furthermore, the dot character is <em>always</em> used as the
+       extension separator.
+     </note>
+  
+     <p>
+       Finally, the (optional) <code>encoding</code> argument specifies the
+       how the source program file contents are encoded. This argument can be
+       <code>null</code> to specify the platform's default encoding.
+     </p>
+   </s2>
+
+
+   <anchor id="program-load"/>
+   <s2 title="Loading Programs">
+     <p>
+       Currently, programs returned by the <code>load</code> operation are
+       "plain" Java <code>Object</code>'s and are not required to implement
+       any interface or to extend any particular class.
+     </p>
+
+     <note>
+       This may change in the future so that the loaded program may be
+       required to provide dependency information (for automatic reloading)
+       as well as source code information (for debugging purposes).
+     </note>
+
+     <p>
+       Compiled programs attempt to locate the <em>object program</em> first.
+       If found, it's loaded in a language-specific way and then returned to
+       the calling environment.
+       Failing that, the source file is located and the language-specific
+       <link href="#compiler">compiler</link> is invoked prior to actual
+       program loading.
+     </p>
+
+     <p>
+       Of course, it is an error for the source program file not to exist as
+       a readable, regular operating system file.
+     </p>
+   </s2>
+
+   <anchor id="program-unload"/>
+   <s2 title="Unloading Programs">
+     <p>
+       When a previously loaded program is no longer needed (or becomes
+       "outdated" as explained below) the language processor may need to
+       perform cleanup actions, such as releasing memory or (in the case
+       of Java-like compiled languages)
+       <link href="#class-loader-reinstantiation">
+       reinstantiating the class loader</link>.
+     </p>
+
+     <p>
+       Loaded programs may become outdated as a consequence of events external
+       to the programming language processor. In a server pages environment,
+       this is the result of the source XML document (or any of the files
+       it depends on) having changed on disk.
+     </p>
+
+     <p>
+       The base class
+       <code>AbstractProgrammingLanguage</code>
+       implements
+       this method <em>as <code>final</code></em> to delete the unloaded
+       <em>source</em> program file and delegate actual unloading to
+       method <code>doUnload</code>.
+     </p>
+
+     <p>
+       Method <code>doUnload</code> is <em>not</em> defined as
+       <code>abstract</code> in order to relieve interpreted subclasses
+       from having to implement an empty method when no cleanup is
+       required.
+     </p>
+
+     <note>
+       Currently, only the <code>program</code> object is being passed
+       to <code>unload</code>. It may be possible for some interpreted
+       languages to also require knowing what file the program was originally
+       loaded from. In this case, instantiation should take place through
+       the program object itself, rather than through the language processor
+       (see <em>Program Instantiation</em> below)
+     </note>
+   </s2>
+
+   <anchor id="program-instantiation"/>
+   <s2 title="Instantiating Programs">
+     <p>
+       The <code>program</code> object returned by <code>load</code> must
+       act as an factory capable of creating <em>program instance</em>
+       objects on demand.
+     </p>
+
+     <p>
+       Currently, instantiation is performed by the language processor
+       given a previously loaded <code>program</code>.
+     </p>
+
+     <p>
+       Compiled programs use a language-specified
+       <link href="#class-loader">class loader</link> to create
+       a new program instance.
+     </p>
+
+     <note>
+      For compiled languages, it is possible to guarantee that a
+      generated program implements a given interface or extends a
+      given class. For interpreted languages, though, it may be
+      necessary to pass an additional <code>prototype</code> object
+      to <code>load</code> as to ensure that created instances conform
+      to a given Java type expected behavior.
+     </note>
+   </s2>
+
+   <anchor id="source-extension"/>
+   <s2 title="Source Extensions">
+     <p>
+       All languages are required to return a <em>source extension</em>.
+       This extension is used to locate source files for subsequent
+       interpretation or compilation.
+     </p>
+   </s2>
+
+   <anchor id="code-formatting"/>
+   <s2 title="Code Formatting">
+     <p>
+       Programming languages may provide a
+       <link href="../../apidocs/org/apache/cocoon/components/language/programming/CodeFormatter.html">
+         <code>CodeFormatter</code>
+       </link>
+       instance used by code generators to beautify source code.
+     </p>
+
+     <p>
+       Interface
+       <code>CodeFormatter</code>
+       exposes a single method:
+       <code>formatCode</code>. <code>formatCode</code> takes as
+       arguments a <code>String</code> containing the source code to
+       be beautified and an <code>encoding</code> to be preserved
+       during string conversions.
+     </p>
+
+     <p>
+       Code formatters can be associated with a programming language
+       by specifying a <code>code-formatter</code> parameter in its
+       sitemap configuration:
+     </p>
+
+<source><![CDATA[
+<parameter name="code-formatter"
+  value="org.apache.cocoon.components.language.programming.java.JstyleFormatter"/>
+]]></source>
+
+     <note>
+       Currently,
+       <link href="http://www.bigfoot.com/~davidsont/jstyle">Jstyle</link>
+       is being used for Java source formatting. This open source project
+       appears to be stagnated and lacks advanced formatting options
+       present in other (unfortunately, not open-sourced) products like
+       <link href="http://home.wtal.de/software-solutions/jindent/">
+         Jindent
+       </link>.
+     </note>
+   </s2>
+
+   <anchor id="string-quoting"/>
+   <s2 title="String Quoting">
+     <p>
+       Method <code>quoteString</code> applies the programming language string
+       constant escaping rules to its input argument.
+     </p>
+
+     <p>
+       This method exists to assist markup language code generators in
+       escaping <code>Text</code> XML nodes.
+     </p>
+   </s2>
+ </s1>
+
+ <anchor id="compiled-languages"/>
+ <s1 title="Compiled Languages">
+   <p>
+     Compiled languages extend the <code>ProgrammingLanguage</code>
+     abstraction by introducing the notions of <em>compilation</em>
+     and <em>object extension</em>.
+   </p>
+
+   <p>
+     A base implementation
+    <link href="../../apidocs/org/apache/cocoon/components/language/programming/CompiledProgrammingLanguage.html">
+       (<code>CompiledProgrammingLanguage</code>)
+     </link>
+     is provided that adds the following protected variables and
+     abstract/overridable methods:
+   </p>
+
+   <ul>
+     <li>Variable <code>compilerClass</code>. Used to create instances
+         of the language's
+         <link href="#compiler">compiler</link>.
+     </li>
+     <li>Variable <code>deleteSources</code>. Used to state whether
+         intermediate source files should be deleted after successful
+         compilation
+     </li>
+     <li>Method <code>getObjectExtension</code>. Used to build object
+         filenames
+     </li>
+     <li>Method <code>loadProgram</code>. Used to perform actual program
+         load after source and (possibly) object files have been located
+     </li>
+     <li>Method <code>doUnload</code>. Used to perform cleanup after
+         program unloading
+     </li>
+   </ul>
+
+   <note>
+     Object files are not required to be <em>Java class files</em>.
+     It's up the the compiled programming language processor to handle
+     object files.
+   </note>
+
+   <p>
+     Compiled programming languages must specify their preferred compiler
+     as a sitemap parameter:
+   </p>
+
+<source><![CDATA[
+<component-instance name="java"
+  class="org.apache.cocoon.components.language.programming.java.JavaLanguage">
+  . . .
+  <parameter name="compiler"
+    value="org.apache.cocoon.components.language.programming.java.Jikes"/>
+  . . .
+</component-instance>
+]]></source>
+
+   <anchor id="object-extension"/>
+   <s2 title="Object Extensions">
+     <p>All compiled languages are required to return a <em>source extension</em>.
+     This extension is used to locate object files for subsequent loading.</p>
+   </s2>
+
+   <anchor id="object-load"/>
+   <s2 title="Object Program Loading">
+     <p>
+       Concrete compiled programming languages must implement the abstract
+       method <code>loadProgram</code> to actually load an <em>object</em>
+       program resulting from compilation.
+     </p>
+   </s2>
+
+   <anchor id="compilation"/>
+   <s2 title="Program Compilation">
+     <p>
+       Compilation is delegated to a sitemap-specified
+       <code>LanguageCompiler</code> instance, as explained below.
+     </p>
+   </s2>
+
+   <anchor id="compiler"/>
+   <s2 title="Compilers">
+     <p>
+       Interface
+      <link href="../../apidocs/org/apache/cocoon/components/language/programming/LanguageCompiler.html">
+         <code>LanguageCompiler</code>
+       </link>
+       defines the
+       initialization and behavior for all compilers.
+     </p>
+
+     <p>
+       Methods exposed by this interface are:
+     </p>
+
+     <ul>
+       <li><code>setFile</code>. Used to specify the source file to
+           be compiled. This should be an absolute filename
+       </li>
+       <li><code>setSource</code>. Used to specify the directory where
+           dependent source files (if any) are stored
+       </li>
+       <li><code>setDestination</code>. Used to specify the directory where
+           the generated object files should be placed
+       </li>
+       <li><code>setClasspath</code>. Used to specify the class loading
+           path used by the compiler. While this option is named after
+           Java's <em>classpath</em> system variable, its semantics are
+           language-independent
+       </li>
+       <li><code>setEncoding</code>. Used to specify the encoding used
+           by the input source file
+       </li>
+       <li><code>compile</code>. The compiler's workhorse (boolean)
+       </li>
+       <li><code>getErrors</code>. Used to retrieve a list of compilation
+           error messages should compilation fail
+       </li>
+     </ul>
+
+     <anchor id="compiler-error"/>
+     <s3 title="Compiler Errors">
+       <p>
+         Error message producer by the compiler must be collected and
+         massaged by the <code>LanguageCompiler</code> in order to
+         wrap each of them as a <code>CompilerError</code> instance.
+       </p>
+
+       <p>
+         Class
+         <link href="../../apidocs/org/apache/cocoon/components/language/programming/CompilerError.html">
+           <code>CompilerError</code>
+         </link>
+         exposes the following
+         methods:
+       </p>
+
+       <ul>
+         <li><code>getFile</code>. Returns the program filename originating
+             the error
+         </li>
+         <li><code>isError</code>. Asserts whether the error is a server
+             error or simply a warning
+         </li>
+         <li><code>getStartLine</code>. Returns the starting line of the
+             offending code
+         </li>
+         <li><code>getStartColumn</code>. Returns the starting column (within
+              the starting line) of the offending code
+         </li>
+         <li><code>getEndLine</code>. Returns the ending line of the
+             offending code
+         </li>
+         <li><code>getEndColumn</code>. Returns the ending column (within
+              the ending line) of the offending code
+         </li>
+         <li><code>getMessage</code>. Returns the actual error message text
+         </li>
+       </ul>
+     </s3>
+
+     <anchor id="java-compilers"/>
+     <s3 title="Java Compilers">
+       <p>
+         For the Java language, 2 pluggable compilers are available:
+       </p>
+
+         <ul>
+           <li><em>Javac</em>. A wrapper to Sun's builtin compiler
+           </li>
+           <li><em>Jikes</em>. A wrapper to IBM's <em>Jikes</em> compiler
+           </li>
+         </ul>
+
+         <p>
+           Both of these compilers are based on
+           <link href="../../apidocs/org/apache/cocoon/components/language/programming/java/AbstractJavaCompiler.html">
+             <code>AbstractJavaCompiler</code>.
+           </link>
+         </p>
+     </s3>
+
+     <anchor id="other-compilers"/>
+     <s3 title="Other Compilers">
+       <p>
+         Since
+         <link href="http://www.mozilla.org/rhino/"><em>Rhino</em></link>
+         Javascript provides its own, only compiler (<em>jsc</em>),
+         class <code>JavascriptLanguage</code> doesn't use the compiler
+         class initialized by <code>CompiledProgrammingLanguage</code>.
+       </p>
+     </s3>
+   </s2>
+
+   <anchor id="object-unload"/>
+   <s2 title="Object Program Unloading">
+     <p>
+       <code>CompiledProgrammingLanguage</code> extends the default
+       implementation provided by
+       <code>AbstractProgrammingLanguage</code>
+       by deleting the <em>object</em> program file and
+       delegating actual unloading to the
+       <code>doUnload</code> method.
+     </p>
+
+     <p>
+       Method <code>doUnload</code> provides an empty default implementation
+       that can be overridden by derived compiled languages should unloading
+       cleanup be actually required.
+     </p>
+
+     <anchor id="class-loader-reinstantiation"/>
+     <p>
+       For Java-based compiled languages (i.e., those using
+       <em>class files</em> as their object format, unloading implies
+       reinstantiating their
+       <link href="#class-loader">class loader</link>
+       such that it "forgets" about previously loaded classes thus
+       becoming able to refresh class files updates since their last
+       load.
+     </p>
+
+     <p>
+       This is a commonly-used workaround for the (somewhat buggy)
+       standard Java class loader, which doesn't provide for an
+       explicit method for reloading class files.
+     </p>
+   </s2>
+
+   <anchor id="class-loader"/>
+   <s2 title="The Cocoon Class Loader">
+     <p>
+       To circumvent standard Java class loaders limitation, Cocoon provides a
+       simple customized class loader
+       <link href="../../apidocs/org/apache/cocoon/components/classloader/RepositoryClassLoader.html">
+       (<code>RepositoryClassLoader</code>)
+     </link>
+       that features:
+     </p>
+
+     <ul>
+       <li>A directory-based extensible classpath that can grow at execution
+           time
+       </li>
+       <li>Class reloading by means of reinstantiation
+       </li>
+     </ul>
+
+     <p>
+       <code>RepositoryClassLoader</code> extends
+       <code>java.lang.ClassLoader</code> adding an
+       <code>addDirectory</code> method that adds the directory pointed to
+       by its <code>String</code> argument to its local classpath.
+     </p>
+
+     <p>
+       Access to <em>protected</em> <code>RepositoryClassLoader</code> class
+       is proxied through interface
+       <link href="../../apidocs/org/apache/cocoon/components/classloader/ClassLoaderManager.html">
+         <code>ClassLoaderManager</code>.
+       </link>
+       This interface exposes the following methods:
+     </p>
+
+     <ul>
+       <li><code>addDirectory</code>. Passed to the proxied
+           <code>RepositoryClassLoader</code>
+       </li>
+       <li><code>loadClass</code>. Passed to the proxied
+           <code>RepositortyClassLoader</code>
+       </li>
+       <li><code>reinstantiate</code>. Used to discard the previous
+           class loader and create a new one
+       </li>
+     </ul>
+
+     <p>
+       Class
+       <link href="../../apidocs/org/apache/cocoon/components/classloader/ClassLoaderManagerImpl.html">
+         <code>ClassLoaderManagerImpl</code>
+       </link>
+       implements
+       <code>ClassLoaderManager</code> in a singleton-like fashion that
+       ensures that only one instance of this class loader exists,
+       thus ensuring the reinstantiation mechanism works properly.
+     </p>
+
+     <p>
+       The class loader can be specified in the sitemap on a per-language
+       basis:
+     </p>
+
+<source><![CDATA[
+<component-instance name="java"
+  class="org.apache.cocoon.components.language.programming.java.JavaLanguage">
+  . . .
+  <parameter name="class-loader"
+    value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+</component-instance>
+]]></source>
+
+     <p>
+       Alternatively, the class loader can be specified in the sitemap as
+       a global component:
+     </p>
+
+<source><![CDATA[
+<component
+  role="class-loader"
+  class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+]]></source>
+   </s2>
+ </s1>
+
+ <anchor id="interpreted-languages"/>
+ <s1 title="Interpreted Languages">
+   <p>
+     Interpreted languages for which a Java-based interpreter exists
+     are supported by means of IBM's outstanding
+     <link href="http://www.alphaworks.ibm.com/tech/bsf">
+       Bean Scripting Framework
+     </link> (BSF).
+   </p>
+
+   <p>
+     Currently, BSF supports:
+   </p>
+
+   <ul>
+     <li>Mozilla Rhino</li>
+     <li>NetRexx</li>
+     <li>Jacl</li>
+     <li>JPython</li>
+     <li>VBScript (Win32 only)</li>
+     <li>JScript (Win32 only)</li>
+     <li>PerlScript (Win32 only)</li>
+     <li>BML (Not applicable to server pages)</li>
+     <li>LotusXSL (Not applicable to server pages)</li>
+   </ul>
+
+   <note>
+     Interpreted language support is still unimplemented!<br/>
+     While BSF is extremely easy to use and very stable, there's still
+     a challenge in writing code-generation logicsheets for each of this
+     languages; this task requires familiarity with XSP internals, XSLT
+     and, above all, the programming language at hand...
+   </note>
+
+   <note>
+     Despite being supported by BSF, Rhino Javascript is separately
+     supported by Cocoon as a compiled language in order to take
+     advantage of automatic class reloading and persistent class file
+     storage.
+   </note>
+
+   <note>
+     Since <code>ProgramGenerator</code> clients will typically require
+     that program instances implement a given interface or extend a given
+     class, method <code>instantiate</code> in interface
+     <code>ProgrammingLanguage</code> may need to be augmented with a
+     <code>prototype</code> interface that can be used by each language
+     processor to ensure that the program instance can act as a Java
+     object of the given type.
+   </note>
+ </s1>
+
+ <anchor id="markup-language"/>
+ <s1 title="The Markup Language Processor">
+   <p>
+     A Cocoon's
+     <link
+     href="../../apidocs/org/apache/cocoon/components/language/markup/MarkupLanguage.html">
+       <code>MarkupLanguage</code>
+     </link>
+     processor exposes the
+     following methods:
+   </p>
+
+   <ul>
+     <li><code>getEncoding</code>.
+         Return the encoding to be used in program generation and
+         compilation or <code>null</code> to use the platform's
+         default encoding
+     </li>
+     <li><code>generateCode</code>.
+         Given a DOM <code>Document</code> written in a given
+         <em>markup language</em>, generate an equivalent  program in a given
+         <em>programming language</em>)
+     </li>
+   </ul>
+
+   <p>
+     A base markup language processor implementation is provided in
+     class
+     <link
+     href="../../apidocs/org/apache/cocoon/components/language/markup/AbstractMarkupLanguage.html">
+       <code>AbstractMarkupLanguage</code>.
+     </link>
+     This class extends
+     <link href="../../apidocs/org/arch/named/AbstractNamedComponent.html">
+       <code>AbstractNamedComponent</code>
+     </link>
+     to set the markup language's
+     associated namespace using the following required parameters:
+   </p>
+   
+   <ul>
+     <li><code>prefix</code>.
+         The markup language's namespace prefix
+     </li>
+     <li><code>uri</code>.
+         The markup language's namespace URI
+     </li>
+   </ul>
+
+<source><![CDATA[
+<component-instance name="xsp"
+  class="org.apache.cocoon.components.language.markup.xsp.XSPMarkupLanguage">
+  <parameter name="prefix" value="xsp"/>
+  <parameter name="uri" value="http://xml.apache.org/xsp"/>
+</component-instance>
+]]></source>
+
+   <p>
+     <code>AbstractMarkupLanguage</code> adds a number of
+     abstract/overridable methods that must be implemented by concrete
+     markup language processors:
+   </p>
+
+   <ul>
+     <li><code>preprocessDocument</code>.
+         Augment the input DOM <code>Document</code> to prepare it for
+         simpler, faster logicsheet-based code generation
+     </li>
+     <li><code>getLogicsheets</code>.
+         Return the list of logicsheets declared in the input document
+         according to the syntax of the markup language at hand
+     </li>
+     <li><code>addDependency</code>.
+         Add a dependency on an external file. This is used to inform
+         the concrete markup language processor about XML documents
+         included by means of XInclude as well as any intervening
+         logicsheet
+     </li>
+   </ul>
+
+   <note>
+     <code>AbstractMarkupLanguage</code> is currently tied to
+     logicsheets as the <em>only</em> means of generating source
+     code. While logicsheets provide a very powerful means for
+     code generation, good design dictates that the actual code
+     generation mechanism should be decoupled from the dynamic
+     markup language abstraction.
+   </note>
+
+   <note>
+     The current code generation strategy is DOM-based. In principle,
+     this is adequate because document preprocessing may need random
+     access to document nodes. Code generation is being reconsidered,
+     however, to overcome this and make it possible to reuse Cocoon's
+     SAX-based filtering pipeline.
+   </note>
+
+   <anchor id="markup-encoding"/>
+   <s2 title="Markup Encoding">
+     <p>
+       All markup languages must provide a way to declare the XML
+       document's encoding so that it is preserved during code generation,
+       beautifying and compilation.
+     </p>
+
+     <p>
+       This is required for proper i18n support, where the default
+       encoding usually replaces "exotic" characters with question marks.
+     </p>
+
+     <note>
+       Ideally, it should be possible to determine the source XML document's
+       <code>encoding</code> from its declaring
+       <code>&lt;?xml?&gt;</code> processing instruction. Unfortunately,
+       XML parsers (both DOM and SAX) don't seem to provide access to it,
+       thus forcing server pages authors to redundantly specify it.
+     </note>
+   </s2>
+
+    <anchor id="logicsheet-class"/>
+    <s2 title="The Logicsheet class">
+      <anchor id="logicsheet"/>
+      <p>
+        A <em>logicsheet</em> is an XML filter used to translate user-defined
+        dynamic markup into equivalent code embedding directives for a given
+        markup language.
+      </p>
+
+      <p>
+        Logicsheets lie at the core of XSP's promise to separate logic from
+        content and presentation: they make dynamic content generation
+        capabilities available to content authors not familiar with (and
+        not interested in) programming.
+      </p>
+
+      <p>
+        For a detailed description of logicsheets, see
+        <link href="logicsheet-concepts.html">Logicsheet Concepts</link>.
+      </p>
+
+      <p>
+        Logicsheets are represented in class
+        <link href="../../apidocs/org/apache/cocoon/components/language/markup/Logicsheet.html">
+          <code>Logicsheet</code>.
+        </link>
+        This
+        class exposes the following methods:
+      </p>
+  
+      <ul>
+        <li><code>setInputSource</code>.
+            Set the <code>InputSource</code> pointing to the XSLT
+            stylesheet to be used for dynamic tag transformation
+        </li>
+        <li><code>apply</code>.
+            Apply the stylesheet to a given document
+        </li>
+      </ul>
+  
+      <p>
+        <code>Logicsheet</code> takes care of preserving all namespaces
+        defined in the input document. This is necessary when multiple
+        logicsheets are applied and multiple namespaces are used in the
+        input document.
+      </p>
+
+      <note>
+        Currently, <code>Logicsheet</code> is a concrete class. It should
+        be redefined as an interface in order to decouple it from the use
+        of XSLT stylesheets. Again, while stylesheets are the "obvious" way
+        to implement logicsheets, a user-supplied XML filter may also be
+        used in some cases.
+        The current implementation uses an ugly
+        hack where a Xalan stylesheet processor is used to perform
+        the transformation without an intervening stylesheet processor
+        wrapping abstraction.
+      </note>
+    </s2>
+
+    <anchor id="named-logicsheet"/>
+    <s2 title="Named Logicsheets">
+      <p>
+        As explained in
+        <link href="logicsheet-concepts.html#logicsheet-object">
+          Logicsheet Concepts,
+        </link>
+        logicsheets are typically associated with a single object type whose
+        methods it wraps to make them available as
+        <em>markup commands</em>.
+      </p>
+
+      <p>
+        Markup commands related to a given object type are grouped under a
+        single namespace.
+      </p>
+
+      <p>
+        Class
+        <link href="../../apidocs/org/apache/cocoon/components/language/markup/NamedLogicsheet.html">
+          <code>NamedLogicsheet</code>
+        </link>
+        extends <code>Logicsheet</code>
+        to associate it with a namespace. This class exposes the following
+        additional methods:
+      </p>
+
+      <ul>
+        <li><code>setPrefix</code>.
+            To set the logicsheet's namespace prefix</li>
+        <li><code>getPrefix</code>.
+            To retrieve the logicsheet's namespace prefix</li>
+        <li><code>setUri</code>.
+            To set the logicsheet's namespace URI</li>
+        <li><code>getUri</code>.
+            To retrieve the logicsheet's namespace URI</li>
+      </ul>
+
+      <p>
+        Named logicsheets are used as
+        <link href="#builtin-logicsheets">
+          builtin logicsheets
+        </link>
+        by <code>AbstractMarkupLanguage</code>
+        to preload logicsheets and make them accessible
+        to dynamic XML documents without explicit declaration.
+      </p>
+
+      <p>
+        This feature relieves page authors from the need to explicitly
+        declare commonly used logicsheets in their documents. Builtin
+        logicsheets are automatically applied if the document declares
+        their same namespace URI.
+      </p>
+
+      <note>
+        The current <code>AbstractMarkupLanguage</code> implementation
+        wrongly binds named logicsheets based on their namespace
+        <em>prefix</em> instead of their URI!
+      </note>
+    </s2>
+
+    <anchor id="logicsheet-generator"/>
+    <s2 title="Logicsheet Code Generators">
+      <p>
+        Logicsheets translate dynamic tags to equivalent code-embedding
+        directives expressed in the markup language at hand. They do not,
+        however, actually emit the final source code program.
+      </p>
+
+      <p>
+        Code generation as such (i.e., the final production of a string
+        containing a source program written in a programming language) is
+        the responsibility of class <code>LogicsheetCodeGenerator</code>.
+      </p>
+
+      <p>
+        Class
+        <link
+        href="../../apidocs/org/apache/cocoon/components/language/markup/LogicsheetCodeGenerator.html">
+          <code>LogicsheetCodeGenerator</code>
+        </link>
+        exposes the following methods:
+      </p>
+
+      <ul>
+        <li><code>addLogicsheet</code>.
+            Add a logicsheet to the generator's logicsheet list.
+            Logicsheets are applied in the order of their addition.
+        </li>
+        <li><code>generateCode</code>.
+            Return a string containing a source program resulting from
+            successively applying added logicsheets.
+        </li>
+      </ul>
+
+      <p>
+        Though "regular" logicsheets as such do not emit source code,
+        <code>LogicsheetCodeGenerator</code> expects its <em>last</em>
+        stylesheet to produce <em>a single element</em> containing only
+        a text node.
+      </p>
+
+      <p>
+        This final, programming language-specific logicsheet is
+        responsible for actually expanding code-embedding directives
+        into source code.
+      </p>
+
+      <p>
+        For each supported target programming language, markup languages
+        must provide a <em>core</em> logicsheet.
+      </p>
+
+      <note>
+        <code>LogicsheetCodeGenerator</code> is currently implemented as a
+        class.  It should be defined as an interface in order to the decouple
+        the code generator abstraction from its logicsheet-based implementation.
+        This would allow for alternative code-generation strategies to
+        be plugged.
+      </note>
+    </s2>
+
+    <anchor id="markup-definition"/>
+    <s2 title="Markup Language Definition">
+      <p>
+        Markup languages are defined in the sitemap as follows:
+      </p>
+
+<source><![CDATA[
+<component-type name="markup-language">
+  <component-instance name="xsp"
+    class="org.apache.cocoon.components.language.markup.xsp.XSPMarkupLanguage">
+    <parameter name="prefix" value="xsp"/>
+    <parameter name="uri" value="http://xml.apache.org/xsp"/>
+
+    <target-language name="java">
+      <parameter name="core-logicsheet"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/>
+
+      <builtin-logicsheet>
+        <parameter name="prefix" value="xsp-request"/>
+        <parameter name="uri" value="http://xml.apache.org/xsp/request/2.0"/>
+        <parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+      </builtin-logicsheet>
+
+      <builtin-logicsheet>
+        <parameter name="prefix" value="xsp-response"/>
+        <parameter name="uri"
+          value="http://xml.apache.org/xsp/response/2.0"/>
+        <parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+      </builtin-logicsheet>
+    </target-language>
+  </component-instance>
+</component-type>
+]]></source>
+
+      <p>
+        Here, the markup language <em>prefix</em> and <em>uri</em>
+       are defined together with one or more
+       <em>supported programming languages</em>.
+      </p>
+
+      <p>
+        For each supported programming language, a corresponding
+       <em>core logicsheet</em> is defined as a URL pointing to
+       its code-generation stylesheet.
+      </p>
+
+      <anchor id="builtin-logicsheets"/>
+      <p>
+        Optionally, each supported programming language may define
+       one or more namespace-mapped <em>builtin logicsheets</em>.
+      </p>
+    </s2>
+  </s1>
+
+ <anchor id="xsp-language"/>
+ <s1 title="The XSP Markup Language">
+   <p>
+     So far, programming and markup languages have been described
+     in general, without explicitly referring to the XSP language.
+   </p>
+
+   <p>
+     This section describes how the above described framework is
+     used to implement XSP in particular. For a description of
+     logicsheet authoring requirements for XSP in Java, see
+     <link href="logicsheet-concepts.html#java-logicsheets">
+       XSLT Logicsheets and XSP for Java.
+     </link>
+   </p>
+
+
+   <note>
+     The XSP syntax is being revised to allow for the omission of the
+     root <code>&lt;xsp:page&gt;</code> element. This is convenient
+     for the (typical) case in which all logic has been conveniently
+     placed in logicsheets so that XSP pages do not need to embed any
+     code. In this case, there should be no need for the
+     <code>&lt;xsp:page&gt;</code> element.
+   </note>
+
+   <anchor id="xsp-encoding"/>
+   <s2 title="Markup Encoding">
+     <p>Method <code>getEncoding</code> is implemented by class
+     <link
+     href="../../apidocs/org/apache/cocoon/components/language/markup/xsp/XSPMarkupLanguage.html">
+       <code>XSPMarkupLanguage</code>
+     </link>
+     by retrieving the attribute named
+     <code>encoding</code> in the root <code>&lt;xsp:page&gt;</code> element.</p>
+
+     <note>
+       In absence of a <code>&lt;xsp:page&gt;</code> root element, the
+       encoding will be retrieved from an attribute named
+       <code>xsp:encoding</code> present in the "user" root element.
+     </note>
+   </s2>
+
+   <anchor id="xsp-preprocessing"/>
+   <s2 title="Document Preprocessing">
+     <p>
+       <code>XSPMarkupLanguage</code> preprocesses its input document
+       by:
+     </p>
+
+     <ul>
+       <li>
+         Setting the root element <code>file-name</code> attribute to the
+        <em>base</em> filename of its input source.
+       </li>
+       <li>
+         Setting the root element <code>file-path</code> attribute to the
+        <em>base</em> directory name of its input source.
+       </li>
+       <li>
+         Setting the root element <code>creation-date</code> attribute to the
+        current system time
+       </li>
+       <li>
+         Escaping text nodes according to the rules dictated by the
+        target programming language. This excludes text nodes enclosed
+        in <code>&lt;xsp:logic&gt;</code> and <code>&lt;xsp:expr&gt;</code>
+        elements, as they are to be output as code.
+       </li>
+     </ul>
+
+     <note>
+       A feature to be added is collecting all text nodes under the document's
+       root element and replacing them by references to their relative index
+       position. This will allow for the generation of
+       <code>contentHandler.characters</code> method calls that reference
+       <code>char</code> arrays instead of constant <code>String</code>'s.
+       In addition to saving execution time, this will result in decreased
+       program size because common substrings can be output by "reusing"
+       their containing character arrays along with their corresponding
+       offsets and lengths.
+     </note>
+   </s2>
+
+   <anchor id="xsp-dependencies"/>
+   <s2 title="Dependency Tracking">
+     <p>
+       File dependencies passed to <code>XSPMarkupLanguage</code> by
+       its <code>AbstractMarkupLanguage</code> superclass are stored
+       in top-level <code>&lt;xsp:dependency&gt;</code> elements.
+     </p>
+
+     <p>
+       These elements are used by XSP code-generation logicsheets to
+       populate the <code>File</code> array defined by the generated
+       classes' <code>AbstractServerPage</code> superclass.
+     </p>
+   </s2>
+
+   <anchor id="xsp-builtin"/>
+   <s2 title="XSP Builtin Logicsheets">
+     <p>
+       XSP for Java currently provides only 2 builtin logicsheets:
+       <code>request</code> and <code>response</code>, associated
+       with their corresponding Cocoon counterparts.
+     </p>
+
+     <note>
+       A mechanism is needed for Cocoon to pass additional objects
+       to XSP pages. In particular, for the servlet execution
+       environment, access to servlet objects is a must.
+     </note>
+   </s2>
+ </s1>
+
+ <anchor id="dom-xsp"/>
+ <s1 title="The DOM-XSP Markup Language">
+   <p>
+     The new, SAX-based XSP version for Cocoon is not backwards
+     compatible with its DOM-based former self.
+   </p>
+
+   <p>
+     In order to protect the existing DOM-based XSP code base,
+     a "new" markup language will be added that simply wraps
+     existing XSP version 1 pages, postprocessing their generated
+     documents to convert them into SAX events.
+   </p>
+
+   <p>
+     While this solution implies additional overhead, it provides
+     a simple path for migrating existing XSP pages.
+   </p>
+
+   <p>
+     In addition to this straight-forward mechanism, the new,
+     SAX-based XSP version will overload the <code>xspExpr</code>
+     method to accept as argument a <code>Node</code> expression
+     and transform it to equivalent SAX events.
+   </p>
+
+   <p>
+     For the long run, though, developers are strongly encouraged
+     to replace their "legacy" DOM pages and classes with equivalent,
+     faster SAX counterparts.
+   </p>
+ </s1>
+
+ <anchor id="program-generator"/>
+ <s1 title="The Program Generator">
+   <p>
+     The
+     <link href="../../apidocs/org/apache/cocoon/components/language/generator/ProgramGenerator.html">
+       <code>ProgramGenerator</code>
+     </link>
+     interface exposes a single
+     <code>load</code> method that takes as arguments a <code>File</code>
+     pointing to a source XML document, as well as a <em>markup</em> and
+     <em>programming</em> language name pair.
+   </p>
+
+   <p>
+     This method is responsible for locating, loading and instantiating
+     a program derived from the given source document. Failing this,
+     the program is generated and stored in an external, persistent
+     <em>repository</em>.
+   </p>
+
+   <p>
+     Once instantiated, the program is kept in an in-memory cache for
+     speeding up subsequent requests.
+   </p>
+
+   <p>
+     For each request, the source XML document is checked for changes
+     and the program instance is queried for dependency changes so that
+     the program can be automatically regenerated and reloaded if needed.
+     This default behavior can be disabled by means of a sitemap
+     parameter.
+   </p>
+
+   <note>
+     Currently, the program <em>instance</em> (as opposed to the
+     program object itself) is queried for invalidating changes.
+     This should change as a consequence of defining a separate
+     <code>Program</code> abstraction as part of the upcoming
+     addition of debugging support.
+   </note>
+
+   <p>
+     A default implementation of <code>ProgramGenerator</code>
+     is provided that uses a
+     <link href="../../apidocs/org/apache/cocoon/components/store/FilesystemStore.html">
+       <code>FilesystemStore</code>
+     </link>
+     as
+     repository:
+     <link href="../../apidocs/org/apache/cocoon/components/language/generator/ProgramGeneratorImpl.html">
+       <code>ProgramGeneratorImpl</code>.
+     </link>
+   </p>
+
+   <anchor id="program-repository"/>
+   <s2 title="Program Repository">
+     <p>
+       <code>FilesystemStore</code> is an implementation of the
+       <code>Store</code> interface that uses a filesystem,
+       hierarchical <em>directory</em> as its persistence
+       mechanism.
+     </p>
+
+     <note>
+       <code>FilesystemStore</code> implements <code>Store</code>
+       directly. A higher-level interface (<code>PersistentStore</code>)
+       should be defined to accommodate other sensible persistent
+       storage mechanisms such as relational databases or object
+       databases like
+       <link href="http://www.ozone-db.org/">Ozone</link>.
+     </note>
+
+     <p>
+       <code>FilesystemStore</code> expects the <code>String</code>
+       representation of its <code>key</code>'s to be <em>filenames</em>
+       relative to its directory root.
+     </p>
+
+     <p>
+       Objects returned by <code>FilesystemStore</code>'s
+       <code>get</code> method are <code>File</code>'s pointing to
+       their corresponding entries (or <code>null</code> if their
+       associated file doesn't exit).
+     </p>
+
+     <p>
+       <code>FilesystemStore</code> stores Java objects according
+       to the following rules:
+     </p>
+
+     <ul>
+       <li><code>null</code> values generate empty directories</li>
+       <li><code>String</code> values are dumped to text files</li>
+       <li>All other <code>Object</code>'s are serialized</li>
+     </ul>
+   </s2>
+
+   <anchor id="program-reloading"/>
+   <s2 title="Program Reloading">
+     <p>
+       Unless the <code>auto-reload</code> sitemap option is in effect,
+       <code>ProgramGeneratorImpl</code> will check whether program
+       instances implement interface <code>Modifiable</code> in order
+       to assert whether they should be regenerated and reloaded.
+     </p>
+
+     <p>
+       Method <code>load</code> uses its <code>markupLanguageName</code> and
+       <code>programmingLanguage</code> arguments to retrieve the corresponding
+       <link href="#named-components"><code>NamedComponent</code></link>
+       instances.
+     </p>
+
+     <p>
+       In server pages mode, these parameters are set by the calling
+       <code>ServerPagesGenerator</code> from parameters passed via
+       the sitemap <code>&lt;process&gt;</code> section.
+     </p>
+
+     <p>
+       The appropriate <code>MarkupLanguage</code> and
+       <code>ProgrammingLanguage</code> instances are used to generate and
+       load a program for which an instance is created and then returned to
+       the calling environment.
+     </p>
+   </s2>
+ </s1>
+
+ <anchor id="named-components"/>
+ <s1 title="Named Components">
+   <p>
+     In order to support pluggable markup and programming languages,
+     a new abstraction was added to Cocoon's <code>arch</code>
+     core interfaces:
+     <link href="../../apidocs/org/apache/arch/named/NamedComponent.html">
+       <code>NamedComponent</code>.
+     </link>
+   </p>
+
+   <p>
+     Interface <code>NamedComponent</code> is simply an extension to
+     <link href="../../apidocs/org/apache/arch/Component.html">
+       <code>Component</code>
+     </link>
+     that exposes a <code>getName()</code>
+     method.
+   </p>
+
+   <p>
+     <code>NamedComponent</code>'s belong to a collection of components
+     sharing the same Java type and are individually identified by a
+     name unique within each collection.
+   </p>
+
+   <p>
+     A
+     <link href="../../apidocs/org/apache/arch/named/NamedComponentManager.html">
+       <code>NamedComponentManager</code>
+     </link>
+     is a component responsible
+     for storing and locating <code>NamedComponent</code> instances.
+     This interface exposes the following methods:
+   </p>
+
+   <ul>
+     <li><code>getComponent</code>. Retrieve a <code>NamedComponent</code>
+         instance given its <code>type</code> and <code>name</code>.
+     </li>
+     <li><code>getTypes</code>. Return an <code>Enumeration</code> of all
+         known <code>NamedComponent</code> types.
+     </li>
+     <li><code>getComponents</code>. Return an <code>Enumeration</code> of
+         all <code>NamedComponents</code> within a given <code>type</code>.
+     </li>
+   </ul>
+
+   <p>
+     A default implementation is provided for this interface:
+     <link href="../../apidocs/org/apache/arch/named/NamedComponentImpl.html">
+       <code>NamedComponentManagerImpl</code>.
+     </link>
+   </p>
+
+   <p>
+     Class
+     <link href="../../apidocs/org/apache/named/AbstractNamedComponent.html">
+       <code>AbstractNamedComponent</code>
+     </link>
+     provides a base implementation
+     for <code>NamedComponent</code> that extends
+     <link href="../../apidocs/org/apache/arch/Configurable.html">
+       <code>Configurable</code>.
+     </link>
+     This class exposes the following methods:
+   </p>
+   
+   <ul>
+     <li><code>setConfiguration</code>.
+         Retrieve named-component sitemap configuration values
+         converting parameter name/value pairs into <code>Parameters</code>
+         passed to subclasses for easier initialization
+     </li>
+     <li><code>setParameters</code>.
+         An empty method to be overridden by subclasses for parameter-based
+         initialization
+     </li>
+     <li><code>setAdditionalConfiguration</code>.
+         An empty method to be overridden by subclasses when parameter-based
+         initialization is not sufficient because there are nested
+         configuration elements in the corresponding sitemap entry
+     </li>
+     <li><code>getRequiredParameter</code>.
+         A static convenience method that returns a named parameter as
+         a <code>String</code> throwing an
+         <code>IllegalArgumentException</code>
+         if the parameter was not specified in the sitemap configuration
+     </li>
+   </ul>
+ </s1>
+
+ <anchor id="sitemap-configuration"/>
+ <s1 title="XSP Sitemap Configuration">
+    <note>
+      The sitemap configuration shown here is likely to change in the
+      near future.
+    </note>
+
+    <p>
+      A (rather verbose) sitemap definition for XSP follows:
+    </p>
+
+<source><![CDATA[
+<component role="factory"
+           class="org.apache.avalon.NamedComponentManagerImpl">
+
+  <component-type name="programming-language">
+    <component-instance name="java"
+    class="org.apache.cocoon.components.language.programming.java.JavaLanguage">
+      <parameter name="compiler"
+      value="org.apache.cocoon.components.language.programming.java.Javac"/>
+      <parameter name="code-formatter"
+      value="org.apache.cocoon.components.language.programming.java.JstyleFormatter"/>
+      <parameter name="class-loader"
+      value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+      <parameter name="delete-sources" value="false"/>
+    </component-instance>
+  </component-type>
+
+  <component-type name="markup-language">
+    <component-instance name="xsp"
+    class="org.apache.cocoon.components.language.markup.xsp.XSPMarkupLanguage">
+      <parameter name="prefix" value="xsp"/>
+      <parameter name="uri" value="http://xml.apache.org/xsp"/>
+
+      <target-language name="java">
+        <parameter name="core-logicsheet"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-request"/>
+          <parameter name="uri" value="http://xml.apache.org/xsp/request/2.0"/>
+          <parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-response"/>
+          <parameter name="uri"
+          value="http://xml.apache.org/xsp/response/2.0"/>
+          <parameter name="href"
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+        </builtin-logicsheet>
+      </target-language>
+    </component-instance>
+  </component-type>
+</component>
+
+<component role="program-generator"
+  class="org.apache.cocoon.components.language.generator.ProgramGeneratorImpl">
+  <parameter name="repository" value="/tmp/repository"/>
+  <parameter name="auto-reload" value="true"/>
+</component>
+
+<generator  name="serverpages"
+            class="org.apache.cocoon.generation.ServerPagesGenerator"/>
+
+<!--
+<component
+  role="class-loader"
+  class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"
+/>
+-->
+
+<sitemap>
+  <partition>
+    <process uri="simple-page.xsp" source="../samples/documents/simple-page.xsp">
+      <generator name="serverpages">
+        <!--
+        <parameter name="markup-language" value="xsp"/>
+        <parameter name="programming-language" value="java"/>
+        -->
+      </generator>
+      <filter name="xslt">
+        <parameter name="stylesheet" value="../samples/documents/simple-page.xsl"/>
+      </filter>
+      <serializer name="html">
+        <parameter name="contentType" value="text/html"/>
+      </serializer>
+    </process>
+  </partition>
+</sitemap>
+]]></source>
+
+ </s1>
+</body>
+</document>

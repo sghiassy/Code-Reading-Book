@@ -1,0 +1,199 @@
+.TH ACE_Sig_Action 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Sig_Action \- C++ wrapper facade for the <sigaction> struct. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Signal.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (void)"
+.br
+.RI "\fIDefault constructor. Initializes everything to 0.\fR"
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (ACE_SignalHandler handler, sigset_t *sigmask = 0, int flags = 0)"
+.br
+.RI "\fIAssigns the various fields of a <sigaction> struct but doesn't register for signal handling via the <sigaction> function.\fR"
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (ACE_SignalHandler handler, const \fBACE_Sig_Set\fR &sigmask, int flags = 0)"
+.br
+.RI "\fIAssigns the various fields of a <sigaction> struct but doesn't register for signal handling via the <sigaction> function.\fR"
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (ACE_SignalHandler handler, int signum, sigset_t *sigmask = 0, int flags = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (ACE_SignalHandler handler, int signum, const \fBACE_Sig_Set\fR &sigmask, int flags = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (const \fBACE_Sig_Set\fR &signalss, ACE_SignalHandler handler, const \fBACE_Sig_Set\fR &sigmask, int flags = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (const \fBACE_Sig_Set\fR &signalss, ACE_SignalHandler handler, sigset_t *sigmask = 0, int flags = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Sig_Action\fR (const ACE_Sig_Action &s)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_Sig_Action\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBregister_action\fR (int signum, ACE_Sig_Action *oaction = 0)"
+.br
+.RI "\fIRegister <this> as the current disposition and store old disposition into <oaction> if it is non-NULL.\fR"
+.ti -1c
+.RI "int \fBrestore_action\fR (int signum, ACE_Sig_Action &oaction)"
+.br
+.RI "\fIAssign the value of <oaction> to <this> and make it become the new signal disposition.\fR"
+.ti -1c
+.RI "int \fBretrieve_action\fR (int signum)"
+.br
+.RI "\fIRetrieve the current disposition into <this>.\fR"
+.ti -1c
+.RI "void \fBset\fR (struct sigaction *)"
+.br
+.ti -1c
+.RI "struct sigaction* \fBget\fR (void)"
+.br
+.ti -1c
+.RI "\fBoperator ACE_SIGACTION *\fR ()"
+.br
+.ti -1c
+.RI "void \fBflags\fR (int)"
+.br
+.ti -1c
+.RI "int \fBflags\fR (void)"
+.br
+.ti -1c
+.RI "void \fBmask\fR (sigset_t *)"
+.br
+.ti -1c
+.RI "void \fBmask\fR (\fBACE_Sig_Set\fR &)"
+.br
+.ti -1c
+.RI "sigset_t* \fBmask\fR (void)"
+.br
+.ti -1c
+.RI "void \fBhandler\fR (ACE_SignalHandler)"
+.br
+.ti -1c
+.RI "ACE_SignalHandler \fBhandler\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "struct sigaction \fBsa_\fR"
+.br
+.RI "\fIControls signal behavior.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+C++ wrapper facade for the <sigaction> struct.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Sig_Action::ACE_Sig_Action (void)
+.PP
+Default constructor. Initializes everything to 0.
+.PP
+.SS ACE_Sig_Action::ACE_Sig_Action (ACE_SignalHandler handler, sigset_t * sigmask = 0, int flags = 0)
+.PP
+Assigns the various fields of a <sigaction> struct but doesn't register for signal handling via the <sigaction> function.
+.PP
+.SS ACE_Sig_Action::ACE_Sig_Action (ACE_SignalHandler handler, const \fBACE_Sig_Set\fR & sigmask, int flags = 0)
+.PP
+Assigns the various fields of a <sigaction> struct but doesn't register for signal handling via the <sigaction> function.
+.PP
+.SS ACE_Sig_Action::ACE_Sig_Action (ACE_SignalHandler handler, int signum, sigset_t * sigmask = 0, int flags = 0)
+.PP
+Assigns the various fields of a <sigaction> struct and registers the <handler> to process signal <signum> via the <sigaction> function. 
+.SS ACE_Sig_Action::ACE_Sig_Action (ACE_SignalHandler handler, int signum, const \fBACE_Sig_Set\fR & sigmask, int flags = 0)
+.PP
+Assigns the various fields of a <sigaction> struct and registers the <handler> to process signal <signum> via the <sigaction> function. 
+.SS ACE_Sig_Action::ACE_Sig_Action (const \fBACE_Sig_Set\fR & signalss, ACE_SignalHandler handler, const \fBACE_Sig_Set\fR & sigmask, int flags = 0)
+.PP
+Assigns the various fields of a <sigaction> struct and registers the <handler> to process all <signals> via the <sigaction> function. 
+.SS ACE_Sig_Action::ACE_Sig_Action (const \fBACE_Sig_Set\fR & signalss, ACE_SignalHandler handler, sigset_t * sigmask = 0, int flags = 0)
+.PP
+Assigns the various fields of a <sigaction> struct and registers the <handler> to process all <signals> via the <sigaction> function. 
+.SS ACE_Sig_Action::ACE_Sig_Action (const ACE_Sig_Action & s)
+.PP
+Copy constructor.
+.PP
+.SS ACE_Sig_Action::~ACE_Sig_Action (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Sig_Action::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_Sig_Action::flags (void)
+.PP
+.SS void ACE_Sig_Action::flags (int)
+.PP
+.SS struct sigaction* ACE_Sig_Action::get (void)
+.PP
+.SS ACE_SignalHandler ACE_Sig_Action::handler (void)
+.PP
+.SS void ACE_Sig_Action::handler (ACE_SignalHandler)
+.PP
+.SS sigset_t* ACE_Sig_Action::mask (void)
+.PP
+.SS void ACE_Sig_Action::mask (\fBACE_Sig_Set\fR &)
+.PP
+.SS void ACE_Sig_Action::mask (sigset_t *)
+.PP
+.SS ACE_Sig_Action::operator \fBACE_SIGACTION\fR * ()
+.PP
+.SS int ACE_Sig_Action::register_action (int signum, ACE_Sig_Action * oaction = 0)
+.PP
+Register <this> as the current disposition and store old disposition into <oaction> if it is non-NULL.
+.PP
+.SS int ACE_Sig_Action::restore_action (int signum, ACE_Sig_Action & oaction)
+.PP
+Assign the value of <oaction> to <this> and make it become the new signal disposition.
+.PP
+.SS int ACE_Sig_Action::retrieve_action (int signum)
+.PP
+Retrieve the current disposition into <this>.
+.PP
+.SS void ACE_Sig_Action::set (struct sigaction *)
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Sig_Action::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS struct sigaction ACE_Sig_Action::sa_\fC [private]\fR
+.PP
+Controls signal behavior.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

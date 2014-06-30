@@ -1,0 +1,145 @@
+.TH ACE_Object_Manager_Base 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Object_Manager_Base \- Base class for ACE_Object_Manager(s). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS.h>\fR
+.PP
+Inherited by \fBACE_Object_Manager\fR, and \fBACE_OS_Object_Manager\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBObject_Manager_State\fR { \fBOBJ_MAN_UNINITIALIZED\fR = 0, \fBOBJ_MAN_INITIALIZING\fR, \fBOBJ_MAN_INITIALIZED\fR, \fBOBJ_MAN_SHUTTING_DOWN\fR, \fBOBJ_MAN_SHUT_DOWN\fR }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBinit\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBfini\fR (void) = 0"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Object_Manager_Base\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Object_Manager_Base\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBstarting_up_i\fR (void)"
+.br
+.ti -1c
+.RI "int \fBshutting_down_i\fR (void)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBObject_Manager_State\fR \fBobject_manager_state_\fR"
+.br
+.RI "\fIState of the Object_Manager;.\fR"
+.ti -1c
+.RI "u_int \fBdynamically_allocated_\fR"
+.br
+.ti -1c
+.RI "ACE_Object_Manager_Base* \fBnext_\fR"
+.br
+.RI "\fILink to next Object_Manager, for chaining.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Object_Manager_Base\fR (const ACE_Object_Manager_Base &)"
+.br
+.ti -1c
+.RI "ACE_Object_Manager_Base& \fBoperator=\fR (const ACE_Object_Manager_Base &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Base class for ACE_Object_Manager(s).
+.PP
+.PP
+ Encapsulates the most useful \fBACE_Object_Manager\fR data structures. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_Object_Manager_Base::Object_Manager_State
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIOBJ_MAN_UNINITIALIZED\fR \fR
+.TP
+\fB\fIOBJ_MAN_INITIALIZING\fR \fR
+.TP
+\fB\fIOBJ_MAN_INITIALIZED\fR \fR
+.TP
+\fB\fIOBJ_MAN_SHUTTING_DOWN\fR \fR
+.TP
+\fB\fIOBJ_MAN_SHUT_DOWN\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Object_Manager_Base::ACE_Object_Manager_Base (void)\fC [protected]\fR
+.PP
+Default constructor.
+.PP
+.SS ACE_Object_Manager_Base::~ACE_Object_Manager_Base (void)\fC [protected, virtual]\fR
+.PP
+Destructor.
+.PP
+.SS ACE_Object_Manager_Base::ACE_Object_Manager_Base (const ACE_Object_Manager_Base &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Object_Manager_Base::fini (void)\fC [pure virtual]\fR
+.PP
+Explicitly destroy. Returns 0 on success, -1 on failure because the number of fini () calls hasn't reached the number of init () calls, or 1 if it had already been called. 
+.PP
+Reimplemented in \fBACE_Object_Manager\fR, and \fBACE_OS_Object_Manager\fR.
+.SS int ACE_Object_Manager_Base::init (void)\fC [pure virtual]\fR
+.PP
+Explicitly initialize. Returns 0 on success, -1 on failure due to dynamic allocation failure (in which case errno is set to ENOMEM), or 1 if it had already been called. 
+.PP
+Reimplemented in \fBACE_Object_Manager\fR, and \fBACE_OS_Object_Manager\fR.
+.SS ACE_Object_Manager_Base& ACE_Object_Manager_Base::operator= (const ACE_Object_Manager_Base &)\fC [private]\fR
+.PP
+.SS int ACE_Object_Manager_Base::shutting_down_i (void)\fC [protected]\fR
+.PP
+Returns 1 after ACE_Object_Manager_Base has been destroyed. This flag can be used to determine if the program is in the midst of destroying static objects. (Note that the program might destroy some static objects before this flag can return 1, if ACE_HAS_NONSTATIC_OBJECT_MANAGER is not defined.) 
+.SS int ACE_Object_Manager_Base::starting_up_i (void)\fC [protected]\fR
+.PP
+Returns 1 before ACE_Object_Manager_Base has been constructed. This flag can be used to determine if the program is constructing static objects. If no static object spawns any threads, the program will be single-threaded when this flag returns 1. (Note that the program still might construct some static objects when this flag returns 0, if ACE_HAS_NONSTATIC_OBJECT_MANAGER is not defined.) 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS u_int ACE_Object_Manager_Base::dynamically_allocated_\fC [protected]\fR
+.PP
+Flag indicating whether the \fBACE_Object_Manager\fR was dynamically allocated by \fBACE\fR. (If is was dynamically allocated by the application, then the application is responsible for destroying it.) 
+.SS ACE_Object_Manager_Base * ACE_Object_Manager_Base::next_\fC [protected]\fR
+.PP
+Link to next Object_Manager, for chaining.
+.PP
+.SS \fBObject_Manager_State\fR ACE_Object_Manager_Base::object_manager_state_\fC [protected]\fR
+.PP
+State of the Object_Manager;.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

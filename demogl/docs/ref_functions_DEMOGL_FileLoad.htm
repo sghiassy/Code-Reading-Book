@@ -1,0 +1,75 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_FileLoad</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_FileLoad</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_FileLoad</h4>
+<dd>DEMOGL_FileLoad loads the file specified into memory and returns a pointer to the filedata in memory.
+	<p>
+	<pre>
+<b>byte</b>
+* DEMOGL_FileLoad(
+	<b>const char</b> *<i>pszFilename</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>pszFilename</i>
+	<dd>Pointer to a zero-terminated string which represents the filename, inclusive subpaths, of the file you want to load.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns a pointer of type <b>byte *</b> to the filedata in memory.<br>
+	If the function fails, it returns NULL.
+	<p>
+<dt><b>Remarks.</b>
+<dd>Because DemoGL does all the File I/O for you so it's completely transparant for you where
+	the files come from (datafile or directory), and you are not bothered by the fact files have to be unpacked
+	and/or decrypted. <b>DEMOGL_FileLoad</b> handles all that for you. 
+	If you don't need the data from the file anymore, call 
+	<a HREF="ref_functions_DEMOGL_FileFree.htm" target="main">DEMOGL_FileFree</a> to free the buffer, 
+	because otherwise your application leaks memory. If you want to know how big the buffer is in
+	bytes, use <a HREF="ref_functions_DEMOGL_FileGetLength.htm" target="main">DEMOGL_FileGetLength</a>.
+	Keep in mind that the filename pointed by <i>pszFilename</i> should contain C/C++ backslash escaping plus should contain
+	the paths needed, thus starting from the root directory DemoGL expects the data, which can be a directory
+	on disk or a datafile with subdirs.
+<p>
+<dt><b>Example.</b>
+<dd><pre>
+byte	*pbyMyData
+
+// Load some datafile.
+pbyMyData = DEMOGL_FileLoad(&quot;data\\mydata.dat&quot;);
+
+// Use data
+
+// Free the data loaded
+DEMOGL_FileFree(pbyMyData);
+	</pre>
+	<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_FileFree.htm" target="main">DEMOGL_FileFree</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

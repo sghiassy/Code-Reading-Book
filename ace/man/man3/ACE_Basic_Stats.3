@@ -1,0 +1,152 @@
+.TH ACE_Basic_Stats 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Basic_Stats \- Collect basic stats about a series of samples. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Basic_Stats.h>\fR
+.PP
+Inherited by \fBACE_Throughput_Stats\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Basic_Stats\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBsamples_count\fR (void) const"
+.br
+.RI "\fIThe number of samples received so far.\fR"
+.ti -1c
+.RI "void \fBsample\fR (\fBACE_UINT64\fR value)"
+.br
+.RI "\fIRecord one sample.\fR"
+.ti -1c
+.RI "void \fBaccumulate\fR (const ACE_Basic_Stats &rhs)"
+.br
+.RI "\fIUpdate the values to reflect the stats in 
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIrhs.\fR\fR\fR"
+.ti -1c
+.RI "void \fBdump_results\fR (const \fBACE_TCHAR\fR *msg, ACE_UINT32 scale_factor) const"
+.br
+.RI "\fIDump all the samples.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_UINT32 \fBsamples_count_\fR"
+.br
+.RI "\fIThe number of samples.\fR"
+.ti -1c
+.RI "\fBACE_UINT64\fR \fBmin_\fR"
+.br
+.RI "\fIThe minimum value.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBmin_at_\fR"
+.br
+.RI "\fIThe number of the sample that had the minimum value.\fR"
+.ti -1c
+.RI "\fBACE_UINT64\fR \fBmax_\fR"
+.br
+.RI "\fIThe maximum value.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBmax_at_\fR"
+.br
+.RI "\fIThe number of the sample that had the maximum value.\fR"
+.ti -1c
+.RI "\fBACE_UINT64\fR \fBsum_\fR"
+.br
+.RI "\fIThe sum of all the values.\fR"
+.ti -1c
+.RI "\fBACE_UINT64\fR \fBsum2_\fR"
+.br
+.RI "\fIThe sum of the square of all the values.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Collect basic stats about a series of samples.
+.PP
+Compute the average and standard deviation (aka jitter) for an arbitrary number of samples, using constant space. Normally used for latency statistics. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Basic_Stats::ACE_Basic_Stats (void)
+.PP
+Constructor.
+.PP
+The number of samples is pre-allocated, and cannot changes once the class is initialized. 
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Basic_Stats::accumulate (const ACE_Basic_Stats & rhs)
+.PP
+Update the values to reflect the stats in 
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIrhs.\fR\fR
+.PP
+.SS void ACE_Basic_Stats::dump_results (const \fBACE_TCHAR\fR * msg, ACE_UINT32 scale_factor) const
+.PP
+Dump all the samples.
+.PP
+Prints out the results, using 
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fImsg\fR\fR as a prefix for each message and scaling all the numbers by 
+.TP
+\fB\fIscale_factor.\fR\fR The latter is useful because high resolution timer samples are acquired in clock ticks, but often presented in microseconds. 
+.SS void ACE_Basic_Stats::sample (\fBACE_UINT64\fR value)
+.PP
+Record one sample.
+.PP
+.SS ACE_UINT32 ACE_Basic_Stats::samples_count (void) const
+.PP
+The number of samples received so far.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_UINT64\fR ACE_Basic_Stats::max_\fC [private]\fR
+.PP
+The maximum value.
+.PP
+.SS ACE_UINT32 ACE_Basic_Stats::max_at_\fC [private]\fR
+.PP
+The number of the sample that had the maximum value.
+.PP
+.SS \fBACE_UINT64\fR ACE_Basic_Stats::min_\fC [private]\fR
+.PP
+The minimum value.
+.PP
+.SS ACE_UINT32 ACE_Basic_Stats::min_at_\fC [private]\fR
+.PP
+The number of the sample that had the minimum value.
+.PP
+.SS ACE_UINT32 ACE_Basic_Stats::samples_count_\fC [private]\fR
+.PP
+The number of samples.
+.PP
+.SS \fBACE_UINT64\fR ACE_Basic_Stats::sum2_\fC [private]\fR
+.PP
+The sum of the square of all the values.
+.PP
+.SS \fBACE_UINT64\fR ACE_Basic_Stats::sum_\fC [private]\fR
+.PP
+The sum of all the values.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

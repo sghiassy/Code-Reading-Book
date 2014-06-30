@@ -1,0 +1,267 @@
+.TH ACE_SV_Semaphore_Simple 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SV_Semaphore_Simple \- This is a simple semaphore package that assumes there are no race conditions for initialization (i.e., the order of process startup must be well defined). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SV_Semaphore_Simple.h>\fR
+.PP
+Inherited by \fBACE_SV_Semaphore_Complex\fR\fC [private]\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBACE_CREATE\fR = IPC_CREAT, \fBACE_EXCL\fR = IPC_EXCL, \fBACE_OPEN\fR = 0 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SV_Semaphore_Simple\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_SV_Semaphore_Simple\fR (key_t key, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.ti -1c
+.RI "\fBACE_SV_Semaphore_Simple\fR (const char *name, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.ti -1c
+.RI "\fB~ACE_SV_Semaphore_Simple\fR (void)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const char *name, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (key_t key, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.RI "\fIOpen or create one or more SV_Semaphores. We return 0 if all is OK, else -1.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose a ACE_SV_Semaphore, marking it as invalid for subsequent operations...\fR"
+.ti -1c
+.RI "int \fBremove\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBacquire\fR (u_short n = 0, int flags = 0) const"
+.br
+.ti -1c
+.RI "int \fBacquire_read\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIAcquire a semaphore for reading.\fR"
+.ti -1c
+.RI "int \fBacquire_write\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIAcquire a semaphore for writing.\fR"
+.ti -1c
+.RI "int \fBtryacquire\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fINon-blocking version of .\fR"
+.ti -1c
+.RI "int \fBtryacquire_read\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fITry to acquire the semaphore for reading.\fR"
+.ti -1c
+.RI "int \fBtryacquire_write\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fITry to acquire the semaphore for writing.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIIncrement ACE_SV_Semaphore by one. Dijkstra's V operation, Tannenbaums UP operation.\fR"
+.ti -1c
+.RI "int \fBop\fR (int val, u_short semnum = 0, int flags = SEM_UNDO) const"
+.br
+.RI "\fIGeneral ACE_SV_Semaphore operation. Increment or decrement by a specific amount (positive or negative; amount can`t be zero).\fR"
+.ti -1c
+.RI "int \fBop\fR (sembuf op_vec[], u_short nsems) const"
+.br
+.RI "\fIGeneral ACE_SV_Semaphore operation on an array of SV_Semaphores.\fR"
+.ti -1c
+.RI "int \fBcontrol\fR (int cmd, \fBsemun\fR arg, u_short n = 0) const"
+.br
+.ti -1c
+.RI "int \fBcontrol\fR (int cmd, int value = 0, u_short n = 0) const"
+.br
+.ti -1c
+.RI "int \fBget_id\fR (void) const"
+.br
+.RI "\fIGet underlying internal id.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBinit\fR (key_t k = ACE_static_cast (key_t, ACE_INVALID_SEM_KEY), int i = -1)"
+.br
+.ti -1c
+.RI "key_t \fBname_2_key\fR (const char *name)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "key_t \fBkey_\fR"
+.br
+.RI "\fISemaphore key.\fR"
+.ti -1c
+.RI "int \fBinternal_id_\fR"
+.br
+.RI "\fIInternal ID to identify the semaphore group within this process.\fR"
+.ti -1c
+.RI "int \fBsem_number_\fR"
+.br
+.RI "\fINumber of semaphores we're creating.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This is a simple semaphore package that assumes there are no race conditions for initialization (i.e., the order of process startup must be well defined).
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_CREATE\fR \fR
+.TP
+\fB\fIACE_EXCL\fR \fR
+.TP
+\fB\fIACE_OPEN\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SV_Semaphore_Simple::ACE_SV_Semaphore_Simple (void)
+.PP
+.SS ACE_SV_Semaphore_Simple::ACE_SV_Semaphore_Simple (key_t key, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+.SS ACE_SV_Semaphore_Simple::ACE_SV_Semaphore_Simple (const char * name, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+.SS ACE_SV_Semaphore_Simple::~ACE_SV_Semaphore_Simple (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SV_Semaphore_Simple::acquire (u_short n = 0, int flags = 0) const
+.PP
+Wait until a ACE_SV_Semaphore's value is greater than 0, the decrement it by 1 and return. Dijkstra's P operation, Tannenbaums DOWN operation. 
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::acquire_read (u_short n = 0, int flags = 0) const
+.PP
+Acquire a semaphore for reading.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::acquire_write (u_short n = 0, int flags = 0) const
+.PP
+Acquire a semaphore for writing.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::close (void)
+.PP
+Close a ACE_SV_Semaphore, marking it as invalid for subsequent operations...
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::control (int cmd, int value = 0, u_short n = 0) const
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::control (int cmd, \fBsemun\fR arg, u_short n = 0) const
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS void ACE_SV_Semaphore_Simple::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::get_id (void) const
+.PP
+Get underlying internal id.
+.PP
+.SS int ACE_SV_Semaphore_Simple::init (key_t k = ACE_static_cast (key_t, ACE_INVALID_SEM_KEY), int i = -1)\fC [protected]\fR
+.PP
+Convert name to key This function is used internally to create keys for the semaphores. A valid name contains letters and digits only and MUST start with a letter.
+.PP
+The method for generating names is not very sophisticated, so caller should not pass strings which match each other for the first LUSED characters when he wants to get a different key. 
+.SS key_t ACE_SV_Semaphore_Simple::name_2_key (const char * name)\fC [protected]\fR
+.PP
+.SS int ACE_SV_Semaphore_Simple::op (sembuf op_vec[], u_short n) const
+.PP
+General ACE_SV_Semaphore operation on an array of SV_Semaphores.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::op (int val, u_short n = 0, int flags = SEM_UNDO) const
+.PP
+General ACE_SV_Semaphore operation. Increment or decrement by a specific amount (positive or negative; amount can`t be zero).
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::open (key_t key, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+Open or create one or more SV_Semaphores. We return 0 if all is OK, else -1.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::open (const char * name, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::release (u_short n = 0, int flags = 0) const
+.PP
+Increment ACE_SV_Semaphore by one. Dijkstra's V operation, Tannenbaums UP operation.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::remove (void) const
+.PP
+Remove all SV_Semaphores associated with a particular key. This call is intended to be called from a server, for example, when it is being shut down, as we do an IPC_RMID on the ACE_SV_Semaphore, regardless of whether other processes may be using it or not. Most other processes should use <close> below. 
+.SS int ACE_SV_Semaphore_Simple::tryacquire (u_short n = 0, int flags = 0) const
+.PP
+Non-blocking version of .
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::tryacquire_read (u_short n = 0, int flags = 0) const
+.PP
+Try to acquire the semaphore for reading.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::tryacquire_write (u_short n = 0, int flags = 0) const
+.PP
+Try to acquire the semaphore for writing.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SV_Semaphore_Simple::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_SV_Semaphore_Complex\fR.
+.SS int ACE_SV_Semaphore_Simple::internal_id_\fC [protected]\fR
+.PP
+Internal ID to identify the semaphore group within this process.
+.PP
+.SS key_t ACE_SV_Semaphore_Simple::key_\fC [protected]\fR
+.PP
+Semaphore key.
+.PP
+.SS int ACE_SV_Semaphore_Simple::sem_number_\fC [protected]\fR
+.PP
+Number of semaphores we're creating.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

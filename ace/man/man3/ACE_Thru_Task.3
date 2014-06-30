@@ -1,0 +1,132 @@
+.TH ACE_Thru_Task 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Thru_Task \- Standard module that acts as a "no op", simply passing on all data to its adjacent neighbor. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Stream_Modules.h>\fR
+.PP
+Inherits \fBACE_Task< ACE_SYNCH_USE >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thru_Task\fR (void)"
+.br
+.RI "\fIConstruction.\fR"
+.ti -1c
+.RI "\fB~ACE_Thru_Task\fR (void)"
+.br
+.RI "\fIDestruction.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (void *a = 0)"
+.br
+.RI "\fIHook called to open a Task.  can be used to pass arbitrary information into <open>.\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (u_long flags = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBput\fR (\fBACE_Message_Block\fR *msg, \fBACE_Time_Value\fR * = 0)"
+.br
+.RI "\fITransfer msg into the queue to handle immediate processing.\fR"
+.ti -1c
+.RI "virtual int \fBsvc\fR (void)"
+.br
+.RI "\fIRun by a daemon thread to handle deferred processing.\fR"
+.ti -1c
+.RI "virtual int \fBinit\fR (int argc, \fBACE_TCHAR\fR *argv[])"
+.br
+.RI "\fIInitializes object when dynamic linking occurs.\fR"
+.ti -1c
+.RI "virtual int \fBinfo\fR (\fBACE_TCHAR\fR **info_string, size_t length) \fBconst\fR"
+.br
+.RI "\fIReturns information on a service object.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fITerminates object when dynamic unlinking occurs.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) \fBconst\fR"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_SYNCH_DECL>  template class ACE_Thru_Task
+Standard module that acts as a "no op", simply passing on all data to its adjacent neighbor.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Thru_Task<>::ACE_Thru_Task<> (void)
+.PP
+Construction.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Thru_Task<>::~ACE_Thru_Task<> (void)
+.PP
+Destruction.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> virtual int ACE_Thru_Task<>::close (u_long flags = 0)\fC [virtual]\fR
+.PP
+Hook called from  when during thread exit and from the default implemenation of <module_closed>. In general, this method shouldn't be called directly by an application, particularly if the <Task> is running as an Active Object. Instead, a special message should be passed into the <Task> via the <put> method defined below, and the <svc> method should interpret this as a flag to shut down the <Task>. 
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS template<ACE_SYNCH_DECL> void ACE_Thru_Task<>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Task\fR.
+.SS template<ACE_SYNCH_DECL> virtual int ACE_Thru_Task<>::fini (void)\fC [virtual]\fR
+.PP
+Terminates object when dynamic unlinking occurs.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<ACE_SYNCH_DECL> virtual int ACE_Thru_Task<>::info (\fBACE_TCHAR\fR ** info_string, size_t length) const\fC [virtual]\fR
+.PP
+Returns information on a service object.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<ACE_SYNCH_DECL> virtual int ACE_Thru_Task<>::init (int argc, \fBACE_TCHAR\fR * argv[])\fC [virtual]\fR
+.PP
+Initializes object when dynamic linking occurs.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<ACE_SYNCH_DECL> virtual int ACE_Thru_Task<>::open (void * a = 0)\fC [virtual]\fR
+.PP
+Hook called to open a Task.  can be used to pass arbitrary information into <open>.
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS template<ACE_SYNCH_DECL> virtual int ACE_Thru_Task<>::put (\fBACE_Message_Block\fR * msg, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Transfer msg into the queue to handle immediate processing.
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS template<ACE_SYNCH_DECL> virtual int ACE_Thru_Task<>::svc (void)\fC [virtual]\fR
+.PP
+Run by a daemon thread to handle deferred processing.
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Thru_Task<>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Task\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

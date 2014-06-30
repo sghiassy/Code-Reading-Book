@@ -1,0 +1,142 @@
+XCOMM $XConsortium: Imakefile /main/12 1996/12/16 12:31:46 rws $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/Imakefile,v 3.28 1996/12/23 06:30:29 dawes Exp $
+
+#include <Server.tmpl>
+#define IHaveSubdirs
+
+#if XF86MonoServer
+VGA2SCREEN = vga2
+#endif
+
+#if (XF86MonoDualServer) || (XF86VGA16DualServer)
+MONOSCREEN = mono
+#endif
+
+#if XF86SVGAServer
+VGA256SCREEN = vga256
+#endif
+
+#if XF86VGA16Server
+VGA16SCREEN = vga16
+#endif
+
+#if XF86AccelServer
+ACCELDIRS = accel
+#endif
+
+#if !defined(OsfArchitecture) && !defined(AmoebaArchitecture)
+SUPERPROBE = SuperProbe
+#endif
+
+#if BuildXF86Setup
+XF86SETUPDIR = XF86Setup
+#endif
+
+SCREENS = $(VGA2SCREEN) $(MONOSCREEN) $(VGA16SCREEN) $(VGA256SCREEN)
+
+SUBDIRS = os-support common common_hw xaa $(SCREENS) $(ACCELDIRS) doc \
+          reconfig xf86config $(XF86SETUPDIR) etc LinkKit \
+          VGADriverDoc $(SUPERPROBE)
+
+#ifndef OS2Architecture
+XF86CONFIG = XF86Config
+#else
+XF86CONFIG = XF86Conf
+#endif
+
+all:: $(XF86CONFIG)
+
+#if defined(i386BsdArchitecture) && !defined(FreeBSDArchitecture)
+MANPAGE=Concat(FileManDir,/XF86Config.0)
+#else
+MANPAGE=Concat3(FileManDir,/XF86Config.,FileManSuffix)
+#endif
+
+RGBPATH=\"DefaultRGBDatabase\"
+MISCFONTPATH=\"$(LIBDIR)/fonts/misc/\"
+T1FONTPATH=\"$(LIBDIR)/fonts/Type1/\"
+SPFONTPATH=\"$(LIBDIR)/fonts/Speedo/\"
+DPI75FONTPATH=\"$(LIBDIR)/fonts/75dpi/\"
+DPI100FONTPATH=\"$(LIBDIR)/fonts/100dpi/\"
+DPI75USFONTPATH=\"$(LIBDIR)/fonts/75dpi/:unscaled\"
+DPI100USFONTPATH=\"$(LIBDIR)/fonts/100dpi/:unscaled\"
+
+#if Build75DpiFonts
+  USE_75FONTS="    FontPath"
+#else
+  USE_75FONTS="XCOMM    FontPath"
+#endif
+#if Build100DpiFonts
+  USE_100FONTS=FontPath
+#else
+  USE_100FONTS="XCOMM    FontPath"
+#endif
+#if BuildSpeedoFonts
+  USE_SPFONTS="    FontPath"
+#else
+  USE_SPFONTS="XCOMM    FontPath"
+#endif
+#if BuildType1Fonts
+  USE_T1FONTS="    FontPath"
+#else
+  USE_T1FONTS="XCOMM    FontPath"
+#endif
+
+#ifdef FreeBSDArchitecture
+  MOUSEDEV=\"/dev/mouse\"
+#else
+# if defined(i386BsdArchitecture)
+  MOUSEDEV=\"/dev/com1\"
+# else
+#  ifdef LinuxArchitecture
+  MOUSEDEV=\"/dev/mouse\"
+#  else
+#   ifdef i386ScoArchitecture
+  MOUSEDEV=\"/dev/tty1a\"
+#   else
+  MOUSEDEV=\"/dev/tty00\"
+#   endif
+#  endif
+# endif
+#endif
+
+#ifdef MinixArchitecture
+CppFileTarget($(XF86CONFIG), XF86Conf.cpp,
+    -DRGBPATH=$(RGBPATH) -DMISCFONTPATH=$(MISCFONTPATH)
+    -DUSE_T1FONTS=$(USE_T1FONTS) -DT1FONTPATH=$(T1FONTPATH)
+    -DUSE_SPFONTS=$(USE_SPFONTS) -DSPFONTPATH=$(SPFONTPATH)
+    -DUSE_75FONTS=$(USE_75FONTS) -DDPI75FONTPATH=$(DPI75FONTPATH)
+    -DUSE_100FONTS=$(USE_100FONTS) -DDPI100FONTPATH=$(DPI100FONTPATH)
+    -DDPI75USFONTPATH=$(DPI75USFONTPATH) -DDPI100USFONTPATH=$(DPI100USFONTPATH)
+    -DMOUSEDEV=$(MOUSEDEV) -DMANPAGE=$(MANPAGE) -DMODULEPATH=\"$(MODULEDIR)\",
+    $(ICONFIGFILES))
+#else
+CppFileTarget($(XF86CONFIG), XF86Conf.cpp, \
+    -DRGBPATH=$(RGBPATH) -DMISCFONTPATH=$(MISCFONTPATH) \
+    -DUSE_T1FONTS=$(USE_T1FONTS) -DT1FONTPATH=$(T1FONTPATH) \
+    -DUSE_SPFONTS=$(USE_SPFONTS) -DSPFONTPATH=$(SPFONTPATH) \
+    -DUSE_75FONTS=$(USE_75FONTS) -DDPI75FONTPATH=$(DPI75FONTPATH) \
+    -DUSE_100FONTS=$(USE_100FONTS) -DDPI100FONTPATH=$(DPI100FONTPATH) \
+    -DDPI75USFONTPATH=$(DPI75USFONTPATH) \
+    -DDPI100USFONTPATH=$(DPI100USFONTPATH) \
+    -DMOUSEDEV=$(MOUSEDEV) -DMANPAGE=$(MANPAGE) -DMODULEPATH=\"$(MODULEDIR)\", \
+    $(ICONFIGFILES))
+#endif
+
+InstallManPage(XFree86,$(MANDIR))
+InstallGenManPageLong(XF86Conf,$(FILEMANDIR),XF86Config,$(FILEMANSUFFIX))
+InstallManPage(XF86_Mono,$(MANDIR))
+InstallManPage(XF86_VGA16,$(MANDIR))
+InstallManPage(XF86_SVGA,$(MANDIR))
+InstallManPageLong(XF86_Acc,$(MANDIR),XF86_Accel)
+InstallManPageAliases(XF86_Accel,$(MANDIR),XF86_S3 XF86_Mach32 XF86_Mach64 XF86_P9000 XF86_Mach8 XF86_8514 XF86_AGX XF86_W32 XF86_I128)
+InstallNamedNonExec($(XF86CONFIG),XF86Config.eg,$(LIBDIR))
+
+InstallLinkKitNonExecFile(xf86Version.h,$(LINKKITDIR)/include)
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

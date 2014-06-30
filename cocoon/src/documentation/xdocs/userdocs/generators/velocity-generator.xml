@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Velocity Generator</title>
+  <subtitle>in @doctitle@</subtitle>
+  <version>0.9</version>
+  <type>Technical document</type>
+  <authors>
+  <person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+  </authors>
+  <abstract>This document describes the Velocity template generator.</abstract>
+ </header>
+ <body>
+  <s1 title="Velocity Generator">
+  <p>
+   Allows Velocity template to be used as a generator. 
+   Builds upon the Velocity servlet functionality - overrides 
+   the output method in order to pipe the results into SAX events.
+  </p>
+  
+  <ul>
+   <li>Name : velocity</li>
+   <li>Class: org.apache.cocoon.generation.VelocityGenerator</li>
+   <li>Cacheable: ????.</li>
+  </ul>
+  <source>
+<![CDATA[
+<map:generate type="velocity"/>
+]]>
+  </source>
+
+  <p>
+   Cocoon Generator that produces dynamic XML SAX events
+   from a Velocity template file.
+  </p>
+ 
+  <s2 title="Sitemap Configuration">
+   <p>
+    Attributes:
+   </p>
+   <dl>
+    <dt>usecache (optional; default: 'false')</dt> 
+    <dd>
+     set to 'true' to enable template caching on the 'cocoon'
+     resource loader
+    </dd>
+   
+    <dt>checkInterval (optional; default: '0')</dt>
+    <dd>
+     This is the number of seconds between modification checks when
+     caching is turned on.  When this is an integer &gt; 0, this represents
+     the number of seconds between checks to see if the template was
+     modified. If the template has been modified since last check, then
+     it is reloaded and reparsed. Otherwise nothing is done. When &lt;= 0,
+     no modification checks will take place, and assuming that the
+     property cache (above) is true, once a template is loaded and
+     parsed the first time it is used, it will not be checked or
+     reloaded after that until the application or servlet engine is
+     restarted.
+    </dd>
+   </dl>
+ 
+   <p>
+   Child Elements:
+   </p>
+   
+   <dl>
+    <dt>&lt;property key="propertyKey" value="propertyValue"/&gt;
+     (optional; 0..n)</dt>
+    <dd>
+     An additional property to pass along to the Velocity template
+     engine during initialization
+    </dd>
+    
+    <dt>&lt;resource-loader name="loaderName" class="javaClassName"/&gt;
+     (optional; 0..n; children: property*)</dt>
+    <dd>
+     The default configuration uses the 'cocoon' resource loader
+     which resolves resources via the Cocoon SourceResolver. Additional
+     resource loaders can be added with this configuration
+     element. Configuration properties for the resource loader can be
+     specified by adding a child property element of the resource-loader
+     element. The prefix '&lt;name&gt;.resource.loader.' is
+     automatically added to the property name.
+    </dd>
+    
+    <dt>&lt;export-object key="objectMapKey" name="velocityContextName"/&gt;
+     (optional; 0..n)</dt>
+    <dd>
+     Export the object specified by <em>key</em> from the Cocoon
+     object map to the Velocity context of the template.  The object can
+     be accessed from the template as <em>name</em>. Be careful to use a
+     valid VTL variable name.
+    </dd>
+   </dl>
+ 
+   <p>
+    Default Java objects exported to the Velocity context:
+   </p>
+   
+   <dl>
+    <dt>request (org.apache.cocoon.environment.Request)</dt>
+    <dd>The Cocoon current request</dd>
+    
+    <dt>template (java.lang.String)</dt>
+    <dd>The path of the template file currently being evaluated</dd>
+    
+    <dt>response (org.apache.cocoon.environment.Response)</dt>
+    <dd>The Cocoon response associated with the current request</dd>
+    
+    <dt>context (org.apache.cocoon.environment.Context)</dt>
+    <dd>The Cocoon context associated with the current request</dd>
+    
+    <dt>parameters (org.apache.avalon.framework.parameters.Parameters)</dt>
+    <dd>Any parameters passed to the generator in the pipeline</dd>
+   </dl>
+ 
+   <p>
+    Additional Java objects can be exported from the Cocoon object
+    map to the Velocity context by adding one or more &lt;export-object
+    key="objectMapKey" name="velocityContextName"/&gt; child elements
+    to the generator configuration in the sitemap.
+   </p>
+ 
+  </s2>
+ </s1>
+ </body>
+</document>

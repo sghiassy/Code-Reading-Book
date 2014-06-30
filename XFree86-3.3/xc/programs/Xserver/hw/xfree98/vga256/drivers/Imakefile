@@ -1,0 +1,83 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/10/25 15:43:11 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/vga256/drivers/Imakefile,v 3.8 1996/12/23 07:08:31 dawes Exp $
+#include <Server.tmpl>
+#define IHaveSubdirs
+
+#if XF98GANBWAPServer
+GANBWAPDIR  = ganbwap
+GANBWAPSRCS = ganbwap/?*.c
+GANBWAPOBJS = ganbwap/cir_drv.o
+#endif
+
+#if XF98NEC480Server
+NEC480DIR  = nec480
+NEC480SRCS = nec480/?*.c
+NEC480OBJS = nec480/nec480_drv.o
+#endif
+
+#if XF98NKVNECServer
+NKVNECDIR  = nkvnec
+NKVNECSRCS = nkvnec/?*.c
+NKVNECOBJS = nkvnec/cir_drv.o
+#endif
+
+#if XF98WABSServer
+WABSDIR  = wabs
+WABSSRCS = wabs/?*.c
+WABSOBJS = wabs/cir_drv.o
+#endif
+
+#if XF98WABEPServer
+WABEPDIR  = wabep
+WABEPSRCS = wabep/?*.c
+WABEPOBJS = wabep/cir_drv.o
+#endif
+
+#if XF98WSNAServer
+WSNADIR  = wsna
+WSNASRCS = wsna/?*.c
+WSNAOBJS = wsna/cir_drv.o
+#endif
+
+#if XF98TGUIServer
+TGUIDIR  = trident
+TGUISRCS = trident/?*.c
+TGUIOBJS = trident/tvga89_drv.o
+#endif
+
+SUBDIRS = $(GANBWAPDIR) $(NEC480DIR) $(NKVNECDIR) $(WABSDIR) $(WABEPDIR) \
+	  $(WSNADIR) $(TGUIDIR)
+
+#if XF98GANBWAPServer
+NormalDepLibraryTarget(driverganbwap,$(GANBWAPDIR) $(GANBWAPOBJS),$(GANBWAPOBJS))
+#endif
+#if XF98NEC480Server
+NormalDepLibraryTarget(drivernec480,$(NEC480DIR) $(NEC480OBJS),$(NEC480OBJS))
+#endif
+#if XF98NKVNECServer
+NormalDepLibraryTarget(drivernkvnec,$(NKVNECDIR) $(NKVNECOBJS),$(NKVNECOBJS))
+#endif
+#if XF98WABSServer
+NormalDepLibraryTarget(driverwabs,$(WABSDIR) $(WABSOBJS),$(WABSOBJS))
+#endif
+#if XF98WABEPServer
+NormalDepLibraryTarget(driverwabep,$(WABEPDIR) $(WABEPOBJS),$(WABEPOBJS))
+#endif
+#if XF98WSNAServer
+NormalDepLibraryTarget(driverwsna,$(WSNADIR) $(WSNAOBJS),$(WSNAOBJS))
+#endif
+#if XF98TGUIServer
+NormalDepLibraryTarget(drivertrident,$(TGUIDIR) $(TGUIOBJS),$(TGUIOBJS))
+#endif
+
+NormalLibraryObjectRule()
+
+ForceSubdirs($(SUBDIRS))
+
+DependSubdirs($(SUBDIRS))
+
+InstallLinkKitNonExecFile(Imakefile,$(XF98LINKKITDIR)/drivers98/vga256)

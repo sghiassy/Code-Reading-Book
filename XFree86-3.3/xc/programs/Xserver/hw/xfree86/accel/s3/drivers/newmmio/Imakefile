@@ -1,0 +1,30 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/09/28 17:21:52 rws $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/s3/drivers/newmmio/Imakefile,v 3.2 1996/12/27 06:56:38 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = newmmio.c
+
+OBJS = newmmio.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I../.. -I$(XF86COMSRC) -I$(XF86HWSRC) \
+	   -I$(XF86OSSRC) -I$(SERVERSRC)/mi \
+           -I$(XF86SRC)/vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
+	   -I$(XF86SRC)/accel/cache
+#endif
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+all:: newmmio.o
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/s3/newmmio)
+InstallLinkKitNonExecFile(newmmio.c,$(LINKKITDIR)/drivers/s3/newmmio)
+
+DependTarget()

@@ -1,0 +1,56 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Running an effect on multiple layers</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Running an effect on multiple layers</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Running an effect on multiple layers.</h4>
+It sometimes is needed to run the same effect logic on multiple layers with different content and
+parameters. For example a 2D picture morpher effect: the code is the same, the parameters and the
+picture are not. When an effectobject is placed on more than one layer, DemoGL will call the rendermethod
+of choice, <b>RenderFrame</b> or <b>RenderFrameEx</b>, every time the effect is found on a layer. 
+To help developers to write cleaner code so they don't have to count how many times the rendermethod is
+called to determine for which layer this call is, it's recommended that developers use <b>RenderFrameEx</b>
+as the rendermethod of choice. RenderFrameEx will receive the layernumber currently executed. This way, the
+developer can determine easily how the logic should behave, looking at the layernumber received. To select
+RenderFrameEx as the default rendermethod instead of the default rendermethod RenderFrame, use 
+<a HREF="ref_functions_DEMOGL_SetVariable.htm">DEMOGL_SetVariable</a> to set the variable DGL_VF_USERENDERFRAMEEX
+to true.
+<p>
+Running effectobjects on more than one layer is more complex than it looks, especially when each layer has
+different runtime parameters and content. The developer has to store layer specific material in a storage
+that keeps the data separated per layer. But with OOP techniques that won't be that much of a problem.
+<p>
+DemoGL's script syntax for userdefined objects contains SEND commands to send an int, float or string to
+an effect plus a layer specification. When the developer creates a store for layer specific parameters, the
+designer can then start the effect on more than one layer and send runtime parameters to the effect for
+layer specific execution using the SENDINT, SENDFLOAT and SENDSTRING commands. The effectobject can then
+react on the received parameters and do layer specific rendering based on the parameters for that layer.
+<p>
+It's thus important the developer first builds layer specific support into the effectclass. Then the designer
+sends layerspecific parameters to the effectobject using TLE's with SENDINT, SENDFLOAT and SENDSTRING commands.
+Then the designer starts the effectobjects on multiple layers and the RenderFrameEx() function with the
+layer specific logic build by the developer does the rest. This way, you build flexible, reusable effectclasses,
+with little effort and which runtime behaviour can be tweaked using simple TLE's in the script. This way, the
+designer can design the demo after the code is written and tweak the execution without recompiling the 
+code. 
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

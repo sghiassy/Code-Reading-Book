@@ -1,0 +1,189 @@
+dnl Use autoconf on this directory to produce configure script
+dnl Use autoheader on this file to produce config.h.in
+dnl Then use configure script to generate makefile from Makefile.in
+
+AC_INIT(sockstream.h)            dnl a distinct socket++ file
+AC_CONFIG_HEADER(config.h)
+
+dnl check for programs
+AC_PROG_MAKE_SET
+AC_PROG_CC
+AC_PROG_CXX
+
+if test $ac_cv_prog_gxx = yes; then
+  dnl check if g++ version is greater than or equal to 2.7.2
+  AC_MSG_CHECKING(whether g++ version is >= 2.7.2)
+  AC_CACHE_VAL(socketxx_cv_gxx_ver, [
+  socketxx_gxx_version=`eval "$CXX --version"`
+  oldifs=$IFS
+  IFS='.-qab'
+  set $socketxx_gxx_version
+  IFS=$oldifs
+  socketxx_cv_gxx_ver=`eval "expr $1 \* 10000 + $2 \* 100 + $3"`])
+
+  if test $socketxx_cv_gxx_ver -ge 20702; then
+    AC_MSG_RESULT(yes)
+  else
+    AC_MSG_RESULT(no)
+    AC_MSG_ERROR(g++ version $socketxx_gxx_version < 2.7.2)
+  fi
+
+  dnl add exception handling flag to g++ compiler
+  dnl exception handling does not work with -O
+  CXXFLAGS="-g -fhandle-exceptions"
+
+  dnl add runtime type identification flag to g++
+  dnl CXXFLAGS="$CXXFLAGS -frtti"
+  dnl libg++ is compiled without rtti thus we should not use rtti
+  CXXFLAGS="$CXXFLAGS -fno-rtti"
+fi
+
+AC_PROG_RANLIB
+AC_CHECK_PROG(MAKEDEPEND, makedepend, makedepend, :) dnl not a smiley :(
+AC_PROG_CPP                      dnl later macros will use it
+AC_PROG_CXXCPP                   dnl later macros will use it
+AC_AIX
+
+dnl check for libraries
+AC_CHECK_LIB(nsl, t_accept, NETWORK_LIBS="$NETWORK_LIBS -lnsl")
+AC_CHECK_LIB(socket, socket, NETWORK_LIBS="$NETWORK_LIBS -lsocket")
+AC_SUBST(NETWORK_LIBS)
+
+dnl check for header files
+AC_LANG_SAVE
+AC_LANG_CPLUSPLUS
+AC_CHECK_HEADERS(string.h memory.h)
+AC_CHECK_HEADER(_G_config.h, AC_DEFINE(_S_LIBGXX))
+AC_LANG_RESTORE
+AC_HEADER_SYS_WAIT
+
+dnl check for typedefs
+AC_PID_T
+
+dnl check for structures
+
+dnl check for compiler characteristics
+AC_SUBST(CXX_INCLUDE_PATH)
+AC_SUBST(CFLAGS)
+AC_SUBST(CXXFLAGS)
+AC_SUBST(LDFLAGS)
+
+dnl check for library functions and global variables
+AC_RETSIGTYPE
+AC_FUNC_VFORK
+AC_HAVE_FUNCS(select)
+
+AC_MSG_CHECKING(for sys_siglist)
+AC_CACHE_VAL(socketxx_cv_siglist, [
+AC_TRY_LINK([
+# include <unistd.h>
+# include <sys/signal.h>
+], [
+#ifndef _sys_siglist
+  extern char* _sys_siglist[];
+#endif
+  puts(*_sys_siglist);
+],
+socketxx_cv_siglist=_sys_siglist,
+socketxx_cv_siglist=sys_siglist) ])
+AC_DEFINE_UNQUOTED(SYS_SIGLIST, $socketxx_cv_siglist)
+AC_MSG_RESULT($socketxx_cv_siglist)
+
+AC_MSG_CHECKING(for sys_errlist)
+AC_CACHE_VAL(socketxx_cv_errlist, [
+AC_TRY_LINK([
+# include <errno.h>
+# include <unistd.h>
+], [
+#ifndef _sys_errlist
+  extern char* _sys_errlist[];
+#endif
+  puts(*_sys_errlist);
+],
+socketxx_cv_errlist=_sys_errlist,
+socketxx_cv_errlist=sys_errlist) ])
+AC_DEFINE_UNQUOTED(SYS_ERRLIST, $socketxx_cv_errlist)
+AC_MSG_RESULT($socketxx_cv_errlist)
+
+AC_MSG_CHECKING(for sys_errlist prototype)
+AC_CACHE_VAL(socketxx_cv_errlist_proto, [
+AC_LANG_SAVE
+AC_LANG_CPLUSPLUS
+AC_TRY_COMPILE( [
+#include <errno.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+], [
+  puts (*$socketxx_cv_errlist);
+],
+socketxx_cv_errlist_proto=yes,
+socketxx_cv_errlist_proto=no) ])
+AC_LANG_RESTORE
+if test $socketxx_cv_errlist_proto = yes; then
+  AC_DEFINE(SYS_ERRLIST_DECLARED)
+fi
+AC_MSG_RESULT($socketxx_cv_errlist_proto)
+
+AC_MSG_CHECKING(for signal handler arg type)
+AC_CACHE_VAL(socketxx_cv_sighnd_argtype, [
+AC_LANG_SAVE
+AC_LANG_CPLUSPLUS
+AC_TRY_COMPILE([
+# include <unistd.h>
+# include <sys/signal.h>
+
+  void sigh (int s, int c, void* p, void* a) {}
+  ], [
+  typedef RETSIGTYPE (*funcptr) (...);
+  struct sigaction sa;
+  sa.sa_handler = funcptr (&sigh);
+  ],
+  socketxx_cv_sighnd_argtype=...,
+  AC_TRY_COMPILE([
+#   include <unistd.h>
+#   include <sys/signal.h>
+
+    void sigh (int s, int c, void* p, void* a);
+    ], [
+    typedef RETSIGTYPE (*funcptr) (int);
+    struct sigaction sa;
+    sa.sa_handler = funcptr (&sigh);
+    ],
+    socketxx_cv_sighnd_argtype=int,
+    socketxx_cv_sighnd_argtype=void)) ])
+AC_LANG_RESTORE
+AC_DEFINE_UNQUOTED(SIGHND_ARGTYPE, $socketxx_cv_sighnd_argtype)
+AC_MSG_RESULT($socketxx_cv_sighnd_argtype)
+
+dnl the following check was provided by
+dnl Blair Zajac <blair@olympia.gps.caltech.edu>
+AC_MSG_CHECKING(if extern \"C\" wrappers are needed)
+AC_CACHE_VAL(bz_cv_cplusplus_needexternCwrapper, [
+AC_LANG_SAVE
+AC_LANG_CPLUSPLUS
+AC_TRY_LINK([
+# include <string.h>
+# include <stdio.h>
+], [
+  char buf[100];
+  strcpy(buf, "Hello world\n");
+],
+  bz_cv_cplusplus_needexternCwrapper=no,
+  bz_cv_cplusplus_needexternCwrapper=yes)
+])
+AC_LANG_RESTORE
+
+if test $bz_cv_cplusplus_needexternCwrapper = no; then
+  AC_DEFINE(EXTERN_C_BEGIN,)
+  AC_DEFINE(EXTERN_C_END,)
+else
+  AC_DEFINE(EXTERN_C_BEGIN, extern "C" {)
+  AC_DEFINE(EXTERN_C_END, })
+fi
+AC_MSG_RESULT($bz_cv_cplusplus_needexternCwrapper)
+
+dnl check for system
+
+dnl generate output files
+AC_OUTPUT(Makefile test/Makefile)

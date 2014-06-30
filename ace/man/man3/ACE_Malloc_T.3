@@ -1,0 +1,359 @@
+.TH ACE_Malloc_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Malloc_T \- Define a C++ class that uses parameterized types to provide an extensible mechanism for encapsulating various of dynamic memory management strategies. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Malloc_T.h>\fR
+.PP
+Inherited by \fBACE_Malloc\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef ACE_MEM_POOL \fBMEMORY_POOL\fR"
+.br
+.ti -1c
+.RI "typedef ACE_MEM_POOL_OPTIONS \fBMEMORY_POOL_OPTIONS\fR"
+.br
+.ti -1c
+.RI "typedef ACE_TYPENAME ACE_CB::ACE_Name_Node \fBNAME_NODE\fR"
+.br
+.ti -1c
+.RI "typedef ACE_TYPENAME ACE_CB::ACE_Malloc_Header \fBMALLOC_HEADER\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Malloc_T\fR (const \fBACE_TCHAR\fR *pool_name = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Malloc_T\fR (const \fBACE_TCHAR\fR *pool_name, const \fBACE_TCHAR\fR *lock_name, const ACE_MEM_POOL_OPTIONS *options = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Malloc_T\fR (const \fBACE_TCHAR\fR *pool_name, const \fBACE_TCHAR\fR *lock_name, const void *options = 0)"
+.br
+.RI "\fIThis is necessary to work around template bugs with certain C++ compilers.\fR"
+.ti -1c
+.RI "\fB~ACE_Malloc_T\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBref_counter\fR (void)"
+.br
+.RI "\fIGet Reference counter.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.RI "\fIRelease ref counter.\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.RI "\fIReleases resources allocated by .\fR"
+.ti -1c
+.RI "void* \fBmalloc\fR (size_t nbytes)"
+.br
+.RI "\fIAllocate <nbytes>, but don't give them any initial value.\fR"
+.ti -1c
+.RI "void* \fBcalloc\fR (size_t nbytes, char initial_value = '\\0')"
+.br
+.RI "\fIAllocate <nbytes>, giving them <initial_value>.\fR"
+.ti -1c
+.RI "void* \fBcalloc\fR (size_t n_elem, size_t elem_size, char initial_value = '\\0')"
+.br
+.RI "\fIAllocate <n_elem> each of size <elem_size>, giving them <initial_value>.\fR"
+.ti -1c
+.RI "void \fBfree\fR (void *ptr)"
+.br
+.RI "\fIDeallocate memory pointed to by <ptr>, which must have been allocated previously by <this->malloc>.\fR"
+.ti -1c
+.RI "\fBMEMORY_POOL\fR& \fBmemory_pool\fR (void)"
+.br
+.RI "\fIReturns a reference to the underlying memory pool.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const char *name, void *pointer, int duplicates = 0)"
+.br
+.ti -1c
+.RI "int \fBtrybind\fR (const char *name, void *&pointer)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const char *name, void *&pointer)"
+.br
+.RI "\fILocate <name> and pass out parameter via <pointer>. If found, return 0, returns -1 if failure occurs.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const char *name)"
+.br
+.RI "\fIReturns 0 if <name> is in the mapping. -1, otherwise.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const char *name)"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const char *name, void *&pointer)"
+.br
+.ti -1c
+.RI "int \fBsync\fR (\fBssize_t\fR len = -1, int flags = MS_SYNC)"
+.br
+.ti -1c
+.RI "int \fBsync\fR (void *addr, size_t len, int flags = MS_SYNC)"
+.br
+.RI "\fISync <len> bytes of the memory region to the backing store starting at .\fR"
+.ti -1c
+.RI "int \fBprotect\fR (\fBssize_t\fR len = -1, int prot = PROT_RDWR)"
+.br
+.ti -1c
+.RI "int \fBprotect\fR (void *addr, size_t len, int prot = PROT_RDWR)"
+.br
+.RI "\fIChange the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBavail_chunks\fR (size_t size) const"
+.br
+.ti -1c
+.RI "ACE_LOCK& \fBmutex\fR (void)"
+.br
+.RI "\fIReturns a pointer to the lock used to provide mutual exclusion to an  allocator.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "void* \fBbase_addr\fR (void)"
+.br
+.RI "\fIReturn cb_ptr value.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBopen\fR (void)"
+.br
+.RI "\fIInitialize the Malloc pool.\fR"
+.ti -1c
+.RI "int \fBshared_bind\fR (const char *name, void *pointer)"
+.br
+.RI "\fIAssociate <name> with <pointer>. Assumes that locks are held by callers.\fR"
+.ti -1c
+.RI "void* \fBshared_find\fR (const char *name)"
+.br
+.ti -1c
+.RI "void* \fBshared_malloc\fR (size_t nbytes)"
+.br
+.RI "\fIAllocate memory. Assumes that locks are held by callers.\fR"
+.ti -1c
+.RI "void \fBshared_free\fR (void *ptr)"
+.br
+.RI "\fIDeallocate memory. Assumes that locks are held by callers.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_CB* \fBcb_ptr_\fR"
+.br
+.RI "\fIPointer to the control block that is stored in memory controlled by <MEMORY_POOL>.\fR"
+.ti -1c
+.RI "\fBMEMORY_POOL\fR \fBmemory_pool_\fR"
+.br
+.RI "\fIPool of memory used by  to manage its freestore.\fR"
+.ti -1c
+.RI "ACE_LOCK \fBlock_\fR"
+.br
+.RI "\fILock that ensures mutual exclusion for the <MEMORY_POOL>.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Malloc_LIFO_Iterator_T< ACE_MEM_POOL_2,ACE_LOCK,ACE_CB >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Malloc_FIFO_Iterator_T< ACE_MEM_POOL_2,ACE_LOCK,ACE_CB >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_MEM_POOL_1, class ACE_LOCK, class ACE_CB>  template class ACE_Malloc_T
+Define a C++ class that uses parameterized types to provide an extensible mechanism for encapsulating various of dynamic memory management strategies.
+.PP
+.PP
+ This class can be configured flexibly with different MEMORY_POOL strategies and different types of ACE_LOCK strategies. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> typedef ACE_TYPENAME ACE_CB::ACE_Malloc_Header ACE_Malloc_T<, ACE_LOCK, ACE_CB>::MALLOC_HEADER
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> typedef ACE_MEM_POOL ACE_Malloc_T<, ACE_LOCK, ACE_CB>::MEMORY_POOL
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> typedef ACE_MEM_POOL_OPTIONS ACE_Malloc_T<, ACE_LOCK, ACE_CB>::MEMORY_POOL_OPTIONS
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> typedef ACE_TYPENAME ACE_CB::ACE_Name_Node ACE_Malloc_T<, ACE_LOCK, ACE_CB>::NAME_NODE
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_T<, ACE_LOCK, ACE_CB>::ACE_Malloc_T<, ACE_LOCK, ACE_CB> (const \fBACE_TCHAR\fR * pool_name = 0)
+.PP
+Initialize \fBACE_Malloc\fR. This constructor passes <pool_name> to initialize the memory pool, and uses  to automatically extract out the name used for the underlying lock name (if necessary). 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_T<, ACE_LOCK, ACE_CB>::ACE_Malloc_T<, ACE_LOCK, ACE_CB> (const \fBACE_TCHAR\fR * pool_name, const \fBACE_TCHAR\fR * lock_name, const ACE_MEM_POOL_OPTIONS * options = 0)
+.PP
+Initialize \fBACE_Malloc\fR. This constructor passes <pool_name> to initialize the memory pool, and uses <lock_name> to automatically extract out the name used for the underlying lock name (if necessary). In addition, <options> is passed through to initialize the underlying memory pool. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_T<, ACE_LOCK, ACE_CB>::ACE_Malloc_T<, ACE_LOCK, ACE_CB> (const \fBACE_TCHAR\fR * pool_name, const \fBACE_TCHAR\fR * lock_name, const void * options = 0)
+.PP
+This is necessary to work around template bugs with certain C++ compilers.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_T<, ACE_LOCK, ACE_CB>::~ACE_Malloc_T<, ACE_LOCK, ACE_CB> (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> \fBssize_t\fR ACE_Malloc_T<, ACE_LOCK, ACE_CB>::avail_chunks (size_t size) const
+.PP
+Returns a count of the number of available chunks that can hold <size> byte allocations. Function can be used to determine if you have reached a water mark. This implies a fixed amount of allocated memory.
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIsize\fR\fR - the chunk size of that you would like a count of 
+.PP
+\fBReturns: \fR
+.in +1c
+ function returns the number of chunks of the given size that would fit in the currently allocated memory. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void * ACE_Malloc_T<, ACE_LOCK, ACE_CB>::base_addr (void)
+.PP
+Return cb_ptr value.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::bind (const char * name, void * pointer, int duplicates = 0)
+.PP
+Associate <name> with <pointer>. If <duplicates> == 0 then do not allow duplicate <name>/<pointer> associations, else if <duplicates> != 0 then allow duplicate <name>/<pointer> assocations. Returns 0 if successfully binds (1) a previously unbound <name> or (2) <duplicates> != 0, returns 1 if trying to bind a previously bound <name> and <duplicates> == 0, else returns -1 if a resource failure occurs. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void * ACE_Malloc_T<, ACE_LOCK, ACE_CB>::calloc (size_t n_elem, size_t elem_size, char initial_value = '\\0')
+.PP
+Allocate <n_elem> each of size <elem_size>, giving them <initial_value>.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void * ACE_Malloc_T<, ACE_LOCK, ACE_CB>::calloc (size_t nbytes, char initial_value = '\\0')
+.PP
+Allocate <nbytes>, giving them <initial_value>.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void ACE_Malloc_T<, ACE_LOCK, ACE_CB>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::find (const char * name)
+.PP
+Returns 0 if <name> is in the mapping. -1, otherwise.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::find (const char * name, void *& pointer)
+.PP
+Locate <name> and pass out parameter via <pointer>. If found, return 0, returns -1 if failure occurs.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void ACE_Malloc_T<, ACE_LOCK, ACE_CB>::free (void * ptr)
+.PP
+Deallocate memory pointed to by <ptr>, which must have been allocated previously by <this->malloc>.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void * ACE_Malloc_T<, ACE_LOCK, ACE_CB>::malloc (size_t nbytes)
+.PP
+Allocate <nbytes>, but don't give them any initial value.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> \fBMEMORY_POOL\fR & ACE_Malloc_T<, ACE_LOCK, ACE_CB>::memory_pool (void)
+.PP
+Returns a reference to the underlying memory pool.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_LOCK & ACE_Malloc_T<, ACE_LOCK, ACE_CB>::mutex (void)
+.PP
+Returns a pointer to the lock used to provide mutual exclusion to an  allocator.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::open (void)\fC [private]\fR
+.PP
+Initialize the Malloc pool.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::protect (void * addr, size_t len, int prot = PROT_RDWR)
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::protect (\fBssize_t\fR len = -1, int prot = PROT_RDWR)
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at <this->base_addr_> up to <len> bytes. If <len> == -1 then change protection of all pages in the mapped region. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::ref_counter (void)
+.PP
+Get Reference counter.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::release (void)
+.PP
+Release ref counter.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::remove (void)
+.PP
+Releases resources allocated by .
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::shared_bind (const char * name, void * pointer)\fC [private]\fR
+.PP
+Associate <name> with <pointer>. Assumes that locks are held by callers.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void * ACE_Malloc_T<, ACE_LOCK, ACE_CB>::shared_find (const char * name)\fC [private]\fR
+.PP
+Try to locate <name>. If found, return the associated , else returns 0 if can't find the <name>. Assumes that locks are held by callers. Remember to cast the return value to ACE_CB::ACE_Name_Node*. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void ACE_Malloc_T<, ACE_LOCK, ACE_CB>::shared_free (void * ptr)\fC [private]\fR
+.PP
+Deallocate memory. Assumes that locks are held by callers.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void * ACE_Malloc_T<, ACE_LOCK, ACE_CB>::shared_malloc (size_t nbytes)\fC [private]\fR
+.PP
+Allocate memory. Assumes that locks are held by callers.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::sync (void * addr, size_t len, int flags = MS_SYNC)
+.PP
+Sync <len> bytes of the memory region to the backing store starting at .
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::sync (\fBssize_t\fR len = -1, int flags = MS_SYNC)
+.PP
+Sync <len> bytes of the memory region to the backing store starting at <this->base_addr_>. If <len> == -1 then sync the whole region. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::trybind (const char * name, void *& pointer)
+.PP
+Associate <name> with <pointer>. Does not allow duplicate <name>/<pointer> associations. Returns 0 if successfully binds (1) a previously unbound <name>, 1 if trying to bind a previously bound <name>, or returns -1 if a resource failure occurs. When this call returns <pointer>'s value will always reference the void * that <name> is associated with. Thus, if the caller needs to use <pointer> (e.g., to free it) a copy must be maintained by the caller. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::unbind (const char * name, void *& pointer)
+.PP
+Unbind (remove) one association of <name> to <pointer>. Returns the value of pointer in case the caller needs to deallocate memory. If you want to remove all occurrences of <name> you'll need to call this method multiple times until it fails... 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_T<, ACE_LOCK, ACE_CB>::unbind (const char * name)
+.PP
+Unbind (remove) the name from the map. Don't return the pointer to the caller. If you want to remove all occurrences of <name> you'll need to call this method multiple times until it fails... 
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> class \fBACE_Malloc_FIFO_Iterator_T\fR\fC [friend]\fR
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> class \fBACE_Malloc_LIFO_Iterator_T\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_T<, ACE_LOCK, ACE_CB>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_CB * ACE_Malloc_T<, ACE_LOCK, ACE_CB>::cb_ptr_\fC [private]\fR
+.PP
+Pointer to the control block that is stored in memory controlled by <MEMORY_POOL>.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_LOCK ACE_Malloc_T<, ACE_LOCK, ACE_CB>::lock_\fC [private]\fR
+.PP
+Lock that ensures mutual exclusion for the <MEMORY_POOL>.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> \fBMEMORY_POOL\fR ACE_Malloc_T<, ACE_LOCK, ACE_CB>::memory_pool_\fC [private]\fR
+.PP
+Pool of memory used by  to manage its freestore.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

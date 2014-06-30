@@ -1,0 +1,166 @@
+CHANGELOG for DemoGL library.
+-------------------------------------------
+
+v1.31.0923. Released on: 23-sep-2001
+-------------------------------------------
+* dgl_dllmain.h
+	- MODIFIED: 24 bit Z-buffer
+* dgl_dlltexture.cpp
+	- FIXED: the extension GL_GENERATE_MIPMAP_SGIS in the 2 texture upload methods
+		DoUploadCubeMap and DoUploadNormal was switched on AFTER the image data was uploaded.
+		This is now fixed.
+* DemoGL_Bass.h
+	- ADDED: Definition of BASS_SYNC_POS.
+
+* Documentation:
+	- MODIFIED: the documentation of DEMOGL_SoundSystemSyncCreate.
+
+v1.31. Released on: 03-jun-2001
+-------------------------------------------
+* dgl_dlltexture.cpp/dgl_dlltexture.h
+	These files have changed a lot. Include the new ones of v1.31 in your code (library developers)
+	- ADDED: Compressed Texture support
+	- ADDED: Cubemap support
+	- ADDED: Hardware generated mipmap support (if available)
+
+* dgl_dllbootutilfuncs.cpp:
+  FIXES:
+	- FIXED: glFrustum was fed with floats. corrected.
+	- FIXED: WS_EX_TOPMOST flag removed in CreateMainWindow()'s release build code.
+	         The window will now not keep on top of the debugger. :)
+  OTHER CHANGES:
+	- Changed the default frustum to: glFrustum (-1.0, 1.0, -0.75, 0.75, 1.0, 20.0); 
+	  in InitGL() so it now starts with the right proportions compared to the default 
+	  screen size proportions: 4:3.
+	- Moved ParseExtensionsString to CExtensions class.
+
+* dgl_dllextensions.cpp/dgl_dllextensions.h
+  FIXES:
+	- FIXED: typo in extension GL_EXT_blend_subtract (that's without a second 's', Otis!). 
+	         Old sourcecode will need a recompile with the new DemoGL_Extensions.h if you 
+			 use this extension. Compiled executables will still work with the new v1.31 DLL.
+  ADDITIONS:
+	- ADDED: ParseExtensionsString (moved from dgl_dllbootutilfuncs)
+	- ADDED: Newest extensions from ATI and nVidia
+  OTHER CHANGES:
+	- Changed the crappy parsecode in ParseExtensionsString to a table based lookup 
+	  tester. It's faster, smaller and better to maintain. It now doesn't update the 
+	  screen when an extension is found and logged to prevent thread starvation 
+	  (because the draw thread is flooded with WM_PAINT messages, which stalled nVidia drivers.)
+
+* dgl_dllutilfuncs.h/dgl_dllutilfuncs.cpp:
+  ADDITIONS:
+	- ADDED: new function: EffectuateVariable_VSYNC() that will switch VSYNC on or off depending
+	         on the CDemoDat variable value. 2 routines were removed from the code and are now
+			 instead calling this new function.
+	- ADDED: new API method: DEMOGL_GetWindowSpecificHandles()
+	- ADDED: new function: GenerateRegistryKeyName() that will generate the keyname used to read/store
+	         values in the registry. It is stored in CDemoDat. The Load and save routines for registry values
+			 for the startup dialog are now using the generated name instead of generating the name themselves.
+
+  OTHER CHANGES:
+	- Added new parameter to LogFeedback: bUpdateScreen. This has a default value of 'true' 
+	  so no LogFeedback using code has to be be updated. 
+
+* dgl_dlltextureutilfuncs.cpp/dgl_dlltextureutilfuncs.h:
+  FIXES:
+	- FIXED: memleak from DEMOGL_TextureLoad(). Texture object was not deleted when loading 
+		     of bitmap failed.
+	- FIXED: DoDeleteTexture() routine sometimes didn't delete texture from OpenGL's 
+	         texturespace
+	- FIXED: Removed hardcoded dependancy of TextureID's to the lowerbound of 1. Now if the 
+	         driver returns a set of TextureID's starting with X. If X>1, this will still 
+			 result in proper functioning of the Texturemanager.
+	- FIXED: Bad bind in 1D texture uploading code.
+  ADDITIONS:
+	- ADDED: new API method: DEMOGL_TextureCubeMapLoad();
+	- ADDED: new API method: DEMOGL_TextureCubeMapCreateDynamic();
+	- ADDED: new API method: DEMOGL_TextureCubeMapUpdateWithFBRegion();
+	- ADDED: new CPixelData class for the bitmap(s) of a texture object
+	- ADDED: new routine: DoImportDDS();
+  OTHER CHANGES:
+	- Recoded some texture management functions to support TextureID's instead of names
+	- Moved texture find/empty slot find code to 1 routine: GetFirstEmptySlotInTextureStore
+	- Cleaned up internal usage of deprecated #defines. Now most #defines that are exported 
+	  and which are also used internally are specified using their v1.3 name, prefixed with 
+	  DGL_
+	- Import routines for JPG/TGA/BMP are now using a CPixelData object instead of a CTexture 
+	  object as storage of the bitdata loaded/converted.
+	- Moved Upload/UnUpload routines to CTexture class.
+	- Cleaned up DEMOGL_TextureDelete(). 
+	- Added DDS (compressed textures) support to DEMOGL_TextureLoad();
+
+* dgl_dlldemodat.h/dgl_dlldemodat.cpp:
+  FIXES:
+	- FIXED: CDemoDat::SetOGLExtensions() now adds a space to the string to fix the bug that the
+	         last extension sometimes wasn't found. (Because the parser is matching strings with a 
+			 space added to the end).
+	- FIXED: CDemoDat::SetbVSYNC() now calls new utilfunction EffectuateVariable_VSYNC().
+  ADDITIONS:
+	- ADDED: a get/set pair methods for OGLMaxTextureSize(), which work on the new membervar 
+	         m_iOGLMaxTextureSize.
+	- ADDED: a get/set pair methods for TexNameTexIDDelta, which work on the new membervar 
+	         m_iTexNameTexIDDelta.
+	- ADDED: a get/set pair methods for RegistryKeyName, which work on thenew membervar
+			 m_sRegistryKeyName.
+
+* dgl_dllkernel.cpp:
+  FIXES:
+	- FIXED: MainMsgHandler now calls EffectuateVariable_VSYNC instead of settig the VSYNC variable
+	         itself.
+  ADDITIONS:
+	- ADDED: the get call for the Max texture size and the storage of that size to 
+	         WM_DEMOGL_INITSYSTEM message handler.
+
+* dgl_dllstartsystem.cpp:
+  ADDITIONS:
+	- Added a call to GenerateRegistryKeyName() to all DoAppRun_* routines.
+  OTHER CHANGES:
+	- Changed some texts in InitSystem();
+
+* dgl_dllstartupdialog.cpp/dgl_dllstartupdialog.h:
+  FIXES:
+	- FIXED: frustum errors with rotating logo are now eliminated with a better scaling of the 
+	         frustum in the about dialog.
+	- FIXED: glFrustum was fed with floats. corrected.
+
+* dgl_dllsysconsole.cpp:
+  FIXES:
+	- FIXED: glOrtho was fed with floats and ints. corrected.
+
+* DemoGL_Extensions.h
+  FIXES:
+  	- FIXED: typo in DGL_GL_EXT_blend_subtract.
+  ADDITIONS:
+	- ADDED: newest declarations for all extensions supported by the latest nVidia and ATi chipsets
+	         and drivers (including Geforce3's, as supported in Detonator v11.xx and v12.xx drivers)
+
+* DemoGL_glext.h
+  ADDITIONS:
+	- ADDED: all #defines and function headerdefinitions of all extensions supported by nVidia and
+	         ATi chipsets and drivers. It's now the most complete glext.h available for OpenGL 
+			 programmers, even more complete than ATi's or nVidia's.
+
+* DemoGL_DLL.h:
+  ADDITIONS:
+	- ADDED: new API method: DEMOGL_GetWindowSpecificHandles()
+	- ADDED: new API method: DEMOGL_TextureCubeMapLoad();
+	- ADDED: new API method: DEMOGL_TextureCubeMapCreateDynamic();
+	- ADDED: new API method: DEMOGL_TextureCubeMapUpdateWithFBRegion();
+	- ADDED: cubemap side #defines.
+
+* Documentation:
+  FIXES:
+	- FIXED: language errors, typo's, bad sentences and other nasties
+	- FIXED: layout errors in codesnippets resulted in all code on a single line.
+	- FIXED: DEMOGL_TextureLoad() documentation was totally wrong.
+  ADDITIONS:
+	- ADDED: descriptions for the new API functions, plus descriptions for the new 
+	         functionality in general
+	- ADDED: Error codes plus descriptions of the textureloaders to reference manual.
+
+
+
+v1.30. Released on: 15th of March, 2001
+-------------------------------------------
+First version of v1.3

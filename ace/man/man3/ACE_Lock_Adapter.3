@@ -1,0 +1,169 @@
+.TH ACE_Lock_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Lock_Adapter \- This is an adapter that allows applications to transparently combine the  abstract base class (which contains pure virtual methods) with any of the other concrete \fBACE\fR synchronization classes (e.g., , , , etc.). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch_T.h>\fR
+.PP
+Inherits \fBACE_Lock\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef ACE_LOCKING_MECHANISM \fBACE_LOCK\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Lock_Adapter\fR (ACE_LOCKING_MECHANISM &lock)"
+.br
+.RI "\fIConstructor. All locking requests will be forwarded to <lock>.\fR"
+.ti -1c
+.RI "\fBACE_Lock_Adapter\fR (void)"
+.br
+.RI "\fIConstructor. Since no lock is provided by the user, one will be created internally.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Lock_Adapter\fR (void)"
+.br
+.RI "\fIDestructor. If <lock_> was not passed in by the user, it will be deleted.\fR"
+.ti -1c
+.RI "virtual int \fBacquire\fR (void)"
+.br
+.RI "\fIBlock the thread until the lock is acquired.\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire\fR (void)"
+.br
+.RI "\fIConditionally acquire the lock (i.e., won't block).\fR"
+.ti -1c
+.RI "virtual int \fBrelease\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBacquire_read\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBacquire_write\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBtryacquire_read\fR (void)"
+.br
+.RI "\fIConditionally acquire a read lock. If the locking mechanism doesn't support read locks then this just calls .\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire_write\fR (void)"
+.br
+.RI "\fIConditionally acquire a write lock. If the locking mechanism doesn't support read locks then this just calls .\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire_write_upgrade\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBremove\fR (void)"
+.br
+.RI "\fIExplicitly destroy the lock.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_LOCKING_MECHANISM* \fBlock_\fR"
+.br
+.RI "\fIThe concrete locking mechanism that all the methods delegate to.\fR"
+.ti -1c
+.RI "int \fBdelete_lock_\fR"
+.br
+.RI "\fIThis flag keep track of whether we are responsible for deleting the lock.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class ACE_LOCKING_MECHANISM>  template class ACE_Lock_Adapter
+This is an adapter that allows applications to transparently combine the  abstract base class (which contains pure virtual methods) with any of the other concrete \fBACE\fR synchronization classes (e.g., , , , etc.).
+.PP
+.PP
+ This class uses a form of the Adapter pattern. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> typedef ACE_LOCKING_MECHANISM ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::ACE_LOCK
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::ACE_Lock_Adapter<ACE_LOCKING_MECHANISM> (ACE_LOCKING_MECHANISM & lock)
+.PP
+Constructor. All locking requests will be forwarded to <lock>.
+.PP
+.SS template<classACE_LOCKING_MECHANISM> ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::ACE_Lock_Adapter<ACE_LOCKING_MECHANISM> (void)
+.PP
+Constructor. Since no lock is provided by the user, one will be created internally.
+.PP
+.SS template<classACE_LOCKING_MECHANISM> ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::~ACE_Lock_Adapter<ACE_LOCKING_MECHANISM> (void)\fC [virtual]\fR
+.PP
+Destructor. If <lock_> was not passed in by the user, it will be deleted.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::acquire (void)\fC [virtual]\fR
+.PP
+Block the thread until the lock is acquired.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::acquire_read (void)\fC [virtual]\fR
+.PP
+Block until the thread acquires a read lock. If the locking mechanism doesn't support read locks then this just calls . 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::acquire_write (void)\fC [virtual]\fR
+.PP
+Block until the thread acquires a write lock. If the locking mechanism doesn't support read locks then this just calls . 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::release (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::remove (void)\fC [virtual]\fR
+.PP
+Explicitly destroy the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::tryacquire (void)\fC [virtual]\fR
+.PP
+Conditionally acquire the lock (i.e., won't block).
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::tryacquire_read (void)\fC [virtual]\fR
+.PP
+Conditionally acquire a read lock. If the locking mechanism doesn't support read locks then this just calls .
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::tryacquire_write (void)\fC [virtual]\fR
+.PP
+Conditionally acquire a write lock. If the locking mechanism doesn't support read locks then this just calls .
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::tryacquire_write_upgrade (void)\fC [virtual]\fR
+.PP
+Conditionally try to upgrade a lock held for read to a write lock. If the locking mechanism doesn't support read locks then this just calls . Returns 0 on success, -1 on failure. 
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::delete_lock_\fC [private]\fR
+.PP
+This flag keep track of whether we are responsible for deleting the lock.
+.PP
+.SS template<classACE_LOCKING_MECHANISM> ACE_LOCKING_MECHANISM * ACE_Lock_Adapter<ACE_LOCKING_MECHANISM>::lock_\fC [private]\fR
+.PP
+The concrete locking mechanism that all the methods delegate to.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

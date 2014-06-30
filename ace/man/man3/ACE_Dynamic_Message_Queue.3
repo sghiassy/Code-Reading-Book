@@ -1,0 +1,236 @@
+.TH ACE_Dynamic_Message_Queue 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Dynamic_Message_Queue \- A derived class which adapts the  class in order to maintain dynamic priorities for enqueued  and manage the queue order according to these dynamic priorities. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Message_Queue_T.h>\fR
+.PP
+Inherits \fBACE_Message_Queue< ACE_SYNCH_USE >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Dynamic_Message_Queue\fR (\fBACE_Dynamic_Message_Strategy\fR & message_strategy, size_t hwm = ACE_Message_Queue_Base::DEFAULT_HWM, size_t lwm = ACE_Message_Queue_Base::DEFAULT_LWM, \fBACE_Notification_Strategy\fR * = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Dynamic_Message_Queue\fR (void)"
+.br
+.RI "\fIClose down the message queue and release all resources.\fR"
+.ti -1c
+.RI "virtual int \fBremove_messages\fR (\fBACE_Message_Block\fR *&list_head, \fBACE_Message_Block\fR *&list_tail, u_int status_flags)"
+.br
+.ti -1c
+.RI "virtual int \fBdequeue_head\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the queue.\fR"
+.ti -1c
+.RI "virtual int \fBenqueue_tail\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBenqueue_head\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBenqueue_i\fR (\fBACE_Message_Block\fR *new_item)"
+.br
+.ti -1c
+.RI "virtual int \fBsublist_enqueue_i\fR (\fBACE_Message_Block\fR *new_item, const \fBACE_Time_Value\fR &current_time, \fBACE_Message_Block\fR *&sublist_head, \fBACE_Message_Block\fR *&sublist_tail, \fBACE_Dynamic_Message_Strategy::Priority_Status\fR status)"
+.br
+.RI "\fIenqueue a message in priority order within a given priority status sublist.\fR"
+.ti -1c
+.RI "virtual int \fBdequeue_head_i\fR (\fBACE_Message_Block\fR *&first_item)"
+.br
+.ti -1c
+.RI "virtual int \fBrefresh_queue\fR (const \fBACE_Time_Value\fR & current_time)"
+.br
+.RI "\fIRefresh the queue using the strategy specific priority status function.\fR"
+.ti -1c
+.RI "virtual int \fBrefresh_pending_queue\fR (const \fBACE_Time_Value\fR & current_time)"
+.br
+.RI "\fIRefresh the pending queue using the strategy specific priority status function.\fR"
+.ti -1c
+.RI "virtual int \fBrefresh_late_queue\fR (const \fBACE_Time_Value\fR & current_time)"
+.br
+.RI "\fIRefresh the late queue using the strategy specific priority status function.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBpending_head_\fR"
+.br
+.RI "\fIPointer to head of the pending messages.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBpending_tail_\fR"
+.br
+.RI "\fIPointer to tail of the pending messages.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBlate_head_\fR"
+.br
+.RI "\fIPointer to head of the late messages.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBlate_tail_\fR"
+.br
+.RI "\fIPointer to tail of the late messages.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBbeyond_late_head_\fR"
+.br
+.RI "\fIPointer to head of the beyond late messages.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBbeyond_late_tail_\fR"
+.br
+.RI "\fIPointer to tail of the beyond late messages.\fR"
+.ti -1c
+.RI "\fBACE_Dynamic_Message_Strategy\fR& \fBmessage_strategy_\fR"
+.br
+.RI "\fIPointer to a dynamic priority evaluation function.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Dynamic_Message_Queue< _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T > &)"
+.br
+.ti -1c
+.RI "\fBACE_Dynamic_Message_Queue\fR (const ACE_Dynamic_Message_Queue< _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T > &)"
+.br
+.ti -1c
+.RI "virtual int \fBpeek_dequeue_head\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIprivate method to hide public base class method: just calls base class method.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_SYNCH_DECL>  template class ACE_Dynamic_Message_Queue
+A derived class which adapts the  class in order to maintain dynamic priorities for enqueued  and manage the queue order according to these dynamic priorities.
+.PP
+.PP
+ The messages in the queue are managed so as to preserve a logical ordering with minimal overhead per enqueue and dequeue operation. For this reason, the actual order of messages in the linked list of the queue may differ from their priority order. As time passes, a message may change from pending status to late status, and eventually to beyond late status. To minimize reordering overhead under this design force, three separate boundaries are maintained within the linked list of messages. Messages are dequeued preferentially from the head of the pending portion, then the head of the late portion, and finally from the head of the beyond late portion. In this way, only the boundaries need to be maintained (which can be done efficiently, as aging messages maintain the same linked list order as they progress from one status to the next), with no reordering of the messages themselves, while providing correct priority ordered dequeueing semantics. Head and tail enqueue methods inherited from \fBACE_Message_Queue\fR are made private to prevent out-of-order messages from confusing management of the various portions of the queue. Messages in the pending portion of the queue whose priority becomes late (according to the specific dynamic strategy) advance into the late portion of the queue. Messages in the late portion of the queue whose priority becomes later than can be represented advance to the beyond_late portion of the queue. These behaviors support a limited schedule overrun, with pending messages prioritized ahead of late messages, and late messages ahead of beyond late messages. These behaviors can be modified in derived classes by providing alternative definitions for the appropriate virtual methods. When filled with messages, the queue's linked list should look like: H T | | B - B - B - B - L - L - L - P - P - P - P - P | | | | | | BH BT LH LT PH PT Where the symbols are as follows: H = Head of the entire list T = Tail of the entire list B = Beyond late message BH = Beyond late messages Head BT = Beyond late messages Tail L = Late message LH = Late messages Head LT = Late messages Tail P = Pending message PH = Pending messages Head PT = Pending messages Tail Caveat: the virtual methods enqueue_tail, enqueue_head, and peek_dequeue_head have semantics for the static message queues that cannot be guaranteed for dynamic message queues. The peek_dequeue_head method just calls the base class method, while the two enqueue methods call the priority enqueue method. The order of messages in the dynamic queue is a function of message deadlines and how long they are in the queues. You can manipulate these in some cases to ensure the correct semantics, but that is not a very stable or portable approach (discouraged). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Dynamic_Message_Queue<>::ACE_Dynamic_Message_Queue<> (\fBACE_Dynamic_Message_Strategy\fR & message_strategy, size_t hwm = ACE_Message_Queue_Base::DEFAULT_HWM, size_t lwm = ACE_Message_Queue_Base::DEFAULT_LWM, \fBACE_Notification_Strategy\fR * = 0)
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Dynamic_Message_Queue<>::~ACE_Dynamic_Message_Queue<> (void)\fC [virtual]\fR
+.PP
+Close down the message queue and release all resources.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Dynamic_Message_Queue<>::ACE_Dynamic_Message_Queue<> (const ACE_Dynamic_Message_Queue< _ACE_SYNCH_MUTEX_T,_ACE_SYNCH_CONDITION_T >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::dequeue_head (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Dequeue and return the  at the head of the queue. Returns -1 on failure, else the number of items still on the queue. 
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::dequeue_head_i (\fBACE_Message_Block\fR *& first_item)\fC [protected, virtual]\fR
+.PP
+Dequeue and return the  at the head of the logical queue. Attempts first to dequeue from the pending portion of the queue, or if that is empty from the late portion, or if that is empty from the beyond late portion, or if that is empty just sets the passed pointer to zero and returns -1. 
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> void ACE_Dynamic_Message_Queue<>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of the queue.
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::enqueue_head (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+just call priority enqueue method: head enqueue semantics for dynamic message queues are unstable: the message may or may not be where it was placed after the queue is refreshed prior to the next enqueue or dequeue operation. 
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::enqueue_i (\fBACE_Message_Block\fR * new_item)\fC [protected, virtual]\fR
+.PP
+Enqueue an  in accordance with its priority. priority may be *dynamic* or *static* or a combination or *both* It calls the priority evaluation function passed into the Dynamic Message Queue constructor to update the priorities of all enqueued messages. 
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::enqueue_tail (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+just call priority enqueue method: tail enqueue semantics for dynamic message queues are unstable: the message may or may not be where it was placed after the queue is refreshed prior to the next enqueue or dequeue operation. 
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> void ACE_Dynamic_Message_Queue<>::operator= (const ACE_Dynamic_Message_Queue< _ACE_SYNCH_MUTEX_T,_ACE_SYNCH_CONDITION_T >&)\fC [private]\fR
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::peek_dequeue_head (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [private, virtual]\fR
+.PP
+private method to hide public base class method: just calls base class method.
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::refresh_late_queue (const \fBACE_Time_Value\fR & current_time)\fC [protected, virtual]\fR
+.PP
+Refresh the late queue using the strategy specific priority status function.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::refresh_pending_queue (const \fBACE_Time_Value\fR & current_time)\fC [protected, virtual]\fR
+.PP
+Refresh the pending queue using the strategy specific priority status function.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::refresh_queue (const \fBACE_Time_Value\fR & current_time)\fC [protected, virtual]\fR
+.PP
+Refresh the queue using the strategy specific priority status function.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::remove_messages (\fBACE_Message_Block\fR *& list_head, \fBACE_Message_Block\fR *& list_tail, u_int status_flags)\fC [virtual]\fR
+.PP
+Detach all messages with status given in the passed flags from the queue and return them by setting passed head and tail pointers to the linked list they comprise. This method is intended primarily as a means of periodically harvesting messages that have missed their deadlines, but is available in its most general form. All messages are returned in priority order, from head to tail, as of the time this method was called. 
+.SS template<ACE_SYNCH_DECL> int ACE_Dynamic_Message_Queue<>::sublist_enqueue_i (\fBACE_Message_Block\fR * new_item, const \fBACE_Time_Value\fR & current_time, \fBACE_Message_Block\fR *& sublist_head, \fBACE_Message_Block\fR *& sublist_tail, \fBACE_Dynamic_Message_Strategy::Priority_Status\fR status)\fC [protected, virtual]\fR
+.PP
+enqueue a message in priority order within a given priority status sublist.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Dynamic_Message_Queue<>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Dynamic_Message_Queue<>::beyond_late_head_\fC [protected]\fR
+.PP
+Pointer to head of the beyond late messages.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Dynamic_Message_Queue<>::beyond_late_tail_\fC [protected]\fR
+.PP
+Pointer to tail of the beyond late messages.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Dynamic_Message_Queue<>::late_head_\fC [protected]\fR
+.PP
+Pointer to head of the late messages.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Dynamic_Message_Queue<>::late_tail_\fC [protected]\fR
+.PP
+Pointer to tail of the late messages.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Dynamic_Message_Strategy\fR & ACE_Dynamic_Message_Queue<>::message_strategy_\fC [protected]\fR
+.PP
+Pointer to a dynamic priority evaluation function.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Dynamic_Message_Queue<>::pending_head_\fC [protected]\fR
+.PP
+Pointer to head of the pending messages.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Dynamic_Message_Queue<>::pending_tail_\fC [protected]\fR
+.PP
+Pointer to tail of the pending messages.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

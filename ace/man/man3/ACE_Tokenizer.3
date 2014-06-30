@@ -1,0 +1,244 @@
+.TH ACE_Tokenizer 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Tokenizer \- Tokenizer. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SString.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBMAX_DELIMITERS\fR = 16, \fBMAX_PRESERVES\fR = 16 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Tokenizer\fR (\fBACE_TCHAR\fR *buffer)"
+.br
+.ti -1c
+.RI "int \fBdelimiter\fR (\fBACE_TCHAR\fR d)"
+.br
+.ti -1c
+.RI "int \fBdelimiter_replace\fR (\fBACE_TCHAR\fR d, \fBACE_TCHAR\fR replacement)"
+.br
+.ti -1c
+.RI "int \fBpreserve_designators\fR (\fBACE_TCHAR\fR start, \fBACE_TCHAR\fR stop, int strip=1)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBnext\fR (void)"
+.br
+.RI "\fIReturns the next token.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBis_delimiter\fR (\fBACE_TCHAR\fR d, int &replace, \fBACE_TCHAR\fR &r)"
+.br
+.RI "\fIReturns 1 if <d> is a delimiter, 0 otherwise. If <d> should be replaced with <r>, <replace> is set to 1, otherwise 0.\fR"
+.ti -1c
+.RI "int \fBis_preserve_designator\fR (\fBACE_TCHAR\fR start, \fBACE_TCHAR\fR &stop, int &strip)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBbuffer_\fR"
+.br
+.ti -1c
+.RI "int \fBindex_\fR"
+.br
+.ti -1c
+.RI "\fBPreserve_Entry\fR \fBpreserves_\fR [MAX_PRESERVES]"
+.br
+.RI "\fIThe application can specify MAX_PRESERVES preserve designators.\fR"
+.ti -1c
+.RI "int \fBpreserves_index_\fR"
+.br
+.RI "\fIPointer to the next free spot in preserves_.\fR"
+.ti -1c
+.RI "\fBDelimiter_Entry\fR \fBdelimiters_\fR [MAX_DELIMITERS]"
+.br
+.RI "\fIThe tokenizer allows MAX_DELIMITERS number of delimiters.\fR"
+.ti -1c
+.RI "int \fBdelimiter_index_\fR"
+.br
+.RI "\fIPointer to the next free space in delimiters_.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Tokenizer.
+.PP
+.PP
+ Tokenizes a buffer. Allows application to set delimiters and preserve designators. Does not allow special characters, yet (e.g., printf ("\\"like a quoted string\\"")). 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIMAX_DELIMITERS\fR \fR
+.TP
+\fB\fIMAX_PRESERVES\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Tokenizer::ACE_Tokenizer (\fBACE_TCHAR\fR * buffer)
+.PP
+\fIbuffer\fR will be parsed. Notice that ACE_Tokenizer will modify \fIbuffer\fR if you use \fC delimiter_replace \fR or \fC preserve_designators \fR to do character substitution. 
+.PP
+\fBSee also: \fR
+.in +1c
+ \fBpreserve_designators\fR ,  \fBpreserve_designators\fR 
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Tokenizer::delimiter (\fBACE_TCHAR\fR d)
+.PP
+\fId\fR is a delimiter. 
+.PP
+\fBReturns: \fR
+.in +1c
+ Returns 0 on success, -1 if there is no memory left.
+.PP
+\fBExample:\fR 
+.PP
+.nf
+
+     ACE_Tokenizer tok ("William/Joseph/Hagins");
+    tok.delimiter ('/');
+     for (char *p = tok.next (); p; p = tok.next ())
+      cout << p << endl;
+    
+.fi
+.PP
+This will print out: 
+.PP
+.nf
+
+     William/Joseph/Hagins
+      Joseph/Hagins
+      Hagins 
+.fi
+ 
+.SS int ACE_Tokenizer::delimiter_replace (\fBACE_TCHAR\fR d, \fBACE_TCHAR\fR replacement)
+.PP
+\fId\fR is a delimiter and, when found, will be replaced by \fIreplacement\fR. 
+.PP
+\fBReturns: \fR
+.in +1c
+ 0 on success, -1 if there is no memory left.
+.PP
+\fBExample:\fR 
+.PP
+.nf
+
+     ACE_Tokenizer tok ("William/Joseph/Hagins");
+     tok.delimiter_replace ('/', 0);
+     for (char *p = tok.next (); p; p = tok.next ())
+       cout << p << endl;
+    
+.fi
+.PP
+This will print out: 
+.PP
+.nf
+
+       William
+       Joseph
+       Hagins 
+.fi
+ 
+.SS int ACE_Tokenizer::is_delimiter (\fBACE_TCHAR\fR d, int & replace, \fBACE_TCHAR\fR & r)\fC [protected]\fR
+.PP
+Returns 1 if <d> is a delimiter, 0 otherwise. If <d> should be replaced with <r>, <replace> is set to 1, otherwise 0.
+.PP
+.SS int ACE_Tokenizer::is_preserve_designator (\fBACE_TCHAR\fR start, \fBACE_TCHAR\fR & stop, int & strip)\fC [protected]\fR
+.PP
+If <start> is a start preserve designator, returns 1 and sets <stop> to the stop designator. Returns 0 if <start> is not a preserve designator. 
+.SS \fBACE_TCHAR\fR * ACE_Tokenizer::next (void)
+.PP
+Returns the next token.
+.PP
+.SS int ACE_Tokenizer::preserve_designators (\fBACE_TCHAR\fR start, \fBACE_TCHAR\fR stop, int strip = 1)
+.PP
+Extract string between a pair of designator characters. For instance, quotes, or '(' and ')'. \fIstart\fR specifies the begin designator. \fIstop\fR specifies the end designator. \fIstrip\fR If \fIstrip\fR == 1, then the preserve designators will be stripped from the tokens returned by next. 
+.PP
+\fBReturns: \fR
+.in +1c
+ 0 on success, -1 if there is no memory left.
+.PP
+\fBExample with strip = 0:\fR 
+.PP
+.nf
+
+     ACE_Tokenizer tok ("William(Joseph)Hagins");
+     tok.preserve_designators ('(', ')', 0);
+     for (char *p = tok.next (); p; p = tok.next ())
+       cout << p << endl;
+    
+.fi
+.PP
+This will print out: 
+.PP
+.nf
+
+      William(Joseph)Hagins
+      (Joseph)Hagins
+      )Hagins 
+.fi
+.PP
+\fBExample with strip = 1:\fR 
+.PP
+.nf
+
+     ACE_Tokenizer tok ("William(Joseph)Hagins");
+     tok.preserve_designators ('(', ')', 1);
+     for (char *p = tok.next (); p; p = tok.next ())
+       cout << p << endl;
+    
+.fi
+.PP
+This will print out: 
+.PP
+.nf
+
+      William
+      Joseph
+      Hagins 
+.fi
+ 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_TCHAR\fR * ACE_Tokenizer::buffer_\fC [protected]\fR
+.PP
+.SS int ACE_Tokenizer::delimiter_index_\fC [protected]\fR
+.PP
+Pointer to the next free space in delimiters_.
+.PP
+.SS \fBDelimiter_Entry\fR ACE_Tokenizer::delimiters_[MAX_DELIMITERS]\fC [protected]\fR
+.PP
+The tokenizer allows MAX_DELIMITERS number of delimiters.
+.PP
+.SS int ACE_Tokenizer::index_\fC [protected]\fR
+.PP
+.SS \fBPreserve_Entry\fR ACE_Tokenizer::preserves_[MAX_PRESERVES]\fC [protected]\fR
+.PP
+The application can specify MAX_PRESERVES preserve designators.
+.PP
+.SS int ACE_Tokenizer::preserves_index_\fC [protected]\fR
+.PP
+Pointer to the next free spot in preserves_.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

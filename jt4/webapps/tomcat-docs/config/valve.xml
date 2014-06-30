@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document>
+
+  &project;
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <title>The Valve Component</title>
+  </properties>
+
+<body>
+
+
+<section name="Introduction">
+
+  <p>A <strong>Valve</strong> element represents a comonent that will be
+  inserted into the request processing pipeline for the associated
+  Catalina container (<a href="engine.html">Engine</a>,
+  <a href="host.html">Host</a>, or <a href="context.html">Context</a>).
+  Individual Valves have distinct processing capabilities, and are
+  described individually below.</p>
+
+    <blockquote><em>
+    <p>The description below uses the variable name $CATALINA_HOME
+    to refer to the directory into which you have installed Tomcat 4,
+    and is the base directory against which most relative paths are
+    resolved.  However, if you have configured Tomcat 4 for multiple
+    instances by setting a CATALINA_BASE directory, you should use
+    $CATALINA_BASE instead of $CATALINA_HOME for each of these
+    references.</p>
+    </em></blockquote>
+
+</section>
+
+
+<section name="Access Log Valve">
+
+  <subsection name="Introduction">
+
+    <p>The <strong>Access Log Valve</strong> creates log files in the same
+    format as those created by standard web servers.  These logs can later
+    be analyzed by standard log analysis tools to track page hit counts,
+    user session activity, and so on.  The Access Log Valve shares many
+    configuration and behavior characteristics of the
+    <a href="logger.html#Standard Implementation">File Logger</a>, including
+    the automatic rollover of log files at midnight each night.  An
+    Access Log Valve can be associated with any Catalina container, and
+    will record ALL requests processed by that container.</p>
+
+  </subsection>
+
+  <subsection name="Attributes">
+
+    <p>The <strong>Access Log Valve</strong> supports the following
+    configuration attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="true">
+        <p>Java class name of the implementation to use.  This MUST be set to
+        <strong>org.apache.catalina.valve.AccessLogValve</strong>.</p>
+      </attribute>
+
+      <attribute name="directory" required="false">
+        <p>Absolute or relative pathname of a directory in which log files
+        created by this valve will be placed.  If a relative path is
+        specified, it is interpreted as relative to $CATALINA_HOME.  If
+        no directory attribute is specified, the default value is "logs"
+        (relative to $CATALINA_HOME).</p>
+      </attribute>
+
+      <attribute name="pattern" required="false">
+        <p>A formatting layout identifying the various information fields
+        from the request and response to be logged, or the word
+        <code>common</code> or <code>combined</code> to select a
+        standard format.  See below for more information on configuring
+        this attribute.</p>
+      </attribute>
+
+      <attribute name="prefix" required="false">
+        <p>The prefix added to the start of each log file's name.  If not
+        specified, the default value is "access_log.".  To specify no prefix,
+        use a zero-length string.</p>
+      </attribute>
+
+      <attribute name="resolveHosts" required="false">
+        <p>Set to <code>true</code> to convert the IP address of the remote
+        host into the corresponding host name via a DNS lookup.  Set to
+        <code>false</code> to skip this lookup, and report the remote IP
+        address instead.</p>
+      </attribute>
+
+      <attribute name="suffix" required="false">
+        <p>The suffix added to the end of each log file's name.  If not
+        specified, the default value is "".  To specify no suffix,
+        use a zero-length string.</p>
+      </attribute>
+
+    </attributes>
+
+    <p>Values for the <code>pattern</code> attribute are made up of literal
+    text strings, combined with pattern identifiers prefixed by the "%"
+    character to cause replacement by the corresponding variable value from
+    the current request and response.  The following pattern codes are
+    supported:</p>
+    <ul>
+    <li><b>%a</b> - Remote IP address</li>
+    <li><b>%A</b> - Local IP address</li>
+    <li><b>%b</b> - Bytes sent, excluding HTTP headers, or '-' if zero</li>
+    <li><b>%B</b> - Bytes sent, excluding HTTP headers</li>
+    <li><b>%h</b> - Remote host name (or IP address if
+        <code>resolveHosts</code> is false)</li>
+    <li><b>%H</b> - Request protocol</li>
+    <li><b>%l</b> - Remote logical username from identd (always returns
+        '-')</li>
+    <li><b>%m</b> - Request method (GET, POST, etc.)</li>
+    <li><b>%p</b> - Local port on which this request was received</li>
+    <li><b>%q</b> - Query string (prepended with a '?' if it exists)</li>
+    <li><b>%r</b> - First line of the request (method and request URI)</li>
+    <li><b>%s</b> - HTTP status code of the response</li>
+    <li><b>%t</b> - Date and time, in Common Log Format</li>
+    <li><b>%u</b> - Remote user that was authenticated (if any), else '-'</li>
+    <li><b>%U</b> - Requested URL path</li>
+    <li><b>%v</b> - Local server name</li>
+    </ul>
+
+    <p>The shorthand pattern name <code>common</code> (which is also the
+    default) corresponds to <strong>%h %l %u %t "%r" %s %b"</strong>.</p>
+
+    <p>The shorthand pattern name <code>combined</code> appends the
+    values of the <code>Referer</code> and <code>User-Agent</code> headers,
+    each in double quotes, to the <code>common</code> pattern
+    described in the previous paragraph.</p>
+
+  </subsection>
+
+</section>
+
+
+<section name="Remote Address Filter">
+
+  <subsection name="Introduction">
+
+    <p>The <strong>Remote Address Filter</strong> allows you to compare the
+    IP address of the client that submitted this request against one or more
+    <em>regular expressions</em>, and either allow the request to continue
+    or refuse to process the request from this client.  A Remote Address
+    Filter can be associated with any Catalina container
+    (<a href="engine.html">Engine</a>, <a href="host.html">Host</a>, or
+    <a href="context.html">Context</a>), and must accept any request
+    presented to this container for processing before it will be passed on.</p>
+
+  </subsection>
+
+  <subsection name="Attributes">
+
+    <p>The <strong>Remote Address Filter</strong> supports the following
+    configuration attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="true">
+        <p>Java class name of the implementation to use.  This MUST be set to
+        <strong>org.apache.catalina.valve.RemoteAddrValve</strong>.</p>
+      </attribute>
+
+      <attribute name="accept" required="false">
+        <p>A comma-separated list of <em>regular expression</em> patterns
+        that the remote client's IP address is compared to.  If this attribute
+        is specified, the remote address MUST match for this request to be
+        accepted.  If this attribute is not specified, all requests will be
+        excepted UNLESS the remote address matches a <code>deny</code>
+        pattern.</p>
+      </attribute>
+
+      <attribute name="deny" required="false">
+        <p>A comma-separated list of <em>regular expression</em> patterns
+        that the remote client's IP address is compared to.  If this attribute
+        is specified, the remote address MUST NOT match for this request to be
+        accepted.  If this attribute is not specified, request acceptance is
+        governed solely by the <code>accept</code> attribute.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+</section>
+
+
+<section name="Remote Host Filter">
+
+  <subsection name="Introduction">
+
+    <p>The <strong>Remote Host Filter</strong> allows you to compare the
+    hostname of the client that submitted this request against one or more
+    <em>regular expressions</em>, and either allow the request to continue
+    or refuse to process the request from this client.  A Remote Host
+    Filter can be associated with any Catalina container
+    (<a href="engine.html">Engine</a>, <a href="host.html">Host</a>, or
+    <a href="context.html">Context</a>), and must accept any request
+    presented to this container for processing before it will be passed on.</p>
+
+  </subsection>
+
+  <subsection name="Attributes">
+
+    <p>The <strong>Remote Host Filter</strong> supports the following
+    configuration attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="true">
+        <p>Java class name of the implementation to use.  This MUST be set to
+        <strong>org.apache.catalina.valve.RemoteHostValve</strong>.</p>
+      </attribute>
+
+      <attribute name="accept" required="false">
+        <p>A comma-separated list of <em>regular expression</em> patterns
+        that the remote client's hostname is compared to.  If this attribute
+        is specified, the remote hostname MUST match for this request to be
+        accepted.  If this attribute is not specified, all requests will be
+        excepted UNLESS the remote hostname matches a <code>deny</code>
+        pattern.</p>
+      </attribute>
+
+      <attribute name="deny" required="false">
+        <p>A comma-separated list of <em>regular expression</em> patterns
+        that the remote client's hostname is compared to.  If this attribute
+        is specified, the remote hostname MUST NOT match for this request to be
+        accepted.  If this attribute is not specified, request acceptance is
+        governed solely by the <code>accept</code> attribute.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+</section>
+
+
+</body>
+
+
+</document>

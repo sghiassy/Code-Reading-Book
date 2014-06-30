@@ -1,0 +1,185 @@
+.TH ACE_Select_Reactor_Handler_Repository 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Select_Reactor_Handler_Repository \- Used to map s onto the appropriate  *. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Select_Reactor_Base.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Handler_Repository\fR (\fBACE_Select_Reactor_Impl\fR &)"
+.br
+.RI "\fIDefault "do-nothing" constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_Select_Reactor_Handler_Repository\fR (void)"
+.br
+.RI "\fIdtor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (size_t size)"
+.br
+.RI "\fIInitialize a repository of the appropriate <size>.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the repository.\fR"
+.ti -1c
+.RI "\fBACE_Event_Handler\fR* \fBfind\fR (ACE_HANDLE handle, size_t *index_p = 0)"
+.br
+.ti -1c
+.RI "int \fBbind\fR (ACE_HANDLE, \fBACE_Event_Handler\fR *, \fBACE_Reactor_Mask\fR)"
+.br
+.RI "\fIBind the  to the  with the appropriate  settings.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (ACE_HANDLE, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRemove the binding of  in accordance with the <mask>.\fR"
+.ti -1c
+.RI "int \fBunbind_all\fR (void)"
+.br
+.RI "\fIRemove all the  tuples.\fR"
+.ti -1c
+.RI "int \fBinvalid_handle\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "int \fBhandle_in_range\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIReturns the current table size.\fR"
+.ti -1c
+.RI "size_t \fBmax_handlep1\fR (void)"
+.br
+.RI "\fIMaximum ACE_HANDLE value, plus 1.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Impl\fR& \fBselect_reactor_\fR"
+.br
+.RI "\fIReference to our <Select_Reactor>.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBmax_size_\fR"
+.br
+.RI "\fIMaximum number of handles.\fR"
+.ti -1c
+.RI "int \fBmax_handlep1_\fR"
+.br
+.RI "\fIThe highest currently active handle, plus 1 (ranges between 0 and <max_size_>.\fR"
+.ti -1c
+.RI "\fBACE_Event_Tuple\fR* \fBevent_handlers_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Select_Reactor_Handler_Repository_Iterator\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Used to map s onto the appropriate  *.
+.PP
+.PP
+ This class is necessary to shield differences between UNIX and Win32. In UNIX,  is an int, whereas in Win32 it's a void *. This class hides all these details from the bulk of the  code. All of these methods are called with the main <Select_Reactor> token lock held. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Select_Reactor_Handler_Repository::ACE_Select_Reactor_Handler_Repository (\fBACE_Select_Reactor_Impl\fR &)
+.PP
+Default "do-nothing" constructor.
+.PP
+.SS ACE_Select_Reactor_Handler_Repository::~ACE_Select_Reactor_Handler_Repository (void)
+.PP
+dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Select_Reactor_Handler_Repository::bind (ACE_HANDLE, \fBACE_Event_Handler\fR *, \fBACE_Reactor_Mask\fR)
+.PP
+Bind the  to the  with the appropriate  settings.
+.PP
+.SS int ACE_Select_Reactor_Handler_Repository::close (void)
+.PP
+Close down the repository.
+.PP
+.SS void ACE_Select_Reactor_Handler_Repository::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS \fBACE_Event_Handler\fR * ACE_Select_Reactor_Handler_Repository::find (ACE_HANDLE handle, size_t * index_p = 0)
+.PP
+Return the  associated with . If <index_p> is non-0, then return the index location of the <handle>, if found. 
+.SS int ACE_Select_Reactor_Handler_Repository::handle_in_range (ACE_HANDLE handle)
+.PP
+.SS int ACE_Select_Reactor_Handler_Repository::invalid_handle (ACE_HANDLE handle)
+.PP
+.SS size_t ACE_Select_Reactor_Handler_Repository::max_handlep1 (void)
+.PP
+Maximum ACE_HANDLE value, plus 1.
+.PP
+.SS int ACE_Select_Reactor_Handler_Repository::open (size_t size)
+.PP
+Initialize a repository of the appropriate <size>.
+.PP
+.SS size_t ACE_Select_Reactor_Handler_Repository::size (void) const
+.PP
+Returns the current table size.
+.PP
+.SS int ACE_Select_Reactor_Handler_Repository::unbind (ACE_HANDLE, \fBACE_Reactor_Mask\fR mask)
+.PP
+Remove the binding of  in accordance with the <mask>.
+.PP
+.SS int ACE_Select_Reactor_Handler_Repository::unbind_all (void)
+.PP
+Remove all the  tuples.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Select_Reactor_Handler_Repository_Iterator\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Select_Reactor_Handler_Repository::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS \fBACE_Event_Tuple\fR * ACE_Select_Reactor_Handler_Repository::event_handlers_\fC [private]\fR
+.PP
+The NT version implements this via a dynamically allocated array of . Since NT implements ACE_HANDLE as a void * we can't directly index into this array. Therefore, we just do a linear search (for now). Next, we'll modify things to use hashing or something faster... 
+.SS int ACE_Select_Reactor_Handler_Repository::max_handlep1_\fC [private]\fR
+.PP
+The highest currently active handle, plus 1 (ranges between 0 and <max_size_>.
+.PP
+.SS \fBssize_t\fR ACE_Select_Reactor_Handler_Repository::max_size_\fC [private]\fR
+.PP
+Maximum number of handles.
+.PP
+.SS \fBACE_Select_Reactor_Impl\fR & ACE_Select_Reactor_Handler_Repository::select_reactor_\fC [private]\fR
+.PP
+Reference to our <Select_Reactor>.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<package name="org.apache.cocoon">
+  <class name="Cocoon">
+    The main engine, should be a singleton per JVM(?). It operates on Environments by invoking them on a sitemap manager. It also seems to do some of the work of resolving the 
+  </class>
+  <interface name="Processor">
+    Processes Environments in some fashion.
+  </interface>
+  <package name="environment">
+    <interface name="Environment">
+      A processing context. Each incoming request gets its own Environment to play with. It's a combination of the servlet request and response objects and some cocoon stuff.
+    </interface>
+  </package>
+  <package name="sitemap">
+    <class name="Manager">
+      Controls access to sitemap objects. It's in charge of reloading the sitemaps as necessary, and mapping sitemap filenames with sitemap objects. It operates on Environments by processing them with a sitemap.
+    </class>
+    <interface name="Sitemap">
+      An aggregate of avalon's Composer, Configurable, and Modifiable interfaces, as well as the cocoon Processor interface.
+    </interface>
+    <class name="AbstractSitemap">
+      Parent of the stylesheet-generated sitemap objects. It provides access to all of the cocoon components by role name. It keeps track of when the stylesheet was created. It loads components by name and configures them. It provides a utility substitute method for string manipulation.
+    </class>
+    <class name="generatedSitemap">
+      Generated sitemaps have routines to load and initialize all of the components requested in the cocoon conf file. When the sitemap processes an Environment, it creates a ResourcePipeline. The current Environment is compared against each of the patterns listed in the sitemap until it finds a match, at which point it builds a ResourcePipeline and processes the environment with the pipeline.
+    </class>
+    <class name="ResourcePipeline">
+      Hooks up the SAX interfaces on a Generator (or a Reader) to those on any Transformers used by this pipeline, then to the SAX interfaces on its Serializer, then starts the generator. This would seem to be the logical place to add a cache.
+    </class>
+  </package>
+</package>

@@ -1,0 +1,373 @@
+.TH ACE_WIN32_Proactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WIN32_Proactor \- A manager for asynchronous event demultiplexing. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <WIN32_Proactor.h>\fR
+.PP
+Inherits \fBACE_Proactor_Impl\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WIN32_Proactor\fR (size_t number_of_threads = 0, int used_with_reactor_event_loop = 0)"
+.br
+.RI "\fIA do nothing constructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_WIN32_Proactor\fR (void)"
+.br
+.RI "\fIVirtual destruction.\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIClose the IO completion port.\fR"
+.ti -1c
+.RI "virtual int \fBregister_handle\fR (ACE_HANDLE handle, const void *completion_key)"
+.br
+.RI "\fIThis method adds the <handle> to the I/O completion port. This function is a no-op function for Unix systems.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR &wait_time)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBpost_completion\fR (\fBACE_WIN32_Asynch_Result\fR *result)"
+.br
+.ti -1c
+.RI "int \fBwake_up_dispatch_threads\fR (void)"
+.br
+.RI "\fIAdd wakeup dispatch threads (reinit).\fR"
+.ti -1c
+.RI "int \fBclose_dispatch_threads\fR (int wait)"
+.br
+.RI "\fIClose all dispatch threads.\fR"
+.ti -1c
+.RI "size_t \fBnumber_of_threads\fR (void) const"
+.br
+.RI "\fINumber of thread used as a parameter to CreatIoCompletionPort.\fR"
+.ti -1c
+.RI "void \fBnumber_of_threads\fR (size_t threads)"
+.br
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIGet the event handle.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Stream_Impl\fR* \fBcreate_asynch_read_stream\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_Stream.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Stream_Impl\fR* \fBcreate_asynch_write_stream\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_Stream.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_File_Impl\fR* \fBcreate_asynch_read_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_File_Impl\fR* \fBcreate_asynch_write_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Dgram_Impl\fR* \fBcreate_asynch_read_dgram\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_Dgram.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Dgram_Impl\fR* \fBcreate_asynch_write_dgram\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_Dgram.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Accept_Impl\fR* \fBcreate_asynch_accept\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Accept.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Transmit_File_Impl\fR* \fBcreate_asynch_transmit_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Transmit_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Stream_Result_Impl\fR* \fBcreate_asynch_read_stream_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void* act, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_Stream::Result\fR class.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Stream_Result_Impl\fR* \fBcreate_asynch_write_stream_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_write, const void* act, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_Stream::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_File_Result_Impl\fR* \fBcreate_asynch_read_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void* act, u_long offset, u_long offset_high, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_File_Result_Impl\fR* \fBcreate_asynch_write_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_write, const void* act, u_long offset, u_long offset_high, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Dgram_Result_Impl\fR* \fBcreate_asynch_read_dgram_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR *message_block, size_t bytes_to_read, int flags, int protocol_family, const void* act, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_Dgram::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Dgram_Result_Impl\fR* \fBcreate_asynch_write_dgram_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR *message_block, size_t bytes_to_write, int flags, const void* act, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_Dgram::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Accept_Result_Impl\fR* \fBcreate_asynch_accept_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE listen_handle, ACE_HANDLE accept_handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void* act, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Accept::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Transmit_File_Result_Impl\fR* \fBcreate_asynch_transmit_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE socket, ACE_HANDLE file, \fBACE_Asynch_Transmit_File::Header_And_Trailer\fR *header_and_trailer, u_long bytes_to_write, u_long offset, u_long offset_high, u_long bytes_per_send, u_long flags, const void *act, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Transmit_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Result_Impl\fR* \fBcreate_asynch_timer\fR (\fBACE_Handler\fR &handler, const void *act, const \fBACE_Time_Value\fR &tv, ACE_HANDLE event, int priority, int signal_number = 0)"
+.br
+.RI "\fICreate a timer result object which can be used with the Timer mechanism of the Proactor.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBhandle_signal\fR (int signum, \fBsiginfo_t\fR * = 0, \fBucontext_t\fR * = 0)"
+.br
+.RI "\fICalled when object is signaled by OS (either via UNIX signals or when a Win32 object becomes signaled).\fR"
+.ti -1c
+.RI "virtual int \fBhandle_close\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR close_mask)"
+.br
+.RI "\fICalled when object is removed from the \fBACE_Reactor\fR.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (unsigned long milli_seconds)"
+.br
+.ti -1c
+.RI "void \fBapplication_specific_code\fR (\fBACE_WIN32_Asynch_Result\fR *asynch_result, u_long bytes_transferred, int success, const void *completion_key, u_long error)"
+.br
+.RI "\fIProtect against structured exceptions caused by user code when dispatching handles.\fR"
+.ti -1c
+.RI "virtual int \fBpost_wakeup_completions\fR (int how_many)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_HANDLE \fBcompletion_port_\fR"
+.br
+.RI "\fIHandle for the completion port. Unix doesnt have completion ports.\fR"
+.ti -1c
+.RI "size_t \fBnumber_of_threads_\fR"
+.br
+.RI "\fIThis number is passed to the <CreatIOCompletionPort> system call.\fR"
+.ti -1c
+.RI "\fBACE_Auto_Event\fR \fBevent_\fR"
+.br
+.RI "\fIThis event is used in conjunction with Reactor when we try to integrate the event loops of Reactor and the Proactor.\fR"
+.ti -1c
+.RI "int \fBused_with_reactor_event_loop_\fR"
+.br
+.RI "\fIFlag that indicates whether we are used in conjunction with Reactor.\fR"
+.ti -1c
+.RI "\fBACE_Handler\fR \fBwakeup_handler_\fR"
+.br
+.RI "\fIHandler to handle the wakeups. This works in conjunction with the .\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A manager for asynchronous event demultiplexing.
+.PP
+.PP
+ See the Proactor pattern description at http://www.cs.wustl.edu/~schmidt/proactor.ps.gz for more details. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WIN32_Proactor::ACE_WIN32_Proactor (size_t number_of_threads = 0, int used_with_reactor_event_loop = 0)
+.PP
+A do nothing constructor.
+.PP
+.SS ACE_WIN32_Proactor::~ACE_WIN32_Proactor (void)\fC [virtual]\fR
+.PP
+Virtual destruction.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_WIN32_Proactor::application_specific_code (\fBACE_WIN32_Asynch_Result\fR * asynch_result, u_long bytes_transferred, int success, const void * completion_key, u_long error)\fC [protected]\fR
+.PP
+Protect against structured exceptions caused by user code when dispatching handles.
+.PP
+.SS int ACE_WIN32_Proactor::close (void)\fC [virtual]\fR
+.PP
+Close the IO completion port.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_WIN32_Proactor::close_dispatch_threads (int wait)\fC [virtual]\fR
+.PP
+Close all dispatch threads.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Accept_Impl\fR* ACE_WIN32_Proactor::create_asynch_accept (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Accept.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Accept_Result_Impl\fR* ACE_WIN32_Proactor::create_asynch_accept_result (\fBACE_Handler\fR & handler, ACE_HANDLE listen_handle, ACE_HANDLE accept_handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Accept::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_Dgram_Impl\fR* ACE_WIN32_Proactor::create_asynch_read_dgram (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_Dgram.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS \fBACE_Asynch_Read_Dgram_Result_Impl\fR * ACE_WIN32_Proactor::create_asynch_read_dgram_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR * message_block, size_t bytes_to_read, int flags, int protocol_family, const void * act, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_Dgram::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_File_Impl\fR* ACE_WIN32_Proactor::create_asynch_read_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_File.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_File_Result_Impl\fR* ACE_WIN32_Proactor::create_asynch_read_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, u_long offset, u_long offset_high, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_File::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_Stream_Impl\fR* ACE_WIN32_Proactor::create_asynch_read_stream (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_Stream.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_Stream_Result_Impl\fR* ACE_WIN32_Proactor::create_asynch_read_stream_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_Stream::Result\fR class.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS \fBACE_Asynch_Result_Impl\fR * ACE_WIN32_Proactor::create_asynch_timer (\fBACE_Handler\fR & handler, const void * act, const \fBACE_Time_Value\fR & tv, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create a timer result object which can be used with the Timer mechanism of the Proactor.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Transmit_File_Impl\fR* ACE_WIN32_Proactor::create_asynch_transmit_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Transmit_File.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Transmit_File_Result_Impl\fR* ACE_WIN32_Proactor::create_asynch_transmit_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE socket, ACE_HANDLE file, \fBACE_Asynch_Transmit_File::Header_And_Trailer\fR * header_and_trailer, u_long bytes_to_write, u_long offset, u_long offset_high, u_long bytes_per_send, u_long flags, const void * act, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Transmit_File::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_Dgram_Impl\fR* ACE_WIN32_Proactor::create_asynch_write_dgram (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_Dgram.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS \fBACE_Asynch_Write_Dgram_Result_Impl\fR * ACE_WIN32_Proactor::create_asynch_write_dgram_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR * message_block, size_t bytes_to_write, int flags, const void * act, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_Dgram::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_File_Impl\fR* ACE_WIN32_Proactor::create_asynch_write_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_File.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_File_Result_Impl\fR* ACE_WIN32_Proactor::create_asynch_write_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_write, const void * act, u_long offset, u_long offset_high, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_File::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_Stream_Impl\fR* ACE_WIN32_Proactor::create_asynch_write_stream (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_Stream.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_Stream_Result_Impl\fR* ACE_WIN32_Proactor::create_asynch_write_stream_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_write, const void * act, ACE_HANDLE event, int priority, int signal_number = 0)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_Stream::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS ACE_HANDLE ACE_WIN32_Proactor::get_handle (void) const\fC [virtual]\fR
+.PP
+Get the event handle.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_WIN32_Proactor::handle_close (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR close_mask)\fC [protected, virtual]\fR
+.PP
+Called when object is removed from the \fBACE_Reactor\fR.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS int ACE_WIN32_Proactor::handle_events (unsigned long milli_seconds)\fC [protected, virtual]\fR
+.PP
+Dispatch a single set of events. If <milli_seconds> elapses before any events occur, return 0. Return 1 if a completion is dispatched. Return -1 on errors. 
+.SS int ACE_WIN32_Proactor::handle_events (void)\fC [virtual]\fR
+.PP
+Block indefinitely until at least one event is dispatched. Dispatch a single set of events. If <wait_time> elapses before any events occur, return 0. Return 1 on success i.e., when a completion is dispatched, non-zero (-1) on errors and errno is set accordingly. 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_WIN32_Proactor::handle_events (\fBACE_Time_Value\fR & wait_time)\fC [virtual]\fR
+.PP
+Dispatch a single set of events. If <wait_time> elapses before any events occur, return 0. Return 1 on success i.e., when a completion is dispatched, non-zero (-1) on errors and errno is set accordingly. 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_WIN32_Proactor::handle_signal (int signum, \fBsiginfo_t\fR * = 0, \fBucontext_t\fR * = 0)\fC [protected, virtual]\fR
+.PP
+Called when object is signaled by OS (either via UNIX signals or when a Win32 object becomes signaled).
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS void ACE_WIN32_Proactor::number_of_threads (size_t threads)\fC [virtual]\fR
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS size_t ACE_WIN32_Proactor::number_of_threads (void) const\fC [virtual]\fR
+.PP
+Number of thread used as a parameter to CreatIoCompletionPort.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_WIN32_Proactor::post_completion (\fBACE_WIN32_Asynch_Result\fR * result)\fC [virtual]\fR
+.PP
+Post a result to the completion port of the Proactor. If errors occur, the result will be deleted by this method. If successful, the result will be deleted by the Proactor when the result is removed from the completion port. Therefore, the result should have been dynamically allocated and should be orphaned by the user once this method is called. 
+.SS int ACE_WIN32_Proactor::post_wakeup_completions (int how_many)\fC [protected, virtual]\fR
+.PP
+Post <how_many> completions to the completion port so that all threads can wake up. This is used in conjunction with the <run_event_loop>. 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_WIN32_Proactor::register_handle (ACE_HANDLE handle, const void * completion_key)\fC [virtual]\fR
+.PP
+This method adds the <handle> to the I/O completion port. This function is a no-op function for Unix systems.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_WIN32_Proactor::wake_up_dispatch_threads (void)\fC [virtual]\fR
+.PP
+Add wakeup dispatch threads (reinit).
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_HANDLE ACE_WIN32_Proactor::completion_port_\fC [protected]\fR
+.PP
+Handle for the completion port. Unix doesnt have completion ports.
+.PP
+.SS \fBACE_Auto_Event\fR ACE_WIN32_Proactor::event_\fC [protected]\fR
+.PP
+This event is used in conjunction with Reactor when we try to integrate the event loops of Reactor and the Proactor.
+.PP
+.SS size_t ACE_WIN32_Proactor::number_of_threads_\fC [protected]\fR
+.PP
+This number is passed to the <CreatIOCompletionPort> system call.
+.PP
+.SS int ACE_WIN32_Proactor::used_with_reactor_event_loop_\fC [protected]\fR
+.PP
+Flag that indicates whether we are used in conjunction with Reactor.
+.PP
+.SS \fBACE_Handler\fR ACE_WIN32_Proactor::wakeup_handler_\fC [protected]\fR
+.PP
+Handler to handle the wakeups. This works in conjunction with the .
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

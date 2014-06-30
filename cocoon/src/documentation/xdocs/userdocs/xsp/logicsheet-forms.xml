@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document> 
+  <header> 
+	 <title>Using Form Validation</title>
+	 <version>0.1</version> 
+	 <type>Overview document</type> 
+	 <authors>
+           <person name="Christian Haul" email="haul@informatik.tu-darmstadt.de"/> 
+	 </authors> 
+  </header> 
+  <body> 
+   <s1 title="Introduction">
+   <p>
+   For most web applications input is essential. Apache Cocoon provides a
+   variety of modules to support basic interaction like simple syntax
+   checking of input data or writing input data to databases.
+   </p>
+   <p>
+   This is about syntax checking. See
+   org.apache.cocoon.acting.DatabaseAbstractAction (in javadocs) for
+   details on database interaction.
+   </p>
+    <p>
+    FormValidatorAction communicates to the application a verbose
+    error status through an request attribute. In addition a taglib
+    allows easy access to the results. On top of that this taglib
+    gives access to the attributes for parameters declared in those
+    sections in descriptor.xml relevant to the validation process.
+    </p>
+    <s2 title="The Descriptor File">
+    <p>
+    For details on the syntax of the descriptor file see
+    javadocs. Basically it consists of two sections, a list of
+    parameters and their properties and a list of constraints or
+    constraint sets. The file syntax is set up so that it can be
+    shared with the database actions.
+    </p>
+     <source>
+<![CDATA[
+<?xml version="1.0"?>
+<root>
+
+  <parameter name="persons" type="long" min="1" default="4" nullable="no"/>
+  <parameter name="deposit" type="double" min="10.0" max="999.99"/>
+  <parameter name="email" type="string" max-len="50"
+             matches-regex="^[\d\w][\d\w\-_\.]*@([\d\w\-_]+\.)\w\w\w?$">
+
+  <constraint-set name="car-reservation">
+    <validate name="persons"/>
+    <validate name="deposit" min="50.0"/>
+    <validate name="email"/>
+  </constraint-set>
+
+</root>
+]]>
+     </source>
+    <p>
+    The above could for example describe expected input from a reservation
+    form. Specifications in a constraint set take precedence over
+    the general ones.
+    </p>
+    </s2>
+    <s2 title="Sitemap Usage">
+    <p>
+    To take advantage of the form validator action create two
+    pages. One for the input form and one indicating the acceptance of
+    the reservation. Create a pipeline in your sitemap so that the
+    confirmation page is only shown when the action completed
+    successfully and the input form is returned otherwise.
+    </p>
+     <source>
+<![CDATA[
+<?xml version="1.0"?>
+   <map:match pattern="car-reservation">
+     <map:act type="form-validator">
+        <!-- add you favourite database action here -->
+        <map:parameter name="descriptor" value="descriptor.xml"/>
+        <map:parameter name="validate-set" value="car-reservation"/>
+	<map:generate type="serverpages" src="OK.xsp"/>
+	<map:transform src="stylesheets/dynamic-page2html.xsl"/>
+	<map:serialize/>
+     </map:act>
+     <map:generate type="serverpages" src="test/ERROR.xsp"/>
+     <map:transform src="stylesheets/dynamic-page2html.xsl"/>
+     <map:serialize/>
+   </map:match>
+]]>
+     </source>
+     <p>
+     Note here that you may not use a redirection to point to the
+     pages if you would like to access the validation results e.g. on
+     the error page. A redirection would create a new request object
+     and thus discard the validation results.
+     </p>
+    </s2>
+    <s2 title="XSP Usage">
+    <p>
+    To give the user some feedback why her/his submitted data was rejected
+    there is a special taglib "xsp-formval". Declare its name space as
+    usual.
+    </p>
+    <p>
+    If only interested in validation results, just:
+    </p>
+     <source>
+<![CDATA[
+     <xsp-formval:on-ok name="persons">
+       <myapp:error>(ERROR)</myapp:error>
+     </xsp-formval:on-ok>
+]]>
+     </source>
+     <p>
+       Alternatively, if you just want a boolean value from the logicsheet
+       if a test is successful, use this method:
+     </p>
+     <source>
+<![CDATA[
+     <xsp:logic>
+	 if (!<xsp-formval:is-ok name="persons"/>) {
+	      <myapp:error>(ERROR)</myapp:error>
+         };
+     </xsp:logic>
+]]>
+     </source>
+     <p>
+     Internationalization issues are a separate concern and are not
+     discussed here.
+     </p>
+     <p>
+     Currently the following validation result codes are supported:
+     </p>
+	 <table>
+	 <tr><th>tag</th><th>Meaning</th></tr>
+	 <tr><td>xsp-formval:is-ok</td><td>no error occurred,
+	                                   parameter successfully 
+					   checked</td></tr>
+	 <tr><td>xsp-formval:is-error</td><td>some error occurred, 
+	                                      this is a result that 
+					      is never set but serves 
+					      as a comparison target
+					   </td></tr>
+	 <tr><td>xsp-formval:is-null</td><td>the parameter is null but 
+	                                     isn't allowed to</td></tr>
+	 <tr><td>xsp-formval:is-toosmall</td><td>either value or
+	                                        length in case of a
+						string is less than
+						the specified
+						minimum</td></tr>
+	 <tr><td>xsp-formval:is-toolarge</td><td>either value or
+	                                         length in case of a
+						 string is greater
+						 than the specified
+						 maximum</td></tr>			 
+	 <tr><td>xsp-formval:is-nomatch</td><td>a string parameter's
+	                                        value is not matched
+						by the specified
+						regular expression</td></tr>
+	 <tr><td>xsp-formval:is-notpresent</td><td>this is returned
+	                                           when the result of
+	                                           a validation is
+						   requested but no
+						   such result is
+						   found in the
+						   request attribute </td></tr>
+	 </table>
+     <p>
+     For debugging purposes or if you would like to iterate over the
+     validation results, <code>xsp-formval:results</code> returns a
+     <code>java.util.Map</code> containing them all.
+     </p>
+     <p>
+     If you would like to be more specific what went wrong, you can
+     query the descriptor file for attributes.
+     </p>
+     <p>
+     First set the url of the file or resource that contains the
+     parameter descriptions and constraint sets.  This needs to be an
+     ancestor to all other tags (of this taglib). Multiple use of this
+     tag is allowed (although probably not necessary).
+     </p>       
+     <p>  
+     You need to do this only if you plan to query the
+     descriptor file or if you'd like to use the shorthand
+     below. 
+     </p>
+     <source>
+<![CDATA[
+<xsp-formval:descriptor name="descriptor.xml" constraint-set="reservation">
+   deposit must be at least EUR
+   <xsp-formval:get-attribute parameter="deposit" name="min"/>
+</xsp-formval:descriptor>
+]]>
+     </source>
+     <p>
+     If you need to use one parameter a lot, there's a short hand. Use
+     this e.g. if you'd like to set up the properties of an input tag
+     according to the information from the descriptor file or if you'd
+     like to give detailed error messages.
+     </p>
+     <p>
+     Note that you can specify additional attributes in the
+     description file that are not understood (and therefore ignored)
+     by the FormValidatorAction but that could be queried here. This
+     might be e.g. the size of the input field which might be
+     different from the max-len a parameter can take.
+     </p>
+     <source>
+<![CDATA[
+<xsp-formval:descriptor name="descriptor.xml" constraint-set="car-reservation">
+  <xsp-formval:validate name="deposit">
+  <xsp:logic>
+    if (<xsp-formval:is-null/>) {
+      <myapp:error> (you must specify a deposit)) </myapp:error>
+    } else if ( <xsp-formval:is-toosmall/> ) {
+      <myapp:error>
+        (deposit is too small (&lt; <xsp-formval:get-attribute name="min"/>))
+      </myapp:error>
+    } else if ( <xsp-formval:is-toolarge/> ) {
+      <myapp:error>
+        (deposit is too large (&gt; <xsp-formval:get-attribute name="max"/>))
+      </myapp:error>
+    } else {
+      <myapp:error> (ERROR) </myapp:error>
+    };
+  </xsp:logic>
+  </xsp-formval:validate>
+</xsp-formval:descriptor>
+]]>
+     </source>
+     </s2>
+   </s1>
+  </body>
+</document>
+

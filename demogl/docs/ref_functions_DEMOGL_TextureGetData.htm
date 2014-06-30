@@ -1,0 +1,88 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_TextureGetData</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_TextureGetData</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_TextureGetData</h4>
+<dd>DEMOGL_TextureGetData retrieves several types of information of the texture with the given TextureID, among them 
+	a pointer to the RGBA colorfragment buffer with the texture data.
+	<p>
+	<pre>
+<b>byte</b>
+* DEMOGL_TextureGetData(
+	<b>const GLuint</b> <i>iTextureID</i>, 
+	<b>int * const</b> <i>iWidth</i>, 
+	<b>int * const</b> <i>iHeight</i>, 
+	<b>int * const</b> <i>iDepth</i>, 
+	<b>int * const</b> <i>iBitsPerPixel</i>, 
+	<b>int * const</b> <i>iDimensions</i>, 
+	<b>bool * const</b> <i>bHasAlpha</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iTextureID</i>
+	<dd>Specifies the TextureID of the texture which information should be retrieved.
+	<dt><i>iWidth</i>
+	<dd>Pointer to an int variable which will be filled with the width in pixels of the texture with TextureID <i>iTextureID</i>.
+	<dt><i>iHeight</i>
+	<dd>Pointer to an int variable which will be filled with the height in pixels of the texture with TextureID <i>iTextureID</i>.
+	<dt><i>iDepth</i>
+	<dd>Pointer to an int variable which will be filled with the depth in pixels of the texture with TextureID <i>iTextureID</i>.
+		Please note that 3D textures are not fully implemented in DemoGL.
+	<dt><i>iBitsPerPixel</i>
+	<dd>Pointer to an int variable which will be filled with the amount of bits per pixel of the texture with TextureID <i>iTextureID</i>.
+	<dt><i>iDimensions</i>
+	<dd>Pointer to an int variable which will be filled with the dimensions of the texture with TextureID <i>iTextureID</i>. Can be one of
+		the following values: DGL_TEXTUREDIMENSION_1D for 1D textures, DGL_TEXTUREDIMENSION_2D for 2D textures
+		or DGL_TEXTUREDIMENSION_3D for 3D textures, which are currently not implemented in full in DemoGL.
+	<dt><i>bHasAlpha</i>
+	<dd>Pointer to a boolean variable which will be filled with the flag if this texture had an alpha channel stored in the texturedata
+		or not. 
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns a pointer to the RGBA color fragments of the texture.<br>
+	If the function failes, NULL is returned.
+	<p>
+<dt><b>Remarks.</b>
+<dd>Support for 3D textures is not fully implemented in DemoGL due to the lack of OpenGL 1.2 support in the Windows OpenGL implementation.
+	The pointer returned by <b>DEMOGL_TextureGetData</b> points to a buffer with 32bpp color fragments with 1 byte per color fragment R, G
+	B and A, in that order. When a pointer to a variable passed is NULL, the texture with TextureID is not found
+	or the texture referenced is created using 
+	<a HREF="ref_functions_DEMOGL_TextureCreateFromFBRegion.htm" target="main">DEMOGL_TextureCreateFromFBRegion</a>, 
+	<b>DEMOGL_TextureGetData</b> will fail and thus return NULL.
+	<p>
+	CubeMap textures will return NULL, and are not supported by this routine. 
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_TextureDelete.htm" target="main">DEMOGL_TextureDelete</a>,
+	<a HREF="ref_functions_DEMOGL_TextureLoad.htm" target="main">DEMOGL_TextureLoad</a>,
+	<a HREF="ref_functions_DEMOGL_TextureUnUpload.htm" target="main">DEMOGL_TextureUnUpload</a>,
+	<a HREF="ref_functions_DEMOGL_TextureUpload.htm" target="main">DEMOGL_TextureUpload</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

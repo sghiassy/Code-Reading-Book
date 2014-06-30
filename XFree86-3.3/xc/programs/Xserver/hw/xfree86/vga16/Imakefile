@@ -1,0 +1,50 @@
+XCOMM $XConsortium: Imakefile /main/13 1996/10/21 14:49:52 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/Imakefile,v 3.8.2.1 1997/05/03 09:47:18 dawes Exp $
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS = vga ibm mfb drivers misc
+
+SRCS = vga/?*.c ibm/?*.c mfb/?*.c
+
+OBJS = vga/?*.o ibm/?*.o mfb/?*.o
+
+DONES = vga/DONE ibm/DONE mfb/DONE
+
+INCLUDES = -I../vga256/vga -I$(XF86COMSRC) -I$(XF86OSSRC) \
+	   -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+VGA16DRIVERS = XF86Vga16Drivers
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS) $(OBJS) $(DONES))
+#endif
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)
+#endif
+
+ConfigTargetNoDepend(vga16Conf,$(ICONFIGFILES),cvga16.SHsuf,$(VGA16DRIVERS))
+#ifdef OS2Architecture
+all:: DONE
+	cp $(OBJS) .
+
+NormalDepLibraryTarget(vga16,$(DONES),?*.o)
+#else
+NormalDepLibraryTarget(vga16,$(SUBDIRS) $(DONES),$(OBJS))
+#endif
+
+NormalLibraryObjectRule()
+
+ForceSubdirs($(SUBDIRS))
+
+InstallLinkKitLibrary(vga16,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(cvga16.SHsuf,$(LINKKITDIR))
+
+DependSubdirs($(SUBDIRS))

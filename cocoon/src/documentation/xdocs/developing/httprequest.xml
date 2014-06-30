@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document> 
+  <header> 
+	 <title>Request Processing</title>
+	 <version>0.1</version> 
+	 <type>Technical Document</type> 
+	 <authors><person name="Tom Klaasen" email="tom.klaasen@the-ecorp.com"/> 
+	 </authors> 
+	 <abstract>This document tries to explain Cocoon (based on the version
+		2.0.1) technically. We do this by describing what happens if somebody types in
+		the URL of a simple Cocoon page.</abstract>
+  </header>
+  <body>
+	 <s1 title="Introduction">
+		<s2 title="Goal">
+		  <p>This document tries to explain Apache Cocoon (based on the version 2.0.1)
+			 technically. We do this by describing what happens if somebody types in the URL
+			 of a simple Cocoon page.</p> 
+		</s2> 
+		<s2 title="Intended public"> 
+		  <p>The reader should have a knowledge of:</p> 
+		  <ul> 
+			 <li>the Java 2 platform</li>
+			 <li>the javax.servlet extensions</li> 
+			 <li>XML</li> 
+			 <li>HTTP</li> 
+		  </ul> 
+		</s2> 
+	 </s1> 
+	 <s1 title="The configuration assumptions"> 
+		<p>The sequence of events described in this document, depends on some
+		  assumptions with regard to the configuration of Cocoon. That's what's described
+		  here.</p>
+		<s2 title="sitemap.xmap">
+		  <p>The task of the sitemap is to define the pipelines that Cocoon will
+			 apply to URI's called in one's browser.</p>
+		  <p>This is the minimal sitemap that is necessary. The lines here are
+			 included in the standard sitemap.xmap that comes with the distribution of
+			 Cocoon 2.0.1.</p>
+		  <p>The sitemap is defined in <code>${cocoon}/sitemap.xmap</code>.</p> 
+		  <source><![CDATA[ 
+<?xml version="1.0"?>
+          
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0"> 
+          
+  <!--===========================Components================================-->
+  <map:components>
+          
+    <map:generators default="file">
+    <map:generator name="file" label="content" 
+                   src="org.apache.cocoon.generation.FileGenerator"/> 
+    </map:generators> 
+
+    <map:transformers default="xslt">
+      <map:transformer name="xslt"
+                       src="org.apache.cocoon.transformation.XalanTransformer">
+        <compile-stylesheets map:value="true"/> 
+      </map:transformer> 
+    </map:transformers>
+
+    <map:serializers default="html">
+      <map:serializer name="html" mime-type="text/html" 
+                      src="org.apache.cocoon.serialization.HTMLSerializer"/> 
+    </map:serializers>
+
+    <map:selectors default="browser">
+      <map:selector name="browser" 
+                    factory="org.apache.cocoon.selection.BrowserSelectorFactory">
+        <browser name="explorer" useragent="MSIE"/>
+        <browser name="netscape" useragent="Mozilla"/> 
+      </map:selector> 
+    </map:selectors>
+
+    <map:matchers default="uri">
+      <map:matcher name="uri" 
+                   factory="org.apache.cocoon.matching.WildcardURIMatcherFactory"/>
+    </map:matchers> 
+
+  </map:components> 
+          
+  <!--===========================Pipelines=================================-->
+  <map:pipelines> 
+    <map:pipeline> 
+      <map:match pattern="hello.html">
+        <map:generate src="docs/samples/hello-page.xml"/>
+        <map:transform src="stylesheets/page/simple-page2html.xsl"/>
+        <map:serialize type="html"/> 
+      </map:match> 
+    </map:pipeline> 
+  </map:pipelines>
+          
+</map:sitemap> 
+]]></source>
+		</s2> 
+		<s2 title="cocoon.xconf"> 
+		  <p><code>cocoon.xconf</code> is the file that defines the
+			 <link href="avalon.html">Avalon</link> Components.</p>
+		  <p>For our study, we need the standard <code>cocoon.xconf</code> file
+			 of Cocoon 2.0.1.</p>
+		  <p>It can be found in <code>${cocoon}/cocoon.xconf</code>.</p> 
+		  <source><![CDATA[
+<?xml version="1.0"?>
+
+<cocoon version="2.0">
+
+<!-- ===================== General Components =========================== -->
+
+  <component role="org.apache.cocoon.components.parser.Parser" 
+             class="org.apache.cocoon.components.parser.JaxpParser"/>
+  <component role="org.apache.cocoon.components.store.Store"  
+             class="org.apache.cocoon.components.store.MemoryStore"/>
+
+  <component
+      role="org.apache.cocoon.components.language.programming.ProgrammingLanguageSelector"
+      class="org.apache.cocoon.CocoonComponentSelector">
+    <component-instance name="java" 
+      class="org.apache.cocoon.components.language.programming.java.JavaLanguage">
+      <parameter name="compiler" 
+      value="org.apache.cocoon.components.language.programming.java.Javac"/>
+      <parameter name="code-formatter" 
+      value="org.apache.cocoon.components.language.programming.java.JstyleFormatter"/>
+      <parameter name="class-loader" 
+      value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+    </component-instance>
+  </component>
+
+  <component role="org.apache.cocoon.components.classloader.ClassLoaderManager" 
+      class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+
+  <component
+      role="org.apache.cocoon.components.language.markup.MarkupLanguageSelector"
+      class="org.apache.cocoon.CocoonComponentSelector">
+    <component-instance name="xsp" 
+        class="org.apache.cocoon.components.language.markup.xsp.XSPMarkupLanguage">
+      <parameter name="prefix" value="xsp"/>
+      <parameter name="uri" value="http://apache.org/xsp"/>
+
+      <target-language name="java">
+        <parameter name="core-logicsheet" 
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-request"/>
+          <parameter name="uri" value="http://apache.org/xsp/request/2.0"/>
+          <parameter name="href" 
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-response"/>
+          <parameter name="uri" value="http://apache.org/xsp/response/2.0"/>
+          <parameter name="href" 
+value="resource://org/apache/cocoon/components/language/markup/xsp/java/response.xsl"/>
+        </builtin-logicsheet>
+      </target-language>
+    </component-instance>
+
+    <component-instance name="sitemap" 
+       class="org.apache.cocoon.components.language.markup.sitemap.SitemapMarkupLanguage">
+      <parameter name="prefix" value="map"/>
+      <parameter name="uri" value="http://apache.org/cocoon/sitemap/1.0"/>
+
+      <target-language name="java">
+        <parameter name="core-logicsheet" 
+value="resource://org/apache/cocoon/components/language/markup/sitemap/java/sitemap.xsl"/>
+      </target-language>
+    </component-instance>
+  </component>
+
+  <component role="org.apache.cocoon.components.language.generator.ProgramGenerator" 
+             class="org.apache.cocoon.components.language.generator.ProgramGeneratorImpl">
+    <parameter name="auto-reload" value="true"/>
+  </component>
+
+  <!-- these components is used as a PoolController for the sitemap component pools  -->
+  <component role="org.apache.avalon.util.pool.PoolController" 
+             class="org.apache.cocoon.util.ComponentPoolController"/>
+
+  <sitemap file="sitemap.xmap"/> 
+</cocoon>
+]]></source> 
+		</s2> 
+	 </s1> 
+	 <s1 title="The sequence of things"> 
+		<s2 title="Role of Tomcat"> 
+		  <p>The role of Tomcat is to initialize the CocoonServlet, and to
+			 receive the HttpRequest and pass it on to the CocoonServlet.</p> 
+		  <s3 title="Initialize CocoonServlet"> 
+			 <p>This is done by calling
+				<code>CocoonServlet.init(ServletConfig)</code>. This is the standard servlet
+				way to initialize a servlet.</p> 
+		  </s3> 
+		  <s3 title="Pass HttpRequest"> 
+			 <p>On reception of a HttpRequest, Tomcat calls
+				<code>CocoonServlet.service(HttpRequest, HttpResponse)</code>. This is also
+				standard.</p> 
+		  </s3> 
+		</s2> 
+		<s2 title="Initialization"> 
+		  <s3 title="Overview"> 
+			 <p>The steps that happen on initialization, are:</p> 
+			 <s4 title="Find the classpath"> 
+				<p>Cocoon needs to know the classpath for compilation of the files
+				  it generates itself. This is where the classpath is stored.</p> 
+			 </s4> 
+			 <s4 title="Find the init file"> 
+				<p>The init file (normally <code>cocoon.xconf</code>, as defined in
+				  <code>${cocoon}/WEB-INF/web.xml</code>) contains the necessary information for
+				  Cocoon to decide which classes to use for which roles (refer to
+				  <link href="avalon.html">Avalon</link>).</p>
+				<p>This is a feature that is added for increased configurability.
+				  If you were developing a one time solution, the information in this file would
+				  normally be hard coded, but the use of this file increases potential
+				  reusability.</p> 
+			 </s4> 
+			 <s4 title="Read the init file"> 
+				<p>The init file is an xml file (normally
+				  <code>cocoon.xconf</code>) which describes the classes to use for which
+				  roles.</p> 
+				<p>"Roles" are a concept of <link
+				href="avalon.html">Avalon</link>.</p> 
+				<p>The handling of <code>cocoon.xconf</code> goes as follows:</p> 
+				<ol> 
+				  <li>Get the parser: This is something necessary for
+					 bootstrapping: cocoon.xconf contains the parser to be used by Cocoon, but
+					 cocoon.xconf is an xml file that has to be parsed itself. That's why Cocoon
+					 gets a default parser out of the System properties (this refers to the
+					 environment variable <code>$org.apache.cocoon.components.parser.Parser</code>
+					 of the OS). If no parser is defined in the environment, Cocoon will use
+					 <code>org.apache.cocoon.components.parser.JaxpParser</code> (a hard-coded
+					 default).</li> 
+				  <li>Get the components: Cocoon uses roles (refer to
+					 <link href="avalon.html">Avalon</link>) as its working classes. Each role is
+				implemented by one or more real classes (components, again an
+				<link href="avalon.html">Avalon</link> concept). This is where they are
+				retrieved.</li> 
+				<li>Get the sitemap: Here the location of the sitemap is retrieved.
+				  The actual compilation of the sitemap occurs in the HttpRequest handling.</li> 
+				</ol> 
+			 </s4> 
+		  </s3> 
+		  <s3 title="UML sequence diagram">
+			 <p>You can find it <link
+			 href="images/initialize_Cocoon.png">here</link>.</p> 
+		  </s3> 
+		</s2> 
+		<s2 title="HttpRequest handling"> 
+		  <s3 title="Overview"> 
+			 <p>When the <code>CocoonServlet</code> gets a HttpRequest from the
+				servlet engine, it sets up an <code>Environment</code> (a
+				<code>HttpEnvironment</code> in this case) and passes that to
+				<code>Cocoon</code>. The <code>Environment</code> exists of Request, Response,
+				and some servlet info (such as requested URI and the servlet's path).</p> 
+			 <p>This <code>Cocoon</code> object lets the <code>Environment</code>
+				decide which sitemap to use, and passes the sitemap filename along with the
+				<code>Environment</code> to a <code>Manager</code>. </p> 
+			 <p>This one puts a <code>Handler</code> to work: it checks whether
+				there already exists a <code>Handler</code> with a compiled version of the
+				sitemap. If not, it creates one. This is what happens then:</p> 
+			 <ol> 
+				<li>The <code>Handler</code> creates a <code>File</code> object
+				  with the asked URL.</li> 
+				<li>The <code>Manager</code> sets the <code>Composer</code> and the
+				  <code>Configuration</code> of the <code>Handler</code>. (These are
+				  <link href="avalon.html">Avalon</link> things).</li> 
+			 <li>If necessary, the <code>Manager</code> asks the
+				<code>Handler</code> to regenerate its sitemap class. (FIXME: As of today,
+				2000-11-08, I'm not sure if the "if necessary" check is working). Regeneration
+				exists in: 
+				<ol> 
+				  <li>The <code>Handler</code> gets the
+					 <code>"program-generator"</code> <code>Component</code> from its
+					 <code>Composer</code>.</li> 
+				  <li>The <code>load()</code> method of this
+					 <code>ProgramGeneratorImpl</code> is called. </li> 
+				  <li>The <code>ProgramGeneratorImpl</code> gets the
+					 <code>"markup-language"</code> (in this case it will get a
+					 <code>SitemapMarkupLanguage</code>) and <code>"programming-language"</code>
+					 (being <code>JavaLanguage</code>) <code>Component</code>s. </li> 
+				  <li>The <code>ProgramGeneratorImpl</code> asks the
+					 <code>SitemapMarkupLanguage</code> to generate code.</li> 
+				  <li>Then it asks the <code>JavaLanguage</code> to load the code.
+					 The <code>JavaLanguage</code> does this by creating a <code>Javac</code>
+					 object, setting its variables, and asking it to compile. Then it loads the
+					 class.</li> 
+				  <li>Then its back to the <code>ProgramGeneratorImpl</code> who
+					 tells the <code>JavaLanguage</code> to instantiate the just loaded class.</li> 
+				</ol></li> 
+			 <li>At last, the sitemapManager asks the <code>Handler</code> to
+				process the <code>Environment</code>, and the <code>Handler</code> just
+				forwards this request to the generated sitemap class.</li> 
+			 </ol> 
+		  </s3> 
+		  <s3 title="UML sequence diagram">
+			 <p>You can find it <link
+			 href="images/get_hello_html.png">here</link>.</p> 
+		  </s3> 
+		</s2> 
+	 </s1> 
+	 <s1 title="Description of classes"> 
+		<s2 title="CocoonServlet"> 
+		  <p><code>org.apache.cocoon.servlet.CocoonServlet</code></p> 
+		  <p>This is the contact point for the servlet engine. It sets up the
+			 environment and passes all the work to a Cocoon object.</p> 
+		</s2> 
+		<s2 title="Cocoon"> 
+		  <p><code>org.apache.cocoon.Cocoon</code></p> 
+		  <p>While this sounds to be the most important part of the Cocoon
+			 application, it is not. It is merely a Composer, meaning that it does some
+			 administrative work and gets other classes to work.</p> 
+		</s2> 
+		<s2 title="ConfigurationBuilder"> 
+		  <p><code>org.apache.avalon.ConfigurationBuilder</code></p> 
+		  <p>This one generates a Configuration out of a xml file.</p> 
+		</s2> 
+		<s2 title="Parser"> 
+		  <p><code>org.apache.cocoon.components.parser.Parser</code></p> 
+		  <p>An interface that takes an xml file and throws SAX events to the
+			 outside.</p> 
+		</s2> 
+		<s2 title="Configuration"> 
+		  <p><code>org.apache.avalon.Configuration</code></p> 
+		  <p>This is an <link href="avalon.html">Avalon</link> interface. It
+		  assigns classes to roles. If an object needs a class for a specific role, it
+		  can ask a Configuration which class it has to use.</p> 
+		</s2> 
+		<s2 title="DefaultComponentManager"> 
+		  <p><code>org.apache.avalon.DefaultComponentManager</code></p> 
+		  <p>Something that manages <link href="avalon.html">Avalon</link>
+		  Components.</p> 
+		</s2> 
+		<s2 title="Manager"> 
+		  <p><code>org.apache.cocoon.sitemap.Manager</code></p> 
+		  <p>This one manages the sitemap: it finds out if there exists a Handler
+			 for a sitemap, and if not, makes sure that one gets created.</p> 
+		</s2> 
+		<s2 title="Handler"> 
+		  <p><code>org.apache.cocoon.sitemap.Handler</code></p> 
+		  <p>A class that is responsible for dealing with sitemaps. It holds the
+			 sourcefile of the sitemap, and the compiled code for it. It checks whether the
+			 sitemap class that it contains is still valid, and if not, regenerates it.</p> 
+		</s2> 
+		<s2 title="ProgramGenerator"> 
+		  <p><code>org.apache.cocoon.components.language.programming.ProgrammingLanguage</code></p>
+		  
+		  <p>Generates programs.</p> 
+		</s2> 
+		<s2 title="SitemapMarkupLanguage"> 
+		  <p><code>org.apache.cocoon.components.language.markup.sitemap.SitemapMarkupLanguage</code></p>
+		  
+		  <p>This one knows the markup of the sitemap, and helps writing the
+			 source file of the sitemap class.</p> 
+		</s2> 
+		<s2 title="JavaLanguage"> 
+		  <p><code>org.apache.cocoon.components.language.programming.java.JavaLanguage</code></p>
+		  
+		  <p>This takes care for outputing Java code as source of the sitemap
+			 class.</p> 
+		</s2> 
+		<s2 title="ResourcePipeline"> 
+		  <p><code>org.apache.cocoon.sitemap.ResourcePipeline</code></p> 
+		  <p>Holds the various steps that have to be taken when executing a
+			 pipeline.</p> 
+		</s2> 
+	 </s1> 
+  </body>
+</document>

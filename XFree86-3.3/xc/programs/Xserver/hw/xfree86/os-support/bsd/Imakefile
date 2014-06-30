@@ -1,0 +1,79 @@
+XCOMM $XConsortium: Imakefile /main/12 1996/10/27 11:06:35 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/bsd/Imakefile,v 3.15 1997/01/05 11:59:09 dawes Exp $
+
+#include <Server.tmpl>
+
+#if defined(FreeBSDArchitecture) || defined(NetBSDArchitecture) || defined(OpenBSDArchitecture)
+#if BuildXInputExt
+# if JoystickSupport
+ JOYSTICK_SRC = bsd_jstk.c
+# endif
+# if BuildDynamicLoading
+SHARED_CFLAGS = PositionIndependentCFlags
+# else
+#  if JoystickSupport
+ JOYSTICK_OBJ = bsd_jstk.o
+#  endif
+# endif
+#endif
+#endif
+
+#if defined(OpenBSDArchitecture) || defined(NetBSDArchitecture) \
+    && ((OSMajorVersion == 1 && OSMinorVersion >= 1) || OSMajorVersion >= 2)
+# if defined(ArcArchitecture)
+ IOPERMDEFINES = -DUSE_ARC_MMAP
+# elif defined(Arm32Architecture)
+ IOPERMDEFINES = -DUSE_ARM32_MMAP
+# else
+ IOPERMDEFINES = -DUSE_I386_IOPL
+# endif
+#else
+IOPERM_SRC = ioperm_noop.c
+IOPERM_OBJ = ioperm_noop.o
+#endif
+
+SRCS = bsd_init.c bsd_video.c bsd_io.c bsd_VTsw.c bios_devmem.c mapVT_noop.c \
+       $(IOPERM_SRC) std_kbdEv.c posix_tty.c std_mouse.c \
+       std_mseEv.c $(JOYSTICK_SRC)
+
+OBJS = bsd_init.o bsd_video.o bsd_io.o bsd_VTsw.o bios_devmem.o mapVT_noop.o \
+       $(IOPERM_OBJ) std_kbdEv.o posix_tty.o std_mouse.o \
+       std_mseEv.o $(JOYSTICK_OBJ)
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+CONSDEFINES = XFree86ConsoleDefines
+
+#if HasNetBSDApertureDriver
+APDEFINES = -DHAS_APERTURE_DRV
+#endif
+
+DEFINES = $(CONSDEFINES) $(APDEFINES) $(IOPERMDEFINES)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+
+#if BuildXInputExt
+# if BuildDynamicLoading
+#  if JoystickSupport
+AllTarget(bsd_jstk.o)
+SpecialObjectRule(bsd_jstk.o,bsd_jstk.c,$(SHARED_CFLAGS))
+#  endif
+# endif
+#endif
+
+ObjectFromSpecialSource(bios_devmem,../shared/bios_devmem,/**/)
+ObjectFromSpecialSource(mapVT_noop,../shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(ioperm_noop,../shared/ioperm_noop,/**/)
+ObjectFromSpecialSource(std_kbdEv,../shared/std_kbdEv,/**/)
+ObjectFromSpecialSource(posix_tty,../shared/posix_tty,/**/)
+ObjectFromSpecialSource(std_mouse,../shared/std_mouse,/**/)
+ObjectFromSpecialSource(std_mseEv,../shared/std_mseEv,/**/)
+
+DependTarget()

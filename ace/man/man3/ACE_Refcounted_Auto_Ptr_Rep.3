@@ -1,0 +1,156 @@
+.TH ACE_Refcounted_Auto_Ptr_Rep 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Refcounted_Auto_Ptr_Rep \- An ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> object incapsulates a pointer to an object of type X. It is pointed to by \fBACE_Refcounted_Auto_Ptr\fR<X, ACE_LOCK> object[s] and only accessible through them. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Refcounted_Auto_Ptr.h>\fR
+.PP
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "X* \fBrelease\fR (void)"
+.br
+.RI "\fISets the pointer value to 0 and returns its old value.\fR"
+.ti -1c
+.RI "void \fBreset\fR (X *p = 0)"
+.br
+.RI "\fIInvokes delete on the previous pointer value and then sets the pointer value to the specified value.\fR"
+.ti -1c
+.RI "X* \fBget\fR (void)"
+.br
+.RI "\fIGet the pointer value.\fR"
+.ti -1c
+.RI "int \fBnull\fR (void) const"
+.br
+.RI "\fIAllows us to check for NULL on all \fBACE_Refcounted_Auto_Ptr\fR objects.\fR"
+.ti -1c
+.RI "\fBACE_Refcounted_Auto_Ptr_Rep\fR (X *p = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_Refcounted_Auto_Ptr_Rep\fR (void)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.ti -1c
+.RI "\fBACE_Auto_Basic_Ptr\fR<X> \fBptr_\fR"
+.br
+.RI "\fIPointer to the result.\fR"
+.ti -1c
+.RI "int \fBref_count_\fR"
+.br
+.RI "\fIReference count.\fR"
+.ti -1c
+.RI "ACE_LOCK \fBlock_\fR"
+.br
+.RI "\fISynchronization variable for the MT_SAFE .\fR"
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>* \fBcreate\fR (X *p)"
+.br
+.RI "\fICreate a ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> and initialize the reference count.\fR"
+.ti -1c
+.RI "ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>* \fBattach\fR (ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> *&rep)"
+.br
+.RI "\fIIncrease the reference count and return argument. Uses the attribute "ace_lock_" to synchronize reference count updating. Precondition (rep != 0).\fR"
+.ti -1c
+.RI "void \fBdetach\fR (ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> *&rep)"
+.br
+.RI "\fIDecreases the reference count and and deletes rep if there are no more references to rep. Precondition (rep != 0).\fR"
+.ti -1c
+.RI "void \fBassign\fR (ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> *&rep, ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> *new_rep)"
+.br
+.RI "\fIDecreases the rep's reference count and and deletes rep if there are no more references to rep. Then assigns new_rep to rep. Precondition (rep != 0 && new_rep != 0).\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Refcounted_Auto_Ptr< X,ACE_LOCK >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class X, class ACE_LOCK>  template class ACE_Refcounted_Auto_Ptr_Rep
+An ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> object incapsulates a pointer to an object of type X. It is pointed to by \fBACE_Refcounted_Auto_Ptr\fR<X, ACE_LOCK> object[s] and only accessible through them.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> (X * p = 0)\fC [private]\fR
+.PP
+.SS template<classX, classACE_LOCK> ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::~ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> (void)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> void ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::assign (ACE_Refcounted_Auto_Ptr_Rep< X,ACE_LOCK >*& rep, ACE_Refcounted_Auto_Ptr_Rep< X,ACE_LOCK >* new_rep)\fC [static, private]\fR
+.PP
+Decreases the rep's reference count and and deletes rep if there are no more references to rep. Then assigns new_rep to rep. Precondition (rep != 0 && new_rep != 0).
+.PP
+.SS template<classX, classACE_LOCK> ACE_Refcounted_Auto_Ptr_Rep< X,ACE_LOCK >* ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::attach (ACE_Refcounted_Auto_Ptr_Rep< X,ACE_LOCK >*& rep)\fC [static, private]\fR
+.PP
+Increase the reference count and return argument. Uses the attribute "ace_lock_" to synchronize reference count updating. Precondition (rep != 0).
+.PP
+.SS template<classX, classACE_LOCK> ACE_Refcounted_Auto_Ptr_Rep< X,ACE_LOCK >* ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::create (X * p)\fC [static, private]\fR
+.PP
+Create a ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK> and initialize the reference count.
+.PP
+.SS template<classX, classACE_LOCK> void ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::detach (ACE_Refcounted_Auto_Ptr_Rep< X,ACE_LOCK >*& rep)\fC [static, private]\fR
+.PP
+Decreases the reference count and and deletes rep if there are no more references to rep. Precondition (rep != 0).
+.PP
+.SS template<classX, classACE_LOCK> X * ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::get (void)\fC [private]\fR
+.PP
+Get the pointer value.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::null (void) const\fC [private]\fR
+.PP
+Allows us to check for NULL on all \fBACE_Refcounted_Auto_Ptr\fR objects.
+.PP
+.SS template<classX, classACE_LOCK> X * ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::release (void)\fC [private]\fR
+.PP
+Sets the pointer value to 0 and returns its old value.
+.PP
+.SS template<classX, classACE_LOCK> void ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::reset (X * p = 0)\fC [private]\fR
+.PP
+Invokes delete on the previous pointer value and then sets the pointer value to the specified value.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> class \fBACE_Refcounted_Auto_Ptr\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::ACE_ALLOC_HOOK_DECLARE\fC [private]\fR
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classX, classACE_LOCK> ACE_LOCK ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::lock_\fC [private]\fR
+.PP
+Synchronization variable for the MT_SAFE .
+.PP
+.SS template<classX, classACE_LOCK> \fBACE_Auto_Basic_Ptr\fR< X > ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::ptr_\fC [private]\fR
+.PP
+Pointer to the result.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Refcounted_Auto_Ptr_Rep<X, ACE_LOCK>::ref_count_\fC [private]\fR
+.PP
+Reference count.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,60 @@
+XCOMM $XConsortium: Imakefile /main/4 1996/09/28 17:12:59 rws $
+#include <Server.tmpl>
+
+SRCS = pgcGlobal.c pgcCmap.c pgcWindow.c  pgcCpArea.c pgcPntWin.c
+
+OBJS = pgcGlobal.o pgcCmap.o pgcWindow.o pgcCpArea.o pgcPntWin.o
+
+INCLUDES = -I../ -I../AIX -I../../../mfb -I../../../cfb -I../../../include -I$(XINCLUDESRC) -I../common -I../../../mi
+
+NormalRelocatableTarget(pgc,$(OBJS))
+
+#if ProfileServer
+ProfiledRelocatableTarget(pgc,$(OBJS))
+#endif
+#if DebugServer
+DebuggedRelocatableTarget(pgc,$(OBJS))
+#endif
+
+#if DebugServer && ProfileServer
+DebuggedAndProfiledLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@ debugger/$@ profiled/$@
+	$(CPP) $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(CP) $@ debugger/$@
+	$(CP) $@ profiled/$@
+	$(RM) -f m.s
+#else
+# if DebugServer
+DebuggedLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@ debugger/$@
+	$(CPP) $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(CP) $@ debugger/$@
+	$(RM) -f m.s
+# else
+#  if ProfileServer
+ProfiledLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@ profiled/$@
+	$(CPP) $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(CP) $@ profiled/$@
+	$(RM) -f m.s
+#  else
+NormalLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@
+	$(CPP) -E $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(RM) -f m.s
+#  endif
+# endif
+#endif
+
+DependTarget()
+
+LintLibraryTarget(pgc,$(SRCS))
+NormalLintTarget($(SRCS))

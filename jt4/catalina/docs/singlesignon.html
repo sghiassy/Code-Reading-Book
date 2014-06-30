@@ -1,0 +1,87 @@
+<html>
+<head>
+<title>Configuring Tomcat for Single Sign On Support</title>
+</head>
+<body bgcolor="white">
+
+<a href="index.html">Home</a>
+
+<div align="center">
+<h1>Configuring Tomcat for Single Sign On Support</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Requirements">[Requirements]</a>
+<a href="#Security">[Security]</a>
+<br><br>
+</div>
+
+<a name="Introduction"></a>
+<h3>Introduction</h3>
+
+<p>In many large web sites, it is desireable to recognize an authenticated
+user the first time that he or she tries to access a protected area in any
+web application, and then recognize that authenticated user across other web
+applications in the same environment without requiring the user to log in
+again.  Tomcat supports that capability if it is configured as described
+in this document.</p>
+
+<a name="Requirements"></a>
+<h3>Configuration Requirements</h3>
+
+<p>To successfully configure Tomcat for "single sign on" support, the
+following requirements must be taken into account:</p>
+<ul>
+<li>All clients that intend to utilize "single sign on" support must provide
+    support for cookies, which are used to maintain the user identity across
+    web applications.</li>
+<li>As implemented in Tomcat, the scope of "single sign on" support is
+    the entire set of web applications registered with a single virtual host.
+    </li>
+</ul>
+
+<p>The system administrator must configure the
+<code>$CATALINA_HOME/conf/server.xml</code> file as follows to enable
+"single sign on" support:</p>
+<ul>
+<li>At the <code>&lt;Engine&gt;</code> or <code>&lt;Host&gt;</code> level,
+    configure a <code>&lt;Realm&gt;</code> element that defines the database
+    of valid users and their corresponding roles.  In the default configuration
+    shipped with Tomcat, this is done at the Engine level.</li>
+<li>You <strong>MUST NOT</strong> configure a <code>&lt;Realm&gt;</code>
+    element inside one of the <code>&lt;Context&gt;</code> elements describing
+    the web applications associated with this virtual host.</li>
+<li>Nested inside the <code>&lt;Host&gt;</code> element, you must include the
+    following element:
+    <pre>
+        &lt;Valve class="org.apache.catalina.authenticator.SingleSignOn"/&gt;
+    </pre></li>
+<li>Each web application that wishes to operate under the "single signon
+    support" environment should define appropriate
+    <code>&lt;security-constraint&gt;</code> and
+    <code>&lt;login-config&gt;</code> elements.  The former elements are used
+    to identify portions of the application's URI space that are to require
+    user authentication, and the latter element is used if this application
+    is the first one accessed by the user that requires the user to log in.
+    </li>
+<li>There are no restrictions on different web applications utilizing
+    different authentication methods.</li>
+</ul>
+
+<a name="Security"></a>
+<h3>Security Considerations</h3>
+
+<p>Because the "single signon support" implementation utilizes cookies to
+maintain use identity across applications, the same risks of information
+exposure apply here as when cookies are used to maintain session identity
+within a single web application.  If you are concerned that attackers may
+try to impersonate an ongoing session, you should run across a secure
+network connection (such as an SSL connection using the <code>https</code>
+protocol).</p>
+
+<br>
+<div align="center"><hr width="75%"><font size="2">
+$Id: singlesignon.html,v 1.2 2001/01/14 01:31:44 craigmcc Exp $
+</font></div>
+
+</body>
+</html>

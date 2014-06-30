@@ -1,0 +1,38 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/10/25 21:23:41 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/accel/s3pwlb/drivers/mmio_928/Imakefile,v 3.7 1996/12/23 07:06:15 dawes Exp $
+
+
+
+#include <Server.tmpl>
+
+SRCS = mmio_928.c
+
+OBJS = mmio_928.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I../.. -I$(XF86COMSRC) -I$(XF86HWSRC) \
+	   -I$(XF86OSSRC) -I$(SERVERSRC)/mi \
+           -I$(XF86SRC)/vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
+	   -I$(XF86SRC)/accel/cache
+#endif
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+all:: mmio_928.o
+
+#if !XF86LinkKit
+LinkSourceFile(mmio_928.c,$(XF86SRC)/accel/s3/drivers/mmio_928)
+#endif
+
+InstallLinkKitNonExecFile(Imakefile,$(XF98LINKKITDIR)/drivers98/s3pwlb/mmio_928)
+InstallLinkKitNonExecFile(mmio_928.c,$(XF98LINKKITDIR)/drivers98/s3pwlb/mmio_928)
+
+DependTarget()
+

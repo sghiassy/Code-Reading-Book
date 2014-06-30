@@ -1,0 +1,87 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_EffectRegister</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_EffectRegister</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_EffectRegister</h4>
+<dd>DEMOGL_EffectRegister registers an instance of a <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> derived class.
+	A <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> derived class is the place where you put your effectcode. When
+	the instance is registered with DemoGL, you can execute that instance using <a HREF="ref_scriptsyntax_SYSTEM.htm" target="main">_SYSTEM script commands</a>.
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_EffectRegister(
+	<b><a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> * const</b> <i>pEffectObject</i>,
+	<b>const char</b> *<i>pszEffectName</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>pEffectObject</i>
+	<dd>Pointer to an instance of a <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> derived effect class. This pointer
+		should be constant, so you can't move your instances in memory after you've registered them. 
+	<dt><i>pszEffectName</i>
+	<dd>Pointer to a zero-terminated string which represents the name of the instance pointed by <i>pEffectObject</i>. This name
+		will be the indentifier to identify in the script which effect object should be used. This name should be unique.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>
+	<p>
+<dt><b>Remarks.</b>
+<dd>You should register your effectobjects before you call <a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a>, using
+	<b>DEMOGL_EffectRegister</b>. Keep the name pointed by <i>pszEffectName</i> unique in your application. This name is
+	case sensitive, though it's recommended to distinquish effect instances by name, not case. Allthough your effect classes
+	are not of type <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a>, you can reference them by using the base class
+	which is of type <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a>. Therefor the pointer <i>pEffectObject</i> is
+	of type <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a>, so all kinds of effect classes can be passed.
+	<p>
+<dt><b>Example.</b>
+<dd><pre>
+// CMyEffectClass is a derived class from CEffect
+CMyEffectClass	*pMyEffect;
+
+// create instance
+pMyEffect = new CMyEffectClass;
+
+// register this instance with DemoGL, under the name &quot;MyEffect&quot;
+DEMOGL_EffectRegister(pMyEffect, &quot;MyEffect&quot;);
+
+// start application
+DEMOGL_AppRun(hInstance, &amp;sdStartupDatValues, &quot;My title&quot;, false,0,0,RUNTYPE_NORMAL);
+
+// Application ends
+DEMOGL_AppEnd();
+
+// Clean up my effectclass
+delete pMyEffect;
+	</pre>
+	<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a>, 
+	<a HREF="ref_classes_CEffect.htm" target="main">CEffect</a>,
+	<a HREF="ref_scriptsyntax_SYSTEM.htm" target="main">_SYSTEM script commands</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

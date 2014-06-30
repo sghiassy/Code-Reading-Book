@@ -1,0 +1,221 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE schema SYSTEM "../../../../xdocs/dtd/XMLSchema.dtd">
+
+<schema
+  xmlns="http://www.w3.org/2000/10/XMLSchema"
+  xmlns:esql="http://apache.org/cocoon/SQL/v2"
+>
+
+<element name="esql:connection">
+  <annotation>
+    <documentation>Opens a new database connection.</documentation>
+  </annotation>
+  <complexType>
+    <sequence>
+      <choice>
+        <sequence>
+          <!-- not schema strings - xsp strings -->
+          <element name="esql:driver" type="string">
+            <annotation>
+              <documentation>The name of the driver to use</documentation>
+            </annotation>
+          </element>
+          <element name="esql:dburl" type="string">
+            <annotation>
+              <documentation>The URL of the database</documentation>
+            </annotation>
+          </element>
+          <element name="esql:username" type="string" minOccurs="0" maxOccurs="1">
+            <annotation>
+              <documentation>The database user's name</documentation>
+            </annotation>
+          </element>
+          <element name="esql:password" type="string" minOccurs="0" maxOccurs="1">
+            <annotation>
+              <documentation>The database user's password</documentation>
+            </annotation>
+          </element>
+        </sequence>
+        <element name="esql:pool" type="string">
+          <annotation>
+            <documentation>The name of the database pool</documentation>
+          </annotation>
+        </element>
+      </choice>
+      <sequence>
+        <element name="esql:execute-query" minOccurs="0" maxOccurs="unbounded">
+          <annotation>
+            <documentation>Executes a query on the database</documentation>
+          </annotation>
+          <complexType>
+            <sequence>
+              <element name="esql:query">
+                <annotation>
+                  <documentation>The query to execute</documentation>
+                </annotation>
+                <complexType mixed="true">
+                  <sequence>
+                    <element name="esql:parameter" minOccurs="0" maxOccurs="unbounded">
+                      <annotation>
+                        <documentation>A parameter for a prepared statement</documentation>
+                      </annotation>
+                    </element>
+                  </sequence>
+                </complexType>
+              </element>
+              <element name="esql:results" minOccurs="0" maxOccurs="1">
+                <annotation>
+                  <documentation>This element's children are instantiated in the result tree when the query returns a resultset</documentation>
+                </annotation>
+                <complexType mixed="true">
+                  <sequence>
+                    <element name="esql:row-results" minOccurs="0" maxOccurs="1">
+                      <annotation>
+                        <documentation>This element's children are instantiated in the result tree for each row in the resultset</documentation>
+                      </annotation>
+                      <complexType mixed="true">
+                        <sequence>
+                          <choice>
+                            <any namespace="##other" minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+                            <element name="esql:get-columns" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns a sequence of elements whose names are the current row's column names, and whose values are the current row's column values</documentation>
+                              </annotation>
+                              <element name="esql:encoding" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                  <documentation>The encoding used for this column, specified as a Java encoding 
+name.</documentation>
+                                </annotation>
+                              </element>
+                            </element>
+                            <element name="esql:get-string" minOccurs="0" maxOccurs="unbounded" type="EsqlColumnFunction">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a string</documentation>
+                              </annotation>
+                              <element name="esql:encoding" minOccurs="0" maxOccurs="1">
+                                <annotation>
+                                  <documentation>The encoding used for this column, specified as a Java encoding
+name.</documentation>
+                                </annotation>
+                              </element>
+                            </element>
+                            <element name="esql:get-date" minOccurs="0" maxOccurs="unbounded" type="EsqlFormattedColumnFunction">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a date</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-time" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a time</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-timestamp" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a timestamp</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-boolean" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a boolean</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-double" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a double</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-float" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a float</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-int" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a int</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-long" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a long</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-short" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the value of the given column in the current row as a short</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-xml" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Parses the value of the given column in the current row as XML and returns it</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-row-position" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the position of the current row in the resultset</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-column-name" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the name of the given column in the current row</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-column-label" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the label of the given column in the current row</documentation>
+                              </annotation>
+                            </element>
+                            <element name="esql:get-column-type-name" minOccurs="0" maxOccurs="unbounded">
+                              <annotation>
+                                <documentation>Returns the type name of the given column in the current row</documentation>
+                              </annotation>
+                            </element>
+                          </choice>
+                        </sequence>
+                      </complexType>
+                    </element>
+                    <element name="esql:no-results" minOccurs="0" maxOccurs="1">
+                      <annotation>
+                        <documentation>This element's children are instantiated in the result tree for each row in the resultset</documentation>
+                      </annotation>
+                    </element>
+                  </sequence>
+                </complexType>
+              </element>
+              <element name="esql:update-results" minOccurs="0" maxOccurs="1">
+                <annotation>
+                  <documentation>This element's children are instantiated in the result tree if the query returns a number of rows</documentation>
+                </annotation>
+              </element>
+              <element name="esql:error-results" minOccurs="0" maxOccurs="1">
+                <annotation>
+                  <documentation>This element's children are instantiated in the result tree if the query results in a database error. If this element does not exist, the error is passed on to the xsp layer. If it does exist, the error is caught here unless passed on explicitly.</documentation>
+                </annotation>
+              </element>
+            </sequence>
+          </complexType>
+        </element>
+      </sequence>
+    </sequence>
+  </complexType>
+</element>
+
+<complexType name="EsqlColumnFunction">
+  <annotation>
+    <documentation>The given column is indicated by the column attribute. If the attribute's value is an integer, it is treated as the index of the column in the row, otherwise it's value is treated as the name of the column.</documentation>
+  </annotation>
+  <attribute name="column" type="string"/>
+</complexType>
+
+<complexType name="EsqlFormattedColumnFunction">
+  <annotation>
+    <documentation>The value of the format attribute can used by some column value functions (e.g. date, real) as a template for formatting the column value. This is necessarily implementation dependent.</documentation>
+  </annotation>
+  <complexContent>
+    <extension base="EsqlColumnFunction">
+      <attribute name="format" type="string"/>
+    </extension>
+  </complexContent>
+</complexType>
+
+</schema>

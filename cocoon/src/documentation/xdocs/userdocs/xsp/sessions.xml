@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+
+  <header>
+    <title>Session tracking with Cocoon</title>
+    <subtitle>Introduction, Installation and Example</subtitle>
+    <version>0.1</version>
+    <type>Technical Document</type>
+    <authors>
+      <person name="J&ouml;rg Prante" email="joerg@7val.com"/>
+    </authors>
+    <abstract>
+    This document explains what Apache Cocoon provides to support session tracking.
+    Session tracking is an important feature for web server frameworks
+    because HTTP and related protocols are stateless,
+    but sometimes we need stateful information about visitors of a Cocoon site.
+    For a more precise analysis of a web site, the tracking of visitors
+    should work independent of the visitor's browser and of the visitor's decision
+    whether we enabled cookies or not. Last not least, Cocoon should not
+    be dependant of the method the servlet engine prefers to generate session IDs.
+    In this document, it is described step by step what has to be done to enable
+    Cocoon for session management.
+    </abstract>
+  </header>
+
+  <body>
+    <s1 title="Introduction">
+      <s2 title="Goal">
+        <p>
+         Maintaining state is a common problem for web server frameworks
+         because HTTP is a stateless protocol. There are many solutions known
+         to obtain stateful information. Client-side storage of state information
+         like the usage of cookies will not be discussed here, since this depends
+         heavily on the client's browser. Since Cocoon is a server-side framework,
+         storing visitor information at the server side will give full access
+         to the list of all visitors, to what they have done, and what they are
+         doing.
+         </p>
+         <p>Please always think a little while if you really want to set up
+         session management. Less scalability and performance is the dark
+         side of keeping user sessions at the server-side. Each user session consumes
+         memory, disk, and CPU, and it is always recommended that you be careful to
+         system resources before wasting it.
+         </p>
+         <p>
+         If you decided to set up session tracking, Cocoon offers you:
+         </p>
+          <ul>
+            <li>creation of new session IDs</li>
+            <li>full session control by the underlying Servlet API 2.2 servlet engine</li>
+            <li>cookie- and URI-based session management</li>
+            <li>automatic link rewrite if you like your XSP pages to be URI-session-aware</li>
+          </ul>
+         </s2>
+
+
+        <s2 title="The session:encode-url template">
+
+        <p>
+        To enable Cocoon for URI-based session IDs, an XSP template with the name
+        <code>session:encode-url</code> will do this for you. It uses the
+        <code>encodeURL</code> method from the Servlet API which encodes
+        an URL in a way that a session ID is being attached. Consult your
+        servlet engine documentation for information about what the <code>encodeURL</code>
+        method returns. For example, the Tomcat
+        engine adds a string <code>;jsession=</code> followed by an MD5 hash
+        to the URL, but only if the client's browser does not accept cookies.
+        </p>
+
+        <p>Here is the fragment for the <code>session:encode-url</code> from session.xsl:</p>
+
+<source><![CDATA[
+<!-- encode an URL with the session ID -->
+<xsl:template match="session:encode-url">
+  <xsl:variable name="href">
+      "<xsl:value-of select="@href"/>"
+  </xsl:variable>
+
+  <xsp:element name="a">
+    <xsp:attribute name="href">
+      <xsp:expr>
+        response.encodeURL(String.valueOf(<xsl:copy-of select="$href"/>))
+      </xsp:expr>
+    </xsp:attribute>
+    <xsl:value-of select="."/>
+  </xsp:element>
+
+</xsl:template>
+]]></source>
+
+         <p>
+         As you might wonder, the XSP template constructs a HTML tag <code>&lt;a&gt;</code> with an
+         attribute <code>href</code> which is enough for most of the cases.
+         Other methods, like XLink, are planned to be supported at a later time when
+         final W3C recommendations are out.
+         </p>
+
+         </s2>
+
+         <s2 title="Creating new sessions">
+         <p>
+         The best place of a web site where new sessions should be created is the entry point
+         where all or most of the visitors step in. After creating the session, or
+         retrieving an old session, the visitor is redirected to a start page.
+         In Cocoon, you must edit your sitemap in order to
+         specify this interesting point of session creation.
+         The <code>map-redirect-to</code>
+         has an extra attribute <code>session</code>, which can be set to <code>true</code>
+         or <code>false</code>. The former will generate a new session ID if needed
+         by invoking the Servlet API method <code>session = request.getSession(true)</code>,
+         while the latter ignores session ID handling.
+         </p>
+
+         <p>
+         How can Cocoon recognize URIs with appended session IDs? The answer is:
+         Cocoon can match a wildcard against your sessionized pages and keeps happy.
+         So please do not forget to append an asterisk '*' to your patterns in the pipelines.
+         </p>
+
+         <p>
+         This fragment from <code>sitemap.xsl</code> shows how you can add a
+         <code>map:redirect-to</code> to
+         your Cocoon framework with session handling at the root URL for your
+         web application:
+         </p>
+
+<source><![CDATA[
+
+ <map:pipelines>
+  <map:pipeline>
+
+   <map:match pattern="">
+     <map:redirect-to session="true" uri="welcome"/>
+   </map:match>
+
+   <map:match pattern="welcome*">
+    <map:generate type="file" src="site/welcome.xml"/>
+    <map:transform src="stylesheets/welcome.xsl"/>
+    <map:serialize/>
+   </map:match>
+
+   <map:match pattern="**.xsp*">
+    <map:generate type="serverpages" src="site/{1}.xsp"/>
+    <map:transform src="stylesheets/dynamic-page2html.xsl"/>
+    <map:serialize/>
+   </map:match>
+]]></source>
+               </s2>
+            </s1>
+
+            <s1 title="Example">
+              <s2 title="A simple XSP page with session ID">
+
+              <p>
+              Here you can see the source of an XSP example of how the
+              session feature can be used.
+              The example is located in a file named <code>sessionpage.xsp</code>
+              and it displays the received session ID together with a rewritten
+              link to the page itself. Depending on your browser settings,
+              you will see nothing (because your browser prefers crunching cookies)
+              or a session ID is encoded into the URL. After clicking on the
+              link named "Follow me!", the session ID is taken into the URL, and
+              the session tracking is established.
+              </p>
+
+<source><![CDATA[
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<xsp:page
+   language="java"
+   xmlns:xsp="http://apache.org/xsp"
+   xmlns:session="http://apache.org/xsp/session/2.0"
+   xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+>
+
+<!-- a simple session page by J&ouml;rg Prante <joerg@7val.com> -->
+
+<page>
+  <title>A Simple URI-based Session Example</title>
+  <content>
+    <para> <xsp-request:get-uri as="xml"/> </para>
+    <para> Session ID = <session:get-id as="xml"/> </para>
+    <para>
+      Encode URL Test =
+      <session:encode-url href="sessionpage.xsp">Follow me!</session:encode-url>
+    </para>
+  </content>
+</page>
+
+</xsp:page>
+]]></source>
+
+      <p>
+      If you have been successful with installing the session feature and
+      the example file, the following HTML output will be generated by
+      Cocoon from the above <code>sessionpage.xsp</code> example, which shows
+      how the rewritten link looks like. Please don't ask
+      why the session ID in the generated link is different from yours.
+      </p>
+
+<source><![CDATA[
+<!DOCTYPE HTML PUBLIC
+    "-//W3C//DTD HTML 4.0//EN"
+    "http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd">
+<html><head><title>
+     A Simple URI Session Example
+  </title></head><body vlink="blue" link="blue" alink="red" bgcolor="white">
+
+  <h2 style="color: navy; text-align: center">
+     A Simple URI Session Example
+  </h2>
+
+  <content>
+
+  <p align="left"><i>
+     <b xmlns:xsp-response="http://apache.org/xsp/response/2.0"
+        xmlns:xsp-request="http://apache.org/xsp/request/2.0">sessionpage.xsp</b>
+  </i></p>
+
+  <p align="left"><i>
+     Session ID =
+     <session:id>F3E9575442D1899760A0B231D0042281</session:id>
+  </i></p>
+
+  <p align="left"><i>
+    Encode URL Test =
+    <a href="sessionpage.xsp;jsessionid=F3E9575442D1899760A0B231D0042281">Follow me!</a>
+  </i></p>
+  </content>
+
+</body></html>
+]]></source>
+
+         </s2>
+      </s1>
+
+      <s1 title="Log analysis of sessions">
+
+      <p>
+        To be done.
+      </p>
+
+      </s1>
+
+</body>
+</document>

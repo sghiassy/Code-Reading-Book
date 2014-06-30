@@ -1,0 +1,22 @@
+XCOMM $XConsortium: Imakefile,v 1.12 93/08/25 10:13:31 rws Exp $
+XCOMM $XFree86: contrib/programs/xgc/Imakefile,v 3.0 1994/06/05 07:59:58 dawes Exp $
+        DEFINES = 
+           SRCS = dashlist.c planemask.c getfile.c tests.c text.c \
+                  choice.c main.c interpret.c record.c testfrac.c
+           OBJS = dashlist.o planemask.o getfile.o tests.o text.o \
+                  choice.o main.o interpret.o record.o testfrac.o \
+                  gram.o lex.o
+LOCAL_LIBRARIES = $(XAWLIB) $(XMULIB) $(XTOOLLIB) $(XLIB) $(LEXLIB)
+        DEPLIBS = $(DEPXAWLIB) $(DEPXMULIB) $(DEPXTOOLLIB) $(DEPXLIB)
+  SYS_LIBRARIES = MathLibrary
+         YFLAGS = -d
+
+all::
+
+LexFile(lex)
+
+YaccFile(gram,$(YFLAGS))
+
+ComplexProgramTarget(xgc)
+
+InstallAppDefaults(Xgc)

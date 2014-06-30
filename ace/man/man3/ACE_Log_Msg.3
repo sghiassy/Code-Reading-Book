@@ -1,0 +1,779 @@
+.TH ACE_Log_Msg 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Log_Msg \- Provides a variable length argument message logging abstraction. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Log_Msg.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBSTDERR\fR = 1, \fBLOGGER\fR = 2, \fBOSTREAM\fR = 4, \fBMSG_CALLBACK\fR = 8, \fBVERBOSE\fR = 16, \fBVERBOSE_LITE\fR = 32, \fBSILENT\fR = 64, \fBSYSLOG\fR = 128 }"
+.br
+.ti -1c
+.RI "enum \fBMASK_TYPE\fR { \fBPROCESS\fR = 0, \fBTHREAD\fR = 1 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Log_Msg\fR (void)"
+.br
+.RI "\fIInitialize logger.\fR"
+.ti -1c
+.RI "\fB~ACE_Log_Msg\fR (void)"
+.br
+.RI "\fIcleanup logger.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_TCHAR\fR *prog_name, u_long options_flags = ACE_Log_Msg::STDERR, const \fBACE_TCHAR\fR *logger_key = 0)"
+.br
+.RI "\fIInitialize the \fBACE\fR logging facility.\fR"
+.ti -1c
+.RI "void \fBset_flags\fR (u_long f)"
+.br
+.ti -1c
+.RI "void \fBclr_flags\fR (u_long f)"
+.br
+.ti -1c
+.RI "u_long \fBflags\fR (void)"
+.br
+.ti -1c
+.RI "void \fBsync\fR (const \fBACE_TCHAR\fR *program_name)"
+.br
+.RI "\fICall after doing a <fork> to resynchronize the process id and <program_name> variables.\fR"
+.ti -1c
+.RI "void \fBop_status\fR (int status)"
+.br
+.RI "\fISet the result of the operation status (by convention, -1 means error).\fR"
+.ti -1c
+.RI "int \fBop_status\fR (void)"
+.br
+.RI "\fIGet the result of the operation status (by convention, -1 means error).\fR"
+.ti -1c
+.RI "void \fBerrnum\fR (int)"
+.br
+.RI "\fISet the value of the errnum (by convention this corresponds to errno).\fR"
+.ti -1c
+.RI "int \fBerrnum\fR (void)"
+.br
+.RI "\fIGet the value of the errnum (by convention this corresponds to errno).\fR"
+.ti -1c
+.RI "void \fBlinenum\fR (int)"
+.br
+.RI "\fISet the line number where an error occurred.\fR"
+.ti -1c
+.RI "int \fBlinenum\fR (void)"
+.br
+.RI "\fIGet the line number where an error occurred.\fR"
+.ti -1c
+.RI "void \fBfile\fR (const char *)"
+.br
+.RI "\fISet the file name where an error occurred.\fR"
+.ti -1c
+.RI "const char* \fBfile\fR (void)"
+.br
+.RI "\fIGet the file name where an error occurred.\fR"
+.ti -1c
+.RI "void \fBmsg\fR (const \fBACE_TCHAR\fR *)"
+.br
+.RI "\fISet the message that describes what type of error occurred.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBmsg\fR (void)"
+.br
+.RI "\fIGet the message that describes what type of error occurred.\fR"
+.ti -1c
+.RI "void \fBrestart\fR (int)"
+.br
+.RI "\fISet the field that indicates whether interrupted calls should be restarted.\fR"
+.ti -1c
+.RI "int \fBrestart\fR (void)"
+.br
+.RI "\fIGet the field that indicates whether interrupted calls should be restarted.\fR"
+.ti -1c
+.RI "void \fBmsg_ostream\fR (ACE_OSTREAM_TYPE *)"
+.br
+.RI "\fIUpdate the ostream without overwriting the delete_ostream_ flag.\fR"
+.ti -1c
+.RI "void \fBmsg_ostream\fR (ACE_OSTREAM_TYPE *, int delete_ostream)"
+.br
+.ti -1c
+.RI "ACE_OSTREAM_TYPE* \fBmsg_ostream\fR (void) const"
+.br
+.RI "\fIGet the ostream that is used to print error messages.\fR"
+.ti -1c
+.RI "\fBACE_Log_Msg_Callback\fR* \fBmsg_callback\fR (\fBACE_Log_Msg_Callback\fR *c)"
+.br
+.ti -1c
+.RI "\fBACE_Log_Msg_Callback\fR* \fBmsg_callback\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBinc\fR (void)"
+.br
+.ti -1c
+.RI "int \fBdec\fR (void)"
+.br
+.ti -1c
+.RI "int \fBtrace_depth\fR (void)"
+.br
+.ti -1c
+.RI "void \fBtrace_depth\fR (int)"
+.br
+.ti -1c
+.RI "int \fBtrace_active\fR (void)"
+.br
+.ti -1c
+.RI "void \fBtrace_active\fR (int value)"
+.br
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBthr_desc\fR (void) const"
+.br
+.RI "\fIGet the TSS thread descriptor.\fR"
+.ti -1c
+.RI "void \fBthr_desc\fR (\fBACE_Thread_Descriptor\fR *td)"
+.br
+.ti -1c
+.RI "void \fBstop_tracing\fR (void)"
+.br
+.ti -1c
+.RI "void \fBstart_tracing\fR (void)"
+.br
+.ti -1c
+.RI "int \fBtracing_enabled\fR (void)"
+.br
+.ti -1c
+.RI "u_long \fBpriority_mask\fR (\fBMASK_TYPE\fR = THREAD)"
+.br
+.RI "\fIGet the current  mask. Set the  mask, returns original mask.\fR"
+.ti -1c
+.RI "u_long \fBpriority_mask\fR (u_long, \fBMASK_TYPE\fR = THREAD)"
+.br
+.ti -1c
+.RI "int \fBlog_priority_enabled\fR (\fBACE_Log_Priority\fR log_priority)"
+.br
+.RI "\fIReturn true if the requested priority is enabled.\fR"
+.ti -1c
+.RI "int \fBlog_priority_enabled\fR (\fBACE_Log_Priority\fR log_priority, const char *, ...)"
+.br
+.RI "\fIReturn true if the requested priority is enabled.\fR"
+.ti -1c
+.RI "\fBpid_t\fR \fBgetpid\fR (void) const"
+.br
+.RI "\fIOptimize reading of the pid (avoids a system call if the value is cached...).\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBlocal_host\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBlocal_host\fR (const \fBACE_TCHAR\fR *)"
+.br
+.ti -1c
+.RI "void \fBset\fR (const char *file, int line, int op_status = -1, int errnum = 0, int restart = 1, ACE_OSTREAM_TYPE *os = 0, \fBACE_Log_Msg_Callback\fR *c = 0)"
+.br
+.ti -1c
+.RI "void \fBconditional_set\fR (const char *file, int line, int op_status, int errnum)"
+.br
+.RI "\fIThese values are only actually set if the requested priority is enabled.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBlog\fR (\fBACE_Log_Priority\fR priority, const \fBACE_TCHAR\fR *format, ...)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBlog\fR (\fBACE_Log_Priority\fR priority, const \fBACE_ANTI_TCHAR\fR *format, ...)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBlog\fR (const \fBACE_TCHAR\fR *format, \fBACE_Log_Priority\fR priority, va_list argp)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBlog\fR (\fBACE_Log_Record\fR &log_record, int suppress_stderr = 0)"
+.br
+.RI "\fILog a custom built log record to the currently enabled logging sinks.\fR"
+.ti -1c
+.RI "int \fBlog_hexdump\fR (\fBACE_Log_Priority\fR log_priority, const char *buffer, int size, const \fBACE_TCHAR\fR *text = 0)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.PP
+.RI "\fBAllow apps to acquire and release internal synchronization\fR"
+.br
+lock
+.PP
+This lock is used internally by the  implementation. By exporting the lock, applications can hold the lock atomically over a number of calls to .
+.PP
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBacquire\fR (void)"
+.br
+.RI "\fIAcquire the internal lock.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.RI "\fIRelease the internal lock.\fR"
+.in -1c
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Log_Msg* \fBinstance\fR (void)"
+.br
+.RI "\fIReturns a pointer to the Singleton.\fR"
+.ti -1c
+.RI "int \fBexists\fR (void)"
+.br
+.RI "\fIReturns non-null if an ACE_Log_Msg exists for the calling thread.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBprogram_name\fR (void)"
+.br
+.RI "\fIReturns the current program name used for logging.\fR"
+.ti -1c
+.RI "void \fBdisable_debug_messages\fR (\fBACE_Log_Priority\fR priority = LM_DEBUG)"
+.br
+.RI "\fIClears the flag from the default priority mask used to initialize ACE_Log_Msg instances.\fR"
+.ti -1c
+.RI "void \fBenable_debug_messages\fR (\fBACE_Log_Priority\fR priority = LM_DEBUG)"
+.br
+.RI "\fISets the flag in the default priority mask used to initialize ACE_Log_Msg instances.\fR"
+.ti -1c
+.RI "void \fBinit_hook\fR (\fBACE_OS_Log_Msg_Attributes\fR &attributes )"
+.br
+.ti -1c
+.RI "void \fBinherit_hook\fR (\fBACE_OS_Thread_Descriptor\fR *thr_desc, \fBACE_OS_Log_Msg_Attributes\fR &attributes)"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Log_Msg& \fBoperator=\fR (const ACE_Log_Msg &)"
+.br
+.ti -1c
+.RI "\fBACE_Log_Msg\fR (const ACE_Log_Msg &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBstatus_\fR"
+.br
+.RI "\fIStatus of operation (-1 means failure, >= 0 means success).\fR"
+.ti -1c
+.RI "int \fBerrnum_\fR"
+.br
+.RI "\fIType of error that occurred (see <sys/errno.h>).\fR"
+.ti -1c
+.RI "int \fBlinenum_\fR"
+.br
+.RI "\fILine number where the error occurred.\fR"
+.ti -1c
+.RI "char \fBfile_\fR [MAXPATHLEN + 1]"
+.br
+.RI "\fIFile where the error occurred.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBmsg_\fR [ACE_Log_Record::MAXLOGMSGLEN + 1]"
+.br
+.RI "\fIThe log message, which resides in thread-specific storage. Note that only the current log message is stored here -- it will be overwritten by the subsequent call to <log>.\fR"
+.ti -1c
+.RI "int \fBrestart_\fR"
+.br
+.RI "\fIIndicates whether we should restart system calls that are interrupted.\fR"
+.ti -1c
+.RI "ACE_OSTREAM_TYPE* \fBostream_\fR"
+.br
+.RI "\fIThe ostream where logging messages can be written.\fR"
+.ti -1c
+.RI "\fBACE_Log_Msg_Callback\fR* \fBmsg_callback_\fR"
+.br
+.RI "\fIThe callback object.\fR"
+.ti -1c
+.RI "int \fBtrace_depth_\fR"
+.br
+.RI "\fIDepth of the nesting for printing traces.\fR"
+.ti -1c
+.RI "int \fBtrace_active_\fR"
+.br
+.RI "\fIAre we already within an \fBACE_Trace\fR constructor call?\fR"
+.ti -1c
+.RI "int \fBtracing_enabled_\fR"
+.br
+.RI "\fIAre we allowing tracing in this thread?\fR"
+.ti -1c
+.RI "int \fBdelete_ostream_\fR"
+.br
+.RI "\fIAre we deleting this ostream?\fR"
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBthr_desc_\fR"
+.br
+.ti -1c
+.RI "u_long \fBpriority_mask_\fR"
+.br
+.ti -1c
+.RI "struct {"
+.br
+.ti -1c
+.RI "  int \fBis_set_\fR"
+.br
+.ti -1c
+.RI "  const char* \fBfile_\fR"
+.br
+.ti -1c
+.RI "  int \fBline_\fR"
+.br
+.ti -1c
+.RI "  int \fBop_status_\fR"
+.br
+.ti -1c
+.RI "  int \fBerrnum_\fR"
+.br
+.ti -1c
+.RI "} \fBconditional_values_\fR"
+.br
+.RI ""
+.br
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBclose\fR (void)"
+.br
+.RI "\fIFor cleanup, at program termination.\fR"
+.ti -1c
+.RI "void \fBsync_hook\fR (const \fBACE_TCHAR\fR *prg_name)"
+.br
+.RI "\fIDecouple the OS layer from the Log_Msg layer.\fR"
+.ti -1c
+.RI "\fBACE_OS_Thread_Descriptor\fR* \fBthr_desc_hook\fR (void)"
+.br
+.RI "\fIReturn the TSS singleton thread descriptor.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "u_long \fBprocess_priority_mask_\fR"
+.br
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBprogram_name_\fR"
+.br
+.RI "\fIRecords the program name.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBlocal_host_\fR"
+.br
+.RI "\fIName of the local host (used when printing messages).\fR"
+.ti -1c
+.RI "\fBpid_t\fR \fBpid_\fR"
+.br
+.RI "\fIProcess id of the current process.\fR"
+.ti -1c
+.RI "u_long \fBflags_\fR"
+.br
+.RI "\fIOptions flags.\fR"
+.ti -1c
+.RI "int \fBmsg_off_\fR"
+.br
+.RI "\fIOffset of msg_[].\fR"
+.ti -1c
+.RI "int \fBinstance_count_\fR"
+.br
+.ti -1c
+.RI "u_long \fBdefault_priority_mask_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "void \fBACE_OS::cleanup_tss\fR (const u_int)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Provides a variable length argument message logging abstraction.
+.PP
+.PP
+ This class is very flexible since it allows formatted error messages to be printed in a thread-safe manner to various locations, such as stdout, stderr, cerr, a distributed logger, etc. The current message is also kept in a thread-specific storage location (i.e., there is one ACE_Log_Msg object per-thread), which can be used to communicate errors between framework methods and callers. A message is logged by the \fBlog\fR() method, only if the message priority is currently enabled. Moreover, only the current log message is stored here -- it will be overwritten by the subsequent call to <log>.
+.PP
+The ACE_Log_Msg class uses two priority masks to control its logging behavior. The <priority_mask_> object attribute is thread specific and specifies the priority levels logged by the thread. The <process_priority_mask_> class attribute is not thread-specific and specifies the priority levels that will be logged by all threads in the process. By default, all levels are disabled for <priority_mask_> and all levels are enabled for <process_priority_mask_> (i.e. the process-wide mask controls the settings, and each instance can expand on it if desired). Both priority masks can be modified using the \fBpriority_mask\fR() method of this class. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fISTDERR\fR \fRWrite messages to stderr.
+.TP
+\fB\fILOGGER\fR \fRWrite messages to the local client logger deamon.
+.TP
+\fB\fIOSTREAM\fR \fRWrite messages to the ostream * stored in thread-specific storage.
+.TP
+\fB\fIMSG_CALLBACK\fR \fRWrite messages to the callback object.
+.TP
+\fB\fIVERBOSE\fR \fRDisplay messages in a verbose manner.
+.TP
+\fB\fIVERBOSE_LITE\fR \fRDisplay messages in a less verbose manner (i.e., only print information that can change between calls).
+.TP
+\fB\fISILENT\fR \fRDo not print messages at all (just leave in thread-specific storage for later inspection).
+.TP
+\fB\fISYSLOG\fR \fRWrite messages to the system's event log.
+.SS enum ACE_Log_Msg::MASK_TYPE
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIPROCESS\fR \fR
+.TP
+\fB\fITHREAD\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Log_Msg::ACE_Log_Msg (void)
+.PP
+Initialize logger.
+.PP
+.SS ACE_Log_Msg::~ACE_Log_Msg (void)
+.PP
+cleanup logger.
+.PP
+.SS ACE_Log_Msg::ACE_Log_Msg (const ACE_Log_Msg &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Log_Msg::acquire (void)
+.PP
+Acquire the internal lock.
+.PP
+.SS void ACE_Log_Msg::close (void)\fC [static, private]\fR
+.PP
+For cleanup, at program termination.
+.PP
+.SS void ACE_Log_Msg::clr_flags (u_long f)
+.PP
+.SS void ACE_Log_Msg::conditional_set (const char * file, int line, int op_status, int errnum)
+.PP
+These values are only actually set if the requested priority is enabled.
+.PP
+.SS int ACE_Log_Msg::dec (void)
+.PP
+.SS void ACE_Log_Msg::disable_debug_messages (\fBACE_Log_Priority\fR priority = LM_DEBUG)\fC [static]\fR
+.PP
+Clears the flag from the default priority mask used to initialize ACE_Log_Msg instances.
+.PP
+.SS void ACE_Log_Msg::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS void ACE_Log_Msg::enable_debug_messages (\fBACE_Log_Priority\fR priority = LM_DEBUG)\fC [static]\fR
+.PP
+Sets the flag in the default priority mask used to initialize ACE_Log_Msg instances.
+.PP
+.SS int ACE_Log_Msg::errnum (void)
+.PP
+Get the value of the errnum (by convention this corresponds to errno).
+.PP
+.SS void ACE_Log_Msg::errnum (int)
+.PP
+Set the value of the errnum (by convention this corresponds to errno).
+.PP
+.SS int ACE_Log_Msg::exists (void)\fC [static]\fR
+.PP
+Returns non-null if an ACE_Log_Msg exists for the calling thread.
+.PP
+.SS const char * ACE_Log_Msg::file (void)
+.PP
+Get the file name where an error occurred.
+.PP
+.SS void ACE_Log_Msg::file (const char *)
+.PP
+Set the file name where an error occurred.
+.PP
+.SS u_long ACE_Log_Msg::flags (void)
+.PP
+.SS \fBpid_t\fR ACE_Log_Msg::getpid (void) const
+.PP
+Optimize reading of the pid (avoids a system call if the value is cached...).
+.PP
+.SS int ACE_Log_Msg::inc (void)
+.PP
+.SS void ACE_Log_Msg::inherit_hook (\fBACE_OS_Thread_Descriptor\fR * thr_desc, \fBACE_OS_Log_Msg_Attributes\fR & attributes)\fC [static]\fR
+.PP
+Inherit hook, the  field is a Log_Msg_Attribute object, invoke the <inherit_log_msg> method on it, then destroy it and set the  argument to 0 
+.SS void ACE_Log_Msg::init_hook (\fBACE_OS_Log_Msg_Attributes\fR & attributes)\fC [static]\fR
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIattributes\fR\fR* Init hook, create a Log_Msg_Attribute object, initialize its * attributes from the TSS Log_Msg and save the object in the *  argument
+.SS ACE_Log_Msg * ACE_Log_Msg::instance (void)\fC [static]\fR
+.PP
+Returns a pointer to the Singleton.
+.PP
+.SS int ACE_Log_Msg::linenum (void)
+.PP
+Get the line number where an error occurred.
+.PP
+.SS void ACE_Log_Msg::linenum (int)
+.PP
+Set the line number where an error occurred.
+.PP
+.SS void ACE_Log_Msg::local_host (const \fBACE_TCHAR\fR *)
+.PP
+.SS const \fBACE_TCHAR\fR* ACE_Log_Msg::local_host (void) const
+.PP
+.SS \fBssize_t\fR ACE_Log_Msg::log (\fBACE_Log_Record\fR & log_record, int suppress_stderr = 0)
+.PP
+Log a custom built log record to the currently enabled logging sinks.
+.PP
+.SS \fBssize_t\fR ACE_Log_Msg::log (const \fBACE_TCHAR\fR * format, \fBACE_Log_Priority\fR priority, va_list argp)
+.PP
+An alternative logging mechanism that makes it possible to integrate variable argument lists from other logging mechanisms into the \fBACE\fR mechanism. 
+.SS \fBssize_t\fR ACE_Log_Msg::log (\fBACE_Log_Priority\fR priority, const \fBACE_ANTI_TCHAR\fR * format, ...)
+.PP
+.SS \fBssize_t\fR ACE_Log_Msg::log (\fBACE_Log_Priority\fR priority, const \fBACE_TCHAR\fR * format, ...)
+.PP
+Format a message to the thread-safe \fBACE\fR logging mechanism. Valid options (prefixed by '%', as in printf format strings) include: + 'A': print an ACE_timer_t value (which could be either double or ACE_UINT32.) + 'a': abort the program at this point abruptly. + 'c': print a character + 'C': print a character string + 'i', 'd': print a decimal number + 'I': indent according to nesting depth (obtained from ). + 'e', 'E', 'f', 'F', 'g', 'G': print a double + 'l': print line number where an error occurred. + 'm': return the message corresponding to errno value, e.g., as done by strerror() + 'N': print file name where the error occurred. + 'n': print the name of the program (or "<unknown>" if not set) + 'o': print as an octal number + 'P': print out the current process id + 'p': print out the appropriate errno message from sys_errlist, e.g., as done by perror() + 'Q': print out the uint64 number + 'r': call the function pointed to by the corresponding argument + 'R': print return status + 'S': print out the appropriate _sys_siglist entry corresponding to var-argument. + 's': print out a character string + 'T': print timestamp in hour:minute:sec:usec format. + 'D': print timestamp in month/day/year hour:minute:sec:usec format. + 't': print thread id (1 if single-threaded) + 'u': print as unsigned int + 'w': prints a wide character + 'W': print a wide character string + 'X', 'x': print as a hex number + '%': print out a single percent sign, '%' 
+.SS int ACE_Log_Msg::log_hexdump (\fBACE_Log_Priority\fR log_priority, const char * buffer, int size, const \fBACE_TCHAR\fR * text = 0)
+.PP
+Method to log hex dump. This is useful for debugging. Calls <log> to do the actual print, but formats first to make the chars printable. 
+.SS int ACE_Log_Msg::log_priority_enabled (\fBACE_Log_Priority\fR log_priority, const char *, ...)
+.PP
+Return true if the requested priority is enabled.
+.PP
+.SS int ACE_Log_Msg::log_priority_enabled (\fBACE_Log_Priority\fR log_priority)
+.PP
+Return true if the requested priority is enabled.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Log_Msg::msg (void)
+.PP
+Get the message that describes what type of error occurred.
+.PP
+.SS void ACE_Log_Msg::msg (const \fBACE_TCHAR\fR *)
+.PP
+Set the message that describes what type of error occurred.
+.PP
+.SS \fBACE_Log_Msg_Callback\fR* ACE_Log_Msg::msg_callback (void) const
+.PP
+.SS \fBACE_Log_Msg_Callback\fR * ACE_Log_Msg::msg_callback (\fBACE_Log_Msg_Callback\fR * c)
+.PP
+Set a new callback object and return the existing callback to allow "chaining". Note that s are not inherited when spawning a new thread, so you'll need to reset them in each thread. 
+.SS ACE_OSTREAM_TYPE * ACE_Log_Msg::msg_ostream (void) const
+.PP
+Get the ostream that is used to print error messages.
+.PP
+.SS void ACE_Log_Msg::msg_ostream (ACE_OSTREAM_TYPE *, int delete_ostream)
+.PP
+delete_stream == 1, forces \fBLog_Msg.h\fR to delete the stream in its own ~dtor (assumes control of the stream) use only with proper ostream (eg: fstream), not (cout, cerr) 
+.SS void ACE_Log_Msg::msg_ostream (ACE_OSTREAM_TYPE *)
+.PP
+Update the ostream without overwriting the delete_ostream_ flag.
+.PP
+.SS int ACE_Log_Msg::op_status (void)
+.PP
+Get the result of the operation status (by convention, -1 means error).
+.PP
+.SS void ACE_Log_Msg::op_status (int status)
+.PP
+Set the result of the operation status (by convention, -1 means error).
+.PP
+.SS int ACE_Log_Msg::open (const \fBACE_TCHAR\fR * prog_name, u_long options_flags = ACE_Log_Msg::STDERR, const \fBACE_TCHAR\fR * logger_key = 0)
+.PP
+Initialize the \fBACE\fR logging facility.
+.PP
+Initialize the \fBACE\fR logging facility. Supplies the program name that is available to each logging message call. Default arguments set up logging to STDERR only.
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIprog_name\fR\fR The name of the calling program. 
+.TP
+\fB\fIflags\fR\fR A bitwise-or of options flags used to set the initial behavior and logging sink(s). (see the enum above for the valid values). 
+.TP
+\fB\fIlogger_key\fR\fR The name of \fBACE_FIFO\fR rendezvous point where the local client logger daemon is listening for logging messages. Only meaningful if the LOGGER bit is set in the <flags> argument. 
+.SS ACE_Log_Msg& ACE_Log_Msg::operator= (const ACE_Log_Msg &)\fC [private]\fR
+.PP
+.SS u_long ACE_Log_Msg::priority_mask (u_long, \fBMASK_TYPE\fR = THREAD)
+.PP
+.SS u_long ACE_Log_Msg::priority_mask (\fBMASK_TYPE\fR = THREAD)
+.PP
+Get the current  mask. Set the  mask, returns original mask.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Log_Msg::program_name (void)\fC [static]\fR
+.PP
+Returns the current program name used for logging.
+.PP
+.SS int ACE_Log_Msg::release (void)
+.PP
+Release the internal lock.
+.PP
+.SS int ACE_Log_Msg::restart (void)
+.PP
+Get the field that indicates whether interrupted calls should be restarted.
+.PP
+.SS void ACE_Log_Msg::restart (int)
+.PP
+Set the field that indicates whether interrupted calls should be restarted.
+.PP
+.SS void ACE_Log_Msg::set (const char * file, int line, int op_status = -1, int errnum = 0, int restart = 1, ACE_OSTREAM_TYPE * os = 0, \fBACE_Log_Msg_Callback\fR * c = 0)
+.PP
+Set the line number, file name, operational status, error number, restart flag, ostream, and the callback object. This combines all the other set methods into a single method. 
+.SS void ACE_Log_Msg::set_flags (u_long f)
+.PP
+Enable the bits in the logger's options flags. Disable the bits in the logger's options flags. Return the bits in the logger's options flags. 
+.SS void ACE_Log_Msg::start_tracing (void)
+.PP
+.SS void ACE_Log_Msg::stop_tracing (void)
+.PP
+.SS void ACE_Log_Msg::sync (const \fBACE_TCHAR\fR * program_name)
+.PP
+Call after doing a <fork> to resynchronize the process id and <program_name> variables.
+.PP
+.SS void ACE_Log_Msg::sync_hook (const \fBACE_TCHAR\fR * prg_name)\fC [static, private]\fR
+.PP
+Decouple the OS layer from the Log_Msg layer.
+.PP
+.SS void ACE_Log_Msg::thr_desc (\fBACE_Thread_Descriptor\fR * td)
+.PP
+Set the TSS thread descriptor. This method will call td->acquire_release to block execution until this call return. 
+.SS \fBACE_Thread_Descriptor\fR * ACE_Log_Msg::thr_desc (void) const
+.PP
+Get the TSS thread descriptor.
+.PP
+.SS \fBACE_OS_Thread_Descriptor\fR * ACE_Log_Msg::thr_desc_hook (void)\fC [static, private]\fR
+.PP
+Return the TSS singleton thread descriptor.
+.PP
+.SS void ACE_Log_Msg::trace_active (int value)
+.PP
+.SS int ACE_Log_Msg::trace_active (void)
+.PP
+.SS void ACE_Log_Msg::trace_depth (int)
+.PP
+.SS int ACE_Log_Msg::trace_depth (void)
+.PP
+.SS int ACE_Log_Msg::tracing_enabled (void)
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_OS::cleanup_tss (const u_int)\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Log_Msg::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS struct { ... }   ACE_Log_Msg::conditional_values_\fC [private]\fR
+.PP
+.SS u_long ACE_Log_Msg::default_priority_mask_\fC [static, private]\fR
+.PP
+.SS int ACE_Log_Msg::delete_ostream_\fC [private]\fR
+.PP
+Are we deleting this ostream?
+.PP
+.SS int ACE_Log_Msg::errnum_\fC [private]\fR
+.PP
+Type of error that occurred (see <sys/errno.h>).
+.PP
+.SS char ACE_Log_Msg::file_[MAXPATHLEN+1]\fC [private]\fR
+.PP
+File where the error occurred.
+.PP
+.SS char ACE_Log_Msg::file_[MAXPATHLEN+1]\fC [private]\fR
+.PP
+File where the error occurred.
+.PP
+.SS u_long ACE_Log_Msg::flags_\fC [static, private]\fR
+.PP
+Options flags.
+.PP
+.SS int ACE_Log_Msg::instance_count_\fC [static, private]\fR
+.PP
+Number of existing Log_Msg instances; when 0, delete program/host names Priority mask to use for each new instance 
+.SS int ACE_Log_Msg::is_set_\fC [private]\fR
+.PP
+.SS int ACE_Log_Msg::line_\fC [private]\fR
+.PP
+.SS int ACE_Log_Msg::linenum_\fC [private]\fR
+.PP
+Line number where the error occurred.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Log_Msg::local_host_\fC [static, private]\fR
+.PP
+Name of the local host (used when printing messages).
+.PP
+.SS \fBACE_TCHAR\fR ACE_Log_Msg::msg_[ACE_Log_Record::MAXLOGMSGLEN+1]\fC [private]\fR
+.PP
+The log message, which resides in thread-specific storage. Note that only the current log message is stored here -- it will be overwritten by the subsequent call to <log>.
+.PP
+.SS \fBACE_Log_Msg_Callback\fR * ACE_Log_Msg::msg_callback_\fC [private]\fR
+.PP
+The callback object.
+.PP
+.SS int ACE_Log_Msg::msg_off_\fC [static, private]\fR
+.PP
+Offset of msg_[].
+.PP
+.SS int ACE_Log_Msg::op_status_\fC [private]\fR
+.PP
+.SS ACE_OSTREAM_TYPE * ACE_Log_Msg::ostream_\fC [private]\fR
+.PP
+The ostream where logging messages can be written.
+.PP
+.SS \fBpid_t\fR ACE_Log_Msg::pid_\fC [static, private]\fR
+.PP
+Process id of the current process.
+.PP
+.SS u_long ACE_Log_Msg::priority_mask_\fC [private]\fR
+.PP
+Keeps track of all the per-thread  values that are currently enabled. Default is for all logging priorities to be _disabled_. 
+.SS u_long ACE_Log_Msg::process_priority_mask_\fC [static, private]\fR
+.PP
+Keeps track of all the per-process  values that are currently enabled. Default is for all logging priorities to be enabled. 
+.SS const \fBACE_TCHAR\fR * ACE_Log_Msg::program_name_\fC [static, private]\fR
+.PP
+Records the program name.
+.PP
+.SS int ACE_Log_Msg::restart_\fC [private]\fR
+.PP
+Indicates whether we should restart system calls that are interrupted.
+.PP
+.SS int ACE_Log_Msg::status_\fC [private]\fR
+.PP
+Status of operation (-1 means failure, >= 0 means success).
+.PP
+.SS \fBACE_Thread_Descriptor\fR * ACE_Log_Msg::thr_desc_\fC [private]\fR
+.PP
+If we're running in the context of an  this will point to the thread descriptor adapter which holds the thread descriptor of the thread. This can be used to repidly access all thread data kept in . 
+.SS int ACE_Log_Msg::trace_active_\fC [private]\fR
+.PP
+Are we already within an \fBACE_Trace\fR constructor call?
+.PP
+.SS int ACE_Log_Msg::trace_depth_\fC [private]\fR
+.PP
+Depth of the nesting for printing traces.
+.PP
+.SS int ACE_Log_Msg::tracing_enabled_\fC [private]\fR
+.PP
+Are we allowing tracing in this thread?
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

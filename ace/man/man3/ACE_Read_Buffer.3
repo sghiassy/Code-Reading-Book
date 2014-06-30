@@ -1,0 +1,160 @@
+.TH ACE_Read_Buffer 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Read_Buffer \- Efficiently reads an artibrarily large buffer from an input stream up to and including a termination character. Also performs search/replace on single occurrences a character in the buffer using the principles of Integrated Layer Processing. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Read_Buffer.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Read_Buffer\fR (FILE *fp, int close_on_delete = 0, \fBACE_Allocator\fR * = 0)"
+.br
+.RI "\fIRead from a FILE *.\fR"
+.ti -1c
+.RI "\fBACE_Read_Buffer\fR (ACE_HANDLE handle, int close_on_delete = 0, \fBACE_Allocator\fR * = 0)"
+.br
+.RI "\fIRead from an open HANDLE.\fR"
+.ti -1c
+.RI "\fB~ACE_Read_Buffer\fR (void)"
+.br
+.RI "\fICloses the FILE *.\fR"
+.ti -1c
+.RI "char* \fBread\fR (int terminator = EOF, int search = '\\n', int replace = '\\0')"
+.br
+.ti -1c
+.RI "size_t \fBreplaced\fR (void) const"
+.br
+.RI "\fIReturns the number of characters replaced during a <read>.\fR"
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIReturns the size of the allocated buffer obtained during a <read>, not including the null terminator.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBalloc\fR (void) const"
+.br
+.RI "\fIReturns a pointer to its allocator.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "char* \fBrec_read\fR (int term, int search, int replace)"
+.br
+.RI "\fIRecursive helper method that does the work...\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Read_Buffer &)"
+.br
+.ti -1c
+.RI "\fBACE_Read_Buffer\fR (const ACE_Read_Buffer &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBsize_\fR"
+.br
+.RI "\fIThe total number of characters in the buffer.\fR"
+.ti -1c
+.RI "size_t \fBoccurrences_\fR"
+.br
+.RI "\fIThe total number of characters replaced.\fR"
+.ti -1c
+.RI "FILE* \fBstream_\fR"
+.br
+.RI "\fIThe stream we are reading from.\fR"
+.ti -1c
+.RI "int \fBclose_on_delete_\fR"
+.br
+.RI "\fIKeeps track of whether we should close the FILE in the destructor.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIPointer to the allocator.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Efficiently reads an artibrarily large buffer from an input stream up to and including a termination character. Also performs search/replace on single occurrences a character in the buffer using the principles of Integrated Layer Processing.
+.PP
+.PP
+ This implementation is optimized to do a single dynamic allocation and make only one copy of the data. It uses recursion and the run-time stack to accomplish this efficiently. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Read_Buffer::ACE_Read_Buffer (FILE * fp, int close_on_delete = 0, \fBACE_Allocator\fR * = 0)
+.PP
+Read from a FILE *.
+.PP
+.SS ACE_Read_Buffer::ACE_Read_Buffer (ACE_HANDLE handle, int close_on_delete = 0, \fBACE_Allocator\fR * = 0)
+.PP
+Read from an open HANDLE.
+.PP
+.SS ACE_Read_Buffer::~ACE_Read_Buffer (void)
+.PP
+Closes the FILE *.
+.PP
+.SS ACE_Read_Buffer::ACE_Read_Buffer (const ACE_Read_Buffer &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS \fBACE_Allocator\fR * ACE_Read_Buffer::alloc (void) const
+.PP
+Returns a pointer to its allocator.
+.PP
+.SS void ACE_Read_Buffer::dump (void) const
+.PP
+Dump the state of the object.
+.PP
+.SS void ACE_Read_Buffer::operator= (const ACE_Read_Buffer &)\fC [private]\fR
+.PP
+.SS char * ACE_Read_Buffer::read (int terminator = EOF, int search = '\\n', int replace = '\\0')
+.PP
+Returns a pointer dynamically allocated with  to data from the input stream up to (and including) the <terminator>. If <search> is >= 0 then all occurrences of the <search> value are substituted with the <replace> value. The last of the byte of data is a 0, so that <strlen> can be used on it. The caller is responsible for freeing the pointer returned from this method using the . 
+.SS char * ACE_Read_Buffer::rec_read (int term, int search, int replace)\fC [private]\fR
+.PP
+Recursive helper method that does the work...
+.PP
+.SS size_t ACE_Read_Buffer::replaced (void) const
+.PP
+Returns the number of characters replaced during a <read>.
+.PP
+.SS size_t ACE_Read_Buffer::size (void) const
+.PP
+Returns the size of the allocated buffer obtained during a <read>, not including the null terminator.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Allocator\fR * ACE_Read_Buffer::allocator_\fC [private]\fR
+.PP
+Pointer to the allocator.
+.PP
+.SS int ACE_Read_Buffer::close_on_delete_\fC [private]\fR
+.PP
+Keeps track of whether we should close the FILE in the destructor.
+.PP
+.SS size_t ACE_Read_Buffer::occurrences_\fC [private]\fR
+.PP
+The total number of characters replaced.
+.PP
+.SS size_t ACE_Read_Buffer::size_\fC [private]\fR
+.PP
+The total number of characters in the buffer.
+.PP
+.SS FILE * ACE_Read_Buffer::stream_\fC [private]\fR
+.PP
+The stream we are reading from.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

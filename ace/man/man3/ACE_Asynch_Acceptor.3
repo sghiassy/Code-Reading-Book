@@ -1,0 +1,271 @@
+.TH ACE_Asynch_Acceptor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Asynch_Acceptor \- This class is an example of the Acceptor Pattern. This class will accept new connections and create new HANDLER to handle the new connections. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_Acceptor.h>\fR
+.PP
+Inherits \fBACE_Handler\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Acceptor\fR (void)"
+.br
+.RI "\fIA do nothing constructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Asynch_Acceptor\fR (void)"
+.br
+.RI "\fIVirtual destruction.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (const \fBACE_INET_Addr\fR &address, size_t bytes_to_read = 0, int pass_addresses = 0, int backlog = ACE_DEFAULT_BACKLOG, int reuse_addr = 1, \fBACE_Proactor\fR *proactor = 0, int validate_new_connection = 0, int reissue_accept = 1, int number_of_initial_accepts = -1)"
+.br
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIGet the underlying handle.\fR"
+.ti -1c
+.RI "virtual void \fBset_handle\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "virtual int \fBaccept\fR (size_t bytes_to_read = 0, const void *act = 0)"
+.br
+.RI "\fIThis initiates a new asynchronous accept through the  call.\fR"
+.ti -1c
+.RI "virtual int \fBcancel\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBvalidate_new_connection\fR (const \fBACE_INET_Addr\fR &remote_address)"
+.br
+.ti -1c
+.RI "virtual int \fBshould_reissue_accept\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBpass_addresses\fR (void) const"
+.br
+.RI "\fISet and get flag that indicates if parsing and passing of addresses to the service_handler is necessary.\fR"
+.ti -1c
+.RI "virtual void \fBpass_addresses\fR (int new_value)"
+.br
+.ti -1c
+.RI "virtual int \fBvalidate_new_connection\fR (void) const"
+.br
+.RI "\fISet and get flag that indicates if address validation is required.\fR"
+.ti -1c
+.RI "virtual void \fBvalidate_new_connection\fR (int new_value)"
+.br
+.ti -1c
+.RI "virtual int \fBreissue_accept\fR (void) const"
+.br
+.RI "\fISet and get flag that indicates if a new accept should be reissued when a accept completes.\fR"
+.ti -1c
+.RI "virtual void \fBreissue_accept\fR (int new_value)"
+.br
+.ti -1c
+.RI "virtual int \fBbytes_to_read\fR (void) const"
+.br
+.RI "\fISet and get bytes to be read with the  call.\fR"
+.ti -1c
+.RI "virtual void \fBbytes_to_read\fR (int new_value)"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "size_t \fBaddress_size\fR (void)"
+.br
+.RI "\fIThis is required by the AcceptEx call.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual void \fBhandle_accept\fR (const \fBACE_Asynch_Accept::Result\fR &result)"
+.br
+.RI "\fIThis is called when an outstanding accept completes.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle\fR (void) const"
+.br
+.RI "\fIReturn the listen handle.\fR"
+.ti -1c
+.RI "void \fBhandle\fR (ACE_HANDLE h)"
+.br
+.RI "\fISet the listen handle.\fR"
+.ti -1c
+.RI "void \fBparse_address\fR (const \fBACE_Asynch_Accept::Result\fR &result, \fBACE_INET_Addr\fR &remote_address, \fBACE_INET_Addr\fR &local_address)"
+.br
+.RI "\fIThis parses the address from read buffer.\fR"
+.ti -1c
+.RI "\fBACE_Asynch_Accept\fR& \fBasynch_accept\fR (void)"
+.br
+.RI "\fIReturn the asynch accept object.\fR"
+.ti -1c
+.RI "virtual HANDLER* \fBmake_handler\fR (void)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_HANDLE \fBlisten_handle_\fR"
+.br
+.RI "\fIHandle used to listen for new connections.\fR"
+.ti -1c
+.RI "\fBACE_Asynch_Accept\fR \fBasynch_accept_\fR"
+.br
+.RI "\fI used to make life easier :-).\fR"
+.ti -1c
+.RI "int \fBpass_addresses_\fR"
+.br
+.RI "\fIFlag that indicates if parsing of addresses is necessary.\fR"
+.ti -1c
+.RI "int \fBvalidate_new_connection_\fR"
+.br
+.RI "\fIFlag that indicates if address validation is required.\fR"
+.ti -1c
+.RI "int \fBreissue_accept_\fR"
+.br
+.RI "\fIFlag that indicates if a new accept should be reissued when a accept completes.\fR"
+.ti -1c
+.RI "int \fBbytes_to_read_\fR"
+.br
+.RI "\fIBytes to be read with the  call.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class HANDLER>  template class ACE_Asynch_Acceptor
+This class is an example of the Acceptor Pattern. This class will accept new connections and create new HANDLER to handle the new connections.
+.PP
+.PP
+ Unlike the , however, this class is designed to be used asynchronously. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classHANDLER> ACE_Asynch_Acceptor<HANDLER>::ACE_Asynch_Acceptor<HANDLER> (void)
+.PP
+A do nothing constructor.
+.PP
+.SS template<classHANDLER> ACE_Asynch_Acceptor<HANDLER>::~ACE_Asynch_Acceptor<HANDLER> (void)\fC [virtual]\fR
+.PP
+Virtual destruction.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::accept (size_t bytes_to_read = 0, const void * act = 0)\fC [virtual]\fR
+.PP
+This initiates a new asynchronous accept through the  call.
+.PP
+.SS template<classHANDLER> size_t ACE_Asynch_Acceptor<HANDLER>::address_size (void)\fC [static]\fR
+.PP
+This is required by the AcceptEx call.
+.PP
+.SS template<classHANDLER> \fBACE_Asynch_Accept\fR & ACE_Asynch_Acceptor<HANDLER>::asynch_accept (void)\fC [protected]\fR
+.PP
+Return the asynch accept object.
+.PP
+.SS template<classHANDLER> virtual void ACE_Asynch_Acceptor<HANDLER>::bytes_to_read (int new_value)\fC [virtual]\fR
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::bytes_to_read (void) const\fC [virtual]\fR
+.PP
+Set and get bytes to be read with the  call.
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::cancel (void)\fC [virtual]\fR
+.PP
+This cancels all pending accepts operations that were issued by the calling thread. Windows NT- The function does not cancel accept operations issued by other threads POSIX - all OK, it delegates cancelation to the \fBACE_POSIX_Asynch_Accept\fR 
+.SS template<classHANDLER> ACE_HANDLE ACE_Asynch_Acceptor<HANDLER>::get_handle (void) const\fC [virtual]\fR
+.PP
+Get the underlying handle.
+.PP
+.SS template<classHANDLER> void ACE_Asynch_Acceptor<HANDLER>::handle (ACE_HANDLE h)\fC [protected, virtual]\fR
+.PP
+Set the listen handle.
+.PP
+Reimplemented from \fBACE_Handler\fR.
+.SS template<classHANDLER> ACE_HANDLE ACE_Asynch_Acceptor<HANDLER>::handle (void) const\fC [protected, virtual]\fR
+.PP
+Return the listen handle.
+.PP
+Reimplemented from \fBACE_Handler\fR.
+.SS template<classHANDLER> void ACE_Asynch_Acceptor<HANDLER>::handle_accept (const \fBACE_Asynch_Accept::Result\fR & result)\fC [protected, virtual]\fR
+.PP
+This is called when an outstanding accept completes.
+.PP
+Reimplemented from \fBACE_Handler\fR.
+.SS template<classHANDLER> HANDLER * ACE_Asynch_Acceptor<HANDLER>::make_handler (void)\fC [protected, virtual]\fR
+.PP
+This is the template method used to create new handler. Subclasses must overwrite this method if a new handler creation strategy is required. 
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::open (const \fBACE_INET_Addr\fR & address, size_t bytes_to_read = 0, int pass_addresses = 0, int backlog = ACE_DEFAULT_BACKLOG, int reuse_addr = 1, \fBACE_Proactor\fR * proactor = 0, int validate_new_connection = 0, int reissue_accept = 1, int number_of_initial_accepts = -1)\fC [virtual]\fR
+.PP
+This starts the listening process at the port specified by . ACE_Asynch_Acceptor initiates the AcceptEx calls with <bytes_to_read>. The buffer for the initial data will be created by ACE_Asynch_Acceptor. This buffer will be passed to the handler in the  callback. If this buffer is required past the <open> callback, the \fBACE_Service_Handler\fR must copy the data. If the <pass_addresses> flag is set, ACE_Asynch_Acceptor will call  before calling . The <backlog> parameter specifies the listen backlog and the outstanding AcceptEx calls. <number_of_initial_accepts> is the number of asynchronous accepts that are started at the end of <open>. If <number_of_initial_accepts> is -1, then <number_of_initial_accepts> is set to <backlog> and hence <backlog> number of asynchronous accepts are started. 
+.SS template<classHANDLER> void ACE_Asynch_Acceptor<HANDLER>::parse_address (const \fBACE_Asynch_Accept::Result\fR & result, \fBACE_INET_Addr\fR & remote_address, \fBACE_INET_Addr\fR & local_address)\fC [protected]\fR
+.PP
+This parses the address from read buffer.
+.PP
+.SS template<classHANDLER> virtual void ACE_Asynch_Acceptor<HANDLER>::pass_addresses (int new_value)\fC [virtual]\fR
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::pass_addresses (void) const\fC [virtual]\fR
+.PP
+Set and get flag that indicates if parsing and passing of addresses to the service_handler is necessary.
+.PP
+.SS template<classHANDLER> virtual void ACE_Asynch_Acceptor<HANDLER>::reissue_accept (int new_value)\fC [virtual]\fR
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::reissue_accept (void) const\fC [virtual]\fR
+.PP
+Set and get flag that indicates if a new accept should be reissued when a accept completes.
+.PP
+.SS template<classHANDLER> void ACE_Asynch_Acceptor<HANDLER>::set_handle (ACE_HANDLE handle)\fC [virtual]\fR
+.PP
+Set the underlying listen handle. It is the user's responsibility to make sure that the old listen handle has been appropriately closed and the all outstanding asynchronous operations have either completed or have been canceled on the old listen handle. 
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::should_reissue_accept (void)\fC [virtual]\fR
+.PP
+Template method for deciding whether to reissue accept.
+.PP
+Default implemenation always returns this->reissue_accept_. 
+.SS template<classHANDLER> virtual void ACE_Asynch_Acceptor<HANDLER>::validate_new_connection (int new_value)\fC [virtual]\fR
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::validate_new_connection (void) const\fC [virtual]\fR
+.PP
+Set and get flag that indicates if address validation is required.
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::validate_new_connection (const \fBACE_INET_Addr\fR & remote_address)\fC [virtual]\fR
+.PP
+Template method for address validation.
+.PP
+Default implemenation always validates the remote address. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classHANDLER> \fBACE_Asynch_Accept\fR ACE_Asynch_Acceptor<HANDLER>::asynch_accept_\fC [private]\fR
+.PP
+ used to make life easier :-).
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::bytes_to_read_\fC [private]\fR
+.PP
+Bytes to be read with the  call.
+.PP
+.SS template<classHANDLER> ACE_HANDLE ACE_Asynch_Acceptor<HANDLER>::listen_handle_\fC [private]\fR
+.PP
+Handle used to listen for new connections.
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::pass_addresses_\fC [private]\fR
+.PP
+Flag that indicates if parsing of addresses is necessary.
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::reissue_accept_\fC [private]\fR
+.PP
+Flag that indicates if a new accept should be reissued when a accept completes.
+.PP
+.SS template<classHANDLER> int ACE_Asynch_Acceptor<HANDLER>::validate_new_connection_\fC [private]\fR
+.PP
+Flag that indicates if address validation is required.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

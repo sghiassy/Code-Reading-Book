@@ -1,0 +1,23 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/xf86config/Imakefile,v 3.6 1996/12/23 07:04:41 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/5 1996/02/21 18:12:46 kaleb $
+
+            SRCS = xf86config.c cards.c
+            OBJS = xf86config.o cards.o
+ LOCAL_LIBRARIES =
+         DEPLIBS =
+      CARDDBFILE = $(LIBDIR)/Cards
+         DEFINES = -DCARD_DATABASE_FILE='"$(CARDDBFILE)"'
+
+AllTarget(ProgramTargetName(xf86config))
+
+NormalProgramTarget(xf86config,$(OBJS),$(DEPLIBS),$(LOCAL_LIBRARIES),NullParameter)
+InstallProgram(xf86config,$(BINDIR))
+DependTarget()
+
+InstallNonExecFile(Cards,$(LIBDIR))
+InstallManPageLong(xf86conf,$(MANDIR),xf86config)

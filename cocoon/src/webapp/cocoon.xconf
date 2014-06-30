@@ -1,0 +1,418 @@
+<?xml version="1.0"?>
+<cocoon version="2.0">
+
+<!-- ================ Apache Cocoon configuration file ================== -->
+<!-- Please refer to the online documentation for full descriptions.
+     The notes that accompany the settings below are intended to be concise.
+-->
+
+<!-- ===================== General Components =========================== -->
+
+  <!-- Parser:
+    The default parser used in the Apache Cocoon 2 system is
+    org.apache.cocoon.components.parser.JaxpParser
+    Apache Cocoon 2 system requires a JAXP 1.1 parser.
+    If you have problems because your servlet environment uses its own
+    parser not conforming to JAXP 1.1 try using the alternative
+    XercesParser instead of the JaxpParser. To activate the XercesParser,
+    move the line below starting with <parser ...> out of this comment block.
+    You also than have to add a system property to your JVM
+    (probably on the startup of your servlet engine like this:
+    -Dorg.apache.cocoon.components.parser.Parser=org.apache.cocoon.components.parser.XercesParser
+
+  <parser class="org.apache.cocoon.components.parser.XercesParser"
+          logger="core.parser"/>
+  -->
+  <parser logger="core.parser"/>
+
+  
+  <!-- ============================ STORE ============================ -->
+  <!-- Memory Storing: -->
+  <store class="org.apache.cocoon.components.store.MRUMemoryStore"
+         logger="core.store">
+     <!-- Indicates how many objects will be hold in the cache.
+     When the number of maxobjects has been reached. The last object in the 
+     cache will be thrown out. -->
+     <parameter name="maxobjects" value="100"/>
+     <!-- Turns the filesystem swapping on and off -->
+     <parameter name="filesystem" value="true"/>
+  </store>
+
+  <!-- Store Janitor:
+    Be careful with the heapsize and freememory paramters. Wrong values can
+    cause high cpu usage.
+    Example configuration:
+    Jvm settings: 
+      -Xms100000000 -Xmx200000000
+    store-janitor settings:
+       <parameter name="freememory" value="5000000"/>
+       <parameter name="heapsize" value="150000000"/>
+  
+    Heapsize *must* be higher then the -Xms parameter and *must* be lower or
+    equal than -Xmx. It is recommended to have heapsize equal to -Xmx, especially
+    on Sun's JVM which are unable to shrink its heap once it grows above minimum. 
+    Freememory parameter *must* be lower than -Xms, and should be greater than
+    amount of memory necessary for normal application operation.
+  -->
+  <store-janitor class="org.apache.cocoon.components.store.StoreJanitorImpl"
+                 logger="core.store-janitor">
+     <!-- How much free memory shall be available in the jvm -->                 
+     <parameter name="freememory" value="1000000"/>
+     <!-- Indicates the limit of the jvm memory consumption. The default max 
+     heapsize for Sun's JVM is 64Mb -->
+     <parameter name="heapsize" value="67108864"/>
+     <!-- How often shall the cleanup thread check memory -->
+     <parameter name="cleanupthreadinterval" value="10"/>
+     <!-- Indicates the thread priority of the cleanup thread -->
+     <parameter name="threadpriority" value="5"/>
+     <!-- How much percent of the elements of each registered Store shall
+     be removed. Default 10% -->
+     <parameter name="percent_to_free" value="10"/>
+  </store-janitor>
+  <!-- ============================ STORE END ========================= -->
+
+  <!-- XSLT Processor:
+    For Xalan: Turn 'incremental-processing' to true if you want a continous output (if set to false the transformer 
+    delivers SAX events after all transformations has been done). -->
+  <xslt-processor class="org.apache.cocoon.components.xslt.XSLTProcessorImpl"
+                  logger="core.xslt-processor">
+     <parameter name="use-store" value="true"/>
+     <parameter name="incremental-processing" value="true"/>
+  </xslt-processor>
+
+  <!-- Xpath Processor:
+  -->
+  <xpath-processor class="org.apache.cocoon.components.xpath.XPathProcessorImpl"
+                   logger="core.xpath-processor"/>
+
+  <!-- URL Factory:
+    The url factory adds special url protocols to the system, they are then
+    available inside Cocoon, e.g. as a source argument for one of the sitemap
+    components.
+  -->
+  <url-factory logger="core.url-factory">
+    <!-- Allows access to resources available from the ClassLoader,
+         using getResource() method. -->
+    <protocol name="resource" class="org.apache.cocoon.components.url.ResourceURLFactory"/>
+    <!-- Allows access to resources available from the servlet context,
+         using getResource() method. -->
+    <protocol name="context"  class="org.apache.cocoon.components.url.ContextURLFactory"/>
+    <!-- Add here protocol factories for your own protocols -->
+  </url-factory>
+
+  <!-- Source Handler:
+    The source handler adds special url protocols to the system, they are
+    then available inside Cocoon, e.g. as a source argument for one of the
+    sitemap components.
+  -->
+  <source-handler logger="core.source-handler">
+    <!-- xmldb pseudo protocol -->
+    <protocol name="xmldb" class="org.apache.cocoon.components.source.XMLDBSourceFactory">
+      <!-- dbXML driver -->
+      <driver type="dbxml" class="org.dbxml.client.xmldb.DatabaseImpl"/>
+      <!-- Add here other XML:DB compliant databases drivers -->
+    </protocol>
+  </source-handler>
+
+  <!-- Program Generator:
+    The ProgamGenerator builds programs from a XML document written in a
+    MarkupLanguage.
+       auto-reload:
+       root-package: persistent code repository.
+       preload:
+  -->
+  <program-generator logger="core.program-generator">
+    <parameter name="auto-reload" value="true"/>
+    <parameter name="root-package" value="org.apache.cocoon.www"/>
+    <parameter name="preload" value="true"/>
+  </program-generator>
+
+  <!-- JSP Engine:
+    The JspGenerator selects a JSPEngine component. The JSPEngine component
+    launches a JSP servlet engine of your servlet container, feeds the
+    HttpRequest into the JSP servlet engine, and pipes the jsp response as
+    SAX events into Cocoon2. The JSP page is specified by the HttpRequest.
+    This way you can continue to use your JSP pages. Your migration from JSP
+    to XSP may be done step by step. You may specify your JSP pages either as
+    JSP scriptlets or as JSP-XML. But keep in mind that your JSP output should
+    be valid XML.
+  -->
+  <jsp-engine logger="core.jsp-engine">
+    <parameter name="servlet-class" value="org.apache.jasper.servlet.JspServlet"/>
+    <parameter name="servlet-name" value="*.jsp"/>
+  </jsp-engine>
+
+  <!-- Xscript:
+  -->
+  <xscript logger="core.xscript">
+    <parameter name="xscript:copy-of" value="resource://org/apache/cocoon/components/xscript/xslt/copy-of.xsl"/>
+    <parameter name="xscript:value-of" value="resource://org/apache/cocoon/components/xscript/xslt/value-of.xsl"/>
+  </xscript>
+
+  <!-- Programming Languages:
+  -->
+  <programming-languages>
+    <java-language name="java" logger="core.language.java">
+      <!-- compiler parameter specifies which class to use to compile Java.
+           Possible variants are Javac and Jikes compilers.
+           Javac requires javac.jar (included with Cocoon distribution).
+           Jikes requires IBM jikes compiler to be present in the PATH  -->
+      <parameter name="compiler" value="org.apache.cocoon.components.language.programming.java.Javac"/>
+      <!-- Specifies which formatter to use to format source code.
+           This parameter is optional. -->
+      <parameter name="code-formatter" value="org.apache.cocoon.components.language.programming.java.JstyleFormatter"/>
+      <!-- A singleton-like implementation of a ClassLoader -->
+      <parameter name="class-loader" value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+    </java-language>
+  </programming-languages>
+
+  <!-- Class loader:
+    A singleton-like implementation of a ClassLoader.
+  -->
+  <classloader class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"
+               logger="core.classloader"/>
+  
+  <!-- Markup Languages:
+    This section defines several builtin logicsheets. A logicsheet is an XML
+    filter used to translate user-defined, dynamic markup into equivalent
+    code embedding directives for a given markup language.
+  -->
+  <markup-languages>
+    <xsp-language name="xsp" logger="core.markup.xsp">
+      <parameter name="prefix" value="xsp"/>
+      <parameter name="uri" value="http://apache.org/xsp"/>
+
+      <!-- Defines the XSP Core logicsheet for the Java language -->
+      <target-language name="java">
+        <parameter name="core-logicsheet" value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/>
+        
+        <!-- The Request logicsheet (taglib) is an XSP logicsheet that wraps XML tags 
+             around standard request operations -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-request"/>
+          <parameter name="uri" value="http://apache.org/xsp/request/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+        </builtin-logicsheet>
+       
+        <!-- The Response logicsheet (taglib) is an XSP logicsheet that wraps XML tags 
+             around standard response operations -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-response"/>
+          <parameter name="uri" value="http://apache.org/xsp/response/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/response.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The Session logicsheet (taglib) is an XSP logicsheet that wraps XML tags around 
+             standard session operations. Specifically, the Session logicsheet provides an 
+             XML interface to most methods of the HttpSession object (see the Java Servlet API 
+             Specification, version 2.2 ) for more information. -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="session"/>
+          <parameter name="uri" value="http://apache.org/xsp/session/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/session.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The Cookie logicsheet (taglib) is an XSP logicsheet that wraps XML tags 
+             around standard cookie operations -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-cookie"/>
+          <parameter name="uri" value="http://apache.org/xsp/cookie/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/cookie.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The ESQL logicsheet is an XSP logicsheet that performs sql queries and 
+             serializes their results as XML. This allows you to work with data from a 
+             wide variety of different sources when using Apache Cocoon. -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="esql"/>
+          <parameter name="uri" value="http://apache.org/cocoon/SQL/v2"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/esql.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="log"/>
+          <parameter name="uri" value="http://apache.org/xsp/log/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/log.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="util"/>
+          <parameter name="uri" value="http://apache.org/xsp/util/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/util.xsl"/>
+        </builtin-logicsheet>
+        
+        <!-- The xsp-formval taglib serves as interface to retrieve validation results 
+             from a request attribute -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-formval"/>
+          <parameter name="uri" value="http://apache.org/xsp/form-validator/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/form-validator.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The sel taglib allows to put multiple pages / view into
+             one xsp. While in general it is good style to put
+             different views into different xsp because they're more
+             easily maintained, this is a useful feature with
+             e.g. with long forms that are broken into parts -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="sel"/>
+          <parameter name="uri" value="http://apache.org/xsp/sel/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/sel.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="action"/>
+          <parameter name="uri" value="http://apache.org/cocoon/action/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/action.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The capture taglib is for capturing parts of the XSP-generated XML as
+             XML fragments or DOM nodes -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="capture"/>
+          <parameter name="uri" value="http://apache.org/cocoon/capture/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/capture.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xscript"/>
+          <parameter name="uri" value="http://apache.org/xsp/xscript/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/xscript.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="soap"/>
+          <parameter name="uri" value="http://apache.org/xsp/soap/3.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/soap.xsl"/>
+        </builtin-logicsheet>
+
+      </target-language>
+    </xsp-language>
+
+    <!-- Defines Sitemap Core logicsheet for the Java language -->
+    <sitemap-language name="sitemap" logger="core.markup.sitemap">
+      <parameter name="prefix" value="map"/>
+      <parameter name="uri" value="http://apache.org/cocoon/sitemap/1.0"/>
+
+      <target-language name="java">
+        <parameter name="core-logicsheet" value="resource://org/apache/cocoon/components/language/markup/sitemap/java/sitemap.xsl"/>
+      </target-language>
+    </sitemap-language>
+  </markup-languages>
+
+  <!-- Datasources:
+  -->
+  <datasources>
+    <jdbc name="personnel" logger="core.datasources.personnel">
+      <!--
+          If you have an Oracle database, and are using the the
+      pool-controller below, you should add the attribute
+      "oradb" and set it to true.
+
+      <pool-controller min="5" max="10" oradb="true"/>
+
+      That way the test to see if the server has disconnected
+      the JdbcConnection will function properly.
+      -->
+      <pool-controller min="5" max="10"/>
+      <!--
+          If you need to ensure an autocommit is set to true or
+      false, then create the "auto-commit" element below.
+
+      <auto-commit>false</auto-commit>
+
+      The default is true.
+      -->
+      <dburl>@database-url@</dburl>
+      <user>@database-user@</user>
+      <password>@database-password@</password>
+    </jdbc>
+  </datasources>
+
+  <!-- Stream Pipeline:
+    Either collects a Reader and lets it produce a character stream
+    or connects an EventPipeline with a Serializer and lets them produce
+    the character stream. Alternatives to CachingStreamPipeline are:
+    <stream-pipeline class="org.apache.cocoon.components.pipeline.NonCachingStreamPipeline"/>
+  -->
+  <stream-pipeline class="org.apache.cocoon.components.pipeline.CachingStreamPipeline"
+                   logger="core.stream-pipeline"
+                   pool-max="32" pool-min="16" pool-grow="4"/>
+
+  <!-- Event Pipeline:
+    Connects the generator and the various transformers and produces a
+    character stream. Alternatives to CachingEventPipeline are:
+    <event-pipeline class="org.apache.cocoon.components.pipeline.NonCachingEventPipeline"/>
+    <event-pipeline class="org.apache.cocoon.components.profiler.ProfilingCachingEventPipeline"/>
+    <event-pipeline class="org.apache.cocoon.components.profiler.ProfilingNonCachingEventPipeline"/>
+  -->
+  <event-pipeline class="org.apache.cocoon.components.pipeline.CachingEventPipeline"
+                  logger="core.event-pipeline"
+                  pool-max="32" pool-min="16" pool-grow="4"/>
+
+  <!-- Compiling xml to byte streams.
+    The xml-serializer "compiles" xml sax events into a byte stream
+    and the xml-deserializer does the same vice versa.
+    Make sure, that if you change one of these components, that you
+    may have to change the other one as well, as they might have
+    a dependency.
+  -->
+  <xml-serializer class="org.apache.cocoon.components.sax.XMLByteStreamCompiler"
+                  logger="core.xml-serializer"/>
+
+  <xml-deserializer class="org.apache.cocoon.components.sax.XMLByteStreamInterpreter"
+                    logger="core.xml-deserializer"/>
+
+  <!-- SAXConnector:
+    Connects the various pipeline components.
+    LoggingSAXConnector logs SAX events between pipeline components
+    into cocoon's log file.
+    ProfilingSAXConnector gathers timing information.
+    Uncomment one of the following lines for using the SAXConnector.
+  <sax-connector class="org.apache.cocoon.components.saxconnector.LoggingSAXConnector"/>
+  <sax-connector class="org.apache.cocoon.components.profiler.ProfilingSAXConnector"/>
+  -->
+
+  <!-- Profiler:
+    The profiler facilitates the gathering of statistics about timings of
+    different steps of pipelines. Profiler consists of several components:
+     profiling pipeline, profiling SAX connector, and profiler generator
+    which are used to generate the profile report. You need to enable all of
+    these components to use profiler.
+
+    Uncomment the following line to use profiler.
+  <profiler/>
+  -->
+
+  <!-- Resource Monitor:
+    The Monitor keeps track on changes to a Resource.
+  -->
+  <monitor logger="core.monitor">
+    <thread priority="5" frequency="10000"/>
+  </monitor>
+
+<!-- ======================== The sitemap  ============================== -->
+
+  <!-- Reloading of the sitemap:
+    The check-reload attribute determines if the sitemap is reloaded on change.
+    Set to "no", the sitemap is generated once at startup.
+    Set to "yes", the sitemap is regenerated if it changes.
+
+    The reload-method specifies the method for the regeneration:
+    asynchron: If the sitemap changes, the sitemap is regenerated at the
+               next request in the background and the incoming request is
+               served with the old sitemap. All subsequent requests are
+               served with the old sitemap until the regeneration in the
+               background has finished.
+    synchron: If the sitemap changes, the sitemap is regenerated at the
+              next request. When the regeneration is finished, the request
+              (and all subsequent ones) is served with the new sitemap.
+
+    For development environment, set the reload-method to synchron and the
+    check-reload to yes.
+    For production environment, it is advisable to set the reload-method to
+    asynchron and for more safety the check-reload to no.
+  -->
+  <sitemap file="sitemap.xmap" reload-method="asynchron" check-reload="yes" logger="sitemap"/>
+
+</cocoon>

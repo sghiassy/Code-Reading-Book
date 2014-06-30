@@ -1,0 +1,326 @@
+.TH ACE_NT_Service 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_NT_Service \- Provide the base class which defines the interface for controlling an NT service. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <NT_Service.h>\fR
+.PP
+Inherits \fBACE_Task< ACE_MT_SYNCH >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_NT_Service\fR (DWORD start_timeout = ACE_NT_SERVICE_START_TIMEOUT, DWORD service_type = SERVICE_WIN32_OWN_PROCESS, DWORD controls_mask = SERVICE_ACCEPT_STOP)"
+.br
+.RI "\fIConstructor primarily for use when running the service.\fR"
+.ti -1c
+.RI "\fBACE_NT_Service\fR (\fBconst\fR \fBACE_TCHAR\fR *name, \fBconst\fR \fBACE_TCHAR\fR *desc = 0, DWORD start_timeout = ACE_NT_SERVICE_START_TIMEOUT, DWORD service_type = SERVICE_WIN32_OWN_PROCESS, DWORD controls_mask = SERVICE_ACCEPT_STOP)"
+.br
+.RI "\fIConstructor primarily for use when inserting/removing/controlling the service.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_NT_Service\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBopen\fR (void *args = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBsvc\fR (void)"
+.br
+.ti -1c
+.RI "virtual void \fBhandle_control\fR (DWORD control_code)"
+.br
+.ti -1c
+.RI "void \fBsvc_handle\fR (\fBconst\fR SERVICE_STATUS_HANDLE new_svc_handle)"
+.br
+.RI "\fISet the svc_handle_ member. This is only a public function because the macro-generated service function calls it.\fR"
+.ti -1c
+.RI "void \fBname\fR (\fBconst\fR \fBACE_TCHAR\fR *name, \fBconst\fR \fBACE_TCHAR\fR *desc = 0)"
+.br
+.RI "\fISets the name and description for the service. If desc is 0, it takes the same value as name.\fR"
+.ti -1c
+.RI "\fBconst\fR \fBACE_TCHAR\fR* \fBname\fR (void) \fBconst\fR"
+.br
+.RI "\fIGet the service name.\fR"
+.ti -1c
+.RI "\fBconst\fR \fBACE_TCHAR\fR* \fBdesc\fR (void) \fBconst\fR"
+.br
+.RI "\fIGet the service description.\fR"
+.ti -1c
+.RI "void \fBhost\fR (\fBconst\fR \fBACE_TCHAR\fR *host)"
+.br
+.RI "\fISets the host machine.\fR"
+.ti -1c
+.RI "\fBconst\fR \fBACE_TCHAR\fR* \fBhost\fR (void) \fBconst\fR"
+.br
+.RI "\fIGet the host machine.\fR"
+.ti -1c
+.RI "int \fBinsert\fR (DWORD start_type = SERVICE_DEMAND_START, DWORD error_control = SERVICE_ERROR_IGNORE, \fBconst\fR \fBACE_TCHAR\fR *exe_path = 0, \fBconst\fR \fBACE_TCHAR\fR *group_name = 0, LPDWORD tag_id = 0, \fBconst\fR \fBACE_TCHAR\fR *dependencies = 0, \fBconst\fR \fBACE_TCHAR\fR *account_name = 0, \fBconst\fR \fBACE_TCHAR\fR *password = 0)"
+.br
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstartup\fR (DWORD startup)"
+.br
+.RI "\fISets the startup type for the service. Returns -1 on error, 0 on success.\fR"
+.ti -1c
+.RI "DWORD \fBstartup\fR (void)"
+.br
+.RI "\fIReturns the current startup type.\fR"
+.ti -1c
+.RI "int \fBstart_svc\fR (\fBACE_Time_Value\fR *wait_time = 0, DWORD *svc_state = 0, DWORD argc = 0, \fBconst\fR \fBACE_TCHAR\fR **argv = 0)"
+.br
+.ti -1c
+.RI "int \fBstop_svc\fR (\fBACE_Time_Value\fR *wait_time = 0, DWORD *svc_state = 0)"
+.br
+.ti -1c
+.RI "int \fBpause_svc\fR (\fBACE_Time_Value\fR *wait_time = 0, DWORD *svc_state = 0)"
+.br
+.RI "\fIPause the service.\fR"
+.ti -1c
+.RI "int \fBcontinue_svc\fR (\fBACE_Time_Value\fR *wait_time = 0, DWORD *svc_state = 0)"
+.br
+.RI "\fIContinue the service.\fR"
+.ti -1c
+.RI "DWORD \fBstate\fR (\fBACE_Time_Value\fR *wait_hint = 0)"
+.br
+.ti -1c
+.RI "int \fBstate\fR (DWORD *pstate, \fBACE_Time_Value\fR *wait_hint = 0)"
+.br
+.RI "\fIA version of <state> that returns -1 for failure, 0 for success. The DWORD pointed to by pstate receives the state value.\fR"
+.ti -1c
+.RI "int \fBtest_access\fR (DWORD desired_access = SERVICE_ALL_ACCESS)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBreport_status\fR (DWORD new_status, DWORD time_hint = 0)"
+.br
+.ti -1c
+.RI "SC_HANDLE \fBsvc_sc_handle\fR (void)"
+.br
+.ti -1c
+.RI "void \fBwait_for_service_state\fR (DWORD desired_state, \fBACE_Time_Value\fR *wait_time)"
+.br
+.ti -1c
+.RI "virtual void \fBstop_requested\fR (DWORD control_code)"
+.br
+.RI "\fICalled by <handle_control> when a stop/shutdown was requested.\fR"
+.ti -1c
+.RI "virtual void \fBpause_requested\fR (DWORD control_code)"
+.br
+.RI "\fICalled by <handle_control> when a pause was requested.\fR"
+.ti -1c
+.RI "virtual void \fBcontinue_requested\fR (DWORD control_code)"
+.br
+.RI "\fICalled by <handle_control> when a continue was requested.\fR"
+.ti -1c
+.RI "virtual void \fBinterrogate_requested\fR (DWORD control_code)"
+.br
+.RI "\fICalled by <handle_control> when a interrogate was requested.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "DWORD \fBstart_time_\fR"
+.br
+.RI "\fIEstimate of init time needed Service handle - doesn't need close.\fR"
+.ti -1c
+.RI "SERVICE_STATUS_HANDLE \fBsvc_handle_\fR"
+.br
+.ti -1c
+.RI "SERVICE_STATUS \fBsvc_status_\fR"
+.br
+.ti -1c
+.RI "SC_HANDLE \fBsvc_sc_handle_\fR"
+.br
+.RI "\fIService's SCM handle.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBname_\fR"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBdesc_\fR"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBhost_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Provide the base class which defines the interface for controlling an NT service.
+.PP
+.PP
+ NT Services can be implemented using the framework defined by the ACE_NT_Service class, and the macros defined in this file. Some quick refresher notes on NT Services:
+.PP
+.TP
+The main program defines an array of entries describing the services offered. The ACE_NT_SERVICE_ENTRY macro can help with this.
+.TP
+For each service, a separate ServiceMain and Handler function need to be defined. These are taken care of by the ACE_NT_SERVICE_DEFINE macro.
+.TP
+When the main program/thread calls StartServiceCtrlDispatcher, NT creates a thread for each service, and runs the ServiceMain function for the service in that new thread. When that thread exits, the service is gone.To use this facility, you could derive a class from \fBACE_Service_Object\fR (if you want to start via \fBACE\fR's service configurator), or use any other class to run when the image starts (assuming that NT runs the image). You must set up an NT SERVICE_TABLE_ENTRY array to define your service(s). You can use the ACE_NT_SERVICE_... macros defined below for this.
+.PP
+A SERVICE_TABLE might look like this: \fBACE_NT_SERVICE_REFERENCE\fR(Svc1); // If service is in another file SERVICE_TABLE_ENTRY myServices[] = { ACE_NT_SERVICE_ENTRY ("MyNeatService", Svc1), { 0, 0 } };
+.PP
+In the file where your service(s) are implemented, use the ACE_NT_SERVICE_DEFINE macro to set up the following: 1. A pointer to the service's implementation object (must be derived from ACE_NT_Service). 2. The service's Handler function (forwards all requests to the ACE_NT_Service-derived object's handle_control function). 3. The service's ServiceMain function. Creates a new instance of the ACE_NT_Service-derived class SVCCLASS, unless one has been created already.
+.PP
+If you are using all the default constructor values, you can let the generated ServiceMain function create the object, else you need to create it by hand before calling StartServiceCtrlDispatcher. Set the pointer so ServiceMain won't create another one. Another reason you may want to do the object creation yourself is if you want to also implement suspend and resume functions (the ones inherited from \fBACE_Service_Object\fR) to do something intelligent to the services which are running, like call their handle_control functions to request suspend and resume actions, similar to what NT would do if a Services control panel applet would do if the user clicks on Suspend. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_NT_Service::ACE_NT_Service (DWORD start_timeout = ACE_NT_SERVICE_START_TIMEOUT, DWORD service_type = SERVICE_WIN32_OWN_PROCESS, DWORD controls_mask = SERVICE_ACCEPT_STOP)
+.PP
+Constructor primarily for use when running the service.
+.PP
+.SS ACE_NT_Service::ACE_NT_Service (\fBconst\fR \fBACE_TCHAR\fR * name, \fBconst\fR \fBACE_TCHAR\fR * desc = 0, DWORD start_timeout = ACE_NT_SERVICE_START_TIMEOUT, DWORD service_type = SERVICE_WIN32_OWN_PROCESS, DWORD controls_mask = SERVICE_ACCEPT_STOP)
+.PP
+Constructor primarily for use when inserting/removing/controlling the service.
+.PP
+.SS virtual ACE_NT_Service::~ACE_NT_Service (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_NT_Service::continue_requested (DWORD control_code)\fC [protected, virtual]\fR
+.PP
+Called by <handle_control> when a continue was requested.
+.PP
+.SS int ACE_NT_Service::continue_svc (\fBACE_Time_Value\fR * wait_time = 0, DWORD * svc_state = 0)
+.PP
+Continue the service.
+.PP
+.SS \fBconst\fR \fBACE_TCHAR\fR * ACE_NT_Service::desc (void) const
+.PP
+Get the service description.
+.PP
+.SS void ACE_NT_Service::handle_control (DWORD control_code)\fC [virtual]\fR
+.PP
+This function is called in response to a request from the Service Dispatcher. It must interact with the <svc> function to effect the requested control operation. The default implementation handles all requests as follows: SERVICE_CONTROL_STOP: set stop pending, set cancel flag SERVICE_CONTROL_PAUSE: set pause pending, <suspend>, set paused SERVICE_CONTROL_CONTINUE: set continue pending, <resume>, set running SERVICE_CONTROL_INTERROGATE: reports current status SERVICE_CONTROL_SHUTDOWN: same as SERVICE_CONTROL_STOP. 
+.SS \fBconst\fR \fBACE_TCHAR\fR * ACE_NT_Service::host (void) const
+.PP
+Get the host machine.
+.PP
+.SS void ACE_NT_Service::host (\fBconst\fR \fBACE_TCHAR\fR * host)
+.PP
+Sets the host machine.
+.PP
+.SS int ACE_NT_Service::insert (DWORD start_type = SERVICE_DEMAND_START, DWORD error_control = SERVICE_ERROR_IGNORE, \fBconst\fR \fBACE_TCHAR\fR * exe_path = 0, \fBconst\fR \fBACE_TCHAR\fR * group_name = 0, LPDWORD tag_id = 0, \fBconst\fR \fBACE_TCHAR\fR * dependencies = 0, \fBconst\fR \fBACE_TCHAR\fR * account_name = 0, \fBconst\fR \fBACE_TCHAR\fR * password = 0)
+.PP
+Insert (create) the service in the NT Service Control Manager, with the given creation values. exe_path defaults to the path name of the program that calls the function. All other 0-defaulted arguments pass 0 into the service creation, taking NT_specified defaults. Returns -1 on error, 0 on success. 
+.SS void ACE_NT_Service::interrogate_requested (DWORD control_code)\fC [protected, virtual]\fR
+.PP
+Called by <handle_control> when a interrogate was requested.
+.PP
+.SS \fBconst\fR \fBACE_TCHAR\fR * ACE_NT_Service::name (void) const
+.PP
+Get the service name.
+.PP
+Reimplemented from \fBACE_Task\fR.
+.SS void ACE_NT_Service::name (\fBconst\fR \fBACE_TCHAR\fR * name, \fBconst\fR \fBACE_TCHAR\fR * desc = 0)
+.PP
+Sets the name and description for the service. If desc is 0, it takes the same value as name.
+.PP
+.SS int ACE_NT_Service::open (void * args = 0)\fC [virtual]\fR
+.PP
+Hook called to open the service. By default, will set the status to <START>_PENDING, <svc>, <wait>, then set the status to STOPPED. 
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS void ACE_NT_Service::pause_requested (DWORD control_code)\fC [protected, virtual]\fR
+.PP
+Called by <handle_control> when a pause was requested.
+.PP
+.SS int ACE_NT_Service::pause_svc (\fBACE_Time_Value\fR * wait_time = 0, DWORD * svc_state = 0)
+.PP
+Pause the service.
+.PP
+.SS int ACE_NT_Service::remove (void)
+.PP
+Remove the service from the NT Service Control Manager. Returns -1 on error, 0 on success. This just affects the SCM and registry - the can and will keep running fine if it is already running. 
+.SS int ACE_NT_Service::report_status (DWORD new_status, DWORD time_hint = 0)\fC [protected]\fR
+.PP
+.SS int ACE_NT_Service::start_svc (\fBACE_Time_Value\fR * wait_time = 0, DWORD * svc_state = 0, DWORD argc = 0, \fBconst\fR \fBACE_TCHAR\fR ** argv = 0)
+.PP
+Start the service (must have been inserted before). wait_time is the time to wait for the service to reach a steady state before returning. If it is 0, the function waits as long as it takes for the service to reach the 'running' state, or gets stuck in some other state, or exits. If <wait_time> is supplied, it is updated on return to hold the service's last reported wait hint. svc_state can be used to receive the state which the service settled in. If the value is 0, the service never ran. argc/argv are passed to the service's ServiceMain function when it starts. Returns 0 for success, -1 for error. 
+.SS DWORD ACE_NT_Service::startup (void)
+.PP
+Returns the current startup type.
+.PP
+.SS int ACE_NT_Service::startup (DWORD startup)
+.PP
+Sets the startup type for the service. Returns -1 on error, 0 on success.
+.PP
+.SS int ACE_NT_Service::state (DWORD * pstate, \fBACE_Time_Value\fR * wait_hint = 0)
+.PP
+A version of <state> that returns -1 for failure, 0 for success. The DWORD pointed to by pstate receives the state value.
+.PP
+.SS DWORD ACE_NT_Service::state (\fBACE_Time_Value\fR * wait_hint = 0)
+.PP
+Get the current state for the service. If <wait_hint> is not 0, it receives the service's reported wait hint. Note that this function returns 0 on failure (not -1 as is usual in \fBACE\fR). A zero return would (probably) only be returned if there is either no service with the given name in the SCM database, or the caller does not have sufficient rights to access the service state. The set of valid service state values are all greater than 0. 
+.SS void ACE_NT_Service::stop_requested (DWORD control_code)\fC [protected, virtual]\fR
+.PP
+Called by <handle_control> when a stop/shutdown was requested.
+.PP
+.SS int ACE_NT_Service::stop_svc (\fBACE_Time_Value\fR * wait_time = 0, DWORD * svc_state = 0)
+.PP
+Requests the service to stop. Will wait up to <wait_time> for the service to actually stop. If not specified, the function waits until the service either stops or gets stuck in some other state before it stops. If <svc_state> is specified, it receives the last reported state of the service. Returns 0 if the request was made successfully, -1 if not. 
+.SS int ACE_NT_Service::svc (void)\fC [virtual]\fR
+.PP
+The actual service implementation. This function need not be overridden by applications that are just using SCM capabilities, but must be by subclasses when actually running the service. It is expected that this function will set the status to RUNNING. 
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS void ACE_NT_Service::svc_handle (\fBconst\fR SERVICE_STATUS_HANDLE new_svc_handle)
+.PP
+Set the svc_handle_ member. This is only a public function because the macro-generated service function calls it.
+.PP
+.SS SC_HANDLE ACE_NT_Service::svc_sc_handle (void)\fC [protected]\fR
+.PP
+Return the svc_sc_handle_ member. If the member is null, it retrieves the handle from the Service Control Manager and caches it. 
+.SS int ACE_NT_Service::test_access (DWORD desired_access = SERVICE_ALL_ACCESS)
+.PP
+Test access to the object's service in the SCM. The service must already have been inserted in the SCM database. This function has no affect on the service itself. Returns 0 if the specified access is allowed, -1 otherwise (either the access is denied, or there is a problem with the service's definition - check \fBACE_OS::last_error\fR to get the specific error indication. 
+.SS void ACE_NT_Service::wait_for_service_state (DWORD desired_state, \fBACE_Time_Value\fR * wait_time)\fC [protected]\fR
+.PP
+Waits for the service to reach <desired_state> or get (apparently) stuck before it reaches that state. Will wait at most <wait_time> to get to the desired state. If <wait_time> is 0, then the function keeps waiting until the desired state is reached or the service doesn't update its state any further. The svc_status_ class member is updated upon return. NOTE - the timeout doesn't currently work - it always acts like \fBACE_Time_Value::zero\fR is passed - it checks the state once but doesn't wait after that. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_NT_Service::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Task\fR.
+.SS \fBACE_TCHAR\fR * ACE_NT_Service::desc_\fC [protected]\fR
+.PP
+.SS \fBACE_TCHAR\fR * ACE_NT_Service::host_\fC [protected]\fR
+.PP
+.SS \fBACE_TCHAR\fR * ACE_NT_Service::name_\fC [protected]\fR
+.PP
+.SS DWORD ACE_NT_Service::start_time_\fC [protected]\fR
+.PP
+Estimate of init time needed Service handle - doesn't need close.
+.PP
+.SS SERVICE_STATUS_HANDLE ACE_NT_Service::svc_handle_\fC [protected]\fR
+.PP
+.SS SC_HANDLE ACE_NT_Service::svc_sc_handle_\fC [protected]\fR
+.PP
+Service's SCM handle.
+.PP
+.SS SERVICE_STATUS ACE_NT_Service::svc_status_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

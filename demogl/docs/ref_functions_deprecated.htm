@@ -1,0 +1,1835 @@
+<html>
+<head>
+<title>DemoGL SDK - DemoGL functions</title>
+</head>
+<body bgcolor="white" text="black">
+<table width="500" border="0" align="left" cellpadding="0" cellspacing="0">
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<p>
+			<b>WARNING: THIS API IS DEPRECATED. DO NOT USE. ONLY MENTIONED FOR BACKWARDS COMPATIBILITY REASONS</b>
+			<br><br>
+			<h2>DemoGL functions, v1.2 API</h2>
+			<p>
+			In this section, all exported functions of DemoGL will be described briefly. If this is
+			your first time reading this section, read the descriptions, and familiarize yourself with
+			the functionality that's offered. Don't get scared if you miss any functions you expected
+			to find here. That funcionality is probably taken care of by DemoGL, so you can do the real
+			stuff: creating content. The functions are ordered alphabetically. Use the menu at the left
+			to fastaccess functions deeper in the page.
+			</p>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="CreateTextureFromBuffer">&nbsp;</a>
+			<b>CreateTextureFromBuffer</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>GLuint&nbsp;&nbsp;CreateTextureFromBuffer(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>int</b> <i>iWidth</i>,<br>
+			<b>int</b> <i>iHeight</i>, <br>
+			<b>byte</b> <i>*pBuffer</i>, <br>
+			<b>const char</b> <i>*sIdentName</i>, <br>
+			<b>int</b> <i>iBorder</i>, <br>
+			<b>GLint</b> <i>iWrapS</i>, <br>
+			<b>GLint</b> <i>iWrapT</i>, <br>
+			<b>GLint</b> <i>iMinFilter</i>, <br>
+			<b>GLint</b> <i>iMagFilter</i>, <br>
+			<b>bool</b> <i>bMipMaps</i>, <br>
+			<b>GLint</b> <i>iTexUploadHint</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Creates a textureobject inside DemoGL with the data provided in *pBuffer.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>iWidth</b>
+				<dd>The width of the texture in pixels. Must be 2^<i>n</i> + 2 * <i>iBorder</i> for some integer <i>n</i>.
+				<dt><b>iHeight</b>
+				<dd>The height of the texture in pixels. Must be 2^<i>n</i> + 2 * <i>iBorder</i> for some integer <i>n</i>.
+				<dt><b>*pBuffer</b>
+				<dd>Pointer to the buffer that contains the texture. Pixels are stored using 4 bytes, and the pixel
+				format is RGBA. No need to supply 16bit textures for 16bit display. That is taken care of by DemoGL
+				using the settings the user selected in the startup dialog and the OpenGL drivercode.
+				<dt><b>*sIdentName</b>
+				<dd>Pointer to the Identification Name of the texture. DemoGL identifies the textureobjects
+				it creates from textures in files by their filenames. If effect A will load a texture X and
+				effect B will load that same texture X, X is not reloaded from disk but the referencecounter
+				to that textureobject is increased by one. DemoGL determines if a texture is already loaded in core
+				by the filename which is unique for every texture loaded from disk. However textures created
+				from a buffer or from the framebufferdata don't have a filename, so you have to supply a
+				unique name yourself. You can for example pass the string &quot;tex1&quot; and in another effectobject
+				just call <a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a> and pass &quot;tex1&quot; as the filename. The
+				effect will get a reference back to the texture you created using CreateTextureFrom Buffer.
+				<dt><b>iBorder</b>
+				<dd>Specifies the size of the textureborder. Must be 0 or 1. Use this if you have to collide several textures
+				to 1 large picture and if you want to avoid bilineair filtering artifacts at the edges. See for
+				details The Opengl Programmers Manual concerning texturing or help on the function glTexImage2D().
+				<dt><b>iWrapS</b>
+				<dd>Sets the wrap parameter for texture coordinate <i>s</i> to either GL_CLAMP or 
+				GL_REPEAT. GL_CLAMP causes <i>s</i> coordinates to be clamped to the range [0,1] 
+				and is useful for preventing wrapping artifacts when mapping a single image onto 
+				an object. GL_REPEAT causes the integer part of the <i>s</i> coordinate to be 
+				ignored; OpenGL uses only the fractional part, thereby creating a repeating 
+				pattern. Border texture elements are accessed only if wrapping is set to 
+				GL_CLAMP. Must be GL_CLAMP or GL_REPEAT.
+				<dt><b>iWrapT</b>
+				<dd>Sets the wrap parameter for texture coordinate <i>t</i> to either GL_CLAMP or 
+				GL_REPEAT. See iWrapS. Must be GL_CLAMP or GL_REPEAT.
+				<dt><b>iMinFilter</b>
+				<dd>This texture minifying function is used whenever the pixel being textured maps to 
+				an area greater than one texture element. There are six defined minifying functions:
+				(without mipmaps:) GL_NEAREST, GL_LINEAR, (with mipmaps:) GL_NEAREST_MIPMAP_NEAREST,
+				GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR and GL_LINEAR_MIPMAP_LINEAR. NEAREST
+				is refering to the PIXEL that is nearest to the center of the pixel currently textured,
+				LINEAR is refering to a weighted average of the 4 surrounding pixels of the pixel currently
+				being textured (bi-lineair filtering). These can include border texture elements. NEAREST
+				values are faster but LINEAR are smoother. Experiment with the values until you are
+				satisfied with the result. DemoGL uses OpenGL's 1.1 textureobject facility to store these
+				values with the texture when it's <a href="ref_functions_deprecated.htm#UploadTexture">uploaded</a>. You can
+				overrule these in your own code when you actually use the texture, but you don't have to set these
+				values explicitly.
+				<dt><b>iMagFilter</b>
+				<dd>This texture magnification function is used when the textured pixel maps to 
+				an area less than or equal to one texture element. Must be GL_NEAREST or GL_LINEAR
+				<dt><b>bMipMaps</b>
+				<dd>If true, DemoGL will automatically create mipmaps for you when <a href="ref_functions_deprecated.htm#UploadTexture">uploading</a>
+				the texture to OpenGL's texturememory. If you set this to false, iMinFilter with MIPMAP 
+				values won't work and opengl's default will be used then (GL_NEAREST).
+				<dt><b>iTexUploadHint</b>
+				<dd>This hint is ment for the situation when the user has selected 16bit textures. In this
+				situation normally DemoGL selects GL_RGBA4 as texturehint towards OpenGL, so you'll get better
+				alphachannel support. If this isn't necessary in your situation, because the texture doesn't use
+				the alphavalues, you can specify an overruling hint for DemoGL to pass on to OpenGL in 16bit. A
+				good hint for nonalpha textures is GL_RGB5_A1. In situations where the user has selected 32bit textures
+				(recommended, since the driver will transform these to 16bit if necessary and will dither, which
+				gives better results) this hint is ignored and GL_RGBA8 is used. If DemoGL should use the default
+				hint whenever it has to for this texture, set iTexUploadHint to DEMOGL_TEXHINT_USEDEFAULT, which
+				is a constant defined in DemoGL_DLL.h.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			<dl>
+				<dt><b>GLuint</b> value. 
+				<dd>Will be 0 when there was an error, like there is no more space left in the texturesystem, 
+				otherwise this is the OpenGL Texturename that you can use when you call glBindTexture(); Store 
+				this returnvalue in a membervariable in your derived effectclass so you can 
+				<a href="ref_functions_deprecated.htm#UploadTexture">upload</a> it, or 
+				<a href="ref_functions_deprecated.htm#DeleteTexture">delete</a> it.
+			</dl>
+			<h3>Remarks</h3>
+			DemoGL is build with OpenGL in mind. OpenGL is a 3D rasterization api and therefore doesn't provide
+			you an LFB in which you can fiddle around. To solve this in a way, you can create textures of your
+			buffers which reside in core memory and then use a 2D projection (Ortogonal projection) in OpenGL to 
+			display these by using a texturemapped polygon in XY space. Beware though that uploading textures to 
+			the card can be slow when you are uploading a lot of textures. So with this function you can overcome
+			the 2D limitations a bit, but it doesn't solve it totally. Remember that the width and height have to be
+			a power of 2, the pixels are 32bit only (RGBA) and the texture must not exceed the maximum texture limits
+			which are 2048x2048 pixels.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#DeleteTexture">DeleteTexture</a>, <a href="ref_functions_deprecated.htm#UploadTexture">UploadTexture</a>, 
+			<a href="ref_functions_deprecated.htm#UnUploadTexture">UnUploadTexture</a>
+			
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="CreateTextureFromFBRegion">&nbsp;</a>
+			<b>CreateTextureFromFBRegion</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>GLuint&nbsp;&nbsp;CreateTextureFromFBRegion(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>int</b> <i>iX</i>,<br>
+			<b>int</b> <i>iY</i>, <br>
+			<b>int</b> <i>iWidth</i>,<br>
+			<b>int</b> <i>iHeight</i>, <br>
+			<b>const char</b> <i>*sIdentName</i>, <br>
+			<b>int</b> <i>iBorder</i>, <br>
+			<b>GLint</b> <i>iWrapS</i>, <br>
+			<b>GLint</b> <i>iWrapT</i>, <br>
+			<b>GLint</b> <i>iMinFilter</i>, <br>
+			<b>GLint</b> <i>iMagFilter</i>, <br>
+			<b>GLint</b> <i>iTexUploadHint</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Creates a textureobject inside DemoGL from the pixels in the framebuffer occupying the
+			region (iX,iY) - ((iX + iWidth),(iY + iHeight)).
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>iX</b>
+				<dd>The X coordinate of the left lower corner of the region. Remember that (0,0) is left below.
+				<dt><b>iY</b>
+				<dd>The X coordinate of the left lower corner of the region. Remember that (0,0) is left below.
+				<dt><b>iWidth</b>
+				<dd>The width of the texture in pixels. Must be 2^<i>n</i> + 2 * <i>iBorder</i> for some integer <i>n</i>.
+				<dt><b>iHeight</b>
+				<dd>The height of the texture in pixels. Must be 2^<i>n</i> + 2 * <i>iBorder</i> for some integer <i>n</i>.
+				<dt><b>*sIdentName</b>
+				<dd>Pointer to the Identification Name of the texture. DemoGL identifies the textureobjects
+				it creates from textures in files by their filenames. If effect A will load a texture X and
+				effect B will load that same texture X, X is not reloaded from disk but the referencecounter
+				to that textureobject is increased by one. DemoGL determines if a texture is already loaded in core
+				by the filename which is unique for every texture loaded from disk. However textures created
+				from a buffer or from the framebufferdata don't have a filename, so you have to supply a
+				unique name yourself. You can for example pass the string &quot;tex1&quot; and in another effectobject
+				just call <a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a> and pass &quot;tex1&quot; as the filename. The
+				effect will get a reference back to the texture you created using CreateTextureFrom Buffer.
+				<dt><b>iBorder</b>
+				<dd>Specifies the size of the textureborder. Must be 0 or 1. Use this if you have to collide several
+				textures to 1 large picture and you want to avoid bilineair filtering artifacts at the edges. See for
+				details The Opengl Programmers Manual concerning texturing or help on the function glTexImage2D().
+				<dt><b>iWrapS</b>
+				<dd>Sets the wrap parameter for texture coordinate <i>s</i> to either GL_CLAMP or 
+				GL_REPEAT. GL_CLAMP causes <i>s</i> coordinates to be clamped to the range [0,1] 
+				and is useful for preventing wrapping artifacts when mapping a single image onto 
+				an object. GL_REPEAT causes the integer part of the <i>s</i> coordinate to be 
+				ignored; OpenGL uses only the fractional part, thereby creating a repeating 
+				pattern. Border texture elements are accessed only if wrapping is set to 
+				GL_CLAMP. Must be GL_CLAMP or GL_REPEAT.
+				<dt><b>iWrapT</b>
+				<dd>Sets the wrap parameter for texture coordinate <i>t</i> to either GL_CLAMP or 
+				GL_REPEAT. See iWrapS. Must be GL_CLAMP or GL_REPEAT.
+				<dt><b>iMinFilter</b>
+				<dd>This texture minifying function is used whenever the pixel being textured maps to 
+				an area greater than one texture element. There are six defined minifying functions:
+				(without mipmaps:) GL_NEAREST, GL_LINEAR, (with mipmaps:) GL_NEAREST_MIPMAP_NEAREST,
+				GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR and GL_LINEAR_MIPMAP_LINEAR. NEAREST
+				is refering to the PIXEL that is nearest to the center of the pixel currently textured,
+				LINEAR is refering to a weighted average of the 4 surrounding pixels of the pixel currently
+				being textured (bi-lineair filtering). These can include border texture elements. NEAREST
+				values are faster but LINEAR are smoother. Experiment with the values until you are
+				satisfied with the result. DemoGL uses OpenGL's 1.1 textureobject facility to store these
+				values with the texture when it's <a href="ref_functions_deprecated.htm#UploadTexture">uploaded</a>. You can
+				overrule these in your own code when you actually use the texture, but you don't have to.
+				<dt><b>iMagFilter</b>
+				<dd>This texture magnification function is used when 
+				the textured pixel maps to an area less than or equal to one texture 
+				element. Must be GL_NEAREST or GL_LINEAR
+				<dt><b>iTexUploadHint</b>
+				<dd>This hint is ment for the situation when the user has selected 16bit textures. In this
+				situation normally DemoGL selects GL_RGBA4 as texturehint towards OpenGL, so you'll get better
+				alphachannel support. If this isn't necessary in your situation, because the texture doesn't use
+				the alphavalues, you can specify an overruling hint for DemoGL to pass on to OpenGL in 16bit. A
+				good hint for nonalpha textures is GL_RGB5_A1. In situations where the user has selected 32bit textures
+				(recommended, since the driver will transform these to 16bit if necessary and will dither, which
+				gives better results) this hint is ignored and GL_RGBA8 is used. If DemoGL should use the default
+				hint whenever it has to for this texture, set iTexUploadHint to DEMOGL_TEXHINT_USEDEFAULT, which
+				is a constant defined in DemoGL_DLL.h.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			<dl>
+				<dt><b>GLuint</b> value. 
+				<dd>Will be 0 when there was an error, otherwise this is the OpenGL Texturename that you can use
+				when you call glBindTexture(); Store this returnvalue in a membervariable in your derived effectclass
+				so you can <a href="ref_functions_deprecated.htm#UploadTexture">upload</a> it, or <a href="ref_functions_deprecated.htm#DeleteTexture">delete</a> it.
+			</dl>
+			<h3>Remarks</h3>By default, 
+			the region is read from the backbuffer. You can change this by calling glReadBuffer() just before you
+			call CreateTextureFromFBRegion. By reading from the backbuffer you can pre-render textures for things like
+			cubic envmapping while you are showing a fancy picture in the front buffer. By switching off bufferswapping you
+			can render in the backbuffer without having these results popping up in the frontbuffer. This function uses glCopyTexImage2D(),
+			which copies the framebuffer data directly to texturememory on the card. This is very fast, although
+			it has the disadvantage that you can't <a href="ref_functions_deprecated.htm#UnUploadTexture">UnUpload</a> the texture
+			and <i>re-upload</i> it later on. If you don't <a href="ref_functions_deprecated.htm#DeleteTexture">delete</a> it however it
+			will reside on the card until the application ends. Also, because the pixels are NOT read to core memory, the
+			creation of mipmaps is not available. If you want to create mipmaps from data and you don't care about the
+			slow speed of glReadPixels(), read the framebuffer region yourself and use 
+			<a href="ref_functions_deprecated.htm#CreateTextureFromBuffer">CreateTextureFromBuffer</a> to create the textures. 
+			Allthough the texture data isn't residing in core, other effects can refer to this same textureobject and 
+			use it as if it were a texture loaded from disk, by using the same sIdentName.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#DeleteTexture">DeleteTexture</a>, <a href="ref_functions_deprecated.htm#UploadTexture">UploadTexture</a>,
+			<a href="ref_functions_deprecated.htm#SetbSwapBuffers">SetbSwapBuffers</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="DeleteTexture">&nbsp;</a>
+			<b>DeleteTexture</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;DeleteTexture(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>int</b> <i>iTextureName</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Deletes a DemoGL textureobject with the number iTextureName from DemoGL <i>and</i> removes it
+			from OpenGL's texturememory. 
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>iTextureName</b>
+				<dd>This parameter is the number you received from one of the three texture creation functions 
+				<a href="ref_functions_deprecated.htm#CreateTextureFromBuffer">CreateTextureFromBuffer</a>, 
+				<a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a> and
+				<a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>. It's called a <i>name</i> because
+				OpenGL uses these numbers as <i>names</i> to refer to OpenGL textureobjects. DemoGL 
+				hides this fuzz for you. All you need to know about a texture is it's 
+				IdentName/Filename when you create the textureobject at DemoGL and the 
+				number you receive from one of the three texture creation functions 
+				mentioned above when you want to do an action with the texture, like 
+				using it, deleting it or (un)uploading it.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			If more than one effectobject loads/creates a texture with the same Identname/filename, and you call this
+			function, not much will happen. The reference counter of the DemoGL textureobject will be decreased and
+			the texture is still usable for other effectobjects. It's removed from memory (OpenGL texturememory and
+			DemoGL in-core texturememory) when there are no more references to the texture by other effectobjects.
+			If a texture is completely deleted from DemoGL and another effect is <a href="ref_functions_deprecated.htm#LoadTexture">loading</a>
+			it again, it has to be read from disk again. Allthough the loadroutines are fast, this can cause stuttering
+			for some milliseconds, so plan when to use certain textures and when to delete them.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#UnUploadTexture">UnUploadTexture</a>, <a href="ref_functions_deprecated.htm#UploadTexture">UploadTexture</a>,
+			<a href="ref_functions_deprecated.htm#CreateTextureFromBuffer">CreateTextureFromBuffer</a>, <a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a>,
+			<a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="DisableMessageHandler">&nbsp;</a>
+			<b>DisableMessageHandler</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;DisableMessageHandler(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sEffectName</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Disables the Messagehandler functionality of the effectobject with the name passed with
+			the function. DemoGL will then not call the MessageHandler method of the effectobject when
+			the effect is running on an active layer <i>and</i> there is a message posted to the
+			application window. The MessageHandler is turned OFF by default.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sEffectName</b>
+				<dd>The name of the effectobject which MessageHandler method should be disabled.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			Starting with version 1.2, DemoGL effectobjects have a new method, the MessageHandler method. 
+			By default this method is never called, or better: it's <i>disabled</i>. If your application
+			enables it using <a href="ref_functions_deprecated.htm#EnableMessagehandler">EnableMessageHandler</a>, DemoGL
+			will call the MessageHandler method of this effect when the effect is running on an active (i.e. 
+			visible) layer, <i>and</i> there is a message received by the application's window message handler
+			which lives inside DemoGL. Most messages are not that interesting for your effect but it can
+			be used to receive mouse input or keyboard input, which result in messages, send to the application
+			window, and thus also to all enabled MessageHandler methods of visible effects.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#EnableMessagehandler">EnableMessageHandler</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="EnableLoadingSplash">&nbsp;</a>
+			<b>EnableLoadingSplash</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;EnableLoadingSplash(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sSplashScreenTexture</i>,<br>
+			<b>int</b> <i>iFileType</i>, <br>
+			<b>float</b> <i>fOpacity</i> <br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			When your application starts, DemoGL displays the console and all kinds of information before
+			the actual application kicks off. It looks ok, but perhaps you want to please the viewer
+			of your application with a splashscreen you supplied.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sSplashScreenTexture</b>
+				<dd>The name of the file, inclusive path, which contains the texturedata. This will be
+				loaded as a normal texture, but DemoGL won't return an ID. The texture is stored in
+				DemoGL's texturebase, so if you load it again using <a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>,
+				it won't be loaded from disk.
+				<dt><b>iFileType</b>
+				<dd>The type of the file loaded. These types are defined in DemoGL_DLL.h. JPGFILE will tell DemoGL to
+				use the jpg loader, TGAFILE to use the tga loader and BMPFILE to use the ..., that's right, bmp loader.
+				Must be TGAFILE, BMPFILE or JPGFILE.
+				<dt><b>fOpacity</b>
+				<dd>This is the opacity DemoGL should use when blending the texture over the console when 
+				the application starts. It's a value between 0.0 (totally transparent) and 1.0 (totally opaque).
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			The texture is blenden on top of the console at startup. If you set the opacity to a lower amount than 
+			1.0, you still see the console through the texture. When the application is started, and the
+			console is activated, the splashscreen isn't blended on top of the console, but a
+			normal console is shown.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="EnableMessageHandler">&nbsp;</a>
+			<b>EnableMessageHandler</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;EnableMessageHandler(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sEffectName</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Enables the Messagehandler functionality of the effectobject with the name passed with
+			the function. DemoGL will then call the MessageHandler method of the effectobject when
+			the effect is running on an active layer <i>and</i> there is a message posted to the
+			application window. The MessageHandler is turned OFF by default.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sEffectName</b>
+				<dd>The name of the effectobject which MessageHandler method should be enabled.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			Starting with version 1.2, DemoGL effectobjects have a new method, the MessageHandler method. 
+			By default this method is never called, or better: it's <i>disabled</i>. If your application
+			enables it using this function, DemoGL will call the MessageHandler method of this effect when 
+			the effect is running on an active (i.e. visible) layer, <i>and</i> there is a message received 
+			by the application's window message handler	which lives inside DemoGL. Most messages are not 
+			that interesting for your effect but it can	be used to receive mouse input or keyboard input, 
+			which result in messages, send to the application window, and thus also to all enabled 
+			MessageHandler methods of visible effects.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#DisableMessagehandler">DisableMessageHandler</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="EndApp">&nbsp;</a>
+			<b>EndApp</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;EndApp(void)</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Calling this function will start the cleanup cycle inside DemoGL to end the application.
+			<h3>Parameters</h3>
+			None.
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			This routine is normally called after you return from <a href="ref_functions_deprecated.htm#RunApp">RunApp()</a>.
+		    EndApp will take care of the cleanup of every object created inside DemoGL, stopping running music,
+		    closing the window, eventually switching back to normal resolution of the desktop etc. Remember that
+		    the effects you registered at DemoGL are <i>not</i> cleaned up. This is because the creation of
+		    these objects is done in your own main. Do the cleanup of these objects after you've called EndApp.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#RunApp">RunApp</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="ExecuteCommand">&nbsp;</a>
+			<b>ExecuteCommand</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;ExecuteCommand(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sCommand</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Executes a scriptcommand. Only <a href="ref_scriptsyntax_deprecated.htm">DemoGL Scriptlanguage</a> commands are
+			accepted. The commands take effect immediately.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sCommand</b>
+				<dd>A normal DemoGL script command. 
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			This function can be used to execute commands from code. It can be an addition to the scriptfile
+			already running for your application. In combination with the MessageHandler method of effectobjects,
+			it's possible to do very precise timing besides the global millisecond timing on the global timeline.
+			It's not recommended to use just this in code timing, because you loose the flexibility of
+			a script.
+			<h3>See also</h3>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="FreeFile">&nbsp;</a>
+			<b>FreeFile</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;FreeFile(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>byte</b> <i>*byFile</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Frees the memory allocated when <a href="ref_functions_deprecated.htm#LoadFile">LoadFile</a> was
+			used to load a file into memory.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*byFile</b>
+				<dd>Pointer to the file in memory, the same pointer received from 
+				<a href="ref_functions_deprecated.htm#LoadFile">LoadFile</a>
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			If a DLL allocates memory and passes a pointer to that memory to the application that
+			is attached to the DLL (and likely caused the allocation of memory), the attached application
+			is not allowed to free the memory pointed by the pointer it received from the DLL. The
+			deallocation should be done by the DLL. Because DemoGL allocates memory when it loads
+			a file into memory and passes a pointer to that memory back to the calling application,
+			it also has to deallocate that memory. This function, FreeFile(), deallocates memory
+			allocated when LoadFile was called. Every LoadFile() call in your application should have
+			an accompanying FreeFile() call.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#LoadFile">LoadFile</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="GetDemoGLVersion">&nbsp;</a>
+			<b>GetDemoGLVersion</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;GetDemoGLVersion(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>float</b> <i>*fVersion</i>, <br>
+			<b>long</b> <i>*lBuildnr</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Returns in the variables, pointed to by the pointers passed, the version of the current
+			used DemoGL library plus the buildnumber. 
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*fVersion</b>
+				<dd>Pointer to a float variable wherein DemoGL will store the version of the
+				library, for example 1.2
+				<dt><b>*lBuildnr</b>
+				<dd>Pointer to a long variable wherein DemoGL will store the buildnr, for example
+				100119.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			It's sometimes useful to know if the library that is loaded with the application is of
+			a certain version, or not higher than a certain version. This function allowes you to
+			test if the DemoGL library loaded is of a certain version. 
+			<h3>See also</h3>
+			No topics related.
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="GetLengthOfFile">&nbsp;</a>
+			<b>GetLengthOfFile</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>long&nbsp;&nbsp;GetLengthOfFile(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sFilename</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Returns the length in bytes of the file with filename <i>sFilename</i> which is stored in the 
+			datafile, or in the data directory. This filename can contain subpaths
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sFilename</b>
+				<dd>This is the name, inclusive path, of the file you want the length of in bytes.</dd>           
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			<dl>
+				<dt><b>long</b> value. 
+				<dd>The length of the file <i>sFilename</i> in bytes.</dd>  
+			</dl>
+			<h3>Remarks</h3>
+			Because DemoGL does all the File I/O for you and returns a buffer with the data to you, you don't
+			know how large these files are and thus how large the buffer is. Use this function in combination with
+			<a href="ref_functions_deprecated.htm#LoadFile">LoadFile</a>. Be aware of the fact that the sSRCDir
+			parameter passed to <a href="ref_functions_deprecated.htm#OverruleDefaults">OverruleDefaults</a> is placed before
+			sFilename.
+			<h3>Example</h3>
+			Suppose sSRCDir is &quot;mydata&quot;, you read from a directory and you want to check the length of the file
+			&quot;mydata\textures\part01\rock.bmp&quot;. You then pass &quot;textures\part01\rock.bmp&quot; to GetLengthOfFile: (C/C++
+			backslash escaping included)<br><br>
+			<center>
+				<code>
+				long lLength = GetLengthOfFile(&quot;textures\\part01\\rock.bmp&quot;);
+				</code>
+			</center>
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#LoadFile">LoadFile</a>, <a href="../docs_v12/fileio.htm">DemoGL File I/O</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="IsExtensionAvailable">&nbsp;</a>
+			<b>IsExtensionAvailable</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>bool&nbsp;&nbsp;IsExtensionAvailable(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>int</b> <i>iExtension</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			This function checks with DemoGL if the specified OpenGL extension is available with the current
+			hardware. 
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>iExtension</b>
+				<dd>Number defined in DemoGL_Extensions.h that represents the extension to check.</dd>           
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			<dl>
+				<dt><b>bool</b> value. 
+				<dd><i>true</i> if the extension is available, <i>false</i> otherwise.</dd>  
+			</dl>
+			<h3>Remarks</h3>
+			Because the OpenGL rendercontext is globally defined inside DemoGL and because DemoGL already 
+			parses the extensionstring received from the OpenGL driver, you don't have to parse this string
+			for yourself. Use this function to choose between several codepaths in your application if you
+			want to be sure available hardware is used and not available hardware is emulated, like multitexturing
+			is emulated with a 2 or more pass routine, instead of using the ARB_multitexture extension.
+			<h3>See also</h3>
+			The include files <i>DemoGL_Extensions.h</i> and <i>DemoGL_glext.h</i>, both supplied with the SDK.
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="LoadFile">&nbsp;</a>
+			<b>LoadFile</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>unsigned char *&nbsp;&nbsp;LoadFile(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sFilename</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Returns a pointer to a buffer wherein the file with filename <i>sFilename</i> which is stored in the 
+			<a href="../docs_v12/fileio.htm">datafile</a>, or in the data directory, is loaded. This filename can contain subpaths.
+			The buffer is already unpacked and decrypted.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sFilename</b>
+				<dd>This is the name, inclusive path, of the file you want the length of in bytes.</dd>           
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			<dl>
+				<dt><b>unsigned char *</b> pointer. 
+				<dd>pointer to a buffer wherein the total file <i>sFilename</i>is loaded, decrypted and unpacked.</dd>  
+				<dt><b>NULL</b> value.
+				<dd>DemoGL couldn't load the file, couldn't unpack the file or couldn't decrypt the file. 
+			</dl>
+			<h3>Remarks</h3>
+			DemoGL handles all file I/O for you, so it's completely transparant for you where
+			the files come from (datafile or directory), and you are not bothered by the fact files have to be unpacked
+			and/or decrypted. LoadFile handles all that for you. If you don't need the data from the file anymore, be sure to
+			call <a href="ref_functions_deprecated.htm#FreeFile">FreeFile</a> to free the buffer, because otherwise your application leaks
+			memory.
+			If you want to know how big the buffer is in
+			bytes, use <a href="ref_functions_deprecated.htm#GetLengthOfFile">GetLengthOfFile</a>. The source where from DemoGL reads the
+			data, depends on the value of iFileSRC, which is overruleable by <a href="ref_functions_deprecated.htm#OverruleDefaults">OverruleDefaults</a>.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#GetLengthOfFile">GetLengthOfFile</a>, <a href="../docs_v12/fileio.htm">DemoGL File I/O</a>,
+			<a href="ref_functions_deprecated.htm#OverruleDefaults">OverruleDefaults</a>, <a href="ref_functions_deprecated.htm#FreeFile">FreeFile</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="LoadTexture">&nbsp;</a>
+			<b>LoadTexture</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>GLuint&nbsp;&nbsp;LoadTexture(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sFilename</i>, <br>
+			<b>int</b> <i>iFileType</i>, <br>
+			<b>GLint</b> <i>iWrapS</i>, <br>
+			<b>GLint</b> <i>iWrapT</i>, <br>
+			<b>GLint</b> <i>iMinFilter</i>, <br>
+			<b>GLint</b> <i>iMagFilter</i>, <br>
+			<b>bool</b> <i>bMipMaps</i><br>
+			<b>bool</b> <i>bCreateAlphaFromColor</i><br>
+			<b>int</b> <i>iBorder</i>, <br>
+			<b>GLint</b> <i>iTexUploadHint</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Creates a textureobject inside DemoGL from the data loaded from the file <i>sFilename</i> which
+			is stored in the datafile or in the data directory.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sFilename</b>
+				<dd>Pointer to the filename, inclusive path, of the texture. This will then be loaded from the 
+				datafile or from the data directory. The source where from DemoGL reads the
+				data, depends on the value of iFileSRC, which is overruleable by <a href="ref_functions_deprecated.htm#OverruleDefaults">OverruleDefaults</a>.
+				DemoGL identifies the textureobjects it creates from textures in files by their filenames. 
+				If effect A will load a texture X and effect B will load that same texture X, X is not reloaded from 
+				disk but the reference counter to that textureobject is increased by one. DemoGL determines if a 
+				texture is already loaded in core by the filename which is unique for every texture loaded from disk.
+				<dt><b>iFileType</b>
+				<dd>The type of the file loaded. These types are defined in DemoGL_DLL.h. JPGFILE will tell DemoGL to
+				use the jpg loader, TGAFILE to use the tga loader and BMPFILE to use the ..., that's right, bmp loader.
+				Must be TGAFILE, BMPFILE or JPGFILE.
+				<dt><b>iWrapS</b>
+				<dd>Sets the wrap parameter for texture coordinate <i>s</i> to either GL_CLAMP or 
+				GL_REPEAT. GL_CLAMP causes <i>s</i> coordinates to be clamped to the range [0,1] 
+				and is useful for preventing wrapping artifacts when mapping a single image onto 
+				an object. GL_REPEAT causes the integer part of the <i>s</i> coordinate to be 
+				ignored; OpenGL uses only the fractional part, thereby creating a repeating 
+				pattern. Border texture elements are accessed only if wrapping is set to 
+				GL_CLAMP. Must be GL_CLAMP or GL_REPEAT. The texture coordinate <i>s</i> is specified
+				with OpenGL calls like glTexCoord2f(s,t);
+				<dt><b>iWrapT</b>
+				<dd>Sets the wrap parameter for texture coordinate <i>t</i> to either GL_CLAMP or 
+				GL_REPEAT. See iWrapS. Must be GL_CLAMP or GL_REPEAT.
+				<dt><b>iMinFilter</b>
+				<dd>This texture minifying function is used whenever the pixel being textured maps to 
+				an area greater than one texture element. There are six defined minifying functions:
+				(without mipmaps:) GL_NEAREST, GL_LINEAR, (with mipmaps:) GL_NEAREST_MIPMAP_NEAREST,
+				GL_LINEAR_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_LINEAR and GL_LINEAR_MIPMAP_LINEAR. NEAREST
+				is refering to the PIXEL that is nearest to the center of the pixel currently textured,
+				LINEAR is refering to a weighted average of the 4 surrounding pixels of the pixel currently
+				being textured (bi-lineair filtering). These can include border texture elements. NEAREST
+				values are faster but LINEAR are smoother. Experiment with the values until you are
+				satisfied with the result. DemoGL uses OpenGL's 1.1 textureobject facility to store these
+				values with the texture when it's <a href="ref_functions_deprecated.htm#UploadTexture">uploaded</a>. You can
+				overrule these in your own code when you actually use the texture, but you don't have to.
+				The texture coordinate <i>t</i> is specified with OpenGL calls like glTexCoord2f(s,t);
+				<dt><b>iMagFilter</b>
+				<dd>This texture magnification function is used when the pixel being textured maps to 
+				an area less than or equal to one texture element. Must be GL_NEAREST or GL_LINEAR
+				<dt><b>bMipMaps</b>
+				<dd>If true, DemoGL will automatically create mipmaps for you when <a href="ref_functions_deprecated.htm#UploadTexture">uploading</a>
+				 the texture to OpenGL's texturememory. If you set this to false, iMinFilter with MIPMAP values
+				won't work and OpenGL's default will be used (GL_NEAREST).
+				<dt><b>bCreateAlphaFromColor</b>
+				<dd>Unlike TGA, JPG and BMP do not have alphachannel support. If you want to create an alphachannel from
+				the colors in the texture, simply set this parameter to <i>true</i>. The alpha of every pixel is determined using
+				the formula: A = (0.35 * R) + (0.45 * G) + (0.20 * B). This is useful for flares or other
+				textures that have relative alpha depending on their luminosity. This will give you better results 
+				if you blend using glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				<dt><b>iBorder</b>
+				<dd>Specifies the size of the textureborder. Must be 0 or 1. Use this if you have to collide several
+				textures to 1 large picture and you want to avoid bilineair filtering artifacts at the edges. See for
+				details The Opengl Programmers Manual concerning texturing or help on the function glTexImage2D().
+				Note that if you specify a border, the image you load as a texture has to contain this border. Thus
+				if the picture has a width of 256 pixels and you set iBorder to 1, the actual texture will be 254 pixels.
+				<dt><b>iTexUploadHint</b>
+				<dd>This hint is ment for the situation when the user has selected 16bit textures. In this
+				situation normally DemoGL selects GL_RGBA4 as texturehint towards OpenGL, so you'll get better
+				alphachannel support. If this isn't necessary in your situation, because the texture doesn't use
+				the alphavalues, you can specify an overruling hint for DemoGL to pass on to OpenGL in 16bit. A
+				good hint for nonalpha textures is GL_RGB5_A1. In situations where the user has selected 32bit textures
+				(recommended, since the driver will transform these to 16bit if necessary and will dither, which
+				gives better results) this hint is ignored and GL_RGBA8 is used. If DemoGL should use the default
+				hint whenever it has to for this texture, set iTexUploadHint to DEMOGL_TEXHINT_USEDEFAULT, which
+				is a constant defined in DemoGL_DLL.h.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			<dl>
+				<dt><b>GLuint</b> value. 
+				<dd>Will be 0 when there was an error, otherwise this is the OpenGL Texturename that you can use
+				when you call glBindTexture(); Store this returnvalue in a membervariable in your derived effectclass
+				so you can <a href="ref_functions_deprecated.htm#UploadTexture">upload</a> it, or <a href="ref_functions_deprecated.htm#DeleteTexture">delete</a> it.
+			</dl>
+			<h3>Remarks</h3>
+			Only 32bpp/24bpp images are supported. Also, the width and height of the images have to be a power of 2 plus 2 * the borderwidth,
+			which can be 0 or 1, to be usable
+			within OpenGL. LoadTexture won't fail when the width and/or height is not a power of 2, but OpenGL won't show the
+			texture. JPG files have 24bpp automatically, TGA files can be 8, 16, 24 or 32bpp. TGA files with 24bpp or 32bpp are supported. BMP 
+			files can have several options, only 24bpp bmp files are supported, uncompressed. 8bpp BMP files are supported but
+			converted to 32bit. All 24bpp formats are converted to 32bpp by adding an alphabyte. The value of the alphabyte depends
+			on the setting <i>bCreateAlphaFromColor</i>. If this setting is <i>false</i> then the value of the alphabyte is 0xff.
+			If you want partial transparancy in your textures, for example in round windows in a walltexture, use 32bit TGA with
+			an alphachannel.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#DeleteTexture">DeleteTexture</a>, <a href="ref_functions_deprecated.htm#UploadTexture">UploadTexture</a>, 
+			<a href="ref_functions_deprecated.htm#UnUploadTexture">UnUploadTexture</a>, <a href="../docs_v12/techaspect.htm">Technical aspects and limitations</a>,
+			<a href="ref_functions_deprecated.htm#OverruleDefaults">OverruleDefaults</a>, <a href="ref_functions_deprecated.htm#LoadFile">LoadFile</a>,
+			<a href="ref_functions_deprecated.htm#GetLengthOfFile">GetLengthOfFile</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="LogLineToConsole">&nbsp;</a>
+			<b>LogLineToConsole</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;LogLineToConsole(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sLine</i>, <br>
+			<b>bool</b> <i>bScroll</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Logs a line to the DemoGL Console. This console can be displayed at any time when you press '~' or
+			'`' unless you blocked it with the settings in <a href="ref_functions_deprecated.htm#OverruleDefaults">OverruleDefaults</a>. 
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sLine</b>
+				<dd>This is the textline you want to log to the console. 
+				<dt><b>bScroll</b>
+				<dd>If <i>true</i> the console will scroll up one line <i>before</i> this line is added to the console contents, otherwise
+				it will not scroll up. So if you want to load 100 files for example you can achieve the QuakeII style console logging, while
+				loading files by passing <i>false</i> (the console won't scroll up before printing a line).</dd>
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			This function is ideal while you are in the developing stage of your application. You can log to the console whatever
+			you want, as long as it is a characterstring and the characters have asciivalues between 32 and 127. 
+			<h3>See also</h3>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="OverruleDefaults">&nbsp;</a>
+			<b>OverruleDefaults</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;OverruleDefaults(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>bool</b> <i>bVSYNC</i>, <br>
+			<b>int</b>	<i>iFileSRC</i>, <br>
+			<b>const char</b> <i>*sSRCDir</i>, <br>
+			<b>const char</b> <i>*sDataFilename</i>, <br>
+			<b>const char</b> <i>*sScriptFilename</i>, <br>
+			<b>bool</b> <i>bShowFPS</i>, <br>
+			<b>bool</b> <i>bNeverShowFPS</i>, <br>
+			<b>bool</b> <i>bNeverShowConsole</i>, <br>
+			<b>bool</b>	<i>bShowDebugInfo</i>, <br>
+			<b>bool</b> <i>bNeverShowDebugInfo</i>, <br>
+			<b>int</b> <i>iMusicSys<br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Overrules some defaults in DemoGL, so the programmer can select some options in code.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>bVSYNC</b>
+				<dd>This parameter tells DemoGL to switch on VSYNC (bVSYNC = true) or to switch off VSYNC
+				(bVSYNC=false), when the extension <i>WGL_EXT_swap_control</i> is available. Switching it off
+				can gain some FPS, but can also lead to tearing. Default is <b>false</b> (which means: OFF).
+				<dt><b>iFileSRC</b>
+				<dd>The parameter that specifies which source to use to read files. Can be SRC_LOADFROMDATAFILE,
+				which specifies that all files will be read from the file specified with sDataFilename, or 
+				SRC_LOADFROMDIR, which specifies that all files will be read from the directory specified with
+				sSRCDir. When you specify SRC_LOADFROMDIR, sDataFilename is ignored. If you specify SRC_LOADFROMDATAFILE,
+				sSRCDir is used to specify a sourcedir <i>inside</i> the datafile specified with sDataFilename.
+				Default is <b>SRC_LOADFROMDATAFILE</b>.
+				<dt><b>*sSRCDir</b>
+				<dd>If iFileSRC = SRC_LOADFROMDIR: the name of the directory where the files used in your application are stored.
+				If iFileSRC = SRC_LOADFROMDATAFILE: the name of the directory <i>inside</i> the datafile where the files used in your application
+				are stored. Default is <b>&quot;&quot;</b>, which means an empty string, which means the directory your application's executable
+				is in, if iFileSRC = SRC_LOADFROMDIR, or which means the rootdir in the datafile if iFileSRC = SRC_LOADFROMDATAFILE.
+				<dt><b>*sDataFilename</b>
+				<dd>The name of the datafile, if iFileSRC = SRC_LOADFROMDATAFILE. It's assumable that you want to name the datafile after the name
+				of your application. By default DemoGL will look for the file <b>demodat.zip</b> in the directory
+				where the application is ran from. This parameter is ignored if iFileSRC = SRC_LOADFROMDIR.
+				<dt><b>*sScriptFilename</b>
+				<dd>This is the name of the <a href="ref_scriptsyntax_deprecated.htm">script</a>, inclusive path,  that should be executed 
+				with the application. This file is placed in the <a href="../docs_v12/fileio.htm">datafile</a> if iFileSRC = SRC_LOADFROMDATAFILE,
+				and placed in the directory sSRCDir if iFileSRC = SRC_LOADFROMDIR. DemoGL will look for
+				<b>demoflow</b> as default script.
+				<dt><b>bShowFPS</b>
+				<dd>DemoGL supports a Frame Per Second viewing on the screen. You can activate this by pressing F2 in a
+				running DemoGL application. When <i>true</i> FPS display is turned on when the application runs. Default 
+				is <b>false</b> (which means: turned OFF).
+				<dt><b>bNeverShowFPS</b>
+				<dd>Because a user can switch ON FPS display by pressing F2, you probably want to disable this in your release
+				version. By setting this parameter to <i>true</i> the user won't be able to turn ON FPS 
+				display. This option also overrules bShowFPS. Default is <b>false</b> (which means: user is able to turn on the FPS counter).
+				<dt><b>bNeverShowConsole</b>
+				<dd>The DemoGL console is neat, but a user can disrupt the flow
+				of your application if he opens the console and closes it some time later. Due to the design of DemoGL,
+				the timeline events	are executed but no effects are called when the console is up. So if you have a non-rendering effect
+				that does some calculations for you, it won't be executed and it therefore can disrupt the execution of
+				objects that are executed at a later time. So if you truely want to disable the console for users, you can
+				by passing <i>true</i>. Default is <b>false</b> (which means: user is able to bring up the console).
+				<dt><b>bShowDebugInfo</b>
+				<dd>DemoGL supports an overlay that contains extra debug info for the programmer, like the last 4 lines logged
+				on the console and a high resolution timer. You can activate this overlay by pressing F5 in a running 
+				DemoGL application. When <i>true</i> DemoGL will display the layer at startup. Default is <b>false</b>
+				(which means: turned OFF)
+				<dt><b>bNeverShowDebugInfo</b>
+				<dd>The debug info overlay is ofcourse horrifying for your design, and perhaps you don't want users to
+				get it visible during application run, so you can lock the F5 key. Passing <i>true</i> will block users
+				from visualizing the debug overlay layer. Default is <b>false</b> (which means, user is able to turn on the
+				debug overlay layer)
+				<dt><b>iMusicSys</b>
+				<dd>This parameter tells DemoGL which musicsubsystem to initialize. Possible values: MP3SUBSYSTEM for 
+				when you use MP3 files, or MODSUBSYSTEM, when you use XM/S3M/MTM/IT or MOD files. In a future version, 
+				when DemoGL has just 1 library for playing all music media, this parameter will be removed. Until then, this
+				parameter will be used which system will be initialized. Using the wrong system for the musicmedia
+				will likely crash the application. Default is MP3SUBSYSTEM.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			Use this function <b>before</b> you call <a href="ref_functions_deprecated.htm#RunApp">RunApp</a>, otherwise the 
+			new defaultsettings you provide are not used. VSYNC is default ON by OpenGL design. It can be
+			switched off with this function but if the driversettings in the registry are set otherwise, it might not
+			work. This is especially the case with nVidia drivers. The nVidia drivers for TNT and TNT2 turn VSYNC on, but
+			if a user changes these settings, there is no way to overrule these settings from code.
+			<h3>See also</h3>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="RegisterEffect">&nbsp;</a>
+			<b>RegisterEffect</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;RegisterEffect(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>CEffect</b> <i>*pEffectObject</i><br>
+			<b>const char</b> <i>*sEffectName</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Registers an effectobject with DemoGL. It's then usable and referable by the name <i>sEffectName</i>.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*pEffectObjeect</b>
+				<dd>This is a pointer to an effectobject that is derived from the baseclass CEffect.
+				To get an effectobject you programmed into the scheduler and to get it up and running you have to register
+				it with DemoGL by using this function.
+				<dt><b>*sEffectName</b>
+				<dd>This is a unique name for the effectobject you want to register. With this name you can refer to the
+				effect in your script to define timeline events and 
+				to control the execution of the effect.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			Be sure the effectname is unique throughout your application. This means that no 2 effects may have
+			the same name. If 2 or more effects have the same name, script execution is undefined. The names are case-sensitive.
+			<h3>See also</h3>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="RunApp">&nbsp;</a>
+			<b>RunApp</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;RunApp(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>HINSTANCE</b> <i>hInstance</i><br>
+			<b>const char</b> <i>*sWindowTitle</i><br>
+			<b>bool</b> <i>bUseCrypting</i><br>
+			<b>unsigned char</b> <i>byKey1</i><br>
+			<b>unsigned char</b> <i>byKey2</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Starts the application.
+			<h3>Parameters</h3>
+			<dl>
+ 				<dt><b>hInstance</b>
+				<dd>This is the hInstance variable you received from your WinMain function.
+				<dt><b>*sWindowTitle</b>
+				<dd>This string will appear as windowtitle if the application is started windowed by the user.</dd>             
+				<dt><b>bUseCrypting</b>
+				<dd>This boolean variable is used to tell DemoGL to decrypt all files (if bUseCrypting is <i>true</i>)
+	            or to not use decrypting.
+	            <dt><b>byKey1</b>
+	            <dd>First key for the decrypting algorithm. Is ignored if bUseCrypting is <i>false</i>. Has to be
+	            between 1 and 255, 255 included, and obviously the Key1 parameter you used when you crypted the
+	            files with Cryde.
+	            <dt><b>byKey2</b>
+	            <dd>Second key for the decrypting algorithm. Is ignored if bUseCrypting is <i>false</i>. Has to be
+	            between 1 and 255, 255 included, and obviously the Key2 parameter you used when you crypted the
+	            files with Cryde.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>This 
+			function starts the application and won't return until the application is terminated by the
+			user or ended by the script. Therefore, you should have set up and registered everything you
+			want <i>before</i> you call this function. 
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#EndApp">EndApp</a>, <a href="ref_functions_deprecated.htm#OverruleDefaults">OverruleDefaults</a>
+			<a href="ref_functions_deprecated.htm#SetStartupDialogVars">SetStartupDialogVars</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="SetbSwapBuffers">&nbsp;</a>
+			<b>SetbSwapBuffers</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;SetbSwapBuffers(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>bool</b> <i>bYN</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Enables/disables the swapping of the front- and backbuffer.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>bYN</b>
+				<dd>If <i>true</i>, the front- and backbuffer will be swapped at VSYNC or, when you
+				disabled that, when OpenGL thinks it's ready, using the function SwapBuffers(). If <i>false</i>, this swapping
+				is disabled, and you can use the backbuffer for example to render bitmaps you can upload as texture
+				using <a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a>. 
+		        This way, the user won't see your pre-rendering in the backbuffer. 
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			Use this with <a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a>. Remember, when
+			you switched off bufferswapping, and you want to have animation again, you have to turn it back on. &quot;Well, DUH!&quot;
+			will gorgle from some mouths, but how obvious it might seem, there probably will be a day you make this mistake too ;)
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="SetStartupDialogVars">&nbsp;</a>
+			<b>SetStartupDialogVars</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;SetStartupDialogVars(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>const char</b> <i>*sDemoName</i><br>
+			<b>const char</b> <i>*sCreators</i><br>
+			<b>bool</b> <i>bFullScreen</i><br>
+			<b>int</b> <i>iResolution</i><br>
+			<b>bool</b> <i>bDisplay32bpp</i><br>
+			<b>bool</b> <i>bTexture32bpp</i><br>
+			<b>bool</b> <i>bSound</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Sets the values of the various controls in the startup dialog of a DemoGL powered application.
+			It overrules the bare defaults for the startup dialog, defined inside DemoGL. You set the
+			values of the controls when the dialog opens. 
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>*sDemoName</b>
+				<dd>This string will appear in the textbox <i>Title</i> in the opening dialog.
+				<dt><b>*sCreators</b>
+				<dd>This string will appear in the textbox <i>Released by</i> in the opening dialog.
+				<dt><b>bFullScreen</b>
+				<dd>This is the value for the <i>Appearance</i> radio button group. If <i>true</i>
+				Full Screen will be selected, if <i>false</i>, Windowed will be selected.
+				<dt><b>iResolution</b>
+				<dd>This is the parameter that will select one of the supported resolutions in the startup
+				dialog. Can be <i>RES1024x768</i>, <i>RES640x480</i> or <i>RES800x600</i>. 
+				If iResolution is RES1024x768, 1024x768 will be selected.
+				If iResolution is RES800x600, 800x600 will be selected.
+				If iResolution is RES640x480, ... guess what ..., 640x480 will be selected. 
+				<dt><b>bDisplay32bpp</b>
+				<dd>This is the value for the <i>Display Quality</i> radio button group. If <i>true</i> 32bit
+				will be selected. If <i>false</i>, 16bit will be selected.
+				<dt><b>bTexture32bpp</b>
+				<dd>This is the value for the <i>Texture Quality</i> radio button group. If <i>true</i> 32bit
+				will be selected. If <i>false</i>, 16bit will be selected.
+				<dt><b>bSound</b>
+				<dd>This is the value for the <i>Sound</i> radio button group. If <i>true</i> Yes will be selected.
+				If <i>false</i> No will be selected.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			This function is called before <a href="ref_functions_deprecated.htm#RunApp">RunApp</a>. It sets the several controls on the startup dialog to
+			the values passed. The startup dialog will show when you call <a href="ref_functions_deprecated.htm#RunApp">RunApp</a>.
+			Allways use this function, because with this function you can set the Title and the Released by
+			textboxes in the dialog. The dialog will show when you call <a href="ref_functions_deprecated.htm#RunApp">RunApp</a>.
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#RunApp">RunApp</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="UnUploadTexture">&nbsp;</a>
+			<b>UnUploadTexture</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;UnUploadTexture(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>int</b> <i>iTextureName</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Deletes a texture with the number iTextureName from OpenGL's texturememory and thus from the
+			3D card's texturememory. 
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>iTextureName</b>
+				<dd>This parameter is the number you received from one of the three texture creation functions 
+				<a href="ref_functions_deprecated.htm#CreateTextureFromBuffer">CreateTextureFromBuffer</a>, 
+				<a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a> and
+				<a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>. It is called a <i>name</i> because
+				OpenGL uses these numbers as <i>names</i> to refer to OpenGL textureobjects. DemoGL 
+				hides this fuzz for you. All you need to know about a texture is its 
+				IdentName/Filename when you create the textureobject at DemoGL and the 
+				number you receive from one of the three texture creation functions 
+				mentioned above, when you want to do an action with the texture, like 
+				using it, deleting it or (un)uploading it.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			The DemoGL texturemanagement has 2 stages: first the texture is loaded into core memory, and
+			in the second stage the texture is uploaded to the OpenGL texturememory. OpenGL will accept any
+			number of textures and will decide for itself which textures are uploaded dedicatedly to the 3D card's
+			memory. Because this memory is limited to 16MB or 32MB or, if you are lucky, even larger, it might happen that
+			OpenGL has more textures to store on the card than the card can handle. If you don't need a texture
+			at a certain time, you can UNUPLOAD this texture from the OpenGL texturememory. It still resides in
+			core memory and can be re-uploaded, but it's not in the way of textures that are needed at that certain
+			time. You don't have to use this function and let OpenGL take care of the texturemanagement to the
+			card, but you can't control it. Basicly the OpenGL texturemanagement is based on usage of the texture,
+			but for you this might not be efficient. 
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#UploadTexture">UploadTexture</a>, <a href="ref_functions_deprecated.htm#CreateTextureFromBuffer">CreateTextureFromBuffer</a>, 
+			<a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a>, <a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>,
+			<a href="ref_functions_deprecated.htm#DeleteTexture">DeleteTexture</a>
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" NOWRAP>&nbsp;<br><br><br></td>
+</tr>	
+<tr bgcolor="#bcd1e6">
+	<td colspan="3">
+		<font face="arial" size="2">
+			<a name="UploadTexture">&nbsp;</a>
+			<b>UploadTexture</b>
+		</font>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<br>
+		<code>		
+			<b>void&nbsp;&nbsp;UploadTexture(</b>
+		</code>
+	</td>
+</tr>
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td width="560">
+		<code>		
+			<b>int</b> <i>iTextureName</i><br>
+		</code>
+	</td>
+</tr>	
+<tr bgcolor="#f4f2f4">
+	<td width="20" NOWRAP>&nbsp;</td>
+	<td colspan="2">
+		<code>		
+			<b>);</b>
+		</code>
+	</td>
+</tr>
+<tr>
+	<td colspan="3">
+		<font face="arial" size="2">
+			<br>
+			<h3>Synopsys</h3>
+			Uploads a texture with the number iTextureName to OpenGL's texturememory. It's then usable for
+			texturing primitives.
+			<h3>Parameters</h3>
+			<dl>
+				<dt><b>iTextureName</b>
+				<dd>This parameter is the number you received from one of the three texture creation functions 
+				<a href="ref_functions_deprecated.htm#CreateTextureFromBuffer">CreateTextureFromBuffer</a>, 
+				<a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a> and
+				<a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>. It's called a <i>name</i> because
+				OpenGL uses these numbers as <i>names</i> to refer to OpenGL textureobjects. DemoGL 
+				hides this fuzz for you. All you need to know about a texture is it's 
+				IdentName/Filename when you create the textureobject at DemoGL and the 
+				number you receive from one of the three texture creation functions 
+				mentioned above, when you want to do an action with the texture, like 
+				using it, deleting it or (un)uploading it.
+			</dl>
+			<h3>Returnvalue(s)</h3>
+			None.
+			<h3>Remarks</h3>
+			When the texture is loaded into DemoGL, it has to be uploaded to OpenGL to be usable 
+			for texturing. This function creates with OpenGL an OpenGL TextureObject and defines several parameters you
+			have specified with one of the 3 texture creation functions. OpenGL then takes care of the transport
+			to the 3D hardware of the texture. After you've called this function with a certain loaded texture,
+			you can use this texture for texturing primitives. This is not limited to a certain effectobject.
+			The textures are globally defined <i>inside</i> OpenGL when uploaded, and thus when you upload a
+			texture T in effectobject A, you can also use it in effectobject B, until you
+			<a href="ref_functions_deprecated.htm#UnUploadTexture">un-upload</a> the texture or 
+			<a href="ref_functions_deprecated.htm#DeleteTexture">delete</a> it. 
+			<h3>See also</h3>
+			<a href="ref_functions_deprecated.htm#UnUploadTexture">UnUploadTexture</a>, <a href="ref_functions_deprecated.htm#CreateTextureFromBuffer">CreateTextureFromBuffer</a>, 
+			<a href="ref_functions_deprecated.htm#CreateTextureFromFBRegion">CreateTextureFromFBRegion</a>, <a href="ref_functions_deprecated.htm#LoadTexture">LoadTexture</a>,
+			<a href="ref_functions_deprecated.htm#DeleteTexture">DeleteTexture</a>			
+		</font>
+	</td>
+</tr>
+<tr>
+	<td colspan="3" align="middle">
+		<font face="arial" size="1">
+			<br><br>
+			<i>Last revisited on 22nd of January 2001</i><br>
+			<hr width="200" size="2">
+			© 1999-2001 <a href="http://www.sd.nl">Solutions Design</a>
+		</font>
+	</td>
+</tr>
+</table>
+</body>
+</html>

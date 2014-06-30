@@ -1,0 +1,106 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemSetChannelAttributes</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemSetChannelAttributes</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemSetChannelAttributes</h4>
+<dd>DEMOGL_SoundSystemSetChannelAttributes sets attributes like volume, panning and frequency of the given channel. Will not have
+	any effect on channels playing data owned by elements which are loaded with 3D enabled. Use
+	<a HREF="ref_functions_DEMOGL_SoundSystemSetChannel3DAttributes.htm" target="main">DEMOGL_SoundSystemSetChannel3DAttributes</a>
+	for those channels. DemoGL uses logaritmic scaling for volumes and pans.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemSetChannelAttributes(
+	<b>const int</b> <i>iChannelCodeID</i>, 
+	<b>const int</b> <i>iVolume</i>, 
+	<b>const int</b> <i>iPan</i>, 
+	<b>const int</b> <i>iFrequency</i>, 
+	<b>const int</b> <i>iWhat</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iChannelCodeID</i>
+	<dd>Specifies the ChannelCodeID of the channel which attributes should be set.
+	<dt><i>iVolume</i>
+	<dd>Specifies the volume of the sound the channel produces. Values have to fall in the range [0, 100], with
+		0 is total silence and 100 is maximum volume. When -1 is specified the current volume value is left untouched, 
+		but this is not necessary, just set <i>iWhat</i> to the right value.
+	<dt><i>iPan</i>
+	<dd>Specifies the panning of the channel in 2D. Values have to fall in the range [-100, 100], with -100 will place
+		the channel totally on the left speaker and 100 will place the channel totally on the right speaker. When -101 is
+		specified the current panning value for this channel is left untouched, but this is not necessary, just set <i>iWhat</i>
+		to the right value.
+	<dt><i>iFrequency</i>
+	<dd>The frequency of the output of the channel. Values have to fall in the range [100, 100000] with 100 the minimum
+		value and 100000 the maximum value. When 0 is specified the original frequency of the channel when it was created
+		is restored. When -1 is specified, the current value for the frequency is left untouched, but this is not necessary, just set <i>iWhat</i>
+		to the right value.
+		This value is not recommended for DGL_SS_MP3ELEMENT and DGL_SS_MODELEMENT sound element based channels.
+	<dt><i>iWhat</i>
+	<dd>Specifies what to update of the attributes passed. <i>iWhat</i> is a collection of one or more of these values:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>iWhat value</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_SA_FREQUENCY</td>
+			<td WIDTH="70%" VALIGN="TOP">Set frequency with the value in <i>iFrequency</i></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_SA_VOLUME</td>
+			<td WIDTH="70%" VALIGN="TOP">Set volume with the value in <i>iVolume</i></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_SA_PAN</td>
+			<td WIDTH="70%" VALIGN="TOP">Set panning with the value in <i>iPan</i></td>
+		</tr>
+		</table>
+		<p>
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns <i>SYS_NOK</i>.
+	<p>
+<dt><b>Remarks.</b>
+<dd>This function will only have effect when the element which owns the data playing on the channel is loaded with 3D enabled.
+<p>
+<dt><b>Example.</b>
+<dd><pre>
+// Set frequency of channel with id iChannelCodeID to frequency 44100hz and pan
+// to the total right.
+iResult = DEMOGL_SoundSystemSetChannelAttributes(
+		iChannelCodeID, -1, 100, 44100, DGL_SS_SA_FREQUENCY | DGL_SS_SA_PAN);
+</pre>
+<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_SoundSystemSetChannel3DAttributes.htm" target="main">DEMOGL_SoundSystemSetChannel3DAttributes</a>,
+	<a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 18-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

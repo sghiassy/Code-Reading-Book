@@ -1,0 +1,148 @@
+
+     _________________________________________________________________
+   
+  TAO's CORBA Object Services Directory Hierarchy
+  
+   The file and directory organization for TAO services can be confusing
+   at first glance (and even on subsequent ones to be honest), so we felt
+   like some rationale and explanation of the directory hierarchy was
+   needed.
+   
+   For general sanity all TAO services files are located under
+   $TAO_ROOT/orbsvcs.
+   
+   It is expected that clients use more than one service at the same time
+   (in fact some of the services already do, for instance the Event
+   Service uses the Naming Service and the Scheduling Service). For this
+   reason all the services stubs are grouped in one library. This library
+   is located in $TAO_ROOT/orbsvcs/orbsvcs. Usually the include path is
+   only $TAO_ROOT/orbsvcs, so files are included like this:
+   
+   #include "orbsvcs/CosNamingC.h"
+   
+   To simplify the IDL generation the skeletons are also on the library,
+   this is not a problem for client programs and most services need to
+   link the library anyway (since they use other services.) Further, the
+   current support for collocation requires that clients link the
+   skeleton files anyway.
+   
+   In the future we intend to use ACE Service Configurator to give the
+   users control over collocation of the services implementation. As a
+   first cut all the service implementations are included in the orbsvcs
+   library $TAO_ROOT/orbsvcs/orbsvcs. Since there are serveral services
+   and each one is implemented using several files we have given a
+   different directory to each service. This structure could also
+   simplify a future split into several libraries (if it proves
+   necessary).
+   
+   The complete list of directories is:
+   
+   Service Implementation Sub-directory
+   A/V Streams Service orbsvcs/AV
+   Concurrency Service orbsvcs/Concurrency
+   Event Service orbsvcs/CosEvent
+   Real-time Event Service orbsvcs/Event
+   LifeCycle Service orbsvcs/LifeCycle
+   Load Balancing Service orbsvcs/LoadBalancing
+   Logging Service orbsvcs/Log
+   Naming Service orbsvcs/Naming
+   Property Service orbsvcs/Property
+   Scheduling Service orbsvcs/Sched
+   Security Service orbsvcs/Security
+   SSLIOP Pluggable Protocol orbsvcs/SSLIOP
+   Trading Service orbsvcs/Trader
+   Time Service orbsvcs/Time
+   Notification Service orbsvcs/Notify
+   
+   Note that in the current version of TAO we still have standalone
+   binaries for some of the services. However, some applications may want
+   to control what process implements a particular service. Therefore, it
+   has proved useful for debugging purposes to keep the most used
+   services separated. The binaries in question are located in
+   $TAO_ROOT/orbsvcs, and the list includes:
+   
+     * Concurrenty_Service
+     * Dump_Schedule
+     * LifeCycle_Service
+     * LoadBalancer
+     * CosEvent_Service
+     * Event_Service
+     * Naming_Service
+     * Scheduling_Service
+     * Trading_Service
+     * Time_Service
+     * ImplRepo_Service *(see below)*
+     * Notify_Service
+       
+   In the future we plan to use a single binary and ACE Service
+   Configurator and keep a single binary.
+   
+   The Implementation Repository is a unique service in that it starts
+   server executables, and it doesn't make sense to collocate it in
+   another server. Because of this, only the IDL files are located in
+   $TAO_ROOT/orbsvcs/orbsvcs. The other files are all located in
+   $TAO_ROOT/orbsvcs/ImplRepo_Service.
+   
+   Finally the tests and example programs are located in
+   $TAO_ROOT/orbsvcs/tests; once more each may involve more than a single
+   binary, so each one is kept in its own directory; the following list
+   describes the contents of each one:
+   
+   Test directory Purpose
+   AVStreams A complete A/V server and client.
+   Concurrency Test the Concurrency Service.
+   CosEC_Basic Test the basic functionality of the standard Event
+   Service.
+   CosEC_Multiple Simple example that connects multiple consumers and/or
+   suppliers to the standard event service. It can be used to show how
+   composing a standard event-service and the real-time event service
+   provides filtering capabilities.
+   EC_Basic Test the basic functionality of the real-time Event Service.
+   EC_Custom_Marshal Show how the Real-time event service can send user
+   defined data using custom marshaling.
+   EC_Mcast Multiple real-time event channels can communicate using
+   multicast, this example shows how to do it.
+   EC_Multiple Connect two Real-time Event Channels using the EC_Gateway,
+   measure latency, utilization and minimum spacing.
+   EC_Throughput Measure throughput and latency for collocated and remote
+   real-time event services.
+   Event_Latency Test the Real-time Event Service and measure end-to-end
+   latency, it also uses the Scheduling and Naming services.
+   ImplRepo Tests used to test the functionality of the Implementation
+   Repository Service.
+   LoadBalancing Test that exercises the Load Balancing service.
+   Logger An example logging service using the Naming Service to locate a
+   factory.
+   Naming This is an obsolete directory.
+   Property Testing for the Property Service.
+   Sched A test of the Scheduling Service.
+   Security Tests that verify that the Security Service is functioning
+   properly. Tests for auxiliary Security Service components such as the
+   SSLIOP pluggable protocol also exist in this directory.
+   Simple_Naming A number of Naming Service tests: from very simple to
+   more fancy.
+   Simulator Prototype implementation of DOVE (DOVE Agent, DOVE Browser,
+   DOVE MIB, DOVE Application). The DOVE Agent consists of the Event
+   Channel, which is then connected to a DOVE Browser implemented in
+   Java.
+   Trading Tests for the Trading Service.
+   Time A test for the Time Service.
+   Notify Consists of basic tests foe the Notification Service - Simple
+   event transfer, client Connect-Disconnect to event channel, creating
+   and destroying channel/admin objects,test for Admin properties, test
+   to check offer/subscription changes. The directory also has
+   performance tests for throughput.
+   
+SEE ALSO
+
+   You may you to check TAO [1]release notes for up to date information
+   on status, changes, future work, etc.
+     _________________________________________________________________
+   
+   
+    [2]Carlos O'Ryan
+
+References
+
+   1. file://localhost/tmp/ACE_wrappers_stage-11052/ACE_wrappers/TAO/docs/releasenotes/index.html
+   2. mailto:coryan@macarena.cs.wustl.edu

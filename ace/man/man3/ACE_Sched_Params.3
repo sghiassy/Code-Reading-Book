@@ -1,0 +1,156 @@
+.TH ACE_Sched_Params 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Sched_Params \- Container for scheduling-related parameters. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Sched_Params.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef int \fBPolicy\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Sched_Params\fR (const \fBPolicy\fR policy, const \fBACE_Sched_Priority\fR priority, const int scope = ACE_SCOPE_THREAD, const \fBACE_Time_Value\fR &quantum = \fBACE_Time_Value::zero\fR)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fB~ACE_Sched_Params\fR (void)"
+.br
+.RI "\fITermination.\fR"
+.ti -1c
+.RI "\fBPolicy\fR \fBpolicy\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBpolicy\fR (const \fBPolicy\fR)"
+.br
+.ti -1c
+.RI "\fBACE_Sched_Priority\fR \fBpriority\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBpriority\fR (const \fBACE_Sched_Priority\fR)"
+.br
+.ti -1c
+.RI "int \fBscope\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBscope\fR (const int)"
+.br
+.ti -1c
+.RI "const \fBACE_Time_Value\fR& \fBquantum\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBquantum\fR (const \fBACE_Time_Value\fR &)"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBpriority_min\fR (const \fBPolicy\fR, const int scope = ACE_SCOPE_THREAD)"
+.br
+.ti -1c
+.RI "int \fBpriority_max\fR (const \fBPolicy\fR, const int scope = ACE_SCOPE_THREAD)"
+.br
+.ti -1c
+.RI "int \fBnext_priority\fR (const \fBPolicy\fR, const int priority, const int scope = ACE_SCOPE_THREAD)"
+.br
+.ti -1c
+.RI "int \fBprevious_priority\fR (const \fBPolicy\fR, const int priority, const int scope = ACE_SCOPE_THREAD)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBPolicy\fR \fBpolicy_\fR"
+.br
+.RI "\fIScheduling policy.\fR"
+.ti -1c
+.RI "\fBACE_Sched_Priority\fR \fBpriority_\fR"
+.br
+.RI "\fIDefault <priority_>: for setting the priority for the process, LWP, or thread, as indicated by the scope_ parameter.\fR"
+.ti -1c
+.RI "int \fBscope_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBquantum_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Container for scheduling-related parameters.
+.PP
+.PP
+ ACE_Sched_Params are passed via  to the OS to specify scheduling parameters. These parameters include scheduling policy, such as FIFO (ACE_SCHED_FIFO), round-robin (ACE_SCHED_RR), or an implementation-defined "OTHER" (ACE_SCHED_OTHER), to which many systems default; priority; and a time-slice quantum for round-robin scheduling. A "scope" parameter specifies whether the ACE_Sched_Params applies to the current process, current lightweight process (LWP) (on Solaris), or current thread. Please see the "NOTE" below about not all combinations of parameters being legal on a particular platform. For the case of thread priorities, it is intended that  usually be called from <main> before any threads have been spawned. If spawned threads inherit their parent's priority (I think that's the default behavior for all of our platforms), then this sets the default base priority. Individual thread priorities can be adjusted as usual using  or via the \fBACE_Thread\fR interface. See the parameter descriptions in the private: section below. NOTE: this class does not do any checking of parameters. It is just a container class. If it is constructed with values that are not supported on a platform, the call to  will fail by returning -1 with EINVAL (available through ). 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef int ACE_Sched_Params::Policy
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Sched_Params::ACE_Sched_Params (const \fBPolicy\fR policy, const \fBACE_Sched_Priority\fR priority, const int scope = ACE_SCOPE_THREAD, const \fBACE_Time_Value\fR & quantum = \fBACE_Time_Value::zero\fR)
+.PP
+Constructor.
+.PP
+.SS ACE_Sched_Params::~ACE_Sched_Params (void)
+.PP
+Termination.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Sched_Params::next_priority (const Policy, const int priority, const int scope = ACE_SCOPE_THREAD)\fC [static]\fR
+.PP
+The next higher priority. "Higher" refers to scheduling priority, not to the priority value itself. (On some platforms, higher scheduling priority is indicated by a lower priority value.) If "priority" is already the highest priority (for the specified policy), then it is returned. 
+.SS void ACE_Sched_Params::policy (const Policy)
+.PP
+.SS \fBPolicy\fR ACE_Sched_Params::policy (void) const
+.PP
+.SS int ACE_Sched_Params::previous_priority (const Policy, const int priority, const int scope = ACE_SCOPE_THREAD)\fC [static]\fR
+.PP
+The previous, lower priority. "Lower" refers to scheduling priority, not to the priority value itself. (On some platforms, lower scheduling priority is indicated by a higher priority value.) If "priority" is already the lowest priority (for the specified policy), then it is returned. 
+.SS void ACE_Sched_Params::priority (const ACE_Sched_Priority)
+.PP
+.SS \fBACE_Sched_Priority\fR ACE_Sched_Params::priority (void) const
+.PP
+.SS int ACE_Sched_Params::priority_max (const Policy, const int scope = ACE_SCOPE_THREAD)\fC [static]\fR
+.PP
+.SS int ACE_Sched_Params::priority_min (const Policy, const int scope = ACE_SCOPE_THREAD)\fC [static]\fR
+.PP
+.SS void ACE_Sched_Params::quantum (const \fBACE_Time_Value\fR &)
+.PP
+.SS const \fBACE_Time_Value\fR& ACE_Sched_Params::quantum (void) const
+.PP
+.SS void ACE_Sched_Params::scope (const int)
+.PP
+.SS int ACE_Sched_Params::scope (void) const
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBPolicy\fR ACE_Sched_Params::policy_\fC [private]\fR
+.PP
+Scheduling policy.
+.PP
+.SS \fBACE_Sched_Priority\fR ACE_Sched_Params::priority_\fC [private]\fR
+.PP
+Default <priority_>: for setting the priority for the process, LWP, or thread, as indicated by the scope_ parameter.
+.PP
+.SS \fBACE_Time_Value\fR ACE_Sched_Params::quantum_\fC [private]\fR
+.PP
+The <quantum_> is for time slicing. An \fBACE_Time_Value\fR of 0 has special significance: it means time-slicing is disabled; with that, a thread that is running on a CPU will continue to run until it blocks or is preempted. Currently ignored if the OS doesn't directly support time slicing, such as on VxWorks, or setting the quantum (can that be done on Win32?). 
+.SS int ACE_Sched_Params::scope_\fC [private]\fR
+.PP
+<scope_> must be one of the following: ACE_SCOPE_PROCESS: sets the scheduling policy for the process, and the process priority. On some platforms, such as Win32, the scheduling policy can _only_ be set at process scope. ACE_SCOPE_LWP: lightweight process scope, only used with Solaris threads. ACE_SCOPE_THREAD: sets the scheduling policy for the thread, if the OS supports it, such as with Posix threads, and the thread priority. NOTE: I don't think that these are the same as POSIX contention scope. POSIX users who are interested in, and understand, contention scope will have to set it by using system calls outside of \fBACE\fR. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

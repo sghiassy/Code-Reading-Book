@@ -1,0 +1,296 @@
+.TH ACE_Stream 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Stream \- This class is the primary abstraction for the ASX framework. It is moduled after System V Stream. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Stream.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBM_DELETE\fR = 3 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Stream\fR (void *arg = 0, \fBACE_Module\fR<ACE_SYNCH_USE> *head = 0, \fBACE_Module\fR<ACE_SYNCH_USE> *tail = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBopen\fR (void *arg, \fBACE_Module\fR<ACE_SYNCH_USE> *head = 0, \fBACE_Module\fR<ACE_SYNCH_USE> *tail = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBclose\fR (int flags = M_DELETE)"
+.br
+.RI "\fIClose down the stream and release all the resources.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Stream\fR (void)"
+.br
+.RI "\fIClose down the stream and release all the resources.\fR"
+.ti -1c
+.RI "virtual int \fBpush\fR (\fBACE_Module\fR<ACE_SYNCH_USE> *mod)"
+.br
+.RI "\fIAdd a new module <mod> right below the Stream head.\fR"
+.ti -1c
+.RI "virtual int \fBpop\fR (int flags = M_DELETE)"
+.br
+.RI "\fIRemove the <mod> right below the Stream head and close it down.\fR"
+.ti -1c
+.RI "virtual int \fBtop\fR (\fBACE_Module\fR<ACE_SYNCH_USE> *&mod)"
+.br
+.RI "\fIReturn the top module on the stream (right below the stream head).\fR"
+.ti -1c
+.RI "virtual int \fBinsert\fR (const \fBACE_TCHAR\fR *prev_name, \fBACE_Module\fR<ACE_SYNCH_USE> *mod)"
+.br
+.RI "\fIInsert a new module <mod> below the named module <prev_name>.\fR"
+.ti -1c
+.RI "virtual int \fBreplace\fR (const \fBACE_TCHAR\fR *replace_name, \fBACE_Module\fR<ACE_SYNCH_USE> *mod, int flags = M_DELETE)"
+.br
+.RI "\fIReplace the named module <replace_name> with a new module <mod>.\fR"
+.ti -1c
+.RI "virtual int \fBremove\fR (const \fBACE_TCHAR\fR *mod, int flags = M_DELETE)"
+.br
+.RI "\fIRemove the named module <mod> from the stream. This bypasses the strict LIFO ordering of <push> and <pop>.\fR"
+.ti -1c
+.RI "virtual \fBACE_Module\fR<ACE_SYNCH_USE>* \fBhead\fR (void)"
+.br
+.RI "\fIReturn current stream head.\fR"
+.ti -1c
+.RI "virtual \fBACE_Module\fR<ACE_SYNCH_USE>* \fBtail\fR (void)"
+.br
+.RI "\fIReturn current stream tail.\fR"
+.ti -1c
+.RI "virtual \fBACE_Module\fR<ACE_SYNCH_USE>* \fBfind\fR (const \fBACE_TCHAR\fR *mod)"
+.br
+.RI "\fIFind a particular \fBACE_Module\fR.\fR"
+.ti -1c
+.RI "virtual int \fBlink\fR (ACE_Stream<ACE_SYNCH_USE> &)"
+.br
+.RI "\fICreate a pipe between two Streams.\fR"
+.ti -1c
+.RI "virtual int \fBunlink\fR (void)"
+.br
+.RI "\fIRemove a pipe formed between two Streams.\fR"
+.ti -1c
+.RI "virtual int \fBput\fR (\fBACE_Message_Block\fR *mb, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBget\fR (\fBACE_Message_Block\fR *&mb, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBcontrol\fR (\fBACE_IO_Cntl_Msg::ACE_IO_Cntl_Cmds\fR cmd, void *args)"
+.br
+.RI "\fISend control message down the stream.\fR"
+.ti -1c
+.RI "virtual int \fBwait\fR (void)"
+.br
+.RI "\fISynchronize with the final close of the stream.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBunlink_i\fR (void)"
+.br
+.RI "\fIActually perform the unlinking of two Streams (must be called with locks held).\fR"
+.ti -1c
+.RI "int \fBlink_i\fR (ACE_Stream<ACE_SYNCH_USE> &)"
+.br
+.RI "\fIActually perform the linking of two Streams (must be called with locks held).\fR"
+.ti -1c
+.RI "int \fBpush_module\fR (\fBACE_Module\fR<ACE_SYNCH_USE> *, \fBACE_Module\fR<ACE_SYNCH_USE> * = 0, \fBACE_Module\fR<ACE_SYNCH_USE> * = 0)"
+.br
+.RI "\fIMust a new module onto the Stream.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Module\fR<ACE_SYNCH_USE>* \fBstream_head_\fR"
+.br
+.RI "\fIPointer to the head of the stream.\fR"
+.ti -1c
+.RI "\fBACE_Module\fR<ACE_SYNCH_USE>* \fBstream_tail_\fR"
+.br
+.RI "\fIPointer to the tail of the stream.\fR"
+.ti -1c
+.RI "ACE_Stream<ACE_SYNCH_USE>* \fBlinked_us_\fR"
+.br
+.RI "\fIPointer to an adjoining linked stream.\fR"
+.ti -1c
+.RI "ACE_SYNCH_MUTEX_T \fBlock_\fR"
+.br
+.RI "\fIProtect the stream against race conditions.\fR"
+.ti -1c
+.RI "ACE_SYNCH_CONDITION_T \fBfinal_close_\fR"
+.br
+.RI "\fIUse to tell all threads waiting on the close that we are done.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Stream_Iterator< ACE_SYNCH_USE >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_SYNCH_DECL>  template class ACE_Stream
+This class is the primary abstraction for the ASX framework. It is moduled after System V Stream.
+.PP
+.PP
+ A Stream consists of a stack of , each of which contains two . Even though the methods in this class are virtual, this class isn't really intended for subclassing unless you know what you are doing. In particular, the  destructor calls <close>, which won't be overridden properly unless you call it in a subclass destructor. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIM_DELETE\fR \fRIndicates that <close> deletes the Tasks. Don't change this value without updating the same enum in class \fBACE_Module\fR...
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Stream<>::ACE_Stream<> (void * arg = 0, \fBACE_Module\fR< ACE_SYNCH_USE >* head = 0, \fBACE_Module\fR< ACE_SYNCH_USE >* tail = 0)
+.PP
+Create a Stream consisting of  and <tail> as the Stream head and Stream tail, respectively. If these are 0 then the  and  are used, respectively.  is the value past in to the <open> methods of the tasks. 
+.SS template<ACE_SYNCH_DECL> ACE_Stream<>::~ACE_Stream<> (void)\fC [virtual]\fR
+.PP
+Close down the stream and release all the resources.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::close (int flags = M_DELETE)\fC [virtual]\fR
+.PP
+Close down the stream and release all the resources.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::control (\fBACE_IO_Cntl_Msg::ACE_IO_Cntl_Cmds\fR cmd, void * args)\fC [virtual]\fR
+.PP
+Send control message down the stream.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Stream<>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Module\fR< ACE_SYNCH_USE >* ACE_Stream<>::find (const \fBACE_TCHAR\fR * mod)\fC [virtual]\fR
+.PP
+Find a particular \fBACE_Module\fR.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::get (\fBACE_Message_Block\fR *& mb, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Read the message <mb> that is stored in the the stream head. Wait for upto <timeout> amount of absolute time for the operation to complete (or block forever if <timeout> == 0). 
+.SS template<ACE_SYNCH_DECL> \fBACE_Module\fR< ACE_SYNCH_USE >* ACE_Stream<>::head (void)\fC [virtual]\fR
+.PP
+Return current stream head.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::insert (const \fBACE_TCHAR\fR * prev_name, \fBACE_Module\fR< ACE_SYNCH_USE >* mod)\fC [virtual]\fR
+.PP
+Insert a new module <mod> below the named module <prev_name>.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::link (ACE_Stream< ACE_SYNCH_USE >&)\fC [virtual]\fR
+.PP
+Create a pipe between two Streams.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::link_i (ACE_Stream< ACE_SYNCH_USE >&)\fC [private]\fR
+.PP
+Actually perform the linking of two Streams (must be called with locks held).
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::open (void * arg, \fBACE_Module\fR< ACE_SYNCH_USE >* head = 0, \fBACE_Module\fR< ACE_SYNCH_USE >* tail = 0)\fC [virtual]\fR
+.PP
+Create a Stream consisting of  and <tail> as the Stream head and Stream tail, respectively. If these are 0 then the  and  are used, respectively.  is the value past in to the <open> methods of the tasks. 
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::pop (int flags = M_DELETE)\fC [virtual]\fR
+.PP
+Remove the <mod> right below the Stream head and close it down.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::push (\fBACE_Module\fR< ACE_SYNCH_USE >* mod)\fC [virtual]\fR
+.PP
+Add a new module <mod> right below the Stream head.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::push_module (\fBACE_Module\fR< ACE_SYNCH_USE >*, \fBACE_Module\fR< ACE_SYNCH_USE >* = 0, \fBACE_Module\fR< ACE_SYNCH_USE >* = 0)\fC [private]\fR
+.PP
+Must a new module onto the Stream.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::put (\fBACE_Message_Block\fR * mb, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Send the message <mb> down the stream, starting at the Module below the Stream head. Wait for upto <timeout> amount of absolute time for the operation to complete (or block forever if <timeout> == 0). 
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::remove (const \fBACE_TCHAR\fR * mod, int flags = M_DELETE)\fC [virtual]\fR
+.PP
+Remove the named module <mod> from the stream. This bypasses the strict LIFO ordering of <push> and <pop>.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::replace (const \fBACE_TCHAR\fR * replace_name, \fBACE_Module\fR< ACE_SYNCH_USE >* mod, int flags = M_DELETE)\fC [virtual]\fR
+.PP
+Replace the named module <replace_name> with a new module <mod>.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Module\fR< ACE_SYNCH_USE >* ACE_Stream<>::tail (void)\fC [virtual]\fR
+.PP
+Return current stream tail.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::top (\fBACE_Module\fR< ACE_SYNCH_USE >*& mod)\fC [virtual]\fR
+.PP
+Return the top module on the stream (right below the stream head).
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::unlink (void)\fC [virtual]\fR
+.PP
+Remove a pipe formed between two Streams.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::unlink_i (void)\fC [private]\fR
+.PP
+Actually perform the unlinking of two Streams (must be called with locks held).
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Stream<>::wait (void)\fC [virtual]\fR
+.PP
+Synchronize with the final close of the stream.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> class \fBACE_Stream_Iterator\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Stream<>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_SYNCH_CONDITION_T ACE_Stream<>::final_close_\fC [private]\fR
+.PP
+Use to tell all threads waiting on the close that we are done.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Stream< ACE_SYNCH_USE >* ACE_Stream<>::linked_us_\fC [private]\fR
+.PP
+Pointer to an adjoining linked stream.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_SYNCH_MUTEX_T ACE_Stream<>::lock_\fC [private]\fR
+.PP
+Protect the stream against race conditions.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Module\fR< ACE_SYNCH_USE >* ACE_Stream<>::stream_head_\fC [private]\fR
+.PP
+Pointer to the head of the stream.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Module\fR< ACE_SYNCH_USE >* ACE_Stream<>::stream_tail_\fC [private]\fR
+.PP
+Pointer to the tail of the stream.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

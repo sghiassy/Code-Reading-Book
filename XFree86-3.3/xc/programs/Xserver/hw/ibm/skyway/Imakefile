@@ -1,0 +1,86 @@
+XCOMM $XConsortium: Imakefile /main/11 1996/09/28 17:13:06 rws $
+
+#include <Server.tmpl>
+
+SRCS =	 	skyInfo.c	\
+		skyHdwr.c	\
+		skyCur.c        \
+		skySave.c       \
+		skyScrInit.c    \
+		skyCmap.c       \
+		skyProbe.c	\
+		skySGC.c	\
+		skyBitBlt.c	\
+		skyFillRct.c	\
+		skyWin.c	\
+		skyFill.c	\
+		copyword.s
+
+OBJS =	 	skyInfo.o       \
+		skyHdwr.o       \
+		skyCur.o        \
+		skySave.o       \
+		skyScrInit.o    \
+		skyCmap.o       \
+		skyProbe.o	\
+		skySGC.o	\
+		skyBitBlt.o	\
+		skyFillRct.o	\
+		skyWin.o	\
+		skyFill.o	\
+		copyword.o
+
+INCLUDES = -I../ -I../OPERATING_SYSTEM -I../../../mfb -I../../../cfb -I../../../include -I$(XINCLUDESRC) -I../common -I../../../mi -I$(FONTINCSRC) -I$(EXTINCSRC)
+STD_DEFINES = ServerDefines -DPSZ=8
+
+NormalRelocatableTarget(skyway,$(OBJS))
+
+#if ProfileServer
+ProfiledRelocatableTarget(skyway,$(OBJS))
+#endif
+#if DebugServer
+DebuggedRelocatableTarget(skyway,$(OBJS))
+#endif
+
+#if DebugServer && ProfileServer
+DebuggedAndProfiledLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@ debugger/$@ profiled/$@
+	$(CPP) $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(CP) $@ debugger/$@
+	$(CP) $@ profiled/$@
+	$(RM) -f m.s
+#else
+# if DebugServer
+DebuggedLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@ debugger/$@
+	$(CPP) $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(CP) $@ debugger/$@
+	$(RM) -f m.s
+# else
+#  if ProfileServer
+ProfiledLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@ profiled/$@
+	$(CPP) $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(CP) $@ profiled/$@
+	$(RM) -f m.s
+#  else
+NormalLibraryObjectRule()
+.s.o:
+	$(RM) -f m.s $@
+	$(CPP) -E $(CFLAGS) $*.s > m.s
+	$(AS) -o $@ m.s
+	$(RM) -f m.s
+#  endif
+# endif
+#endif
+
+DependTarget()
+
+LintLibraryTarget(skyway,$(SRCS))
+NormalLintTarget($(SRCS))

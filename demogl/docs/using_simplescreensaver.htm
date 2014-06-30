@@ -1,0 +1,245 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Creating a simple screensaver</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Creating a simple screensaver</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Creating a simple screensaver.</h4>
+Using DemoGL to create a win32 screensaver is almost as easy as using it for a normal win32 application. The best
+way to create a win32 screensaver with DemoGL is to create it as a win32 application and when you're completely 
+satisfied with the result, you add the extra lines of code to change your application into a screensaver and
+the screensaver can be compiled and run.
+<p>
+As the basis of the simple screensaver, we use the simple application created in <a HREF="using_simpleapplication.htm">Creating a simple application</a>.
+What Windows does when a screensaver is executed, is passing certain parameters on the commandline when calling the executable. In fact, a
+screensaver is just a normal .exe but with a different extension: .scr. A normal executable doesn't react on the screensaver commandline
+parameters and will not behave as a screensaver. DemoGL provides an easy way to determine which commandline parameters were passed and
+thus how to run the screensaver: as preview in the tiny preview window on the screensaver tab in Display Properties, as a normal screensaver when
+called by Windows when the timeout set on the screensaver tab in Display Properties or in configuration mode: when the user selects 'configure'
+in a popup menu or 'settings' on the screensaver tab in Display Properties. 
+<p>
+First, the commandline passed to the WinMain function should be passed and the parameters should be stored in a structure for further interpretation.
+The API function <a HREF="ref_functions_DEMOGL_ParseScreenSaverCL.htm">DEMOGL_ParseScreenSaverCL</a> is made for that:
+<pre>
+int APIENTRY 
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
+	LPSTR lpCmdLine, int nCmdShow)
+{
+	// ... other code
+
+	// Declaration of the structure, which will
+	// contain the parsed screensaver commandline
+	// parameters.
+	SScreenSaverCLParams	*pSSCLParams;
+	
+	int			iRunType;
+	
+	// ... other code
+	
+	// Parse commandline for screensaver exectype.
+	// lpCmdLine is a parameter of WinMain()
+	pSSCLParams=DEMOGL_ParseScreenSaverCL(lpCmdLine);
+
+	// Determine the runtype, using the parsed commandline
+	// parameters.	
+	switch(pSSCLParams-&gt;iSaverExecType)
+	{
+		case DGL_SSAVERET_CONFIG:
+		{
+			/////////////////////////
+			// Insert your own configwindow initialisation and 
+			// start up code HERE
+			/////////////////////////
+			iRunType=RUNTYPE_SAVER_CONFIG;
+		}; break;
+		case DGL_SSAVERET_NORMAL:
+		{
+			iRunType=RUNTYPE_SAVER_NORMAL;
+		}; break;
+		case DGL_SSAVERET_PREVIEW:
+		{
+			iRunType=RUNTYPE_SAVER_PREVIEW;
+		}; break;
+		default:
+		{
+			// should not run, unknown or unsupported screensaver type.
+			iRunType=RUNTYPE_UNKNOWN;	// will return immediately
+		}; break;
+	}
+
+	// we've now gathered enough information to run this application
+	// as a screensaver. Start the application as we did in the 
+	// application, now passing the iRunType variable
+	DEMOGL_AppRun(hInstance, &amp;sdStartupDatValues, &quot;DemoGL Example&quot;,
+		false,0,0,iRunType);
+
+	// ... other code
+}
+</pre>
+<p>
+These are the changes made to WinMain to make a normal application behave as a win32 screensaver. Because
+these changes are standard, you can just copy/paste them in every time you change your application into a 
+screensaver. The reason why there is a difference between the DGL_SSAVERET_* constants and the RUNTYPE_SAVER_*
+constants is that the RUNTYPE_SAVER_* are part of a larger collection than the DGL_SSAVERET_* constants and
+are semantically used for different things, that's why there are different constants defined and that's
+also the reason why DEMOGL_ParseScreenSaverCL doesn't return the RUNTYPE_SAVER_* type but the determined
+execution type of the screensaver. 
+<p>
+A screensaver should run forever and a DemoGL powered win32 application will most of the time end after a 
+predefined amount of time, due to the fact that all content is shown and the audiovisual experience is over.
+To make the win32 application loop, add a TLE at the end of the timeline so DemoGL will restart the application.
+This TLE should execute the RESTART command with the _SYSTEM object. See for more information the 
+<a HREF="ref_scriptsyntax_SYSTEM.htm">_SYSTEM script syntax</a>.
+<p>
+Below is the complete mydemo.cpp file, now modified to act like a screensaver.
+<pre>
+// mydemo.cpp file, which illustrates the basic code needed for 
+// a DemoGL application
+////////////////////////////////////////////////////////////////
+
+// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN	
+
+#include &lt;windows.h&gt;
+
+// include DemoGL headerfile
+#include &quot;DemoGL_DLL.h&quot;
+
+// Include all effect headers
+#include &quot;CSplash.h&quot;
+
+////////////////////////////////////////
+//         C O D E                    //
+////////////////////////////////////////
+
+// Purpose: main routine that is called when the 
+// application is started. 
+int APIENTRY 
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
+	LPSTR lpCmdLine, int nCmdShow)
+{
+	// declare pointers to all effects
+	CSplash			*pSplash;
+
+	// necessary objects and variables
+	SStartupDat		sdStartupDatValues;
+	SScreenSaverCLParams	*pSSCLParams;
+	int			iRunType;
+
+	// create objects of all effects
+	pSplash = new CSplash();
+
+	// set variables that will affect execution. We will
+	// load from a directory. For illustration purposes
+	// we set all variables to a certain value
+	DEMOGL_SetVariable(DGL_VF_VSYNC,true);
+	DEMOGL_SetVariable(DGL_VF_FILESRC,DGL_FSRC_LOADFROMDIR);
+	DEMOGL_SetVariable(DGL_VF_SRCDIR,&quot;demodat&quot;);
+	DEMOGL_SetVariable(DGL_VF_DATAFILENAME,NULL);
+	DEMOGL_SetVariable(DGL_VF_SCRIPTFILENAME,&quot;demoflow&quot;);
+	DEMOGL_SetVariable(DGL_VF_SHOWFPS,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERSHOWFPS,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERSHOWCONSOLE,false);
+	DEMOGL_SetVariable(DGL_VF_SHOWDEBUGINFO,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERSHOWDEBUGINFO,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERRESCALETEXTURES,false);
+	DEMOGL_SetVariable(DGL_VF_QUICKBOOT,false);
+
+	// Set the startup variables. Do that via a structure 
+	// that we'll pass to DEMOGL_AppRun() function
+	sdStartupDatValues.m_bDQ32bit=true;
+	sdStartupDatValues.m_bFullScreen=true;
+	sdStartupDatValues.m_bRescaleTextures=true;
+	sdStartupDatValues.m_bSaveInRegistry=true;
+	sdStartupDatValues.m_bTQ32bit=true;
+	sdStartupDatValues.m_iResolution=DGL_RES_800x600;
+	strncpy(sdStartupDatValues.m_sDemoName,&quot;My Demo&quot;,DGL_SD_STRINGLENGTH);
+	strncpy(sdStartupDatValues.m_sReleasedBy,&quot;Me, myself and I&quot;,
+		DGL_SD_STRINGLENGTH);
+	sdStartupDatValues.m_bSound=true;
+	sdStartupDatValues.m_bSS_3DSound=true;
+	sdStartupDatValues.m_bSS_LowQuality=false;
+	sdStartupDatValues.m_bSS_16bit=true;
+	sdStartupDatValues.m_bSS_A3D=false;
+	sdStartupDatValues.m_bSS_EAX=true;
+	sdStartupDatValues.m_bSS_Stereo=true;
+	sdStartupDatValues.m_iSS_OverallVolume=90;
+	sdStartupDatValues.m_iSS_SoundDevice=0;	
+
+	// register all effectobjects with DemoGL
+	DEMOGL_EffectRegister(pSplash, &quot;SPLASH&quot;);
+
+	// Enable loading progress bar. This example bar is located at 
+	// the bottom of the screen.
+	DEMOGL_LoadingPBEnable(DGL_CNTRL_PGB_LINEAR, 1.0f, 0.02f, 0.0f, 0.00f);
+	DEMOGL_LoadingPBSetAppearance(true, false, GL_SRC_COLOR, 
+		GL_ONE_MINUS_SRC_COLOR, 1.0f, 0.5f,0.5f,0.5f, 1.0f,1.0f,1.0f);
+
+	// Parse commandline for screensaver exectype.
+	// lpCmdLine is a parameter of WinMain()
+	pSSCLParams=DEMOGL_ParseScreenSaverCL(lpCmdLine);
+
+	// Determine the runtype, using the parsed commandline
+	// parameters.	
+	switch(pSSCLParams-&gt;iSaverExecType)
+	{
+		case DGL_SSAVERET_CONFIG:
+		{
+			/////////////////////////
+			// Insert your own configwindow initialisation and 
+			// start up code HERE
+			/////////////////////////
+			iRunType=RUNTYPE_SAVER_CONFIG;
+		}; break;
+		case DGL_SSAVERET_NORMAL:
+		{
+			iRunType=RUNTYPE_SAVER_NORMAL;
+		}; break;
+		case DGL_SSAVERET_PREVIEW:
+		{
+			iRunType=RUNTYPE_SAVER_PREVIEW;
+		}; break;
+		default:
+		{
+			// should not run, unknown or unsupported screensaver type.
+			iRunType=RUNTYPE_UNKNOWN;	// will return immediately
+		}; break;
+	}
+
+
+	// Start The Demo! We won't return until the demo ends (by 
+	// userinteraction or by script) or when a fatal error occurs.
+	DEMOGL_AppRun(hInstance, &amp;sdStartupDatValues, &quot;DemoGL Example&quot;, false,
+		0,0, iRunType);
+
+	// End it. Call this routine to signal demogl it's all over and it 
+	// should release claimed resources.
+	DEMOGL_AppEnd();
+
+	// delete all Effectobjects
+	delete pSplash;
+
+	// end.
+	return 0;
+}
+</pre>
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

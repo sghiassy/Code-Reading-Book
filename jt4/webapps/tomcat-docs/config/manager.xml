@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document>
+
+  &project;
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <title>The Manager Component</title>
+  </properties>
+
+<body>
+
+
+<section name="Introduction">
+
+  <p>The <strong>Manager</strong> element represents the <em>session
+  manager</em> that will be used to create and maintain HTTP sessions
+  as requested by the associated web application.</p>
+
+  <p>A Manager element MAY be nested inside a
+  <a href="context.html">Context</a> component.  If it is not included,
+  a default Manager configuration will be created automatically, which
+  is sufficient for most requirements.</p>
+
+</section>
+
+
+<section name="Attributes">
+
+  <subsection name="Common Attributes">
+
+    <p>All implementations of <strong>Manager</strong>
+    support the following attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="false">
+        <p>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.catalina.Manager</code> interface.
+        If not specified, the standard value (defined below) will be used.</p>
+      </attribute>
+
+      <attribute name="distributable" required="false">
+        <p>Set to <code>true</code> to ask the session manager to enforce
+        the restrictions described in the Servlet Specification on
+        distributable applications (primarily, this would mean that all
+        session attributes must implement <code>java.io.Serializable</code>).
+        Set to <code>false</code> (the default) to not enforce these
+        restrictions.</p>
+
+        <p><strong>NOTE</strong> - The value for this property is inherited
+        automatically based on the presence or absence of the
+        <code>&lt;distributable&gt;</code> element in the web application
+        deployment descriptor (<code>/WEB-INF/web.xml</code>).</p>
+      </attribute>
+
+      <attribute name="maxInactiveInterval" required="false">
+        <p>The default maximum inactive interval (in minutes) for Sessions
+        created by this Manager.  If not specified, the default value is
+        sixty (60) minutes.</p>
+
+        <p><strong>NOTE</strong> - The value for this property is inherited
+        automatically if you specify a <code>&lt;session-timeout&gt;</code>
+        element in the web application deployment descriptor
+        (<code>/WEB-INF/web.xml</code>).</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+
+  <subsection name="Standard Implementation">
+
+    <p>The standard implementation of <strong>Manager</strong> is
+    <strong>org.apache.catalina.session.StandardManager</strong>.
+    It supports the following additional attributes (in addition to the
+    common attributes listed above):</p>
+
+    <attributes>
+
+      <attribute name="algorithm" required="false">
+        <p>Name of the <em>Message Digest</em> algorithm used to calculate
+        session identifiers produced by this Manager.  This value must
+        be supported by the <code>java.security.MessageDigest</code> class.
+        If not specified, the default value is "MD5".</p>
+      </attribute>
+
+      <attribute name="checkInterval" required="false">
+        <p>The number of seconds between checks for expired sessions
+        for this manager.  The default value is 60 seconds.</p>
+      </attribute>
+
+      <attribute name="debug" required="false">
+        <p>The level of debugging detail logged by this <strong>Engine</strong>
+        to the associated <a href="logger.html">Logger</a>.  Higher numbers
+        generate more detailed output.  If not specified, the default
+        debugging detail level is zero (0).</p>
+      </attribute>
+
+      <attribute name="entropy" required="false">
+        <p>A String value that is utilized when seeding the random number
+        generator used to create session identifiers for this Manager.
+        If not specified, a semi-useful value is calculated, but a long
+        String value should be specified in security-conscious
+        environments.</p>
+      </attribute>
+
+      <attribute name="maxActiveSessions" required="false">
+        <p>The maximum number of active sessions that will be created by
+        this Manager, or -1 (the default) for no limit.</p>
+      </attribute>
+
+      <attribute name="pathname" required="false">
+        <p>Absolute or relative (to the work directory for this Context)
+        pathname of the file in which session state will be preserved
+        across application restarts, if possible.  The default is
+        "SESSIONS.ser".  See <a href="#Restart Persistence">Restart
+        Persistence</a> for more information.</p>
+      </attribute>
+
+      <attribute name="randomClass" required="false">
+        <p>Java class name of the <code>java.util.Random</code>
+        implementation class to use.  If not specified, the default value is
+        <code>java.security.SecureRandom</code>.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+
+</section>
+
+
+<section name="Nested Components">
+
+  <p>No components may be nested inside a <strong>Manager</strong> element.</p>
+
+</section>
+
+
+<section name="Special Features">
+
+
+  <subsection name="Restart Persistence">
+
+    <p>Whenver Catalina is shut down normally and restarted, or when an
+    application reload is triggered, the standard Manager implementation
+    will attempt to serialize all currently active sessions to a disk
+    file located via the <code>pathname</code> attribute.  All such saved
+    sessions will then be deserialized and activated (assuming they have
+    not expired in the mean time) when the application reload is completed.</p>
+
+    <p>In order to successfully restore the state of session attributes,
+    all such attributes MUST implement the <code>java.io.Serializable</code>
+    interface.  You MAY cause the Manager to enforce this restriction by
+    including the <code>&lt;distributable&gt;</code> element in your web
+    application deployment descriptor (<code>/WEB-INF/web.xml</code>).</p>
+
+  </subsection>
+
+</section>
+
+
+</body>
+
+
+</document>

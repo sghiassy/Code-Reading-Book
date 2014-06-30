@@ -1,0 +1,110 @@
+<!DOCTYPE linuxdoc PUBLIC "-//XFree86//DTD linuxdoc//EN">
+ 
+<article>
+
+<!-- Title information -->
+<title> Information for SiS Users
+<author> Xavier Ducoin (<it>xavier@rd.lectra.fr</it>)
+<date> 16 January 1997
+
+<!-- Table of contents -->
+<toc>
+
+<sect> Introduction <p>
+
+The driver was primarily written for the SiS86c201.
+The driver has almost been completed, with many additional features.
+These include
+<itemize>
+  <item>Linear Addressing
+  <item>8/15/16/24 bits per pixel
+  <item>Fully programmable clocks are supported
+  <item>H/W cursor support
+  <item>BitBLT acceleration of many operations
+  <item>XAA support (XFree86 Acceleration Architecture)
+</itemize>
+
+<sect> Supported chips <p>
+
+<descrip>
+<tag>SiS 86c201</tag>
+	(External hardware clock)
+<tag>SiS 86c202, SiS 86c205</tag>
+	(Internal clock synthesizer)
+</descrip>
+
+Color expansion is not supported by the engine in 16M-color graphic mode.
+
+<sect> XF86Config Options <p>
+
+The following options are of particular interest for the SiS driver. Each of
+them must be specified in the `svga' driver section of the XF86Config file,
+within the Screen subsections of the depths to which they are applicable
+(you can enable options for all depths by specifying them in the Device
+section).
+
+<descrip>
+<tag>Option &dquot;noaccel&dquot;</tag>
+	By default the XAA (XFree86 Acceleration Architecture) is used.
+	This option will disable the use of the XAA and will enable the old
+	BitBlt acceleration operations. (see below).
+<tag>Option &dquot;hw_clocks&dquot;</tag>
+	On chips 86c202 and later, the default is to use the programmable
+	clock for all clocks. It is possible to use the fixed clocks
+	supported by the chip instead of using this option (manufacturer
+	dependent).
+<tag>Option &dquot;sw_cursor&dquot, &dquot;hw_cursor&dquot;</tag>
+	The default is for using the hardware cursor.
+<tag>Option &dquot;no_linear&dquot;</tag>
+	By default linear addressing is used on all chips.
+	However this might be broken in some implementations. It is
+	possible to turn the linear addressing off with this option.
+	Note that H/W acceleration and 16/24bpp are only supported with
+	linear addressing.
+<tag>Option &dquot;no_bitblt&dquot;</tag>
+	This option will disable the use of all the BitBLT engine.
+	It is useful for problems related to acceleration problems.
+	In general this will result in a reduced performance.
+<tag>Option &dquot;no_imageblt&dquot;</tag>
+	It is useful for problems related to image writing, and possible
+	stipple acceleration problems. In general this will result in a reduced
+	performance.
+</descrip>
+
+
+<sect> Modelines <p>
+
+When constructing a modeline for use with the Sis
+driver you'll need to consider several points:
+<itemize>
+  <item>H/W Acceleration.  The H/W cursor, and fill operations
+	currently allocate memory of the video ram for there own use.
+	If this is not available these functions will automatically be
+	disabled.
+  <item>Dot Clock
+</itemize>
+
+<sect> Troubleshooting <p>
+
+With intensive generation there is a snow phenomenon on the screen.
+Can't remove it even if I used the fifo low/high water mark dumped
+from W95.
+
+
+With intensive generation in 1024x768 65 Mhz sometimes some points (rubbish,
+fuzz... hard to explain) appear in memory, like memory
+violations or memory corruption.
+It looks like an electronic refresh not well done or VClk too near
+the MClk.
+I use the default Mclk set by BIOS.
+It is hard to reproduce this problem (It can take one hour,
+two or more).
+I can't reproduce this problem in 1024x768 75 MHz or 1280x1024 110 MHz
+or 1152x900 95 MHz.
+
+<verb>
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/SiS.sgml,v 3.3 1997/01/25 03:22:15 dawes Exp $
+</verb>
+
+</article>
+

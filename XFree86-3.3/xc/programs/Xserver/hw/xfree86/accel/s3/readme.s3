@@ -1,0 +1,115 @@
+  Hello.
+
+    I mentioned before that I was cleaning up s3.c and here are
+the proposed changes.  Basically what I did was take a 140K s3.c
+and turn it into a 70K s3.c and a 70K s3ramdacs.c, separating the
+ramdac code (most of it anyway) out of s3.c and putting it into
+s3ramdacs.c.  In s3ramdacs.c is a section for each ramdac.
+
+   In this package are drop-in replacements for s3.h, s3.c, and a
+   new s3ramdacs.c
+
+   There is a copy of this message in the package.
+
+Summary:
+
+	There's a new s3RamdacInfo structure which contains the 
+    DacSpeed and the DacProbe() and PreInit() functions.  It 
+    could also contain DacSave(), DacRestore(), and DacInit()
+    functions at some later date.  There is an array of these
+    structures (called s3Ramdacs[]) with an entry for each
+    ramdac.  The #define for a particular ramdac name (like
+    BT485_DAC) is the index into the array.  The ramdac entries
+    in this array are in the same order as their original 
+    probing order in s3.c and the #defines in s3.h have been
+    changed to reflect this.  
+	Ramdac probing is now done by calling the DacProbe functions
+    in a loop like so:
+
+	/* snip from s3.c */
+
+	   if(s3RamdacType == UNKNOWN_DAC) {
+	     for (i = 1; s3Ramdacs[i].DacName; i++) {
+	      if ((s3Ramdacs[i].DacProbe)()) {
+		 s3RamdacType = i;
+		 break;
+	       }
+	     }
+	   }  	
+
+     When a DacProbe() function returns true you have your s3RamdacType.
+
+     The PreInit() function does the following:
+	Verify that the depth is supported by the ramdac.
+	Set cursor options.
+	Check if PixMux is supported and set PixMux related flags.
+	Set s3ClockSelectFunc, maxRawClock, numClocks, etc...
+	Make any necessary clock alterations due to clock doubling,
+		multiplexing, etc...
+
+     Basically, it does everything it can without actually initializing
+     any hardware. I would have added DacSave(), DacRestore() and DacInit()
+     but I wanted to see if people thought this was a good idea before I
+     wasted my time.  So for now, the damage is only in s3.c.
+
+     I had previously extracted an s3ValidMode() function from s3Probe()
+     so the VidMode extension could use it (3.1.2Ga).  I have modified the 
+     s3ValidMode() function so that s3Probe() now uses it as well, and
+     that code is no longer duplicated in s3Probe().
+
+So What are the benefits of this?:
+
+     	I think it will make it easier to add support for new ramdacs
+     and maintain code for existing ramdacs since the ramdac code is
+     now localized in a section in s3ramdac.c rather than dispersed
+     in s3.c.  It makes s3Probe() alot cleaner by removing the long
+     chains of if() else if()  statements.  These benefits could be
+     seen in other files too if DacSave(), DacRestore() and DacInit()
+     were also done in this way.
+
+
+Other stuff:
+
+	Some things are different.  The logic is different in some places
+     (particularly in the modeline validation).
+     The messages printed to console are different in some cases.
+     I know that everything works fine on my Trio64 machine and my
+     968 + IBMRGB526 machine, but I would be very surprised if I didn't
+     break something for some other cards! 
+
+	I'm hoping that what I've done won't go into the server code
+     as is, but that people who know more about the specific hardware
+     than I do will try to clean things up further by optimizing or
+     simplifying the code for whatever ramdac they are most familiar
+     with.  Isolating the ramdac code like I have done makes it a bit
+     easier to see what's going on.
+
+    	I hope that people will look over the code to verify its
+     correctness.   There are little notes that I wrote all over
+     the place as I was attempting to modularize s3Probe(). You
+     can either ignore them or clean them up (if they say anything
+     useful).
+
+Installation:
+
+   	There are drop in replacements for s3.c, s3.h, and a new
+     s3ramdacs.c (Save your old s3.c and s3.h!!!).  The Makefile
+     will have to be modified for s3ramdacs.c (I just gave it
+     s3.o's dependencies).  Check over the code for obvious problems
+     with your ramdac before you try to run it.  I'm fairly confident
+     that there shouldn't be any problems with Trio64 or 968 + IBMRGB526
+     since I've been running the code with the modifications for a few
+     weeks.
+
+
+     Once again,  I may have not implemented this in an optimal way
+     but I think the idea of having the ramdac structures containing
+     the ramdac functions is a good one, so if you can think of some
+     better ways of doing things, please do it.  I just hope what I've
+     done will make a good starting point.
+
+
+				Mark Vojkovich
+				mvojkovi@ucsd.edu
+
+     

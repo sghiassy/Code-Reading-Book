@@ -1,0 +1,99 @@
+.TH ACE_Control_Block 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Control_Block \- This information is stored in memory allocated by the <Memory_Pool>. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Malloc.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBref_counter_\fR"
+.br
+.RI "\fIReference counter.\fR"
+.ti -1c
+.RI "\fBACE_Name_Node\fR* \fBname_head_\fR"
+.br
+.RI "\fIHead of the linked list of Name Nodes.\fR"
+.ti -1c
+.RI "\fBACE_Malloc_Header\fR* \fBfreep_\fR"
+.br
+.RI "\fICurrent head of the freelist.\fR"
+.ti -1c
+.RI "char \fBlock_name_\fR [MAXNAMELEN]"
+.br
+.RI "\fIName of lock thats ensures mutual exclusion.\fR"
+.ti -1c
+.RI "long \fBalign_\fR [ACE_CONTROL_BLOCK_ALIGN_LONGS < 1 ? 1 : ACE_CONTROL_BLOCK_ALIGN_LONGS]"
+.br
+.ti -1c
+.RI "\fBACE_Malloc_Header\fR \fBbase_\fR"
+.br
+.RI "\fIDummy node used to anchor the freelist. This needs to come last...\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBprint_alignment_info\fR (void)"
+.br
+.RI "\fIPrint out a bunch of size info for debugging.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This information is stored in memory allocated by the <Memory_Pool>.
+.PP
+.PP
+ This class defines the "old" control block class for use in \fBACE_Malloc_T\fR. This control block implementation is considerable more efficient than the "position independent" one below (\fBACE_PI_Control_Block\fR) but if you are going to use it to construct a \fBACE_Malloc_T\fR and access the memory from several different processes, you must "map" the underlying memory pool to the same address. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Control_Block::dump (void) const
+.PP
+Dump the state of the object.
+.PP
+.SS void ACE_Control_Block::print_alignment_info (void)\fC [static]\fR
+.PP
+Print out a bunch of size info for debugging.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS long ACE_Control_Block::align_[ACE_CONTROL_BLOCK_ALIGN_LONGS< 1?1:ACE_CONTROL_BLOCK_ALIGN_LONGS]
+.PP
+.SS \fBACE_Malloc_Header\fR ACE_Control_Block::base_
+.PP
+Dummy node used to anchor the freelist. This needs to come last...
+.PP
+.SS \fBACE_Malloc_Header\fR * ACE_Control_Block::freep_
+.PP
+Current head of the freelist.
+.PP
+.SS char ACE_Control_Block::lock_name_[MAXNAMELEN]
+.PP
+Name of lock thats ensures mutual exclusion.
+.PP
+.SS \fBACE_Name_Node\fR * ACE_Control_Block::name_head_
+.PP
+Head of the linked list of Name Nodes.
+.PP
+.SS int ACE_Control_Block::ref_counter_
+.PP
+Reference counter.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

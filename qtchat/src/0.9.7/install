@@ -1,0 +1,131 @@
++---------------------------+
+| QtChat Installation Notes |
++---------------------------+
+
+QtChat is an X-Windows client program which (currently) compiles on
+Unix platforms.  The following requirements must be met in order to
+compile on your particular platform:
+
+	- GNU Make; called 'gmake' on some systems, notably BSD, which
+	  uses Berkeley 'make' by default.  Linux systems use GNU Make
+	  by default and call it 'make'.  The Makefiles may be ported
+	  to Berkeley make in the future.  To find out what version of
+	  make you're using, try 'make -v' (which fails under Berkeley
+	  make) or 'gmake -v'.
+
+	- GNU C++ compiler; QtChat is developed on a system using egcs ver-
+	  sion gcc-2.95.2 19991024 (formerly egcs).  As I have no reports
+	  of QtChat being compiled with other compilers, your mileage may
+	  vary.  This compiler is called 'g++'; to find out what version of
+	  g++ you're using, type 'g++ -v'.
+
+	- X Windows; duh
+
+	- Qt-2.x library/ header files; These are available from Troll Tech
+	  at http://www.troll.no.  QtChat makefile searches for the install-
+	  ation directory automatically; you can suggest a directory by
+	  setting environment variable QTDIR to the toplevel Qt directory
+	  containing subdirectories 'include/' and 'lib/'.  i.e. if you have
+	  directories /usr/local/qt/lib and /usr/local/qt/include, set QTDIR
+	  to "/usr/local/qt".  If it still doesn't build, you'll have to set
+	  the individual library and include directories in ./config.mk (de-
+	  scribed below).
+
+As always, if you have trouble building this distribution, send me
+information about your particular system configuration:
+	- OS version
+	- X-Windows version/installation directory
+	- Qt version/ installation directory
+	- C++ compiler version (type "c++ -v" or "g++ -v")
+to qtchat@mindspring.com.  The output of the compilation would also
+be very helpful ( 'make 1>debug.txt 2>&1' or 'make >& debug.txt' )
+
++---------------+
+| Quick Install |
++---------------+
+
+	tar xvzf qtchat-x.x.x.tar.gz
+	cd qtchat/src/x.x.x
+	gmake distclean all install
+
++------------------+
+| Unpacking QtChat |
++------------------+
+
+To unpack QtChat, simply uncompress the tarball using GNU 'gzip', then
+untar into the desired build directory.  I recommend /usr/local as the
+target directory:
+
+	gzip -dc qtchat-x.x.x.tar.gz | tar xvf - -C /usr/local
+
+or
+	tar xvzf qtchat-x.x.x.tar.gz -C /usr/local
+
+This creates ${DESTDIR}/qtchat/src/x.x.x/ where DESTDIR is the directory
+you've just uncompressed to (in this example, "/usr/local").  Of course
+you need write permission on the desired directory, so /usr/local may
+be used after 'su'ing to root, or use your home directory.
+
++--------------------+
+| Configuring QtChat |
++--------------------+
+
+1. 'cd' to ${DESTDIR}/qtchat/src/x.x.x/, where 'x.x.x' is
+the version number of the particular version of QtChat you want to
+build.
+
+2. Edit the file 'config.mk' to fit your system.  Pay particular
+attention to the QT_foo variables, which tell the build process
+where your Qt library and include files are located.  The build
+process makes a good educated guess based on common locations
+of these directories, but you may need to set these if they are
+in a "non-standard" location (i.e. a location I don't know about).
+
++-----------------+
+| Building QtChat |
++-----------------+
+
+1. Type 'make' ('gmake' if necessary) and go get a cold beverage and
+some Pop Tarts.
+
+Note: Some Linux builds apparently have virtual method 'QString text()
+const' defined as 'const char *text() const'.  If you get lots of
+warnings about redefinition of virtual method text(), this means you
+may have a set of old header files from Qt-1.x around.  The best thing
+to do in this case is to reinstall Qt-2.x.
+
+
++-------------------+
+| Installing QtChat |
++-------------------+
+
+1. Set the environment variable 'PREFIX' to the desired installation
+directory.  By default this is ${DESTDIR}/qtchat.  QtChat will be
+installed to ${PREFIX}/lib and ${PREFIX}/bin.
+
+2. 'su' to root. You must have write permission on the directories
+${PREFIX}, ${PREFIX}/lib and ${PREFIX}/bin, and you must also be able
+to invoke 'ldconfig' to add the ${PREFIX}/lib/lib*.so libraries to the
+system shared libraries.  If you do not have root access, skip steps 2
+and 3 and replace ${PREFIX} in step 4 with ${DESTDIR}/qtchat/src/x.x.x .
+
+3. Type 'make install' ('gmake install' if necessary).
+
+4. Add ${PREFIX}/bin to your executable search path by editing your
+.cshrc | .bashrc | .profile or whatever your login shell resource file is
+to add ${PREFIX}/bin to the environment variable PATH.  Also add
+${PREFIX}/lib to your library search path variable LD_LIBRARY_PATH.
+
+5. Restart your shell.
+
+
++----------------+
+| Running QtChat |
++----------------+
+
+To use the autologin feature, set environment variable QTCHAT_USER to
+your account screenname, and QTCHAT_PASS to your account password.
+Type 'qtchat' in the newly-started shell with the binary 'qtchat' in
+your executable search path and LD_LIBRARY_PATH pointing to the QtChat
+library directory.  You may also have to add the Qt library directory
+to this path (separated by a colon).

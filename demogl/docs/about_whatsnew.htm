@@ -1,0 +1,120 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:What's new in this version</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>What's new in this version</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>What's new in this version</h4>
+<H3>Version 1.31.0923</H3>
+Version 1.31.0923 contains a few bugfixes and uses the new Bass v1.1a musiclibrary. 
+<P>
+<UL>
+	<LI><b>FIXED: mipmap generation</b>. Due to a bug hardware generated mipmaps were not created correctly and therefor
+		not usable with GL_*_MIPMAP_* filter hints. This is fixed now.
+	<LI><b>ADDED: MP3 position syncing</b>. Bass v1.1a includes MP3 position syncing. This has been included into the
+		DemoGL soundsystem too. (See <a href="ref_functions_DEMOGL_SoundSystemSyncCreate.htm">DEMOGL_SoundSystemSyncCreate</a>)
+	<LI><b>MODIFIED: Z-buffer size</b>. The initial Z-buffer size was 32bits. This has been changed to 24 bits to make it
+		easier for the wacky set of ATi Radeon drivers to decide correctly if they're able to support hardware acceleration.
+</UL>
+<P>
+<H3>Version 1.31</H3>
+Version 1.31 contains some new features and several bugfixes and enhancements. Below is a list of the new features
+and changes. Version 1.31 is fully backwards compatible with version 1.3, so you don't have to recompile your existing
+executables.
+<P>
+<UL>
+	<LI><b>Cubemap support</b>. The texture manager of DemoGL now fully understands cubemaps. You can now use the
+	    new API methods to include the usage of cubemaps in your OpenGL powered effects. Both static cubemaps
+	    and dynamic cubemaps are supported.
+	<LI><b>Compressed textures support</b>. The texture manager of DemoGL now loads and supports DDS files, which
+	    contain compressed texturedata, compressed in the format DXT1, DXT3 or DXT5.
+	<LI><b>Export of main window handles</b>. To use the wglFont* functions in OpenGL, you need the hWnd handle and
+	    the hDC handle of the current window. DemoGL contains now a new API method that exports the hWnd and hDC of
+	    the main window, which makes it very easy to create display lists from font glyphs using the wglFont* routines.
+	<LI><b>Support for all new extensions</b>. The DemoGL SDK contains one of the most complete glext.h files available
+	    and v1.31 comes with a new DemoGL_glext.h which contains declarations for all known new nVidia and ATi extensions, 
+	    plus DemoGL includes detection and support for all these new extensions, so your code can check for these new
+	    extensions easily via the DemoGL API methods.
+	<LI><b>Hardware generated mipmaps</b>. When available in the OpenGL ICD, DemoGL will use the hardware to generate
+	    mipmaps for all textures, if requested by the developer.
+	<LI><b>Code enhancements</b>. The texture class is recoded and is now more flexible and more consistent and faster. The
+	    extension detection code is recoded and the logging of the detected extensions is sped up dramatically so the startup
+	    of an application is even faster than before. The main window of the DemoGL powered application is not made topmost
+	    anymore, so when debugging a DemoGL powered application is now much easier, since the debugger window will not be
+	    blocked by the application window.
+	<LI><b>Bug fixes</b>. Some small things were enhanced, some memleaks and bugs were fixed. For a complete list see the
+	    changelog in the sourcecode package.
+	<LI><b>Compressed DLL</b>. The DemoGL DLL is now compressed with UPX, making the distributed DLL a lot smaller. 
+	<LI><b>Updated documentation</b>. The documentation is updated with the new features plus the API reference manual
+	    is re-checked for errors since some API method descriptions were complete wrong.
+</UL>
+<P>
+<H3>Version 1.3</H3>
+Version 1.3 is a major new release of DemoGL with a lot of new functionality, new code, rewritten parts,
+new better documentation and much more. The following sections summarize the new features.
+<p>
+<ul>
+	<li><b>Screensaver support</b>. Before, you could only create win32 applications with DemoGL, but now
+		you can also create win32 screensavers with DemoGL, as a matter of fact, you can change a DemoGL
+		powered win32 application into a win32 screensaver with a few lines of code.
+	<li><b>New, adjustable console</b>. DemoGL v1.3 contains a new adjustable console which is customizable
+		from code: a developer can adjust the size of the contentsbuffer, the amount of lines on screen and the
+		screenwidth plus the console is now scrollable so no logged information is gone. It's now also rendered
+		using vertexbuffers for optimal speed.
+	<li><b>New soundsystem</b>. DemoGL v1.3 includes a total new soundsystem to produce music and soundeffects. 
+		The new soundsystem is based on BASS v0.9 and can play MP3, mod/xm/it/s3m/mtm and wav files simultaneously
+		using 2D and/or 3D logic and effects. DemoGL's API includes easy functions to control playback and to create
+		synchronization callbacks. 
+	<li><b>New kernel</b>. DemoGL v1.3's internal kernel is completely new. Using a better multithreaded boot-phase
+		applications startup faster and run faster due to the better scheduling of tasks internally.
+	<li><b>New, better structured API</b>. DemoGL v1.3's API is totally new. The old v1.2 API is still supported for
+		backwards compatibility but not recommended for new applications. The new API contains a lot more functions
+		and exposes a lot more functionality, making DemoGL even more flexible to use than v1.2.
+	<li><b>New resolutions</b>. All common known resolutions are now supported, from 320x240 to 2048x1536 both full
+		screen and windowed.
+	<li><b>Better support for old hardware</b>. Allthough voodoo1 and voodoo2 are still unsupported, DemoGL contains
+		now a setting to dynamically rescale large textures so voodoo3's and TNT cards will display textures that are
+		larger than the maximum texture size supported by those cards.
+	<li><b>New scriptcommands and parser</b>. DemoGL v1.3 contains support for a lot more scriptcommands and parameters.
+		It is now possible to directly send integers and floats to an effect without having a string-to-int parser
+		in the effectclass itself, plus the values can be given names so scripting of effects is made much easier
+		and powerful. It's now also possible to loop demos by adding a simple command to the script, which can be
+		handy in a multi-part screensaver that has to run on and on.
+	<li><b>Easier debugging</b>. It's easier to debug your application by the adjustable overlay in debugmode plus the
+		new logging functions in the new API. The overlay in debugmode, which is visible on top of the running effects
+		and shows a part of the console contents, can now contain a custom amount of lines. It's now also possible
+		to log lines using a printf style function of the DemoGL API.
+	<li><b>New startup dialog</b>. DemoGL v1.3 contains a new startup dialog which is customizable with a custom graphic
+		and contains much more adjustable settings than v1.2 and earlier. It also doesn't contain any DemoGL information
+		besides a button to the about dialog of DemoGL. 
+	<li><b>Custom startup dialog support</b>. It's now possible to create an own startup dialog and still be able to
+		use DemoGL as if it was using its own startup dialog. The v1.3 API provides functions to determine specifics
+		about the runtype (screensaver or not) and soundsystem so you can provide as much information and settings as
+		DemoGL can with its own dialog.
+	<li><b>Open Source</b>. DemoGL v1.3 is now Open Source, which means the sourcecode for the library is available
+		for download. Developers can add custom functionality that wasn't implemented in DemoGL, remove non-used parts
+		or simply study how DemoGL is constructed and how the system works internally. DemoGL v1.3 uses the 
+		<a href="about_license.htm">BSD license</a> and contains approx 30,000 lines of C/C++ code.
+	<li><b>And much more...</b>. DemoGL v1.3 contains a lot of small enhancements like a customizable progressbar for
+		application loading, better messaging system for effects, bugfixes, tweaks, etc. 
+</ul>
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 05-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

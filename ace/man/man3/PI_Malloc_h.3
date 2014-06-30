@@ -1,0 +1,92 @@
+.TH PI_Malloc_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+PI_Malloc_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/ACE.h"\fR
+.br
+\fC#include "Malloc.h"\fR
+.br
+\fC#include "ace/Based_Pointer_T.h"\fR
+.br
+\fC#include "ace/Malloc_T.h"\fR
+.br
+\fC#include "ace/Memory_Pool.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_PI_Control_Block::ACE_Malloc_Header\fR"
+.br
+.ti -1c
+.RI "class \fBACE_PI_Control_Block::ACE_Name_Node\fR"
+.br
+.ti -1c
+.RI "class \fBACE_PI_Control_Block\fR"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBACE_PI_MALLOC_PADDING_SIZE\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_PI_CONTROL_BLOCK_SIZE\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_PI_CONTROL_BLOCK_ALIGN_LONGS\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBPI_Malloc.h\fR,v 4.4 2001/05/03 21:03:48 nanbor Exp
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Priyanka Gontla <pgontla@ece.uci.edu>
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define ACE_PI_CONTROL_BLOCK_ALIGN_LONGS
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+            ((ACE_PI_CONTROL_BLOCK_SIZE % ACE_MALLOC_ALIGN != 0 \
+              ? ACE_MALLOC_ALIGN - (ACE_PI_CONTROL_BLOCK_SIZE % ACE_MALLOC_ALIGN) \
+              : ACE_MALLOC_ALIGN) / int (sizeof (long)))
+.fi
+.SS #define ACE_PI_CONTROL_BLOCK_SIZE
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+((int)(sizeof (NAME_NODE_PTR) \
+                                         + sizeof (MALLOC_HEADER_PTR) \
+                                         + sizeof (int) \
+                                         + MAXNAMELEN))
+.fi
+.SS #define ACE_PI_MALLOC_PADDING_SIZE
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+((int) (ACE_MALLOC_HEADER_SIZE - \
+                                       (sizeof (MALLOC_HEADER_PTR) + sizeof (size_t)))\
+                                       / (int) sizeof (long))
+.fi
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

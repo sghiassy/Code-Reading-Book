@@ -1,0 +1,169 @@
+<?xml version="1.0"?>
+
+<!--
+
+  This file specifies all the components that can be used in a
+  sitemap. These components can be of the following types:
+
+  - generators
+  - transformers
+  - serializers
+  - readers
+  - selectors
+
+  This file describes what are the components available, which can be
+  used when writing the sitemap. Each component has a name associated
+  with it, a Java class which implements the component. In the sitemap
+  you specify a component type, and refer to it using its name.
+
+  You can specify additional parameters to be passed to the component
+  at initialization time using inline elements embedded inside the
+  component description element.
+
+-->
+
+
+<!-- =========================== Components ================================ -->
+
+<components>
+
+<!--
+  All pipelines consist at least of two components: a generator, that
+  produces the content and a serialiser, that delivers the content to
+  the client.
+
+  More precisely: a generator generates SAX events and a serializer
+  consumes these events and produces a character stream.
+
+  Some things to note here: each generator has a unique name, this
+  name is mapped to a java class, one name is declared as default
+  generator. In addition each generator may have additional
+  configurations as child elements. Additional attributes are targeted
+  at the component manager. The optional "label" attribute is relevant
+  for the view concept below.
+
+  It is possible to have the same java class declared as different
+  generators by using different names. No configuration options are
+  shared between these instances, however.
+
+  All components follow this schema.
+-->
+
+  <generators default="file">
+   <generator  name="file"        src="org.apache.cocoon.generation.FileGenerator" label="content,data"
+		  pool-max="32" pool-min="16" pool-grow="4"/>
+   <generator  name="directory"   src="org.apache.cocoon.generation.DirectoryGenerator" label="content,data"/>
+   <generator  name="imagedirectory"   src="org.apache.cocoon.generation.ImageDirectoryGenerator" label="content,data"/>
+   <generator  name="serverpages" src="org.apache.cocoon.generation.ServerPagesGenerator" label="content,data"/>
+   <generator  name="request"     src="org.apache.cocoon.generation.RequestGenerator" label="data"/>
+   <generator  name="status"      src="org.apache.cocoon.generation.StatusGenerator" label="data"/>
+   <generator  name="extractor"   src="org.apache.cocoon.generation.FragmentExtractorGenerator" label="data"/>
+   <generator  name="script"      src="org.apache.cocoon.generation.ScriptGenerator" label="content,data"/>
+   <generator  name="velocity"    src="org.apache.cocoon.generation.VelocityGenerator" label="content,data"/>
+   <generator  name="jsp"         src="org.apache.cocoon.generation.JspGenerator" label="content,data"/>
+   <generator  name="stream"      src="org.apache.cocoon.generation.StreamGenerator" label="content,data"/>
+  </generators>
+
+
+<!--
+  Transformers can be placed inside the pipeline between the generator
+  and the serializer. You may have as many transformers as you
+  like. Transformers consume SAX events and emmit SAX events.
+
+  The "xslt" transformer is an example of a component with additional
+  configuration.
+-->
+
+  <transformers default="xslt">
+   <transformer     name="xslt"      src="org.apache.cocoon.transformation.TraxTransformer"
+		    pool-max="32" pool-min="16" pool-grow="4">
+    <use-request-parameters>false</use-request-parameters>
+    <use-browser-capabilities-db>false</use-browser-capabilities-db>
+   </transformer>
+   <transformer     name="log"       src="org.apache.cocoon.transformation.LogTransformer"/>
+   <transformer     name="sql"       src="org.apache.cocoon.transformation.SQLTransformer"/>
+   <transformer     name="extractor" src="org.apache.cocoon.transformation.FragmentExtractorTransformer"/>
+   <transformer     name="i18n"      src="org.apache.cocoon.transformation.I18nTransformer">
+    <catalogue-name>messages</catalogue-name>
+    <catalogue-location>translations</catalogue-location>
+   </transformer>
+   <transformer     name="xinclude"  src="org.apache.cocoon.transformation.XIncludeTransformer"/>
+   <transformer     name="cinclude"  src="org.apache.cocoon.transformation.CIncludeTransformer"/>
+   <transformer     name="filter"  src="org.apache.cocoon.transformation.FilterTransformer"/>
+   <transformer     name="writeDOMsession"  src="org.apache.cocoon.transformation.WriteDOMSessionTransformer"/>
+   <transformer     name="readDOMsession"  src="org.apache.cocoon.transformation.ReadDOMSessionTransformer"/>
+  </transformers>
+
+<!--
+  Readers are an exception to the above rule that a pipline need to
+  have exactly one generator and exactly one serializer. Readers
+  circumvent the XML oriented SAX pipeline model, think of a reader
+  being a generator and a serializer at once thus a pipeline may not
+  contain any generator, transformer or serializer in addition to a
+  reader. They are useful for delivering binary content like images.
+-->
+
+  <readers default="resource">
+   <reader name="resource"       src="org.apache.cocoon.reading.ResourceReader"/>
+   <reader name="jsp"        src="org.apache.cocoon.reading.JSPReader"/>
+  </readers>
+
+<!--
+  Serializers consume SAX events and produce a character stream. Every
+  pipeline needs to be terminated by a serializer.
+-->
+
+  <serializers default="html">
+   <serializer name="links"                               src="org.apache.cocoon.serialization.LinkSerializer"/>
+   <serializer name="xml"    mime-type="text/xml"         src="org.apache.cocoon.serialization.XMLSerializer"
+                   pool-max="32" pool-min="16" pool-grow="4"/>
+   <serializer name="html"   mime-type="text/html"        src="org.apache.cocoon.serialization.HTMLSerializer"/>
+   <serializer name="vrml"   mime-type="model/vrml"       src="org.apache.cocoon.serialization.TextSerializer"/>
+   <serializer name="wap"    mime-type="text/vnd.wap.wml" src="org.apache.cocoon.serialization.XMLSerializer">
+    <doctype-public>-//WAPFORUM//DTD WML 1.1//EN</doctype-public>
+    <doctype-system>http://www.wapforum.org/DTD/wml_1.1.xml</doctype-system>
+    <encoding>ASCII</encoding>
+    <omit-xml-declaration>yes</omit-xml-declaration>
+   </serializer>
+   <serializer name="svgxml" mime-type="image/svg-xml"    src="org.apache.cocoon.serialization.XMLSerializer">
+    <doctype-public>-//W3C//DTD SVG 20000303 Stylable//EN</doctype-public>
+    <doctype-system>http://www.w3.org/TR/2000/03/WD-SVG-20000303/</doctype-system>
+   </serializer>
+  </serializers>
+
+
+<!--
+  Selectors are executed during pipeline setup. They can be used to
+  determine which pipeline fragments should be combined. They are best
+  compared with a switch statement in java.
+
+  Since this is important, let me repeat it: Selectors are executed
+  during pipeline setup.
+-->
+
+  <selectors default="browser">
+   <selector name="browser" src="org.apache.cocoon.selection.BrowserSelector">
+    <!-- # NOTE: The appearance indicates the search order. This is very important since
+         #       some words may be found in more than one browser description. (MSIE is
+         #       presented as "Mozilla/4.0 (Compatible; MSIE 4.01; ...")
+    -->
+    <browser name="explorer" useragent="MSIE"/>
+    <browser name="pocketexplorer" useragent="MSPIE"/>
+    <browser name="handweb" useragent="HandHTTP"/>
+    <browser name="avantgo" useragent="AvantGo"/>
+    <browser name="imode" useragent="DoCoMo"/>
+    <browser name="opera" useragent="Opera"/>
+    <browser name="lynx" useragent="Lynx"/>
+    <browser name="java" useragent="Java"/>
+    <browser name="wap" useragent="Nokia"/>
+    <browser name="wap" useragent="UP"/>
+    <browser name="wap" useragent="Wapalizer"/>
+    <browser name="mozilla5" useragent="Mozilla/5"/>
+    <browser name="mozilla5" useragent="Netscape6/"/>
+    <browser name="netscape" useragent="Mozilla"/>
+   </selector>
+   <selector name="parameter" src="org.apache.cocoon.selection.ParameterSelector"/>
+  </selectors>
+
+</components>
+

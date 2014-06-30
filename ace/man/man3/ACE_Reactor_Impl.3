@@ -1,0 +1,632 @@
+.TH ACE_Reactor_Impl 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Reactor_Impl \- An abstract class for implementing the Reactor Pattern. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Reactor_Impl.h>\fR
+.PP
+Inherited by \fBACE_Select_Reactor_Impl\fR, and \fBACE_WFMO_Reactor\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Reactor_Impl\fR (void)"
+.br
+.RI "\fIClose down and release all resources.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (size_t size, int restart = 0, \fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0, int disable_notify_pipe = 0, \fBACE_Reactor_Notify\fR * = 0) = 0"
+.br
+.RI "\fIInitialization.\fR"
+.ti -1c
+.RI "virtual int \fBcurrent_info\fR (ACE_HANDLE, size_t & ) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBset_sig_handler\fR (\fBACE_Sig_Handler\fR *signal_handler) = 0"
+.br
+.RI "\fIUse a user specified signal handler instead.\fR"
+.ti -1c
+.RI "virtual int \fBset_timer_queue\fR (\fBACE_Timer_Queue\fR *tq) = 0"
+.br
+.RI "\fISet a user specified timer queue.\fR"
+.ti -1c
+.RI "virtual int \fBtimer_queue\fR (\fBACE_Timer_Queue\fR *tq) = 0"
+.br
+.RI "\fISet a user-specified timer queue. Return the current .\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Queue\fR* \fBtimer_queue\fR (void) const = 0"
+.br
+.ti -1c
+.RI "virtual int \fBclose\fR (void) = 0"
+.br
+.RI "\fIClose down and release all resources.\fR"
+.ti -1c
+.RI "virtual int \fBwork_pending\fR (const \fBACE_Time_Value\fR &max_wait_time = \fBACE_Time_Value::zero\fR) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR *max_wait_time = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBalertable_handle_events\fR (\fBACE_Time_Value\fR *max_wait_time = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR &max_wait_time) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBalertable_handle_events\fR (\fBACE_Time_Value\fR &max_wait_time) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBdeactivated\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBdeactivate\fR (int do_stop) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (\fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR mask) = 0"
+.br
+.RI "\fIRegister <event_handler> with <mask>. The I/O handle will always come from <get_handle> on the <event_handler>.\fR"
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (ACE_HANDLE io_handle, \fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR mask) = 0"
+.br
+.RI "\fIRegister <event_handler> with <mask>. The I/O handle is provided through the <io_handle> parameter.\fR"
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (\fBACE_Event_Handler\fR *event_handler, ACE_HANDLE event_handle = ACE_INVALID_HANDLE) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (ACE_HANDLE event_handle, ACE_HANDLE io_handle, \fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR mask) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (const \fBACE_Handle_Set\fR &handles, \fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR mask) = 0"
+.br
+.RI "\fIRegister <event_handler> with all the <handles> in the <Handle_Set>.\fR"
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (int signum, \fBACE_Event_Handler\fR *new_sh, \fBACE_Sig_Action\fR *new_disp = 0, \fBACE_Event_Handler\fR **old_sh = 0, \fBACE_Sig_Action\fR *old_disp = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (const \fBACE_Sig_Set\fR &sigset, \fBACE_Event_Handler\fR *new_sh, \fBACE_Sig_Action\fR *new_disp = 0) = 0"
+.br
+.RI "\fIRegisters <new_sh> to handle a set of signals <sigset> using the <new_disp>.\fR"
+.ti -1c
+.RI "virtual int \fBremove_handler\fR (\fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR mask) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBremove_handler\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBremove_handler\fR (const \fBACE_Handle_Set\fR &handle_set, \fBACE_Reactor_Mask\fR mask) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBremove_handler\fR (int signum, \fBACE_Sig_Action\fR *new_disp, \fBACE_Sig_Action\fR *old_disp = 0, int sigkey = -1) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBremove_handler\fR (const \fBACE_Sig_Set\fR &sigset) = 0"
+.br
+.RI "\fICalls <remove_handler> for every signal in <sigset>.\fR"
+.ti -1c
+.RI "virtual int \fBsuspend_handler\fR (\fBACE_Event_Handler\fR *event_handler) = 0"
+.br
+.RI "\fISuspend <event_handler> temporarily. Use  to get the handle.\fR"
+.ti -1c
+.RI "virtual int \fBsuspend_handler\fR (ACE_HANDLE handle) = 0"
+.br
+.RI "\fISuspend <handle> temporarily.\fR"
+.ti -1c
+.RI "virtual int \fBsuspend_handler\fR (const \fBACE_Handle_Set\fR &handles) = 0"
+.br
+.RI "\fISuspend all <handles> in handle set temporarily.\fR"
+.ti -1c
+.RI "virtual int \fBsuspend_handlers\fR (void) = 0"
+.br
+.RI "\fISuspend all <handles> temporarily.\fR"
+.ti -1c
+.RI "virtual int \fBresume_handler\fR (\fBACE_Event_Handler\fR *event_handler) = 0"
+.br
+.RI "\fIResume <event_handler>. Use  to get the handle.\fR"
+.ti -1c
+.RI "virtual int \fBresume_handler\fR (ACE_HANDLE handle) = 0"
+.br
+.RI "\fIResume <handle>.\fR"
+.ti -1c
+.RI "virtual int \fBresume_handler\fR (const \fBACE_Handle_Set\fR &handles) = 0"
+.br
+.RI "\fIResume all <handles> in handle set.\fR"
+.ti -1c
+.RI "virtual int \fBresume_handlers\fR (void) = 0"
+.br
+.RI "\fIResume all <handles>.\fR"
+.ti -1c
+.RI "virtual int \fBresumable_handler\fR (void) = 0"
+.br
+.RI "\fIDoes the reactor allow the application to resume the handle on its own ie. can it pass on the control of handle resumption to the application.\fR"
+.ti -1c
+.RI "virtual int \fBuses_event_associations\fR (void) = 0"
+.br
+.RI "\fIReturn 1 if we any event associations were made by the reactor for the handles that it waits on, 0 otherwise.\fR"
+.ti -1c
+.RI "virtual long \fBschedule_timer\fR (\fBACE_Event_Handler\fR *event_handler, const void *arg, const \fBACE_Time_Value\fR &delay, const \fBACE_Time_Value\fR &interval = \fBACE_Time_Value::zero\fR) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBreset_timer_interval\fR (long timer_id, const \fBACE_Time_Value\fR &interval) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBcancel_timer\fR (\fBACE_Event_Handler\fR *event_handler, int dont_call_handle_close = 1) = 0"
+.br
+.RI "\fICancel all Event_Handlers that match the address of <event_handler>. Returns number of handlers cancelled.\fR"
+.ti -1c
+.RI "virtual int \fBcancel_timer\fR (long timer_id, const void **arg = 0, int dont_call_handle_close = 1) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBschedule_wakeup\fR (\fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR masks_to_be_added) = 0"
+.br
+.RI "\fIAdd <masks_to_be_added> to the <event_handler>'s entry. <event_handler> must already have been registered.\fR"
+.ti -1c
+.RI "virtual int \fBschedule_wakeup\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR masks_to_be_added) = 0"
+.br
+.RI "\fIAdd <masks_to_be_added> to the <handle>'s entry. <event_handler> associated with <handle> must already have been registered.\fR"
+.ti -1c
+.RI "virtual int \fBcancel_wakeup\fR (\fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR masks_to_be_cleared) = 0"
+.br
+.RI "\fIClear <masks_to_be_cleared> from the <event_handler>'s entry.\fR"
+.ti -1c
+.RI "virtual int \fBcancel_wakeup\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR masks_to_be_cleared) = 0"
+.br
+.RI "\fIClear <masks_to_be_cleared> from the <handle>'s entry.\fR"
+.ti -1c
+.RI "virtual int \fBnotify\fR (\fBACE_Event_Handler\fR *event_handler = 0, \fBACE_Reactor_Mask\fR mask = ACE_Event_Handler::EXCEPT_MASK, \fBACE_Time_Value\fR * = 0) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBmax_notify_iterations\fR (int) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBmax_notify_iterations\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBpurge_pending_notifications\fR (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBhandler\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Event_Handler\fR **event_handler = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBhandler\fR (int signum, \fBACE_Event_Handler\fR ** = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBinitialized\fR (void) = 0"
+.br
+.RI "\fIReturns true if Reactor has been successfully initialized, else false.\fR"
+.ti -1c
+.RI "virtual size_t \fBsize\fR (void) const = 0"
+.br
+.RI "\fIReturns the current size of the Reactor's internal descriptor table.\fR"
+.ti -1c
+.RI "virtual \fBACE_Lock\fR& \fBlock\fR (void) = 0"
+.br
+.RI "\fIReturns a reference to the Reactor's internal lock.\fR"
+.ti -1c
+.RI "virtual void \fBwakeup_all_threads\fR (void) = 0"
+.br
+.RI "\fIWake up all threads in waiting in the event loop.\fR"
+.ti -1c
+.RI "virtual int \fBowner\fR (\fBACE_thread_t\fR new_owner, \fBACE_thread_t\fR *old_owner = 0) = 0"
+.br
+.RI "\fITransfers ownership of Reactor_Impl to the <new_owner>.\fR"
+.ti -1c
+.RI "virtual int \fBowner\fR (\fBACE_thread_t\fR *owner) = 0"
+.br
+.RI "\fIReturn the ID of the "owner" thread.\fR"
+.ti -1c
+.RI "virtual int \fBrestart\fR (void) = 0"
+.br
+.RI "\fIGet the existing restart value.\fR"
+.ti -1c
+.RI "virtual int \fBrestart\fR (int r) = 0"
+.br
+.RI "\fISet a new value for restart and return the original value.\fR"
+.ti -1c
+.RI "virtual void \fBrequeue_position\fR (int) = 0"
+.br
+.RI "\fISet position of the owner thread.\fR"
+.ti -1c
+.RI "virtual int \fBrequeue_position\fR (void) = 0"
+.br
+.RI "\fIGet position of the owner thread.\fR"
+.ti -1c
+.RI "virtual int \fBmask_ops\fR (\fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR mask, int ops) = 0"
+.br
+.RI "\fIGET/SET/ADD/CLR the dispatch mask "bit" bound with the <event_handler> and <mask>.\fR"
+.ti -1c
+.RI "virtual int \fBmask_ops\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, int ops) = 0"
+.br
+.RI "\fIGET/SET/ADD/CLR the dispatch MASK "bit" bound with the <handle> and <mask>.\fR"
+.ti -1c
+.RI "virtual int \fBready_ops\fR (\fBACE_Event_Handler\fR *event_handler, \fBACE_Reactor_Mask\fR mask, int ops) = 0"
+.br
+.RI "\fIGET/SET/ADD/CLR the ready "bit" bound with the <event_handler> and <mask>.\fR"
+.ti -1c
+.RI "virtual int \fBready_ops\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR, int ops) = 0"
+.br
+.RI "\fIGET/SET/ADD/CLR the ready "bit" bound with the <handle> and <mask>.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const = 0"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An abstract class for implementing the Reactor Pattern.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Reactor_Impl::~ACE_Reactor_Impl (void)\fC [inline, virtual]\fR
+.PP
+Close down and release all resources.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS virtual int ACE_Reactor_Impl::alertable_handle_events (\fBACE_Time_Value\fR & max_wait_time)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Msg_WFMO_Reactor\fR, \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS virtual int ACE_Reactor_Impl::alertable_handle_events (\fBACE_Time_Value\fR * max_wait_time = 0)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Msg_WFMO_Reactor\fR, \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::cancel_timer (long timer_id, const void ** arg = 0, int dont_call_handle_close = 1)\fC [pure virtual]\fR
+.PP
+Cancel the single Event_Handler that matches the <timer_id> value (which was returned from the schedule method). If arg is non-NULL then it will be set to point to the ``magic cookie'' argument passed in when the Event_Handler was registered. This makes it possible to free up the memory and avoid memory leaks. Returns 1 if cancellation succeeded and 0 if the <timer_id> wasn't found. 
+.PP
+Reimplemented in \fBACE_FlReactor\fR, \fBACE_QtReactor\fR, \fBACE_Select_Reactor_T\fR, \fBACE_TkReactor\fR, \fBACE_WFMO_Reactor\fR, and \fBACE_XtReactor\fR.
+.SS int ACE_Reactor_Impl::cancel_timer (\fBACE_Event_Handler\fR * handler, int dont_call_handle_close = 1)\fC [pure virtual]\fR
+.PP
+Cancel all Event_Handlers that match the address of <event_handler>. Returns number of handlers cancelled.
+.PP
+Reimplemented in \fBACE_FlReactor\fR, \fBACE_QtReactor\fR, \fBACE_Select_Reactor_T\fR, \fBACE_TkReactor\fR, \fBACE_WFMO_Reactor\fR, and \fBACE_XtReactor\fR.
+.SS int ACE_Reactor_Impl::cancel_wakeup (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Clear <masks_to_be_cleared> from the <handle>'s entry.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::cancel_wakeup (\fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Clear <masks_to_be_cleared> from the <event_handler>'s entry.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::close (void)\fC [pure virtual]\fR
+.PP
+Close down and release all resources.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::current_info (ACE_HANDLE, size_t &)\fC [pure virtual]\fR
+.PP
+Returns 0, if the size of the current message has been put in <size> Returns -1, if not. ACE_HANDLE allows the reactor to check if the caller is valid. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS void ACE_Reactor_Impl::deactivate (int do_stop)\fC [pure virtual]\fR
+.PP
+Control whether the Reactor will handle any more incoming events or not. If <do_stop> == 1, the Reactor will be disabled. By default, a reactor is in active state and can be deactivated/reactived as wish. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::deactivated (void)\fC [pure virtual]\fR
+.PP
+Return the status of Reactor. If this function returns 0, the reactor is actively handling events. If it returns non-zero, <handling_events> and <handle_alertable_events> return -1 immediately. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS void ACE_Reactor_Impl::dump (void) const\fC [pure virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Priority_Reactor\fR, \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::handle_events (\fBACE_Time_Value\fR & max_wait_time)\fC [pure virtual]\fR
+.PP
+This method is just like the one above, except the <max_wait_time> value is a reference and can therefore never be NULL.
+.PP
+The only difference between  and <handle_events> is that in the alertable case, the eventloop will return when the system queues an I/O completion routine or an Asynchronous Procedure Call. 
+.PP
+Reimplemented in \fBACE_Msg_WFMO_Reactor\fR, \fBACE_Select_Reactor_T\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::handle_events (\fBACE_Time_Value\fR * max_wait_time = 0)\fC [pure virtual]\fR
+.PP
+This event loop driver blocks for up to <max_wait_time> before returning. It will return earlier if events occur. Note that <max_wait_time> can be 0, in which case this method blocks indefinitely until events occur.
+.PP
+<max_wait_time> is decremented to reflect how much time this call took. For instance, if a time value of 3 seconds is passed to handle_events and an event occurs after 2 seconds, <max_wait_time> will equal 1 second. This can be used if an application wishes to handle events for some fixed amount of time.
+.PP
+Returns the total number of s that were dispatched, 0 if the <max_wait_time> elapsed without dispatching any handlers, or -1 if an error occurs.
+.PP
+The only difference between  and <handle_events> is that in the alertable case, the eventloop will return when the system queues an I/O completion routine or an Asynchronous Procedure Call. 
+.PP
+Reimplemented in \fBACE_Msg_WFMO_Reactor\fR, \fBACE_Select_Reactor_T\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::handler (int signum, \fBACE_Event_Handler\fR ** = 0)\fC [pure virtual]\fR
+.PP
+Check to see if <signum> is associated with a valid Event_Handler bound to a signal. Return the <event_handler> associated with this <handler> if <event_handler> != 0. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::handler (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Event_Handler\fR ** eh = 0)\fC [pure virtual]\fR
+.PP
+Check to see if <handle> is associated with a valid Event_Handler bound to <mask>. Return the <event_handler> associated with this <handler> if <event_handler> != 0. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::initialized (void)\fC [pure virtual]\fR
+.PP
+Returns true if Reactor has been successfully initialized, else false.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS \fBACE_Lock\fR & ACE_Reactor_Impl::lock (void)\fC [pure virtual]\fR
+.PP
+Returns a reference to the Reactor's internal lock.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::mask_ops (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, int ops)\fC [pure virtual]\fR
+.PP
+GET/SET/ADD/CLR the dispatch MASK "bit" bound with the <handle> and <mask>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::mask_ops (\fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask, int ops)\fC [pure virtual]\fR
+.PP
+GET/SET/ADD/CLR the dispatch mask "bit" bound with the <event_handler> and <mask>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::max_notify_iterations (void)\fC [pure virtual]\fR
+.PP
+Get the maximum number of times that the ACE_Reactor_Impl will iterate and dispatch the  that are passed in via the notify queue before breaking out of its  loop. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS void ACE_Reactor_Impl::max_notify_iterations (int)\fC [pure virtual]\fR
+.PP
+Set the maximum number of times that ACE_Reactor_Impl will iterate and dispatch the  that are passed in via the notify queue before breaking out of its  loop. By default, this is set to -1, which means "iterate until the queue is empty." Setting this to a value like "1 or 2" will increase "fairness" (and thus prevent starvation) at the expense of slightly higher dispatching overhead. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::notify (\fBACE_Event_Handler\fR * event_handler = 0, \fBACE_Reactor_Mask\fR mask = ACE_Event_Handler::EXCEPT_MASK, \fBACE_Time_Value\fR * = 0)\fC [pure virtual]\fR
+.PP
+Notify <event_handler> of <mask> event. The  indicates how long to blocking trying to notify. If <timeout> == 0, the caller will block until action is possible, else will wait until the relative time specified in <timeout> elapses). 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::open (size_t max_number_of_handles, int restart = 0, \fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0, int disable_notify_pipe = 0, \fBACE_Reactor_Notify\fR * = 0)\fC [pure virtual]\fR
+.PP
+Initialization.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::owner (\fBACE_thread_t\fR * owner)\fC [pure virtual]\fR
+.PP
+Return the ID of the "owner" thread.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::owner (\fBACE_thread_t\fR n_id, \fBACE_thread_t\fR * o_id = 0)\fC [pure virtual]\fR
+.PP
+Transfers ownership of Reactor_Impl to the <new_owner>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::purge_pending_notifications (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [pure virtual]\fR
+.PP
+Purge any notifications pending in this reactor for the specified  object. Returns the number of notifications purged. Returns -1 on error. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_Impl\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::ready_ops (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR, int ops)\fC [pure virtual]\fR
+.PP
+GET/SET/ADD/CLR the ready "bit" bound with the <handle> and <mask>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::ready_ops (\fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask, int ops)\fC [pure virtual]\fR
+.PP
+GET/SET/ADD/CLR the ready "bit" bound with the <event_handler> and <mask>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::register_handler (const \fBACE_Sig_Set\fR & sigset, \fBACE_Event_Handler\fR * new_sh, \fBACE_Sig_Action\fR * new_disp = 0)\fC [pure virtual]\fR
+.PP
+Registers <new_sh> to handle a set of signals <sigset> using the <new_disp>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::register_handler (int signum, \fBACE_Event_Handler\fR * new_sh, \fBACE_Sig_Action\fR * new_disp = 0, \fBACE_Event_Handler\fR ** old_sh = 0, \fBACE_Sig_Action\fR * old_disp = 0)\fC [pure virtual]\fR
+.PP
+Register <new_sh> to handle the signal <signum> using the <new_disp>. Returns the <old_sh> that was previously registered (if any), along with the <old_disp> of the signal handler. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::register_handler (const \fBACE_Handle_Set\fR & handles, \fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Register <event_handler> with all the <handles> in the <Handle_Set>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::register_handler (ACE_HANDLE event_handle, ACE_HANDLE io_handle, \fBACE_Event_Handler\fR * event_handler, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Register an <event_handler> that will be notified when <event_handle> is signaled. <mask> specifies the network events that the <event_handler> is interested in. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::register_handler (\fBACE_Event_Handler\fR * event_handler, ACE_HANDLE event_handle = ACE_INVALID_HANDLE)\fC [pure virtual]\fR
+.PP
+Register an <event_handler> that will be notified when <event_handle> is signaled. Since no event mask is passed through this interface, it is assumed that the <event_handle> being passed in is an event handle and not an I/O handle. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::register_handler (ACE_HANDLE handle, \fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Register <event_handler> with <mask>. The I/O handle is provided through the <io_handle> parameter.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::register_handler (\fBACE_Event_Handler\fR * event_handler, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Register <event_handler> with <mask>. The I/O handle will always come from <get_handle> on the <event_handler>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::remove_handler (const \fBACE_Sig_Set\fR & sigset)\fC [pure virtual]\fR
+.PP
+Calls <remove_handler> for every signal in <sigset>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::remove_handler (int signum, \fBACE_Sig_Action\fR * new_disp, \fBACE_Sig_Action\fR * old_disp = 0, int sigkey = -1)\fC [pure virtual]\fR
+.PP
+Remove the \fBACE_Event_Handler\fR currently associated with <signum>. Install the new disposition (if given) and return the previous disposition (if desired by the caller). Returns 0 on success and -1 if <signum> is invalid. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::remove_handler (const \fBACE_Handle_Set\fR & handle_set, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Removes all handles in <handle_set>. If <mask> ==  then the <handle_close> method of the associated <event_handler>s is not invoked. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::remove_handler (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Removes <handle>. If <mask> ==  then the <handle_close> method of the associated <event_handler> is not invoked. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::remove_handler (\fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Removes <event_handler>. Note that the I/O handle will be obtained using <get_handle> method of <event_handler> . If <mask> ==  then the <handle_close> method of the <event_handler> is not invoked. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::requeue_position (void)\fC [pure virtual]\fR
+.PP
+Get position of the owner thread.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS void ACE_Reactor_Impl::requeue_position (int)\fC [pure virtual]\fR
+.PP
+Set position of the owner thread.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::reset_timer_interval (long timer_id, const \fBACE_Time_Value\fR & interval)\fC [pure virtual]\fR
+.PP
+Resets the interval of the timer represented by <timer_id> to <interval>, which is specified in relative time to the current <gettimeofday>. If <interval> is equal to , the timer will become a non-rescheduling timer. Returns 0 if successful, -1 if not. 
+.PP
+Reimplemented in \fBACE_FlReactor\fR, \fBACE_Select_Reactor_T\fR, \fBACE_TkReactor\fR, \fBACE_WFMO_Reactor\fR, and \fBACE_XtReactor\fR.
+.SS int ACE_Reactor_Impl::restart (int r)\fC [pure virtual]\fR
+.PP
+Set a new value for restart and return the original value.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::restart (void)\fC [pure virtual]\fR
+.PP
+Get the existing restart value.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::resumable_handler (void)\fC [pure virtual]\fR
+.PP
+Does the reactor allow the application to resume the handle on its own ie. can it pass on the control of handle resumption to the application.
+.PP
+Reimplemented in \fBACE_Select_Reactor_Impl\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::resume_handler (const \fBACE_Handle_Set\fR & handles)\fC [pure virtual]\fR
+.PP
+Resume all <handles> in handle set.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::resume_handler (ACE_HANDLE handle)\fC [pure virtual]\fR
+.PP
+Resume <handle>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::resume_handler (\fBACE_Event_Handler\fR * eh)\fC [pure virtual]\fR
+.PP
+Resume <event_handler>. Use  to get the handle.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::resume_handlers (void)\fC [pure virtual]\fR
+.PP
+Resume all <handles>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS long ACE_Reactor_Impl::schedule_timer (\fBACE_Event_Handler\fR * handler, const void * arg, const \fBACE_Time_Value\fR & delay_time, const \fBACE_Time_Value\fR & interval = \fBACE_Time_Value::zero\fR)\fC [pure virtual]\fR
+.PP
+Schedule an \fBACE_Event_Handler\fR that will expire after an amount of time. The return value of this method, a timer_id value, uniquely identifies the event_handler in the \fBACE_Reactor\fR's internal list of timers. This timer_id value can be used to cancel the timer with the \fBcancel_timer\fR() call.
+.PP
+\fBSee also: \fR
+.in +1c
+ \fBcancel_timer\fR() ,  \fBreset_timer_interval\fR()
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIevent_handler\fR\fR event handler to schedule on reactor 
+.TP
+\fB\fIarg\fR\fR argument passed to the handle_timeout() method of event_handler 
+.TP
+\fB\fIdelta\fR\fR time interval after which the timer will expire 
+.TP
+\fB\fIinterval\fR\fR time interval after which the timer will be automatically rescheduled 
+.PP
+\fBReturns: \fR
+.in +1c
+ -1 on failure, a timer_id value on success 
+.PP
+Reimplemented in \fBACE_FlReactor\fR, \fBACE_QtReactor\fR, \fBACE_Select_Reactor_T\fR, \fBACE_TkReactor\fR, \fBACE_WFMO_Reactor\fR, and \fBACE_XtReactor\fR.
+.SS int ACE_Reactor_Impl::schedule_wakeup (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Add <masks_to_be_added> to the <handle>'s entry. <event_handler> associated with <handle> must already have been registered.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::schedule_wakeup (\fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask)\fC [pure virtual]\fR
+.PP
+Add <masks_to_be_added> to the <event_handler>'s entry. <event_handler> must already have been registered.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::set_sig_handler (\fBACE_Sig_Handler\fR * signal_handler)\fC [pure virtual]\fR
+.PP
+Use a user specified signal handler instead.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::set_timer_queue (\fBACE_Timer_Queue\fR * tq)\fC [pure virtual]\fR
+.PP
+Set a user specified timer queue.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS size_t ACE_Reactor_Impl::size (void) const\fC [pure virtual]\fR
+.PP
+Returns the current size of the Reactor's internal descriptor table.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::suspend_handler (const \fBACE_Handle_Set\fR & handles)\fC [pure virtual]\fR
+.PP
+Suspend all <handles> in handle set temporarily.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::suspend_handler (ACE_HANDLE handle)\fC [pure virtual]\fR
+.PP
+Suspend <handle> temporarily.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::suspend_handler (\fBACE_Event_Handler\fR * eh)\fC [pure virtual]\fR
+.PP
+Suspend <event_handler> temporarily. Use  to get the handle.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::suspend_handlers (void)\fC [pure virtual]\fR
+.PP
+Suspend all <handles> temporarily.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS virtual \fBACE_Timer_Queue\fR* ACE_Reactor_Impl::timer_queue (void) const\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::timer_queue (\fBACE_Timer_Queue\fR * tq)\fC [pure virtual]\fR
+.PP
+Set a user-specified timer queue. Return the current .
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::uses_event_associations (void)\fC [pure virtual]\fR
+.PP
+Return 1 if we any event associations were made by the reactor for the handles that it waits on, 0 otherwise.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS void ACE_Reactor_Impl::wakeup_all_threads (void)\fC [pure virtual]\fR
+.PP
+Wake up all threads in waiting in the event loop.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SS int ACE_Reactor_Impl::work_pending (const \fBACE_Time_Value\fR & max_wait_time = \fBACE_Time_Value::zero\fR)\fC [pure virtual]\fR
+.PP
+Returns non-zero if there are I/O events "ready" for dispatching, but does not actually dispatch the event handlers. By default, don't block while checking this, i.e., "poll". 
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR, and \fBACE_WFMO_Reactor\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Reactor_Impl::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_Priority_Reactor\fR, \fBACE_Select_Reactor_T\fR, \fBACE_TP_Reactor\fR, and \fBACE_WFMO_Reactor\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

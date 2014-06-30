@@ -1,0 +1,30 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/et4000w32/Imakefile,v 3.5 1996/12/23 06:33:57 dawes Exp $
+
+
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/11 1996/10/21 14:50:50 kaleb $
+
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS = cfb.w32 asm w32
+
+INCLUDES = -I$(XF86SRC)/vga256/vga -Iw32 -I$(XF86COMSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+W32DRIVERS = XF86W32Drivers
+
+ConfigTargetNoDepend(w32Conf,$(ICONFIGFILES),confw32.SHsuf,$(W32DRIVERS))
+
+NormalLibraryObjectRule()
+
+MakeSubdirs($(SUBDIRS))
+
+InstallLinkKitNonExecFile(confw32.SHsuf,$(LINKKITDIR))
+
+DependSubdirs($(SUBDIRS))

@@ -1,0 +1,690 @@
+  XFree86 PC98 Dependent Information
+  The XFree86 Project Inc. and X98 CORE TEAM著
+  1997年  1月  23日
+
+  このドキュメントでは、PC98サーバ固有の事項について解説します。 PC-ATと
+  共通の事項については、共通のドキュメントを参照してください。このドキュ
+  メントでも、各サーバごとに参照すべきドキュメントを示していますので参考
+  にしてください。
+
+  1.サポートサーバ及び構成
+
+  PC98用サーバは、以下の拡張ビデオボード、内蔵ビデオシステムに対応してい
+  ます。個々の対応、動作状況についてはVideoBoard98を参照してください。
+
+  1.1.サポートカード一覧
+
+
+    ベンダー      カード名称                               サーバ
+    ------------- --------------------------------------- ----------------
+    MELCO         WAB-S, WAB-1000, WAB-2000, WSR-E, WSR-G XF98_WABS
+    MELCO         WAP-2000, WAP-4000                      XF98_GANBWAP
+    MELCO         WAB-EP                                  XF98_WABEP
+    MELCO         WSN-A2F                                 XF98_WSNA
+    IO Data       GA-98NB I/C,GA-98NB II, GA-98NB IV      XF98_GANBWAP
+                  GA-968V2/PCI, GA-968V4/PCI              XF98_GA968
+                  GA-DRV2/98, GA-DRV4/98                  XF98_TGUI
+    NEC           ウィンドウアクセラレータボード A/B      XF98_NECS3
+    Canopus       PowerWindow 801, 801+, 928, 928G, 801G, XF98_PWSKB
+                  928II, 805i
+    Canopus       PowerWindow 928IILB, 928GLB, 964LB      XF98_PWLB
+    EPSON         PCSKB, PCSKB2, PCSKB3,PCSKB4,PCPKB4     XF98_PWSKB
+
+
+
+  1.2.サポート内蔵ビデオシステム一覧
+
+
+    ベンダー      チップセット                             サーバ
+    ------------- --------------------------------------- ----------------
+    NEC/EPSON     EGC(640x400x16)                         XF98_EGC
+    NEC           PEGC(640x400x256,640x480x256)           XF98_NEC480
+    NEC           S3 928(As2等), S3 864(As3等)            XF98_NECS3
+    NEC           Cirrus CLGD5428/5430(B-Mate,Xe,CanBe等) XF98_NKVNEC
+    NEC           Trident TGUI9680XGi(X-Mate,ValueStar等) XF98_TGUI
+    EPSON         NKV(486MR,MS,MV,586MV等)                XF98_NKVNEC
+
+
+
+  2.共通事項
+
+
+     xf86config
+        PC98用に移植されていません。/usr/X11R6/lib/X11/XF86Config.98を
+        XF86Configとリネームして使用してください。
+
+     xvidtune
+        厳格な動作確認を行っていませんが、動作するようです。
+
+     SuperProbe
+        移植されていません。ハングアップやビデオボードを壊す恐れがあるの
+        で絶対に使用しないでください。
+
+     XF86Setup
+        PC98用に移植されていません。
+
+     scanpci
+        厳格な動作確認を行っていませんが、動作するようです。
+
+     デフォルトのコンパイル時の設定
+        以前のPC98用サーバと異なり、XFree86は、GetValesBC NO,BuildPexExt
+        YES,BuildXIE YESと定義されています。ご注意ください。xengine等で
+        はGetValuesについてソースの修正が必要です。
+
+     16MBシステム空間の設定
+        サーバーによっては、15M-16Mの領域を使用する物があります。シス
+        テムセットアップメニューで、16MBシステム空間を「切り離す」に
+        してサーバーを起動すると、ハングアップ等を引き起こす可能性があ
+        るため、かならず「使用する」にしてください。
+
+
+  3.各サーバについて
+
+  3.1.  XF98_WABS
+
+
+  MELCOのWAB-S,1000/2000,WSR-E/G で動作するVGA256ベースのサーバです。
+
+  3.1.1.  XF86Configの設定
+
+  README.cirrus内に解説されているオプションを指定できます。
+
+  3.1.2.報告されている問題
+
+
+  3.1.3.その他
+
+
+  o  WAB-2000でVRAM 2Mでの動作は未対応です。
+
+  o  WAB-S/1000/2000におけるIO port の SW は default の 0 です。
+
+  3.1.4.関連
+
+  XF86_SVGA manpage,README.cirrus参照。
+
+  3.2.  XF98_WABEP
+
+  MELCOのWAB-EP (EPSON ローカルバス用)で動作するVGA256ベースのサーバで
+  す。
+
+
+  3.2.1.  XF86Configの設定
+
+  README.cirrus内に解説されているオプションを指定できます。
+
+  3.2.2.報告されている問題
+
+
+  3.2.3.その他
+
+
+  o  まだ十分なテストが行われていないので動作レポートをお願いします。
+
+  3.2.4.関連
+
+  XF86_SVGA manpage,README.cirrus参照。
+
+  3.3.  XF98_GANBWAP
+
+  MELCOのWAP2000/4000, IO DataのGA-98NB I/C,II,IV で動作する VGA256ベー
+  スのサーバです。ICM GI-5434-2M/4Mでも動作するかもしれません。
+
+
+  3.3.1.  XF86Configの設定
+
+  以下のOptionがPC98用に指定できます。これ以外に、README.cirrus内に解説
+  されているオプションを指定できます。
+
+     Option ``ga98nb1''
+        GA-98NB I/C 使用時に必ず指定します。
+
+     Option ``ga98nb2''
+        GA-98NB II  使用時に必ず指定します。
+
+     Option ``ga98nb4''
+        GA-98NB IV  使用時に必ず指定します。
+     Option ``wap''
+        WAP-2000/4000使用時に必ず指定します。
+
+     Option ``epsonmemwin''
+        ESPON PC486GRシリーズ以前の機種で、0xf00000へVRAMをマッピング可
+        能にします。FreeBSD(98)ではカーネルconfig時に指定する事で、カー
+        ネル側で同等の機能を実現しています。通常はカーネル側で指定し、
+        XF86Configではこのオプションを指定しません。NetBSD/pc98(based on
+        NetBSD 1.2)では、必ずこのオプションを指定してください。また、NEC
+        機やGRシリーズより新しいEPSON機ではソフトウエアDIPスイッチで同等
+        の機能を実現しますので、このオプションは指定しないでください。
+
+
+  3.3.2.報告されている問題
+
+
+  o  MMIOを使用すると描画に失敗する事があります。
+
+  o  1280x1024では、描画時にノイズが出ます。
+
+  3.3.3.その他
+
+
+  o  GA-98NB, WAP共にIO port の SW は default の 0 です。
+
+  o  15/16/32bppは動作しません。
+
+  o  ドットクロック85MHz以上では、ハードウェアカーソルは使用できませ
+     ん。Option ``sw_cursor''を指定してください。
+
+  o  WGN-A2 については、数件動作する旨の報告を受けていますが、動作しない
+     と言う報告もありました。より詳しい情報をお願いします。
+
+
+  3.3.4.関連
+
+  XF86_SVGA manpage,README.cirrus参照。
+
+  3.4.  XF98_WSNA
+
+  MELCOのWSN-A2F,A4Fで動作する VGA256ベースのサーバです。
+
+
+  3.4.1.  XF86Configの設定
+
+  以下のOptionがPC98用に指定できます。これ以外に、README.cirrus内に解説
+  されているオプションを指定できます。
+
+     Option ``epsonmemwin''
+        ESPON PC486GRシリーズ以前の機種で、0xf00000へVRAMをマッピング可
+        能にします。FreeBSD(98)ではカーネルconfig時に指定する事で、カー
+        ネル側で同等の機能を実現しています。通常はカーネル側で指定し、
+        XF86Configではこのオプションを指定しません。NetBSD/pc98(based on
+        NetBSD 1.2)では、必ずこのオプションを指定してください。また、NEC
+        機やGRシリーズより新しいEPSON機ではソフトウエアDIPスイッチで同等
+        の機能を実現しますので、このオプションは指定しないでください。
+
+
+  3.4.2.報告されている問題
+
+
+  o  開発後十分なテストが行われていないので動作レポートをお願いします。
+
+
+
+
+  3.4.3.その他
+
+
+  o  GA-98NB, WAP共にIO port の SW は default の 0 です。
+
+  o  15/16/32bppは動作しません。
+
+  o  ドットクロック85MHz以上では、ハードウェアカーソルは使用できませ
+     ん。Option ``sw_cursor''を指定してください。
+
+
+  3.4.4.関連
+
+  XF86_SVGA manpage,README.cirrus参照。
+
+  3.5.  XF98_NKVNEC
+
+  NEC,EPSONの内蔵アクセラレータ(Cirrus Logic CL-GD5428,5429,5430)で動作
+  する VGA256ベースのサーバです。
+
+
+  3.5.1.  XF86Configの設定
+
+  以下のOptionがPC98用に指定できます。これ以外に、README.cirrus内に解説
+  されているオプションを指定できます。
+
+     Option ``nec_cirrus''
+        NEC機内蔵crrusチップ使用のビデオシステム使用時に必ず指定します。
+
+
+  3.5.2.報告されている問題
+
+
+  o  機種によっては、コンソール切り替えがうまくできない場合があるようで
+     す。
+
+  o  Xを終了してコンソールに戻ると、キー入力がおかしくなることがありま
+     す。
+
+  o  DOSでDOOMを起動した後、ウォームブートすると正常に初期化できません。
+
+  3.5.3.その他
+
+
+  o  PC-586RVでは、システムメニュー【本体の設定】--その他--システム設
+     定2をLOWにする必要があります。HIGHの場合は正常に動作しません。
+
+  o  15/16/32bppは動作しません。
+
+
+  3.5.4.関連
+
+  XF86_SVGA manpage,README.cirrus参照。
+
+  3.6.  XF98_EGC
+
+
+  EGCを用いた 640x400ドット 16色のサーバです。ハイレゾモードでは動作しま
+  せん。
+
+  3.6.1.  XF86Configの設定
+
+
+  o  XF86Config の option "Monitor" の記述は意味を持ちません。
+     XF86Config.98の通りにしてください。
+
+  o  また、XFree86-3.1.2 から、StaticColor, StaticGray, GrayScale,
+     PseudoColor のvisualをサポートしたため、XF86Config のScreen セ ク
+     ションに、Visual    ``PseudoColor''の記述をしないと、旧版と同じ色に
+     なりません。本配布物に含まれるXF86Config.98にはあらかじめ記述されて
+     います。
+
+  3.6.2.報告されている問題
+
+
+  o  XF86Config での Section "Monitor" の数字は用いていないにもかかわら
+     ず値をチェックします。
+
+  o  EPSON NOTEでは、twmなどのプルダウンメニューでカーソル位置にゴミが生
+     じます。xrefreshなどで除去できますが、解決方法は不明です。
+
+  o  PANIX Ver.5.0 for 98では動作しません。
+
+  3.6.3.その他
+
+
+  o  仮想スクリーンの機能はありません。640x400 固定です。Virtualの設定は
+     行わないでください。
+
+
+  3.6.4.関連
+
+  XF86_VGA16 manpage,README.Config参照。
+
+
+
+  3.7.  XF98_NEC480
+
+  PEGCを用いた、640x400, 640x480ドット256色のサーバです。PC-9821シリー
+  ズの拡張グラフィックアーキテクチャ搭載機で動作します。
+
+  3.7.1.  XF86Configの設定
+
+
+  o  Device,Modesについては、XF86Config.98のとおりにしてください。
+  o  640x400で使用する時は、Clocksを28.322にしてください。
+
+
+  3.7.2.報告されている問題
+
+
+  o  PC-9821Nm ではバックライトが消える障害があります。
+
+  o  GDCの設定を保存できない為、X終了後に同期周波数などが元に戻りませ
+     ん。FreeBSD(98)の場合は、カーネル作成時に options "LINE30"を指定
+     する事により回避できます。
+
+  3.7.3.その他
+
+
+  o  仮想スクリーンの機能はありません。Virtualの設定は行わないでください。
+
+
+  3.7.4.関連
+
+  XF86_SVGA manpage,README.Config参照。
+
+
+  3.8.  XF98_PWSKB
+
+
+  PowerWindow801/801+/928/928G/801G/928II およびEPSON
+  PCSKB/PCSKB2/PCSKB3/PCSKB4/PCPKB4 で動作するサーバです。また、
+  PowerWindow805iに暫定的に対応しています。
+  3.8.1.  XF86Configの設定
+
+  以下のOption等がPC98用に指定できます。これ以外に、README.s3、
+  XF86_Accell man pageで解説されているオプション等を指定できます。
+  PC98固有以外のOption等についてはXF86_Accel man pageを参照してください
+
+     Chipset ``mmio_928''
+        chipが928の場合のみ使用できます。動作が高速になりますが、不安定
+        な場合などは、``s3_generic''を指定してください。
+
+     Chipset ``s3_generic''
+        ``s3_mmio''を指定しない場合に使用します。すなわち、通常の設定で
+        は必ず指定します。
+
+     Ramdac ``sc15025''
+        PowerWindow801/801+/928/928G/801G、PCSKB/PCSKB2/PCSKB4(1M RAM)/
+        PCPKB4(1M RAM)では必ず必要です。
+
+     Ramdac ``bt485''
+        PowerWindow928II,PCSKB4(2,4M RAM),PCPKB4(2,4M RAM)では必ず必要で
+        す。 ``att20c505''でも同等の動作をします。
+
+     Ramdac ``s3_gendac''
+        PowerWindow805iでは、必ず必要です。
+
+     Clockchip ``icd2061a''
+        PowerWindow801/801+/928/928G/801G/928IIで必ず指定します。
+
+     Clockchip ``s3_gendac''
+        PW805iでは、必ず必要です。
+
+     VideoRam 1024
+        PCSKB4/PCPKB4(2,4M RAM)では、正常に1Mを越えるVRAMを扱えません。
+        この設定で1M VRAMとして使用してください。
+
+     Option ``pcskb''
+        EPSON PCSKB/PCSKB2で使用する場合、必ず指定してください。
+
+     Option ``pcskb4''
+        EPSON PCSKB3/PCSKB4/PCPKB4で使用する場合、必ず指定してください。
+
+     Option ``pchkb''
+        EPSON PCHKB用に予約されています。おそらく動作しません。
+
+     Option ``pw805i''
+        PowerWindow805iで使用する時に指定します。ただし、指定しない状態
+        のほうが安定動作する例も報告されています。
+
+     Option ``pw_mux''
+        PW928IIでRAMDACのMUXモードを使い、85MHz以上を動作可能にします。
+        メーカから、情報提供を受ていないので、安全に動作しているか不明で
+        ありリスクを伴います。最悪の場合、ビデオボードを破損する可能性が
+        あります。
+
+     Option ``nomemaccess''
+        VRAMのメモリ空間へのマッピングを行いません。非常に動作が遅くなり
+        ます。PCSKB4/PCPKB4、または、NOTE+拡張BOXの場合必要です。
+
+     Option ``epsonmemwin''
+        ESPON PC486GRシリーズ以前の機種で、0xf00000へVRAMをマッピング可
+        能にします。FreeBSD(98)ではカーネルconfig時に指定する事で、カー
+        ネル側で同等の機能を実現しています。通常はカーネル側で指定し、
+        XF86Configではこのオプションを指定しません。NetBSD/pc98(based on
+        NetBSD 1.2)では、必ずこのオプションを指定してください。また、NEC
+        機やGRシリーズより新しいEPSON機ではソフトウエアDIPスイッチで同等
+        の機能を実現しますので、このオプションは指定しないでください。
+        Option ``nomemaccess''を指定している場合には意味を持ちません。
+
+     Option ``dac_8_bit''
+        Ramdac ``sc15025''を指定している場合、必ず必要です。Ramdac
+        ``bt485''の場合も指定可能です。
+
+     Option ``bt485_curs''
+        Ramdac ``bt485''の場合、指定可能です。Bt485のハードウエアカーソ
+        ル機能を使用します。
+
+
+
+  3.8.2.報告されている問題
+
+
+  o  PW928 + memaccess で動作しない場合があります。本体との相性によるよ
+     うです。
+
+  o  mmio_928 + nomemaccess を同時に指定するとハングアップします。
+
+  o  PW805iでは15/16/32bppは使用できません。
+
+  o  旧版では動作していたものの、現在、PW801で15/16Bppが動作しないという
+     報告がありました。
+
+  o  PCSKB3/PCSKB4/PCPKB4ではmemaccessは使用できません。
+
+  o  PW805iでは初期化に失敗するなど、動作が不安定なようです。
+
+  o  Option ``pcskb'',``pcskb4''指定時に、-probeonlyで起動すると、信号切
+     替用リレーが復帰せず、ブラックアウトします。-probeonlyは、使用しな
+     いでください。
+
+  o  仮想コンソールの切替え(sysconsのCTRL+F1,F2,Fn)後、画面が復帰しない
+     ことがあるようです。解像度の切替え(CTRL+GRPH+ +/-)で復帰するようで
+     す。
+
+  o  PCSKB3,PCSKB4/PCPKB4では、コンソール切り替え、xdmからの復帰に失敗
+     し、ハングする場合があるようです。
+
+  o  PCSKB4/PCPKB4(2,4M RAM)では、XF86ConfigにVideoMem 1024の指定が必要
+     です。
+
+
+  3.8.3.その他
+
+
+  o  PowerWindow928シリーズでは、15/16bppでの動作が確認されています。
+
+  o  16M Byte以上RAMを実装している場合、機種によりカーネル側の設定が必要
+     です。
+
+  o  PowerWindowシリーズのIO port は default のロータリスイッチ 6 ( x6dx
+     port)でソースコード内で固定されています。 IO portが他のボードとぶつ
+     かる場合は common/compiler.h内 にある PW_PORT 0x0600 という定数宣言
+     を変更して下さい。                      ^
+
+  o  PW805iでは、初期化等が不完全な可能性があります。場合によっては、ボ
+     ード付属のPWINIT.EXE等で初期化した後、ウォームブートして使用する
+     と、安定動作する例が報告されています。また、2度目の起動に失敗する場
+     合があります。
+
+  o  PCSKB/2/4のclock 設定は、サンプルの XF86Config.98 を参考にしてくだ
+     さい。固定クロックです。PC-ATと異なり、クロック値の自動検出はできま
+     せん。
+
+  3.8.4.参照
+
+  README.s3、XF86_Accell man page
+
+
+
+  3.9.  XF98_PWLB
+
+
+  PowerWindow928GLB/928IILB/964LB で動作するサーバです。
+
+  3.9.1.  XF86Configの設定
+
+  以下のOption等がPC98用に指定できます。これ以外に、README.s3、
+  XF86_Accell man pageで解説されているオプション等を指定できます。
+  PC98固有以外のOption等についてはXF86_Accel man pageを参照してください
+
+     chipset``mmio_928''
+        このOptionは指定できません。指定しなくても、ハードウエアの構成
+        上、常にMMIOでアクセスされています。
+
+     chipset ``s3_generic''
+        常に指定してください。
+
+     Ramdac ``att20c505''
+        PW928IILB では必要です。
+
+     Ramdac   ``sc15025''
+        PW928GLB では必要です。
+
+     Ramdac    ``ti3025''
+        PW964LB では必要です。
+
+     Clockchip ``icd2061a''
+        PW928IILB/928GLB では必要です。
+
+     Clockchip ``ti3025''
+        PW964LB では必要です。
+
+     VideoRam 1024
+        PW928LB II では、正常に1Mを越えるVRAMを扱えません。この設定で 1M
+        VRAMとして使用してください。
+
+     Option    ``dac_8_bit''
+        PW928IILB/928GLB では必要です。
+
+     Option    ``bt485_curs''
+        PW928IILB では必要です。
+
+     Option    ``number_nine''
+        PW964LB では必要です。
+
+
+  3.9.2.報告されている問題
+
+
+  o  PW964LB では、32bpp が不安定です。ちらついたり、サーバー終了時にハ
+     ングアップする可能性があります。
+
+  o  PW964LB で、画面の端が反対側に折り返したり、画面の端がちらついたり
+     する現象が報告されています。Option ``number_nine''で解消される場合
+     もありますが、解消できない場合もあります。多くの場合サーバを起動し
+     直すことで解消できるようです。
+  o  928IILBではVideoram 2048KBで正常動作しませ
+     ん。XF86Configに``Videoram 1024''の指定をしてください。
+
+  o  S3サーバで、can't read color map from VGAとでることがありま
+     す。(XF86Configに,8,15bpp両方の記述がある場合に出ることがあるようで
+     す。ただし、動作に影響は無いようです。)
+
+
+  3.9.3.その他
+
+
+  o  メモリウィンドウはデフォルトの0xF0000000に設定してください。DIP SW
+     は F0 です。例えば、ウィンドウアドレスを0xE0000000に変更する場合
+     は、s3nec/s3pc98.h にある、PWLB_Winadd 0xf000を0xe000に、DIP SW
+     をE0 にして、サーバーをコンパイルしなおしてください。
+
+  3.9.4.参照
+
+  README.s3、XF86_Accell man page
+
+
+
+  3.10.  XF98_NECS3
+
+
+  NEC ウィンドウアクセラレータボードA, 同B, PC-9821Ap2/U8W 内蔵アクセラ
+  レータ、PC-9821Ap3、PC-9821Xp等で動作するサーバです。
+
+
+  3.10.1.  XF86Configの設定
+
+  以下のOption等がPC98用に指定できます。これ以外に、README.S3、
+  XF86_Accell man pageで解説されているオプション等を指定できます。
+  PC98固有以外のOption等についてはXF86_Accel man pageを参照してください
+
+     Chipset ``s3_generic''
+        常に指定してください。
+
+     chipset``mmio_928''
+        このOptionは指定できません。指定しなくても、ハードウエアの構成
+        上、常にMMIOでアクセスされています。
+
+     Ramdac  ``sc15025''
+        ウィンドウアクセラレータボードA,B、内蔵928では常に必要です。
+
+     Ramdac  ``s3_sdac''
+        内蔵864では必要です。
+
+     Clockchip ``s3_sdac''
+        内蔵864では必要です。
+
+     Option ``nomemaccess''
+        NOTE+拡張BOXの場合必要です。
+
+     Option ``dac_8_bit''
+        ウィンドウアクセラレータボードA,B、内蔵 928では必要です。
+
+     Option ``bt485_curs''
+        内蔵 928で指定可能です
+
+
+
+
+  3.10.2.報告されている問題
+
+
+  o  PC9821Xn(864)では、動作が不安定です。WAITが足りないことが考えられま
+     す。
+
+  o  X-MATE,A-MATE(864)では、16Bpp,32Bppが不安定なようです。特
+     に、32Bppはハングアップすることが多いようです。
+
+  o  X-MATE,A-MATE(864)で、サーバ起動時に画面が乱れる場合があります。そ
+     の場合、解像度を切替えると回復します。 (CTRL+GRPH+ +/-)
+
+  o  ウィンドウアクセラレータボードA,B で 65MHz の Dot Clockが使用できな
+     いことがあります。この時は、XF86Config.98の 1024x768H のMonitor
+     Section を使用してください。
+
+  3.10.3.その他
+
+
+  o  16M Byte以上RAMを実装している場合、機種によりカーネル側の設定が必要
+     です。
+
+  o  IO port は default のDIPスイッチとします。
+
+  3.10.4.参照
+
+  README.s3、XF86_Accell man page
+
+
+  3.11.  XF98_GA968
+
+
+  GA-968V2/PCI, GA-968V4/PCI で動作するサーバです。
+
+  3.11.1.  XF86Configの設定
+
+  以下のOption等がPC98用に指定できます。これ以外に、README.s3、
+  XF86_Accell man pageで解説されているオプション等を指定できます。
+  PC98固有以外のOption等についてはXF86_Accel man pageを参照してください
+
+     chipset ``s3_generic''
+        常に指定してください。
+
+
+  3.11.2.  報告されている問題
+
+
+  o  開発後十分なテストが行われていないので動作レポートをお願いします。
+
+
+  3.11.3.参照
+
+  README.s3、XF86_Accell man page
+
+
+  3.12.  XF98_TGUI
+
+  NECの内蔵アクセラレータ(Trident TGUi9680XGi), IO DataのGA-DRV/98 で動
+  作する VGA256ベースのサーバです。
+
+  3.12.1.  XF86Configの設定
+
+  README.trident内に解説されているオプションを指定できます。
+
+  アクセラレーション機能には最悪の場合システムのハングアップを伴う不具合
+  が見付かっていますので、Option ``noaccel''を指定してアクセラレーション
+  機能を切り離してください。
+
+  3.12.2.  報告されている問題
+
+
+  o  GA-DRV/98で、1024x768が正常に表示されない。
+
+
+  3.12.3.  その他
+
+
+  o  GA-DRV/98では16bppは動作しません。
+
+  o  15/24/32bppは動作しません。
+
+  o  まだ十分なテストが行われていないので動作レポートをお願いします。
+
+  3.12.4.  関連
+
+  README.trident、XF86_SVGA man page

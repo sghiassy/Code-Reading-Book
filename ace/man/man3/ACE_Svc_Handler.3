@@ -1,0 +1,291 @@
+.TH ACE_Svc_Handler 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Svc_Handler \- Defines the interface for a service that exchanges data with its connected peer. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Svc_Handler.h>\fR
+.PP
+Inherits \fBACE_Task< ACE_SYNCH_USE >\fR.
+.PP
+Inherited by \fBACE_Buffered_Svc_Handler\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Svc_Handler\fR (\fBACE_Thread_Manager\fR *thr_mgr = 0, \fBACE_Message_Queue\fR<ACE_SYNCH_USE> *mq = 0, \fBACE_Reactor\fR *reactor = ACE_Reactor::instance ())"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Svc_Handler\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (void * = 0)"
+.br
+.RI "\fIActivate the client handler. This is typically called by the  or .\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (u_long flags = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBidle\fR (u_long flags = 0)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Recyclable_State\fR \fBrecycle_state\fR (void) \fBconst\fR"
+.br
+.ti -1c
+.RI "virtual int \fBrecycle_state\fR (\fBACE_Recyclable_State\fR new_state)"
+.br
+.ti -1c
+.RI "virtual void \fBcleanup_hint\fR (void **act_holder = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBinit\fR (int argc, \fBACE_TCHAR\fR *argv[])"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBinfo\fR (\fBACE_TCHAR\fR **info_string, size_t length) \fBconst\fR"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_close\fR (ACE_HANDLE = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_timeout\fR (\fBconst\fR \fBACE_Time_Value\fR &time, \fBconst\fR void *)"
+.br
+.RI "\fIDefault behavior when timeouts occur is to close down the <Svc_Handler> by calling <handle_close>.\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) \fBconst\fR"
+.br
+.RI "\fIGet the underlying handle associated with the <peer_>.\fR"
+.ti -1c
+.RI "virtual void \fBset_handle\fR (ACE_HANDLE)"
+.br
+.RI "\fISet the underlying handle associated with the <peer_>.\fR"
+.ti -1c
+.RI "ACE_PEER_STREAM& \fBpeer\fR (void) \fBconst\fR"
+.br
+.RI "\fIReturns the underlying PEER_STREAM. Used by  and  factories.\fR"
+.ti -1c
+.RI "void* \fBoperator new\fR (size_t n)"
+.br
+.RI "\fIOverloaded new operator. This method unobtrusively records if a <Svc_Handler> is allocated dynamically, which allows it to clean itself up correctly whether or not it's allocated statically or dynamically.\fR"
+.ti -1c
+.RI "void* \fBoperator new\fR (size_t n, void *p)"
+.br
+.RI "\fIThis operator permits "placement new" on a per-object basis.\fR"
+.ti -1c
+.RI "virtual void \fBdestroy\fR (void)"
+.br
+.ti -1c
+.RI "void \fBoperator delete\fR (void *)"
+.br
+.ti -1c
+.RI "void \fBoperator delete\fR (void *, void *)"
+.br
+.ti -1c
+.RI "void \fBshutdown\fR (void)"
+.br
+.RI "\fIClose down the descriptor and unregister from the Reactor.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) \fBconst\fR"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "virtual void \fBrecycler\fR (\fBACE_Connection_Recycling_Strategy\fR *recycler, \fBconst\fR void *recycling_act)"
+.br
+.RI "\fISet the recycler and the <recycling_act> that is used during purging and caching.\fR"
+.ti -1c
+.RI "virtual \fBACE_Connection_Recycling_Strategy\fR* \fBrecycler\fR (void) \fBconst\fR"
+.br
+.RI "\fIGet the recycler.\fR"
+.ti -1c
+.RI "virtual \fBconst\fR void* \fBrecycling_act\fR (void) \fBconst\fR"
+.br
+.RI "\fIGet the recycling act.\fR"
+.ti -1c
+.RI "virtual int \fBrecycle\fR (void * = 0)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_PEER_STREAM \fBpeer_\fR"
+.br
+.RI "\fIMaintain connection with client.\fR"
+.ti -1c
+.RI "int \fBdynamic_\fR"
+.br
+.RI "\fIHave we been dynamically created?\fR"
+.ti -1c
+.RI "char \fBclosing_\fR"
+.br
+.RI "\fIKeeps track of whether we are in the process of closing (required to avoid circular calls to <handle_close>).\fR"
+.ti -1c
+.RI "\fBACE_Connection_Recycling_Strategy\fR* \fBrecycler_\fR"
+.br
+.RI "\fIPointer to the connection recycler.\fR"
+.ti -1c
+.RI "\fBconst\fR void* \fBrecycling_act_\fR"
+.br
+.RI "\fIAsynchronous Completion Token (ACT) to be used to when talking to the recycler.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL>  template class ACE_Svc_Handler
+Defines the interface for a service that exchanges data with its connected peer.
+.PP
+.PP
+ This class provides a well-defined interface that the Acceptor and Connector pattern factories use as their target. Typically, client applications will subclass ACE_Svc_Handler and do all the interesting work in the subclass. One thing that the ACE_Svc_Handler does contain is a PEER_STREAM endpoint that is initialized by an \fBACE_Acceptor\fR or \fBACE_Connector\fR when a connection is established successfully. This endpoint is used to exchange data between a ACE_Svc_Handler and the peer it is connected with. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> ACE_Svc_Handler<, >::ACE_Svc_Handler<, > (\fBACE_Thread_Manager\fR * thr_mgr = 0, \fBACE_Message_Queue\fR< ACE_SYNCH_USE >* mq = 0, \fBACE_Reactor\fR * reactor = ACE_Reactor::instance ())
+.PP
+Constructor initializes the <thr_mgr> and <mq> by passing them down to the  base class. The <reactor> is passed to the . 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> ACE_Svc_Handler<, >::~ACE_Svc_Handler<, > (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::cleanup_hint (void ** act_holder = 0)\fC [virtual]\fR
+.PP
+When the svc_handle is no longer needed around as a hint, call this method. In addition, reset <*act_holder> to zero if . 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::close (u_long flags = 0)\fC [virtual]\fR
+.PP
+Object termination hook -- application-specific cleanup code goes here. This function is called by the \fBidle\fR() function if the object does not have a \fBACE_Connection_Recycling_Strategy\fR associated with it. Also, due to this class's derivation from , <close> is also called when a thread activated with this object exits. See  for further details. The default action of this function is to call <handle_close> with the default arguments. 
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::destroy (void)\fC [virtual]\fR
+.PP
+Call this to free up dynamically allocated <Svc_Handlers> (otherwise you will get memory leaks). In general, you should call this method rather than <delete> since this method knows whether or not the object was allocated dynamically, and can act accordingly (i.e., deleting it if it was allocated dynamically). 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Task\fR.
+.PP
+Reimplemented in \fBACE_Buffered_Svc_Handler\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::fini (void)\fC [virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> ACE_HANDLE ACE_Svc_Handler<, >::get_handle (void) const\fC [virtual]\fR
+.PP
+Get the underlying handle associated with the <peer_>.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::handle_close (ACE_HANDLE fd = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR close_mask = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [virtual]\fR
+.PP
+Perform termination activities on the SVC_HANDLER. The default behavior is to close down the <peer_> (to avoid descriptor leaks) and to <destroy> this object (to avoid memory leaks)! If you don't want this behavior make sure you override this method... 
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::handle_timeout (\fBconst\fR \fBACE_Time_Value\fR & time, \fBconst\fR void * arg)\fC [virtual]\fR
+.PP
+Default behavior when timeouts occur is to close down the <Svc_Handler> by calling <handle_close>.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.PP
+Reimplemented in \fBACE_Buffered_Svc_Handler\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::idle (u_long flags = 0)\fC [virtual]\fR
+.PP
+Call this method if you want to recycling the <Svc_Handler> instead of closing it. If the object does not have a recycler, it will be closed. 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::info (\fBACE_TCHAR\fR ** info_string, size_t length) const\fC [virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::init (int argc, \fBACE_TCHAR\fR * argv[])\fC [virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::open (void * a = 0)\fC [virtual]\fR
+.PP
+Activate the client handler. This is typically called by the  or .
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::operator delete (void *, void *)
+.PP
+This operator is necessary to complement the class-specific operator new above. Unfortunately, it's not portable to all C++ compilers... 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::operator delete (void *)
+.PP
+This really should be private so that users are forced to call <destroy>. Unfortunately, the C++ standard doesn't allow there to be a public new and a private delete. It is a bad idea to call this method directly, so use <destroy> instead, unless you know for sure that you've allocated the object dynamically. 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void * ACE_Svc_Handler<, >::operator new (size_t n, void * p)
+.PP
+This operator permits "placement new" on a per-object basis.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void * ACE_Svc_Handler<, >::operator new (size_t n)
+.PP
+Overloaded new operator. This method unobtrusively records if a <Svc_Handler> is allocated dynamically, which allows it to clean itself up correctly whether or not it's allocated statically or dynamically.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> ACE_PEER_STREAM & ACE_Svc_Handler<, >::peer (void) const
+.PP
+Returns the underlying PEER_STREAM. Used by  and  factories.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::recycle (void * = 0)\fC [virtual]\fR
+.PP
+Upcall made by the recycler when it is about to recycle the connection. This gives the object a chance to prepare itself for recycling. Return 0 if the object is ready for recycling, -1 on failures. 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> virtual int ACE_Svc_Handler<, >::recycle_state (\fBACE_Recyclable_State\fR new_state)\fC [virtual]\fR
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBACE_Recyclable_State\fR ACE_Svc_Handler<, >::recycle_state (void) const\fC [virtual]\fR
+.PP
+Call this method if you want to get/set the state of the <Svc_Handler>. If the object does not have a recycler, this call will have no effect (and the accessor will return ACE_RECYCLABLE_UNKNOWN). 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBACE_Connection_Recycling_Strategy\fR * ACE_Svc_Handler<, >::recycler (void) const\fC [virtual]\fR
+.PP
+Get the recycler.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::recycler (\fBACE_Connection_Recycling_Strategy\fR * recycler, \fBconst\fR void * recycling_act)\fC [virtual]\fR
+.PP
+Set the recycler and the <recycling_act> that is used during purging and caching.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBconst\fR void * ACE_Svc_Handler<, >::recycling_act (void) const\fC [virtual]\fR
+.PP
+Get the recycling act.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::set_handle (ACE_HANDLE)\fC [virtual]\fR
+.PP
+Set the underlying handle associated with the <peer_>.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> void ACE_Svc_Handler<, >::shutdown (void)
+.PP
+Close down the descriptor and unregister from the Reactor.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> char ACE_Svc_Handler<, >::closing_\fC [protected]\fR
+.PP
+Keeps track of whether we are in the process of closing (required to avoid circular calls to <handle_close>).
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> int ACE_Svc_Handler<, >::dynamic_\fC [protected]\fR
+.PP
+Have we been dynamically created?
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> ACE_PEER_STREAM ACE_Svc_Handler<, >::peer_\fC [protected]\fR
+.PP
+Maintain connection with client.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBACE_Connection_Recycling_Strategy\fR * ACE_Svc_Handler<, >::recycler_\fC [protected]\fR
+.PP
+Pointer to the connection recycler.
+.PP
+.SS template<ACE_PEER_STREAM_1, ACE_SYNCH_DECL> \fBconst\fR void * ACE_Svc_Handler<, >::recycling_act_\fC [protected]\fR
+.PP
+Asynchronous Completion Token (ACT) to be used to when talking to the recycler.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,475 @@
+# $XFree86: xc/programs/Xserver/hw/xfree86/etc/apNetBSD.shar,v 3.8 1996/12/23 06:47:06 dawes Exp $
+#
+# This is a shell archive.  Save it in a file, remove anything before
+# this line, and then unpack it by entering "sh file".  Note, it may
+# create directories; files and directories will be owned by you and
+# have default permissions.
+#
+# This archive contains:
+#
+#	README
+#	Makefile
+#	aperture.c
+#	apinstall
+#	aptest.c
+#	lkm.c
+#	version.c
+#	version.h
+#
+# $XConsortium: apNetBSD.shar /main/8 1996/10/25 11:37:37 kaleb $
+#
+echo x - README
+sed 's/^X//' >README << 'END-of-README'
+X
+X	XFree86 Framebuffer aperture driver for NetBSD.
+X	-----------------------------------------------
+X
+XThis module was written to help work around the security feature of
+XNetBSD 0.9C and later that prevents read/write access to /dev/mem. 
+X
+XXFree86 can take advantage of having direct access to video
+Xmemory (especially with VLB and PCI cards) and even requires it for
+Xthe P9000 server.
+X
+XThis driver works like the standard /dev/mem driver. It just allows
+Xmapping of the VGA framebuffer even if kernel security level is > 0.
+XThe driver only implements the open(), close() and mmap() calls. In
+Xorder not to defeat kernel security, only one open() at a time is
+Xallowed and only a process with effective user id of 0 can perform
+Xit. So while you're running XFree86, no other process will be allowed
+Xto open /dev/xf86.
+X
+XThis work is heavily inspired from the Solaris x86 aperture driver by 
+XDoug Anson (danson@lgc.com) and David Holland (davidh@use.com).
+X
+X
+XInstallation:
+X-------------
+X
+X1. Edit the Makefile if you want to modify the default installation 
+X   directory.
+X
+X2. run make depend && make; then as root, run make install.
+X
+X3. add these lines  somehere at the end of /etc/rc.local (before the 
+X   sysctl that raises the security level):
+X
+X   KERNDIR=/usr/X11R6/lib/X11/kernel
+X   if [ -f ${KERNDIR}/ap.o ]; then
+X     modload -o ${KERNDIR}/ap -e ap -p ${KERNDIR}/apinstall ${KERNDIR}/ap.o
+X   fi
+X
+X   to load the driver at bootime.
+X
+X4. Reboot your system.
+X
+X5. If you're running a version prior to NetBSD 1.0, modload does not
+X   execute post-install scripts. So you have to create the device manually.
+X   If you're running NetBSD 1.0 or later, skip this.
+X  
+X   WARNING: be sure to understand what you'll do before proceeding
+X
+X   a) find out what major device number will be allocated to you by
+X      modload. Modload allocates major numbers beginning at 29. So if
+X      'ap' is your only device driver module, it will have major
+X      number 29. If it's the third, it will be 31...
+X
+X   b) goto the /dev directory and type ``mknod xf86 c 29 0'' (replace
+X      29 by the appropriate value if you load more than one device
+X      driver module.
+X
+X      Make sure that rc.local loads the module every time at the same
+X      position as it did now.
+X
+X6. Test the module by running 'aptest' as root. The outpout will look like:
+X
+X# ./aptest
+XNOTICE: VGA mapped [0xa0000 ,size=4096) to addr=0x10073000...
+X
+XDONE displaying memory contents (80 bytes)
+XUNMAPPING [0xa0000 ,size=4096) to addr=0x10073000... and closing...DONE.
+XExiting successful...
+X
+X7. If you're running XFree86 3.1 or higher, just make sure that
+X   HasNetBSDApertureDriver is set to YES in xf86site.def before building 
+X   your server. The netBSD binary distribution has the aperture driver 
+X   code enabled.
+X
+XBug reports, comments, suggestions can be sent to matthieu@laas.fr
+X
+X--Matthieu Herrb
+X
+X----------------------------------------------------------------------
+X
+X Copyright (c) 1994 The XFree86 Project Inc.
+X
+END-of-README
+echo x - Makefile
+sed 's/^X//' >Makefile << 'END-of-Makefile'
+X#
+X# Loadable Kernel Module for NetBSD Aperture Driver
+X#
+X# Copyright (c) 1994 The XFree86 Project Inc.
+X#
+X
+X# Change KERNDIR to the directory into which you want to install kernel modules
+XKERNDIR = /usr/X11R6/lib/X11/kernel
+X
+X# You can add -DAP_DEBUG to CFLAGS to add debugging prints
+XCFLAGS = -O -D_KERNEL -I/sys $(PC98)
+X
+XMODULE = ap
+XPOSTINSTALL = apinstall
+X
+XSRCS = aperture.c lkm.c version.c
+XOBJS = $(SRCS:.c=.o)
+X
+Xall: $(MODULE).o aptest
+X
+X$(MODULE).o: $(OBJS)
+X	$(LD) -r -o $(MODULE).o $(OBJS)
+X
+Xaptest:	aptest.c
+X	$(CC) -g -o aptest aptest.c
+X
+Xclean:
+X	rm -f $(MODULE).o $(OBJS) aptest
+X
+Xload:
+X	modload -v -o$(MODULE) -e$(MODULE) -p$(POSTINSTALL) $(MODULE).o
+X
+Xunload:
+X	modunload -n $(MODULE)
+X
+Xinstall: $(MODULE).o
+X	install -d -o root -g wheel -m 755 $(KERNDIR)
+X	install -c -o root -g wheel -m 644 $(MODULE).o $(KERNDIR)
+X	install -c -o root -g wheel -m 755 $(POSTINSTALL) $(KERNDIR)
+X
+Xshar:
+X	shar  README Makefile aperture.c apinstall aptest.c lkm.c \
+X	version.c version.h > apNetBSD.shar
+X
+X.c.o:
+X	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
+X
+X.include <bsd.dep.mk>
+END-of-Makefile
+echo x - aperture.c
+sed 's/^X//' >aperture.c << 'END-of-aperture.c'
+X/*
+X * Copyright 1994 the XFree86 Project Inc. 
+X */
+X
+X/* 
+X * linear framebuffer aperture driver for NetBSD
+X */
+X
+X#include <sys/param.h>
+X#include <sys/systm.h>
+X#include <sys/proc.h>
+X#include <sys/errno.h>
+X
+X#define VGA_START 0xA0000
+X#ifdef PC98 
+X#define VGA_END   0xFFFFF
+X#define HOLE16M_START	0xF00000
+X#define HOLE16M_END	0xFFFFFF
+X#else 
+X#define VGA_END   0xBFFFF
+X#endif 
+X
+X/* open counter */
+Xstatic int ap_open_count = 0;
+X
+X/*
+X * Open the device
+X */
+Xint
+Xapopen(dev_t dev, int oflags, int devtype, struct proc *p)
+X{
+X
+X    if (suser(p->p_ucred, &p->p_acflag) != 0) {
+X	return(EPERM);
+X    }
+X    /* authorize only one simultaneous open() */
+X    if (ap_open_count > 0) {
+X	return(EPERM);
+X    }
+X    ap_open_count++;
+X
+X    return(0);
+X}
+X
+X/*
+X * Close the device
+X */
+Xint
+Xapclose(dev_t dev, int cflags, int devtype, struct proc *p)
+X{
+X
+X    ap_open_count--;
+X    return(0);
+X}
+X
+X/*
+X *  mmap() physical memory sections
+X * 
+X * allow only section in the vga framebuffer and above main memory 
+X * to be mapped
+X */
+Xint
+Xapmmap(dev_t dev, int offset, int length)
+X{
+X
+X#ifdef AP_DEBUG
+X    printf("apmmap: addr 0x%x\n", offset);
+X#endif
+X    if  ((minor(dev) == 0) 
+X	 && ((offset >= VGA_START && offset <= VGA_END )
+X	     || (unsigned)offset > (unsigned)ctob(physmem)
+X#ifdef PC98
+X	     || ((unsigned)offset >=HOLE16M_START
+X                   && (unsigned)offset <= HOLE16M_END)
+X#endif
+X	     )) {
+X	return i386_btop(offset);
+X    } else {
+X	return(-1);
+X    }
+X}
+X       
+END-of-aperture.c
+echo x - apinstall
+sed 's/^X//' >apinstall << 'END-of-apinstall'
+X#! /bin/sh
+X# 
+X# Postinstall script for NetBSD Aperture Driver
+X# 
+X# Copyright (C) 1994 The XFree86 Project Inc.
+X#
+Xif [ $# -ne 3 ]; then
+X    echo "$0: should be called by modload(8) with 3 arguments"
+X    exit 1
+Xfi
+X
+Xecho "Major device number: $3"
+Xrm -f /dev/xf86
+Xmknod /dev/xf86 c $3 0
+Xexit 0
+END-of-apinstall
+echo x - aptest.c
+sed 's/^X//' >aptest.c << 'END-of-aptest.c'
+X/* 
+X * Copyright 1994  	Doug Anson, danson@lgc.com & David Holland, davidh@use.com
+X *
+X * Author: Doug Anson (danson@lgc.com)
+X * Date  : 2/21/94
+X * Modifed: David Holland (davidh@use.com)
+X * Log:
+X * 		DWH - Changed names/added comments	2/23/94
+X * 		DWH - Removed annoying delays.		2/23/94
+X * 
+X * This program test the fb aperture driver by 'cheating'
+X * it uses the aperture driver to access/read the main
+X * system BIOS header
+X * 
+X * Copyright notice:
+X * Permission to use, copy, modify, distribute, and sell this software and its
+X * documentation for any purpose is hereby granted without fee, provided that
+X * the above copyright notice appear in all copies and that both that
+X * copyright notice and this permission notice appear in supporting
+X * documentation, and that the name of Doug Anson, and David Holland be used in
+X * advertising or publicity pertaining to distribution of the software 
+X * Doug Anson, and David Holland make no * representations about the 
+X * suitability of this software for any purpose.
+X * It is provided "as is" without express or implied warranty.
+X *
+X * Disclaimer:
+X * DOUG ANSON, AND DAVID HOLLAND DISCLAIMS ALL WARRIENTS WITH REGARD TO THIS 
+X * SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY, AND FITNESS, 
+X * IN NO EVENT SHALL DOUG ANSON, OR DAVID HOLLAND BE LIABLE FOR ANY SPECIAL, 
+X * INDIRECT, OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM 
+X * USAGE OF THIS SOFTWARE.
+X */
+X
+X/*
+X * linear framebuffer aperture driver test program
+X */
+X
+X/* 
+X * $Id
+X */
+X
+X
+X#include <stdio.h>
+X#include <sys/types.h>
+X#include <sys/mman.h>
+X#include <sys/stat.h>
+X#include <fcntl.h>
+X#include <errno.h>
+X
+X#if !defined(sun)
+Xextern void exit(int);
+Xextern caddr_t mmap();
+Xextern int close();
+Xextern int munmap();
+X#endif
+X
+X/* framebuffer access defines */
+X#define AP_DEV		"/dev/xf86"	/* framebuffer apperture device		*/
+X#define PADDR		0xa0000				/* offset from fbmem base     		*/
+X#define BUF_LENGTH  0x1000				/* length in bytes -- ignored 		*/
+X
+X/* debug testing defines */
+X#define START_INDEX	0		/* display starting index(>=0)*/
+X#define STOP_INDEX	80		/* display stopping index	  */
+X#define INCR		1		/* display increment		  */
+X
+X/* main program */
+Xint main(int argc,char **argv)
+X{
+X	caddr_t	addr = (caddr_t)0;
+X	int		fb_dev;
+X	long	start = START_INDEX;
+X	long	stop = STOP_INDEX;
+X	int		i;
+X
+X	/* open the framebuffer device */
+X	fb_dev = open (AP_DEV,O_RDWR);
+X	if (fb_dev < 0)
+X	{
+X		/* failed to open framebuffer driver */
+X		printf("ERROR: failed to open %s\n",AP_DEV);
+X		perror("ERROR: open()");
+X		exit(1);
+X	} 
+X
+X	/* memory map the framebuffer */
+X	addr = (caddr_t)mmap((caddr_t)0,BUF_LENGTH,PROT_READ|PROT_WRITE,MAP_SHARED,
+X			             fb_dev,(off_t)PADDR);
+X	if (addr == (caddr_t)-1)
+X	{
+X		/* failed to memory map framebuffer driver */
+X		printf("ERROR: failed to mmap [0x%x ,size=%d bytes)\n",
+X			   PADDR,BUF_LENGTH);
+X		perror("ERROR: mmap()");
+X		close(fb_dev);
+X		exit(1);
+X	}
+X	else
+X	{
+X		/* frame buffer mapped */
+X		close(fb_dev);
+X		printf("NOTICE: BIOS mapped [0x%x ,size=%d) to addr=0x%x...\n",
+X			   PADDR,BUF_LENGTH,(int)addr);
+X
+X		/* display the buffer */
+X    	for(i=start;i<stop;i=i+INCR)
+X			printf("%c",addr[i]);
+X        	/* printf("addr[%d]=%c\n",i,addr[i]);
+X			 */
+X		printf("\nDONE displaying memory contents (%d bytes)\n",stop);
+X
+X		/* unmap and close */
+X		printf("UNMAPPING [0x%x ,size=%d) to addr=0x%x... and closing...",
+X               PADDR,BUF_LENGTH,(int)addr);
+X		munmap(addr,BUF_LENGTH);
+X		printf("DONE.\n");
+X		printf("Exiting successful...\n");
+X		exit(0);
+X	}
+X	return 1;
+X}
+END-of-aptest.c
+echo x - lkm.c
+sed 's/^X//' >lkm.c << 'END-of-lkm.c'
+X/*
+X * Copyright (c) 1994 The XFree86 Project Inc.
+X */
+X
+X#include <sys/param.h>
+X#include <sys/systm.h>
+X#include <sys/conf.h>
+X#include <sys/uio.h>
+X#include <sys/exec.h>
+X#include <sys/lkm.h>
+X#include <errno.h>
+X#include "version.h"
+X
+X#if NetBSD <= 1994100 && NetBSD >= 1990000
+X/* cdevsw-specific types */
+X#define dev_type_read(n)        int n __P((dev_t, struct uio *, int))
+X#define dev_type_write(n)       int n __P((dev_t, struct uio *, int))
+X#define dev_type_ioctl(n) \
+X        int n __P((dev_t, int, caddr_t, int, struct proc *))
+X#define dev_type_stop(n)        int n __P((struct tty *, int))
+X#define dev_type_reset(n)       int n __P((int))
+X#define dev_type_select(n)      int n __P((dev_t, int, struct proc *))
+X#define dev_type_mmap(n)        int n __P(())
+X#endif
+X
+Xextern int apopen(dev_t dev, int oflags, int devtype, struct proc *p);
+Xextern int apclose(dev_t dev, int fflags, int devtype, struct proc *p);
+Xextern int apmmap(dev_t dev, int offset, int length);
+X
+Xstatic struct cdevsw newdev = {
+X    apopen, apclose, 
+X    (dev_type_read((*))) enodev, (dev_type_write((*))) enodev,
+X    (dev_type_ioctl((*))) enodev, 
+X    (dev_type_stop((*))) enodev,
+X#if NetBSD <= 1994100 && NetBSD >= 1990000
+X    (dev_type_reset((*))) nullop, (struct tty **) 0,
+X#else
+X    0,
+X#endif
+X    seltrue, (dev_type_mmap((*))) apmmap, 0};
+X
+XMOD_DEV("ap", LM_DT_CHAR, -1, &newdev)
+X
+Xstatic int 
+Xap_load(struct lkm_table *lkmtp, int cmd)
+X{
+X    if (cmd == LKM_E_LOAD) {
+X	printf("\n Aperture driver for XFree86 version %s.%s\n",
+X	       ap_major_version, ap_minor_version);
+X    }
+X    return(0);
+X}
+X
+X#if NetBSD <= 1994100 && NetBSD >= 1990000
+Xint
+Xap(struct lkm_table *lkmtp, int cmd, int ver)
+X{
+X    DISPATCH(lkmtp, cmd, ver, ap_load, nosys, nosys)
+X}
+X#else
+Xint
+Xap(struct lkm_table *lkmtp, int cmd, int ver)
+X{
+X    DISPATCH(lkmtp, cmd, ver, ap_load, lkm_nofunc, lkm_nofunc)
+X}
+X#endif
+END-of-lkm.c
+echo x - version.c
+sed 's/^X//' >version.c << 'END-of-version.c'
+X/*
+X * Loadable Kernel Module for XFree86 Aperture driver
+X *
+X * Copyright (c) 1994,1996 The XFree86 Project Inc.
+X */
+Xchar *ap_major_version = "1";
+Xchar *ap_minor_version = "6";
+END-of-version.c
+echo x - version.h
+sed 's/^X//' >version.h << 'END-of-version.h'
+X/*
+X * Loadable Kernel Module for XFree86 Aperture driver
+X *
+X * Copyright (c) 1994 Matthieu Herrb
+X */
+Xextern char *ap_major_version;
+Xextern char *ap_minor_version;
+END-of-version.h
+exit
+

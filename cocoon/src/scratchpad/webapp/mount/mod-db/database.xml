@@ -1,0 +1,122 @@
+<root>
+   <connection>personnel</connection>
+   <!-- this is only used when no connection is specified in sitemap -->
+
+   <!-- a table consists of key attributes and plain values, keys are
+        handled differently on operations. Most significantly when
+        inserting a new row, we need to determine if a value needs to
+        be set by the action or wheter it's an autoincrement. Next,
+        autoincrements work differently on different DBMSs, so we need
+        special support to find out about the value set by the DBMS.
+   -->
+   <table name="user" alias="user">
+      <!-- @name is the table's name in the DB -->
+      <!-- @alias is used instead (if present) for those weirdos that put -->
+      <!-- complex queries into @name ;-) You obviously loose all but select -->
+      <!-- functionality, although this is not enforced. -->
+      <keys>
+         <key name="uid" type="int" autoincrement="true">
+	    <!-- @name is the column's name -->
+	    <!-- @type is the column's jdbc type -->
+            <!-- @autoincrement : column value is determined by special component -->
+	    <mode name="auto"  type="autoincr"/>
+	    <!-- this entry says:
+	    when inserting a new column into a autoincrement column
+            (@type="autoincr"), use the helper named "auto" to find out about
+            how to handle this column. All other operations use the default
+            mode.  
+	    There are two distinct mode types: "autoincr" for insert
+	    operations on autoincrement columns and "others" for all other
+            (delete, update, select) operations on autoincrement columns and
+            all operations on other columns. 
+            -->
+	 </key>
+      </keys>
+      <values>
+         <value name="name"      type="string"></value>
+         <value name="firstname" type="string"></value>
+         <value name="uname"     type="string"></value>
+      </values>   
+   </table>
+
+   <table name="user_groups">
+      <keys>
+         <key name="uid" type="int">
+	    <!-- Next we have two different modes: "request" and
+	    "attrib". See below for explanation. -->
+	    <mode name="request" parameter="user_groups.uid" type="request"/>
+            <mode name="attribute" parameter="org.apache.cocoon.acting.ModularDatabaseAccess.OutputHelper:user.uid[0]" type="attrib"/>
+	    <!--  note here, that the actual parameter has a row index
+	    to it. We don't expect to insert more than one user plus
+	    her groups at any time, so we append just "[0]". However,
+	    if that would be the case, we could let this column be
+	    part of a set and ask for "[*]" instead. Might be tricky
+	    to find the associated groups, though, if we insert x
+	    users plus y_1, y_2, ... , y_x groups.... -->
+	 </key>
+	 <key name="gid" type="int" set="master">
+	    <!-- now, this is tricky: when we need to insert multiple
+	    rows, those attributes that differ in these rows are
+	    marked to belong to a "set". One column is marked to be
+	    the "master" while all others need to be "slaves". A
+	    master is used to obtain a sorted set of index values for
+	    these rows. These will then be used to get the actual
+	    values for the master and slave columns. Note that it is
+	    not necessary to have the master be a key column. Note too, that an
+            autoincrement column may not serve as a master here.
+
+	    This attribute may be specified on a column level or on a
+	    mode level to allow different behavious. Mode level @set
+	    is only considered if @set is not present on column level.
+	    -->
+	    <!-- special mode type "all" is used for all operations -->
+	    <mode name="request" parameter="user_groups.gid" type="all"/>
+	 </key>
+      </keys>
+   </table>
+
+   <table name="groups">
+      <keys>
+         <key name="gid" type="int" autoincrement="true">
+	    <mode name="auto" type="autoincr"/>
+	 </key>
+      </keys>
+      <values>
+         <value name="gname" type="string"/>
+      </values>   
+   </table>
+   
+
+   <!-- the existing DB actions try to work on all tables listed in
+        this descriptor file. Just like some other newer actions this
+        one also allows for table-sets. If no set is found, it
+        defaults to the previous behaviour. Note though, that the
+        syntax is slightly different from the "old" DB actions file. -->
+
+
+   <table-set name="user">
+      <table name="user"/>
+   </table-set>
+
+   <table-set name="groups">
+      <table name="groups"/>
+   </table-set>
+
+   <table-set name="user+groups">
+      <table name="user"/>
+      <table name="user_groups" others-mode="attrib"/>
+      <!-- below we have another table set that inserts data into
+      user_groups. When inserting into user_groups alone, we'd know
+      the uid before hand, but when inserting a new user as well, we
+      need to find out the autoincrement value first. Therefore we
+      need a different approach to obtain that value. So we can
+      instruct the action to use a different type (here "attrib") which reads
+      the result from the first insert operation. 
+      -->
+   </table-set>
+
+   <table-set name="user_groups">
+      <table name="user_groups" others-mode="request"/>
+   </table-set>
+
+</root>

@@ -1,0 +1,220 @@
+<project name="Tester" default="build-main" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <property name="build.compiler"  value="classic"/>
+  <property name="servletapi.home" value="../../jakarta-servletapi-4/dist"/>
+  <property name="tester.build"    value="build"/>
+  <property name="tester.deploy"   value="../build"/>
+  <property name="tester.dist"     value="dist"/>
+  <property name="xerces.home"     value="../../xerces-1_3_0"/>
+
+  <!-- ================== Derived Property Values ========================= -->
+  <property name="ant.jar"         value="${ant.home}/lib/ant.jar"/>
+  <property name="servlet.jar"     value="${servletapi.home}/lib/servlet.jar"/>
+  <property name="xerces.jar"      value="${xerces.home}/xerces.jar"/>
+
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare">
+    <mkdir dir="${tester.build}"/>
+    <mkdir dir="${tester.build}/bin"/>
+    <mkdir dir="${tester.build}/classes"/>
+    <mkdir dir="${tester.build}/lib"/>
+  </target>
+
+
+  <!-- =================== BUILD: Copy Static Files ======================= -->
+  <target name="build-static" depends="build-prepare">
+
+    <!-- Executable Commands -->
+    <mkdir  dir="${tester.build}/bin"/>
+    <copy todir="${tester.build}/bin">
+      <fileset dir="src/bin" />
+    </copy>
+    <fixcrlf srcdir="${tester.build}/bin" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${tester.build}/bin" includes="*.bat" cr="add"/>
+    <chmod perm="+x" file="${tester.build}/bin/tester.sh"/>
+
+    <!-- Compiled Classes -->
+    <mkdir  dir="${tester.build}/classes"/>
+
+    <!-- Web Application -->
+    <mkdir  dir="${tester.build}/web"/>
+    <copy todir="${tester.build}/web">
+      <fileset dir="web"/>
+    </copy>
+    <mkdir  dir="${tester.build}/web/WEB-INF/classes"/>
+
+  </target>
+
+
+  <!-- ================= BUILD: Compile Server Components ================= -->
+  <target name="build-main" depends="build-static">
+
+    <!-- Compile tester components and tools -->
+    <javac srcdir="src/tester" destdir="${tester.build}/classes"
+     classpath="${ant.jar}:${servlet.jar}:${xerces.jar}"
+     deprecation="off" debug="on" optimize="off"
+     excludes="**/CVS/**"/>
+
+    <!-- Copy static resource files -->
+    <copy todir="${tester.build}/classes">
+      <fileset dir="src/tester">
+        <include name="**/*.properties"/>
+      </fileset>
+      <fileset dir="src/tester">
+        <include name="**/*.txt"/>
+      </fileset>
+    </copy>
+    <copy file="${tester.build}/classes/org/apache/tester/unshared/UnsharedSessionBean.class"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/unshared/UnsharedSessionBean.class"/>
+    <copy file="src/tester/org/apache/tester/Resources01.txt"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked01.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources01.txt"
+        tofile="${tester.build}/classes/org/apache/tester/shared/Shared01.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources01.txt"
+        tofile="${tester.build}/classes/org/apache/tester/unpshared/UnpShared01.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources03.txt"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked03.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources03.txt"
+        tofile="${tester.build}/classes/org/apache/tester/shared/Shared03.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources03.txt"
+        tofile="${tester.build}/classes/org/apache/tester/unpshared/UnpShared03.txt"/>
+    <copy file="src/tester/org/apache/tester/Resources05.txt"
+        tofile="${tester.build}/web/WEB-INF/classes/org/apache/tester/Unpacked05.txt"/>
+
+    <!-- Install Xerces -->
+    <copy  todir="${tester.build}/web/WEB-INF/lib">
+        <fileset dir="${xerces.home}" includes="xerces.jar"/>
+    </copy>
+
+    <!-- Create and install tester library -->
+    <mkdir   dir="${tester.build}/web/WEB-INF/lib"/>
+    <jar jarfile="${tester.build}/web/WEB-INF/lib/tester.jar">
+      <fileset dir="${tester.build}/classes">
+        <exclude name="**/shared/*"/>
+        <exclude name="**/unshared/*"/>
+      </fileset>
+    </jar>
+
+  </target>
+
+
+  <!-- ================ BUILD: Create Tester Javadocs ===================== -->
+  <target name="javadoc" depends="build-main">
+    <delete dir="${tester.build}/javadoc"/>
+    <mkdir dir="${tester.build}/javadoc"/>
+    <javadoc packagenames="org.apache.tester.*"
+     classpath="${ant.jar}:${tester.build}/classes"
+     sourcepath="src/tester"
+     destdir="${tester.build}/javadoc"
+     author="true"
+     version="true"
+     windowtitle="Tester Internal API Documentation"
+     doctitle="Tester Tools and Tests API"
+     bottom="Copyright &#169; 2000 Apache Software Foundation.  All Rights Reserved."
+    />
+  </target>
+
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <delete dir="${tester.build}"/>
+  </target>
+
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,build-main"/>
+
+
+  <!-- ====================== DEPLOY: Create Directories ================== -->
+  <target name="deploy-prepare">
+    <mkdir dir="${tester.deploy}"/>
+    <mkdir dir="${tester.deploy}/bin"/>
+  </target>
+
+
+  <!-- ====================== DEPLOY: Copy Static Files =================== -->
+  <target name="deploy-static" depends="build-main,deploy-prepare">
+
+    <!-- Executable Commands -->
+    <copy todir="${tester.deploy}/bin">
+      <fileset dir="${tester.build}/bin" />
+    </copy>
+    <fixcrlf srcdir="${tester.deploy}/bin" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${tester.deploy}/bin" includes="*.bat" cr="add"/>
+    <chmod perm="+x" file="${tester.deploy}/bin/tester.sh"/>
+
+    <!-- Unpacked Shared Classes -->
+    <mkdir   dir="${tester.deploy}/classes"/>
+    <copy  todir="${tester.deploy}/classes">
+      <fileset dir="${tester.build}/classes">
+        <include name="**/unpshared/*"/>
+      </fileset>
+    </copy>
+
+    <!-- Shared Library -->
+    <mkdir   dir="${tester.deploy}/lib"/>
+    <jar jarfile="${tester.deploy}/lib/tester-shared.jar">
+      <fileset dir="${tester.build}/classes">
+        <include name="**/shared/*"/>
+      </fileset>
+    </jar>
+
+    <!-- Web Application -->
+    <mkdir  dir="${tester.deploy}/webapps/tester"/>
+    <copy todir="${tester.deploy}/webapps/tester">
+      <fileset dir="${tester.build}/web"/>
+    </copy>
+
+  </target>
+
+
+  <!-- ====================== DEPLOY: Create Tester JAR =================== -->
+  <target name="deploy-main" depends="deploy-static"/>
+
+
+  <!-- ====================== DEPLOY: Deploy Tester Build ================= -->
+  <target name="deploy" depends="deploy-main"/>
+
+
+  <!-- ====================== DEPLOY: Clean Directories =================== -->
+  <target name="deploy-clean">
+    <delete dir="${tester.deploy}/webapps/tester"/>
+  </target>
+
+
+  <!-- ================ DIST: Create Distribution ========================= -->
+  <target name="dist" depends="build-main">
+
+    <mkdir dir="${tester.dist}/bin"/>
+    <copy todir="${tester.dist}/bin">
+      <fileset dir="${tester.build}/bin" />
+    </copy>
+    <fixcrlf srcdir="${tester.dist}/bin" includes="*.sh" cr="remove"/>
+    <fixcrlf srcdir="${tester.dist}/bin" includes="*.bat" cr="add"/>
+    <chmod perm="+x" file="${tester.dist}/bin/tester.sh"/>
+
+    <mkdir   dir="${tester.dist}/webapps"/>
+    <jar jarfile="${tester.dist}/webapps/tester.war"
+         basedir="${tester.build}/web"/>
+
+  </target>
+
+
+  <!-- ======================== DIST: Clean Directory ===================== -->
+  <target name="dist-clean">
+    <delete dir="${tester.dist}"/>
+  </target>
+
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean, dist-clean"/>
+
+
+</project>

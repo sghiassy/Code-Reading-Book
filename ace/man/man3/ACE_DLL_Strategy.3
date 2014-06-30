@@ -1,0 +1,135 @@
+.TH ACE_DLL_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_DLL_Strategy \- Defines the interface for specifying a creation strategy for a SVC_HANDLER based on dynamic linking of the SVC_HANDLER. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Strategies_T.h>\fR
+.PP
+Inherits \fBACE_Creation_Strategy< SVC_HANDLER >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_DLL_Strategy\fR (void)"
+.br
+.RI "\fI"Do-nothing" constructor.\fR"
+.ti -1c
+.RI "\fBACE_DLL_Strategy\fR (const char dll_name[], const char factory_function[], const char svc_name[], \fBACE_Service_Repository\fR *, \fBACE_Thread_Manager\fR * = 0)"
+.br
+.RI "\fIInitialize the DLL strategy based upon the service's DLL information contained in the <svc_dll_info> string.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const char dll_name[], const char factory_function[], const char svc_name[], \fBACE_Service_Repository\fR *, \fBACE_Thread_Manager\fR * = 0)"
+.br
+.RI "\fIInitialize the DLL strategy based upon the service's DLL information contained in the <svc_dll_info> string.\fR"
+.ti -1c
+.RI "virtual int \fBmake_svc_handler\fR (SVC_HANDLER *&)"
+.br
+.RI "\fICreate a SVC_HANDLER by dynamically linking it from a DLL. Returns -1 on failure, else 0.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Creation_Strategy\fR<SVC_HANDLER> \fBinherited\fR"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "char \fBdll_name_\fR [MAXPATHLEN + 1]"
+.br
+.RI "\fIName of the DLL to dynamically link.\fR"
+.ti -1c
+.RI "char \fBfactory_function_\fR [MAXPATHLEN + 1]"
+.br
+.RI "\fIName of the factory function in the shared library to use to obtain a pointer to the new SVC_HANDLER.\fR"
+.ti -1c
+.RI "char \fBsvc_name_\fR [MAXNAMELEN + 1]"
+.br
+.RI "\fIName of the service.\fR"
+.ti -1c
+.RI "\fBACE_Service_Repository\fR* \fBsvc_rep_\fR"
+.br
+.RI "\fIPointer to the <Service_Repository>.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER>  template class ACE_DLL_Strategy
+Defines the interface for specifying a creation strategy for a SVC_HANDLER based on dynamic linking of the SVC_HANDLER.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> typedef \fBACE_Creation_Strategy\fR<SVC_HANDLER> ACE_DLL_Strategy<SVC_HANDLER>::inherited\fC [protected]\fR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_DLL_Strategy<SVC_HANDLER>::ACE_DLL_Strategy<SVC_HANDLER> (void)
+.PP
+"Do-nothing" constructor.
+.PP
+.SS template<classSVC_HANDLER> ACE_DLL_Strategy<SVC_HANDLER>::ACE_DLL_Strategy<SVC_HANDLER> (const char dll_name[], const char factory_function[], const char svc_name[], \fBACE_Service_Repository\fR *, \fBACE_Thread_Manager\fR * = 0)
+.PP
+Initialize the DLL strategy based upon the service's DLL information contained in the <svc_dll_info> string.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> void ACE_DLL_Strategy<SVC_HANDLER>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Creation_Strategy\fR.
+.SS template<classSVC_HANDLER> int ACE_DLL_Strategy<SVC_HANDLER>::make_svc_handler (SVC_HANDLER *& sh)\fC [virtual]\fR
+.PP
+Create a SVC_HANDLER by dynamically linking it from a DLL. Returns -1 on failure, else 0.
+.PP
+Reimplemented from \fBACE_Creation_Strategy\fR.
+.SS template<classSVC_HANDLER> int ACE_DLL_Strategy<SVC_HANDLER>::open (const char dll_name[], const char factory_function[], const char svc_name[], \fBACE_Service_Repository\fR *, \fBACE_Thread_Manager\fR * = 0)
+.PP
+Initialize the DLL strategy based upon the service's DLL information contained in the <svc_dll_info> string.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_DLL_Strategy<SVC_HANDLER>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Creation_Strategy\fR.
+.SS template<classSVC_HANDLER> char ACE_DLL_Strategy<SVC_HANDLER>::dll_name_[MAXPATHLEN+1]\fC [protected]\fR
+.PP
+Name of the DLL to dynamically link.
+.PP
+.SS template<classSVC_HANDLER> char ACE_DLL_Strategy<SVC_HANDLER>::factory_function_[MAXPATHLEN+1]\fC [protected]\fR
+.PP
+Name of the factory function in the shared library to use to obtain a pointer to the new SVC_HANDLER.
+.PP
+.SS template<classSVC_HANDLER> char ACE_DLL_Strategy<SVC_HANDLER>::svc_name_[MAXNAMELEN+1]\fC [protected]\fR
+.PP
+Name of the service.
+.PP
+.SS template<classSVC_HANDLER> \fBACE_Service_Repository\fR * ACE_DLL_Strategy<SVC_HANDLER>::svc_rep_\fC [protected]\fR
+.PP
+Pointer to the <Service_Repository>.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

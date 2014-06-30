@@ -1,0 +1,158 @@
+.TH ACE_Null_Semaphore 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Null_Semaphore \- Implement a do nothing , i.e., all the methods are no ops. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Null_Semaphore\fR (u_int count = 1, int type = USYNC_THREAD, const \fBACE_TCHAR\fR *name = 0, void * = 0, int max = 0x7fffffff)"
+.br
+.ti -1c
+.RI "\fB~ACE_Null_Semaphore\fR (void)"
+.br
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBacquire\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBacquire\fR (\fBACE_Time_Value\fR &)"
+.br
+.RI "\fIReturn -1 with <errno> == <ETIME>.\fR"
+.ti -1c
+.RI "int \fBacquire\fR (\fBACE_Time_Value\fR *)"
+.br
+.RI "\fIReturn -1 with <errno> == <ETIME>.\fR"
+.ti -1c
+.RI "int \fBtryacquire\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (size_t)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBacquire_write\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBtryacquire_write\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBtryacquire_write_upgrade\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBacquire_read\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "int \fBtryacquire_read\fR (void)"
+.br
+.RI "\fIReturn 0.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Implement a do nothing , i.e., all the methods are no ops.
+.PP
+.PP
+ Although the methods are no-ops, the return values are different for the blocking as opposed to timed acquires. The blocking version of \fBacquire\fR() is often used to serialize access to a critical section, whereas the timed version is often used to wait for another thread to update some condition or change some shared state. When using an ACE_Null_Semaphore, however, there's no other thread involved to change a state or condition (otherwise, a null semaphore would be inappropriate). Returning an error value signifies that the state or condition has not been (and can't be) changed, which is consistent with the behavior of the threaded case where a timeout occurs before the state or condition is changed. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Null_Semaphore::ACE_Null_Semaphore (u_int count = 1, int type = USYNC_THREAD, const \fBACE_TCHAR\fR * name = 0, void * = 0, int max = 0x7fffffff)
+.PP
+.SS ACE_Null_Semaphore::~ACE_Null_Semaphore (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Null_Semaphore::acquire (\fBACE_Time_Value\fR *)
+.PP
+Return -1 with <errno> == <ETIME>.
+.PP
+.SS int ACE_Null_Semaphore::acquire (\fBACE_Time_Value\fR &)
+.PP
+Return -1 with <errno> == <ETIME>.
+.PP
+.SS int ACE_Null_Semaphore::acquire (void)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::acquire_read (void)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::acquire_write (void)
+.PP
+Return 0.
+.PP
+.SS void ACE_Null_Semaphore::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_Null_Semaphore::release (size_t)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::release (void)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::remove (void)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::tryacquire (void)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::tryacquire_read (void)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::tryacquire_write (void)
+.PP
+Return 0.
+.PP
+.SS int ACE_Null_Semaphore::tryacquire_write_upgrade (void)
+.PP
+Return 0.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Null_Semaphore::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

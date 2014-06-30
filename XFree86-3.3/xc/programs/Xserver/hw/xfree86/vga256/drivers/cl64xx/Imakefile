@@ -1,0 +1,33 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:29:11 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/cl64xx/Imakefile,v 3.5 1996/12/23 06:57:04 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = cl_driver.c cl_bank.s
+OBJS = cl_driver.o cl_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I../../vga -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(cl64xx_drv, $(OBJS))
+
+InstallLinkKitNonExecFile(cl_driver.c,$(LINKKITDIR)/drivers/vga256/cl64xx)
+InstallLinkKitNonExecFile(cl_bank.s,$(LINKKITDIR)/drivers/vga256/cl64xx)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/cl64xx)
+
+DependTarget()

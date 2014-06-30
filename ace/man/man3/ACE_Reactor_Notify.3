@@ -1,0 +1,126 @@
+.TH ACE_Reactor_Notify 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Reactor_Notify \- Abstract class for unblocking an  from its event loop. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Reactor_Impl.h>\fR
+.PP
+Inherits \fBACE_Event_Handler\fR.
+.PP
+Inherited by \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBopen\fR (\fBACE_Reactor_Impl\fR *, \fBACE_Timer_Queue\fR *timer_queue = 0, int disable_notify = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBclose\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual \fBssize_t\fR \fBnotify\fR (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::EXCEPT_MASK, \fBACE_Time_Value\fR * = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBdispatch_notifications\fR (int &number_of_active_handles, \fBACE_Handle_Set\fR &rd_mask) = 0"
+.br
+.RI "\fIHandles pending threads (if any) that are waiting to unblock the <Reactor_Impl>.\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBnotify_handle\fR (void) = 0"
+.br
+.RI "\fIReturns the ACE_HANDLE of the notify pipe on which the reactor is listening for notifications so that other threads can unblock the <Reactor_Impl>.\fR"
+.ti -1c
+.RI "virtual int \fBis_dispatchable\fR (\fBACE_Notification_Buffer\fR &buffer) = 0"
+.br
+.RI "\fIVerify whether the buffer has dispatchable info or not.\fR"
+.ti -1c
+.RI "virtual int \fBdispatch_notify\fR (\fBACE_Notification_Buffer\fR &buffer) = 0"
+.br
+.RI "\fIHandle one of the notify call on the <handle>. This could be because of a thread trying to unblock the <Reactor_Impl>.\fR"
+.ti -1c
+.RI "virtual int \fBread_notify_pipe\fR (ACE_HANDLE handle, \fBACE_Notification_Buffer\fR &buffer) = 0"
+.br
+.RI "\fIRead one of the notify call on the <handle> into the <buffer>. This could be because of a thread trying to unblock the <Reactor_Impl>.\fR"
+.ti -1c
+.RI "virtual void \fBmax_notify_iterations\fR (int) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBmax_notify_iterations\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBpurge_pending_notifications\fR (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const = 0"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Abstract class for unblocking an  from its event loop.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS virtual int ACE_Reactor_Notify::close (void)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS int ACE_Reactor_Notify::dispatch_notifications (int & number_of_active_handles, \fBACE_Handle_Set\fR & rd_mask)\fC [pure virtual]\fR
+.PP
+Handles pending threads (if any) that are waiting to unblock the <Reactor_Impl>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS int ACE_Reactor_Notify::dispatch_notify (\fBACE_Notification_Buffer\fR & buffer)\fC [pure virtual]\fR
+.PP
+Handle one of the notify call on the <handle>. This could be because of a thread trying to unblock the <Reactor_Impl>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS void ACE_Reactor_Notify::dump (void) const\fC [pure virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS int ACE_Reactor_Notify::is_dispatchable (\fBACE_Notification_Buffer\fR & buffer)\fC [pure virtual]\fR
+.PP
+Verify whether the buffer has dispatchable info or not.
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS int ACE_Reactor_Notify::max_notify_iterations (void)\fC [pure virtual]\fR
+.PP
+Get the maximum number of times that the <handle_input> method will iterate and dispatch the  that are passed in via the notify queue before breaking out of its event loop. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS void ACE_Reactor_Notify::max_notify_iterations (int)\fC [pure virtual]\fR
+.PP
+Set the maximum number of times that the <handle_input> method will iterate and dispatch the  that are passed in via the notify queue before breaking out of the event loop. By default, this is set to -1, which means "iterate until the queue is empty." Setting this to a value like "1 or 2" will increase "fairness" (and thus prevent starvation) at the expense of slightly higher dispatching overhead. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS \fBssize_t\fR ACE_Reactor_Notify::notify (\fBACE_Event_Handler\fR * event_handler = 0, \fBACE_Reactor_Mask\fR mask = ACE_Event_Handler::EXCEPT_MASK, \fBACE_Time_Value\fR * timeout = 0)\fC [pure virtual]\fR
+.PP
+Called by a thread when it wants to unblock the <Reactor_Impl>. This wakeups the <Reactor_Impl> if currently blocked. Pass over both the <Event_Handler> *and* the <mask> to allow the caller to dictate which <Event_Handler> method the <Reactor_Impl> will invoke. The  indicates how long to blocking trying to notify the <Reactor_Impl>. If <timeout> == 0, the caller will block until action is possible, else will wait until the relative time specified in *<timeout> elapses). 
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS ACE_HANDLE ACE_Reactor_Notify::notify_handle (void)\fC [pure virtual]\fR
+.PP
+Returns the ACE_HANDLE of the notify pipe on which the reactor is listening for notifications so that other threads can unblock the <Reactor_Impl>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS virtual int ACE_Reactor_Notify::open (\fBACE_Reactor_Impl\fR * wfmo_reactor, \fBACE_Timer_Queue\fR * timer_queue = 0, int disable_notify = 0)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS int ACE_Reactor_Notify::purge_pending_notifications (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [pure virtual]\fR
+.PP
+Purge any notifications pending in this reactor for the specified  object. Returns the number of notifications purged. Returns -1 on error. 
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+.SS int ACE_Reactor_Notify::read_notify_pipe (ACE_HANDLE handle, \fBACE_Notification_Buffer\fR & buffer)\fC [pure virtual]\fR
+.PP
+Read one of the notify call on the <handle> into the <buffer>. This could be because of a thread trying to unblock the <Reactor_Impl>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_Notify\fR, and \fBACE_WFMO_Reactor_Notify\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

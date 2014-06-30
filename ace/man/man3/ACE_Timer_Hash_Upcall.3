@@ -1,0 +1,111 @@
+.TH ACE_Timer_Hash_Upcall 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Timer_Hash_Upcall \- Functor for Timer_Hash. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Timer_Hash_T.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_Queue_T\fR<\fBACE_Event_Handler\fR *, ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>, \fBACE_Null_Mutex\fR> \fBTIMER_QUEUE\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Hash_Upcall\fR (void)"
+.br
+.RI "\fIDefault constructor (creates an invalid object, but needs to be here so timer queues using this functor can be constructed).\fR"
+.ti -1c
+.RI "\fBACE_Timer_Hash_Upcall\fR (\fBACE_Timer_Queue_T\fR<TYPE, FUNCTOR, ACE_LOCK> *timer_hash)"
+.br
+.RI "\fIConstructor that specifies a Timer_Hash to call up to.\fR"
+.ti -1c
+.RI "int \fBtimeout\fR (\fBTIMER_QUEUE\fR &timer_queue, \fBACE_Event_Handler\fR *handler, const void *arg, const \fBACE_Time_Value\fR &cur_time)"
+.br
+.RI "\fIThis method is called when the timer expires.\fR"
+.ti -1c
+.RI "int \fBcancellation\fR (\fBTIMER_QUEUE\fR &timer_queue, \fBACE_Event_Handler\fR *handler)"
+.br
+.RI "\fIThis method is called when the timer is canceled.\fR"
+.ti -1c
+.RI "int \fBdeletion\fR (\fBTIMER_QUEUE\fR &timer_queue, \fBACE_Event_Handler\fR *handler, const void *arg)"
+.br
+.RI "\fIThis method is called when the timer queue is destroyed and the timer is still contained in it.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Hash_Upcall\fR (const ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK> &)"
+.br
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK> &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Queue_T\fR<TYPE, FUNCTOR, ACE_LOCK>* \fBtimer_hash_\fR"
+.br
+.RI "\fITimer Queue to do the calling up to.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE, class FUNCTOR, class ACE_LOCK>  template class ACE_Timer_Hash_Upcall
+Functor for Timer_Hash.
+.PP
+.PP
+ This class calls up to the Timer Hash's functor from the timer queues in the hash table 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> typedef \fBACE_Timer_Queue_T\fR<\fBACE_Event_Handler\fR *, ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>, \fBACE_Null_Mutex\fR> ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::TIMER_QUEUE
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK> (void)
+.PP
+Default constructor (creates an invalid object, but needs to be here so timer queues using this functor can be constructed).
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK> (\fBACE_Timer_Queue_T\fR< TYPE,FUNCTOR,ACE_LOCK >* timer_hash)
+.PP
+Constructor that specifies a Timer_Hash to call up to.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK> (const ACE_Timer_Hash_Upcall< TYPE,FUNCTOR,ACE_LOCK >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::cancellation (\fBTIMER_QUEUE\fR & timer_queue, \fBACE_Event_Handler\fR * handler)
+.PP
+This method is called when the timer is canceled.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::deletion (\fBTIMER_QUEUE\fR & timer_queue, \fBACE_Event_Handler\fR * handler, const void * arg)
+.PP
+This method is called when the timer queue is destroyed and the timer is still contained in it.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::operator= (const ACE_Timer_Hash_Upcall< TYPE,FUNCTOR,ACE_LOCK >&)\fC [private]\fR
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::timeout (\fBTIMER_QUEUE\fR & timer_queue, \fBACE_Event_Handler\fR * handler, const void * arg, const \fBACE_Time_Value\fR & cur_time)
+.PP
+This method is called when the timer expires.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Queue_T\fR< TYPE,FUNCTOR,ACE_LOCK >* ACE_Timer_Hash_Upcall<TYPE, FUNCTOR, ACE_LOCK>::timer_hash_\fC [private]\fR
+.PP
+Timer Queue to do the calling up to.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

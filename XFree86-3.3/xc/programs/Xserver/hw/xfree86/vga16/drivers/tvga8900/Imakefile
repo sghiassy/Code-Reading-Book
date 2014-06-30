@@ -1,0 +1,37 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/09/28 17:25:38 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/drivers/tvga8900/Imakefile,v 3.8 1996/12/23 06:52:29 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = t89_driver.c t89_bank.s
+
+OBJS = t89_driver.o t89_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(XF86SRC)/vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+DEFINES = -DXF86VGA16
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+
+NormalRelocatableTarget(t89_drv,$(OBJS))
+
+LinkSourceFile(t89_driver.c,$(VGADRIVERSRC)/tvga8900)
+LinkSourceFile(t89_driver.h,$(VGADRIVERSRC)/tvga8900)
+LinkSourceFile(tgui_ger.h,$(VGADRIVERSRC)/tvga8900)
+ObjectFromSpecialAsmSource(t89_bank,$(VGADRIVERSRC)/tvga8900/bank,NullParameter)
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga16/tvga8900)
+
+DependTarget()

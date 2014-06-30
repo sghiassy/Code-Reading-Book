@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+
+<!-- Author: Ovidiu Predescu "ovidiu@cup.hp.com" -->
+<!-- Date: October 7, 2000 -->
+
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	 xmlns:prf="http://www.wapforum.org/UAPROF/ccppschema-20000405">
+
+<browser-categories>
+
+ <!-- The search-order specifies the order in which the MIME types are
+ searched in Accept header to identify the type of the browser. -->
+ <search-order>
+  <type>text/html</type>
+  <type>text/vnd.wap.wml</type>
+ </search-order>
+
+ <!-- browser-category defines a group of browser types. The group is
+ identified by a "media" type attribute, and a "mime-type" and
+ "formatter-type" elements. These are required when defining a new
+ category. -->
+ <browser-category media="wap">
+  <mime-type>text/vnd.wap.wml</mime-type>
+  <formatter-type>text/wml</formatter-type>
+
+  <!-- Browsers in a category inherit automatically the properties of
+  their category. However they may decide to override some of these
+  properties. -->
+  <browser name="phone.com">
+   <formatter-type>text/wml/phone.com</formatter-type>
+   <user-agent>UP.Browser</user-agent>
+   <has-accesskey/>
+   <binds-call-to-send>vnd.up.send</binds-call-to-send>
+   <prf:WmlDeckSize>1400</prf:WmlDeckSize>
+
+   <!-- Apparently phone.com browsers have the the WTAI add phonebook
+   entry facility, so I added this here. However the phones I tested
+   with don't have this ability. -->
+   <has-wtai-add-phonebook/>
+
+   <!-- The inner browsers inherit the properties of the enclosing
+   browser. You can also selectively disable some of the inherited
+   properties. -->
+   <browser name="Motorola i500+, i700+, i1000+">
+    <user-agent>MO01</user-agent>
+    <binds-call-to-send>false</binds-call-to-send>
+    <has-wtai-add-phonebook>false</has-wtai-add-phonebook>
+    <prf:NumberOfSoftKeys>2</prf:NumberOfSoftKeys>
+   </browser>
+
+  </browser>
+
+  <!-- No need to list here WAP browsers that don't have special
+  characteristics. By default Cocoon is able to handle them as long as
+  they put text/vnd.wap.wml in the Accept: header of the request. We
+  list Nokia here because apparently it sends in the Accept: header
+  the */* string only (don't ask me why). -->
+  <browser name="Nokia">
+   <user-agent>Nokia</user-agent>
+  </browser>
+
+ </browser-category>
+
+ <!-- Describe the Web browsers here. It is possible to override the
+ "media" attribute by specifying a media attribute in the <browser>
+ description. This way we maintain the compatibility with the old way
+ Cocoon handled different Web browsers. By having an attribute or an
+ element with a similar name as another in the parent, you override
+ the one inherited from the parent.
+
+ A much nicer approach would be to list the capabilities of the
+ browsers and make use of them in the XSLT stylesheets, rather than
+ having multiple stylesheets one for each browser. -->
+ <browser-category media="html">
+  <mime-type>text/html</mime-type>
+  <formatter-type>text/html</formatter-type>
+
+  <browser media="explorer">
+   <user-agent>MSIE</user-agent>
+  </browser>
+
+  <browser media="pocketexplorer">
+   <user-agent>MSPIE</user-agent>
+  </browser>
+
+  <browser media="handweb">
+   <user-agent>HandHTTP</user-agent>
+  </browser>
+
+ </browser-category>
+
+</browser-categories>
+
+</rdf:RDF>

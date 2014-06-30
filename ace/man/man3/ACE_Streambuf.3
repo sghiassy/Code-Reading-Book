@@ -1,0 +1,292 @@
+.TH ACE_Streambuf 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Streambuf \- Create your custom \fBstreambuf\fR by providing and ACE_*_Stream object to this template. I have tested it with \fBACE_SOCK_Stream\fR and it should work fine for others as well. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <IOStream.h>\fR
+.PP
+Inherits \fBstreambuf\fR.
+.PP
+Inherited by \fBACE_Streambuf_T\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Streambuf\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Time_Value\fR* \fBrecv_timeout\fR (\fBACE_Time_Value\fR *tv = NULL)"
+.br
+.RI "\fIGet the current Time_Value pointer and provide a new one.\fR"
+.ti -1c
+.RI "char* \fBreset_put_buffer\fR (char *newBuffer = NULL, u_int _streambuf_size = 0, u_int _pptr = 0 )"
+.br
+.ti -1c
+.RI "u_int \fBput_avail\fR (void)"
+.br
+.RI "\fIReturn the number of bytes to be 'put' onto the stream media. pbase + put_avail = pptr.\fR"
+.ti -1c
+.RI "char* \fBreset_get_buffer\fR (char *newBuffer = NULL, u_int _streambuf_size = 0, u_int _gptr = 0, u_int _egptr = 0)"
+.br
+.ti -1c
+.RI "u_int \fBget_waiting\fR (void)"
+.br
+.RI "\fIReturn the number of bytes not yet gotten. eback + get_waiting = gptr.\fR"
+.ti -1c
+.RI "u_int \fBget_avail\fR (void)"
+.br
+.RI "\fIReturn the number of bytes in the get area (includes some already gotten); eback + get_avail = egptr.\fR"
+.ti -1c
+.RI "u_int \fBstreambuf_size\fR (void)"
+.br
+.RI "\fIQuery the \fBstreambuf\fR for the size of its buffers.\fR"
+.ti -1c
+.RI "u_char \fBtimeout\fR (void)"
+.br
+.RI "\fIDid we take an error because of an IO operation timeout? Note: Invoking this resets the flag.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Streambuf\fR (u_int streambuf_size, int io_mode)"
+.br
+.ti -1c
+.RI "virtual int \fBsync\fR (void)"
+.br
+.RI "\fISync both input and output. See syncin/syncout below for descriptions.\fR"
+.ti -1c
+.RI "virtual int \fBunderflow\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBoverflow\fR (int = EOF)"
+.br
+.RI "\fIThe overflow function receives the character which caused the overflow.\fR"
+.ti -1c
+.RI "void \fBreset_base\fR (void)"
+.br
+.RI "\fIResets the <base> pointer and \fBstreambuf\fR mode. This is used internally when get/put buffers are allocatd.\fR"
+.ti -1c
+.RI "int \fBsyncin\fR (void)"
+.br
+.ti -1c
+.RI "int \fBsyncout\fR (void)"
+.br
+.RI "\fIsyncout is called when the output needs to be flushed. This is easily done by calling the peer's send_n function.\fR"
+.ti -1c
+.RI "int \fBflushbuf\fR (void)"
+.br
+.RI "\fIflushbuf is the worker of syncout. It is a separate function because it gets used sometimes in different context.\fR"
+.ti -1c
+.RI "int \fBfillbuf\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBget_one_byte\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fBssize_t\fR \fBsend\fR (char *buf, \fBssize_t\fR len) = 0"
+.br
+.ti -1c
+.RI "virtual \fBssize_t\fR \fBrecv\fR (char *buf, \fBssize_t\fR len, \fBACE_Time_Value\fR *tv = NULL) = 0"
+.br
+.ti -1c
+.RI "virtual \fBssize_t\fR \fBrecv\fR (char *buf, \fBssize_t\fR len, int flags, \fBACE_Time_Value\fR *tv = NULL) = 0"
+.br
+.ti -1c
+.RI "virtual \fBssize_t\fR \fBrecv_n\fR (char *buf, \fBssize_t\fR len, int flags = 0, \fBACE_Time_Value\fR *tv = NULL) = 0"
+.br
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "char* \fBeback_saved_\fR"
+.br
+.ti -1c
+.RI "char* \fBgptr_saved_\fR"
+.br
+.ti -1c
+.RI "char* \fBegptr_saved_\fR"
+.br
+.ti -1c
+.RI "char* \fBpbase_saved_\fR"
+.br
+.ti -1c
+.RI "char* \fBpptr_saved_\fR"
+.br
+.ti -1c
+.RI "char* \fBepptr_saved_\fR"
+.br
+.ti -1c
+.RI "u_char \fBcur_mode_\fR"
+.br
+.ti -1c
+.RI "const u_char \fBget_mode_\fR"
+.br
+.ti -1c
+.RI "const u_char \fBput_mode_\fR"
+.br
+.ti -1c
+.RI "int \fBmode_\fR"
+.br
+.RI "\fImode tells us if we're working for an istream, ostream, or \fBiostream\fR.\fR"
+.ti -1c
+.RI "const u_int \fBstreambuf_size_\fR"
+.br
+.RI "\fIThis defines the size of the input and output buffers. It can be set by the object constructor.\fR"
+.ti -1c
+.RI "u_char \fBtimeout_\fR"
+.br
+.RI "\fIDid we take an error because of an IO operation timeout?\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBrecv_timeout_value_\fR"
+.br
+.RI "\fIWe want to allow the user to provide Time_Value pointers to prevent infinite blocking while waiting to receive data.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR* \fBrecv_timeout_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Create your custom \fBstreambuf\fR by providing and ACE_*_Stream object to this template. I have tested it with \fBACE_SOCK_Stream\fR and it should work fine for others as well.
+.PP
+.PP
+ For any \fBiostream\fR object, the real work is done by the underlying \fBstreambuf\fR class. That is what we create here. A \fBstreambuf\fR has an internal buffer area into which data is read and written as the \fBiostream\fR requests and provides data. At some point during the read process, the \fBiostream\fR will realize that the \fBstreambuf\fR has no more data. The underflow function of the \fBstreambuf\fR is then called. Likewise, during the write process, the \fBiostream\fR will eventually notice that the streabuf's buffer has become full and will invoke the overflow function. The empty/full state of the read/write "buffers" are controled by two sets pointers. One set is dedicated to read, the other to write. These pointers, in turn, reference a common buffer that is to be shared by both read and write operations. It is this common buffer to which data is written and from which it is read. The common buffer is used by functions of the \fBstreambuf\fR as well as the \fBiostream\fR. Because of this and the fact that it is "shared" by both read and write operators, there is a danger of data corruption if read and write operations are allowed to take place "at the same time". To prevent data corruption, we manipulate the read and write pointer sets so that the \fBstreambuf\fR is in either a read-mode or write-mode at all times and can never be in both modes at the same time. In the constructor: set the read and write sets to NULL This causes the underflow or overflow operators to be invoked at the first IO activity of the \fBiostream\fR. In the underflow function we arrange for the common buffer to reference our read buffer and for the write pointer set to be disabled. If a write operation is performed by the \fBiostream\fR this will cause the overflow function to be invoked. In the overflow function we arrange for the common buffer to reference our write buffer and for the read pointer set to be disabled. This causes the underflow function to be invoked when the \fBiostream\fR "changes our mode". The overflow function will also invoke the send_n function to flush the buffered data to our peer. Similarly, the sync and syncout functions will cause send_n to be invoked to send the data. Since socket's and the like do not support seeking, there can be no method for "syncing" the input. However, since we maintain separate read/write buffers, no data is lost by "syncing" the input. It simply remains buffered. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Streambuf::~ACE_Streambuf (void)\fC [virtual]\fR
+.PP
+If the default allocation strategey were used the common buffer would be deleted when the object destructs. Since we are providing separate read/write buffers, it is up to us to manage their memory. 
+.SS ACE_Streambuf::ACE_Streambuf (u_int streambuf_size, int io_mode)\fC [protected]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Streambuf::fillbuf (void)\fC [protected]\fR
+.PP
+fillbuf is called in a couple of places. This is the worker of underflow. It will attempt to fill the read buffer from the peer. 
+.SS int ACE_Streambuf::flushbuf (void)\fC [protected]\fR
+.PP
+flushbuf is the worker of syncout. It is a separate function because it gets used sometimes in different context.
+.PP
+.SS u_int ACE_Streambuf::get_avail (void)
+.PP
+Return the number of bytes in the get area (includes some already gotten); eback + get_avail = egptr.
+.PP
+.SS virtual ACE_HANDLE ACE_Streambuf::get_handle (void)\fC [protected, virtual]\fR
+.PP
+Reimplemented in \fBACE_Streambuf_T\fR.
+.SS int ACE_Streambuf::get_one_byte (void)\fC [protected, virtual]\fR
+.PP
+Used by fillbuf and others to get exactly one byte from the peer. recv_n is used to be sure we block until something is available. It is virtual because we really need to override it for datagram-derived objects. 
+.SS u_int ACE_Streambuf::get_waiting (void)
+.PP
+Return the number of bytes not yet gotten. eback + get_waiting = gptr.
+.PP
+.SS int ACE_Streambuf::overflow (int = EOF)\fC [protected, virtual]\fR
+.PP
+The overflow function receives the character which caused the overflow.
+.PP
+.SS u_int ACE_Streambuf::put_avail (void)
+.PP
+Return the number of bytes to be 'put' onto the stream media. pbase + put_avail = pptr.
+.PP
+.SS virtual \fBssize_t\fR ACE_Streambuf::recv (char * buf, \fBssize_t\fR len, int flags, \fBACE_Time_Value\fR * tv = NULL)\fC [protected, pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Streambuf_T\fR.
+.SS virtual \fBssize_t\fR ACE_Streambuf::recv (char * buf, \fBssize_t\fR len, \fBACE_Time_Value\fR * tv = NULL)\fC [protected, pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Streambuf_T\fR.
+.SS virtual \fBssize_t\fR ACE_Streambuf::recv_n (char * buf, \fBssize_t\fR len, int flags = 0, \fBACE_Time_Value\fR * tv = NULL)\fC [protected, pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Streambuf_T\fR.
+.SS \fBACE_Time_Value\fR * ACE_Streambuf::recv_timeout (\fBACE_Time_Value\fR * tv = NULL)
+.PP
+Get the current Time_Value pointer and provide a new one.
+.PP
+.SS void ACE_Streambuf::reset_base (void)\fC [protected]\fR
+.PP
+Resets the <base> pointer and \fBstreambuf\fR mode. This is used internally when get/put buffers are allocatd.
+.PP
+.SS char * ACE_Streambuf::reset_get_buffer (char * newBuffer = NULL, u_int _streambuf_size = 0, u_int _gptr = 0, u_int _egptr = 0)
+.PP
+Use this to allocate a new/different buffer for get operations. If you do not provide a buffer pointer, one will be allocated. That is the preferred method. If you do provide a buffer, the size must match that being used by the put buffer. If successful, you will receive a pointer to the current get buffer. It is your responsibility to delete this memory when you are done with it. 
+.SS char * ACE_Streambuf::reset_put_buffer (char * newBuffer = NULL, u_int _streambuf_size = 0, u_int _pptr = 0)
+.PP
+Use this to allocate a new/different buffer for put operations. If you do not provide a buffer pointer, one will be allocated. That is the preferred method. If you do provide a buffer, the size must match that being used by the get buffer. If successful, you will receive a pointer to the current put buffer. It is your responsibility to delete this memory when you are done with it. 
+.SS \fBssize_t\fR ACE_Streambuf::send (char * buf, \fBssize_t\fR len)\fC [protected, pure virtual]\fR
+.PP
+Stream connections and "unconnected connections" (ie -- datagrams) need to work just a little differently. We derive custom Streambuf objects for them and provide these functions at that time. 
+.PP
+Reimplemented in \fBACE_Streambuf_T\fR.
+.SS u_int ACE_Streambuf::streambuf_size (void)
+.PP
+Query the \fBstreambuf\fR for the size of its buffers.
+.PP
+.SS int ACE_Streambuf::sync (void)\fC [protected, virtual]\fR
+.PP
+Sync both input and output. See syncin/syncout below for descriptions.
+.PP
+.SS int ACE_Streambuf::syncin (void)\fC [protected]\fR
+.PP
+syncin is called when the input needs to be synced with the source file. In a filebuf, this results in the <seek> system call being used. We can't do that on socket-like connections, so this does basically nothing. That's safe because we have a separate read buffer to maintain the already-read data. In a filebuf, the single common buffer is used forcing the <seek> call. 
+.SS int ACE_Streambuf::syncout (void)\fC [protected]\fR
+.PP
+syncout is called when the output needs to be flushed. This is easily done by calling the peer's send_n function.
+.PP
+.SS u_char ACE_Streambuf::timeout (void)
+.PP
+Did we take an error because of an IO operation timeout? Note: Invoking this resets the flag.
+.PP
+.SS virtual int ACE_Streambuf::underflow (void)\fC [protected, virtual]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS u_char ACE_Streambuf::cur_mode_\fC [protected]\fR
+.PP
+.SS char * ACE_Streambuf::eback_saved_\fC [protected]\fR
+.PP
+.SS char * ACE_Streambuf::egptr_saved_\fC [protected]\fR
+.PP
+.SS char * ACE_Streambuf::epptr_saved_\fC [protected]\fR
+.PP
+.SS const u_char ACE_Streambuf::get_mode_\fC [protected]\fR
+.PP
+.SS char * ACE_Streambuf::gptr_saved_\fC [protected]\fR
+.PP
+.SS int ACE_Streambuf::mode_\fC [protected]\fR
+.PP
+mode tells us if we're working for an istream, ostream, or \fBiostream\fR.
+.PP
+.SS char * ACE_Streambuf::pbase_saved_\fC [protected]\fR
+.PP
+.SS char * ACE_Streambuf::pptr_saved_\fC [protected]\fR
+.PP
+.SS const u_char ACE_Streambuf::put_mode_\fC [protected]\fR
+.PP
+.SS \fBACE_Time_Value\fR * ACE_Streambuf::recv_timeout_\fC [protected]\fR
+.PP
+.SS \fBACE_Time_Value\fR ACE_Streambuf::recv_timeout_value_\fC [protected]\fR
+.PP
+We want to allow the user to provide Time_Value pointers to prevent infinite blocking while waiting to receive data.
+.PP
+.SS const u_int ACE_Streambuf::streambuf_size_\fC [protected]\fR
+.PP
+This defines the size of the input and output buffers. It can be set by the object constructor.
+.PP
+.SS u_char ACE_Streambuf::timeout_\fC [protected]\fR
+.PP
+Did we take an error because of an IO operation timeout?
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

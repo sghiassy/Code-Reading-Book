@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *****************************************************************************
+ * Copyright (C) The Apache Software Foundation. All rights reserved.        *
+ * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+ * This software is published under the terms of the Apache Software License *
+ * version 1.1, a copy of which has been included  with this distribution in *
+ * the LICENSE file.                                                         *
+ *****************************************************************************
+
+ @author <a href="mailto:sylvain@apache.org">Sylvain Wallez</a>
+ @version CVS $Revision: 1.2 $ $Date: 2002/01/15 11:10:52 $
+-->
+
+<tree-processor>
+  <!-- The sitemap language -->
+  <language name="sitemap" class="org.apache.cocoon.treeprocessor.sitemap.SitemapLanguage">
+  
+    <!-- Namespace for this language -->
+    <namespace uri="http://apache.org/cocoon/sitemap/1.0"/>
+  
+    <!-- File name for files in this language, relative to the environment prefix -->
+    <file name="sitemap.xmap"/>
+    
+    <!-- Description of the element for nodes parameters -->
+    <parameter element="parameter"/>
+    
+    <!-- roles for the sitemap language -->
+    <roles>
+      <role name="org.apache.cocoon.acting.ActionSelector"
+            shorthand="actions"
+            default-class="org.apache.cocoon.treeprocessor.sitemap.ComponentsSelector"/>
+      
+      <role name="org.apache.cocoon.selection.SelectorSelector"
+            shorthand="selectors"
+            default-class="org.apache.cocoon.treeprocessor.sitemap.ComponentsSelector"/>
+      
+      <role name="org.apache.cocoon.matching.MatcherSelector"
+            shorthand="matchers"
+            default-class="org.apache.cocoon.treeprocessor.sitemap.ComponentsSelector">
+
+        <hint shorthand="regexp-uri-matcher"
+              class="org.apache.cocoon.matching.RegexpURIMatcher"/>
+
+        <hint shorthand="wildcard-uri-matcher"
+              class="org.apache.cocoon.matching.WildcardURIMatcher"/>
+
+      </role>
+      
+      <role name="org.apache.cocoon.generation.GeneratorSelector"
+            shorthand="generators"
+            default-class="org.apache.cocoon.treeprocessor.sitemap.ComponentsSelector">
+
+        <hint shorthand="file-generator"
+              class="org.apache.cocoon.generation.FileGenerator"/>
+
+        <hint shorthand="XSP-generator"
+              class="org.apache.cocoon.generation.ServerPagesGenerator"/>
+      </role>
+      
+      <role name="org.apache.cocoon.transformation.TransformerSelector"
+            shorthand="transformers"
+            default-class="org.apache.cocoon.treeprocessor.sitemap.ComponentsSelector">
+
+        <hint shorthand="XSLT-transformer"
+              class="org.apache.cocoon.transformation.TraxTransformer"/>
+
+        <hint shorthand="cinclude-transformer"
+              class="org.apache.cocoon.transformation.CIncludeTransformer"/>
+
+      </role>
+      
+      <role name="org.apache.cocoon.serialization.SerializerSelector"
+            shorthand="serializers"
+            default-class="org.apache.cocoon.treeprocessor.sitemap.ComponentsSelector"/>
+      
+      <role name="org.apache.cocoon.reading.ReaderSelector"
+            shorthand="readers"
+            default-class="org.apache.cocoon.treeprocessor.sitemap.ComponentsSelector"/>
+          
+      <role name="org.apache.cocoon.components.notification.NotifyingBuilder"
+            shorthand="notifying-builder"
+            default-class="org.apache.cocoon.components.notification.DefaultNotifyingBuilder"/>  
+
+    </roles>
+    
+    <!-- node definitions for the sitemap language -->
+    <nodes>
+      <!-- All node names are given as local names in the above namespace (no prefix) -->
+      
+      <!-- Sitemap root node -->
+      <node name="sitemap" builder="org.apache.cocoon.treeprocessor.sitemap.SitemapNodeBuilder">
+        <allowed-children>components, views, action-sets, resources, pipelines</allowed-children>
+      </node>
+    
+      <!-- Components definition : parse view info associated to components
+           (actual components creation is done by SitemapLanguage) -->
+      <node name="components" builder="org.apache.cocoon.treeprocessor.sitemap.ComponentsNodeBuilder"/>
+      
+      <node name="pipelines" builder="org.apache.cocoon.treeprocessor.sitemap.PipelinesNodeBuilder">
+        <allowed-children>pipeline</allowed-children>
+      </node>
+      
+      <node name="views" builder="org.apache.cocoon.treeprocessor.CategoryNodeBuilder"/>
+      
+      <node name="view" builder="org.apache.cocoon.treeprocessor.sitemap.ViewNodeBuilder"/>
+      
+      <node name="resources" builder="org.apache.cocoon.treeprocessor.CategoryNodeBuilder"/>
+      
+      <node name="resource" builder="org.apache.cocoon.treeprocessor.NamedContainerNodeBuilder"/>
+      
+      <node name="action-sets" builder="org.apache.cocoon.treeprocessor.CategoryNodeBuilder"/>
+      
+      <node name="action-set" builder="org.apache.cocoon.treeprocessor.sitemap.ActionSetNodeBuilder"/>
+
+      <node name="pipeline" builder="org.apache.cocoon.treeprocessor.sitemap.PipelineNodeBuilder">
+        <forbidden-children>sitemap, components, pipelines</forbidden-children>
+      </node>
+      
+      <node name="match" builder="org.apache.cocoon.treeprocessor.sitemap.MatchNodeBuilder">
+        <forbidden-children>sitemap, components, pipeline, handle-errors</forbidden-children>
+      </node>
+
+      <node name="select" builder="org.apache.cocoon.treeprocessor.sitemap.SelectNodeBuilder"/>
+
+      <node name="act" builder="org.apache.cocoon.treeprocessor.sitemap.ActNodeBuilder">
+        <forbidden-children>sitemap, components, pipeline, handle-errors</forbidden-children>
+      </node>
+
+      <node name="redirect-to" builder="org.apache.cocoon.treeprocessor.sitemap.RedirectToNodeBuilder"/>
+      
+      <node name="call" builder="org.apache.cocoon.treeprocessor.sitemap.CallNodeBuilder"/>
+
+      <node name="mount" builder="org.apache.cocoon.treeprocessor.sitemap.MountNodeBuilder"/>
+
+      <node name="read" builder="org.apache.cocoon.treeprocessor.sitemap.ReadNodeBuilder"/>
+
+      <node name="aggregate" builder="org.apache.cocoon.treeprocessor.sitemap.AggregateNodeBuilder"/>
+
+      <node name="generate" builder="org.apache.cocoon.treeprocessor.sitemap.GenerateNodeBuilder"/>
+
+      <node name="transform" builder="org.apache.cocoon.treeprocessor.sitemap.TransformNodeBuilder"/>
+
+      <node name="serialize" builder="org.apache.cocoon.treeprocessor.sitemap.SerializeNodeBuilder"/>
+
+      <node name="handle-errors" builder="org.apache.cocoon.treeprocessor.sitemap.HandleErrorsNodeBuilder"/>
+
+    </nodes>
+    
+  </language>
+
+</tree-processor>

@@ -1,0 +1,205 @@
+.TH ACE_TLI_Stream 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_TLI_Stream \- Defines the member functions for ACE_TLI_Stream abstraction. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <TLI_Stream.h>\fR
+.PP
+Inherits \fBACE_TLI\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_INET_Addr\fR \fBPEER_ADDR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TLI_Stream\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down and release resources.\fR"
+.ti -1c
+.RI "int \fBactive_close\fR (void)"
+.br
+.RI "\fISend a release and then await the release from the other side.\fR"
+.ti -1c
+.RI "int \fBpassive_close\fR (void)"
+.br
+.RI "\fIAcknowledge the release from the other side and then send the release to the other side.\fR"
+.ti -1c
+.RI "int \fBget_remote_addr\fR (\fBACE_Addr\fR &) const"
+.br
+.RI "\fIReturn address of remotely connected peer.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, int flags, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISend an n byte buffer to the connected socket (uses t_snd(3)). Recv an n byte buffer from the connected socket (uses t_rcv(3)).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, int *flags, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (const void *buf, size_t n, int flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fISend exactly n bytes to the connected socket (uses t_snd(3)). Recv exactly n bytes from the connected socket (uses t_rcv(3)).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n\fR (void *buf, size_t n, int *flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISend an n byte buffer to the connected socket (uses write(2)).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fIRecv an n byte buffer from the connected socket (uses read(2)).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (const void *buf, size_t n, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fISend n bytes, keep trying until n are sent (uses write(2)).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n\fR (void *buf, size_t n, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fIRecv n bytes, keep trying until n are received (uses read (2)).\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBget_rwflag\fR (void)"
+.br
+.ti -1c
+.RI "void \fBset_rwflag\fR (int)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBrwflag_\fR"
+.br
+.RI "\fIIndicates whether the tirdwr module should be pushed.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_TLI_Acceptor\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TLI_Connector\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the member functions for ACE_TLI_Stream abstraction.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_INET_Addr\fR ACE_TLI_Stream::PEER_ADDR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_TLI_Stream::ACE_TLI_Stream (void)
+.PP
+Default constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_TLI_Stream::active_close (void)
+.PP
+Send a release and then await the release from the other side.
+.PP
+.SS int ACE_TLI_Stream::close (void)
+.PP
+Close down and release resources.
+.PP
+Reimplemented from \fBACE_TLI\fR.
+.SS void ACE_TLI_Stream::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_TLI\fR.
+.SS int ACE_TLI_Stream::get_remote_addr (\fBACE_Addr\fR &) const
+.PP
+Return address of remotely connected peer.
+.PP
+.SS int ACE_TLI_Stream::get_rwflag (void)\fC [private]\fR
+.PP
+.SS int ACE_TLI_Stream::passive_close (void)
+.PP
+Acknowledge the release from the other side and then send the release to the other side.
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::recv (void * buf, size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Recv an n byte buffer from the connected socket (uses read(2)).
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::recv (void * buf, size_t n, int * flags, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::recv_n (void * buf, size_t n, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Recv n bytes, keep trying until n are received (uses read (2)).
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::recv_n (void * buf, size_t n, int * flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::send (const void * buf, size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Send an n byte buffer to the connected socket (uses write(2)).
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::send (const void * buf, size_t n, int flags, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Send an n byte buffer to the connected socket (uses t_snd(3)). Recv an n byte buffer from the connected socket (uses t_rcv(3)).
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::send_n (const void * buf, size_t n, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Send n bytes, keep trying until n are sent (uses write(2)).
+.PP
+.SS \fBssize_t\fR ACE_TLI_Stream::send_n (const void * buf, size_t n, int flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Send exactly n bytes to the connected socket (uses t_snd(3)). Recv exactly n bytes from the connected socket (uses t_rcv(3)).
+.PP
+.SS void ACE_TLI_Stream::set_rwflag (int)\fC [private]\fR
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_TLI_Acceptor\fC [friend]\fR
+.PP
+.SS class ACE_TLI_Connector\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_TLI_Stream::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_TLI\fR.
+.SS int ACE_TLI_Stream::rwflag_\fC [private]\fR
+.PP
+Indicates whether the tirdwr module should be pushed.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

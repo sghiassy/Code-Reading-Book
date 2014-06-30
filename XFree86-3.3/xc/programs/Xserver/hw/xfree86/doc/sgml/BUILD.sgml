@@ -1,0 +1,234 @@
+<!DOCTYPE linuxdoc PUBLIC "-//XFree86//DTD linuxdoc//EN">
+
+<article>
+<title>Building XFree86
+<author>David Dawes
+<Date>2 June 1997
+
+<abstract>
+This document describes how to build XFree86 from the <bf>source</bf>
+distribution.  It covers building from the full source distribution as
+well as from the cut-down source distribution available for building
+only the X servers.  It is designed to
+be used in conjunction with the OS-specific README files.
+</abstract>
+
+<toc>
+
+    
+<sect>Building XFree86 From a Source Distribution
+
+<p>
+<quote>
+<bf/NOTE:/  Refer to the appropriate OS-specific README file before attempting
+       to build XFree86.  These files contain additional information that 
+       you may need to successfully build under your OS.
+</quote>
+
+
+We highly recommend using GCC-2 to build XFree86.  Do not use version
+2.6.0 or 2.4.x versions prior to 2.4.5 due to bugs that cause either
+build or execution failures.  (gcc-2 is available from prep.ai.mit.edu
+and other sites archiving GNU source.)
+
+<sect1>How to get the XFree86 3.3 source
+<p>
+There are a few starting points for getting the XFree86 source.  One option
+is to start directly with the XFree86 3.3 source distribution.  In this
+case, the procedure is as follows:
+<itemize>
+  <item>The XFree86 3.3 source is contained in files <tt>X33src-1.tgz</tt>,
+	<tt>X33src-2.tgz</tt> and <tt>X33src-3.tgz</tt>.  These can be found
+	at <htmlurl name="ftp://ftp.xfree86.org/pub/XFree86/3.3/source/"
+	url="ftp://ftp.xfree86.org/pub/XFree86/3.3/source/"> and similar
+	locations on XFree86 mirror sites.  <tt>X33src-2.tgz</tt> contains
+	the fonts and documentation source.  <tt>X33src-3.tgz</tt> contains
+	the hardcopy documentation.  <tt>X33src-1.tgz</tt> contains
+	everything else.  If you don't need the docs or fonts you can get
+	by with only <tt>X33src-1.tgz</tt>.
+  <item>Extract each of these files by running the following from a directory
+	on a filesystem containing enough space (the full source requires
+	around 130MB, and a similar amount is required in addition to this
+	for the compiled binaries):
+	<quote><verb>
+	gzip -d < X33src-1.tgz | tar vxf -
+	gzip -d < X33src-2.tgz | tar vxf -
+	gzip -d < X33src-3.tgz | tar vxf -
+	</verb></quote>
+</itemize>
+
+Another option is to start with the X11R6.3 source distribution and patch
+it up to XFree86 3.3.  In this case you need to do the following:
+<itemize>
+  <item>Start with the X Consortium's X11R6.3 distribution with public
+	patch 1 applied.  This can be obtained by following the links
+	from the <url name="X home page" url="http://www.x.org">.
+  <item>Get the files <tt>R6.3pl1-3.3.diff1.gz</tt>,
+	<tt>R6.3pl1-3.3.diff2.gz</tt>, <tt>R6.3pl1-3.3.diff3.gz</tt>,
+	<tt>R6.3pl1-3.3.diff4.gz</tt>, and <tt>cfont33.tgz</tt>
+	from <htmlurl name="ftp://ftp.xfree86.org/pub/XFree86/3.3/patches/"
+	url="ftp://ftp.xfree86.org/pub/XFree86/3.3/patches/"> (or a similar
+	location on mirror sites).  To upgrade the source to XFree86 3.3,
+	run the following from directory containing the <tt>xc</tt>
+	directory of the X11R6.3 pl1 source tree:
+	<quote><verb>
+	gzip -d < R6.3pl1-3.3.diff1.gz | patch -p0 -E
+	gzip -d < R6.3pl1-3.3.diff2.gz | patch -p0 -E
+	gzip -d < R6.3pl1-3.3.diff3.gz | patch -p0 -E
+	gzip -d < R6.3pl1-3.3.diff4.gz | patch -p0 -E
+	gzip -d < cfont33.tgz | tar vxf -
+	</verb></quote>
+	Be sure to do this with a clean unmodified source tree.  If you
+	don't some patches may fail.
+</itemize>
+
+If you only want to build the XFree86 X servers, you can use a cut-down
+version of the XFree86 source tree called the ``servers only'' distribution.
+If you choose this option, do the following:
+<itemize>
+  <item>Get the <tt>X33servonly.tgz</tt> file from
+	<htmlurl name="ftp://ftp.xfree86.org/pub/XFree86/3.3/source/"
+	url="ftp://ftp.xfree86.org/pub/XFree86/3.3/source/"> (or a similar
+	locations on mirror sites.
+  <item>Extract this by running the following:
+	<quote><verb>
+	gzip -d < X33servonly.tgz | tar vxf -
+	</verb></quote>
+</itemize>
+
+There is no patch to upgrade from the XFree86 3.2 source to 3.3.  The
+reason for this is the large number of changes associated with the
+move from X11R6.1 to X11R6.3.
+
+XFree86 supports a small subset of the X Consortium X11R6.1 contrib
+distribution.  If you wish to build this, you will need at least the
+following files/directories from that distribution:
+<tscreen><verb>
+	contrib/Imakefile
+	contrib/programs/Imakefile
+	contrib/programs/ico
+	contrib/programs/listres
+	contrib/programs/showfont
+	contrib/programs/viewres
+	contrib/programs/xbiff
+	contrib/programs/xcalc
+	contrib/programs/xditview
+	contrib/programs/xedit
+	contrib/programs/xev
+	contrib/programs/xeyes
+	contrib/programs/xfontsel
+	contrib/programs/xgc
+	contrib/programs/xload
+	contrib/programs/xman
+	contrib/programs/xmessage
+</verb></tscreen>
+You will also need the XFree86 patch <tt>contrib-3.3.diff.gz</tt>.  To
+apply the patch, run the following from the directory containing the
+<tt>contrib</tt> directory:
+<tscreen><verb>
+	gzip -d < contrib-3.3.diff.gz | patch -p0 -E
+</verb></tscreen>
+Alternatively, you can just get the file <tt>X33contrib.tgz</tt> from
+the XFree86 source directory, and extract it by running:
+<tscreen><verb>
+	gzip -d < X33contrib.tgz | tar vxf -
+</verb></tscreen>
+
+If you wish to build the xtest distribution, get the source distribution
+<tt>X33test.tgz</tt> from the XFree86 source directory, and extract it
+by running:
+<tscreen><verb>
+	gzip -d < X33test.tgz | tar vxf -
+</verb></tscreen>
+Note, xtest is no longer part of the core X11 distribution (since X11R6.3).
+
+<sect1>Configuring the source before building
+<p>
+It is recommended that you start the configuration process by going to the
+<tt>xc/config/cf</tt> directory, and copying the file <tt>xf86site.def</tt>
+to <tt>host.def</tt>.  Then read through the <tt>host.def</tt> file
+(which is heavily commented), and set any parameters that you want for
+your configuration.  You can usually find out what the default settings
+are by checking the <tt>.cf</tt> file(s) relevant to your OS.
+
+Unlike previous versions, imake can now automatically detect and set
+the various <bf>OS*Version</bf> parameters, so you shouldn't need to
+enter those settings explicitly.
+
+If you are using just the <tt>X33src-1.tgz</tt> part of the source dist,
+you will need to define <bf>BuildFonts</bf> to <bf>NO</bf>.
+
+If you are using the ``servers only'' distribution, you will need to
+define <bf>BuildServersOnly</bf> to <bf>YES</bf>.
+
+<sect1>Building and installing the distribution
+<p>
+Before building the distribution, read through the OS-specific <tt/README/
+file in <tt>xc/programs/Xserver/hw/xfree86/doc</tt> that is relevant to
+you.  Once those OS-specific details have been taken care of, go the
+<tt/xc/ directory and run ``<tt/make World/'' with the <bf/BOOTSTRAPCFLAGS/
+set as described in the OS-specific README (if necessary).  It is
+advisable to redirect stdout and stderr to <tt/World.Log/ so that you
+can track down problems that might occur during the build.
+
+When the build is finished, you should check <tt/World.Log/ to see
+if there were any problems.  If there weren't any then you can install
+the binaries.  When using the full source distribution, the installation
+should be done from the <tt/xc/ directory.  When using the ``servers only''
+distribution, the install should be done from the
+<tt>xc/programs/Xserver</tt> directory.
+To do
+the install, run ``<tt/make
+install/'' and ``<tt/make install.man/''.  Make sure you have enough
+space in <tt>/usr/X11R6</tt> for the install to succeed.  If you want
+to install on a filesystem other than <tt>/usr</tt>, make a symbolic
+link to <tt>/usr/X11R6</tt> before installing.
+
+To install the binary LinkKit (in <tt>/usr/X11R6/lib/Server</tt>),
+run ``<tt>make install.linkkit</tt>'' from the <tt/xc/ directory.
+
+To build the subset of the contrib release supported by
+XFree86, make sure that you have first built and installed the core
+distribution.  Then go to the <tt/contrib/ directory and run
+``<tt/xmkmf -a; make/''.  When that is completed, run
+``<tt/make install/'' and ``<tt/make install.man/'' to install it.
+
+To build/run the xtest distribution, refer to the instructions in
+the file <tt>test/xsuite/NOTES.xf86</tt>.
+
+<sect>Reconfiguring the server (source distribution)
+<p>
+To build a different set of servers or servers with a different set of
+drivers installed:
+<enum>
+<item>Make sure the source for any new drivers is in the correct place (e.g.,
+driver source for the SVGA server should be in a subdirectory of
+<tt>xc/programs/Xserver/hw/xfree86/vga256/drivers</tt>).
+
+<item>Change the settings of the server defines
+in <tt/host.def/ to specify which servers you
+wish to build.  Also, change the driver lists to suit your needs.
+
+<item>From <tt>xc/programs/Xserver</tt>, run:
+<tscreen><verb>
+	make Makefile
+	make Makefiles
+	make depend
+	make
+</verb></tscreen>
+</enum>
+
+<sect>Reconfiguring the server (binary distribution)
+<p>
+
+If you have installed the server Binary LinkKit, it is possible to
+reconfigure the drivers and some of the extensions in the servers.  For
+details of how to do this, please refer to the <htmlurl url="LinkKit.html"
+name="README.LinkKit"> file.
+
+<verb>
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/BUILD.sgml,v 3.1.2.4 1997/06/02 03:12:42 dawes Exp $
+</verb>
+
+</article>
+

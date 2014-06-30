@@ -1,0 +1,99 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/10/25 15:35:57 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/LinkKit/Imakefile,v 3.9 1997/01/12 10:41:28 dawes Exp $
+
+all:: mkmf
+
+CppScriptTarget(mkmf,mkmf.cpp,-DCONFIGDIRSPEC=-I$(CONFIGDIR),$(ICONFIGFILES))
+
+#ifndef LimitBoolean
+/*
+ * "name" must be in quotes; "maxbound" is default or error replacement value.
+ *
+ * Because of the shell's meddling, neither minbound nor maxbound may be
+ * expressions.
+ */
+#define LimitBoolean(name,minbound,maxbound)	@(echo ""; \	@@\
+	echo "#ifdef" name; \					@@\
+	echo "#if (" name "<" minbound ") || (" name ">" maxbound ")"; \ @@\
+	echo "/* Dunno if I can portably warn here... */"; \	@@\
+	echo "#undef" name; \					@@\
+	echo "#endif"; \					@@\
+	echo "#endif"; \					@@\
+	echo "#ifndef" name; \					@@\
+	echo "#define" name maxbound; \				@@\
+	echo "#endif")
+#endif
+
+all:: LinkKit.tmpl
+
+/*
+ * A word on how this is all supposed to work...  Let's assume (for now) that
+ * the LinkKit contains all server-side extension libraries.
+ *
+ * If an extension does not appear here, it is because the LinkKit can turn it
+ * on or off regardless of whether the main build included the extension in the
+ * server(s) it built.
+ *
+ * If an extension appears with NO and Build*, the LinkKit can turn it off, but
+ * can only turn it on if the main build also included it.
+ *
+ * If an extension appears with Build* and Build*, the LinkKit cannot change
+ * the setting used for the main build.
+ */
+
+LinkKit.tmpl: Imakefile $(ICONFIGFILES)
+	@echo "Generating LinkKit.tmpl file"
+	@RemoveFile($@)
+	@echo "/*" > $@
+	@echo " * This causes the LinkKit to inherit some of the" >> $@
+	@echo " * settings used to generate it." >> $@
+	@echo " *" >> $@
+	@echo " * *** THIS FILE IS GENERATED ***  Do not edit." >> $@
+	@echo " * Changing any of the settings below will cause" >> $@
+	@echo " * this Link Kit to fail." >> $@
+	@echo " */" >> $@
+	LimitBoolean("HasShm", HasShm, HasShm) >> $@
+	LimitBoolean("BuildBigReqsExt", NO, BuildBigReqsExt) >> $@
+	LimitBoolean("BuildSyncExt", NO, BuildSyncExt) >> $@
+	LimitBoolean("BuildShapeExt", NO, BuildShapeExt) >> $@
+	LimitBoolean("BuildPexExt", NO, BuildPexExt) >> $@
+	@echo "" >> $@	/* PEX can depend on Multibuffer */
+	@echo "#if BuildPexExt" >> $@
+	LimitBoolean("BuildMultibuffer", BuildMultibuffer, BuildMultibuffer) >> $@
+	@echo "" >> $@
+	@echo "#endif" >> $@
+	LimitBoolean("BuildXInputExt", BuildXInputExt, BuildXInputExt) >> $@
+	LimitBoolean("BuildXKB", BuildXKB, BuildXKB) >> $@
+	LimitBoolean("BuildLBX", BuildLBX, BuildLBX) >> $@
+	LimitBoolean("BuildScreenSaverExt", NO, BuildScreenSaverExt) >> $@
+	LimitBoolean("BuildXF86VidModeExt", NO, BuildXF86VidModeExt) >> $@
+	LimitBoolean("BuildXF86MiscExt", NO, BuildXF86MiscExt) >> $@
+	LimitBoolean("BuildXF86DGA", NO, BuildXF86DGA) >> $@
+	LimitBoolean("BuildDPMSExt", BuildDPMSExt, BuildDPMSExt) >> $@
+
+clean::
+	$(RM) LinkKit.tmpl
+
+#ifdef LinkDirectory
+LinkSourceFile(Imakefile.LK,LinkDirectory)
+LinkSourceFile(README,LinkDirectory)
+LinkSourceFile(mkmf.cpp,LinkDirectory)
+LinkSourceFile(site.def.LK,LinkDirectory)
+#endif
+
+#if !defined(LinkDirectory) || !defined(DontInstallPC98Version)
+InstallLinkKitNonExecFile(LinkKit.tmpl,$(LINKKITDIR))
+InstallLinkKitNamedNonExec(Imakefile.LK,Imakefile,$(LINKKITDIR))
+InstallLinkKitNamedNonExec(site.def.LK,xf86site.def,$(LINKKITDIR))
+InstallLinkKitNamedProg(mkmf,mkmf,$(LINKKITDIR))
+#if !HasLinuxDoc
+InstallLinkKitNonExecFile(README,$(LINKKITDIR))
+InstallNamedNonExec(README,README.LinkKit,$(XFREE86DOCDIR))
+#endif
+#endif
+
+DependTarget()

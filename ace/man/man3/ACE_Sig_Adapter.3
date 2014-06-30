@@ -1,0 +1,134 @@
+.TH ACE_Sig_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Sig_Adapter \- Provide an adapter that transforms various types of signal handlers into the scheme used by the . 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Signal.h>\fR
+.PP
+Inherits \fBACE_Event_Handler\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Sig_Adapter\fR (\fBACE_Sig_Action\fR &, int sigkey)"
+.br
+.ti -1c
+.RI "\fBACE_Sig_Adapter\fR (\fBACE_Event_Handler\fR *, int sigkey)"
+.br
+.ti -1c
+.RI "\fBACE_Sig_Adapter\fR (\fBACE_Sig_Handler_Ex\fR, int sigkey = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_Sig_Adapter\fR (void)"
+.br
+.ti -1c
+.RI "int \fBsigkey\fR (void)"
+.br
+.RI "\fIReturns this signal key that's used to remove this from the 's internal table.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_signal\fR (int, \fBsiginfo_t\fR *, \fBucontext_t\fR *)"
+.br
+.RI "\fICalled by the <Reactor> to dispatch the signal handler.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBACE_HANDLER\fR, \fBSIG_ACTION\fR, \fBC_FUNCTION\fR }"
+.br
+.RI "\fIIs this an external handler or an \fBACE\fR handler?\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBsigkey_\fR"
+.br
+.RI "\fIKey for this signal handler (used to remove it).\fR"
+.ti -1c
+.RI "enum ACE_Sig_Adapter:: { ... }   \fBtype_\fR"
+.br
+.RI "\fIIs this an external handler or an \fBACE\fR handler?\fR"
+.ti -1c
+.RI "\fBACE_Sig_Action\fR \fBsa_\fR"
+.br
+.RI "\fIThis is an external handler (ugh).\fR"
+.ti -1c
+.RI "\fBACE_Event_Handler\fR* \fBeh_\fR"
+.br
+.RI "\fIThis is an \fBACE\fR hander.\fR"
+.ti -1c
+.RI "\fBACE_Sig_Handler_Ex\fR \fBsig_func_\fR"
+.br
+.RI "\fIThis is a normal C function.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Provide an adapter that transforms various types of signal handlers into the scheme used by the .
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum\fC [private]\fR
+.PP
+Is this an external handler or an \fBACE\fR handler?
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_HANDLER\fR \fRWe're just wrapping an \fBACE_Event_Handler\fR.
+.TP
+\fB\fISIG_ACTION\fR \fRAn \fBACE_Sig_Action\fR.
+.TP
+\fB\fIC_FUNCTION\fR \fRA normal C function.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Sig_Adapter::ACE_Sig_Adapter (\fBACE_Sig_Action\fR &, int sigkey)
+.PP
+.SS ACE_Sig_Adapter::ACE_Sig_Adapter (\fBACE_Event_Handler\fR *, int sigkey)
+.PP
+.SS ACE_Sig_Adapter::ACE_Sig_Adapter (\fBACE_Sig_Handler_Ex\fR, int sigkey = 0)
+.PP
+.SS ACE_Sig_Adapter::~ACE_Sig_Adapter (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Sig_Adapter::handle_signal (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)\fC [virtual]\fR
+.PP
+Called by the <Reactor> to dispatch the signal handler.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS int ACE_Sig_Adapter::sigkey (void)
+.PP
+Returns this signal key that's used to remove this from the 's internal table.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Event_Handler\fR * ACE_Sig_Adapter::eh_\fC [private]\fR
+.PP
+This is an \fBACE\fR hander.
+.PP
+.SS \fBACE_Sig_Action\fR ACE_Sig_Adapter::sa_\fC [private]\fR
+.PP
+This is an external handler (ugh).
+.PP
+.SS \fBACE_Sig_Handler_Ex\fR ACE_Sig_Adapter::sig_func_\fC [private]\fR
+.PP
+This is a normal C function.
+.PP
+.SS int ACE_Sig_Adapter::sigkey_\fC [private]\fR
+.PP
+Key for this signal handler (used to remove it).
+.PP
+.SS enum { ... }  ACE_Sig_Adapter::type_\fC [private]\fR
+.PP
+Is this an external handler or an \fBACE\fR handler?
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,43 @@
+XCOMM $XConsortium: Imakefile /main/8 1996/10/25 06:20:46 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/oak/Imakefile,v 3.9 1996/12/23 06:57:51 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = oak_driver.c oak_bank.s oti87_fill.c oti87_sol.c oti87_bltC.c \
+       oak_colexp.s
+
+OBJS = oak_driver.o oak_bank.o oti87_fill.o oti87_sol.o oti87_bltC.o \
+       oak_colexp.o
+
+DEFINES = -DPSZ=8
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/cfb \
+           -I../../vga -I$(FONTINCSRC) -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(oak_drv,$(OBJS))
+
+InstallLinkKitNonExecFile(oak_driver.c,$(LINKKITDIR)/drivers/vga256/oak)
+InstallLinkKitNonExecFile(oak_driver.h,$(LINKKITDIR)/drivers/vga256/oak)
+InstallLinkKitNonExecFile(oak_bank.s,$(LINKKITDIR)/drivers/vga256/oak)
+InstallLinkKitNonExecFile(oti87_fill.c,$(LINKKITDIR)/drivers/vga256/oak)
+InstallLinkKitNonExecFile(oti87_sol.c,$(LINKKITDIR)/drivers/vga256/oak)
+InstallLinkKitNonExecFile(oti87_bltC.c,$(LINKKITDIR)/drivers/vga256/oak)
+InstallLinkKitNonExecFile(oak_colexp.s,$(LINKKITDIR)/drivers/vga256/oak)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/oak)
+
+DependTarget()

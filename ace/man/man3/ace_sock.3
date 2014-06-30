@@ -1,0 +1,155 @@
+.TH ACE_SOCK 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SOCK \- An abstract class that forms the basis for more specific classes, such as  and . Do not instantiate this class. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SOCK.h>\fR
+.PP
+Inherits \fBACE_IPC_SAP\fR.
+.PP
+Inherited by \fBACE_MEM_IO\fR, \fBACE_SOCK_Acceptor\fR, \fBACE_SOCK_Dgram\fR, and \fBACE_SOCK_IO\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fB~ACE_SOCK\fR (void)"
+.br
+.RI "\fIDefault ctor/dtor.\fR"
+.ti -1c
+.RI "int \fBset_option\fR (int level, int option, void *optval, int optlen) const"
+.br
+.RI "\fIWrapper around the <setsockopt> system call.\fR"
+.ti -1c
+.RI "int \fBget_option\fR (int level, int option, void *optval, int *optlen) const"
+.br
+.RI "\fIWrapper around the <getsockopt> system call.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the socket handle.\fR"
+.ti -1c
+.RI "int \fBget_local_addr\fR (\fBACE_Addr\fR &) const"
+.br
+.RI "\fIReturn the local endpoint address in the referenced . Returns 0 if successful, else -1.\fR"
+.ti -1c
+.RI "int \fBget_remote_addr\fR (\fBACE_Addr\fR &) const"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "int \fBopen\fR (int type, int protocol_family, int protocol, int reuse_addr)"
+.br
+.RI "\fIWrapper around the BSD-style <socket> system call (no QoS).\fR"
+.ti -1c
+.RI "int \fBopen\fR (int type, int protocol_family, int protocol, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr)"
+.br
+.RI "\fIWrapper around the QoS-enabled <WSASocket> function.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SOCK\fR (int type, int protocol_family, int protocol = 0, int reuse_addr = 0)"
+.br
+.RI "\fIConstructor with arguments to call the BSD-style <socket> system call (no QoS).\fR"
+.ti -1c
+.RI "\fBACE_SOCK\fR (int type, int protocol_family, int protocol, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr)"
+.br
+.RI "\fIConstructor with arguments to call the QoS-enabled <WSASocket> function.\fR"
+.ti -1c
+.RI "\fBACE_SOCK\fR (void)"
+.br
+.RI "\fIDefault constructor is protected to prevent instances of this class from being defined.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An abstract class that forms the basis for more specific classes, such as  and . Do not instantiate this class.
+.PP
+.PP
+ This class provides functions that are common to all of the  classes.  provides the ability to get and set socket options, get the local and remote addresses, and open and close a socket handle. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SOCK::~ACE_SOCK (void)
+.PP
+Default ctor/dtor.
+.PP
+.SS ACE_SOCK::ACE_SOCK (int type, int protocol_family, int protocol = 0, int reuse_addr = 0)\fC [protected]\fR
+.PP
+Constructor with arguments to call the BSD-style <socket> system call (no QoS).
+.PP
+.SS ACE_SOCK::ACE_SOCK (int type, int protocol_family, int protocol, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr)\fC [protected]\fR
+.PP
+Constructor with arguments to call the QoS-enabled <WSASocket> function.
+.PP
+.SS ACE_SOCK::ACE_SOCK (void)\fC [protected]\fR
+.PP
+Default constructor is protected to prevent instances of this class from being defined.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SOCK::close (void)
+.PP
+Close down the socket handle.
+.PP
+Reimplemented in \fBACE_MEM_Stream\fR, \fBACE_SOCK_Acceptor\fR, \fBACE_SOCK_Dgram_Bcast\fR, and \fBACE_SOCK_Stream\fR.
+.SS void ACE_SOCK::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_IPC_SAP\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, \fBACE_LSOCK_CODgram\fR, \fBACE_LSOCK_Dgram\fR, \fBACE_LSOCK_Stream\fR, \fBACE_MEM_Acceptor\fR, \fBACE_MEM_IO\fR, \fBACE_MEM_Stream\fR, \fBACE_SOCK_Acceptor\fR, \fBACE_SOCK_CODgram\fR, \fBACE_SOCK_Dgram\fR, \fBACE_SOCK_Dgram_Bcast\fR, \fBACE_SOCK_Dgram_Mcast\fR, \fBACE_SOCK_IO\fR, and \fBACE_SOCK_Stream\fR.
+.SS int ACE_SOCK::get_local_addr (\fBACE_Addr\fR &) const
+.PP
+Return the local endpoint address in the referenced . Returns 0 if successful, else -1.
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, and \fBACE_LSOCK_Stream\fR.
+.SS int ACE_SOCK::get_option (int level, int option, void * optval, int * optlen) const
+.PP
+Wrapper around the <getsockopt> system call.
+.PP
+.SS int ACE_SOCK::get_remote_addr (\fBACE_Addr\fR &) const
+.PP
+Return the address of the remotely connected peer (if there is one), in the referenced . Returns 0 if successful, else -1. 
+.PP
+Reimplemented in \fBACE_LSOCK_Stream\fR, \fBACE_SOCK_Acceptor\fR, \fBACE_SOCK_Dgram\fR, and \fBACE_SOCK_Dgram_Bcast\fR.
+.SS int ACE_SOCK::open (int type, int protocol_family, int protocol, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr)
+.PP
+Wrapper around the QoS-enabled <WSASocket> function.
+.PP
+.SS int ACE_SOCK::open (int type, int protocol_family, int protocol, int reuse_addr)
+.PP
+Wrapper around the BSD-style <socket> system call (no QoS).
+.PP
+.SS int ACE_SOCK::set_option (int level, int option, void * optval, int optlen) const
+.PP
+Wrapper around the <setsockopt> system call.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SOCK::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_IPC_SAP\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, \fBACE_LSOCK_CODgram\fR, \fBACE_LSOCK_Dgram\fR, \fBACE_LSOCK_Stream\fR, \fBACE_MEM_Acceptor\fR, \fBACE_MEM_IO\fR, \fBACE_MEM_Stream\fR, \fBACE_SOCK_Acceptor\fR, \fBACE_SOCK_CODgram\fR, \fBACE_SOCK_Dgram\fR, \fBACE_SOCK_Dgram_Bcast\fR, \fBACE_SOCK_Dgram_Mcast\fR, \fBACE_SOCK_IO\fR, and \fBACE_SOCK_Stream\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

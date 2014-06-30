@@ -1,0 +1,219 @@
+.TH ACE_Timer_List_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Timer_List_T \- Provides a simple implementation of timers. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Timer_List_T.h>\fR
+.PP
+Inherits \fBACE_Timer_Queue_T< TYPE,FUNCTOR,ACE_LOCK >\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_List_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK> \fBLIST_ITERATOR\fR"
+.br
+.RI "\fIType of iterator.\fR"
+.ti -1c
+.RI "typedef \fBACE_Timer_Queue_T\fR<TYPE, FUNCTOR, ACE_LOCK> \fBINHERITED\fR"
+.br
+.RI "\fIType inherited from.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_List_T\fR (FUNCTOR *upcall_functor = 0, \fBACE_Free_List\fR<\fBACE_Timer_Node_T\fR <TYPE> > *freelist = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Timer_List_T\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBis_empty\fR (void) const"
+.br
+.RI "\fITrue if queue is empty, else false.\fR"
+.ti -1c
+.RI "virtual const \fBACE_Time_Value\fR& \fBearliest_time\fR (void) const"
+.br
+.RI "\fIReturns the time of the earlier node in the . Must be called on a non-empty queue.\fR"
+.ti -1c
+.RI "virtual long \fBschedule\fR (const TYPE &type, const void *act, const \fBACE_Time_Value\fR &delay, const \fBACE_Time_Value\fR &interval = \fBACE_Time_Value::zero\fR)"
+.br
+.ti -1c
+.RI "virtual int \fBreset_interval\fR (long timer_id, const \fBACE_Time_Value\fR &interval)"
+.br
+.ti -1c
+.RI "virtual int \fBcancel\fR (const TYPE &type, int dont_call_handle_close = 1)"
+.br
+.ti -1c
+.RI "virtual int \fBcancel\fR (long timer_id, const void **act = 0, int dont_call_handle_close = 1)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Timer_Queue_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK>& \fBiter\fR (void)"
+.br
+.RI "\fIReturns a pointer to this 's iterator.\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Node_T\fR<TYPE>* \fBremove_first\fR (void)"
+.br
+.RI "\fIRemoves the earliest node from the queue and returns it.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "virtual void \fBreschedule\fR (\fBACE_Timer_Node_T\fR<TYPE> *)"
+.br
+.RI "\fIReschedule an "interval" . This should be private but for now it needs to be public for .\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Node_T\fR<TYPE>* \fBget_first\fR (void)"
+.br
+.RI "\fIReads the earliest node from the queue and returns it.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_List_T\fR (const ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK> &)"
+.br
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK> &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Node_T\fR<TYPE>* \fBhead_\fR"
+.br
+.RI "\fIPointer to linked list of .\fR"
+.ti -1c
+.RI "\fBLIST_ITERATOR\fR* \fBiterator_\fR"
+.br
+.RI "\fIIterator used to expire timers.\fR"
+.ti -1c
+.RI "long \fBtimer_id_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Timer_List_Iterator_T< TYPE,FUNCTOR,ACE_LOCK >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE, class FUNCTOR, class ACE_LOCK>  template class ACE_Timer_List_T
+Provides a simple implementation of timers.
+.PP
+.PP
+ This implementation uses a linked list of absolute times. Therefore, in the average case, scheduling and canceling timers is O(N) (where N is the total number of timers) and expiring timers is O(K) (where K is the total number of timers that are < the current time of day). More clever implementations could use a delta-list, a heap, or timing wheels, etc. For instance,  is a subclass of  that implements a heap-based callout queue. For most applications, the  will perform substantially faster than the . 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> typedef \fBACE_Timer_Queue_T\fR<TYPE, FUNCTOR, ACE_LOCK> ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::INHERITED
+.PP
+Type inherited from.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> typedef \fBACE_Timer_List_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK> ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::LIST_ITERATOR
+.PP
+Type of iterator.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK> (FUNCTOR * upcall_functor = 0, \fBACE_Free_List\fR< \fBACE_Timer_Node_T\fR< TYPE > >* freelist = 0)
+.PP
+Default constructor. <upcall_functor> is the instance of the FUNCTOR to be used by the list. If <upcall_functor> is 0, a default FUNCTOR will be created. <freelist> the freelist of timer nodes. If 0, then a default freelist will be created. 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::~ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK> (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK> (const ACE_Timer_List_T< TYPE,FUNCTOR,ACE_LOCK >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::cancel (long timer_id, const void ** act = 0, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel the single timer that matches the <timer_id> value (which was returned from the <schedule> method). If act is non-NULL then it will be set to point to the ``magic cookie'' argument passed in when the timer was registered. This makes it possible to free up the memory and avoid memory leaks. If <dont_call> is 0 then the <functor> will be invoked. Returns 1 if cancellation succeeded and 0 if the <timer_id> wasn't found. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::cancel (const TYPE & type, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel all timer associated with <type>. If <dont_call> is 0 then the <functor> will be invoked. Returns number of timers cancelled. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> const \fBACE_Time_Value\fR & ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::earliest_time (void) const\fC [virtual]\fR
+.PP
+Returns the time of the earlier node in the . Must be called on a non-empty queue.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::get_first (void)\fC [virtual]\fR
+.PP
+Reads the earliest node from the queue and returns it.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::is_empty (void) const\fC [virtual]\fR
+.PP
+True if queue is empty, else false.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Queue_Iterator_T\fR< TYPE,FUNCTOR,ACE_LOCK >& ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::iter (void)\fC [virtual]\fR
+.PP
+Returns a pointer to this 's iterator.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::operator= (const ACE_Timer_List_T< TYPE,FUNCTOR,ACE_LOCK >&)\fC [private]\fR
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::remove_first (void)\fC [virtual]\fR
+.PP
+Removes the earliest node from the queue and returns it.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::reschedule (\fBACE_Timer_Node_T\fR< TYPE >*)\fC [virtual]\fR
+.PP
+Reschedule an "interval" . This should be private but for now it needs to be public for .
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::reset_interval (long timer_id, const \fBACE_Time_Value\fR & interval)\fC [virtual]\fR
+.PP
+Resets the interval of the timer represented by <timer_id> to <interval>, which is specified in relative time to the current <gettimeofday>. If <interval> is equal to , the timer will become a non-rescheduling timer. Returns 0 if successful, -1 if not. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> long ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::schedule (const TYPE & type, const void * act, const \fBACE_Time_Value\fR & delay, const \fBACE_Time_Value\fR & interval = \fBACE_Time_Value::zero\fR)\fC [virtual]\fR
+.PP
+Schedule <type> that will expire after <delay> amount of time, which is specified in absolute time. If it expires then  is passed in as the value to the <functor>. If <interval> is != to  then it is used to reschedule the <type> automatically, using relative time to the current <gettimeofday>. This method returns a <timer_id> that uniquely identifies the the <type> entry in an internal list. This <timer_id> can be used to cancel the timer before it expires. The cancellation ensures that <timer_ids> are unique up to values of greater than 2 billion timers. As long as timers don't stay around longer than this there should be no problems with accidentally deleting the wrong timer. Returns -1 on failure (which is guaranteed never to be a valid <timer_id>). 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> class \fBACE_Timer_List_Iterator_T\fR\fC [friend]\fR
+.PP
+Iterator is a friend.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::head_\fC [private]\fR
+.PP
+Pointer to linked list of .
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBLIST_ITERATOR\fR * ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::iterator_\fC [private]\fR
+.PP
+Iterator used to expire timers.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> long ACE_Timer_List_T<TYPE, FUNCTOR, ACE_LOCK>::timer_id_\fC [private]\fR
+.PP
+Keeps track of the timer id that uniquely identifies each timer. This id can be used to cancel a timer via the <cancel (int)> method. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

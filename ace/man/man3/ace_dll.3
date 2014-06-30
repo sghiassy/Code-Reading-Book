@@ -1,0 +1,130 @@
+.TH ACE_DLL 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_DLL \- Provides an abstract interface for handling various DLL operations. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <DLL.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_DLL\fR (int close_on_destruction = 1)"
+.br
+.RI "\fIDefault constructor. By default, the <close> operation on the object will be invoked before it is destroyed.\fR"
+.ti -1c
+.RI "\fBACE_DLL\fR (const \fBACE_TCHAR\fR *dll_name, int open_mode = ACE_DEFAULT_SHLIB_MODE, int close_on_destruction = 1)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_TCHAR\fR *dll_name, int open_mode = ACE_DEFAULT_SHLIB_MODE, int close_on_destruction = 1)"
+.br
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fICall to close the DLL object.\fR"
+.ti -1c
+.RI "\fB~ACE_DLL\fR (void)"
+.br
+.ti -1c
+.RI "void* \fBsymbol\fR (const \fBACE_TCHAR\fR *symbol_name)"
+.br
+.RI "\fIIf <symbol_name> is in the symbol table of the DLL a pointer to the <symbol_name> is returned. Otherwise, returns 0.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBerror\fR (void)"
+.br
+.RI "\fIReturns a pointer to a string explaining why <symbol> or <open> failed.\fR"
+.ti -1c
+.RI "\fBACE_SHLIB_HANDLE\fR \fBget_handle\fR (int become_owner = 0)"
+.br
+.ti -1c
+.RI "int \fBset_handle\fR (\fBACE_SHLIB_HANDLE\fR handle, int close_on_destruction = 1)"
+.br
+.RI "\fISet the handle for the DLL object. By default, the <close> operation on the object will be invoked before it is destroyed.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_DLL\fR (const ACE_DLL &)"
+.br
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_DLL &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SHLIB_HANDLE\fR \fBhandle_\fR"
+.br
+.RI "\fIThis is a handle to the DLL.\fR"
+.ti -1c
+.RI "int \fBclose_on_destruction_\fR"
+.br
+.RI "\fIThis flag keeps track of whether we should close the handle automatically when the destructor runs.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Provides an abstract interface for handling various DLL operations.
+.PP
+.PP
+ This class is an wrapper over the various methods for utilizing a dynamically linked library (DLL), which is called a shared library on some platforms. Operations <open>, <close>, and <symbol> have been implemented to help opening/closing and extracting symbol information from a DLL, respectively. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_DLL::ACE_DLL (int close_on_destruction = 1)
+.PP
+Default constructor. By default, the <close> operation on the object will be invoked before it is destroyed.
+.PP
+.SS ACE_DLL::ACE_DLL (const \fBACE_TCHAR\fR * dll_name, int open_mode = ACE_DEFAULT_SHLIB_MODE, int close_on_destruction = 1)
+.PP
+This constructor opens and dynamically links <dll_name>. The default mode is <RTLD_LAZY>, which loads identifier symbols but not the symbols for functions, which are loaded dynamically on-demand. Other supported modes include: <RTLD_NOW>, which performs all necessary relocations when <dll_name> is first loaded and <RTLD_GLOBAL>, which makes symbols available for relocation processing of any other DLLs. 
+.SS ACE_DLL::~ACE_DLL (void)
+.PP
+Called when the DLL object is destroyed -- invokes <close> if the <close_on_destruction> flag is set in the constructor or <open> method. 
+.SS ACE_DLL::ACE_DLL (const ACE_DLL &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_DLL::close (void)
+.PP
+Call to close the DLL object.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_DLL::error (void)
+.PP
+Returns a pointer to a string explaining why <symbol> or <open> failed.
+.PP
+.SS \fBACE_SHLIB_HANDLE\fR ACE_DLL::get_handle (int become_owner = 0)
+.PP
+Return the handle to the caller. If <become_owner> is non-0 then caller assumes ownership of the handle and the  object won't call <close> when it goes out of scope, even if <close_on_destruction> is set. 
+.SS int ACE_DLL::open (const \fBACE_TCHAR\fR * dll_name, int open_mode = ACE_DEFAULT_SHLIB_MODE, int close_on_destruction = 1)
+.PP
+This method opens and dynamically links <dll_name>. The default mode is <RTLD_LAZY>, which loads identifier symbols but not the symbols for functions, which are loaded dynamically on-demand. Other supported modes include: <RTLD_NOW>, which performs all necessary relocations when <dll_name> is first loaded and <RTLD_GLOBAL>, which makes symbols available for relocation processing of any other DLLs. Returns -1 on failure and 0 on success. 
+.SS void ACE_DLL::operator= (const ACE_DLL &)\fC [private]\fR
+.PP
+.SS int ACE_DLL::set_handle (\fBACE_SHLIB_HANDLE\fR handle, int close_on_destruction = 1)
+.PP
+Set the handle for the DLL object. By default, the <close> operation on the object will be invoked before it is destroyed.
+.PP
+.SS void * ACE_DLL::symbol (const \fBACE_TCHAR\fR * symbol_name)
+.PP
+If <symbol_name> is in the symbol table of the DLL a pointer to the <symbol_name> is returned. Otherwise, returns 0.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_DLL::close_on_destruction_\fC [private]\fR
+.PP
+This flag keeps track of whether we should close the handle automatically when the destructor runs.
+.PP
+.SS \fBACE_SHLIB_HANDLE\fR ACE_DLL::handle_\fC [private]\fR
+.PP
+This is a handle to the DLL.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

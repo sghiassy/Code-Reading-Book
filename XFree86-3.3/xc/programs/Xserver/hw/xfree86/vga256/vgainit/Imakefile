@@ -1,0 +1,21 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/10/22 14:36:18 kaleb $
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/vgainit/Imakefile,v 3.3 1996/12/23 07:04:33 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = 	vga16scrin.c vga24scrin.c vga32scrin.c
+
+OBJS = 	vga16scrin.o vga24scrin.o vga32scrin.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) -I../../vga256/vga \
+           -I$(SERVERSRC)/cfb -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(FONTINCSRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+ObjectFromSpecialSource(vga16scrin, vgabppscrin, -DPSZ=16)
+ObjectFromSpecialSource(vga24scrin, vgabppscrin, -DPSZ=24)
+ObjectFromSpecialSource(vga32scrin, vgabppscrin, -DPSZ=32)
+
+DependTarget()

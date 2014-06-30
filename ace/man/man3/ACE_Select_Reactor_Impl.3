@@ -1,0 +1,274 @@
+.TH ACE_Select_Reactor_Impl 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Select_Reactor_Impl \- This class simply defines how Select_Reactor's basic interface functions should look like and provides a common base class for <Select_Reactor> using various locking mechanism. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Select_Reactor_Base.h>\fR
+.PP
+Inherits \fBACE_Reactor_Impl\fR.
+.PP
+Inherited by \fBACE_Select_Reactor_T\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBDEFAULT_SIZE\fR = ACE_DEFAULT_SELECT_REACTOR_SIZE }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Impl\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual int \fBpurge_pending_notifications\fR (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)"
+.br
+.ti -1c
+.RI "virtual int \fBresumable_handler\fR (void)"
+.br
+.RI "\fIDoes the reactor allow the application to resume the handle on its own ie. can it pass on the control of handle resumption to the application. The select reactor has no handlers that can be resumed by the application. So return 0;.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBbit_ops\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Select_Reactor_Handle_Set\fR &wait_Set, int ops)"
+.br
+.RI "\fIAllow manipulation of the <wait_set_> mask and <ready_set_> mask.\fR"
+.ti -1c
+.RI "virtual void \fBrenew\fR (void) = 0"
+.br
+.RI "\fIEnqueue ourselves into the list of waiting threads at the appropriate point specified by <requeue_position_>.\fR"
+.ti -1c
+.RI "int \fBsupress_notify_renew\fR (void)"
+.br
+.RI "\fIControls/access whether the notify handler should renew the Select_Reactor's token or not.\fR"
+.ti -1c
+.RI "void \fBsupress_notify_renew\fR (int sr)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Handler_Repository\fR \fBhandler_rep_\fR"
+.br
+.RI "\fITable that maps  to 's.\fR"
+.ti -1c
+.RI "\fBACE_Select_Reactor_Handle_Set\fR \fBwait_set_\fR"
+.br
+.RI "\fITracks handles that are waited for by <select>.\fR"
+.ti -1c
+.RI "\fBACE_Select_Reactor_Handle_Set\fR \fBsuspend_set_\fR"
+.br
+.RI "\fITracks handles that are currently suspended.\fR"
+.ti -1c
+.RI "\fBACE_Select_Reactor_Handle_Set\fR \fBready_set_\fR"
+.br
+.RI "\fITrack HANDLES we are interested in for various events that must be dispatched *without* going through <select>.\fR"
+.ti -1c
+.RI "\fBACE_Timer_Queue\fR* \fBtimer_queue_\fR"
+.br
+.RI "\fIDefined as a pointer to allow overriding by derived classes...\fR"
+.ti -1c
+.RI "int \fBdelete_timer_queue_\fR"
+.br
+.RI "\fIKeeps track of whether we should delete the timer queue (if we didn't create it, then we don't delete it).\fR"
+.ti -1c
+.RI "\fBACE_Sig_Handler\fR* \fBsignal_handler_\fR"
+.br
+.RI "\fIHandle signals without requiring global/static variables.\fR"
+.ti -1c
+.RI "int \fBdelete_signal_handler_\fR"
+.br
+.RI "\fIKeeps track of whether we should delete the signal handler (if we didn't create it, then we don't delete it).\fR"
+.ti -1c
+.RI "\fBACE_Reactor_Notify\fR* \fBnotify_handler_\fR"
+.br
+.RI "\fICallback object that unblocks the  if it's sleeping.\fR"
+.ti -1c
+.RI "int \fBdelete_notify_handler_\fR"
+.br
+.RI "\fIKeeps track of whether we need to delete the notify handler (if we didn't create it, then we don't delete it).\fR"
+.ti -1c
+.RI "int \fBrestart_\fR"
+.br
+.RI "\fIRestart the <handle_events> event-loop method automatically when <select> is interrupted via <EINTR>.\fR"
+.ti -1c
+.RI "int \fBrequeue_position_\fR"
+.br
+.ti -1c
+.RI "int \fBinitialized_\fR"
+.br
+.RI "\fITrue if we've been initialized yet...\fR"
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBowner_\fR"
+.br
+.RI "\fIThe original thread that created this Select_Reactor.\fR"
+.ti -1c
+.RI "int \fBstate_changed_\fR"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Impl\fR (const ACE_Select_Reactor_Impl &)"
+.br
+.RI "\fIDeny access since member-wise won't work...\fR"
+.ti -1c
+.RI "ACE_Select_Reactor_Impl& \fBoperator=\fR (const ACE_Select_Reactor_Impl &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBsupress_renew_\fR"
+.br
+.RI "\fIDetermine whether we should renew Select_Reactor's token after handling the notification message.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Select_Reactor_Notify\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Select_Reactor_Handler_Repository\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class simply defines how Select_Reactor's basic interface functions should look like and provides a common base class for <Select_Reactor> using various locking mechanism.
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIDEFAULT_SIZE\fR \fRDefault size of the Select_Reactor's handle table.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Select_Reactor_Impl::ACE_Select_Reactor_Impl (void)
+.PP
+Constructor.
+.PP
+.SS ACE_Select_Reactor_Impl::ACE_Select_Reactor_Impl (const ACE_Select_Reactor_Impl &)\fC [private]\fR
+.PP
+Deny access since member-wise won't work...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Select_Reactor_Impl::bit_ops (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Select_Reactor_Handle_Set\fR & wait_Set, int ops)\fC [protected, virtual]\fR
+.PP
+Allow manipulation of the <wait_set_> mask and <ready_set_> mask.
+.PP
+.SS ACE_Select_Reactor_Impl& ACE_Select_Reactor_Impl::operator= (const ACE_Select_Reactor_Impl &)\fC [private]\fR
+.PP
+.SS int ACE_Select_Reactor_Impl::purge_pending_notifications (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [virtual]\fR
+.PP
+Purge any notifications pending in this reactor for the specified  object. Returns the number of notifications purged. Returns -1 on error. 
+.PP
+Reimplemented from \fBACE_Reactor_Impl\fR.
+.SS void ACE_Select_Reactor_Impl::renew (void)\fC [protected, pure virtual]\fR
+.PP
+Enqueue ourselves into the list of waiting threads at the appropriate point specified by <requeue_position_>.
+.PP
+Reimplemented in \fBACE_Select_Reactor_T\fR.
+.SS int ACE_Select_Reactor_Impl::resumable_handler (void)\fC [virtual]\fR
+.PP
+Does the reactor allow the application to resume the handle on its own ie. can it pass on the control of handle resumption to the application. The select reactor has no handlers that can be resumed by the application. So return 0;.
+.PP
+Reimplemented from \fBACE_Reactor_Impl\fR.
+.PP
+Reimplemented in \fBACE_TP_Reactor\fR.
+.SS void ACE_Select_Reactor_Impl::supress_notify_renew (int sr)\fC [protected]\fR
+.PP
+.SS int ACE_Select_Reactor_Impl::supress_notify_renew (void)\fC [protected]\fR
+.PP
+Controls/access whether the notify handler should renew the Select_Reactor's token or not.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Select_Reactor_Handler_Repository\fC [friend]\fR
+.PP
+.SS class ACE_Select_Reactor_Notify\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Select_Reactor_Impl::delete_notify_handler_\fC [protected]\fR
+.PP
+Keeps track of whether we need to delete the notify handler (if we didn't create it, then we don't delete it).
+.PP
+.SS int ACE_Select_Reactor_Impl::delete_signal_handler_\fC [protected]\fR
+.PP
+Keeps track of whether we should delete the signal handler (if we didn't create it, then we don't delete it).
+.PP
+.SS int ACE_Select_Reactor_Impl::delete_timer_queue_\fC [protected]\fR
+.PP
+Keeps track of whether we should delete the timer queue (if we didn't create it, then we don't delete it).
+.PP
+.SS \fBACE_Select_Reactor_Handler_Repository\fR ACE_Select_Reactor_Impl::handler_rep_\fC [protected]\fR
+.PP
+Table that maps  to 's.
+.PP
+.SS int ACE_Select_Reactor_Impl::initialized_\fC [protected]\fR
+.PP
+True if we've been initialized yet...
+.PP
+.SS \fBACE_Reactor_Notify\fR * ACE_Select_Reactor_Impl::notify_handler_\fC [protected]\fR
+.PP
+Callback object that unblocks the  if it's sleeping.
+.PP
+.SS \fBACE_thread_t\fR ACE_Select_Reactor_Impl::owner_\fC [protected]\fR
+.PP
+The original thread that created this Select_Reactor.
+.PP
+.SS \fBACE_Select_Reactor_Handle_Set\fR ACE_Select_Reactor_Impl::ready_set_\fC [protected]\fR
+.PP
+Track HANDLES we are interested in for various events that must be dispatched *without* going through <select>.
+.PP
+.SS int ACE_Select_Reactor_Impl::requeue_position_\fC [protected]\fR
+.PP
+Position that the main ACE_Select_Reactor thread is requeued in the list of waiters during a <notify> callback. If this value == -1 we are requeued at the end of the list. Else if it's 0 then we are requeued at the front of the list. Else if it's > 1 then that indicates the number of waiters to skip over. 
+.SS int ACE_Select_Reactor_Impl::restart_\fC [protected]\fR
+.PP
+Restart the <handle_events> event-loop method automatically when <select> is interrupted via <EINTR>.
+.PP
+.SS \fBACE_Sig_Handler\fR * ACE_Select_Reactor_Impl::signal_handler_\fC [protected]\fR
+.PP
+Handle signals without requiring global/static variables.
+.PP
+.SS int ACE_Select_Reactor_Impl::state_changed_\fC [protected]\fR
+.PP
+True if state has changed during dispatching of , else false. This is used to determine whether we need to make another trip through the <Select_Reactor>'s <wait_for_multiple_events> loop. 
+.SS int ACE_Select_Reactor_Impl::supress_renew_\fC [private]\fR
+.PP
+Determine whether we should renew Select_Reactor's token after handling the notification message.
+.PP
+.SS \fBACE_Select_Reactor_Handle_Set\fR ACE_Select_Reactor_Impl::suspend_set_\fC [protected]\fR
+.PP
+Tracks handles that are currently suspended.
+.PP
+.SS \fBACE_Timer_Queue\fR * ACE_Select_Reactor_Impl::timer_queue_\fC [protected]\fR
+.PP
+Defined as a pointer to allow overriding by derived classes...
+.PP
+.SS \fBACE_Select_Reactor_Handle_Set\fR ACE_Select_Reactor_Impl::wait_set_\fC [protected]\fR
+.PP
+Tracks handles that are waited for by <select>.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,34 @@
+XCOMM $XConsortium: Imakefile /main/10 1996/12/03 20:04:42 rws $
+
+#ifndef CgiBinDir
+#define CgiBinDir /usr/xc/Jigsaw/Jigsaw/WWW/cgi-bin
+#endif
+#ifndef ProxyManager
+#define ProxyManager tcp/cambridge.x.org:6500
+#endif
+#ifndef WinCenterHost
+#define WinCenterHost windy.x.org
+#endif
+
+    CGIBINDIR = CgiBinDir
+    PROXYMNGR = ProxyManager
+    PROJECTROOT = ProjectRoot
+    WINCENTERHOST = WinCenterHost
+
+#define PerlTarget(name)						@@\
+all:: name.pl								@@\
+									@@\
+name.pl: name								@@\
+	m4 -DCGIBINDIR="$(CGIBINDIR)" -DXPROJECT_ROOT="$(PROJECTROOT)" -DXPROXYMNGR="$(PROXYMNGR)" -DWINCENTERHOST="$(WINCENTERHOST)" name >$@ @@\
+InstallProgramWithFlags(name.pl,CgiBinDir,$(INSTBINFLAGS))
+
+PerlTarget(bitmap)
+PerlTarget(dtcm)
+PerlTarget(excel)
+PerlTarget(xclock)
+PerlTarget(xload)
+
+InstallProgramWithFlags(dtcm.sh,CgiBinDir,$(INSTBINFLAGS))
+
+clean::
+	$(RM) *.pl

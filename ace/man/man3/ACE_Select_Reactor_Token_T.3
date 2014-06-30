@@ -1,0 +1,101 @@
+.TH ACE_Select_Reactor_Token_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Select_Reactor_Token_T \- Used as a synchronization mechanism to coordinate concurrent access to a Select_Reactor object. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Select_Reactor_T.h>\fR
+.PP
+Inherits \fBACE_SELECT_REACTOR_MUTEX\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Token_T\fR (\fBACE_Select_Reactor_Impl\fR &r)"
+.br
+.ti -1c
+.RI "\fBACE_Select_Reactor_Token_T\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Select_Reactor_Token_T\fR (void)"
+.br
+.ti -1c
+.RI "virtual void \fBsleep_hook\fR (void)"
+.br
+.RI "\fICalled just before the \fBACE_Event_Handler\fR goes to sleep.\fR"
+.ti -1c
+.RI "\fBACE_Select_Reactor_Impl\fR& \fBselect_reactor\fR (void)"
+.br
+.RI "\fISet/Get methods.\fR"
+.ti -1c
+.RI "void \fBselect_reactor\fR (\fBACE_Select_Reactor_Impl\fR &)"
+.br
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Impl\fR* \fBselect_reactor_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class ACE_SELECT_REACTOR_MUTEX>  template class ACE_Select_Reactor_Token_T
+Used as a synchronization mechanism to coordinate concurrent access to a Select_Reactor object.
+.PP
+.PP
+ This class is used to make the  thread-safe. By default, the thread that runs the <handle_events> loop holds the token, even when it is blocked in the <select> call. Whenever another thread wants to access the  via its <register_handler>, <remove_handler>, etc. methods) it must ask the token owner for temporary release of the token. To accomplish this, the owner of a token must define a <sleep_hook> through which it can be notified to temporarily release the token if the current situation permits this. The owner of the token is responsible for deciding which request for the token can be granted. By using the  API, the thread that releases the token temporarily can specify to get the token back right after the other thread has completed using the token. Thus, there is a dedicated thread that owns the token ``by default.'' This thread grants other threads access to the token by ensuring that whenever somebody else has finished using the token the ``default owner'' first holds the token again, i.e., the owner has the chance to schedule other threads. The thread that most likely needs the token most of the time is the thread running the dispatch loop. Typically the token gets released prior to entering the <select> call and gets ``re-acquired'' as soon as the <select> call returns, which results probably in many calls to <release>/ that are not really needed since no other thread would need the token in the meantime. That's why the dispatcher thread is chosen to be the owner of the token. In case the token would have been released while in <select> there would be a good chance that the <fd_set> could have been modified while the <select> returns from blocking and trying to re-acquire the lock. Through the token mechanism it is ensured that while another thread is holding the token, the dispatcher thread is blocked in the <renew> call and not in <select>. Thus, it is not critical to change the <fd_set>. The implementation of the <sleep_hook> mechanism provided by the  enables the default owner to be the thread that executes the dispatch loop. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classACE_SELECT_REACTOR_MUTEX> ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR> (\fBACE_Select_Reactor_Impl\fR & r)
+.PP
+.SS template<classACE_SELECT_REACTOR_MUTEX> ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR> (void)
+.PP
+.SS template<classACE_SELECT_REACTOR_MUTEX> virtual ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::~ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR> (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classACE_SELECT_REACTOR_MUTEX> void ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+.SS template<classACE_SELECT_REACTOR_MUTEX> void ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::select_reactor (\fBACE_Select_Reactor_Impl\fR &)
+.PP
+.SS template<classACE_SELECT_REACTOR_MUTEX> \fBACE_Select_Reactor_Impl\fR & ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::select_reactor (void)
+.PP
+Set/Get methods.
+.PP
+.SS template<classACE_SELECT_REACTOR_MUTEX> void ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::sleep_hook (void)\fC [virtual]\fR
+.PP
+Called just before the \fBACE_Event_Handler\fR goes to sleep.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classACE_SELECT_REACTOR_MUTEX> ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classACE_SELECT_REACTOR_MUTEX> \fBACE_Select_Reactor_Impl\fR * ACE_Select_Reactor_Token_T<\fBACE_SELECT_REACTOR_MUTEX\fR>::select_reactor_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

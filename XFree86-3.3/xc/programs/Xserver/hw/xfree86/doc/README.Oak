@@ -1,0 +1,398 @@
+
+
+
+
+
+
+
+
+
+	      Information for Oak Technologies Inc. Chipset Users
+
+		  Jorge F. Delgado Mendoza (ernar@dit.upm.es)
+
+				 12 March 1996
+
+
+
+1.  Supported chipsets
+
+The driver is used in the 8-bit / 256-color SVGA server and the mono server.
+The following chipsets for Oak Tech. Inc. are supported:
+
+      OTI037C
+	    8-bit SVGA chipset, with up to 256Kbytes of DRAM, only preliminary
+	    support is included in the driver as I don't have a 037c to test
+	    it.
+
+      OTI067
+	    ISA SVGA chipset, up to 512Kbytes of DRAM (usually 70/80 ns).
+
+      OTI077
+	    Enhanced version of the 067, with support for 1Mbyte and up to 65
+	    Mhz dot-clock, this chipset supports up to 1024x768x256 colors in
+	    Non-Interlaced mode, and up to 1280x1024x16 colors Interlaced.
+
+      OTI087
+	    One of the first VLB chipsets available, it has a 16-bit external
+	    data path, and a 32-bit internal memory-controller data path, it
+	    also has register-based color expansion, hardware cursor, a primi-
+	    tive BitBlt engine, a 64 bit graphic latch and some other new (on
+	    its time) features. Maximum BIOS resolutions are 1024x768x256 Non-
+	    Interlaced and 1280x1024x256 interlaced.  Maximum Dot-Clock is
+	    80Mhz, but is usually coupled with the OTI068 clock generator whose
+	    highest frequency is 78Mhz.  Supports up to 2MBytes of 70/70R ns
+	    DRAM.
+
+      OTI107 and OTI111
+	    These are new, PCI chipsets by Oak Tech. Inc. Support is not
+	    included for them, as they are very rare, and I haven't had the
+	    chance to look at one of these boards.
+
+All the chipsets up to the OTI087 are "Backwards compatible", in fact some
+early drivers for the OTI087 based chipsets were those made for the 077.
+
+Accelerated support is included only for OTI087 chipsets, also Mono server is
+only included for 067/077 chipsets.
+
+
+2.  XF86Config options
+
+The following options are of particular interest to the Oak driver. Each of
+
+
+Information for Oak Technologies Inc. Chipset Users
+
+
+
+
+
+Information for Oak Technologies Inc. Chipset Users
+
+
+
+them must be specified in the 'svga' driver section of the XF86Config file,
+within the Screen subsections to which they are applicable (you can enable
+options for all depths by specifying them in the Device section).
+
+      Option "linear" (OTI087)
+	    This option enables a linear framebuffer at 0xE00000 (14Mb) for
+	    cards recognized as ISA by the probe.  Cards that are VLB will map
+	    the framebuffer at 0x4E00000.  The aperture depends on the VideoRam
+	    parameter in the XF86Config file or on the probed value for the
+	    board. It will speed up performance by about 15% on a VLB-based
+	    boards for a DX2-66 486.
+
+	    Sometimes a motherboard will not be able to map at 0x4E00000, and
+	    then linear mode will not work with more than 14 Mbytes of main
+	    RAM. I know this because mine doesn't.
+
+      Option "fifo_aggressive" (OTI087)
+	    This option will cause the command FIFO threshold of the chipset to
+	    be set at 0 instructions, which should be optimal for 16-bit data
+	    transfers, as empirical use of different thresholds, with xbench,
+	    show. Expect a 5-10% of performance boost on a DX2-66 486.
+
+      Option "fifo_conservative" (OTI087)
+	    This option will set the FIFO to a safe value of 14, slowing the
+	    board by a 50%, use this only if you experience streaks or anoma-
+	    lies on the screen.
+
+      Option "enable_bitblt" (OTI087)
+	    This option will enable an internal cache on the board that will be
+	    used as a rudimentary bitblt engine. Performance boost is more or
+	    less 100%, (double BlitStones on xbench). Most OTI087 boards seem
+	    to have this feature broken, corrupting text from xterms and leav-
+	    ing mouse droppings throughout the screen. As a rule of thumb,
+	    enable it, if it works badly, disable it ;).
+
+      Option "clock_50" (OTI087)
+	    This one will force the internal speed to 50 Mhz.
+
+      Option "clock_66" (OTI087)
+	    This one will force the internal speed to 66 Mhz, speeding up per-
+	    formance of the chipset.
+
+      Option "no_wait" (OTI087)
+	    Sets the VLB interface to no wait states. On a medium VLB board
+	    (mine is VLB/PCI, so its not a very fast one) in VLB transparent
+	    mode, it manages up to 16 Mbytes/second transfer rate through the
+	    bus.
+
+      Option "first_wait" (OTI087)
+	    Makes the VLB interface to add one wait state to the first read or
+	    write of a given burst.
+
+      Option "first_wwait" (OTI087)
+	    Similar to the previous one, this only inserts a wait state in the
+
+
+
+
+
+
+
+
+Information for Oak Technologies Inc. Chipset Users
+
+
+
+	    first 'write' of a given burst. reads are not affected. This is the
+	    default behaviour of the server.
+
+      Option "write_wait" (OTI087)
+	    This configures the VLB interface to add one wait state to each
+	    write cycle.
+
+      Option "read_wait" (OTI087)
+	    This configures the VLB interface to add one wait state to each
+	    read cycle.
+
+      Option "all_wait" (OTI087)
+	    Enables the slowest VLB transfer adding wait states in all cases.
+	    Hopefully, no board will need this enabled.
+
+      Option "one_wait" (OTI087)
+	    Sets the VLB interface to at least one wait state.
+
+      Option "noaccel" (OTI087)
+	    One accelerated routine has been lately added to the driver, allow-
+	    ing it to draw solid fills quite faster. This routine only works
+	    (up to date) on segmented addressing, and only if the virtual width
+	    is 1024. This option is automatically enabled by the driver. Use
+	    this option if you want to disable it.
+
+As a rule of thumb, use the option "no_wait", and if it doesn't result in cor-
+rupting text, lucky you. If not, try "first_wwait", and downwards. ISA card
+owners should not use these options.
+
+
+3.  Mode issues
+
+The use of very high dot-clocks has a REAL negative effect on the performance
+of the boards, due to its limited 80Mbit/sec, higher dot clocks limit its abil-
+ity to draw data into the framebuffer. Thus expect better performance of a
+72Mhz based mode than on a 78Mhz based one (for example) where more bandwidth
+is required for screen refresh.
+
+It does not make much sense to use the highest clock (78 MHz) for 1024x768 at
+76 Hz on a OTI087; the card will almost come to a standstill. A 72 MHz dot
+clock results in 70 Hz which should be acceptable. If you have a monitor that
+supports 1024x768 at 76 Hz with a 78 MHz dot clock, a standard OTI087 based
+card is a poor match anyway.
+
+
+4.  Linear addressing
+
+Linear addressing is hardwired to 14 Mbytes for ISA boards and 78 Mbytes for
+VLB boards, thus if you have more than that on your board you shouldn't enable
+it.  The aperture is selected from the VideoRam parameter of the XF86Config or
+from the amount of memory that is detected if VideoRam is not found.
+
+I hope (because I have not tested it very thoroughly) that linear addressing
+will work on ISA boards, VLB ones are fine (I am writing this stuff on mine).
+
+
+
+
+
+
+
+
+Information for Oak Technologies Inc. Chipset Users
+
+
+
+GOOD LUCK!!!!
+
+     Generated from XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/Oak.sgml,v 3.12 1997/01/25 03:22:02 dawes Exp $
+
+
+
+
+
+     $XConsortium: Oak.sgml /main/8 1996/05/12 20:58:00 kaleb $
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Information for Oak Technologies Inc. Chipset Users
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				   CONTENTS
+
+
+
+1. Supported chipsets  ...................................................... 1
+
+2. XF86Config options  ...................................................... 1
+
+3. Mode issues	............................................................. 3
+
+4. Linear addressing ........................................................ 3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				       i
+
+
+
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/README.Oak,v 3.17 1997/01/27 22:12:44 dawes Exp $

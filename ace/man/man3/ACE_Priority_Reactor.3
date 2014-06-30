@@ -1,0 +1,149 @@
+.TH ACE_Priority_Reactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Priority_Reactor \- Implements priority based dispatching. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Priority_Reactor.h>\fR
+.PP
+Inherits \fBACE_Select_Reactor_T\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Priority_Reactor\fR (\fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0)"
+.br
+.RI "\fIInitialize  with the default size.\fR"
+.ti -1c
+.RI "\fBACE_Priority_Reactor\fR (size_t size, int restart = 0, \fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0)"
+.br
+.RI "\fIInitialize  with size <size>.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Priority_Reactor\fR (void)"
+.br
+.RI "\fIClose down the select_reactor and release all of its resources.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBdispatch_io_set\fR (int number_of_active_handles, int &number_dispatched, int mask, \fBACE_Handle_Set\fR &dispatch_mask, \fBACE_Handle_Set\fR &ready_mask, \fBACE_EH_PTMF\fR callback)"
+.br
+.RI "\fIWe simply override this function to implement the priority dispatching.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Unbounded_Queue\fR<\fBACE_Event_Tuple\fR> \fBQUEUE\fR"
+.br
+.RI "\fIThere is a queue per-priority, which simply holds the Event_Handlers until we knwo who goes first.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBinit_bucket\fR (void)"
+.br
+.RI "\fIA small helper to initialize the bucket.\fR"
+.ti -1c
+.RI "\fBACE_Priority_Reactor\fR (const \fBACE_Select_Reactor\fR &)"
+.br
+.RI "\fIDeny access since member-wise won't work...\fR"
+.ti -1c
+.RI "ACE_Priority_Reactor& \fBoperator=\fR (const \fBACE_Select_Reactor\fR &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBQUEUE\fR** \fBbucket_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBtuple_allocator_\fR"
+.br
+.RI "\fIThe queues themselves use this allocator to minimize dynamic memory usage.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Implements priority based dispatching.
+.PP
+.PP
+ This class refines the dispatching mechanism for the Select_Reactor by taking advantage of the priority method on \fBACE_Event_Handler\fR. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Unbounded_Queue\fR<\fBACE_Event_Tuple\fR> ACE_Priority_Reactor::QUEUE\fC [private]\fR
+.PP
+There is a queue per-priority, which simply holds the Event_Handlers until we knwo who goes first.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Priority_Reactor::ACE_Priority_Reactor (\fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0)
+.PP
+Initialize  with the default size.
+.PP
+.SS ACE_Priority_Reactor::ACE_Priority_Reactor (size_t size, int restart = 0, \fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0)
+.PP
+Initialize  with size <size>.
+.PP
+.SS ACE_Priority_Reactor::~ACE_Priority_Reactor (void)\fC [virtual]\fR
+.PP
+Close down the select_reactor and release all of its resources.
+.PP
+.SS ACE_Priority_Reactor::ACE_Priority_Reactor (const \fBACE_Select_Reactor\fR &)\fC [private]\fR
+.PP
+Deny access since member-wise won't work...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Priority_Reactor::dispatch_io_set (int number_of_active_handles, int & number_dispatched, int mask, \fBACE_Handle_Set\fR & dispatch_mask, \fBACE_Handle_Set\fR & ready_mask, \fBACE_EH_PTMF\fR callback)\fC [protected, virtual]\fR
+.PP
+We simply override this function to implement the priority dispatching.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS void ACE_Priority_Reactor::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS void ACE_Priority_Reactor::init_bucket (void)\fC [private]\fR
+.PP
+A small helper to initialize the bucket.
+.PP
+.SS ACE_Priority_Reactor& ACE_Priority_Reactor::operator= (const \fBACE_Select_Reactor\fR &)\fC [private]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Priority_Reactor::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS \fBQUEUE\fR ** ACE_Priority_Reactor::bucket_\fC [private]\fR
+.PP
+.SS \fBACE_Allocator\fR * ACE_Priority_Reactor::tuple_allocator_\fC [private]\fR
+.PP
+The queues themselves use this allocator to minimize dynamic memory usage.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

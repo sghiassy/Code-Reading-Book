@@ -1,0 +1,81 @@
+<HTML>
+<HEAD><TITLE>Hypersonic SQL</TITLE></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+
+<H2>Benchmark</H2>
+<P>
+The performance of InterBase Server 5.0, Sybase SQL Anywhere, Microsoft SQL Server 7.0,
+InstandDB, Cloudscape and Hypersonic SQL was compared. It was assumed the databases 
+that are not written in Java would be much faster because they are written in C, C++ 
+or Assembler, and because Hypersonic SQL is until now not optimized for speed. But 
+the contrary was true:
+<P>
+<I>
+The current version of Hypersonic SQL is (using this simple tests) always faster 
+than all the other databases. Sometimes more than 10 times!
+</I>
+<P>
+The reasons for this are not fully clear. One reason may be that Hypersonic SQL 
+does not organize the data in a traditional file oriented way.
+<P>
+<H3>Results</H3>
+<P>
+The results indicate the time (in seconds) required for executing the 
+commands. Smaller is better. There are currently no results for Microsoft 
+Access, but the results are similar to InterBase and Sybase. The results for 
+Cloudscape are not included in the graphic because this would disturb the 
+picture.
+<P>
+<IMG SRC="images/PerformanceDiagram.gif" ALT="Performance Diagram">
+<P>
+Results as a table
+<P>
+<IMG SRC="images/PerformanceTable.gif" ALT="Performance Table">
+<P>
+<H3>Remarks</H3>
+<P>
+
+All databases are run with enough memory (no swapping) on the same computer.
+The databases are:
+<P>
+<UL>
+<LI><STRONG>Hypersonic SQL</STRONG><BR>
+The current version of Hypersonic SQL, in the Standalone mode (with saving
+the SQL commands to disk)
+<LI><STRONG>MS SQL 7</STRONG><BR>
+Microsoft SQL Server 7.0
+<LI><STRONG>Sybase</STRONG><BR>
+Sybase SQL Anywhere 5.0
+<LI><STRONG>InterBase</STRONG><BR>
+InterBase 5.1.1
+<LI><STRONG>InstantDB</STRONG><BR>
+InstantDB 3.12
+<LI><STRONG>Cloudscape</STRONG><BR>
+Cloudscape 3.0.0
+</UL>
+<P>
+<H3>Test Program</H3>
+<P>
+The tests have been executed on a computer with Windows NT 4.0,
+a AMD 350 MHz processor, with 128 MB RAM. The test program 
+is included in the DatabaseManager: Commands / Test Script.
+The JDK 1.3 has been used. When running the database inside a 
+browser, Hypersonic SQL it is much slower, because the Java Virtual
+Machines in browsers are currently quite slow.
+<P>
+The following statements are tested:
+<FONT SIZE=3><PRE>
+CREATE TABLE Test(
+  Id INTEGER PRIMARY KEY,
+  FirstName VARCHAR(20),
+  Name VARCHAR(50),
+  ZIP INTEGER)
+INSERT INTO Test VALUES(#,'Julia','Peterson-Clancy',#)
+UPDATE Test SET Name='Hans' WHERE Id=#
+SELECT * FROM Test WHERE Id=#
+DELETE FROM Test WHERE Id=#
+DROP TABLE Test
+</PRE></FONT>
+where # is a loop from 0 to 1000
+</FONT></BODY></HTML>

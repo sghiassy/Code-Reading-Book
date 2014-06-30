@@ -1,0 +1,27 @@
+XCOMM $XConsortium: Imakefile /main/19 1996/02/01 00:00:13 gildea $
+XCOMM $XFree86: contrib/programs/Imakefile,v 3.4 1996/10/24 13:00:39 dawes Exp $
+#define IHaveSubdirs
+#define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
+
+#if BuildPhigs
+PHIGSDIRS = auto_box beach_ball gpc
+#endif
+#ifdef XFree86Version
+VIDMODEDIR = xvidmode
+#endif
+#ifdef BuildXF86DGA
+XF86DGA = xf86dga
+#endif
+
+#ifdef XF86Contrib
+SUBDIRS = ico listres showfont viewres xbiff xcalc \
+	xditview xedit xev xeyes xfontsel xgc xload \
+	xman xmessage
+#else
+SUBDIRS = ico listres maze puzzle showfont viewres xbiff xcalc \
+	xditview xedit xev xeyes xfontsel xgas xgc xload xman \
+	xmessage xpr $(PHIGSDIRS) $(VIDMODEDIR) dbedizzy $(XF86DGA)
+#endif
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

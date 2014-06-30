@@ -1,0 +1,101 @@
+.TH ACE_Asynch_Read_Dgram 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Asynch_Read_Dgram \- This class is a factory for starting off asynchronous reads on a UDP socket. This class forwards all methods to its implementation class. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Operation\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Read_Dgram\fR (void)"
+.br
+.RI "\fIA do nothing constructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Asynch_Read_Dgram\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle = ACE_INVALID_HANDLE, const void *completion_key = 0, \fBACE_Proactor\fR *proactor = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (\fBACE_Message_Block\fR *message_block, size_t &number_of_bytes_recvd, int flags, int protocol_family = PF_INET, const void *act = 0, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.ti -1c
+.RI "\fBACE_Asynch_Read_Dgram_Impl\fR* \fBimplementation\fR (void) const"
+.br
+.RI "\fIReturn the underlying implementation class.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBimplementation\fR (\fBACE_Asynch_Read_Dgram_Impl\fR *implementation)"
+.br
+.RI "\fISet the implementation class.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Read_Dgram_Impl\fR* \fBimplementation_\fR"
+.br
+.RI "\fIImplementation class that all methods will be forwarded to.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class is a factory for starting off asynchronous reads on a UDP socket. This class forwards all methods to its implementation class.
+.PP
+.PP
+ Once <open> is called, multiple asynchronous <read>s can be started using this class. An \fBACE_Asynch_Read_Dgram::Result\fR will be passed back to the <handler> when the asynchronous reads completes through the  callback. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Asynch_Read_Dgram::ACE_Asynch_Read_Dgram (void)
+.PP
+A do nothing constructor.
+.PP
+.SS ACE_Asynch_Read_Dgram::~ACE_Asynch_Read_Dgram (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Asynch_Read_Dgram::implementation (\fBACE_Asynch_Read_Dgram_Impl\fR * implementation)\fC [protected]\fR
+.PP
+Set the implementation class.
+.PP
+.SS \fBACE_Asynch_Read_Dgram_Impl\fR * ACE_Asynch_Read_Dgram::implementation (void) const
+.PP
+Return the underlying implementation class.
+.PP
+Reimplemented from \fBACE_Asynch_Operation\fR.
+.SS int ACE_Asynch_Read_Dgram::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle = ACE_INVALID_HANDLE, const void * completion_key = 0, \fBACE_Proactor\fR * proactor = 0)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. 
+.PP
+Reimplemented from \fBACE_Asynch_Operation\fR.
+.SS \fBssize_t\fR ACE_Asynch_Read_Dgram::recv (\fBACE_Message_Block\fR * message_block, size_t & number_of_bytes_recvd, int flags, int protocol_family = PF_INET, const void * act = 0, int priority = 0, int signal_number = ACE_SIGRTMIN)
+.PP
+This starts off an asynchronous read. Upto <message_block->total_size()> will be read and stored in the <message_block>. <message_block>'s <wr_ptr> will be updated to reflect the added bytes if the read operation is successfully completed. Return code of 1 means immediate success and <number_of_bytes_recvd> will contain number of bytes read. The  method will still be called. Return code of 0 means the IO will complete proactively. Return code of -1 means there was an error, use errno to get the error code.
+.PP
+Scatter/gather is supported on WIN32 by using the <message_block->cont()> method. Up to ACE_IOV_MAX <message_block>'s are supported. Upto  <message_block->size()> bytes will be read into each <message block> for a total of <message_block->total_size()> bytes. All <message_block>'s <wr_ptr>'s will be updated to reflect the added bytes for each  <message_block>
+.PP
+Priority of the operation is specified by <priority>. On POSIX4-Unix, this is supported. Works like <nice> in Unix. Negative values are not allowed. 0 means priority of the operation same as the process priority. 1 means priority of the operation is one less than process. And so forth. On Win32, <priority> is a no-op. <signal_number> is the POSIX4 real-time signal number to be used for the operation. <signal_number> ranges from ACE_SIGRTMIN to ACE_SIGRTMAX. This argument is a no-op on non-POSIX4 systems. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Asynch_Read_Dgram_Impl\fR * ACE_Asynch_Read_Dgram::implementation_\fC [protected]\fR
+.PP
+Implementation class that all methods will be forwarded to.
+.PP
+Reimplemented from \fBACE_Asynch_Operation\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

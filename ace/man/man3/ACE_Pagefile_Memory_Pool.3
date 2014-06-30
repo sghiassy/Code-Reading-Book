@@ -1,0 +1,187 @@
+.TH ACE_Pagefile_Memory_Pool 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Pagefile_Memory_Pool \- Make a memory pool that is based on "anonymous" memory regions allocated from the Win32 page file. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Memory_Pool.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Pagefile_Memory_Pool_Options\fR \fBOPTIONS\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Pagefile_Memory_Pool\fR (const \fBACE_TCHAR\fR *backing_store_name = 0, const \fBOPTIONS\fR *options = 0)"
+.br
+.RI "\fIInitialize the pool.\fR"
+.ti -1c
+.RI "void* \fBinit_acquire\fR (size_t nbytes, size_t &rounded_bytes, int &first_time)"
+.br
+.RI "\fIAsk system for initial chunk of shared memory.\fR"
+.ti -1c
+.RI "void* \fBacquire\fR (size_t nbytes, size_t &rounded_bytes)"
+.br
+.RI "\fIAcquire at least <nbytes> from the memory pool. <rounded_bytes> is the actual number of bytes allocated.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.RI "\fIInstruct the memory pool to release all of its resources.\fR"
+.ti -1c
+.RI "virtual int \fBseh_selector\fR (void *)"
+.br
+.ti -1c
+.RI "int \fBremap\fR (void *addr)"
+.br
+.ti -1c
+.RI "size_t \fBround_to_page_size\fR (size_t nbytes)"
+.br
+.RI "\fIRound up to system page size.\fR"
+.ti -1c
+.RI "size_t \fBround_to_chunk_size\fR (size_t nbytes)"
+.br
+.RI "\fIRound up to the chunk size required by the operation system.\fR"
+.ti -1c
+.RI "int \fBsync\fR (\fBssize_t\fR = -1, int = MS_SYNC)"
+.br
+.ti -1c
+.RI "int \fBsync\fR (void *, size_t, int = MS_SYNC)"
+.br
+.ti -1c
+.RI "int \fBprotect\fR (\fBssize_t\fR = -1, int = PROT_RDWR)"
+.br
+.ti -1c
+.RI "int \fBprotect\fR (void *, size_t, int = PROT_RDWR)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBmap\fR (int &firstTime, int appendBytes = 0)"
+.br
+.ti -1c
+.RI "int \fBunmap\fR (void)"
+.br
+.RI "\fIRelease the mapping.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBControl_Block\fR \fBlocal_cb_\fR"
+.br
+.RI "\fIDescription of what our process mapped.\fR"
+.ti -1c
+.RI "\fBControl_Block\fR* \fBshared_cb_\fR"
+.br
+.RI "\fIShared memory pool statistics.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBobject_handle_\fR"
+.br
+.RI "\fIFile mapping handle.\fR"
+.ti -1c
+.RI "size_t \fBpage_size_\fR"
+.br
+.RI "\fISystem page size.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBbacking_store_name_\fR [MAXPATHLEN]"
+.br
+.RI "\fIName of the backing store where the shared memory pool is kept.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Make a memory pool that is based on "anonymous" memory regions allocated from the Win32 page file.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Pagefile_Memory_Pool_Options\fR ACE_Pagefile_Memory_Pool::OPTIONS
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Pagefile_Memory_Pool::ACE_Pagefile_Memory_Pool (const \fBACE_TCHAR\fR * backing_store_name = 0, const \fBOPTIONS\fR * options = 0)
+.PP
+Initialize the pool.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void * ACE_Pagefile_Memory_Pool::acquire (size_t nbytes, size_t & rounded_bytes)
+.PP
+Acquire at least <nbytes> from the memory pool. <rounded_bytes> is the actual number of bytes allocated.
+.PP
+.SS void ACE_Pagefile_Memory_Pool::dump (void) const\fC [inline]\fR
+.PP
+.SS void * ACE_Pagefile_Memory_Pool::init_acquire (size_t nbytes, size_t & rounded_bytes, int & first_time)
+.PP
+Ask system for initial chunk of shared memory.
+.PP
+.SS int ACE_Pagefile_Memory_Pool::map (int & firstTime, int appendBytes = 0)\fC [protected]\fR
+.PP
+Map portions or the entire pool into the local virtual address space. To do this, we compute the new <file_offset> of the backing store and commit the memory. 
+.SS int ACE_Pagefile_Memory_Pool::protect (void *, size_t, int = PROT_RDWR)
+.PP
+.SS int ACE_Pagefile_Memory_Pool::protect (\fBssize_t\fR = -1, int = PROT_RDWR)
+.PP
+.SS int ACE_Pagefile_Memory_Pool::release (void)
+.PP
+Instruct the memory pool to release all of its resources.
+.PP
+.SS int ACE_Pagefile_Memory_Pool::remap (void * addr)
+.PP
+Try to extend the virtual address space so that  is now covered by the address mapping. The method succeeds and returns 0 if the backing store has adequate memory to cover this address. Otherwise, it returns -1. This method is typically called by an exception handler for a Win32 structured exception when another process has grown the backing store (and its mapping) and our process now incurs a fault because our mapping isn't in range (yet). 
+.SS size_t ACE_Pagefile_Memory_Pool::round_to_chunk_size (size_t nbytes)
+.PP
+Round up to the chunk size required by the operation system.
+.PP
+.SS size_t ACE_Pagefile_Memory_Pool::round_to_page_size (size_t nbytes)
+.PP
+Round up to system page size.
+.PP
+.SS int ACE_Pagefile_Memory_Pool::seh_selector (void *)\fC [virtual]\fR
+.PP
+Win32 Structural exception selector. The return value decides how to handle memory pool related structural exceptions. Returns 1, 0, or , -1. 
+.SS int ACE_Pagefile_Memory_Pool::sync (void *, size_t, int = MS_SYNC)
+.PP
+.SS int ACE_Pagefile_Memory_Pool::sync (\fBssize_t\fR = -1, int = MS_SYNC)
+.PP
+.SS int ACE_Pagefile_Memory_Pool::unmap (void)\fC [protected]\fR
+.PP
+Release the mapping.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_TCHAR\fR ACE_Pagefile_Memory_Pool::backing_store_name_[MAXPATHLEN]\fC [private]\fR
+.PP
+Name of the backing store where the shared memory pool is kept.
+.PP
+.SS \fBControl_Block\fR ACE_Pagefile_Memory_Pool::local_cb_\fC [private]\fR
+.PP
+Description of what our process mapped.
+.PP
+.SS ACE_HANDLE ACE_Pagefile_Memory_Pool::object_handle_\fC [private]\fR
+.PP
+File mapping handle.
+.PP
+.SS size_t ACE_Pagefile_Memory_Pool::page_size_\fC [private]\fR
+.PP
+System page size.
+.PP
+.SS \fBControl_Block\fR * ACE_Pagefile_Memory_Pool::shared_cb_\fC [private]\fR
+.PP
+Shared memory pool statistics.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,16 @@
+XCOMM $XConsortium: Imakefile,v 1.13 94/02/06 10:50:53 rws Exp $
+#if HasSecureRPC
+RPC_DEFINES = -DSECURE_RPC
+#else
+RPC_DEFINES = 
+#endif
+KRB5_DEFINES = Krb5Defines
+KRB5_INCLUDE = Krb5Includes
+       INCLUDES = $(KRB5_INCLUDE)
+        DEPLIBS = $(DEPXMULIB) $(DEPXLIB)
+LOCAL_LIBRARIES = $(XMULIB) $(XLIB)
+           SRCS = xhost.c 
+           OBJS = xhost.o 
+        DEFINES = ConnectionFlags $(SIGNAL_DEFINES) $(RPC_DEFINES) $(KRB5_DEFINES)
+
+ComplexProgramTarget(xhost)

@@ -1,0 +1,70 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_TextureUpload</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_TextureUpload</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_TextureUpload</h4>
+<dd>DEMOGL_TextureUnUpload uploads the texturedata of the texture with the given TextureID to OpenGL so it can be used in
+	texturing operations in OpenGL.
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_TextureUpload(
+	<b>const GLuint</b> <i>iTextureID</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iTextureID</i>
+	<dd>Specifies the TextureID, or <i>texture name</i>, of the texture which should be uploaded to OpenGL. 
+		A TextureID is returned by the several texture creation functions.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd><p>
+<dt><b>Remarks.</b>
+<dd>OpenGL manages the textures available for texturing. When you want to use a texture, its data should be uploaded to OpenGL. 
+	Because current videocards have limited
+	memory, not always all textures in an application will fit in the videocard's memory. When you upload every texture to OpenGL
+	probably textures you don't	use at the moment are stored on the videocard while others now needed are not, resulting in stalls in 
+	the rendering. To avoid this, you can do the reverse of <b>DEMOGL_TextureUpload</b> with
+	<a HREF="ref_functions_DEMOGL_TextureUpload.htm" target="main">DEMOGL_TextureUpload</a>: it will remove the texture data from 
+	OpenGL so it will not get in the way of other textures who will be used. Upload only textures which are needed in the next 
+	frame or in the next few frames. Use PREPARE commands in the script to call Prepare() methods of effectobjects and place calls
+	to <b>DEMOGL_TextureUpload</b> to time texture uploads efficiently.
+	<P>
+	DemoGL will use hardware generated mipmaps, when the hardware supports the extension GL_SGIS_generate_mipmap.
+	<p>
+	DemoGL keeps references to uploaded textures, how many times it's uploaded. When you unupload a texture which is uploaded twice
+	the texture is not removed from OpenGL but the upload references are decreased with one. When no upload reference exists anymore,
+	the texture is fysically removed from OpenGL.
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+	<a HREF="ref_functions_DEMOGL_TextureUnUpload.htm" target="main">DEMOGL_TextureUnUpload</a>
+	<a HREF="ref_scriptsyntax_user.htm" target="main">Effect object commands</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 01-jun-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,102 @@
+XCOMM $XConsortium: Imakefile,v 1.5 92/09/03 19:22:15 rws Exp $
+#include <Server.tmpl>
+
+/* "@(#)Imakefile	3.1 88/09/22 09:29:19" */
+#define IHaveSubdirs
+#undef PassCDebugFlags
+#define PassCDebugFlags 'CDEBUGFLAGS=$(CDEBUGFLAGS)' 'CC=$(CC)' 'HCVERSION=$(HCVERSION)'
+
+#define	ListCreate(name)\
+SUBDIRS0= name @@\
+SUBOBJS0= name/name.o @@\
+DSUBOBJS0= name/name/**/_d.o @@\
+PSUBOBJS0= name/name/**/_p.o
+#define	ListCreateEmpty()\
+SUBDIRS0=  @@\
+SUBOBJS0=  @@\
+DSUBOBJS0=  @@\
+PSUBOBJS0= 
+#define	ListAdd(last,new,name)\
+SUBDIRS/**/new= $(SUBDIRS/**/last) name @@\
+SUBOBJS/**/new= $(SUBOBJS/**/last) name/name.o @@\
+DSUBOBJS/**/new= $(DSUBOBJS/**/last) name/name/**/_d.o @@\
+PSUBOBJS/**/new= $(PSUBOBJS/**/last) name/name/**/_p.o
+#define	ListAddEmpty(last,new)\
+SUBDIRS/**/new= $(SUBDIRS/**/last) @@\
+SUBOBJS/**/new= $(SUBOBJS/**/last) @@\
+DSUBOBJS/**/new= $(DSUBOBJS/**/last) @@\
+PSUBOBJS/**/new= $(PSUBOBJS/**/last)
+
+#if ibmInclude8514
+ListCreate(ibm8514)
+#else
+ListCreateEmpty()
+#endif
+#if ibmIncludeADAM
+ListCreate(adam)
+#else
+ListCreateEmpty()
+#endif
+#if ibmIncludeSKYWAY
+ListAdd(0,1,skyway)
+#else
+ListAddEmpty(0,1)
+#endif
+#if ibmIncludeCFBLANNO
+ListAdd(1,2,cfblanno)
+#else
+ListAddEmpty(1,2)
+#endif
+#if ibmIncludeMFBLANNO
+ListAdd(2,3,mfblanno)
+#else
+ListAddEmpty(2,3)
+#endif
+#if ibmIncludeGAI
+ListAdd(3,4,GAI)
+#else
+ListAddEmpty(3,4)
+#endif
+#if ibmIncludePED
+ListAdd(4,5,ped)
+#else
+ListAddEmpty(4,5)
+#endif
+#if ibmIncludeVGA
+ListAdd(5,6,vga)
+#else
+ListAddEmpty(5,6)
+#endif
+
+SUBDIRS= $(SUBDIRS6) common OPERATING_SYSTEM /* pgc ppc */
+/* common/ibmcomm.o is the seed for the link -- Don't put it below */
+SUBOBJS= $(SUBOBJS6) OPERATING_SYSTEM/OPERATING_SYSTEM.o /* pgc/pgc.o ppc/ppc.o*/
+DSUBOBJS= $(DSUBOBJS6) OPERATING_SYSTEM/OPERATING_SYSTEM/**/_d.o
+PSUBOBJS= $(PSUBOBJS6) OPERATING_SYSTEM/OPERATING_SYSTEM/**/_p.o
+
+all::	subdirs
+
+libibm.a: $(ICONFIGFILES)
+
+NormalLibraryTarget(ibm,$(SUBOBJS))
+#if ProfileServer
+NormalLibraryTarget(ibm_p,$(PSUBOBJS))
+#endif
+#if DebugServer
+NormalLibraryTarget(ibm_d,$(DSUBOBJS))
+#endif
+	
+NamedMakeSubdirs(subdirs,$(SUBDIRS))
+	
+XCOMM
+XCOMM before doing the depend, be sure that makedepend exists.
+XCOMM
+depend:: $(DEPEND)
+
+DependSubdirs($(SUBDIRS))
+
+XCOMM
+XCOMM we should be always using ANY tool available ( even lint ) !
+XCOMM
+MakeLintLibSubdirs($(SUBDIRS))
+LintSubdirs($(SUBDIRS))

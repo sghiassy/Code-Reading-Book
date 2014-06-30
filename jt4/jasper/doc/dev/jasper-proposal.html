@@ -1,0 +1,300 @@
+<html>
+<head>
+<title>Proposal for Development of Jasper in Tomcat 4.0</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>Proposal for Development of Jasper in Tomcat 4.0</h1>
+<h2>$Id: jasper-proposal.html,v 1.2 2000/08/30 21:01:49 pierred Exp $</h2>
+</div>
+<p>
+<h4>by Craig McClanahan</h4>
+
+<h2>Introduction</h2>
+
+<p>The specification for JavaServer Pages<sup>TM</sup> (JSP) version 1.2 is
+likely to require, among other things, exposing the internal structure of a
+JSP page to custom tag libraries at page translation time.  This will require
+some substantial changes to the existing Jasper code base, and offers us the
+opportunity to improve its internal organization and functionality.
+Prior to undertaking these efforts, it is appropriate for us to discuss
+and agree on the high level goals we wish to achieve, and the proposed overall
+architecture of the new code.</p>
+
+<p>This document proposes a set of goal statements, along with related
+assumptions and implications, for the purpose of gaining consensus and
+agreement at a high level.  It also includes a first cut at an overall
+architecture (subject to change if the goals change during the process of
+consensus building)</p>
+
+<p>Jasper is, and is proposed to remain, the component of Tomcat that compiles
+and executes JSP pages.  If the proposal on source code organization is also
+accepted, it will live in a "jasper" subdirectory of the new
+<code>jakarta-tomcat-4.0</code> CVS module.</p>
+
+
+<h2>High Level Goals for Next Generation Jasper</h2>
+
+<p>The statements in the following sections describe goals by which we can
+measure the completeness and success of the efforts to develop the next
+major version of the JSP page compiler and runtime environment currently known
+as Jasper.</p>
+
+
+<h3>Specification Compliance</h3>
+
+<p>The result of this coding effort will support 100% of the required
+functionality described in the JSP 1.2 specification (to be available as
+an initial public draft fairly soon), as well as the relevant portions of
+the Servlet 2.3 specification (to be available at the same time).</p>
+<ul>
+<li>The means by which specification conformance is tested shall include
+    passing 100% of the JSP tests in the <strong>jakarta-watchdog</strong> test
+    suite, as it is evolved to include tests for all the new features.</li>
+<li>The servlet and JSP API classes against which Jasper is compiled and
+    executed shall be the most current version of the API classes for
+    JSP 1.2 and Servlet 2.3 that have been checked in to the
+    <strong>jakarta-servletapi</strong> repository while these specifications
+    are in public review.  After the specifications are final, the final
+    versions of the API classes, as amended for any formally adopted errata
+    on the specifications after the are final, will be utilized.</li>
+<li>In addition, Jasper shall provide a web application containing unit tests
+    to validate the functionality of its own behavior, above and beyond the
+    specification requirements.</li>
+</ul>
+
+
+<h3>Compiler Environment and Requirements</h3>
+
+<p>The JSP page compiler component of Jasper shall operate in the following
+environments:</p>
+<ul>
+<li>It shall be possible to execute the JSP page compiler, and produce the
+    corresponding servlet classes representing these pages, from a command
+    line application (currently <code>jspc</code>), without having to be
+    executed within a servlet container.</li>
+<li>It shall be possible to embed the JSP page compiler as a servlet in any
+    servlet container conforming to the Servlet 2.3 Specification (not just
+    Tomcat).  Among other things, this implies that there shall be no internal
+    code dependencies within Jasper on any classes in the
+    <code>org.apache.tomcat.*</code> package hierarcy.</li>
+<li>When embedded as a servlet, the JSP page compiler shall support both
+    on-demand page compilation (when it detects that the source code of a
+    page has been changed) or on-request page compilation (based on the
+    reserved precompilation request URIs described in the JSP 1.2
+    specification).</li>
+<li>When embedded as a servlet, the JSP page compiler shall support
+    optional compilation of JSP pages in the entire web application, or within
+    designated portions of the context-relative URI space, in response to
+    an "application startup" event.</li>
+<li>It shall be feasible for servlet containers (such as Tomcat) to support
+    mechanisms for improved performance of the JSP page compiler that depend
+    on internal knowledge of the JSP page compiler and its classes if it
+    chooses to do so.  Therefore, the key features and integration points
+    of the JSP page compiler shall be exposed through interfaces that can
+    remain stable across enhancements to the Jasper code base.</li>
+<li>It shall be possible to embed the JSP page compiler inside a development
+    tool in such a way that JSP pages can be translated on request from within
+    that tool.</li>
+</ul>
+
+<p>The JSP page compiler component of Jasper shall support the following
+high level functional capabilities:</p>
+<ul>
+<li>The compiler shall accept input pages in either the JSP syntax or the
+    XML syntax, as described by the JSP 1.2 Specification.</li>
+<li>It shall be possible to use the appropriate portions of the compiler
+    (principally the parser) to build a tool that translates a page in
+    JSP syntax into a corresponding page using the XML syntax.</li>
+<li>When executed in a stand-alone environment, or from within a development
+    tool, the JSP page compiler shall include the optional ability to generate
+    elements to be included in the web application deployment descriptor
+    (<code>WEB-INF/web.xml</code>) of the web application in which these
+    servlets will be included.</li>
+<li>When executed from within a servlet container, the JSP page compiler
+    shall support the option to retain intermediate versions of the translated
+    source code (such as the internal XML representation and the Java source
+    code representation) after translation is complete.</li>
+<li>The JSP page compiler shall support configurable properties and plugins
+    for customizing its functionality, including (but not limited to):
+    <ul>
+    <li>The mechanism by which Java class names for the generated servlet
+        are created.</li>
+    <li>The package name into which generated servlets are placed.</li>
+    <li>The processing performed for scriptlets, so that languages other than
+        Java can be used.  The standard Jasper page compiler shall support
+        Java language scriptlets.</li>
+    <li>The Java compiler to be used for translating Java source code into
+        the corresponding servlet class file.</li>
+    </ul>
+    </li>
+<li>The JSP page compiler shall support the optional generation of debugging
+    information (such as line and column numbers) that will assist the runtime
+    environment in identifying error locations in the original JSP page.
+    Initially, this debugging information shall be similar to that generated
+    by Jasper in Tomcat 3.2; however, once the JSR-045 specification (related
+    to adding debugging information to Java class files for non-Java languages)
+    is available in public draft, it shall be possible to configure the
+    generation of debugging information in this format as well.</li>
+<li>The JSP page compiler shall support the ability to generate servlets
+    that extend a developer-provided superclass (rather than the default one
+    available in the runtime support classes included with Jasper), as
+    required by the JSP 1.2 specification.  However, the organization of the
+    generated servlet code, and associated runtime support classes, should be
+    optimized for the case where the default superclass will be utilized.</li>
+<li>To the maximum degree feasible, translation errors shall be reported
+    in terms of line and column numbers from the original JSP source page,
+    rather than line numbers in the generated servlet.</li>
+<li>The JSP page compiler shall generate servlets that conform to all of the
+    requirements described below in section "Runtime Environment and
+    Requirements."</li>
+</ul>
+
+
+<h3>Runtime Environment and Requirements</h3>
+
+<p>The servlet classes produced by the JSP page compiler (no matter which
+mode the compiler itself was executed in) shall operate in the following
+environments:</p>
+<ul>
+<li>The generated servlet classes may depend on runtime support classes that
+    are specific to Jasper.  These runtime support classes shall be available
+    in a JAR file that can be included in the <code>WEB-INF/lib</code>
+    directory of a web application in which the generated servlet classes
+    will be executed, or made available as server extensions by whatever means
+    are supported by the servlet container they are deployed into.
+<li>It shall be possible to deploy the generated servlet classes, and the
+    associated runtime support classes described above, on any servlet
+    container conforming to the Servlet 2.3 Specification (not just Tomcat).
+    Among other things, this implies that there shall be no internal code
+    dependencies in the generated servlet classes, or the runtime support
+    classes, on any classes in the <code>org.apache.tomcat.*</code>
+    package hierarchy.</li>
+<li>It shall be feasible for servlet containers (such as Tomcat) to support
+    mechanisms for improved performance of the generated servlets that depend
+    on internal knowledge of the JSP page compiler, the servlet classes that
+    it generates, and the runtime support classes, if it chooses to do so.
+    Therefore, key features and integration points of the generated servlet
+    classes and runtime support classes shall be exposed through interfaces
+    that can remain stable across enhancements to the Jasper code base.</li>
+<li>The generated servlet classes shall have no runtime dependencies on any
+    classes in the JSP page compiler.  It shall be possible to run them in
+    a web application where all JSP pages have been precompiled, and no
+    runtime JSP page compilation is available.  It shall also be possible
+    to run them (and recompile them if necessary) in an environment where
+    runtime JSP page compilation is available.</li>
+<li>The generated servlet classes shall operate under the class loader and
+    security domain (if any) established by the servlet container in which
+    they are deployed.</li>
+</ul>
+
+<p>The servlet classes produced by the JSP page compiler (no what what
+environment it was executed in) shall support the following high level
+functional capabilities:</p>
+<ul>
+<li>To the maximum degree feasible, runtime exceptions shall be reported
+    in terms of line and column numbers from the original JSP source page,
+    rather than line numbers in the generated servlet.</li>
+<li>Stack traces produced in response to translation or runtime errors may
+    be logged (via <code>ServletContext.log()</code>), but shall not be
+    reported back to clients whose requests triggered the errors.</li>
+</ul>
+
+
+<h2>Overall Architecture Proposal</h2>
+
+<p>The following diagram contains the first cut at an overall architecture
+for the next generation Jasper compiler, taking into account the goals
+described earlier.</p>
+
+<p><strong>FIXME - image containing the architecture diagram</strong></p>
+
+<p>As you can see, the compiler is divided into several phases, with the
+functionality described below:</p>
+<ul>
+<li><strong>Parser</strong> - Accept as input a page in either JSP syntax or
+    XML syntax, as described by the specification.  Produce as output a DOM
+    view of the underlying page, as well as related source file debugging
+    information that can be passed along to be included in the servlet class
+    that is ultimately generated.</li>
+<li><strong>Transformer</strong> - Accept as input the DOM and debugging
+    information provided by the Parser, and support the translation time
+    transformations described in the JSP 1.2 specification.  The output will
+    be a revised DOM tree (transformed in place?) and revised debugging
+    information.</li>
+<li><strong>Generator</strong> - Accept as input the (possibly transformed
+    and validated) DOM and debugging information from the Transformer, and
+    generate the source code for a Java servlet that implements the desired
+    functionality of the JSP page.</li>
+<li><strong>Translator</strong> - Accept as input the Java servlet produced
+    by the Generator, and compile it with the configured Java compiler to
+    produce a servlet class file for this page.</li>
+<li><strong>Deployer</strong> - If this page is being compiled in a stand
+    alone environment, the Deployer phase can be invoked to produce the
+    appropriate additions to the web application deployment descriptor
+    (<code>web.xml</code>), and a JAR file containing the compiled page
+    classes, to be included in a web application.</li>
+</ul>
+
+<p>The following points should be kept in mind when considering how to
+implement the phases described above:</p>
+<ul>
+<li>At first blush, it would appear that the Parser could use a standard
+    JAXP-compatible DOM parser (with validation enabled) when reading XML
+    input.  However, this will not be feasible for the following reasons:
+    <ul>
+    <li>Any JSP page (in XML syntax) that uses custom tag libraries will
+        not be possible to validate, because the custom tag attributes
+        themselves are not available in the DTD of the JSP page itself.</li>
+    <li>If you use a non-validating DOM parser, there is no access to source
+        line and column number information.
+    </ul>
+    Therefore, it appears that we should implement two parser front ends
+    (one for each syntax) that generate SAX events, and build a common parser
+    back end that produces the DOM and debugging information to be handed on
+    to the Transformer.</li>
+<li>The front end for JSP syntax can be based on the existing parser code in
+    Jasper, after modifying to produce output in the expected format.</li>
+<li>It should be easy to add a command-line tool that takes the DOM as input
+    and produces a page source file (in XML syntax) as output.  This would be
+    useful for developers who wish to switch from JSP syntax to XML syntax
+    without having to manually recode all of their pages.</li>
+<li>The Transformer phase will also likely support the concept of validators
+    that examine the DOM of the page for consistency with application
+    standards.  Therefore, it can also cause fatal translation time errors.
+    </li>
+<li>Since we are not using a validating XML parser for the reasons described
+    above, we should consider using an internal validator at this stage to
+    check for "validity" of the DOM in the XML sense (proper nesting of
+    elements, no unknown attributes, and so on).</li>
+<li>The Generator should be able to produce debugging information that is
+    similar to that produced by the current version of Jasper, for backwards
+    compatibility.  In addition, it should track with the published results
+    of JSR 45, under which original line number information for any language
+    being translated into Java will be optionally included in the class file
+    itself.</li>
+<li>At a minimum, the Translator phase should support Jikes and the built in
+    Java compiler from the JDK (as is supported by the current version of
+    Jasper).  To the maximum degree feasible, we should also support plug in
+    of different Java compilers through some appropriate interface.</li>
+<li>Deployer support is something that can be done in a minimal fashion early
+    on (similar to what <code>jspc</code> does now), but I envision enhanced
+    capabilities in this area being added later.</li>
+</ul>
+
+<p>Although it is too early for detailed source code design, I would suggest
+that the source modules for each phase of the JSP page compiler be organized
+into a separate Java package (such as <code>org.apache.jasper.generator</code>
+for the Java code generation phase).  Interfaces that describe cross-phase
+information flows can be defined in the <code>org.apache.jasper</code>
+package, with implementations provided by the phase that actually produces
+that information.</p>
+
+<p>In a similar manner, the runtime support classes that a generated page
+may depend on should be organized into a single Java package (such as
+<code>org.apache.jasper.runtime</code>), to facilitate easy packaging as a
+JAR file, and to discourage dependencies on other Jasper internals.</p>
+
+</body>
+</html>

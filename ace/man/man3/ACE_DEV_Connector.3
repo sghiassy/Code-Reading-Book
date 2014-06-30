@@ -1,0 +1,93 @@
+.TH ACE_DEV_Connector 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_DEV_Connector \- Defines an active connection factory for the \fBACE_DEV\fR wrappers. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <DEV_Connector.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_DEV_Addr\fR \fBPEER_ADDR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_DEV_IO\fR \fBPEER_STREAM\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_DEV_Connector\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_DEV_Connector\fR (\fBACE_DEV_IO\fR &new_io, const \fBACE_DEV_Addr\fR &remote_sap, \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)"
+.br
+.ti -1c
+.RI "int \fBconnect\fR (\fBACE_DEV_IO\fR &new_io, const \fBACE_DEV_Addr\fR &remote_sap, \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)"
+.br
+.ti -1c
+.RI "int \fBreset_new_handle\fR (ACE_HANDLE handle)"
+.br
+.RI "\fIResets any event associations on this handle.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines an active connection factory for the \fBACE_DEV\fR wrappers.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_DEV_Addr\fR ACE_DEV_Connector::PEER_ADDR
+.PP
+.SS typedef \fBACE_DEV_IO\fR ACE_DEV_Connector::PEER_STREAM
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_DEV_Connector::ACE_DEV_Connector (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_DEV_Connector::ACE_DEV_Connector (\fBACE_DEV_IO\fR & new_io, const \fBACE_DEV_Addr\fR & remote_sap, \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the maximum amount of time to wait before timing out. If the time expires before the connection is made <errno == ETIME>. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleanedup yet. The <flags> and <perms> arguments are passed down to the <open> method. 
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_DEV_Connector::connect (\fBACE_DEV_IO\fR & new_io, const \fBACE_DEV_Addr\fR & remote_sap, \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the maximum amount of time to wait before timing out. If the time expires before the connection is made <errno == ETIME>. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleanedup yet. The <flags> and <perms> arguments are passed down to the <open> method. 
+.SS void ACE_DEV_Connector::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_DEV_Connector::reset_new_handle (ACE_HANDLE handle)
+.PP
+Resets any event associations on this handle.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_DEV_Connector::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

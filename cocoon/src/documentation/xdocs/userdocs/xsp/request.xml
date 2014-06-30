@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+
+  <header>
+    <title>Request Logicsheet</title>
+    <authors>
+      <person name="Christopher Painter-Wakefield" email="paint007@mc.duke.edu"/>
+    </authors>
+  </header>
+
+<body>
+
+<s1 title="Description">
+
+<p>The Request logicsheet (taglib) is an XSP logicsheet that wraps XML tags around
+standard request operations.  Specifically, the Request logicsheet provides an XML
+interface to most methods of the HttpServletRequest object (see the
+<link href="http://java.sun.com/products/servlet/2.2/javadoc/index.html">
+Java Servlet API Specification, version 2.2
+</link>) for more information.</p>
+
+<p>The Request tags provide information about all aspects of the current request,
+such as the request method (GET, POST, etc.), what protocol is in use (http, https),
+cookie information, preferred locale, and so forth.  The Request logicsheet is
+probably used mostly, however, for obtaining field values from a submitted HTML form.
+See xsp-request:get-parameter below for more information on this topic.</p>
+
+</s1>
+
+<s1 title="Usage">
+
+<p>As an XSP logicsheet, the Request logicsheet can only be used in an XSP page.
+It may be helpful to be familiar with <link href="xsp.html">XSP</link> before
+working with this (or any) logicsheet.</p>
+
+<p>To use the Request logicsheet, you must first declare the <em>xsp-request</em>
+namespace, mapping it to the uri <em>http://apache.org/xsp/request/2.0</em>.
+This is typically done like this:</p>
+
+<source><![CDATA[
+<xsp:page
+    xmlns:xsp="http://apache.org/xsp"
+    xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+>
+...
+</xsp:page>
+]]></source> 
+
+<p>You may then use any of the elements in the <em>request</em> namespace described
+in the <link href="request.html#id_el">Elements Reference</link> section below.</p>
+
+</s1>
+
+<s1 title="Example Code">
+
+<p>The following code shows a typical example of using the Request logicsheet.
+The output elements display the request method and the value of the query
+parameter "fruit".  Of course, rather than displaying these values as we've
+done, you might instead store them in elements and process them further through
+an XSLT stylesheet, for instance.</p>
+
+<source><![CDATA[
+<?xml version="1.0"?>
+
+<?cocoon-process type="xsp"?>
+
+<xsp:page
+    xmlns:xsp="http://apache.org/xsp"
+    xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+>
+  <html>
+    <b>Request method:</b> <xsp-request:get-method/>
+    <br/>
+    <b>Fruit requested:</b> <xsp-request:get-parameter name="fruit"/>
+  </html>
+</xsp:page>
+]]></source> 
+
+<p>If your server is www.mydomain.com and you save this XML in your Cocoon
+document tree as /cocoon/request.xml, then you can see the effect of the 
+<em>request</em> elements by opening your browser with the URL
+<code>http://www.mydomain.com/cocoon/request.xml?fruit=apple</code></p>
+
+<p>The output should look something like:</p>
+<p><strong>Request Method:</strong> GET</p>
+<p><strong>Fruit requested:</strong> apple</p>
+
+</s1>
+
+<s1 title="XSP Interactions">
+
+<p>The Request logicsheet tags may be used interchangeably with XSP code that 
+directly uses the <code>request</code> object.  The <code>request</code> object
+is an instance of the HttpServletRequest class, and is available inside the
+user element in an XSP page.  The Request logicsheet itself uses this object.
+Therefore, the following code snippets function essentially the same:</p>
+
+<source>
+<strong>Using the Request logicsheet:</strong>
+<![CDATA[
+<xsp:page
+    xmlns:xsp="http://apache.org/xsp"
+    xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+>
+  <page>
+    <fruit><xsp-request:get-parameter name="fruit"/></fruit>
+  </page>
+</xsp:page>
+]]></source> 
+
+<source>
+<strong>Using the request object:</strong>
+<![CDATA[
+<xsp:page
+    xmlns:xsp="http://apache.org/xsp"
+>
+  <page>
+    <fruit><xsp:expr>request.getParameter("fruit")</xsp:expr></fruit>
+  </page>
+</xsp:page>
+]]></source> 
+
+<p>You may freely mix Request elements with other XSP Java code.  Many, if not
+most, Request elements result in String objects.  Thus, the following code
+fragment is valid:</p>
+
+<source><![CDATA[
+<xsp:logic>
+  String fruit = <xsp-request:get-parameter name="fruit"/>;
+  if (fruit != null) {
+    fruit = fruit.toUpperCase();
+  }
+</xsp:logic>
+<fruit><xsp:expr>fruit</xsp:expr></fruit>
+]]></source> 
+
+</s1>
+
+<anchor id="id_el"/>
+<s1 title="Elements Reference">
+
+<p>All Request elements which require or allow for additional information allow
+you to provide the information as either an attribute or a child element.  These
+attributes/child elements are listed in the "Attributes/Child Elements" column
+of the table below.  Unless noted, these are required for the given element; 
+their absence will result in Java compilation errors or exceptions.</p>
+<p>The following fragments are equivalent:</p>
+
+<source><![CDATA[
+<xsp-request:get-parameter name="fruit"/>
+]]></source> 
+
+<source><![CDATA[
+<xsp-request:get-parameter><name>fruit</name></xsp-request:get-parameter>
+]]></source> 
+
+<p>All Request elements which get data from the request can output the data
+in two ways.  The <code>as</code> attribute of the element is used to switch
+between the different output options.  The choice is always between some
+default value for <code>as</code> and the value "node".  Using the default
+value for <code>as</code> (which is most easily achieved by leaving out the
+attribute altogether), the Request element will put the result of its operation
+in an &lt;xsp:expr> node.  This allows you to use the result in a Java expression,
+or converts it to text in the output DOM tree.  If you use <code>as="node"</code>,
+however, the output is embedded in a node or nodes, as appropriate.  For instance,
+the following code fragment:</p>
+
+<source><![CDATA[
+<xsp-request:get-parameter as="xml" name="fruit"/>
+]]></source> 
+
+<p>results in output similar to:</p>
+
+<source><![CDATA[
+<xsp-request:parameter name="fruit">apple</xsp-request:parameter>
+]]></source> 
+
+<p>This is especially useful with elements that return multiple pieces of
+information, such as <code>xsp-request:get-parameter-values</code>.  Without using 
+<code>as="node"</code>, the returned values are written out end to end
+without separation.  If node output is requested, however, each value
+is written out in a separate node, which may then be referenced separately.</p>
+
+<p>The elements which provide for node output are marked with a "yes" in the
+"Node?" column of the table below.  Unlike the other attributes used in 
+Request elements, <code>as</code> cannot be supplied as a child element; it
+must be supplied as an attribute, if it is used at all.</p>
+
+
+<note>Since these elements are primarily wrappers around HttpServletRequest
+methods, the HttpServletRequest documentation in the
+<link href="http://java.sun.com/products/servlet/2.2/javadoc/index.html">
+Java Servlet API Specification, version 2.2
+</link> 
+is also helpful in understanding the behavior and usage of these elements.</note>
+
+<table>
+<caption>All of the Request logicsheet elements, in alphabetic order.</caption>
+<tr>
+<th>Element Name</th>
+<th>Attributes/Child Elements</th>
+<th>Node?</th>
+<th>Description</th>
+</tr>
+
+<tr>
+<td>xsp-request:get-attribute</td>
+<td>name</td>
+<td>yes</td>
+<td>Gets a named attribute set by the servlet container or by a previous 
+xsp-request:set-attribute operation.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-attribute-names</td>
+<td></td>
+<td>yes</td>
+<td>Gets the names of all available request attributes.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-auth-type</td>
+<td></td>
+<td>yes</td>
+<td>Gets the name of the authentication scheme used to protect this request
+location, if used, e.g., BASIC or SSL.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-character-encoding</td>
+<td></td>
+<td>yes</td>
+<td>Gets the name of the character encoding used in the body of this request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-content-length</td>
+<td></td>
+<td>yes</td>
+<td>Gets the length, in bytes, of the request body, or -1 if the length is unknown.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-content-type</td>
+<td></td>
+<td>yes</td>
+<td>Gets the MIME type of the body of the request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-context-path</td>
+<td></td>
+<td>yes</td>
+<td>Gets the portion of the request URI that indicates the context of the request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-cookies</td>
+<td></td>
+<td>yes</td>
+<td>Gets all cookie objects supplied by the client with this request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-date-header</td>
+<td>name, format <em>(optional)</em></td>
+<td>yes</td>
+<td>Gets the value of the named request header that represents a date. Use this 
+method with headers that contain dates, such as If-Modified-Since.  The <code>as</code> attribute
+for this element may be "long" (default), "string", "date", or "node".  If "long",
+the returned value is a Java <code>long</code> that represents a Java <code>Date</code>
+value.  If "date", the returned value is a Java <code>Date</code> object.  If "string" or 
+"node", the optional <code>format</code> attribute may be used
+to supply a format string for a Java <code>SimpleDateFormat</code> to format the resulting
+string.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-header</td>
+<td>name</td>
+<td>yes</td>
+<td>Gets the string value of the named request header.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-headers</td>
+<td>name</td>
+<td>yes</td>
+<td>Gets all values of the named request header.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-header-names</td>
+<td></td>
+<td>yes</td>
+<td>Gets the names of all available request headers.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-int-header</td>
+<td>name</td>
+<td>yes</td>
+<td>Gets the value of the named request header which represents an integer,
+or -1 if the named header doesn't exist.  The <code>as</code> attribute may
+be set to "int" (default), "string", or "node".</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-locale</td>
+<td></td>
+<td>yes</td>
+<td>Gets the preferred locale for the client browser, or the default
+server locale if not provided by the client.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-locales</td>
+<td></td>
+<td>yes</td>
+<td>Gets the locales accepted by the client in order of preference.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-method</td>
+<td></td>
+<td>yes</td>
+<td>Gets the name of the method associated with this request, e.g., GET, POST, or PUT.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-parameter</td>
+<td>name</td>
+<td>yes</td>
+<td>Gets the value of the named request parameter.  This is a value from
+the request string (e.g., ?fruit=apple) or from POSTed form data.  If the parameter
+has more than one value, (e.g, ?fruit=apple&amp;fruit=orange), then this gets the first
+value.  See xsp-request:get-parameter-values. Possible attributes:
+form-encoding (depends on the encoding of the page which sends the form data)
+and container-encoding (default per servlet spec: ISO-8859-1 but if your servlet container
+uses another one you can adjust)</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-parameter-names</td>
+<td></td>
+<td>yes</td>
+<td>Gets the names of all the request parameters.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-parameter-values</td>
+<td>name</td>
+<td>yes</td>
+<td>Gets all values for the named request parameter.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-path-info</td>
+<td></td>
+<td>yes</td>
+<td>Gets any additional path information supplied by the client with this request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-path-translated</td>
+<td></td>
+<td>yes</td>
+<td>Gets any additional path information after the servlet name but before the query string,
+translated to a real path.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-protocol</td>
+<td></td>
+<td>yes</td>
+<td>Gets the name and version of the protocol the request uses, for example, HTTP/1.1.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-query-string</td>
+<td></td>
+<td>yes</td>
+<td>Gets the query string for this request (e.g., "?fruit=apple&amp;bread=rye").</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-remote-addr</td>
+<td></td>
+<td>yes</td>
+<td>Gets the IP address of the requesting client.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-remote-host</td>
+<td></td>
+<td>yes</td>
+<td>Gets the fully-qualified name of the requesting client, or the IP address
+if the name cannot be determined.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-remote-user</td>
+<td></td>
+<td>yes</td>
+<td>Gets the login name of the user making the request, if a user has been
+authenticated.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-requested-session-id</td>
+<td></td>
+<td>yes</td>
+<td>Gets the session id contained in the request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-request-uri</td>
+<td></td>
+<td>yes</td>
+<td>Gets the part of the request URL from the protocol name up to the
+query string.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-scheme</td>
+<td></td>
+<td>yes</td>
+<td>Gets the name of the scheme used in this request, e.g., http or https.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-server-name</td>
+<td></td>
+<td>yes</td>
+<td>Gets the name of the server that received the request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-server-port</td>
+<td></td>
+<td>yes</td>
+<td>Gets the port on which the request was received, e.g., 80 or 443.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-servlet-path</td>
+<td></td>
+<td>yes</td>
+<td>Gets the part of the request URL that calls the servlet.</td>
+</tr>
+
+<tr>
+<td>xsp-request:get-user-principal</td>
+<td></td>
+<td>yes</td>
+<td>Gets a java.security.Principal object containing the name of the user,
+if a user has been authenticated.</td>
+</tr>
+
+<tr>
+<td>xsp-request:is-requested-session-id-from-cookie</td>
+<td></td>
+<td>yes</td>
+<td>Indicates whether the requested session id was provided in a cookie.</td>
+</tr>
+
+<tr>
+<td>xsp-request:is-requested-session-id-from-url</td>
+<td></td>
+<td>yes</td>
+<td>Indicates whether the requested session id was provided as part of the
+request URL.</td>
+</tr>
+
+<tr>
+<td>xsp-request:is-requested-session-id-valid</td>
+<td></td>
+<td>yes</td>
+<td>Indicates whether the requested session id is still valid.</td>
+</tr>
+
+<tr>
+<td>xsp-request:is-secure</td>
+<td></td>
+<td>yes</td>
+<td>Indicates whether the request was made using a secure protocol such as HTTPS.</td>
+</tr>
+
+<tr>
+<td>xsp-request:is-user-in-role</td>
+<td>role</td>
+<td>yes</td>
+<td>Indicates whether the authenticated user is a member in the named role.</td>
+</tr>
+
+<tr>
+<td>xsp-request:remove-attribute</td>
+<td>name</td>
+<td>no</td>
+<td>Removes the named attribute from the request.</td>
+</tr>
+
+<tr>
+<td>xsp-request:set-attribute</td>
+<td>name</td>
+<td>no</td>
+<td>Sets the named attribute to the value represented by any children of the element.
+If the element has a text node as its child, the attribute will be set to the String
+containing the text.</td>
+</tr>
+
+</table>
+
+</s1>
+
+</body>
+</document>

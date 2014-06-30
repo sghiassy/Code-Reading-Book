@@ -1,0 +1,115 @@
+This is the first public release of a ViRGE driver for the SVGA/XAA server. 
+This is a total rewrite, so unfortunately there are probably many 
+bugs present and not all features of the accel virge server are implemented. 
+
+
+What works: 
+- Supports PCI hardware, ViRGE, ViRGE/DX, ViRGE/GX and ViRGE/VX
+- Supports 8bpp, 15/16bpp, 24bpp and 32bpp.
+- VT switching seems to work well, no corruption for 8, 16 and 24bpp.
+- Acceleration: ScreenToScreen copy, solid rectangle fills, CPU to
+  screen color expansion, 8x8 mono and color fills. Currently, this appears
+  to be substantially faster than the accel server at least for 
+  color expansions. These functions also include planemask support, and there
+  is transparency for 8x8 mono fills. Work has started on accelerating lines 
+  and polygons. 
+- Acceleration in 32bpp is limited: only ScreenToScreen bitblit and solid 
+  rectangles are supported. The ViRGE itself has no support for 32bpp 
+  acceleration, so the GE is used in 16bpp mode. 
+
+What does not work for sure:
+- No VLB support for now (were there any VLB virge cards produced??)
+- No doublescan support
+- Not all of the XConfig options work as yet, mainly the chipset override.
+
+What probably does not work:
+- Special handling of memory accesses on alpha?
+- DGA support may still have some problems
+- Many other things which I cannot think of now :-)
+
+What is in the works:
+- Fix accelerated lines and polygons.
+- Add ImageWrite function.
+
+
+
+
+XCONFIG options:
+
+The driver supports quite a few different XConfig options, which can
+be used to tune the driver and improve performance. Without any options, 
+the driver will use conservative settings which should work on most
+hardware. Large improvements in performance are possible by selecting
+the proper options, which will probably work on most systems.
+
+Video memory:
+
+- "slow_edodram" will switch the ViRGE to 2-cycle edo mode. Try this if
+	you encounter pixel corruption on the ViRGE. Using this option will
+	cause a large decrease in performance. 
+- "fpm_vram" will switch the ViRGE/VX to fast page mode vram mode
+- "early_ras_precharge" or "late_ras_precharge" will modify the
+        memory timings, and may fix pixel corruption on some cards. 
+        The default behavior is set by the BIOS, and is normally 
+        "late_ras_precharge".
+- "set_mclk value" sets the video memory clock rate to 'value' (in MHz).
+	The performance of the card is directly proportional to the memory
+	clocking, so this may provide a performance increase. The BIOS setting
+	for your card is printed at server start-up. Often, "low-cost" cards 
+	use the S3 default of 50MHz. This can often be exceeded with faster 
+	memory, some cards may function reliably at 60 or 65 MHz (even higher
+	on some recent /DX and /GX cards). Note	that S3 only officially 
+	supports MCLK of 50MHz.
+        *** This option should not be preceded by the "Option" keyword!
+
+
+Acceleration and graphic engine:
+ 
+- "noaccel" turns off all acceleration
+- "fifo_aggressive", "fifo_moderate" and "fifo_conservative" alter the settings
+	for the threshold at which the pixel FIFO takes over the internal 
+	memory bus to refill itself. The smaller this threshold, the better
+	the acceleration performance of the card. You may try the fastest 
+	setting ("aggressive") and move down if you encounter pixel corruption.
+	The optimal setting will probably depend on dot-clock and on color 
+	depth. Note that specifying any of these options will also alter other
+	memory settings which should increase performance, so you should at
+        least use "fifo_conservative" (this uses the chip defaults).
+
+
+PCI bus:
+- "pci_burst_on" will enable PCI burst mode. This should work on all but a
+	few "broken" PCI chipsets, and will increase performance.
+- "pci_retry" will allow the driver to rely on PCI Retry to program the 
+	ViRGE registers. "pci_burst_on" must be enabled for this to work. 
+	This will increase performance, especially for small fills/blits, 
+        because the driver does not have to poll the ViRGE before sending it 
+        commands to make sure it is ready. It should work on most 
+        recent PCI chipsets. 
+
+Cursor:
+- "hw_cursor" turns on the hardware cursor.
+
+Color depth options/limitations.
+- Pixel multiplexing is used above 80MHz for 8bpp on the ViRGE. 
+- 15bpp is supported, use "-bpp 16 -weight 555" as options to the server.
+- 24bpp is supported using the STREAMS engine.
+- 32bpp uses STREAMS as well; however, because the ViRGE does not really 
+        support 32 bpp "natively", acceleration is quite limited.
+- Both 24bpp and 32bpp do not support interlace modes.  
+
+Main author:
+
+Sebastien Marineau <marineau@genie.uottawa.ca>
+
+And 
+
+Harald Koenig <koenig@tat.physik.uni-tuebingen.de>
+
+
+15/05/97
+
+
+
+
+$XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/s3v/README,v 1.1.2.3 1997/05/26 14:36:22 dawes Exp $

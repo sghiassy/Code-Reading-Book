@@ -1,0 +1,487 @@
+<?xml version="1.0"?>
+<cocoon version="2.0" user-roles="/user.roles">
+
+<!-- ================ Apache Cocoon configuration file ================== -->
+<!-- Please refer to the online documentation for full descriptions.
+     The notes that accompany the settings below are intended to be concise.
+-->
+
+<!-- ===================== General Components =========================== -->
+
+  <!-- Parser:
+    The default parser used in the Apache Cocoon 2 system is
+    org.apache.cocoon.components.parser.JaxpParser
+    Apache Cocoon 2 system requires a JAXP 1.1 parser.
+    If you have problems because your servlet environment uses its own
+    parser not conforming to JAXP 1.1 try using the alternative
+    XercesParser instead of the JaxpParser. To activate the XercesParser,
+    move the line below starting with <parser ...> out of this comment block.
+    You also than have to add a system property to your JVM
+    (probably on the startup of your servlet engine like this:
+    -Dorg.apache.cocoon.components.parser.Parser=org.apache.cocoon.components.parser.XercesParser
+
+  <parser class="org.apache.cocoon.components.parser.XercesParser"/>
+  -->
+
+  <!-- HSQLDB Server for samples:
+    Comment this section out if you don't care about the samples.
+        port   : number      port where the server is listening
+        silent : true/false  display all queries
+        trace  : true/false  display JDBC trace messages
+  -->
+  <hsqldb-server class="org.apache.cocoon.components.hsqldb.ServerImpl" 
+                 pool-max="1" pool-min="1">
+     <parameter name="port" value="9002"/>
+     <parameter name="silent" value="true"/>
+     <parameter name="trace" value="false"/>
+  </hsqldb-server>
+
+  <!-- Storing:
+    maxobjects: Indicates how many objects will be hold in the cache.
+                When the number of maxobjects has been reached. The
+                last object in the cache will be thrown out.
+    filesystem: Turns the filesystem storage for objects on or off.
+  -->
+  <store class="org.apache.cocoon.components.store.MRUMemoryStore" logger="root.store">
+     <parameter name="maxobjects" value="100"/>
+     <parameter name="filesystem" value="true"/>
+  </store>
+
+  <!-- Store Janitor:
+    freememory = How much free memory shall be available in the jvm
+    heapsize = Indicates the limit of the jvm memory consumption
+    cleanupthreadinterval = How often shall the cleanup thread check memory
+    threadpriority = Indicates the thread priority of the cleanup thread
+
+    Be careful with the heapsize and freememory paramters. Wrong values can
+    cause high cpu usage.
+    Example configuration:
+    Jvm settings: 
+      -Xms100000000 -Xmx200000000
+    store-janitor settings:
+       <parameter name="freememory" value="50000000"/>
+       <parameter name="heapsize" value="150000000"/>
+  
+    Heapsize must be higher then the -Xms parameter and freememory
+    between those both.    
+  -->
+  <store-janitor class="org.apache.cocoon.components.store.StoreJanitorImpl" logger="root.store">
+     <parameter name="freememory" value="1000000"/>
+     <parameter name="heapsize" value="60000000"/>
+     <parameter name="cleanupthreadinterval" value="10"/>
+     <parameter name="threadpriority" value="5"/>
+  </store-janitor>
+
+  <!-- Filesystem Queue
+    The Filesystem Queue is the central queue for writing objects onto
+    the filesystem:
+      handlerinterval = How often (seconds) is the queue checked for new objects
+      threadpriority = The priority of the Handler Thread
+      maxobjects = Defines the maximum numbers of objects in the queue.
+                   If the queue is full no objects can be inserted.
+  -->
+  <filesystem-queue class="org.apache.cocoon.components.store.FilesystemQueueImpl" logger="root.store">
+    <parameter name="handlerinterval" value="10"/>
+    <parameter name="threadpriority" value="5"/>
+    <parameter name="maxobjects" value="100"/>
+  </filesystem-queue>
+
+  <!-- Entity resolution catalogs:
+    catalog:
+    The default catalog is distributed at /resources/entities/catalog
+    This is the contextual pathname for Cocoon resources.
+    You can override this path, if necessary, using the "catalog" parameter.
+   <parameter name="catalog" value="/resources/entities/catalog"/>
+    However, it is probably desirable to leave this default catalog config
+    and declare your own local catalogs, which are loaded in addition to
+    the system catalog.
+
+    There are various ways to do local configuration (see "Entity Catalogs"
+    documentation). One way is via the CatalogManager.properties file.
+    As an additional method, you can specify the "local-catalog" parameter here.
+
+    local-catalog:
+    The full filesystem pathname to a single local catalog file.
+   <parameter name="local-catalog" value="/usr/local/sgml/mycatalog"/>
+
+    verbosity:
+    The level of messages for status/debug (messages go to standard output)
+     0 (none) .. 3 (maximum)
+    The following messages are provided ...
+     0 = none
+     1 = ? (... not sure yet)
+     2 = 1+, Loading catalog, Resolved public, Resolved system
+     3 = 2+, Catalog does not exist, resolvePublic, resolveSystem
+   <parameter name="verbosity" value="2"/>
+
+  -->
+  <resolver class="org.apache.cocoon.components.resolver.ResolverImpl">
+   <parameter name="catalog" value="/resources/entities/catalog"/>
+   <parameter name="verbosity" value="2"/>
+  </resolver>
+
+  <!-- XSLT Processor:
+    For Xalan: Turn 'incremental-processing' to true if you want a continous output (if set to false the transformer 
+    delivers SAX events after all transformations has been done).
+    WARNING: Due to a bug of Xalan 2.2.0-D13 and beneath there are problems with multi-threading, so it's 
+    turned off by default.                                        -->
+  <xslt-processor class="org.apache.cocoon.components.xslt.XSLTProcessorImpl" logger="root.xslt">
+     <parameter name="use-store" value="true"/>
+     <parameter name="incremental-processing" value="false"/>
+  </xslt-processor>
+
+  <!-- Xpath Processor:
+  -->
+  <xpath-processor class="org.apache.cocoon.components.xpath.XPathProcessorImpl" logger="root.xslt"/>
+
+  <!-- URL Factory:
+    The url factory adds special url protocols to the system, they are then
+    available inside Cocoon, e.g. as a source argument for one of the sitemap
+    components.
+  -->
+  <url-factory>
+    <protocol name="resource" class="org.apache.cocoon.components.url.ResourceURLFactory"/>
+    <protocol name="context"  class="org.apache.cocoon.components.url.ContextURLFactory"/>
+  </url-factory>
+
+  <!-- Source Handler:
+    The source handler adds special url protocols to the system, they are
+    then available inside Cocoon, e.g. as a source argument for one of the
+    sitemap components.
+  -->
+  <source-handler>
+  </source-handler>
+
+  <!-- Program Generator:
+    The ProgamGenerator builds programs from a XML document written in a
+    MarkupLanguage.
+       auto-reload:
+       root-package: persistent code repository.
+       preload:
+  -->
+  <program-generator>
+    <parameter name="auto-reload" value="true"/>
+    <parameter name="root-package" value="org.apache.cocoon.www"/>
+    <parameter name="preload" value="true"/>
+  </program-generator>
+
+  <!-- JSP Engine:
+    The JspGenerator selects a JSPEngine component. The JSPEngine component
+    launches a JSP servlet engine of your servlet container, feeds the
+    HttpRequest into the JSP servlet engine, and pipes the jsp response as
+    SAX events into Cocoon2. The JSP page is specified by the HttpRequest.
+    This way you can continue to use your JSP pages. Your migration from JSP
+    to XSP may be done step by step. You may specify your JSP pages either as
+    JSP scriptlets or as JSP-XML. But keep in mind that your JSP output should
+    be valid XML.
+  -->
+  <jsp-engine>
+    <parameter name="servlet-class" value="org.apache.jasper.servlet.JspServlet"/>
+    <parameter name="servlet-name" value="*.jsp"/>
+  </jsp-engine>
+
+  <!-- Xscript:
+  -->
+  <xscript>
+    <parameter name="xscript:copy-of" value="resource://org/apache/cocoon/components/xscript/xslt/copy-of.xsl"/>
+    <parameter name="xscript:value-of" value="resource://org/apache/cocoon/components/xscript/xslt/value-of.xsl"/>
+  </xscript>
+
+  <!-- Programming Languages:
+  -->
+  <programming-languages>
+    <java-language name="java">
+      <!-- compiler parameter specifies which class to use to compile Java.
+           Possible variants are Javac and Jikes compilers.
+           Javac requires javac.jar (included with Cocoon distribution).
+           Jikes requires IBM jikes compiler to be present in the PATH  -->
+      <parameter name="compiler" value="org.apache.cocoon.components.language.programming.java.Javac"/>
+      <!-- Specifies which formatter to use to format source code.
+           This parameter is optional. -->
+      <parameter name="code-formatter" value="org.apache.cocoon.components.language.programming.java.JstyleFormatter"/>
+      <!-- A singleton-like implementation of a ClassLoader -->
+      <parameter name="class-loader" value="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+    </java-language>
+  </programming-languages>
+
+  <!-- Class loader:
+    A singleton-like implementation of a ClassLoader.
+  -->
+  <classloader class="org.apache.cocoon.components.classloader.ClassLoaderManagerImpl"/>
+  
+  <!-- Markup Languages:
+    This section defines several builtin logicsheets. A logicsheet is an XML
+    filter used to translate user-defined, dynamic markup into equivalent
+    code embedding directives for a given markup language.
+  -->
+  <markup-languages>
+    <xsp-language name="xsp">
+      <parameter name="prefix" value="xsp"/>
+      <parameter name="uri" value="http://apache.org/xsp"/>
+
+      <!-- Defines the XSP Core logicsheet for the Java language -->
+      <target-language name="java">
+        <parameter name="core-logicsheet" value="resource://org/apache/cocoon/components/language/markup/xsp/java/xsp.xsl"/>
+        
+        <!-- The Request logicsheet (taglib) is an XSP logicsheet that wraps XML tags 
+             around standard request operations -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-request"/>
+          <parameter name="uri" value="http://apache.org/xsp/request/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/request.xsl"/>
+        </builtin-logicsheet>
+       
+        <!-- The Response logicsheet (taglib) is an XSP logicsheet that wraps XML tags 
+             around standard response operations -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-response"/>
+          <parameter name="uri" value="http://apache.org/xsp/response/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/response.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The Session logicsheet (taglib) is an XSP logicsheet that wraps XML tags around 
+             standard session operations. Specifically, the Session logicsheet provides an 
+             XML interface to most methods of the HttpSession object (see the Java Servlet API 
+             Specification, version 2.2 ) for more information. -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="session"/>
+          <parameter name="uri" value="http://apache.org/xsp/session/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/session.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-cookie"/>
+          <parameter name="uri" value="http://apache.org/xsp/cookie/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/cookie.xsl"/>
+        </builtin-logicsheet>
+
+        <!-- The ESQL logicsheet is an XSP logicsheet that performs sql queries and 
+             serializes their results as XML. This allows you to work with data from a 
+             wide variety of different sources when using Apache Cocoon. -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="esql"/>
+          <parameter name="uri" value="http://apache.org/cocoon/SQL/v2"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/esql.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="log"/>
+          <parameter name="uri" value="http://apache.org/xsp/log/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/log.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="util"/>
+          <parameter name="uri" value="http://apache.org/xsp/util/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/util.xsl"/>
+        </builtin-logicsheet>
+        
+        <!-- The xsp-formval taglib serves as interface to retrieve validation results 
+             from a request attribute -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xsp-formval"/>
+          <parameter name="uri" value="http://apache.org/xsp/form-validator/2.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/form-validator.xsl"/>
+        </builtin-logicsheet>
+
+	<!-- The sel taglib allows to put multiple pages / view into
+	     one xsp. While in general it is good style to put
+	     different views into different xsp because they're more
+	     easily maintained, this is a useful feature with
+	     e.g. with long forms that are broken into parts -->
+        <builtin-logicsheet>
+          <parameter name="prefix" value="sel"/>
+          <parameter name="uri" value="http://apache.org/xsp/sel/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/sel.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="action"/>
+          <parameter name="uri" value="http://apache.org/cocoon/action/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/action.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="capture"/>
+          <parameter name="uri" value="http://apache.org/cocoon/capture/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/capture.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="xscript"/>
+          <parameter name="uri" value="http://apache.org/xsp/xscript/1.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/xscript.xsl"/>
+        </builtin-logicsheet>
+
+        <builtin-logicsheet>
+          <parameter name="prefix" value="soap"/>
+          <parameter name="uri" value="http://apache.org/xsp/soap/3.0"/>
+          <parameter name="href" value="resource://org/apache/cocoon/components/language/markup/xsp/java/soap.xsl"/>
+        </builtin-logicsheet>
+
+      </target-language>
+    </xsp-language>
+
+    <!-- Defines Sitemap Core logicsheet for the Java language -->
+    <sitemap-language name="sitemap">
+      <parameter name="prefix" value="map"/>
+      <parameter name="uri" value="http://apache.org/cocoon/sitemap/1.0"/>
+
+      <target-language name="java">
+        <parameter name="core-logicsheet" value="resource://org/apache/cocoon/components/language/markup/sitemap/java/sitemap.xsl"/>
+      </target-language>
+    </sitemap-language>
+  </markup-languages>
+
+  <!-- Datasources:
+  -->
+  <datasources>
+    <jdbc name="personnel">
+      <!--
+          If you have an Oracle database, and are using the the
+      pool-controller below, you should add the attribute
+      "oradb" and set it to true.
+
+      <pool-controller min="5" max="10" oradb="true"/>
+
+      That way the test to see if the server has disconnected
+      the JdbcConnection will function properly.
+      -->
+      <pool-controller min="5" max="10"/>
+      <!--
+          If you need to ensure an autocommit is set to true or
+      false, then create the "auto-commit" element below.
+
+      <auto-commit>false</auto-commit>
+
+      The default is true.
+      -->
+      <dburl>@database-url@</dburl>
+      <user>@database-user@</user>
+      <password>@database-password@</password>
+    </jdbc>
+  </datasources>
+
+  <!-- Stream Pipeline:
+    Either collects a Reader and lets it produce a character stream
+    or connects an EventPipeline with a Serializer and lets them produce
+    the character stream. Alternatives to CachingStreamPipeline are:
+    <stream-pipeline class="org.apache.cocoon.components.pipeline.NonCachingStreamPipeline"/>
+  -->
+  <stream-pipeline class="org.apache.cocoon.components.pipeline.CachingStreamPipeline"
+                   pool-max="32" pool-min="16" pool-grow="4"/>
+
+  <!-- Caching of stream pipeline:
+    maxobjects: Indicates how many objects will be hold in the cache.
+                When the number of maxobjects has been reached. The
+                last object in the cache will be thrown out.
+    filesystem: Turns the filesystem storage for objects on or off.
+  -->
+  <stream-cache class="org.apache.cocoon.components.store.MRUMemoryStore" logger="root.store">
+     <parameter name="maxobjects" value="100"/>
+     <parameter name="filesystem" value="true"/>
+  </stream-cache>
+
+  <!-- Event Pipeline:
+    Connects the generator and the various transformers and produces a
+    character stream. Alternatives to CachingEventPipeline are:
+    <event-pipeline class="org.apache.cocoon.components.pipeline.NonCachingEventPipeline"/>
+    <event-pipeline class="org.apache.cocoon.components.profiler.ProfilingCachingEventPipeline"/>
+    <event-pipeline class="org.apache.cocoon.components.profiler.ProfilingNonCachingEventPipeline"/>
+  -->
+  <event-pipeline class="org.apache.cocoon.components.pipeline.CachingEventPipeline"
+                  pool-max="32" pool-min="16" pool-grow="4"/>
+
+  <!-- Caching of event pipeline:
+    maxobjects: Indicates how many objects will be hold in the cache.
+                When the number of maxobjects has been reached. The
+                last object in the cache will be thrown out.
+    filesystem: Turns the filesystem storage for objects on or off.
+  -->
+  <event-cache class="org.apache.cocoon.components.store.MRUMemoryStore" logger="root.store">
+     <parameter name="maxobjects" value="100"/>
+     <parameter name="filesystem" value="true"/>
+  </event-cache>
+
+  <!-- Compiling xml to byte streams.
+    The xml-serializer "compiles" xml sax events into a byte stream
+    and the xml-deserializer does the same vice versa.
+    Make sure, that if you change one of these components, that you
+    may have to change the other one as well, as they might have
+    a dependency.
+  -->
+  <xml-serializer class="org.apache.cocoon.components.sax.XMLByteStreamCompiler"/>
+  <xml-deserializer class="org.apache.cocoon.components.sax.XMLByteStreamInterpreter"/>
+
+  <!-- SAXConnector:
+    Connects the various pipeline components.
+    LoggingSAXConnector logs SAX events between pipeline components
+    into cocoon's log file.
+    ProfilingSAXConnector gathers timing information.
+    Uncomment one of the following lines for using the SAXConnector.
+  <sax-connector class="org.apache.cocoon.components.saxconnector.LoggingSAXConnector"/>
+  <sax-connector class="org.apache.cocoon.components.profiler.ProfilingSAXConnector"/>
+  -->
+
+  <!-- Profiler:
+    The profiler facilitates the gathering of statistics about timings of
+    different steps of pipelines. Profiler consists of several components:
+     profiling pipeline, profiling SAX connector, and profiler generator
+    which are used to generate the profile report. You need to enable all of
+    these components to use profiler.
+
+    Uncomment the following line to use profiler.
+  <profiler/>
+  -->
+
+  <!-- Search:
+    These are the components that handle the search. [fixme (sm): write more on this]
+   -->
+  <lucene-cocoon-indexer>
+  </lucene-cocoon-indexer>
+  <lucene-cocoon-searcher>
+  </lucene-cocoon-searcher>
+  <lucene-xml-indexer>
+  </lucene-xml-indexer>
+  <cocoon-crawler>
+  </cocoon-crawler>
+
+  <!-- Resource Monitor:
+    The Monitor keeps track on changes to a Resource.
+  -->
+  <monitor>
+    <thread priority="5" frequency="10000"/>
+  </monitor>
+
+<!-- ======================== The sitemap  ============================== -->
+
+  <!-- Reloading of the sitemap:
+    The check-reload attribute determines if the sitemap is reloaded on change.
+    Set to "no", the sitemap is generated once at startup.
+    Set to "yes", the sitemap is regenerated if it changes.
+
+    The reload-method specifies the method for the regeneration:
+    asynchron: If the sitemap changes, the sitemap is regenerated at the
+               next request in the background and the incoming request is
+               served with the old sitemap. All subsequent requests are
+               served with the old sitemap until the regeneration in the
+               background has finished.
+    synchron: If the sitemap changes, the sitemap is regenerated at the
+              next request. When the regeneration is finished, the request
+              (and all subsequent ones) is served with the new sitemap.
+
+    For development environment, set the reload-method to synchron and the
+    check-reload to yes.
+    For production environment, it is advisable to set the reload-method to
+    asynchron and for more safety the check-reload to no.
+  -->
+  <sitemap file="sitemap.xmap" reload-method="asynchron" check-reload="yes"
+	   components="/components.xconf"
+	   handler-class="org.apache.cocoon.scheme.sitemap.SchemeSitemapHandler"/>
+
+  <scheme-interpreter entry-point="main"
+		      sitemap-parse="sitemap-parse!"
+		      heap="/schecoon.heap"
+		      allow-eval="true"/>
+
+</cocoon>

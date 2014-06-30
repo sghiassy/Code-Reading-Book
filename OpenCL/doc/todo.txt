@@ -1,0 +1,70 @@
+Here are some notes about various things I should/could/might implement. If
+you're interested in working on something here (or something else!), drop me an
+email and we can coordinate efforts.
+
+* Algorithms/Related
+  1) HAS-V, a new (supposedly quite fast) hash function
+  2) Panama (stream cipher + hash)
+  3) Block ciphers: MARS, Crypton v1.0, Rainbow, SAFER+ (all partially done)
+  5) Constructions:
+      + Parallel Hash Function
+      + Cascade Block Cipher
+      + Cascade Block Cipher with Stream Cipher [B2(S(B1(x)))]
+      + Bear, Lioness (both are slower than Lion, however)
+  6) CTS block cipher mode
+  7) Error correcting codes
+  8) Huffman, Arithmetic, or LZ77 compression
+
+* Infrastructure
+  1) Secure memory locking
+      + Bzip2 and Zlib modules don't even clear out their memory, much
+        less have plugins for locking
+      + Secure memory needs to be thread safe (user-provided callbacks?
+        modules?)
+      + Maybe different methods (ie, mlock, and mmap'ing an on-disk file which
+        can subsequently be securely wiped); run time or config time choice?
+  2) Threading of Filters. My conception of this is: Pipe pipe(new
+        ThreadedFilter<filterA>, new ThreadedFilter<filterB>) and the
+        ThreadedFilter spawns a thread for it's filter to work in. This would
+        need module support, of course.
+
+* Modules
+  1) EntropySources
+      BeOS: get_next_{team,thread}_info, get_system_info
+      Generic Unix: /proc walker
+                    exec programs (ps, netstat, etc)
+      Win32: CryptGenRandom and/or Win32 API functions
+      Misc: EGD, thread-based (?), signal/high-res timer based (?)
+  2) Compression: Zip, Gzip, Arithmetic Coding (?)
+  3) Dynamic Algorithm Loader (in progress, ~35% done)
+  4) GSM speech encoding (useful for encrypted voice-over-IP)
+
+* Configure/Build System
+  1) Need support for NMAKE, because most Windows compilers use it. How
+     different is it from standard Unix make, actually?
+  2) Support more CPUs, including: POWER, PPC-64, SH, VAX, US III
+  3) Support more OSes, including: Hurd, QNX, Plan9, OS/2, VMS, MacOS pre-X
+  4) Support more compilers, including: VC++, Intel CC, Metrowerks, SGI Pro64,
+             AIX CC, HP-UX CC (HP included but never tested), IBM VisualAge,
+             Apple MPW
+  5) An opencl-config script, akin to gtk-config and friends
+  6) Fix the known bugs/deficiencies in the system:
+      + PowerPC support is poor. ARM isn't too good either (StrongARM alias?)
+      + Module autoloading (ie, if you're running linux, add devrand, etc)
+      + Should allow and deal with .S/.s/.asm files in modules
+      + Sometimes if you change between two modules, both of which modify the
+        same file (like gettimeofday => posix_timer), the file doesn't get
+        rebuilt.
+
+* New Interfaces
+  1) Support for SCAN? The API is pretty Java specific, and some of the
+     interfaces really assume everything is being done dynamically, whereas
+     OpenCL uses templates for a lot of it. But it's an idea, anyway.
+
+* Misc
+  1) The whole check program is a mess
+  2) More/better documentation
+      + Document user visible modules
+      + Man and/or info pages
+      + Translations of docs (maybe later when things have stabilized more?)
+  3) More/better examples

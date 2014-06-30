@@ -1,0 +1,36 @@
+XCOMM $XConsortium: Imakefile /main/4 1996/09/28 17:25:32 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/drivers/sis/Imakefile,v 3.3 1996/12/23 06:52:25 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = sis86c201.c sis_bank.s
+
+OBJS = sis86c201.o sis_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(XF86SRC)/vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+DEFINES = -DXF86VGA16
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(sis_drv,$(OBJS))
+
+LinkSourceFile(sis86c201.c,$(VGADRIVERSRC)/sis)
+LinkSourceFile(sis_bank.s,$(VGADRIVERSRC)/sis)
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga16/sis)
+
+DependTarget()

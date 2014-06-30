@@ -1,0 +1,136 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:ScriptSyntax:_SYSTEM</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::ScriptSyntax::<b>_SYSTEM</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>_SYSTEM</h4>
+Below are the definitions for all the commands which can be specified with the _SYSTEM object in the script.
+You can add as much whitespace around commands and object names in the scriptcommands as you like, these will be 
+stripped off anyway. 
+<p>
+All the commands below are prefixed with the timeline position in milliseconds when the command should be executed.
+This timeline position can be negative, which means the command is executed prior application execution. All negative timeline events
+are executed at once, prior to the start of the application, in the order on the timeline, so more negative times come first.
+<p>
+Example:
+<pre>
+60000;HIDE;1;
+</pre>
+<p>
+This will hide layer 1 after 60000 milliseconds, or better: at timeline position 60 seconds.
+<p>
+<dl>
+<dt><hr size="1" width="80%" align="left">
+	<b>HIDE</b>
+<pre>
+_SYSTEM;HIDE;Layer number;
+</pre>
+<dd>Hides the layer with the number Layer number, which makes the effect on that layer invisible. The RenderFrame/RenderFrameEx methods are
+	not called by DemoGL when an effect is placed on a layer that is not visible, i.e. hidden.
+	<p>
+	<dl>
+	<dt><i>Layer number</i>
+	<dd>Specifies the number of the layer which should be hidden.<br>
+		<b>Type:</b> long. Legal values are &gt;=0.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SHOW</b>
+<pre>
+_SYSTEM;SHOW;Layer number;
+</pre>
+<dd>Shows the (hidden) layer with the number Layer number, which makes the effect on that layer visible. The RenderFrame/RenderFrameEx methods are
+	called by DemoGL when an effect is placed on a layer that is visible.
+	<p>
+	<dl>
+	<dt><i>Layer number</i>
+	<dd>Specifies the number of the layer which should be made visible.<br>
+		<b>Type:</b> long. Legal values are &gt;=0.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>END</b>
+<pre>
+_SYSTEM;END;
+</pre>
+<dd>Ends the system. DemoGL will end itself and return to the calling code in the application, i.e. the code that called
+	<a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>CAPTUREMOUSE</b>
+<pre>
+_SYSTEM;CAPTUREMOUSE;OnOff;
+</pre>
+<dd>Enables or disables the capturing of the mouse by the DemoGL application window. When switch ON, DemoGL will receive mouse related messages
+	which can then be used to control visual effects. 
+	<p>
+	<dl>
+	<dt><i>OnOff</i>
+	<dd>Specifies if the mouse capturing should be ON or OFF.<br>
+		<b>Type:</b> string. Legal values are ON and OFF.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SETTIME</b>
+<pre>
+_SYSTEM;SETTIME;Time;
+</pre>
+<dd>Sets the current position on the timeline to Time milliseconds. This way you can start your application at any spot
+	on the timeline.
+	<p>
+	<dl>
+	<dt><i>Time</i>
+	<dd>Specifies the new timespot on the timeline.<br>
+		<b>Type:</b> integer. Specified in milliseconds.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>RESTART</b>
+<pre>
+_SYSTEM;RESTART;Time;Re-initialize effects;Execute pre-Time effects;Kill sound;
+</pre>
+<dd>Restarts the application and will restart it on timeline position Time. You can use this command to
+	make looping applications, so you can easily transform a multipart demo into a screensaver.
+	<p>
+	<dl>
+	<dt><i>Time</i>
+	<dd>Specifies the timespot on the timeline where DemoGL should start the application again.<br>
+		<b>Type:</b> integer. Specified in milliseconds.
+	<dt><i>Re-initialize effects</i>
+	<dd>Specifies if all Init() methods of all effects should be called before the application is restarted (1) or not (0).<br>
+		<b>Type:</b> integer. Legal values are 0 and 1.
+	<dt><i>Execute pre-Time effects</i>
+	<dd>Specifies if all timeline events defined on the timeline with a timespot prior to <i>Time</i> should be executed (1) or not (0).<br>
+		<b>Type:</b> integer. Legal values are 0 and 1.
+	<dt><i>Kill sound</i>
+	<dd>Specifies if all the playing sound channels should be removed when the application restarts (1) or not (0).
+		Remove always current playing soundchannels when you configurate RESTART to re-execute scriptcommands that load and 
+		play sound channels that are currently playing. (i.e.: always pass 1 for Kill sound, unless you want f.e. 1 music file playing
+		looped while the application loops too but not in phase)<br>
+		<b>Type:</b> integer. Legal values are 0 and 1.
+	</dl>
+	<p>
+<dt><hr size="2" width="80%" align="left">
+<b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

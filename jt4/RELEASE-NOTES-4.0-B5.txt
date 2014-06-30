@@ -1,0 +1,179 @@
+                  Apache Tomcat Version 4.0 Beta 5
+                  =================================
+                            Release Notes
+                            =============
+
+$Id: RELEASE-NOTES-4.0-B5.txt,v 1.2 2001/05/15 02:50:09 craigmcc Exp $
+
+
+============
+INTRODUCTION:
+============
+
+
+This document describes the changes that have been made in the current
+beta release of Apache Tomcat, relative to the previous release.
+
+Bug reports should be entered at the bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please report bugs and feature requests under product name "Tomcat 4".
+
+
+----> SECURITY ALERT:  Two security-related problems were discovered in
+----> the Tomcat 4.0-b4 release which was announced on 05/11/2001.  These
+----> vulnerabilities have been fixed in this beta release.  Anyone who
+----> downloaded and installed Tomcat 4.0-b4 is urged to upgrade to this
+----> new release immediately.
+
+
+----> UPCOMING CHANGE NOTICE:  In a future beta release of Tomcat 4.0, it
+----> is likely that the default operational mode will be to run Tomcat
+----> under a security manager (rather than the current default of not
+----> using one).  This may necessitate editing the policy permissions
+----> file ($CATALINA_HOME/conf/catalina.policy) if your web applications
+----> require permissions that are not enabled by default (such as connecting
+----> to network ports).  You are urged to test your applications with
+----> Tomcat 4.0-b5 running under the security manager now, so that this
+----> upcoming change will not be disruptive.  To do so, start Tomcat 4.0
+----> with the command "$CATALINA_HOME/bin/catalina.sh start -security"
+----> (Unix) or "%CATALINA_HOME%\bin\catalina start -security" (Windows).
+
+
+============
+NEW FEATURES:
+============
+
+
+---------------------
+Catalina New Features:
+---------------------
+
+Facades:  The servlet API implementation objects that are passed to a servlet
+are now protected by facades.  This avoids a security vulnerability (that
+existed only when Tomcat 4.0 was *not* run under a security manager) that
+allowed servlets to call arbitrary public methods on these classes via Java
+reflection.  NOTE:  While facades solve this particular problem, servlets can
+do many other negative things (like shutting down Tomcat by executing
+System.exit(0)) unless you run Tomcat under a security manager.  
+
+
+-------------------
+Jasper New Features:
+-------------------
+
+
+--------------------
+Webapps New Features:
+--------------------
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+
+------------------
+Catalina Bug Fixes:
+------------------
+
+JSP Source Exposure Vulnerability:  Previous versions of Tomcat would expose
+the source code to a JSP page, on some JDK platforms, when a request URL like
+this was processed:
+    http://localhost:8080/examples/jsp/num/numguess.jsp%00
+The problem occurs because the null character (%00) causes extension mapping
+to fail, so this URL is passed to the default file-serving servlet.  If the
+web application is running in an unpacked directory structure, the JDK's
+implementation of the File I/O methods is typically written in C, and the C
+runtimes will not have any problem treating the null character as a filename
+terminator.  Now, Tomcat 4.0 will throw HTTP error 400 (bad request) if you
+use invalid characters (including %00) in your request URLs.
+
+StandardClassLoader:  Correct resource existence checks when using a URL.
+This was causing automatic class reloading to fail in some cases.
+
+Bootstrap:  Preload additional classes necessary to pass all unit test and
+Watchdog tests (and run many other test applications) when a security manager
+is enabled.  Previously, problems could occur with
+ServletContext.getResourcePaths() and ServletResponse.setLocale().
+
+
+----------------
+Jasper Bug Fixes:
+----------------
+
+
+-----------------
+Webapps Bug Fixes:
+-----------------
+
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+
+------------------------------------------
+Redeploying From a Web Application Archive:
+------------------------------------------
+
+If you attempt to undeploy, then redeploy, an application from the same
+web application archive file URL (where the URL refers to an actual WAR
+file, not to a directory), the redeploy will fail with error "zip file is
+closed".  There appears to be a problem in the JDK's JarURLConnection class
+where JAR files are cached, even after they are closed, so that a request
+for a connection to the same URL returns the previous JarFile object instead
+of a new one.  As a workaround, you should do one of the following:
+* Change the URL of the web application archive each time you redeploy.
+* Deploy from an unpacked directory (on the same server) instead of from
+  a WAR file (this is often more convenient in a development environment
+  anyway).
+
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
+JAXP/1.1 reference implementation) to web applications.  This is no longer
+the case, because Jasper loads its parser with a new class loader instead.
+Keep the following points in mind when considering how to use XML parsers
+in Tomcat 4.0 and your web applications:
+
+* If you wish to make the JAXP/1.1 RI XML parser available to all web
+  applications, simply move the "jaxp.jar" and "crimson.jar" files from
+  the "$TOMCAT_HOME/jasper" directory to the "$TOMCAT_HOME/lib" directory.
+
+* If you wish to make another XML parser that is JAXP/1.1-compatible
+  available to all web applications, install that parser into the
+  "$TOMCAT_HOME/lib" directory and remove "jaxp.jar" and "crimson.jar"
+  from the "$TOMCAT_HOME/jasper" directory.  It has been reported that
+  Xerces 1.3.1 can be used in this fashion, but 2.x alpha releases
+  can not be.
+
+* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
+  directory of your web application, this should now be possible, because
+  of the modified JAXP 1.1 parser mentioned below.
+
+WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
+(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.
+
+
+--------------------
+MOD_WEBAPP Connector:
+--------------------
+
+A new version of the Apache 1.3 side of the MOD_WEBAPP connector is included
+in this release, in the "connectors" directory.  It has not been tested
+heavily yet, so it should be considered experimental.
+
+
+

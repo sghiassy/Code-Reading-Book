@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>Extending Apache Cocoon</title>
+		<version>0.1</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Tom Klaasen" email="tom.klaasen@the-ecorp.com"/>
+		</authors>
+	</header>
+	<body>
+		<s1 title="Introduction">
+			<p>If you want to extend the functionality of Apache Cocoon, it may be unclear
+		  how to achieve your goal. This page tries to indicate when to write what, and
+		  to give an overview of what already exists (so you don't duplicate other's
+		  efforts).</p>
+		</s1>
+		<s1 title="When to write a Generator">
+			<p>From the sitemap documentation: "A <code>Generator</code> generates
+		  XML content as SAX events and initializes the pipeline processing. "</p>
+			<p>Thus a <code>Generator</code> is the starting point of a pipeline: it
+		  produces the first SAX events on which all other components of the pipeline are
+		  triggered.</p>
+			<p>You may want to write a <code>Generator</code> if you want some other
+		  basis for your SAX events (maybe you want a SAX event every time the
+		  temperature of your CPU changes?) However, before writing a
+		  <code>Generator</code> from scratch, it may be worthwhile to have a look at
+		  <link href="#xsp">XSP</link>, which can create a <code>Generator</code> for
+		you.</p>
+			<p>Existing <code>Generator</code>s are: </p>
+			<ul>
+				<li>
+					<code>DirectoryGenerator</code> - Generates an XML directory
+			 listing.</li>
+				<li>
+					<code>FileGenerator</code> - Does the job of an XML parser: read an
+			 XML file and outputs SAX events.</li>
+				<li>
+					<code>HTMLGenerator</code> - Takes an HTML URL, makes an XHTML of
+			 it, and outputs the SAX events caused by this XHTML.</li>
+				<li>
+					<code>ImageDirectoryGenerator</code> - An extension of
+			 DirectoryGenerators that adds extra attributes for image files. </li>
+				<li>
+					<code>PhpGenerator</code> - Allows PHP to be used as a generator.
+			 Builds upon the PHP servlet functionality. Overrides the output method in
+			 order to pipe the results into SAX events.</li>
+				<li>
+					<code>RequestGenerator</code> - [FIXME: This looks like just
+			 outputing the request headers, the request parameters and the configuration
+			 parameters. But I don't see any use of it (besides debugging and
+			 demonstration). Are there other situations in which you might want to use
+			 this?]</li>
+				<li>
+					<code>ServerPagesGenerator</code> - Makes a <code>Generator</code>
+			 at compile time, based on the <code>src</code> file you define in the sitemap.
+			 This one is responsible for making your XSP pages work.</li>
+				<li>
+					<code>StatusGenerator</code> - Generates an XML representation of
+			 the current status of Cocoon. This can be considered "for administration use",
+			 i.e. your application probably won't deal with this one.</li>
+			</ul>
+			<p>All these classes are in the <code>org.apache.cocoon.generation</code>
+		  package. In the same package, you find following helper classes and
+		  interfaces:</p>
+			<ul>
+				<li>
+					<code>Generator</code> - The interface you have to implement if you
+			 want to write a <code>Generator</code>.</li>
+				<li>
+					<code>AbstractGenerator</code> - Extend this one for easier
+			 building of your own <code>Generator</code>.</li>
+				<li>
+					<code>AbstractServerPage</code> - [FIXME: This seems to be intended
+			 as basis for the <code>ServerPagesGenerator</code>, but it seems to be obsolete
+			 now?]</li>
+				<li>
+					<code>ComposerGenerator</code> - Can be used as base class if you
+			 want your <code>Generator</code> to be an <link href="avalon.html">Avalon
+		Composer</link>.</li>
+				<li>
+					<code>ServletGenerator</code> - If you want to generate servlets.
+		  This is the base class for the <code>ServerPagesGenerator</code>.</li>
+			</ul>
+		</s1>
+		<s1 title="When to write a Transformer">
+			<p>Let's start again from the sitemap documentation: "A
+		  <code>Transformer</code> transforms SAX events in SAX events." In other words,
+		  a <code>Transformer</code> outputs SAX events based on SAX events it
+		  receives.</p>
+			<p>You can imagine a <code>Transformer</code> doing many things, from
+		  XSLT processing over database querying to sending mail (and much further, of
+		  course).</p>
+			<p>These <code>Transformer</code>s are standard available:</p>
+			<ul>
+				<li>
+					<code>LogTransformer</code> - This is a class that can be plugged
+			 into a pipeline to print the SAX events which passes through this
+			 <code>Transformer</code> in a readable form to a file. This
+			 <code>Transformer</code>'s main purpose is debugging.</li>
+				<li>
+					<code>SQLTransformer</code> - Can be used for querying a SQL
+			 database.</li>
+				<li>
+					<code>XalanTransformer</code> - Probably the most intuitive
+			 <code>Transformer</code>: it applies an XSL sheet to the SAX events it
+			 receives. It uses Xalan in the process.</li>
+				<li>
+					<code>XIncludeTransformer</code> - To include other XML documents
+			 in your "XML document" (which at transformation time exists in SAX
+			 events).</li>
+				<li>
+					<code>XTTransformer</code> - The same as
+			 <code>XalanTransformer</code>, but this one uses XT.</li>
+			</ul>
+			<p>All these classes can be found in
+		  <code>org.apache.cocoon.transformation</code>, along with these helper classes
+		  and interfaces:</p>
+			<ul>
+				<li>
+					<code>Transformer</code> - The interface each Transformer has to
+			 implement.</li>
+				<li>
+					<code>AbstractTransformer</code> - A helper base class for
+			 implementing a <code>Transformer</code>.</li>
+				<li>
+					<code>AbstractDOMTransformer</code> - An Abstract DOM Transformer
+			 (helper base class), for use when a transformer needs a DOM-based view of the
+			 document.</li>
+			</ul>
+		</s1>
+		<s1 title="When to write a Serializer">
+			<p>No need for re-inventing the wheel, so let's start again with the
+		  sitemap documentation: "A <code>Serializer</code> transforms SAX events in
+		  binary or char streams for final client consumption." A <code>Serializer</code>
+		  is always the last step in a pipeline, and gives the client its final result:
+		  an HTML page, a nice PNG picture, a sound stream, or maybe just an XML
+		  document.</p>
+			<p>You should write a <code>Serializer</code> if you want to serve a  client with some format that hasn't been provided yet.</p>
+			<p>Existing <code>Serializer</code>s:</p>
+			<ul>
+				<li>
+					<code>FOPSerializer</code>- Make PDF files.</li>
+				<li>
+					<code>HTMLSerializer</code> - Generate an HTML document.</li>
+				<li>
+					<code>LinkSerializer</code>- Show the targets of the links in the document.</li>
+				<li>
+					<code>SVGSerializer</code>- To construct an SVG.</li>
+				<li>
+					<code>TextSerializer</code> - Generate a text document.</li>
+				<li>
+					<code>XMLSerializer</code> - Generate an XML document.</li>
+			</ul>
+			<p>Again, these can be found in the package <code>org.apache.cocoon.serialization</code>. And this package also includes following interfaces and helper classes:</p>
+			<ul>
+				<li>
+					<code>Serializer</code> - The interface every <code>Serializer</code> has to implement.</li>
+				<li>
+					<code>AbstractTextSerializer</code> - Use this as base for your <code>Serializer</code> if you want to output a character stream.</li>
+				<li>
+					<code>AbstractSerializer</code> - A more general base class.</li>
+			</ul>
+		</s1>
+		<s1 title="About Action">
+			<p>[FIXME: We have to wait until we can see what is going to happen here. Also, I wonder if this belongs here or should deserve a separate page.]</p>
+			<p>The Action part will be used for making Cocoon able to react on form input. This will make Cocoon no longer a simple basis for web publishing, but will make it apt for web interaction as well.</p>
+		</s1>
+		<s1 title="About XSP">
+			<anchor id="xsp"/>
+			<p>XSP stands for "eXtensible Server Pages". It is the idea to program <code>Generator</code>s by means of XML. The basic idea is to put XML tags like <code><![CDATA[<xsp:logic>]]></code> in your XML file, with in those tags Java code.</p>
+			<note>This is not the proper way to use XSP's. I just mentioned them here so you wouldn't forget their existence. Look to the <link href="../userdocs/xsp/xsp.html">XSP page</link> for more information.</note>
+		</s1>
+	</body>
+</document>

@@ -1,0 +1,156 @@
+.TH ACE_Fixed_Stack 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Fixed_Stack \- Implement a generic LIFO abstract data type. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Containers_T.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Fixed_Stack\fR (void)"
+.br
+.RI "\fIInitialize a new stack so that it is empty.\fR"
+.ti -1c
+.RI "\fBACE_Fixed_Stack\fR (const ACE_Fixed_Stack<T, ACE_SIZE> &s)"
+.br
+.RI "\fIThe copy constructor (performs initialization).\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Fixed_Stack<T, ACE_SIZE> &s)"
+.br
+.RI "\fIAssignment operator(performs assignment).\fR"
+.ti -1c
+.RI "\fB~ACE_Fixed_Stack\fR (void)"
+.br
+.RI "\fIPerform actions needed when stack goes out of scope.\fR"
+.ti -1c
+.RI "int \fBpush\fR (const T &new_item)"
+.br
+.ti -1c
+.RI "int \fBpop\fR (T &item)"
+.br
+.ti -1c
+.RI "int \fBtop\fR (T &item) const"
+.br
+.ti -1c
+.RI "int \fBis_empty\fR (void) const"
+.br
+.RI "\fIReturns 1 if the container is empty, otherwise returns 0.\fR"
+.ti -1c
+.RI "int \fBis_full\fR (void) const"
+.br
+.RI "\fIReturns 1 if the container is full, otherwise returns 0.\fR"
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIThe number of items in the stack.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBsize_\fR"
+.br
+.RI "\fISize of the allocated data.\fR"
+.ti -1c
+.RI "size_t \fBtop_\fR"
+.br
+.RI "\fIKeeps track of the current top of stack.\fR"
+.ti -1c
+.RI "T \fBstack_\fR [ACE_SIZE]"
+.br
+.RI "\fIHolds the stack's contents.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T, size_t ACE_SIZE>  template class ACE_Fixed_Stack
+Implement a generic LIFO abstract data type.
+.PP
+.PP
+ This implementation of a Stack uses a fixed array with the size fixed at instantiation time. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT, size_tACE_SIZE> ACE_Fixed_Stack<T, ACE_SIZE>::ACE_Fixed_Stack<T, ACE_SIZE> (void)
+.PP
+Initialize a new stack so that it is empty.
+.PP
+.SS template<classT, size_tACE_SIZE> ACE_Fixed_Stack<T, ACE_SIZE>::ACE_Fixed_Stack<T, ACE_SIZE> (const ACE_Fixed_Stack< T,ACE_SIZE >& s)
+.PP
+The copy constructor (performs initialization).
+.PP
+.SS template<classT, size_tACE_SIZE> ACE_Fixed_Stack<T, ACE_SIZE>::~ACE_Fixed_Stack<T, ACE_SIZE> (void)
+.PP
+Perform actions needed when stack goes out of scope.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT, size_tACE_SIZE> void ACE_Fixed_Stack<T, ACE_SIZE>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classT, size_tACE_SIZE> int ACE_Fixed_Stack<T, ACE_SIZE>::is_empty (void) const
+.PP
+Returns 1 if the container is empty, otherwise returns 0.
+.PP
+.SS template<classT, size_tACE_SIZE> int ACE_Fixed_Stack<T, ACE_SIZE>::is_full (void) const
+.PP
+Returns 1 if the container is full, otherwise returns 0.
+.PP
+.SS template<classT, size_tACE_SIZE> void ACE_Fixed_Stack<T, ACE_SIZE>::operator= (const ACE_Fixed_Stack< T,ACE_SIZE >& s)
+.PP
+Assignment operator(performs assignment).
+.PP
+.SS template<classT, size_tACE_SIZE> int ACE_Fixed_Stack<T, ACE_SIZE>::pop (T & item)
+.PP
+Remove and return the top stack item. Returns -1 if the stack is already empty, 0 if the stack is not already empty, and -1 if failure occurs. 
+.SS template<classT, size_tACE_SIZE> int ACE_Fixed_Stack<T, ACE_SIZE>::push (const T & new_item)
+.PP
+Place a new item on top of the stack. Returns -1 if the stack is already full, 0 if the stack is not already full, and -1 if failure occurs. 
+.SS template<classT, size_tACE_SIZE> size_t ACE_Fixed_Stack<T, ACE_SIZE>::size (void) const
+.PP
+The number of items in the stack.
+.PP
+.SS template<classT, size_tACE_SIZE> int ACE_Fixed_Stack<T, ACE_SIZE>::top (T & item) const
+.PP
+Return top stack item without removing it. Returns -1 if the stack is already empty, 0 if the stack is not already empty, and -1 if failure occurs. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT, size_tACE_SIZE> ACE_Fixed_Stack<T, ACE_SIZE>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classT, size_tACE_SIZE> size_t ACE_Fixed_Stack<T, ACE_SIZE>::size_\fC [private]\fR
+.PP
+Size of the allocated data.
+.PP
+.SS template<classT, size_tACE_SIZE> T ACE_Fixed_Stack<T, ACE_SIZE>::stack_[ACE_SIZE]\fC [private]\fR
+.PP
+Holds the stack's contents.
+.PP
+.SS template<classT, size_tACE_SIZE> size_t ACE_Fixed_Stack<T, ACE_SIZE>::top_\fC [private]\fR
+.PP
+Keeps track of the current top of stack.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

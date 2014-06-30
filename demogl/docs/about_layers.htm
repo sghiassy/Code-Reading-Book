@@ -1,0 +1,57 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:Layers</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>Layers</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Layers.</h4>
+When the developer has created <a href="about_effect.htm">CEffect derived effectclasses</a>, the instances (objects) of these
+classes should be placed on <i>layers</i> to get them executed by DemoGL. Layers are transparant overlays with a number and stacked
+on top of each other, the one with the lowest number at the bottom and the viewer/user at the top looking at the bottom of the
+layerstack, through the layers. 
+<p>
+DemoGL supports an unlimited amount of layers and one effect object per layer. An effect object can be placed on as much layers as
+the developer likes. Each layer can be visible or hidden. Each visible layer will be rendered, all hidden layers will be left alone.
+This means that all effects on all visible layers will be executed in a given frame. DemoGL will begin execution of effects at the
+visible layer with the lowest number, moving on to the visible layer with the highest number. When an effect is placed on more
+than one layer it gets executed more than once. DemoGL supplies two different methods in the <a href="about_effect.htm">CEffect</a> base class: 
+<b>RenderFrame</b> and <b>RenderFrameEx</b> (see the DemoGL Reference manual entry about <a href="ref_classes_CEffect.htm">CEffect</a>),
+and the developer can choose between the two by setting a DemoGL internal variable. DemoGL will then call one of the two methods
+each frame for all effect objects on each visible layer. <b>RenderFrame</b> does not receive the layernumber currently executing, so
+when you place an effect on more than one layer, the effect class's RenderFrame method can't determine which layer is executed when 
+that method is called. 
+<b>RenderFrameEx</b> receives the layernumber currently executing, so the developer can add logic to execute different code
+for each layer the effect is placed on.
+<p>
+Because a layer is in fact nothing more than a placeholder for an effect, there are no operations defined nor possible between
+layers, like for example photoshop does. When you want to perform layer operations between the layer stack, you have to implement
+these using blendingmodes and other tricks when the effects are rendered, preferably with <b>RenderFrameEx</b> so you can decide
+which operation should be performed between which layers.
+<p>
+When the developer has created instances (objects) of effectclasses and has <a href="ref_functions_DEMOGL_EffectRegister.htm">registered</a>
+the instances with DemoGL, the effectobjects are not placed on layers automatically. You can place a registered effectobject on a layer
+using a scriptcommand in the application script (see for details: <a href="ref_scriptsyntax_user.htm">User defined objects syntax</a> in
+the DemoGL Reference manual). All scriptcommands are timeline based so you can schedule when an effect should be visible by specifying
+script commands in the application script. Besides placing effectobjects on layers you can perform hide/show and other operations on
+layers by using the script commands of the _SYSTEM object, a DemoGL object. See for details: 
+<a href="ref_scriptsyntax_SYSTEM.htm">_SYSTEM object syntax</a> in the DemoGL Reference manual.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

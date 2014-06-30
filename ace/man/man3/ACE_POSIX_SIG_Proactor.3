@@ -1,0 +1,153 @@
+.TH ACE_POSIX_SIG_Proactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_POSIX_SIG_Proactor \- This Proactor implementation does compeltion querying using POSIX Real Time signals. <sigtimedwait>/<sigwaitinfo> call is used to get the notify/get the completions. The real-time signals that are going to be used with this Proactor should be given apriori in the constructor, so that those signals can be masked from asynchornous delivery. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <POSIX_Proactor.h>\fR
+.PP
+Inherits \fBACE_POSIX_AIOCB_Proactor\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_POSIX_SIG_Proactor\fR (size_t nmaxop = ACE_AIO_DEFAULT_SIZE)"
+.br
+.ti -1c
+.RI "virtual \fBProactor_Type\fR \fBget_impl_type\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_POSIX_SIG_Proactor\fR (const sigset_t mask_set, size_t nmaxop = ACE_AIO_DEFAULT_SIZE)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_POSIX_SIG_Proactor\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR &wait_time)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Asynch_Result_Impl\fR* \fBcreate_asynch_timer\fR (\fBACE_Handler\fR &handler, const void *act, const \fBACE_Time_Value\fR &tv, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fIPost a result to the completion port of the Proactor. now it is implemented in base \fBACE_POSIX_AIOCB_Proactor\fR classvirtual int post_completion (\fBACE_POSIX_Asynch_Result\fR *result);.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBsetup_signal_handler\fR (int signal_number) const"
+.br
+.RI "\fITo setup the handler for a real-time signbal.\fR"
+.ti -1c
+.RI "int \fBmask_signals\fR (const sigset_t *signals) const"
+.br
+.RI "\fITo mask all the specified signals in a thread.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (u_long milli_seconds)"
+.br
+.ti -1c
+.RI "virtual int \fBallocate_aio_slot\fR (\fBACE_POSIX_Asynch_Result\fR *result)"
+.br
+.RI "\fIFind free slot to store result and \fBaiocb\fR pointer.\fR"
+.ti -1c
+.RI "virtual int \fBnotify_completion\fR ( int sig_num )"
+.br
+.RI "\fINotify queue of "post_completed" ACE_POSIX_Asynch_Results called from post_completion method.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "sigset_t \fBRT_completion_signals_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_POSIX_SIG_Asynch_Operation\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This Proactor implementation does compeltion querying using POSIX Real Time signals. <sigtimedwait>/<sigwaitinfo> call is used to get the notify/get the completions. The real-time signals that are going to be used with this Proactor should be given apriori in the constructor, so that those signals can be masked from asynchornous delivery.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_POSIX_SIG_Proactor::ACE_POSIX_SIG_Proactor (size_t nmaxop = ACE_AIO_DEFAULT_SIZE)
+.PP
+This constructor masks only the  real-time signal. Only this signal should be used to issue asynchronous operations using this Proctor. 
+.SS ACE_POSIX_SIG_Proactor::ACE_POSIX_SIG_Proactor (const sigset_t mask_set, size_t nmaxop = ACE_AIO_DEFAULT_SIZE)
+.PP
+This constructor should be used to tell the Proactor to mask and wait for the real-time signals specified in this set. Only these signals should be used by the asynchronous operations when they use this Proactor. 
+.SS ACE_POSIX_SIG_Proactor::~ACE_POSIX_SIG_Proactor (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_POSIX_SIG_Proactor::allocate_aio_slot (\fBACE_POSIX_Asynch_Result\fR * result)\fC [protected, virtual]\fR
+.PP
+Find free slot to store result and \fBaiocb\fR pointer.
+.PP
+These signals are used for completion notification by the Proactor. The signals specified while issueing s are stored here in this set. These signals are masked for a thread when it calls the Proactor::handle_events. 
+.PP
+Reimplemented from \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS \fBACE_Asynch_Result_Impl\fR * ACE_POSIX_SIG_Proactor::create_asynch_timer (\fBACE_Handler\fR & handler, const void * act, const \fBACE_Time_Value\fR & tv, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Post a result to the completion port of the Proactor. now it is implemented in base \fBACE_POSIX_AIOCB_Proactor\fR classvirtual int post_completion (\fBACE_POSIX_Asynch_Result\fR *result);.
+.PP
+If <signal_number> is -1, check with the Proactor and use one of the signals that is present in the mask set (i.e. the signals for which the Proactor will be waiting) of the Proactor. If there are more than one signal, the higher numbered signal will be chosen. 
+.PP
+Reimplemented from \fBACE_POSIX_Proactor\fR.
+.SS virtual \fBProactor_Type\fR ACE_POSIX_SIG_Proactor::get_impl_type (void)\fC [virtual]\fR
+.PP
+Reimplemented from \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS int ACE_POSIX_SIG_Proactor::handle_events (u_long milli_seconds)\fC [protected, virtual]\fR
+.PP
+Dispatch a single set of events. If <milli_seconds> elapses before any events occur, return 0. Return 1 if a completion is dispatched. Return -1 on errors. 
+.PP
+Reimplemented from \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS int ACE_POSIX_SIG_Proactor::handle_events (void)\fC [virtual]\fR
+.PP
+Block indefinitely until at least one event is dispatched. Dispatch a single set of events. If <wait_time> elapses before any events occur, return 0. Return 1 on success i.e., when a completion is dispatched, non-zero (-1) on errors and errno is set accordingly. 
+.PP
+Reimplemented from \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS int ACE_POSIX_SIG_Proactor::handle_events (\fBACE_Time_Value\fR & wait_time)\fC [virtual]\fR
+.PP
+Dispatch a single set of events. If <wait_time> elapses before any events occur, return 0. Return 1 on success i.e., when a completion is dispatched, non-zero (-1) on errors and errno is set accordingly. 
+.PP
+Reimplemented from \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS int ACE_POSIX_SIG_Proactor::mask_signals (const sigset_t * signals) const\fC [protected]\fR
+.PP
+To mask all the specified signals in a thread.
+.PP
+.SS int ACE_POSIX_SIG_Proactor::notify_completion (int sig_num)\fC [protected, virtual]\fR
+.PP
+Notify queue of "post_completed" ACE_POSIX_Asynch_Results called from post_completion method.
+.PP
+Reimplemented from \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS int ACE_POSIX_SIG_Proactor::setup_signal_handler (int signal_number) const\fC [protected]\fR
+.PP
+To setup the handler for a real-time signbal.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_POSIX_SIG_Asynch_Operation\fC [friend]\fR
+.PP
+This class does the registering of Asynch Operations with the Proactor which is necessary in the SIG strategy, because we need to store the signal number. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS sigset_t ACE_POSIX_SIG_Proactor::RT_completion_signals_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

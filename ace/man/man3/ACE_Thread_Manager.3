@@ -1,0 +1,726 @@
+.TH ACE_Thread_Manager 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Thread_Manager \- Manages a pool of threads. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Thread_Manager.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef int (ACE_Thread_Manager::* \fBACE_THR_MEMBER_FUNC\fR )(\fBACE_Thread_Descriptor\fR *, int)"
+.br
+.ti -1c
+.RI "enum { \fBACE_THR_IDLE\fR = 0x00000000, \fBACE_THR_SPAWNED\fR = 0x00000001, \fBACE_THR_RUNNING\fR = 0x00000002, \fBACE_THR_SUSPENDED\fR = 0x00000004, \fBACE_THR_CANCELLED\fR = 0x00000008, \fBACE_THR_TERMINATED\fR = 0x00000010, \fBACE_THR_JOINING\fR = 0x10000000 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR (size_t preaolloc = ACE_DEFAULT_THREAD_MANAGER_PREALLOC, size_t lwm = ACE_DEFAULT_THREAD_MANAGER_LWM, size_t inc = ACE_DEFAULT_THREAD_MANAGER_INC, size_t hwm = ACE_DEFAULT_THREAD_MANAGER_HWM)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Thread_Manager\fR (void)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (size_t size = 0)"
+.br
+.RI "\fINo-op. Currently unused.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.ti -1c
+.RI "int \fBspawn\fR (ACE_THR_FUNC func, void *args = 0, long flags = THR_NEW_LWP | THR_JOINABLE, \fBACE_thread_t\fR * = 0, \fBACE_hthread_t\fR *t_handle = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, void *stack = 0, size_t stack_size = 0)"
+.br
+.ti -1c
+.RI "int \fBspawn_n\fR (size_t n, ACE_THR_FUNC func, void *args = 0, long flags = THR_NEW_LWP | THR_JOINABLE, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, \fBACE_Task_Base\fR *task = 0, \fBACE_hthread_t\fR thread_handles[] = 0, void *stack[] = 0, size_t stack_size[] = 0)"
+.br
+.ti -1c
+.RI "int \fBspawn_n\fR (\fBACE_thread_t\fR thread_ids[], size_t n, ACE_THR_FUNC func, void *args, long flags, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, void *stack[] = 0, size_t stack_size[] = 0, \fBACE_hthread_t\fR thread_handles[] = 0, \fBACE_Task_Base\fR *task = 0)"
+.br
+.ti -1c
+.RI "void* \fBexit\fR (void *status = 0, int do_thread_exit = 1)"
+.br
+.ti -1c
+.RI "int \fBwait\fR (const \fBACE_Time_Value\fR *timeout = 0, int abandon_detached_threads = 0)"
+.br
+.ti -1c
+.RI "int \fBjoin\fR (\fBACE_thread_t\fR tid, void **status = 0)"
+.br
+.RI "\fIJoin a thread specified by <tid>. Do not wait on a detached thread.\fR"
+.ti -1c
+.RI "int \fBwait_grp\fR (int grp_id)"
+.br
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBthread_desc_self\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBthread_descriptor\fR (\fBACE_thread_t\fR)"
+.br
+.RI "\fIReturn a pointer to the thread's Thread_Descriptor, 0 if fail.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBhthread_descriptor\fR (\fBACE_hthread_t\fR)"
+.br
+.RI "\fIReturn a pointer to the thread's Thread_Descriptor, 0 if fail.\fR"
+.ti -1c
+.RI "int \fBthr_self\fR (\fBACE_hthread_t\fR &)"
+.br
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBthr_self\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Task_Base\fR* \fBtask\fR (void)"
+.br
+.ti -1c
+.RI "int \fBsuspend_all\fR (void)"
+.br
+.ti -1c
+.RI "int \fBsuspend\fR (\fBACE_thread_t\fR)"
+.br
+.ti -1c
+.RI "int \fBsuspend_grp\fR (int grp_id)"
+.br
+.ti -1c
+.RI "int \fBtestsuspend\fR (\fBACE_thread_t\fR t_id)"
+.br
+.ti -1c
+.RI "int \fBresume_all\fR (void)"
+.br
+.ti -1c
+.RI "int \fBresume\fR (\fBACE_thread_t\fR)"
+.br
+.ti -1c
+.RI "int \fBresume_grp\fR (int grp_id)"
+.br
+.ti -1c
+.RI "int \fBtestresume\fR (\fBACE_thread_t\fR t_id)"
+.br
+.ti -1c
+.RI "int \fBkill_all\fR (int signum)"
+.br
+.ti -1c
+.RI "int \fBkill\fR (\fBACE_thread_t\fR, int signum)"
+.br
+.ti -1c
+.RI "int \fBkill_grp\fR (int grp_id, int signum)"
+.br
+.ti -1c
+.RI "int \fBcancel_all\fR (int async_cancel = 0)"
+.br
+.ti -1c
+.RI "int \fBcancel\fR (\fBACE_thread_t\fR, int async_cancel = 0)"
+.br
+.ti -1c
+.RI "int \fBcancel_grp\fR (int grp_id, int async_cancel = 0)"
+.br
+.ti -1c
+.RI "int \fBtestcancel\fR (\fBACE_thread_t\fR t_id)"
+.br
+.ti -1c
+.RI "int \fBset_grp\fR (\fBACE_thread_t\fR, int grp_id)"
+.br
+.ti -1c
+.RI "int \fBget_grp\fR (\fBACE_thread_t\fR, int &grp_id)"
+.br
+.ti -1c
+.RI "int \fBwait_task\fR (\fBACE_Task_Base\fR *task)"
+.br
+.ti -1c
+.RI "int \fBsuspend_task\fR (\fBACE_Task_Base\fR *task)"
+.br
+.ti -1c
+.RI "int \fBresume_task\fR (\fBACE_Task_Base\fR *task)"
+.br
+.ti -1c
+.RI "int \fBkill_task\fR (\fBACE_Task_Base\fR *task, int signum)"
+.br
+.ti -1c
+.RI "int \fBcancel_task\fR (\fBACE_Task_Base\fR *task, int async_cancel = 0)"
+.br
+.ti -1c
+.RI "int \fBhthread_within\fR (\fBACE_hthread_t\fR handle)"
+.br
+.RI "\fICheck if the thread is managed by the thread manager. Return true if the thread is found, false otherwise.\fR"
+.ti -1c
+.RI "int \fBthread_within\fR (\fBACE_thread_t\fR tid)"
+.br
+.ti -1c
+.RI "int \fBnum_tasks_in_group\fR (int grp_id)"
+.br
+.RI "\fIReturns the number of  in a group.\fR"
+.ti -1c
+.RI "int \fBnum_threads_in_task\fR (\fBACE_Task_Base\fR *task)"
+.br
+.RI "\fIReturns the number of threads in an .\fR"
+.ti -1c
+.RI "int \fBtask_list\fR (int grp_id, \fBACE_Task_Base\fR *task_list[], size_t n)"
+.br
+.ti -1c
+.RI "int \fBthread_list\fR (\fBACE_Task_Base\fR *task, \fBACE_thread_t\fR thread_list[], size_t n)"
+.br
+.ti -1c
+.RI "int \fBhthread_list\fR (\fBACE_Task_Base\fR *task, \fBACE_hthread_t\fR hthread_list[], size_t n)"
+.br
+.ti -1c
+.RI "int \fBthread_grp_list\fR (int grp_id, \fBACE_thread_t\fR thread_list[], size_t n)"
+.br
+.ti -1c
+.RI "int \fBhthread_grp_list\fR (int grp_id, \fBACE_hthread_t\fR hthread_list[], size_t n)"
+.br
+.ti -1c
+.RI "int \fBtask_all_list\fR (\fBACE_Task_Base\fR *task_list[], size_t n)"
+.br
+.ti -1c
+.RI "int \fBthread_all_list\fR (\fBACE_thread_t\fR thread_list[], size_t n)"
+.br
+.ti -1c
+.RI "int \fBset_grp\fR (\fBACE_Task_Base\fR *task, int grp_id)"
+.br
+.ti -1c
+.RI "int \fBget_grp\fR (\fBACE_Task_Base\fR *task, int &grp_id)"
+.br
+.ti -1c
+.RI "int \fBcount_threads\fR (void) const"
+.br
+.RI "\fIReturn a count of the current number of threads active in the <Thread_Manager>.\fR"
+.ti -1c
+.RI "int \fBat_exit\fR (\fBACE_At_Thread_Exit\fR* cleanup)"
+.br
+.ti -1c
+.RI "int \fBat_exit\fR (\fBACE_At_Thread_Exit\fR& cleanup)"
+.br
+.RI "\fIRegister an At_Thread_Exit hook and the ownership is retained for the caller. Normally used when the at_exit hook is created in stack.\fR"
+.ti -1c
+.RI "int \fBat_exit\fR (void *object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void *param)"
+.br
+.ti -1c
+.RI "void \fBwait_on_exit\fR (int dowait)"
+.br
+.RI "\fIAccess function to determine whether the Thread_Manager will wait for its thread to exit or not when being closing down.\fR"
+.ti -1c
+.RI "int \fBwait_on_exit\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void)"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Thread_Manager* \fBinstance\fR (void)"
+.br
+.RI "\fIGet pointer to a process-wide .\fR"
+.ti -1c
+.RI "ACE_Thread_Manager* \fBinstance\fR (ACE_Thread_Manager *)"
+.br
+.RI "\fISet pointer to a process-wide  and return existing pointer.\fR"
+.ti -1c
+.RI "void \fBclose_singleton\fR (void)"
+.br
+.RI "\fIDelete the dynamically allocated Singleton.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBspawn_i\fR (ACE_THR_FUNC func, void *args, long flags, \fBACE_thread_t\fR * = 0, \fBACE_hthread_t\fR *t_handle = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, void *stack = 0, size_t stack_size = 0, \fBACE_Task_Base\fR *task = 0)"
+.br
+.RI "\fICreate a new thread (must be called with locks held).\fR"
+.ti -1c
+.RI "void \fBrun_thread_exit_hooks\fR (int i)"
+.br
+.RI "\fIRun the registered hooks when the thread exits.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBfind_thread\fR (\fBACE_thread_t\fR t_id)"
+.br
+.RI "\fILocate the index of the table slot occupied by <t_id>. Returns -1 if <t_id> is not in the table doesn't contain <t_id>.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBfind_hthread\fR (\fBACE_hthread_t\fR h_id)"
+.br
+.RI "\fILocate the index of the table slot occupied by <h_id>. Returns -1 if <h_id> is not in the table doesn't contain <h_id>.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR* \fBfind_task\fR (\fBACE_Task_Base\fR *task, int slot = -1)"
+.br
+.ti -1c
+.RI "int \fBinsert_thr\fR (\fBACE_thread_t\fR t_id, \fBACE_hthread_t\fR, int grp_id = -1, long flags = 0)"
+.br
+.RI "\fIInsert a thread in the table (checks for duplicates).\fR"
+.ti -1c
+.RI "int \fBappend_thr\fR (\fBACE_thread_t\fR t_id, \fBACE_hthread_t\fR, ACE_UINT32, int grp_id, \fBACE_Task_Base\fR *task = 0, long flags = 0, \fBACE_Thread_Descriptor\fR *td = 0)"
+.br
+.RI "\fIAppend a thread in the table (adds at the end, growing the table if necessary).\fR"
+.ti -1c
+.RI "void \fBremove_thr\fR (\fBACE_Thread_Descriptor\fR *td, int close_handler)"
+.br
+.RI "\fIRemove thread from the table.\fR"
+.ti -1c
+.RI "void \fBremove_thr_all\fR (void)"
+.br
+.RI "\fIRemove all threads from the table.\fR"
+.ti -1c
+.RI "int \fBcheck_state\fR (ACE_UINT32 state, \fBACE_thread_t\fR thread, int enable = 1)"
+.br
+.ti -1c
+.RI "int \fBapply_task\fR (\fBACE_Task_Base\fR *task, \fBACE_THR_MEMBER_FUNC\fR, int = 0)"
+.br
+.RI "\fIApply <func> to all members of the table that match the <task>.\fR"
+.ti -1c
+.RI "int \fBapply_grp\fR (int grp_id, \fBACE_THR_MEMBER_FUNC\fR func, int arg = 0)"
+.br
+.RI "\fIApply <func> to all members of the table that match the <grp_id>.\fR"
+.ti -1c
+.RI "int \fBapply_all\fR (\fBACE_THR_MEMBER_FUNC\fR, int = 0)"
+.br
+.RI "\fIApply <func> to all members of the table.\fR"
+.ti -1c
+.RI "int \fBjoin_thr\fR (\fBACE_Thread_Descriptor\fR *td, int = 0)"
+.br
+.RI "\fIJoin the thread described in <tda>.\fR"
+.ti -1c
+.RI "int \fBresume_thr\fR (\fBACE_Thread_Descriptor\fR *td, int = 0)"
+.br
+.RI "\fIResume the thread described in <tda>.\fR"
+.ti -1c
+.RI "int \fBsuspend_thr\fR (\fBACE_Thread_Descriptor\fR *td, int = 0)"
+.br
+.RI "\fISuspend the thread described in <tda>.\fR"
+.ti -1c
+.RI "int \fBkill_thr\fR (\fBACE_Thread_Descriptor\fR *td, int signum)"
+.br
+.RI "\fISend signal <signum> to the thread described in <tda>.\fR"
+.ti -1c
+.RI "int \fBcancel_thr\fR (\fBACE_Thread_Descriptor\fR *td, int async_cancel = 0)"
+.br
+.RI "\fISet the cancellation flag for the thread described in <tda>.\fR"
+.ti -1c
+.RI "int \fBregister_as_terminated\fR (\fBACE_Thread_Descriptor\fR *td)"
+.br
+.RI "\fIRegister a thread as terminated and put it into the <terminated_thr_list_>.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Double_Linked_List\fR<\fBACE_Thread_Descriptor\fR> \fBthr_list_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Double_Linked_List\fR<\fBACE_Thread_Descriptor_Base\fR> \fBterminated_thr_list_\fR"
+.br
+.RI "\fICollect terminated but not yet joined thread entries.\fR"
+.ti -1c
+.RI "\fBACE_Unbounded_Queue\fR<\fBACE_Thread_Descriptor\fR*> \fBthr_to_be_removed_\fR"
+.br
+.RI "\fICollect pointers to thread descriptors of threads to be removed later.\fR"
+.ti -1c
+.RI "int \fBgrp_id_\fR"
+.br
+.RI "\fIKeeps track of the next group id to assign.\fR"
+.ti -1c
+.RI "int \fBautomatic_wait_\fR"
+.br
+.RI "\fISet if we want the Thread_Manager to wait on all threads before being closed, reset otherwise.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Mutex\fR \fBlock_\fR"
+.br
+.RI "\fISerialize access to the <zero_cond_>.\fR"
+.ti -1c
+.RI "\fBACE_Condition_Thread_Mutex\fR \fBzero_cond_\fR"
+.br
+.RI "\fIKeep track of when there are no more threads.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Locked_Free_List\fR<\fBACE_Thread_Descriptor\fR, ACE_SYNCH_MUTEX> \fBthread_desc_freelist_\fR"
+.br
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Thread_Manager* \fBthr_mgr_\fR"
+.br
+.RI "\fIPointer to a process-wide .\fR"
+.ti -1c
+.RI "int \fBdelete_thr_mgr_\fR"
+.br
+.RI "\fIMust delete the <thr_mgr_> if non-0.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Thread_Control\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Thread_Descriptor\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Manages a pool of threads.
+.PP
+.PP
+ This class allows operations on groups of threads atomically. The default behavior of thread manager is to wait on all threads under it's management when it gets destructed. Therefore, remember to remove a thread from thread manager if you don't want it to wait for the thread. There are also function to disable this default wait-on-exit behavior. However, if your program depends on turning this off to run correctly, you are probably doing something wrong. Rule of thumb, use \fBACE_Thread\fR to manage your daemon threads. Notice that if there're threads live beyond the scope of <main>, you are sure to have resource leaks in your program. Remember to wait on threads before exiting <main> if that could happen in your programs. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef int (ACE_Thread_Manager::* ACE_Thread_Manager::ACE_THR_MEMBER_FUNC)(\fBACE_Thread_Descriptor\fR *, int)
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_THR_IDLE\fR \fRUninitialized.
+.TP
+\fB\fIACE_THR_SPAWNED\fR \fRCreated but not yet running.
+.TP
+\fB\fIACE_THR_RUNNING\fR \fRThread is active (naturally, we don't know if it's actually *running* because we aren't the scheduler...).
+.TP
+\fB\fIACE_THR_SUSPENDED\fR \fRThread is suspended.
+.TP
+\fB\fIACE_THR_CANCELLED\fR \fRThread has been cancelled (which is an indiction that it needs to terminate...).
+.TP
+\fB\fIACE_THR_TERMINATED\fR \fRThread has shutdown, but the slot in the thread manager hasn't been reclaimed yet.
+.TP
+\fB\fIACE_THR_JOINING\fR \fRJoin operation has been invoked on the thread by thread manager.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Thread_Manager::ACE_Thread_Manager (size_t preaolloc = ACE_DEFAULT_THREAD_MANAGER_PREALLOC, size_t lwm = ACE_DEFAULT_THREAD_MANAGER_LWM, size_t inc = ACE_DEFAULT_THREAD_MANAGER_INC, size_t hwm = ACE_DEFAULT_THREAD_MANAGER_HWM)
+.PP
+@breif Initialization and termination methods.
+.PP
+Internally, ACE_Thread_Manager keeps a freelist for caching resources it uses to keep track of managed threads (not the threads themselves.) \fIprealloc\fR, \fIlwm\fR, \fIinc\fR, @hwm determine the initial size, the low water mark, increment step, and high water mark of the freelist.
+.PP
+\fBSee also: \fR
+.in +1c
+ \fBACE_Free_List\fR 
+.SS virtual ACE_Thread_Manager::~ACE_Thread_Manager (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Thread_Manager::append_thr (\fBACE_thread_t\fR t_id, \fBACE_hthread_t\fR, ACE_UINT32, int grp_id, \fBACE_Task_Base\fR * task = 0, long flags = 0, \fBACE_Thread_Descriptor\fR * td = 0)\fC [protected]\fR
+.PP
+Append a thread in the table (adds at the end, growing the table if necessary).
+.PP
+.SS int ACE_Thread_Manager::apply_all (\fBACE_THR_MEMBER_FUNC\fR, int = 0)\fC [protected]\fR
+.PP
+Apply <func> to all members of the table.
+.PP
+.SS int ACE_Thread_Manager::apply_grp (int grp_id, \fBACE_THR_MEMBER_FUNC\fR func, int arg = 0)\fC [protected]\fR
+.PP
+Apply <func> to all members of the table that match the <grp_id>.
+.PP
+.SS int ACE_Thread_Manager::apply_task (\fBACE_Task_Base\fR * task, \fBACE_THR_MEMBER_FUNC\fR, int = 0)\fC [protected]\fR
+.PP
+Apply <func> to all members of the table that match the <task>.
+.PP
+.SS int ACE_Thread_Manager::at_exit (void * object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void * param)
+.PP
+\fBDeprecated: \fR
+.in +1c
+ This function is deprecated. Please use the previous two at_exit method. Notice that you should avoid mixing this method with the previous two at_exit methods.
+.PP
+Register an object (or array) for cleanup at thread termination. "cleanup_hook" points to a (global, or static member) function that is called for the object or array when it to be destroyed. It may perform any necessary cleanup specific for that object or its class. "param" is passed as the second parameter to the "cleanup_hook" function; the first parameter is the object (or array) to be destroyed. "cleanup_hook", for example, may delete the object (or array). If <cleanup_hook> == 0, the <object> will _NOT_ get cleanup at thread exit. You can use this to cancel the previously added at_exit. 
+.SS int ACE_Thread_Manager::at_exit (\fBACE_At_Thread_Exit\fR & cleanup)
+.PP
+Register an At_Thread_Exit hook and the ownership is retained for the caller. Normally used when the at_exit hook is created in stack.
+.PP
+.SS int ACE_Thread_Manager::at_exit (\fBACE_At_Thread_Exit\fR * cleanup)
+.PP
+Register an At_Thread_Exit hook and the ownership is acquire by Thread_Descriptor, this is the usual case when the AT is dynamically allocated. 
+.SS int ACE_Thread_Manager::cancel (\fBACE_thread_t\fR, int async_cancel = 0)
+.PP
+.SS int ACE_Thread_Manager::cancel_all (int async_cancel = 0)
+.PP
+Cancel's all the threads. Cancel a single thread. Cancel a group of threads. True if <t_id> is cancelled, else false. 
+.SS int ACE_Thread_Manager::cancel_grp (int grp_id, int async_cancel = 0)
+.PP
+.SS int ACE_Thread_Manager::cancel_task (\fBACE_Task_Base\fR * task, int async_cancel = 0)
+.PP
+Cancel all threads in an . If  is non-0, then asynchronously cancel these threads if the OS platform supports cancellation. Otherwise, perform a "cooperative" cancellation. 
+.SS int ACE_Thread_Manager::cancel_thr (\fBACE_Thread_Descriptor\fR * td, int async_cancel = 0)\fC [protected]\fR
+.PP
+Set the cancellation flag for the thread described in <tda>.
+.PP
+.SS int ACE_Thread_Manager::check_state (ACE_UINT32 state, \fBACE_thread_t\fR thread, int enable = 1)\fC [protected]\fR
+.PP
+Efficiently check whether <thread> is in a particular <state>. This call updates the TSS cache if possible to speed up subsequent searches. 
+.SS int ACE_Thread_Manager::close (void)
+.PP
+Release all resources. By default, this method will wait till all threads exit. However, when called from <close_singleton>, most global resources are destroyed and thus, we don't try to wait but just clean up the thread descriptor list. 
+.SS void ACE_Thread_Manager::close_singleton (void)\fC [static]\fR
+.PP
+Delete the dynamically allocated Singleton.
+.PP
+.SS int ACE_Thread_Manager::count_threads (void) const
+.PP
+Return a count of the current number of threads active in the <Thread_Manager>.
+.PP
+.SS void ACE_Thread_Manager::dump (void)
+.PP
+Dump the state of an object.
+.PP
+.SS void * ACE_Thread_Manager::exit (void * status = 0, int do_thread_exit = 1)
+.PP
+Called to clean up when a thread exits. If <do_thread_exit> is non-0 then  is called to exit the thread, in which case <status> is passed as the exit value of the thread. Should _not_ be called by main thread. 
+.SS \fBACE_Thread_Descriptor\fR * ACE_Thread_Manager::find_hthread (\fBACE_hthread_t\fR h_id)\fC [protected]\fR
+.PP
+Locate the index of the table slot occupied by <h_id>. Returns -1 if <h_id> is not in the table doesn't contain <h_id>.
+.PP
+.SS \fBACE_Thread_Descriptor\fR * ACE_Thread_Manager::find_task (\fBACE_Task_Base\fR * task, int slot = -1)\fC [protected]\fR
+.PP
+Locate the thread descriptor address of the list occupied by <task>. Returns 0 if <task> is not in the table doesn't contain <task>. 
+.SS \fBACE_Thread_Descriptor\fR * ACE_Thread_Manager::find_thread (\fBACE_thread_t\fR t_id)\fC [protected]\fR
+.PP
+Locate the index of the table slot occupied by <t_id>. Returns -1 if <t_id> is not in the table doesn't contain <t_id>.
+.PP
+.SS int ACE_Thread_Manager::get_grp (\fBACE_Task_Base\fR * task, int & grp_id)
+.PP
+.SS int ACE_Thread_Manager::get_grp (\fBACE_thread_t\fR, int & grp_id)
+.PP
+.SS \fBACE_Thread_Descriptor\fR * ACE_Thread_Manager::hthread_descriptor (\fBACE_hthread_t\fR)
+.PP
+Return a pointer to the thread's Thread_Descriptor, 0 if fail.
+.PP
+.SS int ACE_Thread_Manager::hthread_grp_list (int grp_id, \fBACE_hthread_t\fR hthread_list[], size_t n)
+.PP
+Returns in <hthread_list> a list of up to <n> thread handles in a group <grp_id>. The caller must allocate memory for <hthread_list>. 
+.SS int ACE_Thread_Manager::hthread_list (\fBACE_Task_Base\fR * task, \fBACE_hthread_t\fR hthread_list[], size_t n)
+.PP
+Returns in <hthread_list> a list of up to <n> thread handles in an . The caller must allocate memory for <hthread_list>. In case of an error, -1 is returned. If no requested values are found, 0 is returned, otherwise correct number of retrieved values are returned. 
+.SS int ACE_Thread_Manager::hthread_within (\fBACE_hthread_t\fR handle)
+.PP
+Check if the thread is managed by the thread manager. Return true if the thread is found, false otherwise.
+.PP
+.SS int ACE_Thread_Manager::insert_thr (\fBACE_thread_t\fR t_id, \fBACE_hthread_t\fR, int grp_id = -1, long flags = 0)\fC [protected]\fR
+.PP
+Insert a thread in the table (checks for duplicates).
+.PP
+.SS ACE_Thread_Manager * ACE_Thread_Manager::instance (ACE_Thread_Manager *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer.
+.PP
+.SS ACE_Thread_Manager * ACE_Thread_Manager::instance (void)\fC [static]\fR
+.PP
+Get pointer to a process-wide .
+.PP
+.SS int ACE_Thread_Manager::join (\fBACE_thread_t\fR tid, void ** status = 0)
+.PP
+Join a thread specified by <tid>. Do not wait on a detached thread.
+.PP
+.SS int ACE_Thread_Manager::join_thr (\fBACE_Thread_Descriptor\fR * td, int = 0)\fC [protected]\fR
+.PP
+Join the thread described in <tda>.
+.PP
+.SS int ACE_Thread_Manager::kill (\fBACE_thread_t\fR, int signum)
+.PP
+.SS int ACE_Thread_Manager::kill_all (int signum)
+.PP
+Send <signum> to all stopped threads. Not supported on platforms that do not have advanced signal support, such as Win32. Send the <signum> to a single thread. Not supported on platforms that do not have advanced signal support, such as Win32. Send <signum> to a group of threads, not supported on platforms that do not have advanced signal support, such as Win32. 
+.SS int ACE_Thread_Manager::kill_grp (int grp_id, int signum)
+.PP
+.SS int ACE_Thread_Manager::kill_task (\fBACE_Task_Base\fR * task, int signum)
+.PP
+.SS int ACE_Thread_Manager::kill_thr (\fBACE_Thread_Descriptor\fR * td, int signum)\fC [protected]\fR
+.PP
+Send signal <signum> to the thread described in <tda>.
+.PP
+.SS int ACE_Thread_Manager::num_tasks_in_group (int grp_id)
+.PP
+Returns the number of  in a group.
+.PP
+.SS int ACE_Thread_Manager::num_threads_in_task (\fBACE_Task_Base\fR * task)
+.PP
+Returns the number of threads in an .
+.PP
+.SS int ACE_Thread_Manager::open (size_t size = 0)
+.PP
+No-op. Currently unused.
+.PP
+.SS int ACE_Thread_Manager::register_as_terminated (\fBACE_Thread_Descriptor\fR * td)\fC [protected]\fR
+.PP
+Register a thread as terminated and put it into the <terminated_thr_list_>.
+.PP
+.SS void ACE_Thread_Manager::remove_thr (\fBACE_Thread_Descriptor\fR * td, int close_handler)\fC [protected]\fR
+.PP
+Remove thread from the table.
+.PP
+.SS void ACE_Thread_Manager::remove_thr_all (void)\fC [protected]\fR
+.PP
+Remove all threads from the table.
+.PP
+.SS int ACE_Thread_Manager::resume (\fBACE_thread_t\fR)
+.PP
+.SS int ACE_Thread_Manager::resume_all (void)
+.PP
+Resume all stopped threads Resume a single thread. Resume a group of threads. True if <t_id> is active (i.e., resumed), else false. 
+.SS int ACE_Thread_Manager::resume_grp (int grp_id)
+.PP
+.SS int ACE_Thread_Manager::resume_task (\fBACE_Task_Base\fR * task)
+.PP
+.SS int ACE_Thread_Manager::resume_thr (\fBACE_Thread_Descriptor\fR * td, int = 0)\fC [protected]\fR
+.PP
+Resume the thread described in <tda>.
+.PP
+.SS void ACE_Thread_Manager::run_thread_exit_hooks (int i)\fC [protected]\fR
+.PP
+Run the registered hooks when the thread exits.
+.PP
+.SS int ACE_Thread_Manager::set_grp (\fBACE_Task_Base\fR * task, int grp_id)
+.PP
+.SS int ACE_Thread_Manager::set_grp (\fBACE_thread_t\fR, int grp_id)
+.PP
+.SS int ACE_Thread_Manager::spawn (ACE_THR_FUNC func, void * args = 0, long flags = THR_NEW_LWP | THR_JOINABLE, \fBACE_thread_t\fR * = 0, \fBACE_hthread_t\fR * t_handle = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, void * stack = 0, size_t stack_size = 0)
+.PP
+Create a new thread, which executes <func>. Returns: on success a unique group id that can be used to control other threads added to the same group. On failure, returns -1. 
+.SS int ACE_Thread_Manager::spawn_i (ACE_THR_FUNC func, void * args, long flags, \fBACE_thread_t\fR * = 0, \fBACE_hthread_t\fR * t_handle = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, void * stack = 0, size_t stack_size = 0, \fBACE_Task_Base\fR * task = 0)\fC [protected, virtual]\fR
+.PP
+Create a new thread (must be called with locks held).
+.PP
+.SS int ACE_Thread_Manager::spawn_n (\fBACE_thread_t\fR thread_ids[], size_t n, ACE_THR_FUNC func, void * args, long flags, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, void * stack[] = 0, size_t stack_size[] = 0, \fBACE_hthread_t\fR thread_handles[] = 0, \fBACE_Task_Base\fR * task = 0)
+.PP
+Spawn N new threads, which execute <func> with argument . If <thread_ids> != 0 the thread_ids of successfully spawned threads will be placed into the <thread_ids> buffer (which must be the same size as <n>). If <stack> != 0 it is assumed to be an array of <n> pointers to the base of the stacks to use for the threads being spawned. If <stack_size> != 0 it is assumed to be an array of <n> values indicating how big each of the corresponding <stack>s are. If <thread_handles> != 0 it is assumed to be an array of <n> thread_handles that will be assigned the values of the thread handles being spawned. Returns -1 on failure (<errno> will explain...), otherwise returns the group id of the threads. 
+.SS int ACE_Thread_Manager::spawn_n (size_t n, ACE_THR_FUNC func, void * args = 0, long flags = THR_NEW_LWP | THR_JOINABLE, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, \fBACE_Task_Base\fR * task = 0, \fBACE_hthread_t\fR thread_handles[] = 0, void * stack[] = 0, size_t stack_size[] = 0)
+.PP
+Create N new threads, all of which execute <func>. Returns: on success a unique group id that can be used to control all of the threads in the same group. On failure, returns -1. 
+.SS int ACE_Thread_Manager::suspend (\fBACE_thread_t\fR)
+.PP
+.SS int ACE_Thread_Manager::suspend_all (void)
+.PP
+Suspend all threads Suspend a single thread. Suspend a group of threads. True if <t_id> is inactive (i.e., suspended), else false. 
+.SS int ACE_Thread_Manager::suspend_grp (int grp_id)
+.PP
+.SS int ACE_Thread_Manager::suspend_task (\fBACE_Task_Base\fR * task)
+.PP
+.SS int ACE_Thread_Manager::suspend_thr (\fBACE_Thread_Descriptor\fR * td, int = 0)\fC [protected]\fR
+.PP
+Suspend the thread described in <tda>.
+.PP
+.SS \fBACE_Task_Base\fR * ACE_Thread_Manager::task (void)
+.PP
+Returns a pointer to the current  we're executing in if this thread is indeed running in an , else return 0. 
+.SS int ACE_Thread_Manager::task_all_list (\fBACE_Task_Base\fR * task_list[], size_t n)
+.PP
+Returns in <task_list> a list of up to <n> . The caller must allocate the memory for <task_list>. In case of an error, -1 is returned. If no requested values are found, 0 is returned, otherwise correct number of retrieved values are returned. 
+.SS int ACE_Thread_Manager::task_list (int grp_id, \fBACE_Task_Base\fR * task_list[], size_t n)
+.PP
+Returns in <task_list> a list of up to <n>  in a group. The caller must allocate the memory for <task_list>. In case of an error, -1 is returned. If no requested values are found, 0 is returned, otherwise correct number of retrieved values are returned. 
+.SS int ACE_Thread_Manager::testcancel (\fBACE_thread_t\fR t_id)
+.PP
+.SS int ACE_Thread_Manager::testresume (\fBACE_thread_t\fR t_id)
+.PP
+.SS int ACE_Thread_Manager::testsuspend (\fBACE_thread_t\fR t_id)
+.PP
+.SS \fBACE_thread_t\fR ACE_Thread_Manager::thr_self (void)
+.PP
+Return the unique ID of the thread. This is not strictly necessary (because a thread can always just call ). However, we put it here to be complete. 
+.SS int ACE_Thread_Manager::thr_self (\fBACE_hthread_t\fR &)
+.PP
+Return the "real" handle to the calling thread, caching it if necessary in TSS to speed up subsequent lookups. This is necessary since on some platforms (e.g., Win32) we can't get this handle via direct method calls. Notice that you should *not* close the handle passed back from this method. It is used internally by Thread Manager. On the other hand, you *have to* use this internal thread handle when working on Thread_Manager. Return -1 if fail. 
+.SS int ACE_Thread_Manager::thread_all_list (\fBACE_thread_t\fR thread_list[], size_t n)
+.PP
+Returns in <thread_list> a list of up to <n> thread ids. The caller must allocate the memory for <thread_list>. In case of an error, -1 is returned. If no requested values are found, 0 is returned, otherwise correct number of retrieved values are returned. 
+.SS \fBACE_Thread_Descriptor\fR * ACE_Thread_Manager::thread_desc_self (void)
+.PP
+Get a pointer to the calling thread's own thread_descriptor. This must be called from a spawn thread. This function will fetch the info from TSS. 
+.SS \fBACE_Thread_Descriptor\fR * ACE_Thread_Manager::thread_descriptor (\fBACE_thread_t\fR)
+.PP
+Return a pointer to the thread's Thread_Descriptor, 0 if fail.
+.PP
+.SS int ACE_Thread_Manager::thread_grp_list (int grp_id, \fBACE_thread_t\fR thread_list[], size_t n)
+.PP
+Returns in <thread_list> a list of up to <n> thread ids in a group <grp_id>. The caller must allocate the memory for <thread_list>. In case of an error, -1 is returned. If no requested values are found, 0 is returned, otherwise correct number of retrieved values are returned. 
+.SS int ACE_Thread_Manager::thread_list (\fBACE_Task_Base\fR * task, \fBACE_thread_t\fR thread_list[], size_t n)
+.PP
+Returns in <thread_list> a list of up to <n> thread ids in an . The caller must allocate the memory for <thread_list>. In case of an error, -1 is returned. If no requested values are found, 0 is returned, otherwise correct number of retrieved values are returned. 
+.SS int ACE_Thread_Manager::thread_within (\fBACE_thread_t\fR tid)
+.PP
+.SS int ACE_Thread_Manager::wait (const \fBACE_Time_Value\fR * timeout = 0, int abandon_detached_threads = 0)
+.PP
+Block until there are no more threads running in the <Thread_Manager> or <timeout> expires. Note that <timeout> is treated as "absolute" time. Returns 0 on success and -1 on failure. If  is set, wait will first check thru its thread list for threads with THR_DETACHED or THR_DAEMON flags set and remove these threads. Notice that unlike other wait_* function, by default, <wait> does wait on all thread spawned by this thread_manager no matter the detached flags are set or not unless it is called with  flag set. NOTE that if this function is called while the \fBACE_Object_Manager\fR is shutting down (as a result of program rundown via \fBACE::fini\fR), it will not wait for any threads to complete. If you must wait for threads spawned by this thread manager to complete and you are in a \fBACE\fR rundown situation (such as your object is being destroyed by the \fBACE_Object_Manager\fR) you can use wait_grp instead. 
+.SS int ACE_Thread_Manager::wait_grp (int grp_id)
+.PP
+Block until there are no more threads running in a group. Returns 0 on success and -1 on failure. Notice that wait_grp will not wait on detached threads. 
+.SS int ACE_Thread_Manager::wait_on_exit (void)
+.PP
+.SS void ACE_Thread_Manager::wait_on_exit (int dowait)
+.PP
+Access function to determine whether the Thread_Manager will wait for its thread to exit or not when being closing down.
+.PP
+.SS int ACE_Thread_Manager::wait_task (\fBACE_Task_Base\fR * task)
+.PP
+Block until there are no more threads running in <task>. Returns 0 on success and -1 on failure. Note that <wait_task> will not wait on detached threads. Suspend all threads in an \fBACE_Task\fR. Resume all threads in an \fBACE_Task\fR. Send a signal <signum> to all threads in an . 
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Thread_Control\fC [friend]\fR
+.PP
+.SS class ACE_Thread_Descriptor\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Thread_Manager::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS int ACE_Thread_Manager::automatic_wait_\fC [protected]\fR
+.PP
+Set if we want the Thread_Manager to wait on all threads before being closed, reset otherwise.
+.PP
+.SS int ACE_Thread_Manager::delete_thr_mgr_\fC [static, private]\fR
+.PP
+Must delete the <thr_mgr_> if non-0.
+.PP
+.SS int ACE_Thread_Manager::grp_id_\fC [protected]\fR
+.PP
+Keeps track of the next group id to assign.
+.PP
+.SS \fBACE_Thread_Mutex\fR ACE_Thread_Manager::lock_\fC [protected]\fR
+.PP
+Serialize access to the <zero_cond_>.
+.PP
+.SS \fBACE_Double_Linked_List\fR< \fBACE_Thread_Descriptor_Base\fR > ACE_Thread_Manager::terminated_thr_list_\fC [protected]\fR
+.PP
+Collect terminated but not yet joined thread entries.
+.PP
+.SS \fBACE_Double_Linked_List\fR< \fBACE_Thread_Descriptor\fR > ACE_Thread_Manager::thr_list_\fC [protected]\fR
+.PP
+Keeping a list of thread descriptors within the thread manager. Double-linked list enables us to cache the entries in TSS and adding/removing thread descriptor entries without affecting other thread's descriptor entries. 
+.SS ACE_Thread_Manager * ACE_Thread_Manager::thr_mgr_\fC [static, private]\fR
+.PP
+Pointer to a process-wide .
+.PP
+.SS \fBACE_Unbounded_Queue\fR< \fBACE_Thread_Descriptor\fR *> ACE_Thread_Manager::thr_to_be_removed_\fC [protected]\fR
+.PP
+Collect pointers to thread descriptors of threads to be removed later.
+.PP
+.SS \fBACE_Locked_Free_List\fR< \fBACE_Thread_Descriptor\fR,ACE_SYNCH_MUTEX > ACE_Thread_Manager::thread_desc_freelist_\fC [private]\fR
+.PP
+.SS \fBACE_Condition_Thread_Mutex\fR ACE_Thread_Manager::zero_cond_\fC [protected]\fR
+.PP
+Keep track of when there are no more threads.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

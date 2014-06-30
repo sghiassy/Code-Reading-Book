@@ -1,0 +1,72 @@
+                  Apache Tomcat Version 4.0 Beta 1
+                  =================================
+                            Release Notes
+                            =============
+
+$Id: RELEASE-NOTES-4.0-B1.txt,v 1.1 2000/12/14 22:36:10 craigmcc Exp $
+
+
+============
+INTRODUCTION:
+============
+
+This document describes the changes that have been made in the current
+beta release of Apache Tomcat, relative to the previous release.
+
+Bug reports should be entered at the interim bug reporting system for
+Jakarta projects at:
+
+        http://znutar.cortexity.com:8888/
+
+Please use project codes "Catalina" and "Jasper" for servlet-related and
+JSP-related bug reports, respectively.
+
+
+============
+NEW FEATURES:
+============
+
+Tomcat 4.0 is in feature freeze as we approach final release.  New features
+will be added on the Tomcat 4.1 track.
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+
+
+==============================
+KNOWN PROBLEMS IN THIS RELEASE:
+==============================
+
+
+URL Decoding Incomplete
+-----------------------
+Currently, Catalina does not decode the values returned by getServletPath()
+and getPathInfo(), as required by the Servlet Specification.  This will be
+dealt with after clarifications to the requirements are completed in the
+JSR-053 expert group.
+
+
+Redeploying From a Web Application Archive
+------------------------------------------
+If you attempt to undeploy, then redeploy, an application from the same
+web application archive file URL (where the URL refers to an actual WAR
+file, not to a directory), the redeploy will fail with error "zip file is
+closed".  There appears to be a problem in the JDK's JarURLConnection class
+where JAR files are cached, even after they are closed, so that a request
+for a connection to the same URL returns the previous JarFile object instead
+of a new one.  As a workaround, you should do one of the following:
+* Change the URL of the web application archive each time you redeploy.
+* Deploy from an unpacked directory (on the same server) instead of from
+  a WAR file (this is often more convenient in a development environment
+  anyway).
+
+
+Running Web Apps Under A Security Manager
+-----------------------------------------
+Support for running individual web applications under the protection of a
+security manager has not yet been completed.
+
+

@@ -1,0 +1,72 @@
+.TH ACE_Managed_Object 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Managed_Object \- Wrapper for interface to allocate an object managed by the \fBACE_Object_Manager\fR. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Managed_Object.h>\fR
+.PP
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "TYPE* \fBget_preallocated_object\fR (\fBACE_Object_Manager::Preallocated_Object\fR id)"
+.br
+.ti -1c
+.RI "TYPE* \fBget_preallocated_array\fR (\fBACE_Object_Manager::Preallocated_Array\fR id)"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Managed_Object\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Managed_Object\fR (const ACE_Managed_Object<TYPE> &)"
+.br
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Managed_Object<TYPE> &)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBthis_prevents_compiler_warning_about_only_private_constructors\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE>  template class ACE_Managed_Object
+Wrapper for interface to allocate an object managed by the \fBACE_Object_Manager\fR.
+.PP
+.PP
+ This template class wraps an interface that is used to allocate and access an object that is managed by the \fBACE_Object_Manager\fR. Because static template member functions are not supported by some compilers, it is a separate (template) class. This interface is typically used to replace a static object with one that is dynamically allocated. It helps to avoid problems with order of static object construction/destruction. Managed objects won't be allocated until needed, but should be allocated when first needed. And they are destroyed in the reverse order of construction. <get_preallocated_object> accesses a "preallocated" object, i.e., one that is identified by a value in the \fBACE_Object_Manager\fR:: Preallocated_Object enum. These objects are used internally by the \fBACE\fR library. Hooks are provided for the application to preallocate objects via the same mechanism. ACE_APPLICATION_PREALLOCATED_OBJECT_DECLARATIONS can be used to define enum values; ACE_APPLICATION_PREALLOCATED_OBJECT_DEFINITIONS can be used to define the corresponding objects. The format of the \fBACE\fR internal library definitions should be followed. And similarly, ACE_APPLICATION_PREALLOCATED_ARRAY_DECLARATIONS and ACE_APPLICATION_PREALLOCATED_ARRAY_DEFINITIONS can be used to preallocate arrays. By default, preallocation uses dynamic allocation. The preallocated objects and arrays are allocated off the heap in the \fBACE_Object_Manager\fR constructor. To statically place the preallocated objects in program global data instead of on the heap, define ACE_HAS_STATIC_PREALLOCATION prior to building the \fBACE\fR library. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE> ACE_Managed_Object<TYPE>::ACE_Managed_Object<TYPE> (void)\fC [private]\fR
+.PP
+.SS template<classTYPE> ACE_Managed_Object<TYPE>::ACE_Managed_Object<TYPE> (const ACE_Managed_Object< TYPE >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE> TYPE * ACE_Managed_Object<TYPE>::get_preallocated_array (\fBACE_Object_Manager::Preallocated_Array\fR id)\fC [inline, static]\fR
+.PP
+.SS template<classTYPE> TYPE * ACE_Managed_Object<TYPE>::get_preallocated_object (\fBACE_Object_Manager::Preallocated_Object\fR id)\fC [inline, static]\fR
+.PP
+.SS template<classTYPE> void ACE_Managed_Object<TYPE>::operator= (const ACE_Managed_Object< TYPE >&)\fC [private]\fR
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE> class this_prevents_compiler_warning_about_only_private_constructors\fC [friend]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

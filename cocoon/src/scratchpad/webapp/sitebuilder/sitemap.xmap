@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<map:sitemap id="1" xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+<!-- =========================== Components ================================ -->
+
+ <map:components id="2" >
+
+  <map:generators id="3" default="file" />
+
+  <map:transformers id="4" default="xslt">
+   <map:transformer id="5" name="xslt" src="org.apache.cocoon.transformation.TraxTransformer">
+    <use-store id="6">true</use-store>
+    <use-request-parameters id="7">true</use-request-parameters>
+    <use-browser-capabilities-db id="8">false</use-browser-capabilities-db>
+   </map:transformer>
+  </map:transformers>
+
+  <map:readers id="9" default="resource"/>
+
+  <map:serializers id="10" default="html"/>
+
+  <map:selectors id="11" default="browser"/>
+
+  <map:matchers id="12" default="wildcard">
+    <map:matcher id="13" name="wildcard" src="org.apache.cocoon.matching.WildcardURIMatcher"/>
+    <map:matcher id="14" name="regexp" src="org.apache.cocoon.matching.RegexpURIMatcher"/>
+  </map:matchers>
+
+  <map:actions id="15" >
+   <map:action id="16" name="request" src="org.apache.cocoon.acting.RequestParamAction"/>
+  </map:actions>
+
+ </map:components>
+
+ <!-- =========================== Pipelines ================================= -->
+ <map:pipelines id="17">
+   <!-- ===- A. Readers (public)           -->
+   <map:pipeline id="18">
+     <!-- Site-wide components -->
+      <map:match id="19" pattern="**img/**.gif">
+       <map:read id="20" src="img/{2}.gif" mime-type="image/gif"/>
+     </map:match>
+
+     <!-- Static files -->
+     <map:match id="21" pattern="staticFile/**.xml">
+       <map:generate id="22" src="staticContent/{1}.xml"/>
+       <map:serialize id="23"/>
+     </map:match>
+
+     <map:match id="25" pattern="staticFile/**.html">
+       <map:generate id="26" type="html" src="staticContent/{1}.html"/>
+       <map:serialize id="27"/>
+     </map:match>
+
+     <map:match id="28" pattern="staticFile/**.css">
+       <map:read id="29" src="staticContent/{1}.css" mime-type="text/css"/>
+     </map:match>
+
+     <map:match id="30" pattern="staticFile/**">
+       <map:read id="31" src="staticContent/{1}" mime-type="application/octet-stream"/>
+     </map:match>    
+   </map:pipeline>
+
+   <!-- ===- B. Site components (private)  -->
+   <map:pipeline id="32" internal-only="true">
+  <!-- Dynamic stylesheets -->
+      <map:match id="33" pattern="component/replacer/*/">
+       <map:generate id="34" type="serverpages" src="stylesheets/replacer.xsp">
+        <map:parameter id="35" name="toReplace" value="{1}"/>
+       </map:generate>
+       <map:serialize id="36" type="xml"/>
+      </map:match>
+
+<!-- Web Site Navigation -->
+     <map:match id="37" pattern="component/menu/*">
+       <map:generate id="38" src="datasources/menu.{1}.xml"/>
+       <map:transform id="39" src="stylesheets/menu.{1}.xsl"/>
+       <map:serialize id="40"/>
+     </map:match>
+
+<!-- Sitemap manipulation -->
+     <map:match id="41" pattern="component/sitemap/*/**">
+       <map:generate id="42" src="../{2}/sitemap.xmap"/>
+       <map:transform id="43" src="stylesheets/sitemap.{1}.xsl"/>
+       <map:serialize id="44"/>
+     </map:match>
+
+<!-- Pipeline manipulation -->
+     <map:match id="45" pattern="component/pipeline/*/*/**">
+       <map:generate id="46" src="../{3}/sitemap.xmap"/>
+       <map:transform id="47" src="stylesheets/fragmentExtractor.xsl">
+        <map:parameter id="48" name="elementId" value="{2}" />
+       </map:transform>
+       <map:transform id="49" src="stylesheets/pipeline.{1}.xsl"/>
+       <map:serialize id="50"/>
+     </map:match>
+
+<!-- Match manipulation -->
+     <map:match id="51" pattern="component/match/*/*/*/**">
+       <map:generate id="52" src="../{4}/sitemap.xmap"/>
+       <map:transform id="53" src="stylesheets/fragmentExtractor.xsl">
+        <map:parameter id="54" name="elementId" value="{2}" />
+       </map:transform>
+       <map:transform id="55" src="stylesheets/match.{1}.xsl"/>
+       <map:serialize id="56"/>
+     </map:match>
+
+<!-- Forms -->
+     <map:match id="57" pattern="component/form/*/*/">
+       <map:generate id="58" src="datasources/forms/{1}.xfdl"/>
+       <map:transform id="59" src="cocoon:/component/replacer/{2}/"/>
+       <map:transform id="60" src="stylesheets/xfdl-html.xsl"/>
+       <map:serialize id="61"/>        
+     </map:match> 
+
+    <!-- XML document editing -->
+     <map:match id="62" pattern="component/deleteElement/*/**">
+      <map:generate id="63" type="jsp" src="/sitebuilder/datasources/deleteElement.jsp" />
+      <map:transform id="64" src="stylesheets/operation-result.xsl" />
+      <map:serialize id="65" type="html"/>
+     </map:match>
+
+     <map:match id="66" pattern="component/addElement/**">
+      <map:generate id="67" type="jsp" src="/sitebuilder/datasources/addElement.jsp"/>
+      <map:transform id="68" src="stylesheets/operation-result.xsl"/>
+      <map:serialize id="69" type="html"/>
+     </map:match>
+   </map:pipeline>
+
+   <!-- ===- C. Site definition (public)   -->
+
+   <map:pipeline id="210">
+
+<!-- Root Page -->
+     <map:match id="70" pattern="">
+      <map:redirect-to id="72" uri="openSubSite/" />
+     </map:match>
+
+     <map:match id="71" pattern="openSubSite/**">
+       <map:aggregate id="73" element="page">
+         <map:part id="74" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="75" src="cocoon:/component/sitemap/openSubSite/" element="layout-content" />
+       </map:aggregate>
+       <map:transform id="76" src="stylesheets/layout.2.xsl"/> 
+       <map:serialize id="77"/>
+     </map:match>
+
+<!-- Site Overview -->
+     <map:match id="78" pattern="sitemap/view/">
+      <map:act type="request"> 
+       <map:parameter id="79" name="parameters" value="true"/>
+
+       <map:aggregate id="80" element="page">
+         <map:part id="81" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="82" src="cocoon:/component/sitemap/view/{siteName}/" element="layout-content"/>
+       </map:aggregate>
+       <map:transform id="83" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="84"/>
+      </map:act>
+     </map:match>
+
+<!-- Site Edit -->
+     <map:match id="85" pattern="sitemap/edit/">
+      <map:act type="request">
+       <map:parameter id="86" name="parameters" value="true"/>
+       <map:aggregate id="87" element="page">
+         <map:part id="88" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="89" src="cocoon:/component/sitemap/edit/{siteName}/" element="layout-content"/>
+       </map:aggregate>
+       <map:transform id="90" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="91"/>
+      </map:act>
+     </map:match>
+
+<!-- Site Add New Element Form -->
+     <map:match id="92" pattern="sitemap/new*/">
+      <map:act type="request">
+       <map:parameter id="93" name="parameters" value="true"/>
+       <map:aggregate id="94" element="page">
+         <map:part id="95" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="96" src="cocoon:/component/form/newSitemap{../1}/siteName={siteName}/" element="layout-content"/> 
+       </map:aggregate>
+       <map:transform id="97" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="98"/>
+      </map:act>
+     </map:match>
+
+<!-- Site Add New Element Processor -->
+     <map:match id="99" pattern="sitemap/new*/process">
+      <map:act type="request">
+       <map:parameter id="100" name="parameters" value="true"/>
+       <map:aggregate id="101" element="page">
+         <map:part id="102" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="103" src="cocoon:/component/addElement/{siteName}/sitemap.xmap" element="layout-content"/> 
+       </map:aggregate>
+       <map:transform id="104" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="105" />
+      </map:act>
+     </map:match>
+
+<!-- Site Add New Element Results -->
+     <map:match id="106" pattern="sitemap/new*/success">
+      <map:act type="request">
+       <map:parameter id="107" name="parameters" value="true"/>
+       <map:redirect-to id="108" uri="../../sitemap/edit/?siteName={siteName}"/>
+      </map:act>
+     </map:match>
+
+     <map:match id="109" pattern="sitemap/new*/failure">
+      <map:act type="request">
+       <map:parameter id="110" name="parameters" value="true"/>
+       <map:redirect-to id="111" uri="../../sitemap/edit/?siteName={siteName}"/>
+      </map:act>
+     </map:match>
+
+
+<!-- Site Delete Element Processor -->
+     <map:match id="112" pattern="sitemap/deleteElement/process">
+      <map:act type="request">
+       <map:parameter id="113" name="parameters" value="true"/>
+       <map:aggregate id="114" element="page">
+         <map:part id="115" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="116" src="cocoon:/component/deleteElement/{elementId}/{siteName}/sitemap.xmap" element="layout-content"/> 
+       </map:aggregate>
+       <map:transform id="117" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="118"/>
+      </map:act>
+     </map:match>
+
+<!-- Site Delete Element Results -->
+     <map:match id="119" pattern="sitemap/deleteElement/success">
+      <map:act type="request">
+       <map:parameter id="120" name="parameters" value="true"/>
+       <map:redirect-to id="121" uri="../../sitemap/edit/?siteName={siteName}"/>
+      </map:act>
+     </map:match>
+
+     <map:match id="122" pattern="sitemap/deleteElement/failure">
+      <map:act type="request">
+       <map:parameter id="123" name="parameters" value="true"/>
+       <map:redirect-to id="124" uri="../../sitemap/edit/?siteName={siteName}"/>
+      </map:act>
+     </map:match>
+
+
+<!-- Pipeline Edit -->
+     <map:match id="125" pattern="pipeline/edit/">
+      <map:act type="request">
+       <map:parameter id="126" name="parameters" value="true"/>
+       <map:aggregate id="127" element="page">
+         <map:part id="128" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="129" src="cocoon:/component/pipeline/edit/{pipelineId}/{siteName}/" element="layout-content"/>
+       </map:aggregate>
+       <map:transform id="130" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="131"/>
+      </map:act>
+     </map:match>
+
+<!-- Pipeline Add New Element Form -->
+     <map:match id="132" pattern="pipeline/new*/">
+      <map:act type="request">
+       <map:parameter id="133" name="parameters" value="true"/>
+       <map:aggregate id="134" element="page">
+         <map:part id="135" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="136" src="cocoon:/component/form/newPipeline{../1}/pipelineId={pipelineId}:siteName={siteName}/" element="layout-content"/>
+       </map:aggregate>
+       <map:transform id="137" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="138"/>
+      </map:act>
+     </map:match>
+
+<!-- Pipeline Add New Element Processor -->
+     <map:match id="139" pattern="pipeline/new*/process">
+      <map:act type="request">
+       <map:parameter id="140" name="parameters" value="true"/>
+       <map:aggregate id="141" element="page">
+         <map:part id="142" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="143" src="cocoon:/component/addElement/{siteName}/sitemap.xmap" element="layout-content"/> 
+       </map:aggregate>
+       <map:transform id="144" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="145"/>
+      </map:act>
+     </map:match>
+
+<!-- Pipeline Add New Element Results -->
+     <map:match id="146" pattern="pipeline/new*/success">
+      <map:act type="request">
+       <map:parameter id="147" name="parameters" value="true"/>
+       <map:redirect-to id="148" uri="../../pipeline/edit/?siteName={siteName}&amp;pipelineId={pipelineId}"/>
+      </map:act>
+     </map:match>
+
+     <map:match id="149" pattern="pipeline/new*/failure">
+      <map:act type="request">
+       <map:parameter id="150" name="parameters" value="true"/>
+       <map:redirect-to id="151" uri="../../pipeline/edit/?siteName={siteName}&amp;pipelineId={pipelineId}"/>
+      </map:act>
+     </map:match>
+
+<!-- Pipeline Delete Element Processor -->
+     <map:match id="152" pattern="pipeline/deleteElement/process">
+      <map:act type="request">
+       <map:parameter id="153" name="parameters" value="true"/>
+       <map:aggregate id="154" element="page">
+         <map:part id="155" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="156" src="cocoon:/component/deleteElement/{elementId}/{siteName}/sitemap.xmap" element="layout-content"/> 
+       </map:aggregate>
+       <map:transform id="157" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="158"/>
+      </map:act>
+     </map:match>
+
+<!-- Pipeline Delete Element Results -->
+     <map:match id="159" pattern="pipeline/deleteElement/success">
+      <map:act type="request">
+       <map:parameter id="160" name="parameters" value="true"/>
+       <map:redirect-to id="161" uri="../../pipeline/edit/?siteName={siteName}&amp;pipelineId={pipelineId}"/>
+      </map:act>
+     </map:match>
+
+     <map:match id="162" pattern="sitemap/deleteElement/failure">
+      <map:act type="request">
+       <map:parameter id="163" name="parameters" value="true"/>
+       <map:redirect-to id="164" uri="../../pipeline/edit/?siteName={siteName}&amp;pipelineId={pipelineId}"/>
+      </map:act>
+     </map:match>
+
+<!-- Match Edit -->
+     <map:match id="165" pattern="match/edit/">
+      <map:act type="request">
+       <map:parameter id="166" name="parameters" value="true"/>
+       <map:aggregate id="167" element="page">
+         <map:part id="168" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="169" src="cocoon:/component/match/edit/{matchId}/{pipelineId}/{siteName}/" element="layout-content"/>
+       </map:aggregate>
+       <map:transform id="170" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="171"/>
+      </map:act>
+     </map:match>
+
+<!-- Match Add New Element Form -->
+     <map:match id="172" pattern="match/new*/">
+      <map:act type="request">
+       <map:parameter id="173" name="parameters" value="true"/>
+       <map:aggregate id="174" element="page">
+         <map:part id="175" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="176" src="cocoon:/component/form/newMatch{../1}/aggregateId={aggregateId}:matchId={matchId}:pipelineId={pipelineId}:siteName={siteName}/" element="layout-content"/>
+       </map:aggregate>
+       <map:transform id="177" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="178"/>
+      </map:act>
+     </map:match>
+
+<!-- Match Add New Element Processor -->
+     <map:match id="179" pattern="match/new*/process">
+      <map:act type="request">
+       <map:parameter id="180" name="parameters" value="true"/>
+       <map:aggregate id="181" element="page">
+         <map:part id="182" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="183" src="cocoon:/component/addElement/{siteName}/sitemap.xmap" element="layout-content"/> 
+       </map:aggregate>
+       <map:transform id="184" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="185"/>
+      </map:act>
+     </map:match>
+
+<!-- Match Add New Element Results -->
+     <map:match id="186" pattern="match/new*/success">
+      <map:act type="request">
+       <map:parameter id="187" name="parameters" value="true"/>
+       <map:redirect-to id="188" uri="../../match/edit/?siteName={siteName}&amp;pipelineId={pipelineId}&amp;matchId={matchId}"/>
+      </map:act>
+     </map:match>
+
+     <map:match id="189" pattern="match/new*/failure">
+      <map:act type="request">
+       <map:parameter id="190" name="parameters" value="true"/>
+       <map:redirect-to id="191" uri="../../match/edit/?siteName={siteName}&amp;pipelineId={pipelineId}&amp;matchId={matchId}"/>
+      </map:act>
+     </map:match>
+
+<!-- Match Delete Element Processor -->
+     <map:match id="192" pattern="match/deleteElement/process">
+      <map:act type="request">
+       <map:parameter id="193" name="parameters" value="true"/>
+       <map:aggregate id="194" element="page">
+         <map:part id="195" src="cocoon:/component/menu/main" element="layout-leftbar"/>
+         <map:part id="196" src="cocoon:/component/deleteElement/{elementId}/{siteName}/sitemap.xmap" element="layout-content"/> 
+       </map:aggregate>
+       <map:transform id="197" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="198"/>
+      </map:act>
+     </map:match>
+
+<!-- Match Delete Element Results -->
+     <map:match id="199" pattern="match/deleteElement/success">
+      <map:act type="request">
+       <map:parameter id="200" name="parameters" value="true"/>
+       <map:redirect-to id="201" uri="../../match/edit/?siteName={siteName}&amp;pipelineId={pipelineId}&amp;matchId={matchId}"/>
+      </map:act>
+     </map:match>
+
+     <map:match id="202" pattern="sitemap/deleteElement/failure">
+      <map:act type="request">
+       <map:parameter id="203" name="parameters" value="true"/>
+       <map:redirect-to id="204" uri="../../match/edit/?siteName={siteName}&amp;pipelineId={pipelineId}&amp;matchId={matchId}"/>
+      </map:act>
+     </map:match>
+
+<!-- Static Pages -->
+     <map:match id="205" type="regexp" pattern="(.*)/staticPage/(.*)">
+       <map:aggregate id="206" element="page">
+         <map:part id="207" src="component/staticFile/{2}" element="layout-content"/>
+       </map:aggregate>
+       <map:transform id="208" src="stylesheets/layout.2.xsl"/>
+       <map:serialize id="209"/>
+     </map:match>
+   </map:pipeline>
+ </map:pipelines>
+ 
+</map:sitemap>

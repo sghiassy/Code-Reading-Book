@@ -1,0 +1,465 @@
+.\" $XFree86: xc/programs/Xserver/hw/xfree86/XF86_SVGA.man,v 3.42.2.5 1997/05/24 08:35:57 dawes Exp $ 
+.TH XF86_SVGA 1 "Version 3.3"  "XFree86"
+.SH NAME
+XF86_SVGA - SVGA X Window System servers for UNIX on 
+x86 platforms
+.SH SYNOPSIS
+.B XF86_SVGA
+[:displaynumber] [ option ] ...
+.SH DESCRIPTION
+.I XF86_SVGA
+is an 8-bit PseudoColor, 16-bit TrueColor and 24-bit TrueColor server for
+Super-VGA cards.  It is derived from
+the
+.I X386
+server provided with X11R5.
+Note: 16-bit and 24-bit TrueColor are currently only supported for some
+Cirrus, ARK, Chips & Technologies, and Trident chips, the ET6000 and some
+ET4000W32 chips.
+.SH CONFIGURATIONS
+.PP
+The
+.I XF86_SVGA
+server supports the following popular SuperVGA chipsets in 256 color mode.
+Virtual resolutions up to (approximately) 1152x900 are supported, using (up
+to) 1Mb of display memory. The Western Digital WD90C33, some of the Cirrus
+chipsets, ARK, the Oak OTI087, the Chips & Technologies 65550 or 65554 and
+the ET6000 support up to 2Mb of display memory and virtual resolutions of
+1280x1024 and higher. Some of the Cirrus and ARK chipsets also support
+16bpp, 24bpp and 32bpp (truecolor) modes on certain configurations. Some
+Trident chips are supported at 16bpp. Some Chips & Technologies chipset also
+support 16bpp and 24bpp (truecolor) modes. The ET6000 and some ET4000W32i or
+ET4000W32p chips supports all color depths. Generic VGA cards are also
+supported at 8bpp 320x200 only. The Matrox Millennium supports all color
+depths.
+.RS .5i
+.TP 4
+ATI:
+18800, 18800-1, 28800-2, 28800-4, 28800-5, 28800-6, 68800-3, 68800-6, 68800AX,
+68800LX, 88800GX-C, 88800GX_D, 88800GX-E, 88800GX-F, 88800CX, 264CT, 264ET,
+264VT, 264VT2, 264GT
+.TP 4
+Tseng:
+ET3000, ET4000, ET4000/W32, ET6000
+.TP 4
+Western Digital:
+PVGA1, WD90C00, WD90C10, WD90C11, WD90C24A, WD90C30, WD90C31, WD90C33
+.TP 4
+Genoa:
+GVGA
+.TP 4
+Trident:
+TVGA8800CS, TVGA8900B, TVGA8900C, TVGA8900CL, TVGA9000
+TVGA9000i, TVGA9100B, TVGA9200CXr, TGUI9320LCD, TGUI9400CXi, TGUI9420,
+TGUI9420DGi, TGUI9430DGi, TGUI9440AGi, TGUI9660XGi, TGUI9680
+.TP 4
+NCR:
+77C22, 77C22E
+.TP 4
+Cirrus Logic:
+CLGD5420, CLGD5422, CLGD5424, CLGD5426, CLGD5428, CLGD5429,
+CLGD5430, CLGD5434, CLGD5436, CLGD5440, CLGD5446, CLGD5462,
+CLGD5464, CLGD6205, CLGD6215, CLGD6225, CLGD6235,
+CL6410, CL6412, CL6420, CL6440
+.TP 4
+ARK:
+ARK1000PV, ARK1000VL, ARK2000PV, ARK2000MT
+.TP 4
+RealTek:
+RTG3106
+.TP 4
+Compaq:
+AVGA
+.TP 4
+Oak:
+OTI067, OTI077, OTI087
+.TP 4
+Avance Logic:
+AL2101, ALI2301, ALI2302, ALI2308, ALI2401
+.TP 4
+Chips & Technologies:
+.ig
+82C451, 82C452, 82C453, 82C455, 82C456, 82C457,
+..
+65520, 65530, 65540, 65545, 65546, 65548, 65550, 65554
+
+.TP 4
+SiS:
+SIS 86C201, 86C202, 86C205
+.TP 4
+MX:\ \ 
+MX68000, MX68010
+.TP 4
+Video7:
+HT216-32
+.TP 4
+Alliance:
+AP6422
+.TP 4
+Matrox:
+MGA2064W
+.TP 4
+NVidia:
+NV1, STG2000
+.RE
+.PP
+Accelerated support is included for most of the Cirrus chipsets, the Western
+Digital WD90C31 and WD90C33 chipsets, the Oak OTI087 chipset, Chips &
+Technologies, ARK Logic chipsets, the ET6000 and the ET4000/W32p.
+Accelerated 8bpp support for the ET4000/W32 (i and p) and ET6000 is
+implemented in a separate server (see
+\fIXF86_W32(1)\fP). Users of boards based on ATI's Mach8, Mach32 and Mach64
+chipsets should refer to the \fIXF86_Mach8(1)\fP, \fIXF86_Mach32(1)\fP and
+\fIXF86_Mach64(1)\fP manual pages, respectively.
+.SH OPTIONS
+In addition to the normal server options described in the \fIXserver(1)\fP
+manual page, \fIXF86_SVGA\fP accepts some more command line switches,
+as described in the 
+.I XFree86(1) 
+manpage.
+.SH SETUP
+.I XFree86
+uses a configuration file called \fBXF86Config\fP for its initial setup.  
+See the 
+.I XF86Config(4/5) 
+manpage for general details. Here only the
+.I XF86_SVGA
+specific parts are explained.
+.PP
+This server requires a \fBScreen\fP section in the XF86Config file with
+the \fBDriver\fP entry set to \fBsvga\fP.
+.PP
+Entries for the \fBDevice\fP section in the XF86Config file include:
+.br
+.ne 3i
+.TP 8
+.B chipset \fI"name"\fP
+specifies a chipset so the correct driver can be used.  Possible chipsets
+are:
+.sp
+.RS 1.5i
+.TP 4
+ATI:
+ati (See README.ati for other recognized names)
+.TP 4
+Tseng:
+et3000, et4000W32, et4000W32i, et4000W32i_rev_b, et4000W32i_rev_c,
+et4000W32p, et4000W32p_rev_a, et4000W32p_rev_b, et4000W32p_rev_c,
+et4000W32p_rev_d, et6000
+.TP 4
+Western Digital:
+pvga1, wd90c00, wd90c10, wd90c24, wd90c30, wd90c31, wd90c33
+.TP 4
+Genoa:
+gvga
+.TP 4
+Trident:
+tvga8800cs, tvga8900b, tvga8900c, tvga8900cl, tvga9000, tvga9000i,
+tvga9100b, tvga9200cxr, tgui9320lcd, tgui9400cxi, tgui9420,
+tgui9420dgi, tgui9430dgi, tgui9440agi, tgui9660xgi, tgui9680
+.TP 4
+NCR:
+ncr77c22, ncr77c22e
+.TP 4
+Cirrus Logic:
+clgd5420, clgd5422, clgd5424, clgd5426, clgd5428, clgd5429,
+clgd5430, clgd5434, clgd5436, clgd5446, clgd5462, clgd5464,
+clgd6205, clgd6215, clgd6225, clgd6235,
+cl6410, cl6412, cl6420, cl6440
+.TP 4
+RealTek:
+realtek
+.TP 4
+ARK:
+ark1000pv, ark1000vl, ark2000pv, ark2000mt
+.ig
+.TP 4
+Compaq:
+cpq_avga
+..
+.TP 4
+OAK:
+oti067, oti077, oti087
+.TP 4
+Avance Logic:
+al2101, ali2301, ali2302, ali2308, ali2401
+.TP 4
+Chips & Technologies:
+ct65520, ct65530, ct65540, ct65545, ct65546, ct65548, ct65550, ct65554
+.TP 4
+SiS:
+sis86c201, sis86c202, sis86c205
+.TP 4
+Alliance:
+AP6422
+.TP 4
+MX:\ \ 
+mx
+.TP 4
+Video7:
+video7
+.TP 4
+Matrox: (you should not need to specify this)
+mga2064w
+.TP 4
+NVidia:
+nv1, stg2000
+.TP 4
+Generic:
+generic
+.RE
+.TP 8
+.B Option \fI"optionstring"\fP
+allows the user to select certain options provided by the drivers.  Currently 
+the following strings are recognized:
+.sp
+\fBlegend\fP - for Sigma Legend ET4000-based boards.  This option enables
+a special clock-selection algorithm used on Legend boards, and MUST be
+specified for these boards to function correctly.
+.sp
+\fBswap_hibit\fP - for Western Digital/PVGA1 chipsets.  Some Western Digital
+based boards require the high-order clock-select lead to be inverted.  It
+is not possible for the server to determine this information at run-time.
+If the 9th clock in the list of clocks detected by the server is less than
+30Mhz, this option likely needs to be set.
+.sp
+\fBhibit_low\fP, \fBhibit_high\fP - for Tseng ET4000 chipsets.  With
+some ET4000 cards, the server has difficulty getting the state of the
+high-order clocks select bit right when started from a high-resolution text
+mode.  These options allow the correct initial state of that bit to be
+specified.  To find out what the correct initial state is, start the server
+from an 80x25 text mode.  This option is only needed if the clocks reported
+by the server when started from a high-resolution text mode differ from
+those reported when it is started from an 80x25 text mode.
+.sp
+\fB8clocks\fP - for the PVGA1 chipset the default is 4 clocks.  Some
+cards with this chipset may support 8 clocks.  Specifying this option
+will allow the driver to detect and use the extra clocks.
+.sp
+\fB16clocks\fP - for Trident TVGA8900B and 8900C chipsets.  Some newer boards
+using 8900B and 8900C chipsets actually support 16 clocks rather than the
+standard 8 clocks.  Such boards will have a "TCK9002" or "TCK9004" chip
+on them.  Specifying this option will allow the driver to detect and use
+the extra 8 clocks.
+.sp
+\fBprobe_clocks\fP - for Cirrus chipsets.  The Cirrus driver has a fixed
+set of clocks that are normally used.  Specifying this option will force
+the driver to probe for clocks instead of reporting the built-in defaults.
+This option is for debugging purposes only.
+.sp
+\fBhw_clocks\fP - for C&T chipsets. The Chips & Technologies driver
+will by default attempt to use programmable clocks for chips that support
+them. Specifying this option will force the server to use the limited number
+of fixed clocks supported by the hardware.
+.sp
+\fBclkdiv2\fP - for all chipsets using a set of discrete clocks (i.e. not
+using a programmable ClockChip or a ClockProg). With this option enabled,
+the SVGA driver can also use all the clocks mentioned in the clocks line
+divided by 2, presenting the server with twice as many clocks to choose
+from, especially in the low- and mid-range. This is useful for creating very
+low resolution modes like 320x200, because the lowest available clock on
+many cards (25.175 MHz) is too high to create a standard 320x200 mode. A few
+SVGA chips (S3, WD90cxx) don't support this option, causing a distorted
+screen.
+.sp
+\fBpower_saver\fP - This option enables the server
+to use the power saving features of VESA DPMS compatible monitors.
+Refer to the \fIXF86Config(4/5)\fP
+manual page for details of how to set the timeouts for the different levels
+of operation.
+.sp
+\fBnoaccel\fP - for Cirrus, WD, ARK, C&T, MGA and Tseng chipsets.  This option
+disables the accelerated features for the clgd542X, clgd543x, clgd5446,
+clgd546X, wd90c24, wd90c31 and wd90c33, C&T, ARK, MGA and Tseng chipsets.
+.sp
+\fBno_pixmap_cache\fP - for any chip that uses XAA for acceleration,
+which includes ARK, Cirrus, C&T, MGA, SiS, Trident 9440/9680, and Tseng
+chipsets. This disables the use of a pixmap cache by XAA.
+.sp
+\fBxaa_no_color_exp\fP - for any chip that uses XAA for acceleration.
+This option disables the use by XAA of hardware color expansion features. If
+you see text rendering problems, try this.
+.sp
+\fBxaa_benchmarks\fP - most useful for a chip that uses XAA for
+acceleration. This option makes the server perform and report the results
+of benchmarks performed at start-up of XAA acceleration primitives.
+.sp
+\fBfifo_conservative\fP - for Cirrus chipsets 542x/3x/46/6x, oti087, and
+ARK.
+This option
+sets the CRT
+FIFO threshold to a conservative value for higher dot clocks.  This
+slightly
+reduces performance, but may help in eliminating problems with ``streaks''
+on the screen caused by video memory bandwidth contention during BitBLT
+operations
+.sp
+\fBfifo_aggressive\fP - for Cirrus chipsets 542x/3x/46/6x, and oti087,
+and ARK.
+This option sets the CRT FIFO threshold to an aggressive value.
+.sp
+\fBslow_dram\fP - for Cirrus chipsets 542x/3x/46, and Trident.  This option
+sets the DRAM timings for slow DRAM chips.
+.sp
+\fBmed_dram\fP - for Cirrus chipsets 542x/3x/46 and Trident.  This option
+sets the DRAM timings for medium-speed DRAM chips.
+.sp
+\fBfast_dram\fP - for ET4000, ET6000 and Cirrus chipsets 542x/3x/46, and
+Trident. This option sets the DRAM timings for fast DRAM chips. Normally not
+recommended.
+.sp
+\fBno_2mb_banksel\fP - for Cirrus chipsets.  This option is required for
+Cirrus cards with 2MB of videoram which is in the form of 512kx8 DRAMs
+(4 chips) rather than 256kx4 DRAMs (16 chips).
+.sp
+\fBno_bitblt\fP - for Cirrus and C&T chipsets.  This option disables use of
+hardware BitBLT.
+.sp
+\fBno_imageblt\fP - for Cirrus and C&T chipsets.  This option disables use of
+CPU-assisted BitBLT functions.
+.sp
+\fBmmio\fP - for Cirrus and C&T chipsets.  This option enables memory-mapped
+I/O for BitBLT communication.
+.sp
+\fBlinear\fP - Attempt a linear mapping of the framebuffer into high
+memory. Currently only supported for some Cirrus and oti087 configurations,
+the ET6000, the ET4000W32p rev C and D and the ET4000W32i.
+Automatically selected (and hence the option is ignored) for the clgd5462
+and clgd5464, C&T, NVidia, and the ARK chipsets. This is also true for Tseng
+chips, except for 8bpp modes, where this flag allows linear mapping to be
+forced (it defaults to banked mode at 8bpp).
+.sp
+\fBnolinear\fP - Disable linear mapping. Useful for C&T, ARK and some
+Cirrus chipsets.
+.sp
+\fBmed_dram, favour_bitblt, clgd6225_lcd, no_stretch, no_mmio\fP
+- more Cirrus-specific options. Refer to
+/usr/X11R6/lib/X11/doc/README.cirrus for a detailed description of Cirrus
+options.
+.sp
+\fBext_fram_buf, use_modeline, fix_panel_size, no_stretch, lcd_center,
+suspend_hack, use_18bit_bus\fP - more Chips & Technologies specific
+options for use with LCD screens. Refer to <XRoot>/lib/X11/doc/README.chips
+for a detailed description of these options.
+.sp
+\fBhw_cursor\fP - for ARK or ET6000 chipsets.  This option enables the
+hardware cursor.
+.sp
+\fBsw_cursor\fP - for Cirrus and C&T chipsets.  This option disables the
+hardware cursor.
+.sp
+\fBsync_on_green\fP - for Chips & Technologies 65550's and 65554's
+and Matrox MGA2064W's.  This option enables the generation of a sync
+on green signal.
+.sp
+\fBpci_retry\fP - for all accelerated Tseng chipsets. This option enables a
+"bus-hold" feature on the Tseng chip that will increase accelerator
+performance, but at the cost of long system bus blocking periods. This may
+cause bus timeouts for some ISA DMA hardware (soundcards, floppy tape drives,
+etc). Despite the name, this is not limited to PCI bus cards only.
+.ig
+intern_disp (use internal display for laptops -- WD90C2x)
+extern_disp (use external display for laptops -- WD90C2x)
+..
+.TP 8
+.B speedup \fI"selection"\fP
+sets the selection of SpeedUps to use.  The optional selection string can
+take the following values:
+.sp
+.in 20
+.nf
+none
+all
+.fi
+.IP
+If the selection string is omitted, or if the \fBspeedup\fP option is omitted,
+the selection defaults to "all".
+Some of the SpeedUps can only be used with the ET4000, WD90C31 and WD90C33
+chipsets and
+others requires a virtual resolution with a xdim of 1024.  SpeedUps that
+won't work with a given configuration are automatically disabled.
+.TP 8
+.B nospeedup
+disables the SpeedUp code.  This is equivalent to \fBspeedup "none"\fP.
+.TP 8
+.B Ramdac \fI"ramdac-type"\fP
+This specifies the type of RAMDAC used on the board.  The ARK and
+ET4000W32i/p drivers use this. Refer to the chips-specific documentation for
+details.
+.TP 8
+.B TextClockFreq \fItxtclk\fP
+For some Chips & Technologies chipsets it is impossible to determine the
+clock used at the text console. The server therefore assumes that a 25.175MHz
+clock is being used. This can easily be wrong and corrupt the restored text
+console. This option allows the user to specify a clock that will be restored.
+.PP
+Note that \fIXFree86\fP has some internal capabilities to determine
+what hardware
+it is running on. Thus normally the keywords \fIchipset\fP, \fIclocks\fP,
+and \fIvideoram\fP don't have to be specified.  But there
+may be occasions when this autodetection mechanism fails, (for example, too
+high of load on the machine when you start the server).  For cases like this,
+one should first run \fIXF86_SVGA\fP on an unloaded machine, look at the
+results of the autodetection (that are printed out during server startup)
+and then explicitly specify these parameters in the configuration file.
+\fBIt is recommended that all parameters, especially Clock values,
+be specified in the XF86Config file.\fP
+.SH FILES
+.TP 30
+<XRoot>/bin/XF86_SVGA
+The SVGA color X server
+.TP 30
+/etc/XF86Config
+Server configuration file
+.TP 30
+<XRoot>/lib/X11/XF86Config
+Server configuration file
+.TP 30
+<XRoot>/lib/X11/doc/README.ark
+Extra documentation for the ARK driver
+.TP 30
+<XRoot>/lib/X11/doc/README.ati
+Extra documentation for the ATI vgawonder driver
+.TP 30
+<XRoot>/lib/X11/doc/README.chips
+Extra documentation for the Chips & Technologies driver
+.TP 30
+<XRoot>/lib/X11/doc/README.cirrus
+Extra documentation for the Cirrus driver
+.TP 30
+<XRoot>/lib/X11/doc/README.MGA
+Extra documentation for the Matrox MGA driver
+.TP 30
+<XRoot>/lib/X11/doc/README.trident
+Extra documentation for the Trident driver
+.TP 30
+<XRoot>/lib/X11/doc/README.tseng
+Extra documentation for the ET4000 and ET3000 drivers
+.TP 30
+<XRoot>/lib/X11/doc/README.Oak
+Extra documentation for the Oak driver
+.TP 30
+<XRoot>/lib/X11/doc/README.Video7
+Extra documentation for the Video7 driver
+.TP 30
+<XRoot>/lib/X11/doc/README.WstDig
+Extra documentation for the WD/PVGA driver
+.LP
+Note: <XRoot> refers to the root of the X11 install tree.
+.SH "SEE ALSO"
+X(1), Xserver(1), XFree86(1), XF86Config(4/5), xf86config(1), XF86Setup(1),
+xvidtune(1), xdm(1), xinit(1)
+.SH BUGS
+.PP
+Bug reports are welcome, and should be emailed
+to the address listed below.
+.SH CONTACT INFO
+\fIXFree86\fP source is available from the FTP server
+\fIftp.XFree86.org\fP.  Send email to
+\fIXFree86@XFree86.org\fP for details.
+.SH AUTHORS
+.PP
+Refer to the
+.I XFree86(1)
+manual page.
+.\" $XConsortium: XF86_SVGA.man /main/20 1996/12/09 17:33:14 kaleb $

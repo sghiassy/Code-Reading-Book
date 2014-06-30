@@ -1,0 +1,346 @@
+                  Apache Tomcat Version 4.0 Beta 4
+                  =================================
+                            Release Notes
+                            =============
+
+$Id: RELEASE-NOTES-4.0-B4.txt,v 1.6 2001/05/11 04:53:35 craigmcc Exp $
+
+
+============
+INTRODUCTION:
+============
+
+
+This document describes the changes that have been made in the current
+beta release of Apache Tomcat, relative to the previous release.
+
+Bug reports should be entered at the bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please report bugs and feature requests under product name "Tomcat 4".
+
+
+============
+NEW FEATURES:
+============
+
+
+---------------------
+Catalina New Features:
+---------------------
+
+DTD Changes:  Catalina now supports the most recent changes to the web
+application deployment descriptor approved by the JSR-053 expert group:
+* The <run-as> element now has <description> and <role-name> subelements.
+* The new <local-ejb-ref> element (and associated subelements) supports
+  the optional EJB feature of local EJBs.
+
+PersistentManager:  You can now configure the persistent session manager
+(along with an appropriate Store implementation) in the server.xml file.
+Added an example of this, commented out by default.
+
+Manager/Session:  Refactor to eliminate dependencies by StandardManager,
+ManagerBase, and StandardSession on each other.
+
+Realms:  Refactor MemoryRealm and JDBCRealm so that common code is in a
+shared base class.  Add JNDIRealm for accessing users and roles stored in
+a directory server.
+
+Stores:  Refactor code that is common to Store implementations (and Manager
+implementation) into a new StoreBase base class.  Complete implementation of
+FileStore and add JDBCStore to store session state information in a database
+accessed via JDBC.
+
+Proxy Support:  Improve support for running Tomcat 4.0 behind a proxy server
+(or an instance of Apache that forwards requests via the mod_proxy module)
+by allowing you to configure the server name and port that a Connector reports
+to something other than the server name and port that the connector itself is
+listening on.
+
+Servlet 2.3 Proposed Final Draft 2:  Implement the API and functionality
+changes of the Servlet Specification, Version 2.3, Proposed Final Draft 2:
+- Implement revised algorithm for looking up error pages.
+- Calling setAttribute("name", null) has the same effect as calling
+  removeAttribute("name") on ServletRequest, HttpSession, and ServletContext.
+- If a servlet calls request.getSession(true) with no current session, and
+  the response has already been committed, and we are using cookies for session
+  id tracking, throw IllegalStateException because there is no way the client
+  could ever find out about this session.
+
+DistributableManager: Work has begun on support for distributable applications
+in Tomcat 4.0.
+
+JNDI Naming Support:  You can now bind threads, as well as class loaders, to
+specific directory contexts.  This is required for automatic reloading on
+modified classes to work using the new JNDI access to static resources.
+
+HttpConnector:  It is now possible to disable lookups of the remote host name
+when the web app calls request.getRemoteHost().  Lookups are enabled by default
+but you might wish to disable them to improve performance, by setting the
+"disableLookups" attribute of the <Connector> element to "true".
+
+SSL Required Redirect:  If a request is being processed on a non-SSL
+connection, and is subject to a security constraint that includes a transport
+guarantee requiring SSL, the request will be automatically redirected to the
+port number configured by the "redirectPort" of the non-SSL <Connector>.  As
+long as an SSL connector is configured within the same <Service> element (and
+thus talks to the same set of web apps), sessions will be maintained across
+this redirect as well.
+
+
+-------------------
+Jasper New Features:
+-------------------
+
+JSP 1.2 Proposed Final Draft 2:  Implement the API and functionality changes
+of the JavaServer Pages Specification, Version 1.2, Proposed Final Draft 2:
+- The new URI for the "jsp" namespace is "http://java.sun.com/JSP/Page".
+- Changed <jsp:cdata> to <jsp:text>.
+- Added a mandatory "version" attribute to <jsp:root>.
+- Removed the DOCTYPE declaration from the generated XML view.
+- It is now legal to assign a String literal to a custom tag property
+  of type Object.
+- When an action has no body, the methods related to body manipulation
+  (setBodyContent(), doInitBody(), and doAfterBody()) are *not* invoked.
+  A body of whitespace is significant in JSP syntax, but not in XML syntax.
+
+
+--------------------
+Webapps New Features:
+--------------------
+
+SsiInvokerServlet:  Can now be configured for virtual paths to be relative
+to the server's document root (the default, for NCSA compatibility) or the
+current web application's context root (for convenience when using web apps).
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+
+------------------
+Catalina Bug Fixes:
+------------------
+
+Base64:  Update to the new version of the Xerces Base64 encoder/decoder.
+The old one had problems encoding binary content.
+
+Catalina:  Do not set an initial context factory.
+
+Naming:  Make the initial context factory available during the init() and
+destroy() methods of all servlets, including those marked load-on-startup.
+
+ApplicationContext:  Fix for Bugzilla #1219.  Previously, different web apps
+that used JAR files with the same name in their WEB-INF/lib directories could
+get access to classes from the wrong JAR file.
+
+StandardClassLoader:  Change the way that security manager permissions are
+defined (for each web app) to account for the changes in the previous fix for
+cross-webapp JAR files.  Fix a NullPointerException if a JAR file does not
+have a META-INF/MANIFEST.MF entry.
+
+ApplicationFilterChain:  If a filter or servlet throws a security exception
+(when run under a security manager), make the rethrown ServletException more
+useful by including the actual exception as a root cause.
+
+Bootstrap:  Set the Catalina class loader as the thread context class loader.
+
+catalina.policy:  Update the default security manager policies to reflect the
+fact that "${java.home}" on some JVMs actually points at "$JAVA_HOME/jre"
+instead of "$JAVA_HOME".  Allow the "jaxp.debug" property to be read.
+
+Changed the Java SecurityManager implementation to allow finer control
+when setting security policies for a web application.  See the updated
+catalina.policy file for example usage.
+
+HttpConnector:  Rearrange how shutdown occurs so that trying to reopen the
+server socket (inside the IOException catch in run()) does not throw
+NullPointerException.
+
+ContainerBase:  Fix a "container not started" exception at shutdown time,
+caused by an attempt to stop Contexts associated with a Host twice.
+
+JDBCRealm: Digest should be called on user credentials, not on what is
+picked up from the database.
+
+WebdavServlet:  Tighten security checks to prohibit MKCOL from modifying
+WEB-INF or META-INF if read/write mode is enabled (it is disabled by default).
+
+StandardContext:  Rearrange processing in reload() so that the directory
+context URLStreamHandler is recreated and bound before the Manager is
+reinitialized.  This makes it possible to reload session attributes whose
+classes are only found in the web app's class loader.
+
+Catalina:  Restore recognition of <Logger>, <Realm>, and <Valve> elements
+nested inside a <Context> element in "conf/server.xml".  They were only being
+recognized inside a <DefaultContext> element.
+
+HttpResponseBase:  If you call response.setLocale(new Locale("en", "US"))
+you will now get a Content-Language header with value "en-US" in accordance
+with the HTTP/1.1 specification, section 3.10.
+
+StandardWrapper:  Before calling destroy() on a servlet instance, allow all
+current request threads to complete.
+
+ApplicationContext:  Correct the paths returned by
+ServletContext.getResourcePaths("/"), which incorrectly returned paths with
+two leading "/" characters.
+
+ResourceSet:  Ensure that the Set returned by ServletContext.getResourcePaths()
+is really immutable.
+
+HttpRequestBase:  ServletRequest.getCharacterEncoding() must return null if
+no character encoding was included with the request.  If you call getReader()
+in this case, you will still get ISO-8859-1 as the spec requires.
+
+StandardContext:  If a <load-on-startup> servlet throws ServletException or
+UnavailableException from it's init() method, this should make *only* the
+servlet in question unavailable.  It was making the entire web app
+unavailable.
+
+ApplicationHttpRequest: Allow an "include"d servlet to set and remove request
+attributes, with those changes being visible to the calling servlet.
+
+HttpRequestBase:  HttpServletRequest.getCookies() is supposed to return null
+if no cookies were included on this request.  We were returning a zero length
+array.
+
+ApplicationDispatcher:  Correctly handle a <servlet> definition utilizing a
+<jsp-file> element when that servlet is the subject of a request dispatcher
+forward or include.
+
+StandardClassLoader: Correctly register repositories based on non-file
+protocols (which broke class reloading).
+
+ContainerBase, Standard{Engine,Host,Context}: Make it possible to dynamically
+select the Mapper implementation class used to map a request to a child
+container.  This makes it possible to experiment with new implementations
+without impacting overall stability.
+
+FastEngineMapper:  Initial implementation of an Engine->Host Mapper that runs
+much faster than the current StandardEngineMapper.  It is not yet the default,
+but will become the default after more testing.
+
+NonLoginAuthenticator:  If the only security constraint defined for a web app
+imposes only limits not related to authentication (such as only a <transport-
+guarantee>), install a special Authenticator that does not challenge the user
+for authentication.  In this way, the remaining constraints are still
+enforced, rather than being ignored.
+
+StandardWrapper:  The context class loader is set during calls to init() and
+destroy(), so that webapp-local classes can be referenced in these methods.
+
+ApplicationFilterChain:  Correct exception handling behavior when a Filter or
+Servlet throws a RuntimeException.  Previously, this exception was wrapped in
+a ServletException before being passed to an error page.  Now, the
+RuntimeException itself is passed.
+
+AuthenticatorBase:  Update access control logic to correctly process
+authentication constraints with a "*" <role-name> element, which means that
+all roles are allowed.
+
+
+----------------
+Jasper Bug Fixes:
+----------------
+
+TagBeginGenerator:  Fix problem processing custom tags where the "rtexprvalue"
+property was sometimes getting set to the wrong attribute.
+
+TagBeginGenerator:  Remove runtime error message if EVAL_BODY_INCLUDE is
+returned from a BodyTag, to reflect the fact that this is legal in JSP 1.2.
+
+XmlOutputter:  Make the XML output consistent with the DTD -- the spec was
+inconsistent.
+
+TagBeginGenerator:  Use QName instead of LocalName to match element values.
+
+PageContextImpl:  When a JSP page throws a RuntimeException, do not wrap it in
+a ServletException before throwing it to the container.
+
+
+-----------------
+Webapps Bug Fixes:
+-----------------
+
+WebdavServlet:  Fix thread safety problems with the WebDAV servlet.  The JAXP
+document builder is not thread-safe, but it was being reused.  Now, a new
+instance is created on each request.
+
+DefaultServlet:  Path "/." was not normalized properly (even though "/./" was).
+
+WebdavServlet:  Prevent /WEB-INF and /META-INF from being deleted, or the
+contents of these directories from being modified, if read/write
+access is enabled.  This is *not* enabled by default.
+
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+
+------------------------------------------
+Redeploying From a Web Application Archive:
+------------------------------------------
+
+If you attempt to undeploy, then redeploy, an application from the same
+web application archive file URL (where the URL refers to an actual WAR
+file, not to a directory), the redeploy will fail with error "zip file is
+closed".  There appears to be a problem in the JDK's JarURLConnection class
+where JAR files are cached, even after they are closed, so that a request
+for a connection to the same URL returns the previous JarFile object instead
+of a new one.  As a workaround, you should do one of the following:
+* Change the URL of the web application archive each time you redeploy.
+* Deploy from an unpacked directory (on the same server) instead of from
+  a WAR file (this is often more convenient in a development environment
+  anyway).
+
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
+JAXP/1.1 reference implementation) to web applications.  This is no longer
+the case, because Jasper loads its parser with a new class loader instead.
+Keep the following points in mind when considering how to use XML parsers
+in Tomcat 4.0 and your web applications:
+
+* If you wish to make the JAXP/1.1 RI XML parser available to all web
+  applications, simply move the "jaxp.jar" and "crimson.jar" files from
+  the "$TOMCAT_HOME/jasper" directory to the "$TOMCAT_HOME/lib" directory.
+
+* If you wish to make another XML parser that is JAXP/1.1-compatible
+  available to all web applications, install that parser into the
+  "$TOMCAT_HOME/lib" directory and remove "jaxp.jar" and "crimson.jar"
+  from the "$TOMCAT_HOME/jasper" directory.  It has been reported that
+  Xerces 1.3.1 can be used in this fashion, but 2.x alpha releases
+  can not be.
+
+* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
+  directory of your web application, this should now be possible, because
+  of the modified JAXP 1.1 parser mentioned below.
+
+WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
+(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.
+
+
+--------------------
+MOD_WEBAPP Connector:
+--------------------
+
+A new version of the Apache 1.3 side of the MOD_WEBAPP connector is included
+in this release, in the "connectors" directory.  It has not been tested
+heavily yet, so it should be considered experimental.
+
+
+

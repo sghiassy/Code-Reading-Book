@@ -1,0 +1,47 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/solx86/Imakefile,v 3.4 1996/12/23 06:51:16 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/5 1996/09/28 17:24:30 rws $
+
+#include <Server.tmpl>
+
+BIOS_MOD = solx86_mmap
+
+#if !HasGcc
+PROWORKS_INOUT_SRC = solx86_iout.s
+PROWORKS_INOUT_OBJ = solx86_iout.o
+#endif
+
+
+SRCS = solx86_init.c solx86_vid.c IO_utils.c sysv_io.c $(BIOS_MOD).c \
+	VTsw_usl.c sysv_kbd.c std_kbdEv.c sysv_tty.c std_mouse.c \
+	std_mseEv.c $(PROWORKS_INOUT_SRC)
+
+OBJS = solx86_init.o solx86_vid.o IO_utils.o sysv_io.o $(BIOS_MOD).o \
+	VTsw_usl.o sysv_kbd.o std_kbdEv.o sysv_tty.o std_mouse.o \
+	std_mseEv.o $(PROWORKS_INOUT_OBJ)
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+#if HasSolx86ApertureDriver
+DEFINES = -DHAS_APERTURE_DRV
+#endif
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+ObjectFromSpecialSource(IO_utils,../shared/IO_utils,/**/)
+ObjectFromSpecialSource(VTsw_usl,../shared/VTsw_usl,/**/)
+ObjectFromSpecialSource(sysv_kbd,../shared/sysv_kbd,/**/)
+ObjectFromSpecialSource(sysv_tty,../shared/sysv_tty,/**/)
+ObjectFromSpecialSource(std_mouse,../shared/std_mouse,/**/)
+ObjectFromSpecialSource(std_mseEv,../shared/std_mseEv,/**/)
+ObjectFromSpecialSource(std_kbdEv,../shared/std_kbdEv,/**/)
+ObjectFromSpecialSource(sysv_io,../sysv/sysv_io,/**/)
+
+DependTarget()

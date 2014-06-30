@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+<document> 
+  <header> 
+	 <title>Using and Implementing Matchers and Selectors</title>
+	 <version>0.1</version> 
+	 <type>Overview document</type> 
+	 <authors>
+           <person name="Christian Haul" email="haul@informatik.tu-darmstadt.de"/> 
+	 </authors> 
+  </header> 
+  <body>
+
+  <s1 title="Introduction">
+  <p>
+  Matchers and selectors are sitemap components. They are used to
+  determine the flow, the other components involved and their ordering
+  of the request processing. One particular matcher you're probably
+  familiar with, is the WildcardURIMatcher. That is the one that
+  determines the (sub-)pipeline in the welcome example. But there are
+  many more matchers supplied with Apache Cocoon, one matches the requested
+  URI on regular expressions, others match the client's hostname,
+  existence of parameters and so on.
+  </p>
+  <p>
+  There is also a number of selectors supplied with Cocoon. Selectors
+  test a generally simple boolean expression and allow to select on
+  roughly the same things as matchers would. There is a selector on
+  the client's hostname, on the client's browser etc.
+  </p>
+  <p>
+  To make things even more complicated, actions have very similar
+  properties. You can nest other sitemap elements in an action and
+  those are included in the processing only if the action completes
+  successfully.
+  </p>
+  </s1>
+<s1 title="So what are the differences?">
+<p>
+The basic structure of a selector is that of a case, switch or
+if-elseif-...-elseif-else statement in programming languages while
+matchers and actions compare more to a if statement. In addition
+selectors don't communicate the basis for their decision to the
+embedded elements, just select the next part(s) of the
+pipeline. Matchers and actions, however, add a new map to the
+environment that can be used for the further processing in the
+sub pipeline. 
+</p>
+<p>
+You've already come across this feature on the example sitemap: The
+value matched by the WildcardURIMatcher is used to determine the
+filename <code>docs/samples/xsp/{1}.xsp</code>. Here <code>{1}</code>
+represents the value that is stored in the environmental map with the
+key <code>1</code>. The name of the key is arbitrary and set by the
+matcher. If you had supplied a more complex pattern, there would be
+others. For example <code><![CDATA[<map:match pattern="*/*/*/*/report.html">]]></code>
+would result in keys <code>1</code>, <code>2</code>, <code>3</code>,
+and <code>4</code> being defined, corresponding to the <code>*</code>s
+in the pattern.
+</p>
+<p>
+BTW you cannot access those maps from your XSP. Use parameters to the
+generator to explicitly send them. On your XSP you can access them
+through an object called <code>parameters</code>. Example
+</p>
+
+<source><![CDATA[
+   <map:match pattern="*/*/*/*/report.html">
+      <map:generate type="serverpages" src="docs/getPostcodeData.xsp">
+         <parameter name="postcode" value="{1}{2} {3}{4}"/>
+      </map:generate>
+      <map:transform src="stylesheets/html/report.xsl"/>
+      <map:serialize/>
+   </map:match>
+]]>
+</source>
+
+<p>On your XSP do</p>
+<source>
+<![CDATA[
+   <xsp:expr>parameters.getParameter("postcode")</xsp:expr>
+]]>
+</source>
+<p>
+Generally, one could say that selectors are better suited if the
+decisions has few easily distinguishable cases, the map feature is not
+needed and the decision occurs later in the pipeline. Their
+implementation should be lightweight and so is their integration in
+the compiled sitemap.
+</p>
+<p>
+Matchers are often the very first element in a pipeline. They direct
+the processing based on more complex decision process. They are
+general purpose but more costly than selectors.
+</p>
+<p>
+Actions should be used to <em>"do"</em> something, not to chose
+between different sub pipelines. That should be done only, if an error
+occurred and you cannot continue the regular pipeline. Of course this
+is a fuzzy criterion and using an action to chose between exactly two
+sub pipelines is a very common task i.e. for authentication. Also,
+often actions have no nested elements and the further processing is
+not affected by the result of the action.  </p>
+</s1>
+<s1 title="Using Matchers">
+<p>
+Like every other sitemap component, matchers need to be declared in
+the sitemap:
+</p>
+<source>
+<![CDATA[
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+  <map:components>
+   ...
+
+  <map:matchers default="wildcard">
+     <map:matcher name="wildcard"
+                  src="org.apache.cocoon.matching.WildcardURIMatcherFactory"/>
+     ...
+     <map:matcher name="next-page"
+        src="org.apache.cocoon.matching.WildcardParameterValueMatcherFactory">
+        <map:parameter name="parameter-name" value="next-state"/>
+     </map:matcher>
+  </map:matchers>
+
+  ...
+  </map:components>
+
+  <map:resources/>
+  <map:pipelines/>
+</map:sitemap>
+]]>
+</source>
+<p>Matchers are given a short name (e.g, "wildcard") and of course the
+name of the JAVA class that implements the matcher or a matcher
+factory. In addition, parameters can be defined as well.
+</p>
+<p>
+One matcher may be defined as default matcher, so whenever a matcher
+appears in the sitemap without explicit type specification it will be
+assumed that it is of the default type.
+</p>
+<p>
+In a pipeline use the matcher like this
+</p>
+<source>
+<![CDATA[
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+  <map:components/>
+  <map:resources/>
+  <map:pipelines>
+     <map:pipeline>
+
+   	<map:match pattern="*">
+   	   <map:generate type="serverpages" src="test/{1}.xsp"/>
+   	   <map:transform src="stylesheets/dynamic-page2html.xsl"/>
+   	   <map:serialize/>
+   	</map:match>
+
+     </map:pipeline>
+  </map:pipelines>
+</map:sitemap>
+]]>
+</source>
+<p>
+Matchers can be nested:
+</p>
+<source>
+<![CDATA[
+         <map:match type="sessionstate" pattern="edit*">
+            <!-- here you could insert parameters for the above matcher -->
+	    <map:parameter name="attribute-name" value="__sessionstate"/>
+	    <map:match type="next-page" pattern="ok*">
+	           <!-- do something here, eg. database updates -->
+                   <map:call resource="simple-page1"/>
+	    </map:match>
+	    <map:match type="next-page" pattern="delete*">
+	           <!-- do something different here, eg. database deletions -->
+                   <map:call resource="simple-page1"/>
+	    </map:match>
+	  </map:match>
+]]>
+</source>
+</s1>
+<s1 title="Using Selectors">
+<p>
+As said above, selectors are very similar to matchers. Again, you need
+to declare selectors in the sitemap.xmap
+</p>
+<source>
+<![CDATA[
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+  <map:components>
+   ...
+  <map:selectors default="browser">
+   <map:selector name="browser"
+                 src="org.apache.cocoon.selection.BrowserSelectorFactory">
+    <browser name="explorer" useragent="MSIE"/>
+    <browser name="lynx" useragent="Lynx"/>
+    <browser name="netscape" useragent="Mozilla"/>
+   </map:selector>
+   <map:selector name="coded"
+                 src="org.apache.cocoon.selection.CodedSelectorFactory"/>
+   <map:selector name="parameter"
+                 src="org.apache.cocoon.selection.ParameterSelectorFactory"/>
+  </map:selectors>
+
+  ...
+  </map:components>
+
+  <map:resources/>
+  <map:pipelines/>
+</map:sitemap>
+]]>
+</source>
+<p>
+Their use is a bit different to matchers, though:
+</p>
+<source>
+<![CDATA[
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+  <map:components/>
+  <map:resources/>
+  <map:pipelines>
+     <map:pipeline>
+
+   	<map:match pattern="*">
+   	   <map:generate type="serverpages" src="test/{1}.xsp"/>
+
+	   <map:select type="browser">
+	      <!-- you could insert parameters here as well -->
+	      <map:when test="explorer">
+   	         <map:transform src="stylesheets/w3c-2-msie.xsl"/>
+	      </map:when>
+	      <map:when test="lynx">
+   	         <map:transform src="stylesheets/dynamic-page2html-text.xsl"/>
+		 <map:serialize/>
+	      </map:when>
+	      <map:when test="netscape">
+   	         <map:transform src="stylesheets/ns4.xsl"/>
+	      </map:when>
+	      <map:otherwise>
+   	         <map:transform src="stylesheets/w3c.xsl"/>
+	      </map:otherwise>
+	   </map:select>
+
+   	   <map:transform src="stylesheets/dynamic-page2html.xsl"/>
+   	   <map:serialize/>
+   	</map:match>
+
+     </map:pipeline>
+  </map:pipelines>
+</map:sitemap>
+]]>
+</source>
+<p>
+Obviously, this could have been done with matchers as well. Decide on
+yourself, what appears clearer to you in a specific situation.
+</p>
+</s1>
+<s1 title="Write Your Own Matchers and Selectors">
+<s2 title="Matchers">
+<p>
+Since the basic structure and the assumptions are very similar, we
+look first at matchers and matcher factories and point out the
+differences to selectors at the end.
+</p>
+<p>
+Matchers need to implement the org.apache.cocoon.matching.Matcher
+interface. See javadocs for more details, see also example matchers
+included in the distribution.
+</p>
+<p>
+If you would like to do global configuration for your matcher, it has
+to implement the
+<code>org.apache.avalon.framework.configuration.Configurable</code>
+interface.
+</p>
+<s3 title="MatcherFactories">
+<p>
+Matcher factories generate two distinct parts of source code: a
+processed pattern stored in a global variable in the sitemap and a
+method used to do the actual matching. Since the global variable can
+be of an arbitrary type and it is an argument for the matcher method,
+it is, too, configurable.
+</p>
+<p>
+For each uniquely named matcher the function
+<code>generateParameterSource</code> and
+<code>generateMethodSource</code> are called exactly once, while
+<code>generateClassSource</code> is called for every use of the
+generated matcher in sitemap pipelines.
+</p>
+<p>
+Note that you may use the same matcher factory (or the same matcher or
+whatever) and declare it with different names. Although they will be
+instances of the very same class they would be different instances and
+thus another matcher method would be generated, e.g. using different
+configuration parameters.
+</p>
+<p>
+The generated matcher method looks like
+</p>
+<source>
+<![CDATA[
+  private Map wildcardMatch (int [] pattern, Map objectModel,
+                             Parameters parameters) {
+
+    // this has been generated by generateMethodSource ->			     
+    HashMap map = new HashMap();
+    String uri = XSPRequestHelper.getSitemapURI(objectModel);
+    if (uri.startsWith("/"))
+      uri = uri.substring(1);
+    if (org.apache.cocoon.matching.helpers.WildcardURIMatcher.match (
+          map, uri, pattern)) {
+      return map;
+    } else {
+      return null;
+    }
+    // <- this has been generated by generateMethodSource
+  }
+]]>
+</source>
+<p>
+The method takes three arguments: the first is the aforementioned by
+<code>generateClassSource</code> processed pattern, the current environment
+(<code>objectModel</code>), and the parameters given for the corresponding match
+element. In the example above for nested matchers, this would be the
+<code><![CDATA[<map:parameter name="attribute-name" value="__sessionstate"/>]]></code>. The 
+<code>int []</code> part of the method signature was generated by
+<code>generateParameterSource</code>.
+</p>
+<p>
+To configure the generated matcher, global configuration parameters
+can be used to create different sources. To read global configuration
+parameters, dom2 is used, you cannot use the usual avalon classes for
+this.
+</p>
+<p>
+Local configuration parameters are avalon parameters and thus can be
+easily read and used with the generated matcher method.
+</p>
+<p>
+If the matcher returns not null, the match was successful and the
+nested sub pipeline is executed. Components in sub pipeline can access
+the matching result through the returned map.
+</p>
+<p>
+The easiest way to write your own matcher would be to base it upon
+org.apache.cocoon.matching.WildcardURIMatcherFactory and override the
+generateMethodSource method with your own.
+</p>
+<p>
+Personally, I like factories more because they are easily written and
+global configuration options can be incorporated in the generated
+source thus the generated source is less complex than a similar
+versatile matcher would be.
+</p>
+</s3>
+</s2>
+<s2 title="Selectors">
+<p>
+Selectors and selector factories differ from their matcher counter
+parts only in the fact that selectors return boolean values rather
+than maps. Thus when a selector returns <code>true</code> the nested
+elements will be included in the processing, otherwise they are not
+included. Since no map is returned, no additional information may be
+passed to those elements.
+</p>
+<p>
+For selectors, the last argument reads <code>param</code> instead of
+<code>parameters</code>.  </p></s2></s1></body>
+</document>

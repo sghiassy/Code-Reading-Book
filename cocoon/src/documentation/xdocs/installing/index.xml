@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+  <header>
+    <title>Installing Apache Cocoon</title>
+    <authors>
+      <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
+      <person name="Giacomo Pati" email="Giacomo.Pati@pwr.ch"/>
+      <person name="Tom Klaasen" email="tom.klaasen@the-ecorp.com"/>
+      <person name="Chris Stevenson" email="zhcchz@mail.on.net"/>
+      <person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+      <person name="Vadim Gritsenko" email="vgritsenko@apache.org"/>
+      <person name="Bernhard Huber" email="berni_huber@a1.net"/>
+    </authors>
+  </header>
+
+  <body>
+
+    <s1 title="System Requirements">
+      <p>
+       Apache Cocoon requires the following systems to be already installed in your system:
+      </p>
+    
+      <p><strong>Java Virtual Machine</strong>
+       A Java 1.2 or later compatible virtual machine must be present for both
+       command line and servlet type usage of Apache Cocoon. Note that all servlet engines
+       require a JVM to run so if you are already using servlets you already have
+       one installed.
+      </p>
+    
+      <p><strong>Servlet Engine</strong>
+       A Servlet 2.2 compliant servlet engine must be present in order to support
+       servlet operation and dynamic request handling. Note that this requirement
+       is optional for command line operation.
+      </p>
+    
+      <p>If you don't have a servlet engine installed, well, stop right here and
+      go to the Apache Tomcat project
+      <link href="http://jakarta.apache.org/tomcat/">http://jakarta.apache.org/tomcat/</link>
+      then come back when you are done.</p>
+    </s1>
+
+    <s1 title="Getting Apache Cocoon">
+      <p>
+       You have three choices for getting Cocoon: you can either download
+       a stable relese, or you can download development snapshot, or you can 
+       get the latest development version directly from the cvs repository.
+      </p>      
+      <s2 title="Download a distribution">
+       <p>
+        You can simply download the latest official release from the
+        <link href="http://xml.apache.org/cocoon/dist/">Cocoon distribution</link>
+        directory.
+       </p>
+      </s2>
+      <s2 title="Download a development snapshot">
+       <p>
+        You also can download one of the development snapshots from the
+        <link href="http://xml.apache.org/from-cvs/xml-cocoon2/">CVS snapshots</link>
+        directory.
+       </p>
+      </s2>
+      <s2 title="Step-by-step cvs instructions for Windows">
+        <p>See the Cocoon document
+         <link href="../contrib.html">Contrib</link>
+         for starting tips.
+        </p>
+        <ol>
+          <li>Download
+            <link href="http://telia.dl.sourceforge.net/cvsgui/WinCvs120.zip">WinCVS
+              (v1.2)</link> (homepage is <link href="http://www.wincvs.org/">http://www.wincvs.org/</link>);
+          </li>
+          <li>Install it;</li>
+          <li>Start it;</li>
+          <li>Click on admin-&gt;preferences;</li>
+          <li> In "Enter the CVSROOT:" enter
+            ":pserver:anoncvs@cvs.apache.org:/home/cvspublic" (without quotes);</li>
+          <li>In "Authentication:" choose ""passwd" file on the cvs server";</li>
+          <li>Click "Ok";</li>
+          <li>Click admin-&gt;login;</li>
+          <li> When asked for the password: answer "anoncvs" (without quotes);</li>
+          <li> Click "create-&gt;checkout module";</li>
+          <li>Module name and path on the server is "xml-cocoon2" (no quotes);</li>
+          <li>Choose a dir to put the source code in;</li>
+          <li>Go to the "Checkout-options" tab and select "By revision/tag/branch"
+              and enter "HEAD";</li>
+          <li>Click "Ok";</li>
+          <li>If everything goes well, messages will start to appear in the log
+            window;</li>
+          <li>Wait until you see "*****CVS exited normally with code 0*****" in the
+            log window;</li>
+          <li>The Cocoon source is now on your harddrive.</li>
+        </ol>
+      </s2>
+      <s2 title="Step-by-step cvs instructions for Unix">
+        <ol>
+          <li>Start the shell of your choice.</li>
+          <li>Enter "cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic login".</li>
+          <li>When asked for the password: answer "anoncvs".</li>
+          <li>Enter "cvs -d :pserver:anoncvs@cvs.apache.org:/home/cvspublic -z3 checkout
+            -r HEAD xml-cocoon2". This will create a directory called "xml-cocoon2" where the 
+            Cocoon2 source will be stored.</li>
+          <li>Wait until cvs has finished.</li>
+          <li>The Cocoon source is now on your harddrive.</li>
+        </ol>
+        <p>In case you want to update your Cocoon source tree to the
+          current version, change to the "xml-cocoon2" directory and
+          call "cvs -z3 update -d -P".</p>
+      </s2>
+    </s1>
+
+ <s1 title="Building Cocoon">
+
+    <s2 title="Set JAVA_HOME environment variable">
+
+      <p>Set the JAVA_HOME environment variable to point to the root directory of
+      the Java Development Kit installed on your machine. To do this simply type:</p>
+
+      <source>
+[unix]  JAVA_HOME=/path/to/java/
+[win32] SET JAVA_HOME=c:\path\to\java
+      </source>
+
+      <p>Your mileage may vary, but you know how to setup environments, right?</p>
+
+    </s2>
+
+<!--
+    <s2 title="Making the sql examples work out of the box">
+     <p>
+      The sample web application delivered with Cocoon contains some
+      examples which require a sql database. To make them work out of
+      the box, the hsqldb is included. However, this database needs
+      the installation path to work correctly. Using Tomcat (see notes
+      below) you could use the following instruction to directly
+      build a web application which is alreary configured for the sql
+      examples. The build script will copy it directly to your webapps
+      directory.
+     </p>
+      <source>
+[unix]
+./build.sh  -Dinclude.webapp.libs=yes -Dinstall.war={path-to-webapps-dir} install
+[win32]
+.\build.bat -Dinclude.webapp.libs=yes -Dinstall.war={path-to-webapps-dir} install
+      </source>
+      <p>
+       Please note that this might not work with all servlet engines
+       and that you must follow the steps below, too.
+      </p>
+    </s2>
+-->
+
+    <s2 title="Adding additional components">
+     <p>
+      Some of the components delivered with Cocoon required additional libraries,
+      e.g. the Php generator or the FOP serializer (for more information about
+      these components, refer to their documentation).
+     </p>
+     <p>
+      Most of these libraries are already included in the distribution, but some
+      have to be downloaded manually. The build task checks whether you have
+      the required libraries or not and includes the optional components only
+      if you have the libraries available when you build Cocoon.
+     </p>
+     <p>
+      A library/package is available to the build process when it is located
+      in the <code>./lib</code> directory.
+     </p>
+     <p>
+      The following table contains a list of the optional components,
+      their needed libraries and if they are already included or not.
+     </p>
+  <table>
+   <tr>
+     <th>Component</th>
+     <th>Required Library</th>
+     <th>Library Included</th>
+   </tr>
+   <tr>
+     <td>HTML Generator</td>
+     <td><link href="http://sourceforge.net/projects/jtidy">JTidy</link></td>
+     <td>Yes</td>
+   </tr>
+   <tr>
+     <td>Php Generator</td>
+     <td><link href="http://www.php.net">Php Servlet</link></td>
+     <td>No</td>
+   </tr>
+   <tr>
+     <td>XT Transformer</td>
+     <td><link href="http://www.jclark.com/xml/xt.html">XT Processor</link></td>
+     <td>Yes</td>
+   </tr>
+   <tr>
+     <td>LDAP Transformer</td>
+     <td><link href="http://java.sun.com/products/jndi">JNDI</link></td>
+     <td>No</td>
+   </tr>
+   <tr>
+     <td>PDF Serializer</td>
+     <td><link href="http://xml.apache.org/fop/index.html">FOP</link></td>
+     <td>Yes</td>
+   </tr>
+  </table>
+     <p><strong>Note:</strong> If you added a library/package, you
+      need to rebuild Cocoon as described in 'Create the Cocoon WAR package'.
+     </p>
+    </s2>
+
+    <s2 title="Create the Cocoon WAR package">
+
+      <p>To do this you simply have to type:</p>
+
+      <source>
+[unix]  ./build.sh  -Dinclude.webapp.libs=yes webapp
+[win32] .\build.bat -Dinclude.webapp.libs=yes webapp
+      </source>
+
+      <p>this will create the "cocoon.war" file in the
+      './build/cocoon' directory.</p>
+
+    </s2>
+ </s1>
+
+ <s1 title="Installing Cocoon">
+
+    <p>In most servlet engines, this is just a matter of copying
+    the war file in a specific directory and the engine will take
+    care of installing it when restarted.</p>
+
+    <s2 title="Installing on Tomcat 3.X">
+      <note>Cocoon requires Tomcat version 3.2 or greater. It wouldn't work 
+        with Tomcat 3.1.X</note>
+
+      <p>Tomcat currently uses a different version of the XML parser
+      than Cocoon. To get Cocoon to work, you need to perform the
+      following steps:</p>
+
+      <ol>
+
+        <li>
+          <strong>Stop Tomcat</strong>
+          Go to the tomcat/bin directory, and run the shutdown script.
+        </li>
+
+        <li>
+          <strong>Delete tomcat/lib/jaxp.jar</strong>
+          Tomcat's jaxp.jar is 'sealed', and since xerces contains its
+          own implementation of the JAXP standard extension, Java
+          will fail to load xerces and report a 'Package Sealing Violation'
+          if both are in the classpath.
+        </li>
+
+        <li>
+          <strong>Rename tomcat/lib/parser.jar to tomcat/lib/zparser.jar</strong>
+          Tomcat's parser.jar contains older versions of some the same
+          XML APIS that Xerces uses, and these will prevent Xerces from
+          functioning properly if they appear before Xerces in the classpath.
+          Since Tomcat's startup scripts automatically load all the jar files
+          in tomcat/lib in name order, changing the name of the file causes it
+          to be loaded last in the classpath.
+        </li>
+
+        <li>
+          <strong>Copy the cocoon/lib/xerces-XXX.jar and cocoon/lib/xml-apis.jar files to tomcat/lib</strong>
+          Cocoon will now be able to see and use the correct XML libraries.
+        </li>
+
+        <li>
+          <strong>Copy cocoon/build/cocoon/cocoon.war into tomcat/webapps</strong>
+        </li>
+
+        <li>
+          <strong>Start Tomcat</strong>
+          Go to the tomcat/bin directory, and run the startup script.
+        </li>
+
+        <li>
+          <strong>Start using Cocoon</strong>
+          Access the URI
+          <link href="http://localhost:8080/cocoon/">http://localhost:8080/cocoon/</link>
+          with your favorite browser and start to enjoy the world of Cocoon.
+          Note that the first time you access Cocoon, it will take a few
+          seconds to start, since Cocoon needs to compile parts of itself.
+        </li>
+
+      </ol>
+    </s2>
+
+    <s2 title="Installing on Tomcat 4.X">
+		<p>Tomcat 4 is a really straight-forward installation.</p>
+		<ol>
+        <li>
+          <strong>Build the Cocoon webapp</strong>
+          Build the webapp as described above.
+        </li>
+
+        <li>
+          <strong>Copy cocoon/build/cocoon/cocoon.war into tomcat/webapps</strong>
+        </li>
+
+        <li>
+          <strong>Start Tomcat</strong>
+          Go to the tomcat/bin directory, and run the startup script.
+        </li>
+
+        <li>
+          <strong>Start using Cocoon</strong>
+          Access the URI
+          <link href="http://localhost:8080/cocoon/">http://localhost:8080/cocoon/</link>
+          with your favorite browser and start to enjoy the world of Cocoon.
+          Note that the first time you access Cocoon, it will take a few
+          seconds to start, since Cocoon needs to compile parts of itself.
+        </li>
+
+      </ol>
+      <s3 title="Linux/Headless/Batik">
+        <p>If you are using unix with the sun jdk, it's awt implementation requires you to use X
+        even if you aren't actually displaying anything.  One simple solution is to use a different 
+        implementation of the awt.</p> 
+
+        <ol>
+        <li>From www.eteks.com you can get an awt replacement that doesn't need X: 
+        <link href="http://www.eteks.com/pja/en/">http://www.eteks.com/pja/en</link>.</li>
+        
+        <li>Unpack the jars into a place where your jdk will be able to use them--
+        $JAVAHOME/jre/classes works for j2sdk1.3</li>
+
+        <li>Then add the following to your Tomcat startup script
+         (using CATALINA_OPTS if it is 4.x, TOMCAT_OPTS if it is 3.x)
+        </li>
+        </ol>
+
+        <source>
+export CATALINA_OPTS='-Dawt.toolkit=com.eteks.awt.PJAToolkit \
+  -Djava.awt.graphicsenv=com.eteks.java2d.PJAGraphicsEnvironment \
+  -Djava.awt.fonts=/usr/local/jdk/jre/lib/fonts/'
+        </source>
+        <p><strong>(Re)start Tomcat and enjoy!</strong></p>
+      </s3>
+    </s2>
+
+    <s2 title="Installing on BEA Weblogic 6.0">
+
+      <p>This installs Cocoon using the cocoon.war file.  
+         This was successfully installed under Windows 2000.
+         Unix users will need to adjust appropriately. If you haven't done so already, 
+         build a domain and a server. In this discussion, the name of the domain 
+         is 'mydomain' and the name of the server is 'myserver'. 
+         These are the BEA default names.
+      </p>
+
+      <ol>
+        <li>Copy <code>cocoon.war</code> into <code>c:\bea\wlserver6.0sp1\config\mydomain\applications</code></li>
+        <li>Create a new directory named <code>ext</code> under <code>c:\bea\jdk130\jre\lib</code></li>
+        <li>Copy the <code>xerces-XXX.jar</code> JAR file from <code>xml-cocoon2/lib</code> to 
+            <code>c:\bea\jdk130\jre\lib</code> directory
+        </li>
+        <li>
+            Run weblogic using <code>startWebLogic.cmd</code> file in <code>c:\bea\wlserver6.0sp1\config\mydomain</code> directory
+        </li>
+        <li>
+            Using a browser, link to your web site's cocoon page:
+            <br/>
+	            http://&lt;your machine name&gt;:&lt;port number&gt;/cocoon/
+            <br/>
+            (Don't forget the final / in the link.)
+        </li>
+
+        <li>
+            Congratulations! (hopefully) you should see the Cocoon welcome page.
+        </li>
+      </ol>
+      <note>If you have problems with starting up Cocoon, you can modify the CLASSPATH in the .cmd files and
+            ensure that xerces-XXX.jar is picked up before any other jars.
+            <br/>
+            <code>set CLASSPATH=.;c:\bea\jdk130\jre\lib\xerces-XXX.jar;.\lib\weblogic_sp.jar;.\lib\weblogic.jar</code>
+            <br/>
+      </note>
+    </s2>
+    
+    <s2 title="Installing on BEA WLS6.1sp1, WLS6.1sp2">
+    
+      <p>This section describes installing Cocoon in a "directory configuration".
+        This was successfully installed under Windows 2000.
+        Unix users will need to adjust appropriately. If you haven't done so already, 
+        build a domain and a server. In this discussion, the name of the domain 
+        is 'mydomain' and the name of the server is 'myserver'. 
+        These are the BEA default names; you may want to download
+        <link href="www.weblogic.com">WLS6.1</link>.
+      </p>
+      <ol>
+        <li>Compile and build Cocoon. Launch <code>build compile</code>,
+          <code>build -Dinclude.webapp.libs webapp webapp-local</code>.
+        </li>
+        <li>You should have a webapplication directory in 
+          <code>{cocoon-dir}/build/cocoon/webapp</code>.
+        </li>
+        <li>Modify <code>{cocoon-dir}/build/cocoon/webapp/cocoon.xconf</code>.
+          Replace xslt-processor definition using TRAX XSLT transformer factory by
+          xslt-processor definition using Xalan transformer factory explicitly.
+          Your xslt-processor definition should look like the code snippet below.
+        </li>
+        <li>
+          Configure your WebLogic server, launch your WebLogic console.
+          Use <code>Configure a new Web Application...</code>, 
+          and enter in field "Path URI" full path name of Cocoon 
+          webapplication directory,
+          like <code>d:\xml-cocoon2\build\cocoon\webapp</code>, 
+          enter in field "Name" the servlet name 
+          eg. <code>cocoon</code>. 
+          Check the "Deployed" checkbox, and click "Apply". 
+          At last be sure that you assign the servlet to a target server.
+        </li>
+        <li>
+          You might try to avoid the configuration step by copying 
+          the whole Cocoon webapp directory into the <code>applications</code>
+          directory of your WLS6.1 server. In this case you might have
+          to restart your WLS6.1 server in order to activate Cococoon servlet in WLS 6.1.
+        </li>
+        <li>
+            Using a browser, you might want to check WLS6.1 configuration
+            link to your WLS6.1 console
+            http://&lt;your machine name&gt;:&lt;port number&gt;/console.
+        </li>
+        <li>
+            Using a browser, link to your web site's cocoon page:
+	    http://&lt;your machine name&gt;:&lt;port number&gt;/cocoon/
+            (Don't forget the final / in the link.)
+        </li>
+        <li>
+          Congratulations! (hopefully) you should see the Cocoon welcome page.
+        </li>
+      </ol>
+      <p>
+        Snippet of modified <code>cocoon.xconf</code>. The effect of this 
+        change is that Cocoon will not try to use a TRAX XSLT transformer factory.
+        Using the TRAX XSLT transformer factory under WLS6.1sp1 lead to empty
+        <code>sitemap_xmap.java</code> files, indicating that the XSLT processor 
+        used did not work properly. WLS6.1 has a built-in TRAX XSLT which seems
+        not to work properly for Cocoon.
+      </p>
+      <p>
+        The code snippet below configures the xslt processor to use the XALAN transformer
+        factory explictly.
+        Forcing Cocoon using Xalan XSLT lead to correct <code>sitemap_xmap.java</code> 
+        files.
+      </p>
+      <source><![CDATA[
+<xslt-processor class="org.apache.cocoon.components.xslt.XSLTProcessorImpl" 
+  logger="root.xslt">
+  <parameter name="use-store" value="true"/>
+  <parameter name="transformer-factory" 
+    value="org.apache.xalan.processor.TransformerFactoryImpl"/>
+</xslt-processor>]]></source>
+      <note>
+        The above description does not change any WLS6.1 startup script. Moreover
+        other applications will still use the WLS6.1 shipped XSLT processor.
+        All changes described above are locally to the Cocoon webapplication.
+      </note>
+    </s2>
+
+    <s2 title="Installing on ServletExec 3.1 (In Process with IIS)">
+
+      <p>This installs Cocoon in a "war" configuration.  This was successfully
+         installed under Windows NT 4.0 and IIS 4.  I don't believe that SE is
+         available for unix.</p>
+
+      <note>Please note that <em>JDK 1.3</em> is required.</note>
+
+      <ol>
+        <li>Install IIS as usual</li>
+        <li>Install ServletExec (default paths will be used throughout), but
+            don't start it.</li>
+        <li>Build Cocoon's war file (include lib's)</li>
+        <li>Copy <em>cocoon.war</em> into 
+            <em>C:\Program Files\New Atlanta\ServletExec ISAPI\webapps\default</em>,
+            creating the directory default if required.</li>
+        <li>Start IIS.</li>
+        <li>Open the Cocoon welcome page (http://localhost/cocoon/)</li>
+        <li>
+            Congratulations! (hopefully) you should see the Cocoon welcome page.
+        </li>
+      </ol>
+    </s2>
+    <s2 title="Installing on JBoss 2.2.2 with Tomcat 3.2.2">
+     <p>This section describes the deployment of the Cocoon sample WAR with
+     the JBoss 2.2.2/Tomcat-3.2.2 package. It assumes that you built Cocoon as described above. All steps have been tested with a fresh JBoss 2.2.2 installation on Linux and Windows ME(sic).</p>
+   <note>The JBoss/Tomcat bundle is available from the <link href="http://sourceforge.net/projects/jboss/">JBoss project page</link></note>
+     <p>The JBoss/Tomcat package has the following directory
+     structure</p>
+     <source>
+[path]/JBoss-2.2.2_Tomcat-3.2.2/jboss
+[path]/JBoss-2.2.2_Tomcat-3.2.2/tomcat
+     </source>
+     <p>Subsequently, </p>
+         <ul><li><code>jboss</code> denotes the <code>JBoss-2.2.2_Tomcat-3.2.2/jboss</code> directory</li>
+	 <li><code>Tomcat</code> is short for <code>JBoss-2.2.2_Tomcat-3.2.2/tomcat</code></li><li>and <code>cocoon</code> is the base directory of your Cocoon distribution or CVS checkout.</li></ul>
+     <p>In order to get Cocoon running you have to install Xerces as default XML parser for JBoss.</p>
+     <ul>
+       <li>Stop the server if it is running.</li>
+       <li>Remove the following files from the <code>jboss/lib</code> directory
+         <ul>
+	   <li>crimson.jar</li>
+	   <li>jaxp.jar</li>
+	   <li>xml.jar</li>
+	 </ul>
+       </li>
+       <li>Remove the following files from the <code>tomcat/lib</code> 
+           directory
+         <ul>
+	   <li>jaxp.jar</li>
+	   <li>parser.jar</li>
+	 </ul>
+       </li>
+       <li>Copy <code>xerces-XXX.jar</code> from <code>cocoon/lib</code> to <code>jboss/lib</code></li>
+       <li>Change <code>jboss/bin/run.sh</code></li>
+     </ul>
+     <source>
+[...]
+# Add the XML parser jars and set the JAXP factory names
+# Crimson parser JAXP setup(default)
+<strong># Change it to Xerces for C2</strong>
+JBOSS_CLASSPATH=$JBOSS_CLASSPATH:<strong>../lib/xerces-XXX.jar</strong>
+<strong># Remove the following two lines</strong>
+<sub>JAXP=-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.crimson.jaxp.DocumentBuilderFactoryImpl
+JAXP="$JAXP -Djavax.xml.parsers.SAXParserFactory=org.apache.crimson.jaxp.SAXParserFactoryImpl"</sub>
+[...]
+     </source>
+     <note>Windows users have to change <code>run.bat</code> accordingly.
+     </note>
+     <ul>
+       <li>Start JBoss with <code>run_with_tomcat.sh</code> or <code>run_with_tomcat.bat</code></li>
+       <li>Copy <code>cocoon/build/cocoon/cocoon.war</code> to <code>jboss/deploy</code></li>
+       <li>Check the server log to make sure that <code>J2EE application: [...]/cocoon.war is deployed.</code></li>
+       <li>Open the Cocoon welcome page (http://localhost:8080/cocoon/)</li>
+       <li>
+           Congratulations! (hopefully) you should see the Cocoon welcome page.
+       </li>
+     </ul>
+     <note>As both JBoss and Cocoon ship with a Hypersonic database installed, these two conflict and you won't be able to use Cocoon database (SQL) samples. Then again, you probably use JBoss for EJB persistence anyway, so this shouldn't bother you too much ;-)
+     </note>
+    </s2>
+    <s2 title="Installing on Resin 2.0.x">
+     <p>
+        This section describes the deployment of the Cocoon sample WAR with Resin 2.0.x. 
+        It assumes that you built Cocoon as described above. All steps have been tested 
+        with a fresh Resin 2.0.0, 2.0.1 and 2.0.4 installations (the package is available from 
+        <link href="http://www.caucho.com/download/">Resin's download page</link>)
+     </p>
+     <p>After unpacking the Resin package you get the following directory structure</p>
+     <source>
+[path]...
+[path]/resin-2.0.x/lib
+[path]/resin-2.0.x/webapps
+[path]...</source>
+     <p>To get Cocoon running do the following:</p>
+     <ul>
+       <li>Stop the server if it is running.</li>
+       <li>If yours Resin is older then 2.0.4, you have to install Xerces as default XML parser for Resin
+         (Skip this step if you are using Resin 2.0.4 or newer)
+         <ul><li>Remove the following files from the <code>resin-2.0.x/lib</code> directory:
+           <ul>
+             <li>jaxp.jar</li>
+             <li>dom.jar</li>
+             <li>sax.jar</li>
+           </ul>
+           </li>
+           <li>Copy the <code>xerces-XXX.jar</code> JAR file from <code>xml-cocoon2/lib</code> to 
+             <code>resin-2.0.x/lib</code> directory</li>
+         </ul>
+       </li>
+       <li>Copy the <code>xml-cocoon2/build/cocoon/cocoon.war</code> WAR file to <code>resin-2.0.x/webapps</code> directory
+       </li>
+       <li>Start Resin as usual</li>
+       <li>Open the Cocoon welcome page (http://localhost:8080/cocoon/)</li>
+       <li>Congratulations! (hopefully) you should see the Cocoon welcome page.</li>
+     </ul>
+     <note> If you want to place Cocoon webapp in a
+       directory different than <code>resin-2.0.x/webapps</code>, you need
+       to edit <code>resin-2.0.x/conf/resin.conf</code> file and add a line
+       somewhere in <code><![CDATA[<host>]]></code> tag:
+       <code><![CDATA[<web-app id='/cocoon' app-dir='/path/to/webapp/cocoon.war'/>]]></code>
+       </note>
+     </s2>
+     <s2 title="Installing on HP-AS 8.X">
+       <p>HP-AS is J2EE application server available from the Hewlett-Packard website.
+         <link href="http://www.hpmiddleware.com/download">Download and install HP-AS 8.X</link>
+       </p>
+       <note>Cocoon cannot be deployed as a .war file in HP-AS. 
+         Use the following steps to deploy cocoon.war:
+       </note>
+       <ol>
+         <li>Extract the <code>cocoon.war</code> file to some directory, using <code>WinZIP</code> 
+           or a similar utility to extract the files.</li>
+         <li>To run HP-AS, go to<strong><code>( Start | Programs | HP Middleware | HP Application Server | System Console).</code></strong>
+           <br/>
+           The HP-AS Console appears with a Log browser. 
+           As the HP-AS kernel starts and initializes, messages will appear in the 
+           status bar of the console. 
+           Wait for the message 'Kernel started' to appear in the Log browser. 
+           The following message should display:<br/><br/>
+           <code>[10/16/01 16:03:50][localhost_][S]:Kernel "kernel" started.</code><br/><br/>
+         </li>
+         <li>To verify that an instance of HP-AS is running, 
+           open a web browser and go to <code>:http://localhost:9090/helloservlet/hello.</code>
+           <br/>
+           An HTML page should appear containing the following message:
+           <br/><br/>
+           <code>Congratulations!</code><br/>
+           <code>Congratulations from the HelloWorldServlet</code><br/>
+           <code>It appears you have the server running</code><br/>
+           <code>My servlet path is /hello</code><br/><br/>
+           <strong><code>This test is valid only if you've performed a full install of HP-AS</code></strong>
+           <br/><br/>
+         </li>
+         <li>In the HP-AS console, select <strong>View | Deployment Window</strong>. 
+           In the <strong>Available Files</strong> pane on the right, 
+           browse to the the directory you extracted the <code>cocoon.war</code> file to.
+           <br/>
+           Expand this directory, and then drag and drop the 
+           <code>cocoon</code> sub-directory node to the <strong>kernel.j2ee-partition</strong> icon 
+           in the left pane.
+         </li>
+         <li>When prompted, answer <strong>Yes</strong> to the deployment question.<br/>
+           This should create an appropriate entry in the HP-AS j2ee partition configuration file.<br/>
+           <strong><code>In the current version of the console, 
+           there is no indication that the operation succeeded. 
+           If you see a parser error in the Log browser, ignore it.</code></strong>
+         </li>
+         <li>To test the deployment, open a web browser and go to the following URL:<br/><br/>
+           <code> http://localhost:9090/cocoon/welcome</code>
+           <br/><br/>
+           Congratulations! (hopefully) you should see the Cocoon welcome page.
+           (this request may take some time).
+           <br/>
+         </li>
+       </ol>
+     </s2>
+ </s1>
+
+</body>
+</document>

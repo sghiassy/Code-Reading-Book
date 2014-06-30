@@ -1,0 +1,96 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Synchronizing effectcode to music or events</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Synchronizing effectcode to music or events</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Synchronizing effectcode to music or events.</h4>
+DemoGL's soundsystem has the ability to generate events when settable synchronizer objects are triggered.
+These synchronizer objects can be created inside the soundsystem and work with DGL_SS_MODELEMENT sound elements.
+The soundsystem will send normal windows messages to the application's messagepump when synchronizer objects
+are triggered. All messages received by the application's messagepump can also be received by effectobjects.
+All they have to do is enable their messagehandler method, using: 
+<a HREF="ref_functions_DEMOGL_MessageHandlerEnable.htm">DEMOGL_MessageHandlerEnable</a> (disabled by default). 
+When an effect has enabled its messagehandler method, all windows messages will be passed to that effect's
+messagehandler method, CEffect's <b>MessageHandler</b>. 
+<p>
+To create a synchronizer object inside the soundsystem, use 
+<a HREF="ref_functions_DEMOGL_SoundSystemSyncCreate.htm">DEMOGL_SoundSystemSyncCreate</a>, specifying a certain
+ChannelCodeID to use as the source for the synchronizer object. The channel specified must play DGL_SS_MODELEMENT
+type data, otherwise the synchronizer object will not work (i.e. will never get triggered). An example of
+creating a synchronizer object:
+<pre>
+iSyncID=DEMOGL_SoundSystemSyncCreate(iModuleChannelID, 
+	BASS_SYNC_MUSICINST,MAKELONG(7,-1),1);
+</pre>
+This will create a synchronizer object for the channel with ChannelCodeID stored in iModuleChannelID, the type
+is an instrument trigger, for instrument no. 7 and all notes. The flag specified is '1', which is sent with the
+message that is send when the synchronizer object gets triggered, which is in this case, when instrument 7 is played
+on channel iModuleChannelID.
+<p>
+When a synchronizer object gets triggered, it will send a normal windows message. Besides the triggerdata, also the
+flag specified when the synchronizer object was created is send with the message. This flag is now usable to 
+select which synchronizer object was triggered and send this message. Below is an example how this synchronizer
+just created above can be used to perform certain actions. Note: a message send due to a synchronizer is send to the
+application message pump, and all messages received by the application message pump are passed through to <i>all</i> 
+<b>enabled</b> MessageHandler methods of <i>all</i> effectobjects. This way it's easy to synchronize multiple effects
+on just one synchronizer object.
+<pre>
+// Purpose: the messagehandler of this effect. if we enable it we'll receive 
+// every message posted to the window of the current app. This is handy if we 
+// want to receive keyboard or mouse messages or f.e. soundsystem synchronizer
+// messages
+void
+CMyCoolEffect::MessageHandler(HWND hWnd, UINT uMsg, WPARAM  wParam, LPARAM  lParam)
+{
+	switch(uMsg)
+	{
+		// ... other message handler case clauses
+		
+		case WM_DEMOGL_SOUNDSYSTEMSYNC:
+		{
+			switch(wParam)
+			{
+				// here 3 synchronizers are created, they are used to
+				// modify rotation angles of a rotating object. 
+				case 1:
+				{
+					m_fAlpha+=1.0f;
+				}; break;
+				case 2:
+				{
+					m_fBeta+=4.0f;
+				}; break;
+				case 3:
+				{
+					m_fGamma+=3.0f;
+				}; break;
+			}
+		}; break;
+	}
+}
+</pre>
+The example above is very basic but you can do anything based on a received synchronizer message.
+To remove a synchronizer, simply delete it using
+<a HREF="ref_functions_DEMOGL_SoundSystemSyncDelete.htm">DEMOGL_SoundSystemSyncDelete</a>. It will then
+not be available, and no messages will be received from this synchronizer object.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

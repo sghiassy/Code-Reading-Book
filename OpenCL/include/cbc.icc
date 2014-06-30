@@ -1,0 +1,108 @@
+/*************************************************
+* CBC Mode Source File                           *
+* (C) 1999-2001 The OpenCL Project               *
+*************************************************/
+
+#include <opencl/cbc.h>
+
+namespace OpenCL {
+
+/*************************************************
+* CBC Encryption Constructor                     *
+*************************************************/
+template<typename B, typename P>
+CBC_Encryption<B,P>::CBC_Encryption(const BlockCipherKey& key,
+                                    const BlockCipherModeIV& iv) :
+   CipherMode<B>(name(), key, iv)
+   {
+   if(!P::valid_blocksize(BLOCKSIZE))
+      throw Invalid_BlockSize(name(), P::name());
+   }
+
+/*************************************************
+* Encrypt in CBC mode                            *
+*************************************************/
+template<typename B, typename P>
+void CBC_Encryption<B,P>::write(const byte input[], u32bit length)
+   {
+   while(length)
+      {
+      u32bit xored = std::min(BLOCKSIZE - position, length);
+      xor_buf(state + position, input, xored);
+      input += xored;
+      length -= xored;
+      position += xored;
+      if(position == BLOCKSIZE)
+         {
+         cipher.encrypt(state);
+         send(state, BLOCKSIZE);
+         position = 0;
+         }
+      }
+   }
+
+/*************************************************
+* Finish encrypting in CBC mode                  *
+*************************************************/
+template<typename B, typename P>
+void CBC_Encryption<B,P>::final()
+   {
+   SecureBuffer<byte, BLOCKSIZE> padding;
+   P::pad(padding, BLOCKSIZE, position);
+   write(padding, P::pad_bytes(BLOCKSIZE, position));
+   if(position != 0)
+      throw Exception(name() + ": Did not pad to full blocksize");
+   }
+
+/*************************************************
+* CBC Decryption Constructor                     *
+*************************************************/
+template<typename B, typename P>
+CBC_Decryption<B,P>::CBC_Decryption(const BlockCipherKey& key,
+                                    const BlockCipherModeIV& iv) :
+   CipherMode<B>(name(), key, iv)
+   {
+   if(!P::valid_blocksize(BLOCKSIZE))
+      throw Invalid_BlockSize(name(), P::name());
+   }
+
+/*************************************************
+* Decrypt in CBC mode                            *
+*************************************************/
+template<typename B, typename P>
+void CBC_Decryption<B,P>::write(const byte input[], u32bit length)
+   {
+   while(length)
+      {
+      if(position == BLOCKSIZE)
+         {
+         cipher.decrypt(buffer, temp);
+         xor_buf(temp, state, BLOCKSIZE);
+         send(temp, BLOCKSIZE);
+         state = buffer;
+         position = 0;
+         }
+      u32bit added = std::min(BLOCKSIZE - position, length);
+      buffer.copy(position, input, added);
+      input += added;
+      length -= added;
+      position += added;
+      }
+   }
+
+/*************************************************
+* Finish decrypting in CBC mode                  *
+*************************************************/
+template<typename B, typename P>
+void CBC_Decryption<B,P>::final()
+   {
+   if(position != BLOCKSIZE)
+      throw Decoding_Error(name());
+   cipher.decrypt(buffer, temp);
+   xor_buf(temp, state, BLOCKSIZE);
+   send(temp, P::unpad(temp, BLOCKSIZE));
+   state = buffer;
+   position = 0;
+   }
+
+}

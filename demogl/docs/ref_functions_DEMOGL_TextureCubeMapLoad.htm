@@ -1,0 +1,333 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_TextureCubeMapLoad</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_TextureCubeMapLoad</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_TextureCubeMapLoad</h4>
+<dd>DEMOGL_TextureCubeMapLoad creates a new cubemap texture in the texture store of DemoGL. The data for the six sides of the
+cubemap is loaded from files with filenames constructed using the name pointed by <i>pszFilename</i>. 
+	<p>
+	<pre>
+<b>GLuint</b>
+DEMOGL_TextureLoad(
+	<b>const char</b> *<i>pszFilename</i>,
+	<b>const int</b> <i>iFileType</i>,
+	<b>const GLint</b> <i>iMinFilter</i>,
+	<b>const GLint</b> <i>iMagFilter</i>,
+	<b>const bool</b> <i>bMipMaps</i>,	
+	<b>const bool</b> <i>bCreateAlphaFromColor</i>,	
+	<b>const int</b> <i>iBorder</i>,
+	<b>const GLint</b> <i>iTexUploadHint</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>pszFilename</i>
+	<dd>Pointer to a zero-terminated string which contains the common part of the filename, inclusive relative path, that 
+	    contains the texturedata. DemoGL will use the name pointed by <i>pszFilename</i> to construct the correct filenames
+	    for all the six textures needed to build the cubemap. The extension of the files will be determined from <i>iFileType</i>.
+	    DemoGL will add the following strings to the name pointed by <i>pszFilename</i>. As an example in the table below, 
+	    <i>pszFilename</i> points to the string "mycubemap_" and the textures are of the type DGL_FTYPE_JPGFILE. The table then
+	    shows the resulting filenames, thus you should name your texturefiles accordingly, if you want them to end up in the
+	    cubemap.
+	    <p>
+   		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Cube side</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>String added.</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Positive X</td>
+			<td WIDTH="70%">
+				posx
+				<P>
+				This will result in:<BR>
+				mycubemap_posx.jpg
+			</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Negative X</td>
+			<td WIDTH="70%">
+				negx
+				<P>
+				This will result in:<BR>
+				mycubemap_negx.jpg
+			</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Positive Y</td>
+			<td WIDTH="70%">
+				posy
+				<P>
+				This will result in:<BR>
+				mycubemap_posy.jpg
+			</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Negative Y</td>
+			<td WIDTH="70%">
+				negy
+				<P>
+				This will result in:<BR>
+				mycubemap_negy.jpg
+			</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Positive Z</td>
+			<td WIDTH="70%">
+				posz
+				<P>
+				This will result in:<BR>
+				mycubemap_posz.jpg
+			</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Negative Z</td>
+			<td WIDTH="70%">
+				negz
+				<P>
+				This will result in:<BR>
+				mycubemap_negz.jpg
+			</TD>
+		</TR>
+		</Table>
+
+	<dt><i>iFileType</i>
+	<dd>Specifies the filetype used in the files to load using <i>pszFilename</i>. <i>iFileType</i> can be
+		one of the following values:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>FileType</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_FTYPE_JPGFILE</td>
+			<td WIDTH="70%" VALIGN="TOP">Imagedata stored using the JPEG format.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_FTYPE_TGAFILE</td>
+			<td WIDTH="70%" VALIGN="TOP">Imagedata stored using the TGA format.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_FTYPE_BMPFILE</td>
+			<td WIDTH="70%" VALIGN="TOP">Imagedata stored using the BMP format.</td>
+		</tr>
+		</table>
+		<p>
+		The value of iFileType generates the extension of the files loaded by <b>DEMOGL_TextureCubeMapLoad</b>.
+	<dt><i>iMinFilter</i>
+	<dd>Sets the texture minifying function. Can be one of the following values:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr vAlign="top">
+		<th BGCOLOR="#e8e8e8" align="left" width="48%">Value</th>
+		<th BGCOLOR="#e8e8e8" align="left" width="52%">Meaning</th></tr>
+		<tr vAlign="top">
+			<td width="48%">GL_NEAREST </td>
+			<td width="52%">Returns the value of the texture element that is nearest (in 
+				Manhattan distance) to the center of the pixel being textured. 
+			</td>
+		</tr>
+		<tr vAlign="top">
+			<td width="48%">GL_LINEAR</td>
+			<td width="52%">
+				Returns the weighted average of the four texture elements that 
+				are closest to the center of the pixel being textured. These can include border 
+				texture elements, depending on the values of <i>iWrapS</i>, <i>iWrapT</i>,
+				and on the exact mapping. GL_NEAREST is generally faster than 
+				GL_LINEAR, but it can produce textured images with sharper edges because the 
+				transition between texture elements is not as smooth. 
+			</td>
+		</tr>
+		<tr vAlign="top">
+			<td width="48%">GL_NEAREST_MIPMAP_NEAREST</td>
+			<td width="52%">Chooses the mipmap that most closely matches the size of the 
+				pixel being textured and uses the GL_NEAREST criterion (the texture element 
+				nearest to the center of the pixel) to produce a texture value. 
+			</td>
+		</tr>
+		<tr vAlign="top">
+			<td width="48%">GL_LINEAR_MIPMAP_NEAREST</td>
+			<td width="52%">Chooses the mipmap that most closely matches the size of the 
+				pixel being textured and uses the GL_LINEAR criterion (a weighted average of the 
+				four texture elements that are closest to the center of the pixel) to produce a 
+				texture value. 
+			</td>
+		</tr>
+		<tr vAlign="top">
+			<td width="48%">GL_NEAREST_MIPMAP_LINEAR</td>
+			<td width="52%">Chooses the two mipmaps that most closely match the size of the 
+				pixel being textured and uses the GL_NEAREST criterion (the texture element 
+				nearest to the center of the pixel) to produce a texture value from each mipmap. 
+				The final texture value is a weighted average of those two values. 
+			</td>
+		</tr>
+		<tr vAlign="top">
+			<td width="48%">GL_LINEAR_MIPMAP_LINEAR</td>
+			<td width="52%">Chooses the two mipmaps that most closely match the size of the 
+				pixel being textured and uses the GL_LINEAR criterion (a weighted average of the 
+				four texture elements that are closest to the center of the pixel) to produce a 
+				texture value from each mipmap. The final texture value is a weighted average of 
+				those two values.
+			</td>
+		</tr>
+		</table>
+		<p>
+	<dt><i>iMagFilter</i>
+	<dd>Sets the texture magnification function. The texture magnification function is used when the pixel being textured maps to 
+		an area less than or equal to one texture element. It sets the texture 	magnification function to either GL_NEAREST or GL_LINEAR.
+	<dt><i>bMipMaps</i>
+	<dd>Specifies if DemoGL should create mipmaps from the supplied texture data (true) or not (false). If The ICD supports
+	    the extension GL_SGIS_generate_mipmap, the mipmaps are generated using the videocard, otherwise the mipmaps are
+	    generated using the gluBuild*DMipmaps() routine.
+	<dt><i>bCreateAlphaFromColor</i>
+	<dd>Specifies if DemoGL should fill in the Alpha byte in the RGBA value for each pixel using a luminance formula (true) or that it should
+		fill in 0xFF as alpha value, if the texture loaded doesn't contain an alpha channel (false). The luminance formula used is:
+		Alpha = (0.35 * Red) + (0.45 * Green) + (0.20 * Blue). 
+	<dt><i>iBorder</i>
+	<dd>Specifies the width of the textureborder in OpenGL for this texture, normally 0 or 1.
+	<dt><i>iTexUploadHint</i>
+	<dd>Specifies the upload hint which should be used when DemoGL uploads the texture data to OpenGL.
+		This hint is ment for the situation when the user has selected 16bit textures ONLY. In this
+		situation normally DemoGL selects GL_RGBA4 as texturehint for the upload process to OpenGL, so you'll get better
+		alphachannel support. If this isn't necessary in a situation, because the texture doesn't use
+		the alphavalues, you can specify an overruling hint for DemoGL to pass on to OpenGL in 16bit. A
+		good hint for nonalpha textures is GL_RGB5_A1. In situations where the user has selected 32bit textures
+		(recommended, since the driver will transform these to 16bit if necessary and will dither, which
+		gives better results) this hint is ignored and GL_RGBA8 is used. If DemoGL should use the default
+		hint for this texture whenever it has to, set iTexUploadHint to DGL_TEXHINT_USEDEFAULT.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns the TextureID, or <i>texture name</i>, usable with functions in OpenGL like 
+	glBindTexture.<br>
+	If the function failes, 0 is returned.
+	<p>
+<dt><b>Remarks.</b>
+<dd>If the videocard doesn't support cubemaps, <b>DEMOGL_TextureCubeMapLoad</b> will fail. Be sure to support the correct common
+	name with the parameter <i>pszFilename</i>.
+	When you load a texture with the same value for <i>pszFilename</i>, DemoGL will increase the reference counter 
+	to the loaded texture instead of loading the texturedata again. 
+	The texture created is usable for dynamic updates. It's however more wise to use 
+	<a HREF="ref_functions_DEMOGL_TextureCubeMapCreateDynamic.htm">DEMOGL_TextureCubeMapCreateDynamic</a> for creating
+	a dynamic cubemap texture object without data and update the sides of that cubemap using
+	<a HREF="ref_functions_DEMOGL_TextureCubeMapCreateDynamic.htm">DEMOGL_TextureCubeMapUpdateWithFBRegion</a>. 
+	The texture created with
+	<b>DEMOGL_TextureCubeMapLoad</b> can be used with the normal upload/unupload and delete functions for textures:
+	<a HREF="ref_functions_DEMOGL_TextureDelete.htm" target="main">DEMOGL_TextureDelete</a>,
+	<a HREF="ref_functions_DEMOGL_TextureUnUpload.htm" target="main">DEMOGL_TextureUnUpload</a> and
+	<a HREF="ref_functions_DEMOGL_TextureUpload.htm" target="main">DEMOGL_TextureUpload</a>
+	<p>
+	Cubemapping is implemented in hardware using the DirectX concepts. This means that negative Z en positive Z are switched.
+	See DemoGL Example 6 for example code on how to use DemoGL to render objects using cubemaps. It's recommended to 
+	read nVidia's documentation about cubemaps and OpenGL also on their developer site, especially 
+	<b>CubeEnvMapping2.pdf</b>.
+	<p>
+	DemoGL_glext.h contains all necessary constant definitions for cubemapping. When you use cubemaps in your code, be sure
+	to include DemoGL_glext.h.
+	<p>
+	DemoGL doesn't support cubemaps stored in DDS files. DDS files are therefor not supported in this routine. 
+<p>
+<dt><b>Example.</b>
+<dd>Below are snippets of the essential code needed to use a cubemap in your effectcode. The snippets below 
+load cubemaps with the common name "test_" of the type JPG and use it on a mesh. This is a typical <i>static cubemap</i>.
+See DemoGL Example 6 for an example how to use dynamic cubemaps that are updated per frame to reflect a rotating
+object. 
+	<PRE>
+// include the DemoGL_glext.h file to include definitions for the ARB cubemap
+// constants
+#include "DemoGL_glext.h"
+
+// ...
+// Other code
+// ...
+
+// Load the cubemap textures "test_*.jpg" into 1 cubemap texture. F.e. in an
+// Init() method
+m_iTextureCube = DEMOGL_TextureCubeMapLoad("demotex\\test_",DGL_FTYPE_JPGFILE, 
+		GL_LINEAR, GL_LINEAR, false, false, 0, GL_RGB5_A1);
+
+// ...
+// Other code
+// ...
+
+// Upload the texture to OpenGL, f.e. in a Prepare() method
+DEMOGL_TextureUpload(m_iTextureCube);
+
+// ...
+// Other code
+// ...
+
+// Render the mesh using the cubemap, f.e. in a RenderFrame() method
+// Enable cubemapping. This will overrule GL_TEXTURE_2D.
+glEnable(GL_TEXTURE_CUBE_MAP_ARB);
+
+// Bind to the cubemap texture loaded
+glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, m_iTextureCube);
+
+// Set the reflection generation functions.
+glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP_ARB);
+glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP_ARB);
+glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_REFLECTION_MAP_ARB);
+
+// Enable texturecoordinate generation. Notice the 'R' coordinate
+// function, which is needed.
+glEnable(GL_TEXTURE_GEN_S); 
+glEnable(GL_TEXTURE_GEN_T);
+glEnable(GL_TEXTURE_GEN_R);
+
+glColor4f(1.0f,1.0f,1.0f,1.0f);
+// draw all faces of the mesh
+for(i=0;i&lt;m_pModel-&gt;m_iAmFaces;i++)
+{
+	// draw a face.
+	glBegin(GL_TRIANGLES);
+	for(j=0;j<3;j++)
+	{
+		glNormal3fv(&m_pModel-&gt;m_pFaces[i].m_vVertexNormals[j][0]);
+		glVertex3fv(
+			&m_pModel-&gt;m_pVertices[
+				m_pModel-&gt;m_pFaces[i].m_iVertexIndices[j]][0]);
+		glTexCoord2f(0.0f,0.0f);
+	}
+	glEnd();
+}
+// disable cubemap 
+glDisable(GL_TEXTURE_CUBE_MAP_ARB);
+// Disable the texture generation functions.
+glDisable(GL_TEXTURE_GEN_R);
+glDisable(GL_TEXTURE_GEN_T);
+glDisable(GL_TEXTURE_GEN_S);
+	</PRE>
+<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.31 (build 0528 or higher), Cubemap support in hardware (GeForce card series and ATi Radeon card series)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_TextureDelete.htm" target="main">DEMOGL_TextureDelete</a>,
+	<a HREF="ref_functions_DEMOGL_TextureUnUpload.htm" target="main">DEMOGL_TextureUnUpload</a>,
+	<a HREF="ref_functions_DEMOGL_TextureUpload.htm" target="main">DEMOGL_TextureUpload</a>,
+	<a HREF="ref_functions_DEMOGL_TextureCubeMapCreateDynamic.htm">DEMOGL_TextureCubeMapCreateDynamic</a>,
+	<a HREF="ref_functions_DEMOGL_TextureCubeMapUpdateWithFBRegion.htm">DEMOGL_TextureCubeMapUpdateWithFBRegion</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 28-may-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemStartElement</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemStartElement</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemStartElement</h4>
+<dd>DEMOGL_SoundSystemStartElement starts a sound element on a new channel. See the remarks section for limitations with starting
+	sound elements more than once.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemStartElement(
+	<b>const int</b> <i>iElementCodeID</i>,
+	<b>const int</b> <i>iElementType</i>, 
+	<b>const long</b> <i>lStartPos</i>,
+	<b>const bool</b> <i>bLoop</i>,
+	<b>const int</b> <i>iVolume</i>,
+	<b>const int</b> <i>iPan</i>, 
+	<b>const int</b> <i>iFrequency</i>,
+	<b><a HREF="ref_structures_SSoundChannel3DPosition.htm" target="main">SSoundChannel3DPosition</a> * const</b> <i>p3DPosition</i>, 
+	<b>const char</b> *<i>pszChannelScriptID</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iElementCodeID</i>
+	<dd>Specifies the ElementCodeID of the channel which should be removed from the sound system.
+	<dt><i>iElementType</i>
+	<dd>Specifies of which type the to be loaded sound element is so the sound system can use the correct logic to play the sound.
+		iElementType can be one of the following sound element types:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Sound element type</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_MP3ELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element stored in the MP3 standard, i.e. MPEG v1.0 and v2.0 layer3.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_MODELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element stored in one of the following formats: MOD, XM, IT, S3M or MTM.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_SAMPLEELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">
+				Sound element stored in the standard windows PCM format, or compressed with a custom CODEC.
+				When you use a custom CODEC, this CODEC is required to be installed on the user's computer for 
+				the WAV to be decoded. So, you should either distribute the CODEC with your 
+				software, or use a CODEC that comes with Windows (eg. Microsoft ADPCM).
+			</td>
+		</tr>
+		</table>
+		<p>
+	<dt><i>lStartPos</i>
+	<dd>Specifies the position where to start the play from. For channels playing DGL_SS_SAMPLEELEMENT sound elements, 
+		<i>lStartPos</i> is a position in bytes. For channels playing DGL_SS_MP3ELEMENT sound elements, <i>lStartPos</i> is
+		a position in milliseconds from the start. For channels playing DGL_SS_MODELEMENT sound elements, <i>lStartPos</i>
+		is a value calculated using the macro MAKELONG: MAKELONG(order,row). This will result in a longword with LOWORD=order in
+		the music module and HIWORD=row in that pattern. 
+	<dt><i>bLoop</i>
+	<dd>Specifies if the sound data owned by the element should be restarted when the play of the data is finished (true) or not (false).
+	<dt><i>iVolume</i>
+	<dd>Specifies the volume of the sound the resulting channel produces. Values have to fall in the range [0, 100], with
+		0 is total silence and 100 is maximum volume. When -1 is specified the current volume value is left untouched.
+		Will not have any effect when the sound element	is loaded with 3D disabled.
+	<dt><i>iPan</i>
+	<dd>Specifies the panning of the resulting channel in 2D. Values have to fall in the range [-100, 100], with -100 will place
+		the channel totally on the left speaker and 100 will place the channel totally on the right speaker. When -101 is
+		specified the current panning value for this channel is left untouched. Will not have any effect when the sound element
+		is loaded with 3D disabled.
+	<dt><i>iFrequency</i>
+	<dd>The frequency of the output of the resulting channel. Values have to fall in the range [100, 100000] with 100 the minimum
+		value and 100000 the maximum value. When 0 is specified the original frequency of the resulting channel when it was created
+		is restored. When -1 is specified, the current value for the frequency is left untouched. Will not have any effect when 
+		the sound element is loaded with 3D disabled.
+		This value is not recommended for DGL_SS_MP3ELEMENT and DGL_SS_MODELEMENT sound element based channels.
+	<dt><i>p3DPosition</i>
+	<dd>Pointer to filled <a HREF="ref_structures_SSoundChannel3DPosition.htm" target="main">SSoundChannel3DPosition</a> structure with
+		the 3D position, orientation and soundspeed to apply to the resulting channel. See note below on listener positions
+	<dt><i>pszChannelScriptID</i>
+	<dd>Pointer to a zero-terminated string which contains the ChannelScriptID that should be associated with the
+		sound channel where the element will be started on. When <b>DEMOGL_SoundSystemStartElement</b> succeeds, script commands
+		can interact with the started channel, refering to it by using <i>pszChannelScriptID</i>.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns the ChannelCodeID of the channel where the element is started on.<br>
+	If the function fails, it returns one of the following error codes:
+	<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Error code</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_CHANNELSTOREFULL</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element couldn't be started because the channel store is full, there are no more
+				free channels left.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_CHANNELACTIONFAILED</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element couldn't be started because the play of the sounddata failed. An errorcode of
+				the lower level sound library is logged on the system console. These errorcodes are defined in DemoGL_Bass.h.
+				Most of these errors are 3D sound related.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_OPERATIONFAILED</td>
+			<td WIDTH="70%" VALIGN="TOP">Could not start the sound element data, the play and / or the seek into the data to the
+				<i>lStartPos</i> failed.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_ILLEGALELEMENTID</td>
+			<td WIDTH="70%" VALIGN="TOP">The <i>iElementCodeID</i> value is not found as a loaded sound element. 
+			</td>
+		</tr>
+		</table>	
+	<p>
+<dt><b>Remarks.</b>
+<dd>The play of sound elements will be done by sound channels, thus elements play their data through sound channels. When a sound
+	element is started, it's started on a channel, the element itself is just a container for the sound data. You can refer to the
+	playing sound channel by using the iChannelCodeID you receive when the call to <b>DEMOGL_SoundSystemStartElement</b> succeeds.
+	Elements of type DGL_SS_MP3ELEMENT and DGL_SS_MODELEMENT can be started only once, or better: just one channel can actually play the
+	sound data owned by the element. When you start an element of those types when the element is already playing on another channel, that
+	channel will be stopped and the new channel will continue the play. This is due to a limit in the underlying sound library, however
+	should not be limiting in most circumstances. You can start elements of type DGL_SS_SAMPLEELEMENT on as much channels as you want, all
+	will be playing along.
+	<p>
+	<b>NOTE:</b> There is just <i>one</i> &nbsp;listener position in the sound system, because that's the way the underlying sound library
+	works. This way, you have to keep in mind that two or more effects visible at the same time with total different scenes have to use the
+	same global listener position for their 3D enabled sound channels. It will be odd at first, but it's the same way OpenGL works: there
+	is no camera, the frustum is always at (0,0,0) looking at the negative Z, the world is moved/rotated so it looks as if the 'camera' is
+	rotated/moved. Updating the global listener position in more than one effect in one frame is useless: only the last one will have any
+	effect.
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_SoundSystemSetListener3DPosition.htm" target="main">DEMOGL_SoundSystemSetListener3DPosition</a>,
+	<a HREF="ref_structures_SSoundChannel3DPosition.htm" target="main">SSoundChannel3DPosition</a>,
+	<a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm" target="main">_SOUNDSYSTEM commands</a>,
+	<a HREF="ref_definitionsanddefaults.htm" target="main">Definitions and defaults</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 18-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

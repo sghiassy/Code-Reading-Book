@@ -1,0 +1,42 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/09/28 16:55:47 rws $
+XCOMM $XFree86: xc/programs/Xserver/XIE/dixie/request/Imakefile,v 3.2.2.1 1997/05/22 14:00:28 dawes Exp $
+XCOMM build device independent request objects
+#include <Server.tmpl>
+
+SRCS1 = difloat.c error.c event.c flo.c lut.c memory.c \
+        photomap.c protoflo.c session.c tables.c technq.c
+OBJS1 = difloat.o error.o event.o flo.o lut.o memory.o \
+        photomap.o protoflo.o session.o tables.o technq.o
+
+#if BuildDIS
+DIS_DEFINES = -DXIE_DIS
+#else
+SRCS2 = colorlst.c roi.c
+OBJS2 = colorlst.o roi.o
+#endif
+#if XieDynamicModule
+#if HasDlsymBug
+MODULE_DEFINES =  -DDLSYM_BUG
+#endif
+#define SharedServerLibraryDef -DDYNAMIC_MODULE
+SHAREDINCLUDES = -I$(XF86SRC)
+#endif
+DEFINES = $(DIS_DEFINES) $(MODULE_DEFINES)
+
+       SRCS = $(SRCS1) $(SRCS2)
+
+       OBJS = $(OBJS1) $(OBJS2)
+
+   INCLUDES = -I../../include -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
+              -I$(EXTINCSRC) $(SHAREDINCLUDES)
+
+   LINTLIBS = ../export/llib-lexp.ln ../import/llib-limp.ln \
+              ../process/llib-lproc.ln ../request/llib-lreq.ln
+
+#define DoSharedLib	XieDynamicModule
+#include <ServerLib.tmpl>
+SubdirLibraryRule($(OBJS))
+LintLibraryTarget(req,$(SRCS))
+NormalLintTarget($(SRCS))
+
+DependTarget()

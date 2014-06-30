@@ -1,0 +1,132 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/09/28 17:25:50 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/mfb/Imakefile,v 3.7 1996/12/23 06:53:51 dawes Exp $
+#include <Server.tmpl>
+
+SRCS1 =	 mfbgc.c mfbwindow.c mfbfont.c \
+	 mfbfillrct.c mfbpntwin.c maskbits.c mfbpixmap.c \
+	 mfbimage.c mfbline1.c mfbbres1.c mfbhrzvert1.c mfbbresd1.c \
+	 mfbpushpxl.c mfbzerarc1.c mfbfillarc1.c \
+         mfbfillsp.c mfbsetsp.c mfbscrinit.c mfbscrclse.c mfbclip.c \
+         mfbbitblt.c mfbgetsp.c mfbpolypnt.c \
+	 mfbbltC.c mfbbltX.c mfbbltCI.c mfbbltO.c mfbbltG.c \
+	 mfbcmap.c mfbtileC.c mfbtileG.c mfbmisc.c mfbbstore.c
+
+SRCS =	 $(SRCS1) mfbseg1.c mfbpgbwht.c mfbpgbblak.c mfbpgbinv.c mfbigbwht.c \
+	 mfbigbblak.c mfbpawhite.c mfbpablack.c mfbpainv.c mfbtewhite.c \
+	 mfbteblack.c mfbbltC.c mfbbltX.c mfbbltCI.c mfbbltO.c mfbbltG.c \
+	 mfbtileC.c mfbtileG.c mfbplywhite.c mfbplyblack.c mfbplyinv.c
+
+OBJS =   mfbgc.o mfbwindow.o mfbfont.o \
+	 mfbfillrct.o mfbpntwin.o maskbits.o mfbpixmap.o \
+	 mfbimage.o mfbline1.o mfbbres1.o mfbhrzvert1.o mfbbresd1.o mfbseg1.o \
+	 mfbpushpxl.o mfbzerarc1.o mfbfillarc1.o \
+	 mfbfillsp.o mfbsetsp.o mfbscrinit.o mfbscrclse.o mfbclip.o \
+         mfbbitblt.o mfbgetsp.o mfbpolypnt.o \
+	 mfbbltC.o mfbbltX.o mfbbltCI.o mfbbltO.o mfbbltG.o \
+	 mfbpgbwht.o mfbpgbblak.o mfbpgbinv.o \
+	 mfbigbwht.o mfbigbblak.o mfbcmap.o \
+	 mfbpawhite.o mfbpablack.o mfbpainv.o mfbtileC.o mfbtileG.o \
+         mfbtewhite.o mfbteblack.o mfbmisc.o mfbbstore.o \
+	 mfbplywhite.o mfbplyblack.o mfbplyinv.o
+
+INCLUDES = -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC) -I$(FONTINCSRC)
+
+LINTDEFS = -DMFBPOLYGLYPHBLT=mfbPolyGlyphBltWhite \
+           -DMFBIMAGEGLYPHBLT=mfbImageGlyphBltWhite \
+           -DEQWHOLEWORD=\=\~0 -DOPEQ=\|=
+LINTLIBS = $(SERVERSRC)/dix/llib-ldix.ln $(SERVERSRC)/os/llib-los.ln \
+           $(SERVERSRC)/mi/llib-lmi.ln
+
+DEFINES = -DXF86VGA16
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalLintTarget($(LINTDEFS) $(SRCS1))
+
+#define MfbSourceDir $(SERVERSRC)/mfb
+
+LinkSourceFile(maskbits.c,MfbSourceDir)
+LinkSourceFile(mfbbitblt.c,MfbSourceDir)
+LinkSourceFile(mfbblt.c,MfbSourceDir)
+LinkFile(mfbbres1.c,MfbSourceDir/mfbbres.c)
+LinkFile(mfbbresd1.c,MfbSourceDir/mfbbresd.c)
+LinkSourceFile(mfbbstore.c,MfbSourceDir)
+LinkSourceFile(mfbclip.c,MfbSourceDir)
+LinkSourceFile(mfbcmap.c,MfbSourceDir)
+LinkFile(mfbfillarc1.c,MfbSourceDir/mfbfillarc.c)
+LinkSourceFile(mfbfillrct.c,MfbSourceDir)
+LinkSourceFile(mfbfillsp.c,MfbSourceDir)
+LinkSourceFile(mfbfont.c,MfbSourceDir)
+LinkSourceFile(mfbgc.c,MfbSourceDir)
+LinkSourceFile(mfbgetsp.c,MfbSourceDir)
+LinkFile(mfbhrzvert1.c,MfbSourceDir/mfbhrzvert.c)
+LinkSourceFile(mfbimage.c,MfbSourceDir)
+LinkSourceFile(mfbimggblt.c,MfbSourceDir)
+LinkFile(mfbline1.c,MfbSourceDir/mfbline.c)
+LinkSourceFile(mfbmisc.c,MfbSourceDir)
+LinkSourceFile(mfbpixmap.c,MfbSourceDir)
+LinkSourceFile(mfbply1rct.c,MfbSourceDir)
+LinkSourceFile(mfbplygblt.c,MfbSourceDir)
+LinkSourceFile(mfbpntarea.c,MfbSourceDir)
+LinkSourceFile(mfbpntwin.c,MfbSourceDir)
+LinkSourceFile(mfbpolypnt.c,MfbSourceDir)
+LinkSourceFile(mfbpushpxl.c,MfbSourceDir)
+LinkSourceFile(mfbscrclse.c,MfbSourceDir)
+LinkSourceFile(mfbscrinit.c,MfbSourceDir)
+LinkSourceFile(mfbsetsp.c,MfbSourceDir)
+LinkSourceFile(mfbtegblt.c,MfbSourceDir)
+LinkSourceFile(mfbtile.c,MfbSourceDir)
+LinkSourceFile(mfbwindow.c,MfbSourceDir)
+LinkFile(mfbzerarc1.c,MfbSourceDir/mfbzerarc.c)
+
+ObjectFromSpecialSource(mfbseg1,mfbline1,-DPOLYSEGMENT)
+
+ObjectFromSpecialSource(mfbpgbwht,mfbplygblt,-DMFBPOLYGLYPHBLT=mfbPolyGlyphBltWhite -DOPEQ=\|=)
+
+ObjectFromSpecialSource(mfbpgbblak,mfbplygblt,-DMFBPOLYGLYPHBLT=mfbPolyGlyphBltBlack -DOPEQ=\&=\~)
+
+ObjectFromSpecialSource(mfbpgbinv,mfbplygblt,-DMFBPOLYGLYPHBLT=mfbPolyGlyphBltInvert -DOPEQ=\^=)
+
+ObjectFromSpecialSource(mfbigbwht,mfbimggblt,-DMFBIMAGEGLYPHBLT=mfbImageGlyphBltWhite -DOPEQ=\|=)
+
+ObjectFromSpecialSource(mfbigbblak,mfbimggblt,-DMFBIMAGEGLYPHBLT=mfbImageGlyphBltBlack -DOPEQ=\&=\~)
+
+ObjectFromSpecialSource(mfbpawhite,mfbpntarea,-DMFBSOLIDFILLAREA=mfbSolidWhiteArea -DMFBSTIPPLEFILLAREA=mfbStippleWhiteArea -DOPEQ=\|= -DEQWHOLEWORD=\=\~0)
+
+ObjectFromSpecialSource(mfbpablack,mfbpntarea,-DMFBSOLIDFILLAREA=mfbSolidBlackArea -DMFBSTIPPLEFILLAREA=mfbStippleBlackArea -DOPEQ=\&=\~ -DEQWHOLEWORD=\=0)
+
+ObjectFromSpecialSource(mfbpainv,mfbpntarea,-DMFBSOLIDFILLAREA=mfbSolidInvertArea -DMFBSTIPPLEFILLAREA=mfbStippleInvertArea -DOPEQ=\^= -DEQWHOLEWORD=\^=\~0)
+
+ObjectFromSpecialSource(mfbtewhite,mfbtegblt,-DMFBTEGLYPHBLT=mfbTEGlyphBltWhite -DOP= -DCLIPTETEXT=mfbImageGlyphBltWhite)
+
+ObjectFromSpecialSource(mfbteblack,mfbtegblt,-DMFBTEGLYPHBLT=mfbTEGlyphBltBlack -DOP=\~ -DCLIPTETEXT=mfbImageGlyphBltBlack)
+
+ObjectFromSpecialSource(mfbplywhite,mfbply1rct,-DMFBFILLPOLY1RECT=mfbFillPolyWhite -DOPEQ=MFB_OPEQ_WHITE -DEQWHOLEWORD=MFB_EQWHOLEWORD_WHITE)
+
+ObjectFromSpecialSource(mfbplyblack,mfbply1rct,-DMFBFILLPOLY1RECT=mfbFillPolyBlack -DOPEQ=MFB_OPEQ_BLACK -DEQWHOLEWORD=MFB_EQWHOLEWORD_BLACK)
+
+ObjectFromSpecialSource(mfbplyinv,mfbply1rct,-DMFBFILLPOLY1RECT=mfbFillPolyInvert -DOPEQ=MFB_OPEQ_INVERT -DEQWHOLEWORD=MFB_EQWHOLEWORD_INVERT)
+
+ObjectFromSpecialSource(mfbbltC,mfbblt,-DMROP=Mcopy)
+
+ObjectFromSpecialSource(mfbbltX,mfbblt,-DMROP=Mxor)
+
+ObjectFromSpecialSource(mfbbltCI,mfbblt,-DMROP=McopyInverted)
+
+ObjectFromSpecialSource(mfbbltO,mfbblt,'-DMROP=Mor')
+
+ObjectFromSpecialSource(mfbbltG,mfbblt,-DMROP=0)
+
+ObjectFromSpecialSource(mfbtileC,mfbtile,-DMROP=Mcopy)
+
+ObjectFromSpecialSource(mfbtileG,mfbtile,-DMROP=0)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

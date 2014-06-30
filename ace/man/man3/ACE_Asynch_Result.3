@@ -1,0 +1,156 @@
+.TH ACE_Asynch_Result 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Asynch_Result \- An interface base class which allows users access to common information related to an asynchronous operation. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_IO.h>\fR
+.PP
+Inherited by \fBACE_Asynch_Accept::Result\fR, \fBACE_Asynch_Read_Dgram::Result\fR, \fBACE_Asynch_Read_Stream::Result\fR, \fBACE_Asynch_Transmit_File::Result\fR, \fBACE_Asynch_Write_Dgram::Result\fR, and \fBACE_Asynch_Write_Stream::Result\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "u_long \fBbytes_transferred\fR (void) const"
+.br
+.RI "\fINumber of bytes transferred by the operation.\fR"
+.ti -1c
+.RI "const void* \fBact\fR (void) const"
+.br
+.RI "\fIACT associated with the operation.\fR"
+.ti -1c
+.RI "int \fBsuccess\fR (void) const"
+.br
+.RI "\fIDid the operation succeed?\fR"
+.ti -1c
+.RI "const void* \fBcompletion_key\fR (void) const"
+.br
+.ti -1c
+.RI "u_long \fBerror\fR (void) const"
+.br
+.RI "\fIError value if the operation fails.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBevent\fR (void) const"
+.br
+.ti -1c
+.RI "u_long \fBoffset\fR (void) const"
+.br
+.ti -1c
+.RI "u_long \fBoffset_high\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBpriority\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBsignal_number\fR (void) const"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Asynch_Result\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Result\fR (\fBACE_Asynch_Result_Impl\fR *implementation)"
+.br
+.RI "\fIConstructor. This implementation will not be deleted. The implementation will be deleted by the Proactor.\fR"
+.ti -1c
+.RI "\fBACE_Asynch_Result_Impl\fR* \fBimplementation\fR (void) const"
+.br
+.RI "\fIGet the implementation class.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Result_Impl\fR* \fBimplementation_\fR"
+.br
+.RI "\fIImplementation class.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An interface base class which allows users access to common information related to an asynchronous operation.
+.PP
+.PP
+ An interface base class from which you can obtain some basic information like the number of bytes transferred, the ACT associated with the asynchronous operation, indication of success or failure, etc. Subclasses may want to store more information that is particular to the asynchronous operation it represents. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Asynch_Result::~ACE_Asynch_Result (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS ACE_Asynch_Result::ACE_Asynch_Result (\fBACE_Asynch_Result_Impl\fR * implementation)\fC [protected]\fR
+.PP
+Constructor. This implementation will not be deleted. The implementation will be deleted by the Proactor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS const void * ACE_Asynch_Result::act (void) const
+.PP
+ACT associated with the operation.
+.PP
+.SS u_long ACE_Asynch_Result::bytes_transferred (void) const
+.PP
+Number of bytes transferred by the operation.
+.PP
+.SS const void * ACE_Asynch_Result::completion_key (void) const
+.PP
+This is the ACT associated with the handle on which the Asynch_Operation takes place.
+.PP
+On WIN32, this returns the ACT associated with the handle when it was registered with the I/O completion port.
+.PP
+@ This is not implemented for POSIX4 platforms. Returns 0. 
+.SS u_long ACE_Asynch_Result::error (void) const
+.PP
+Error value if the operation fails.
+.PP
+.SS ACE_HANDLE ACE_Asynch_Result::event (void) const
+.PP
+On WIN32, this returns the event associated with the \fBOVERLAPPED\fR structure.
+.PP
+This returns ACE_INVALID_HANDLE on POSIX4-Unix platforms. 
+.SS \fBACE_Asynch_Result_Impl\fR * ACE_Asynch_Result::implementation (void) const\fC [protected]\fR
+.PP
+Get the implementation class.
+.PP
+Reimplemented in \fBACE_Asynch_Read_Stream::Result\fR, \fBACE_Asynch_Write_Stream::Result\fR, \fBACE_Asynch_Read_File::Result\fR, \fBACE_Asynch_Write_File::Result\fR, \fBACE_Asynch_Accept::Result\fR, \fBACE_Asynch_Transmit_File::Result\fR, \fBACE_Asynch_Read_Dgram::Result\fR, and \fBACE_Asynch_Write_Dgram::Result\fR.
+.SS u_long ACE_Asynch_Result::offset (void) const
+.PP
+This really makes sense only when doing file I/O.
+.PP
+On WIN32, these are represented in the \fBOVERLAPPED\fR datastructure.
+.PP
+@ On POSIX4-Unix, offset_high should be supported using aiocb64. 
+.SS u_long ACE_Asynch_Result::offset_high (void) const
+.PP
+.SS int ACE_Asynch_Result::priority (void) const
+.PP
+Priority of the operation.
+.PP
+On POSIX4-Unix, this is supported. Priority works like <nice> in Unix. Negative values are not allowed. 0 means priority of the operation same as the process priority. 1 means priority of the operation is one less than process. And so forth.
+.PP
+On Win32, this is a no-op. 
+.SS int ACE_Asynch_Result::signal_number (void) const
+.PP
+POSIX4 real-time signal number to be used for the operation. <signal_number> ranges from ACE_SIGRTMIN to ACE_SIGRTMAX. By default, ACE_SIGRTMIN is used to issue  calls. This is a no-op on non-POSIX4 systems and returns 0. 
+.SS int ACE_Asynch_Result::success (void) const
+.PP
+Did the operation succeed?
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Asynch_Result_Impl\fR * ACE_Asynch_Result::implementation_\fC [protected]\fR
+.PP
+Implementation class.
+.PP
+Reimplemented in \fBACE_Asynch_Read_Stream::Result\fR, \fBACE_Asynch_Write_Stream::Result\fR, \fBACE_Asynch_Read_File::Result\fR, \fBACE_Asynch_Write_File::Result\fR, \fBACE_Asynch_Accept::Result\fR, \fBACE_Asynch_Transmit_File::Result\fR, \fBACE_Asynch_Read_Dgram::Result\fR, and \fBACE_Asynch_Write_Dgram::Result\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,40 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/sysv/Imakefile,v 3.7 1996/12/23 06:51:23 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/10 1996/10/25 11:38:05 kaleb $
+
+#include <Server.tmpl>
+
+#if defined(SVR4Architecture) || defined(i386Sco325Architecture)
+BIOS_MOD = bios_V4mmap
+#else
+BIOS_MOD = bios_devmem
+#endif
+
+SRCS = sysv_init.c sysv_video.c IO_utils.c sysv_io.c $(BIOS_MOD).c VTsw_usl.c \
+       sysv_kbd.c std_kbdEv.c sysv_tty.c std_mouse.c std_mseEv.c xqueue.c
+
+OBJS = sysv_init.o sysv_video.o IO_utils.o sysv_io.o $(BIOS_MOD).o VTsw_usl.o \
+       sysv_kbd.o std_kbdEv.o sysv_tty.o std_mouse.o std_mseEv.o xqueue.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC) -I$(EXTINCSRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+
+#if !defined(SVR4Architecture)
+ObjectFromSpecialSource(bios_devmem,../shared/bios_devmem,/**/)
+#endif
+ObjectFromSpecialSource(VTsw_usl,../shared/VTsw_usl,/**/)
+ObjectFromSpecialSource(IO_utils,../shared/IO_utils,/**/)
+ObjectFromSpecialSource(sysv_kbd,../shared/sysv_kbd,/**/)
+ObjectFromSpecialSource(std_kbdEv,../shared/std_kbdEv,/**/)
+ObjectFromSpecialSource(sysv_tty,../shared/sysv_tty,/**/)
+ObjectFromSpecialSource(std_mouse,../shared/std_mouse,/**/)
+ObjectFromSpecialSource(std_mseEv,../shared/std_mseEv,/**/)
+
+DependTarget()

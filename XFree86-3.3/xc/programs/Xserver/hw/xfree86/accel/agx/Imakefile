@@ -1,0 +1,52 @@
+XCOMM $XConsortium: Imakefile /main/10 1996/09/28 17:20:24 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/agx/Imakefile,v 3.15 1996/12/23 06:32:22 dawes Exp $
+
+#include <Server.tmpl>
+
+SRCS = 	agx.c agxCmap.c agxCursor.c  agxInit.c vgaHW.c agxIm.c \
+        agxScrIn.c agxGC.c agxGC16.c \
+        agxBlt.c agxLine.c agxSeg.c agxMap.c \
+        agxBCach.c agxFCach.c agxFont.c agxText.c agxFRect.c \
+        agxFS.c agxGS.c agxSS.c agxWin.c agxBStor.c agxPntWin.c \
+        xf86RamDac.c Bt481.c Bt485.c xf861502x.c Att490.c \
+        hercRamDac.c agxGtImg.c agxFArc.c agxFPoly.c \
+        agxDLine.c agxDSeg.c
+
+OBJS =  agx.o agxCmap.o agxCursor.o  agxInit.o vgaHW.o agxIm.o \
+        agxScrIn.o agxGC.o agxGC16.o \
+        agxBlt.o agxLine.o agxSeg.o agxMap.o \
+        agxBCach.o agxFCach.o agxFont.o agxText.o agxFRect.o \
+        agxFS.o agxGS.o agxSS.o agxWin.o agxBStor.o agxPntWin.o \
+        xf86RamDac.o Bt481.o Bt485.o xf861502x.o Att490.o \
+        hercRamDac.o agxGtImg.o agxFArc.o agxFPoly.o \
+        agxDLine.o agxDSeg.o
+
+DEFINES = -DPSZ=8 -DAGX_SERVER
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) -I. \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+	   -I$(XF86SRC)/vga256/vga \
+	   -I$(XF86SRC)/vga256/enhanced \
+           -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) -I$(FONTINCSRC) 
+
+
+AGXDRIVERS = XF86AGXDrivers
+
+NormalLibraryTarget(agx,$(OBJS))
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+LinkSourceFile(vgaHW.c,../../vga256/vga)
+
+InstallLinkKitLibrary(agx,$(LINKKITDIR)/drivers)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

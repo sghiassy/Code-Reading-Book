@@ -1,0 +1,214 @@
+.TH ACE_MEM_IO 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_MEM_IO \- Defines the methods for the \fBACE\fR shared memeory wrapper I/O routines (e.g., send/recv). The shared memory transport uses ACE_SOCK_* class to implement the signaling mechanism so we can easily use the new mechanism with the Reactor pattern (which uses select under the hood.) \fBACE_MEM_Acceptor\fR and \fBACE_MEM_Connector\fR are used to establish connections. When a connection is established, \fBACE_MEM_Acceptor\fR creates the MMAP file for data exchange and sends the location of the file (complete path name) to \fBACE_MEM_Connector\fR thru the socket. \fBACE_MEM_Connector\fR then reads the location of the file off the socket and opens up the same MMAP file. \fBACE_MEM_Stream\fR at each side then contains a reference to the ACE_Mallo object using the same MMAP file. When sending information using methods provided in this class, ACE_MEM_IO requests a chunk of memory from the MALLOC_TYPE object, copy the data into the shared memory and send the memory offset (from the start of the \fBACE_Malloc\fR) across the socket. This action also servers as a signal to the other end. The receiving side then reverses the procedures and copies the information into user buffer. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <MEM_IO.h>\fR
+.PP
+Inherits \fBACE_SOCK\fR.
+.PP
+Inherited by \fBACE_MEM_Stream\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBSignal_Strategy\fR { \fBReactive\fR, \fBMT\fR }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_MEM_IO\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fB~ACE_MEM_IO\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBinit\fR (const \fBACE_TCHAR\fR *name, \fBACE_MEM_IO::Signal_Strategy\fR type = ACE_MEM_IO::Reactive, \fBACE_MEM_SAP::MALLOC_OPTIONS\fR *options = 0)"
+.br
+.ti -1c
+.RI "int \fBfini\fR (void)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, int flags)"
+.br
+.RI "\fISend an <n> byte buffer to the other process using shm_malloc_ connected thru the socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, int flags)"
+.br
+.RI "\fIRecv an <n> byte buffer from the shm_malloc_ thru connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n)"
+.br
+.RI "\fISend an <n> byte buffer to the other process using shm_malloc_ connected thru the socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n)"
+.br
+.RI "\fIRecv an <n> byte buffer from the shm_malloc_ thru connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, int flags, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const \fBACE_Message_Block\fR *message_block, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, int flags, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBssize_t\fR \fBfetch_recv_buf\fR (int flag, const \fBACE_Time_Value\fR *timeout)"
+.br
+.RI "\fIReturn the local endpoint port number. Returns 0 if successful, else -1.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_MEM_SAP\fR* \fBdeliver_strategy_\fR"
+.br
+.RI "\fIActual deliverying mechanism.\fR"
+.ti -1c
+.RI "\fBACE_MEM_SAP_Node\fR* \fBrecv_buffer_\fR"
+.br
+.RI "\fIInternal pointer for support recv/send.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBbuf_size_\fR"
+.br
+.RI "\fIRecord the current total buffer size of <recv_buffer_>.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBcur_offset_\fR"
+.br
+.RI "\fIRecord the current read pointer location in <recv_buffer_>.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the methods for the \fBACE\fR shared memeory wrapper I/O routines (e.g., send/recv). The shared memory transport uses ACE_SOCK_* class to implement the signaling mechanism so we can easily use the new mechanism with the Reactor pattern (which uses select under the hood.) \fBACE_MEM_Acceptor\fR and \fBACE_MEM_Connector\fR are used to establish connections. When a connection is established, \fBACE_MEM_Acceptor\fR creates the MMAP file for data exchange and sends the location of the file (complete path name) to \fBACE_MEM_Connector\fR thru the socket. \fBACE_MEM_Connector\fR then reads the location of the file off the socket and opens up the same MMAP file. \fBACE_MEM_Stream\fR at each side then contains a reference to the ACE_Mallo object using the same MMAP file. When sending information using methods provided in this class, ACE_MEM_IO requests a chunk of memory from the MALLOC_TYPE object, copy the data into the shared memory and send the memory offset (from the start of the \fBACE_Malloc\fR) across the socket. This action also servers as a signal to the other end. The receiving side then reverses the procedures and copies the information into user buffer.
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_MEM_IO::Signal_Strategy
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIReactive\fR \fR
+.TP
+\fB\fIMT\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_MEM_IO::ACE_MEM_IO (void)
+.PP
+Constructor.
+.PP
+.SS ACE_MEM_IO::~ACE_MEM_IO (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_MEM_IO::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_MEM_Stream\fR.
+.SS \fBssize_t\fR ACE_MEM_IO::fetch_recv_buf (int flag, const \fBACE_Time_Value\fR * timeout)\fC [private]\fR
+.PP
+Return the local endpoint port number. Returns 0 if successful, else -1.
+.PP
+.SS int ACE_MEM_IO::fini (void)
+.PP
+Finalizing the MEM_IO object. This method doesn't invoke the <remove> method. 
+.SS int ACE_MEM_IO::init (const \fBACE_TCHAR\fR * name, \fBACE_MEM_IO::Signal_Strategy\fR type = ACE_MEM_IO::Reactive, \fBACE_MEM_SAP::MALLOC_OPTIONS\fR * options = 0)
+.PP
+Initialize the MEM_SAP object. 
+.SS \fBssize_t\fR ACE_MEM_IO::recv (void * buf, size_t n, int flags, const \fBACE_Time_Value\fR * timeout)
+.PP
+Wait up to <timeout> amount of time to receive up to <n> bytes into <buf> from <handle> (uses the <recv> call). If <recv> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes received is returned. 
+.SS \fBssize_t\fR ACE_MEM_IO::recv (void * buf, size_t n, const \fBACE_Time_Value\fR * timeout)
+.PP
+Wait up to <timeout> amount of time to receive up to <n> bytes into <buf> from <handle> (uses the <recv> call). If <recv> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes received is returned. 
+.SS \fBssize_t\fR ACE_MEM_IO::recv (void * buf, size_t n)
+.PP
+Recv an <n> byte buffer from the shm_malloc_ thru connected socket.
+.PP
+.SS \fBssize_t\fR ACE_MEM_IO::recv (void * buf, size_t n, int flags)
+.PP
+Recv an <n> byte buffer from the shm_malloc_ thru connected socket.
+.PP
+.SS \fBssize_t\fR ACE_MEM_IO::send (const \fBACE_Message_Block\fR * message_block, const \fBACE_Time_Value\fR * timeout)
+.PP
+Wait to to <timeout> amount of time to send the <message_block>. If <send> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes sent is returned. 
+.SS \fBssize_t\fR ACE_MEM_IO::send (const void * buf, size_t n, int flags, const \fBACE_Time_Value\fR * timeout)
+.PP
+Wait to to <timeout> amount of time to send up to <n> bytes into <buf> from <handle> (uses the <send> call). If <send> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes sent is returned. 
+.SS \fBssize_t\fR ACE_MEM_IO::send (const void * buf, size_t n, const \fBACE_Time_Value\fR * timeout)
+.PP
+Wait to to <timeout> amount of time to send up to <n> bytes into <buf> from <handle> (uses the <send> call). If <send> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes sent is returned. 
+.SS \fBssize_t\fR ACE_MEM_IO::send (const void * buf, size_t n)
+.PP
+Send an <n> byte buffer to the other process using shm_malloc_ connected thru the socket.
+.PP
+.SS \fBssize_t\fR ACE_MEM_IO::send (const void * buf, size_t n, int flags)
+.PP
+Send an <n> byte buffer to the other process using shm_malloc_ connected thru the socket.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_MEM_IO::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_MEM_Stream\fR.
+.SS \fBssize_t\fR ACE_MEM_IO::buf_size_\fC [private]\fR
+.PP
+Record the current total buffer size of <recv_buffer_>.
+.PP
+.SS \fBssize_t\fR ACE_MEM_IO::cur_offset_\fC [private]\fR
+.PP
+Record the current read pointer location in <recv_buffer_>.
+.PP
+.SS \fBACE_MEM_SAP\fR * ACE_MEM_IO::deliver_strategy_\fC [private]\fR
+.PP
+Actual deliverying mechanism.
+.PP
+.SS \fBACE_MEM_SAP_Node\fR * ACE_MEM_IO::recv_buffer_\fC [private]\fR
+.PP
+Internal pointer for support recv/send.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,164 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Playing a sound or a piece of music</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Playing a sound or a piece of music</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Playing a sound or a piece of music.</h4>
+To create a good audiovisual experience, the application or screensaver should play sound: background
+music, sound FX etc. To do this, use the build-in <a HREF="about_soundsystem.htm">soundsystem</a>. Here 
+we're going to extend the simple application created in <a HREF="using_simpleapplication.htm">Creating a simple application</a>
+with background music and a sound FX. 
+<p>
+Both soundelements are loaded from the application script to illustrate the usage of a soundelement loaded in the script from code.
+Here is the script snippet that loads the MP3 'background.mp3' for the background music and 'lightning.wav' as sample FX soundelement.
+<pre>
+# Load an MP3 before application execution and assign
+# ElementScriptID 'MP3_1' to it
+-10;_SOUNDSYSTEM;LOADMP3;background.mp3;MP3_1;0;
+
+# Load a Sample before application execution and assign
+# ElementScriptID 'SMPL_1' to it
+-9;_SOUNDSYSTEM;LOADSMPL;lightning.wav;SMPL_1;0;
+</pre>
+<p>
+Both soundelements are not marked for 3D sound usage so normal panning will have effect. When the sound elements were marked for
+3D usage, to have decent panning and volume settings also 3D positioning and a 3D listener position should be set. The script snippet
+above loads both the soundelements before application execution, since the timespots are negative. 
+<p>
+The background music should start when the application starts, and the best way to do that is from a TLE, since the TLE's get
+executed at pre-defined timespots. The soundFX will be started when the fading of the splash effect (see 
+<a HREF="using_creatingeffect.htm">Creating an effectclass</a>) is completed. Now the flexibility of this system shows: in
+the early days designers had to mix in the soundeffects with the background music and tune and tweak the application so it would
+play the visual effects at the same time as the background music was playing the soundeffect. That's not needed anymore: the 
+designer can change the soundFX at any time and doesn't have to worry if the soundFX are played at the right time. 
+<p>
+Below is the TLE definition of the start of the backgroundmusic.
+<pre>
+# Start the MP3_1 soundelement with volume 100, normal panning
+# from startposition 0 (is the start) and loop playback
+# and start it on channel with ChannelScriptID CHAN_MP3_1 
+0;_SOUNDSYSTEM;PLAYMP3;MP3_1;0;100;0;1;CHAN_MP3_1;
+</pre>
+<p>
+Because it's background music, it should run forever, so the playback is looped. The playback is started using channel CHAN_MP3_1,
+at timespot 0, which is the start of the application execution.
+<p>
+The background music is playing from the beginning and the soundeffect should be started when the fading is done. The code knows
+when the fading is done, so we'll play the soundeffect from code. In this example the ElementScriptID of the soundFX soundelement
+is known by the programmer and is hardcoded. This also could have been send to the effectobject using a TLE:
+<pre>
+-8;SPLASH;SENDSTRING;SoundFxElementScriptID;SMPL_1;0;
+</pre>
+<p>
+The effectobject registered with the name 'SPLASH' will receive the string 'SMPL_1', assigned to the name 'SoundFxElementScriptID'
+in the method ReceiveString(). In this example, this method is not implemented in CSplash, so it doesn't have any effect. 
+<p>
+To start the soundeffect when the fading is completely done, we add some code to the DrawLogo() method of the CSplash class.
+This code will determine when the fading is over, and then start the sound element. The new DrawLogo() method looks something like
+this:
+<pre>
+// Purpose: draws the actual splashscreen.
+void
+CSplash::DrawLogo(long lNow)
+{
+	float	fPassedSeconds;
+	long	iElementCodeID
+
+	fPassedSeconds = ((float)(lNow - m_lTimeStart))/1000.f;
+	
+	if(fPassedSeconds <= 10.0f) 
+	{ 
+		// we will fade up in 10 seconds. So we will go from 0 
+		// to 1.0 in 10 seconds. 
+		glColor4f(1.0f,1.0f,1.0f, fPassedSeconds/10.0f); 
+	}
+	else 
+	{
+		// fading is over, test if we're here for the first time 
+		if(!m_bSoundFXStarted) 
+		{
+			// yes. start soundfx 
+			// Get iElementCodeID 
+			iElementCodeID=DEMOGL_SoundSystemElementScriptID2ElementCodeID("SMPL_1");
+			m_lChannelScriptID=DEMOGL_SoundSystemStartElement(
+				iElementCodeID, // The ElementCodeID to start 
+				DGL_SS_SAMPLEELEMENT, // Element type 
+				0, // Startposition 
+				false, // Loop 
+				100, // Volume 
+				0, // Panning 
+				-1, // Frequency (-1== left untouched) 
+				NULL, // 3D position structure. No 3D used 
+				CHAN_SMPL_1 // ChannelScriptID 
+				); 
+			m_bSoundFXStarted=true;
+		} 
+	}
+	// start drawing a quad. 
+	glBegin(GL_QUADS); 
+		glTexCoord2f(0.0f,0.0f);glVertex3f(0.2f,0.125f,-0.45f); 
+		glTexCoord2f(1.0f,0.0f);glVertex3f(0.8f,0.125f,-0.45f); 
+		glTexCoord2f(1.0f,1.0f);glVertex3f(0.8f,0.875f,-0.45f); 
+		glTexCoord2f(0.0f,1.0f);glVertex3f(0.2f,0.875f,-0.45f); 
+	glEnd(); 
+	
+	// draw white background 
+	glDisable(GL_TEXTURE_2D); 
+	glBegin(GL_QUADS); 
+		glVertex3f(0.0f,0.0f,-0.5f); 
+		glVertex3f(1.0f,0.0f,-0.5f); 
+		glVertex3f(1.0f,1.0f,-0.5f); 
+		glVertex3f(0.0f,1.0f,-0.5f); 
+	glEnd(); 
+}
+</PRE>
+<p>
+Two new membervariables are introduced here, m_lChannelScriptID and m_bSoundFXStarted. The have to be
+added to the private member section of the CSplash class defintion in CSplash.h:
+<pre>
+	// ... CSplash public and private method declaration
+	
+	// Private members
+	private:
+		long	m_lChannelCodeID;
+		bool	m_bSoundFXStarted;
+		
+		// ... rest of private member declarations
+</pre>
+<p>
+The Init() method of CSplash has to be altered to initialize the member variables just added:
+<pre>
+// Purpose: implementation of init()
+int
+CSplash::Init(int iWidth, int iHeight)
+{
+	m_bSoundFXStarted=false;
+	m_lChannelCodeID=0;
+	
+	// ... rest of Init() code
+</pre>
+<p>
+DemoGL will clean up every soundelement and every channel playing when the application exits, since
+this can happen at any time when the user presses ALT-F4, hits ESC or clicks the close window button.
+It's however a clean coding practice to at least add some sort of cleaning up code when possible.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

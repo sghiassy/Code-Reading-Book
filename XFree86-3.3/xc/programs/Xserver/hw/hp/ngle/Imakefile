@@ -1,0 +1,46 @@
+/* $XConsortium: Imakefile /main/7 1996/09/28 17:12:41 rws $ */
+#include <Server.tmpl>
+
+ORIG_SRCS =	nglescreen.c	\
+		nglecolormap.c	\
+		nglecursor.c    \
+		nglenoop.c	\
+		hyperScrn.c
+
+ORIG_OBJS =	nglescreen.o	\
+		nglecolormap.o	\
+		nglecursor.o	\
+		nglenoop.o	\
+		hyperScrn.o
+
+#ifdef HPFastScrolling
+SCROLLING_SRC = nglecopy.c      \
+		ngleblt.c
+
+SCROLLING_OBJ = nglecopy.o      \
+		ngleblt.o       \
+		ngledoblt.o
+
+FAST_SCROLLING_DEFINES = -DHP_FAST_SCROLLING
+#endif
+
+SRCS = $(ORIG_SRCS) $(SCROLLING_SRC)
+
+OBJS = $(ORIG_OBJS) $(SCROLLING_OBJ)
+
+DEFINES = $(FAST_SCROLLING_DEFINES) ExtensionOSDefines
+
+INCLUDES = -I. -I.. -I../include -I../../../mfb -I../../../cfb -I../../../mi \
+	-I../../../include -I$(XINCLUDESRC) -I$(EXTINCSRC) \
+	-I$(FONTINCSRC)
+
+LINTLIBS = ../../../dix/llib-ldix.ln ../../../os/4.2bsd/llib-los.ln \
+	../../mfb/llib-lmfb.ln ../../mi/llib-lmi.ln ../../cfb/llib-lcfb.ln
+
+NormalLibraryObjectRule()
+
+NormalRelocatableTarget(ngle,$(OBJS))
+
+LinkFile(ngledoblt.o,ngledoblt.o.8.07)
+
+DependTarget()

@@ -1,0 +1,276 @@
+.TH ACE_Timer_Hash_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Timer_Hash_T \- Provides a hash table of <BUCKET>s as an implementation for a timer queue. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Timer_Hash_T.h>\fR
+.PP
+Inherits \fBACE_Timer_Queue_T< TYPE,FUNCTOR,ACE_LOCK >\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_Hash_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK, BUCKET> \fBHASH_ITERATOR\fR"
+.br
+.RI "\fIType of iterator.\fR"
+.ti -1c
+.RI "typedef \fBACE_Timer_Queue_T\fR<TYPE, FUNCTOR, ACE_LOCK> \fBINHERITED\fR"
+.br
+.RI "\fIType inherited from.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Hash_T\fR (size_t table_size, FUNCTOR *upcall_functor = 0, \fBACE_Free_List\fR<\fBACE_Timer_Node_T\fR <TYPE> > *freelist = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Timer_Hash_T\fR (FUNCTOR *upcall_functor = 0, \fBACE_Free_List\fR<\fBACE_Timer_Node_T\fR <TYPE> > *freelist = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Timer_Hash_T\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBis_empty\fR (void) const"
+.br
+.RI "\fITrue if queue is empty, else false.\fR"
+.ti -1c
+.RI "virtual const \fBACE_Time_Value\fR& \fBearliest_time\fR (void) const"
+.br
+.RI "\fIReturns the time of the earlier node in the . Must be called on a non-empty queue.\fR"
+.ti -1c
+.RI "virtual long \fBschedule\fR (const TYPE &type, const void *act, const \fBACE_Time_Value\fR &delay, const \fBACE_Time_Value\fR &interval = \fBACE_Time_Value::zero\fR)"
+.br
+.ti -1c
+.RI "virtual int \fBreset_interval\fR (long timer_id, const \fBACE_Time_Value\fR &interval)"
+.br
+.ti -1c
+.RI "virtual int \fBcancel\fR (const TYPE &type, int dont_call_handle_close = 1)"
+.br
+.ti -1c
+.RI "virtual int \fBcancel\fR (long timer_id, const void **act = 0, int dont_call_handle_close = 1)"
+.br
+.ti -1c
+.RI "virtual int \fBexpire\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBexpire\fR (const \fBACE_Time_Value\fR &current_time)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Timer_Queue_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK>& \fBiter\fR (void)"
+.br
+.RI "\fIReturns a pointer to this 's iterator.\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Node_T\fR<TYPE>* \fBremove_first\fR (void)"
+.br
+.RI "\fIRemoves the earliest node from the queue and returns it.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Node_T\fR<TYPE>* \fBget_first\fR (void)"
+.br
+.RI "\fIReads the earliest node from the queue and returns it.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "virtual void \fBreschedule\fR (\fBACE_Timer_Node_T\fR<TYPE> *)"
+.br
+.RI "\fIReschedule an "interval" .\fR"
+.ti -1c
+.RI "void \fBfind_new_earliest\fR (void)"
+.br
+.RI "\fIFinds the earliest node.\fR"
+.ti -1c
+.RI "\fBACE_Timer_Hash_T\fR (const ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET> &)"
+.br
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET> &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBsize_\fR"
+.br
+.RI "\fIKeeps track of the size of the queue.\fR"
+.ti -1c
+.RI "BUCKET** \fBtable_\fR"
+.br
+.RI "\fITable of BUCKETS.\fR"
+.ti -1c
+.RI "size_t \fBtable_size_\fR"
+.br
+.RI "\fIKeeps track of the size of table_.\fR"
+.ti -1c
+.RI "\fBACE_Timer_Hash_Upcall\fR<TYPE, FUNCTOR, ACE_LOCK> \fBtable_functor_\fR"
+.br
+.RI "\fIFunctor used for the table's timer queues.\fR"
+.ti -1c
+.RI "size_t \fBearliest_position_\fR"
+.br
+.RI "\fIIndex to the position with the earliest entry.\fR"
+.ti -1c
+.RI "\fBHASH_ITERATOR\fR* \fBiterator_\fR"
+.br
+.RI "\fIIterator used to expire timers.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Timer_Hash_Iterator_T< TYPE,FUNCTOR,ACE_LOCK,BUCKET >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE, class FUNCTOR, class ACE_LOCK, class BUCKET>  template class ACE_Timer_Hash_T
+Provides a hash table of <BUCKET>s as an implementation for a timer queue.
+.PP
+.PP
+ This implementation uses a hash table of BUCKETs. The hash is based on the time_value of the event. Unlike other Timer Queues, ACE_Timer_Hash does not expire events in order. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> typedef \fBACE_Timer_Hash_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK, BUCKET> ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::HASH_ITERATOR
+.PP
+Type of iterator.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> typedef \fBACE_Timer_Queue_T\fR<TYPE, FUNCTOR, ACE_LOCK> ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::INHERITED
+.PP
+Type inherited from.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET> (size_t table_size, FUNCTOR * upcall_functor = 0, \fBACE_Free_List\fR< \fBACE_Timer_Node_T\fR< TYPE > >* freelist = 0)
+.PP
+Default constructor. <table_size> determines the size of the hash table. <upcall_functor> is the instance of the FUNCTOR to be used by the buckets. If <upcall_functor> is 0, a default FUNCTOR will be created. 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET> (FUNCTOR * upcall_functor = 0, \fBACE_Free_List\fR< \fBACE_Timer_Node_T\fR< TYPE > >* freelist = 0)
+.PP
+Default constructor. <upcall_functor> is the instance of the FUNCTOR to be used by the queue. If <upcall_functor> is 0, Timer Hash will create a default FUNCTOR. <freelist> the freelist of timer nodes. If 0, then a default freelist will be created. The default size will be ACE_DEFAULT_TIMERS and there will be no preallocation. 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::~ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET> (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET> (const ACE_Timer_Hash_T< TYPE,FUNCTOR,ACE_LOCK,BUCKET >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> int ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::cancel (long timer_id, const void ** act = 0, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel the single timer that matches the <timer_id> value (which was returned from the <schedule> method). If act is non-NULL then it will be set to point to the ``magic cookie'' argument passed in when the timer was registered. This makes it possible to free up the memory and avoid memory leaks. If <dont_call> is 0 then the <functor> will be invoked. Returns 1 if cancellation succeeded and 0 if the <timer_id> wasn't found. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> int ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::cancel (const TYPE & type, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel all timer associated with <type>. If <dont_call> is 0 then the <functor> will be invoked. Returns number of timers cancelled. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> void ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> const \fBACE_Time_Value\fR & ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::earliest_time (void) const\fC [virtual]\fR
+.PP
+Returns the time of the earlier node in the . Must be called on a non-empty queue.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> int ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::expire (const \fBACE_Time_Value\fR & current_time)\fC [virtual]\fR
+.PP
+Run the <functor> for all timers whose values are <= <cur_time>. This does not account for <timer_skew>. Returns the number of timers canceled. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> int ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::expire (void)\fC [virtual]\fR
+.PP
+Run the <functor> for all timers whose values are <= . Also accounts for <timer_skew>. Returns the number of timers canceled. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> void ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::find_new_earliest (void)\fC [private]\fR
+.PP
+Finds the earliest node.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::get_first (void)\fC [virtual]\fR
+.PP
+Reads the earliest node from the queue and returns it.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> int ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::is_empty (void) const\fC [virtual]\fR
+.PP
+True if queue is empty, else false.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> \fBACE_Timer_Queue_Iterator_T\fR< TYPE,FUNCTOR,ACE_LOCK >& ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::iter (void)\fC [virtual]\fR
+.PP
+Returns a pointer to this 's iterator.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> void ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::operator= (const ACE_Timer_Hash_T< TYPE,FUNCTOR,ACE_LOCK,BUCKET >&)\fC [private]\fR
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::remove_first (void)\fC [virtual]\fR
+.PP
+Removes the earliest node from the queue and returns it.
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> void ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::reschedule (\fBACE_Timer_Node_T\fR< TYPE >*)\fC [private, virtual]\fR
+.PP
+Reschedule an "interval" .
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> int ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::reset_interval (long timer_id, const \fBACE_Time_Value\fR & interval)\fC [virtual]\fR
+.PP
+Resets the interval of the timer represented by <timer_id> to <interval>, which is specified in relative time to the current <gettimeofday>. If <interval> is equal to , the timer will become a non-rescheduling timer. Returns 0 if successful, -1 if not. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> long ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::schedule (const TYPE & type, const void * act, const \fBACE_Time_Value\fR & delay, const \fBACE_Time_Value\fR & interval = \fBACE_Time_Value::zero\fR)\fC [virtual]\fR
+.PP
+Schedule <type> that will expire after <delay> amount of time, which is specified in absolute time. If it expires then  is passed in as the value to the <functor>. If <interval> is != to  then it is used to reschedule the <type> automatically, using relative time to the current <gettimeofday>. This method returns a <timer_id> that is a pointer to a token which stores information about the event. This <timer_id> can be used to cancel the timer before it expires. Returns -1 on failure. 
+.PP
+Reimplemented from \fBACE_Timer_Queue_T\fR.
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> class \fBACE_Timer_Hash_Iterator_T\fR\fC [friend]\fR
+.PP
+Iterator is a friend.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> size_t ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::earliest_position_\fC [private]\fR
+.PP
+Index to the position with the earliest entry.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> \fBHASH_ITERATOR\fR * ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::iterator_\fC [private]\fR
+.PP
+Iterator used to expire timers.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> size_t ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::size_\fC [private]\fR
+.PP
+Keeps track of the size of the queue.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> BUCKET ** ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::table_\fC [private]\fR
+.PP
+Table of BUCKETS.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> \fBACE_Timer_Hash_Upcall\fR< TYPE,FUNCTOR,ACE_LOCK > ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::table_functor_\fC [private]\fR
+.PP
+Functor used for the table's timer queues.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK, classBUCKET> size_t ACE_Timer_Hash_T<TYPE, FUNCTOR, ACE_LOCK, BUCKET>::table_size_\fC [private]\fR
+.PP
+Keeps track of the size of table_.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

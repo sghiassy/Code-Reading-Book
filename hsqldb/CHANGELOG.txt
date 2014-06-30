@@ -1,0 +1,454 @@
+CHANGELOG (as of 20 July 2001 - changes currently reflected in CVS trunk/module [stable])
+========================================================================================
+
+========================================================================================
+HSQLDB v. 1.61
+
+Changes 20 July 2001
+
+The following enhancements and bug fixes have been introduced:
+Patch or Bug tracking numbers are included where one exists.
+
+Compatibility with version 1.43 databases.
+Database files created with 1.43 can be opened with version 1.61. The
+database is converted into the 1.6x format.
+
+The LIMIT keyword for fetching only part of the result set.
+
+SELECT LIMIT n m { selectExpression | table.* | * } [, ... ] .........
+
+The LIMIT keyword can be used immediately after the SELECT keyword and has
+two numbers as parameters. The query is executed as if LIMIT and its 
+parameters were not present, then the rows after the offset position (n)
+and specified by count (m) are returned. Offset n is counted from one.
+"SELECT LIMIT 10 20 * FROM mytable" returns rows 11-30 only
+Currently LIMIT cannot be used together with DISTINCT
+
+
+418019 Timestamp format
+
+418022 Char comparison
+
+418023 SUBSTR 
+
+416144  416146  430615 GROUP BY used with aggregate functions:
+                a new patch, without side-effects, has been used
+
+425495 setObject
+
+
+========================================================================================
+
+========================================================================================
+
+Changes 06 July 2001
+
+
+I have checked the bug reports and patches and indicated my opinion as to
+which patches / bug fixes should be done for the 1.61 point release,
+stating NO or OK. I have incorporated some of these and fixed one myself.
+In addition, the patch for database migration from 1.43 to 1.6x that I 
+submitted on 16 April should be incorporated into the point release.
+
+There were 10 patches up to 16 April, which according to Mark, have been 
+incorporated. Except:
+
+OK-------416149 Swing interface for DatabaseManager - ok - but file is missing
+
+Patches since 16 April:
+
+
+OK-------418014 Trace specific exceptions - ok
+INCORPORATED fredt
+
+NO-------418017 Month format
+		   fredt: - patch is ok - do we want this as it can break existing code
+
+OK-------418019 Timestamp format - ok - won't break existing code
+INCORPORATED fredt
+
+
+OK-------418022 Char comparison
+		   fredt: - patch is ok - do we want this as it can break existing code
+         fredt: - now I think we should add it anyway. Side effects would be minimal.
+INCORPORATED fredt
+
+
+OK-------418023 SUBSTR - ok
+INCORPORATED fredt
+
+
+Bugs
+
+
+OK-------416138 Resolved: The user should use switchtojdk11 before the build
+
+NO-------416139 Multiple result sets
+         fredt: High Hopes?
+
+
+  -------416140 PATCH for getMoreResults() - ok
+
+ALREADY IN VERSION 1.60 fredt
+
+
+OK-------416141 DatabaseMetaData.getExportedKeys() does not work :
+		   fredt: I know this one from Hypersonic. May be able to fix it.
+
+fredt: In DatabaseInformatio.java, getSystemTable(,,) creates a table on the
+fly for metadata information and then fills it with information from tTable.
+Code has been written to fill the SYSTEM_TABLES, SYSTEM_TYPES, etc.
+but not FOREIGN_KEY etc. as these would be more complicated.
+I hope to get a bit of extra time in the near future to implement
+this and related calls, getExportedKeys(), getCrossReference(), etc.
+
+
+  -------416142 SAME AS ABOVE
+
+
+OK-------416143 PATCH LONGVARBINARY - ok
+
+ALREADY IN VERSION 1.60
+
+OK-------416144 PATCH for GROUP BY - has side effect
+  -------416146 SAME AS ABOVE
+
+INCORPORATED fredt: fixed with different code without side effect
+
+OK-------416325 complaint by user -
+		   fredt: If they submit their changes we will incorporate into the CVS.
+
+
+OK-------416357 DB transition - documentation issue - If anyone has a
+         half-finished doc we can put it up and ask users / developers to
+         contibute and finish it. Mike seems to have done something about this.
+
+
+OK-------423114 Timestamp - Mike and Mark were looking into this.
+		   fredt: If no results I can have a go.
+
+OK-------423964 Single Quote in string fields - says it has been fixed in HQSLDB
+		   fredt: has it been fixed?
+
+??-------424027 DELETE FROM ... problem with cached tables
+NO-------424759 CREATE TABLE ... request for extended SQL support (worked with 1.43)
+         fredt: it works if NOT NULL is placed before PRIMARY KEY
+
+NO-------424763 canonizing column names request for case insensitive names (worked with 1.43)
+NO-------424767 Request for support for 0 and 1 as bit values
+
+OK-------424784 now() parsed as timestamp
+
+
+OK-------425495 PATCH setObject - ok
+INCORPORATED fredt
+
+
+  -------430615 SAME AS 416144
+OK-------432855 shutdown compact
+
+
+=======================================================================================
+
+=======================================================================================
+
+Changes 01 July 2001
+
+
+I have checked the reports and patches and indicated my opinion as to which
+of the patches / bug fixes should be done for the 1.61 point release,
+stating NO or OK. I have incorporated some of these and fixed one myself. In
+additions the patch for database migration from 1.43 to 1.6x that I submitted
+on 16 April should be incorporated into the point release.
+
+There were 10 patches up to 16 April, which according to Mark, have been 
+incorporated. Except:
+
+OK-------416149 Swing interface for DatabaseManager - ok - but file is missing
+
+Patches since 16 April:
+
+
+OK-------418014 Trace specific exceptions - ok
+INCORPORATED fredt
+
+NO-------418017 Month format
+		   fredt: - patch is ok - do we want this as it can break existing code
+
+OK-------418019 Timestamp format - ok - won't break existing code
+INCORPORATED fredt
+
+
+OK-------418022 Char comparison
+		   fredt: - patch is ok - do we want this as it can break existing code
+         fredt: - now I think we should add it anyway
+
+
+OK-------418023 SUBSTR - ok
+INCORPORATED fredt
+
+
+Bugs
+
+
+OK-------416138 Resolved: The user should use switchtojdk11 before the build
+
+NO-------416139 Multiple result sets
+         fredt: High Hopes?
+
+
+  -------416140 PATCH for getMoreResults() - ok
+
+ALREADY IN VERSION 1.60 fredt
+
+
+OK-------416141 DatabaseMetaData.getExportedKeys() does not work :
+		   fredt: I know this one from Hypersonic. May be able to fix it.
+
+fredt: In DatabaseInformatio.java, getSystemTable(,,) creates a table on the
+fly for metadata information and then fills it with information from tTable.
+Code has been written to fill the SYSTEM_TABLES, SYSTEM_TYPES, etc.
+but not FOREIGN_KEY etc. as these would be more complicated.
+I hope to get a bit of extra time in the near future to implement
+this and related calls, getExportedKeys(), getCrossReference(), etc.
+
+
+  -------416142 SAME AS ABOVE
+
+
+OK-------416143 PATCH LONGVARBINARY - ok
+
+ALREADY IN VERSION 1.60
+
+OK-------416144 PATCH for GROUP BY - has side effect
+  -------416146 SAME AS ABOVE
+
+INCORPORATED fredt: fixed with different code without side effect
+
+OK-------416325 complaint by user -
+		   fredt: If they submit their changes we will incorporate into the CVS.
+
+
+OK-------416357 DB transition - documentation issue - If anyone has a
+         half-finished doc we can put it up and ask users / developers to
+         contibute and finish it. Mike seems to have done something about this.
+
+
+OK-------423114 Timestamp - Mike and Mark were looking into this.
+		   fredt: If no results I can have a go.
+
+OK-------423964 Single Quote in string fields - says it has been fixed in HQSLDB
+		   fredt: has it been fixed?
+
+??-------424027 DELETE FROM ... problem with cached tables
+NO-------424759 CREATE TABLE ... request for extended SQL support (worked with 1.43)
+         fredt: it works if NOT NULL is placed before PRIMARY KEY
+
+NO-------424763 canonizing column names request for case insensitive names (worked with 1.43)
+NO-------424767 Request for support for 0 and 1 as bit values
+OK-------424784 now() parsed as timestamp
+OK-------425495 PATCH setObject - ok
+  -------430615 SAME AS 416144
+OK-------432855 shutdown compact
+
+
+=================================================================================
+
+=================================================================================
+
+Changes to HSQLDB v. 1.60 directory structure and introduction of an
+Ant build.xml
+
+
+The original directory structure of HypersonicSQL had evolved around a set of
+demos and the hsql.jar file was located in the /demo directory.
+
+There was no /lib directory and the javax.servlet classes were in the same
+folder as the source code. This arrangement was somewhat useful with jdk1.1.x
+as it did not require a classpath argument for some of the compile and run tasks.
+But it has no major advantage with jdk1.3.
+
+In HSQLDB, all classes are in the org.hsqldb. tree, compared to HypersonicSQL's
+org.hsql. This change already dictates that any existing .html, .bat, .sh and
+other command files that are in use for running the database, or its utility
+classes, have to be edited to reflect the new tree name.
+
+HypersonicSQL only included .bat files for development and running tasks. The
+development of Apache Ant has made it possible to perform compile and build tasks
+in a platform-independent manner. So a build.xml script for Ant is highly
+desireable.
+ 
+These circumstances justify the introduction a new directory structure which
+follows the standards used by Sun and others to distribute Java programs. 
+
+
+Changes:
+
+Summary of Changes:
+
+/bin /lib and /classes directories have been added to the rool directory of the
+installation. Some existing files have been moved to these directories. All
+command files have been updated to work within the new structure.
+
+Details of Changes:
+
+/bin is almost empty now but will hold .bat and .sh files used for creating
+databases and running different configuration of the server. Unlike the
+versions in /demo, these will not create a test database and will expect the
+user to specify a database. 
+(.sh files will be addes after some work to make them independent of java
+runtime location)
+
+/lib contains the javax.servlet precompiled classes (moved from /src) and is
+the location of the hsqldb.jar file when it is created.
+
+/classes contains the org.hsqldb classes while the .jar is being built and
+CodeSwitcher.java is used to convert source code. It is normally deleted after
+the operation.
+
+In /src there is an Ant build.xml that builds the hsqldb.jar. (Ant must be 
+already installed). To use it, change to /src then type:
+
+ant
+
+This displays the command line options which include
+
+ant jar              to make the hsqldb.jar
+ant clean            to clean up the /classes directory that is created type:
+ant cleanall         to remove the old jar as well
+ant switchtojdk11    to process and change the code for jdk1.1.x
+ant switchtojdk12    to process and change the code for jdk1.2.x and 1.3.x
+
+In /demo all the html and bat files have been changed to reflect the
+new relative location of the hsqldb.jar file. The .bat files all work.
+
+In .html files, the codebase argument was added to the Applet tag. The
+in-memory and client-server .html demos all work
+
+/src/build.bat works with jdk1.1x and above. It puts the hsqldb.jar file in
+/lib and takes account of the new location of javax classes.
+
+All the other .bat files work, except:
+
+switchtoprofile.bat
+switchtoruntime.bat
+
+There is a problem with the same .bat files in HypersonicSQL 1.43. The  new format 
+of the 1.60 code and the addition of comments in 1.60 just result in extra
+errors. 
+
+THESE .bat FILES CORRUPT THE SOURCES, so that if they are performed one followed
+by the other, the sources no longer compile correctly (tested with jdk1.3).
+
+***I suggest not to include them in the distribution until there is a
+resolution.
+
+I think the new directory structure can be introduced as the remaining minor
+problems are definitely not related to the change of dirctory structure.
+
+Tests have been performed on Win NT 4 SP6A with jdk1.3.0_02 and jdk1.1.8. In
+both test environments, a minimal classpath was used. Internet Explorer 5.5 was
+used for testing .html Applets
+===================================================================================
+
+===================================================================================
+Changes 16 April 2001
+
+
+
+By Fred Toussi fredt@users.sourceforege.net
+
+
+Database.java
+
+Log.java
+
+
+
+Enable opening database files created with older version of hsql but disable
+
+opening databases created with later versions (1.60 and 1.61 are considered
+
+the same version but 1.60 and 1.70 are different versions)
+
+Has been tested and is unlikely to have any side effects
+
+
+
+
+
+
+
+Parser.java
+
+Select.java
+
+
+
+Introduced the additions made by Hybris to 1.43 code, resulting in 1.50
+
+These additions implement the LIMIT keyword e.g.
+
+"select limit 10 20 * from mytable" returns rows 11-30 only
+
+
+
+Additions made by Hybris for cosmetic or debugging purposes were ignored.
+
+Has been checked and tested and is unlikely to have any side effects.
+
+
+
+
+======================================================================================
+
+======================================================================================
+Changes in 1.60
+
+Several minor fixes, code formatted to Sun standards, Javadoc comments started.
+
+Issues Addressed:
+
+Problem: LONGVARBINARY error using setObject.
+    When using setObject to set the value of a binary column a class cast
+    error occured. Added methods to resolve this, bug and fix submitted by ?.
+
+Problem: BINARY data types were limited to 32K.
+    Added support for larger objects. Bug and fix submitted by Jonathan Tappan.
+    
+Problem: Cached table corruption
+    Modified Cache class to update free space list correctly. Bug and fix 
+    submitted by Jonathan Tappan.
+    
+Problem: readonly property causes stack dump in Log class
+    Bug and fix submitted by Donatella Mori and Richard Hoad.
+    
+Problem: getMoreResults fails to follow JDBC spec.
+    Bug and fix submitted by Brent Boyer.
+    
+Problem: Subselect bugs
+    Bug and fix submitted by Mark Muday.
+    
+Problem: hsql connection type converted to http by jdbcConnection class.
+    Bug and fix submitted by Elize Jensen.
+    
+Problem: INTERNAL connection type being closed incorrectly, causing, among other 
+    things, CALL IDENTITY() to fail.  Bug and fix provided by Mauro Canal.
+
+New Features:    
+    
+Extended SQL syntax for DROP TABLE to allow 'DROP TABLE IF EXISTS <table>'. 
+
+Logicscope Realisations Ltd. graciously sponsored Peter Hudson who developed
+the trigger implementation for HSQLdb.
+
+Postponed Features:
+
+Reworked transactions mechanism.  The problem with the old mechanism 
+(as I understand it) was that during a transaction, the uncommited records were 
+available to other channels, i.e. they can read uncommitted changes that may be
+rolled back in the case of an aborted transaction.  The modification 
+allows 2 phase transactions, where the updates are not visible outside of the 
+Channel until the transaction is committed. Patch submitted by Valerio Aimale.  
+The concept is sound, but the changes caused problems, perhaps due to other changes 
+in this release.

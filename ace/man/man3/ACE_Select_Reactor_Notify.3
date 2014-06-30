@@ -1,0 +1,193 @@
+.TH ACE_Select_Reactor_Notify 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Select_Reactor_Notify \- Unblock the  from its event loop. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Select_Reactor_Base.h>\fR
+.PP
+Inherits \fBACE_Reactor_Notify\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Notify\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "\fB~ACE_Select_Reactor_Notify\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBopen\fR (\fBACE_Reactor_Impl\fR *, \fBACE_Timer_Queue\fR * = 0, int disable_notify_pipe = 0)"
+.br
+.RI "\fIInitialize.\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIDestroy.\fR"
+.ti -1c
+.RI "virtual \fBssize_t\fR \fBnotify\fR (\fBACE_Event_Handler\fR * = 0, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::EXCEPT_MASK, \fBACE_Time_Value\fR * = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBdispatch_notifications\fR (int &number_of_active_handles, \fBACE_Handle_Set\fR &rd_mask)"
+.br
+.RI "\fIHandles pending threads (if any) that are waiting to unblock the .\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBnotify_handle\fR (void)"
+.br
+.RI "\fIReturns the ACE_HANDLE of the notify pipe on which the reactor is listening for notifications so that other threads can unblock the Select_Reactor.\fR"
+.ti -1c
+.RI "virtual int \fBdispatch_notify\fR (\fBACE_Notification_Buffer\fR &buffer)"
+.br
+.RI "\fIHandle one of the notify call on the <handle>. This could be because of a thread trying to unblock the <Reactor_Impl>.\fR"
+.ti -1c
+.RI "virtual int \fBread_notify_pipe\fR (ACE_HANDLE handle, \fBACE_Notification_Buffer\fR &buffer)"
+.br
+.RI "\fIRead one of the notify call on the <handle> into the <buffer>. This could be because of a thread trying to unblock the <Reactor_Impl>.\fR"
+.ti -1c
+.RI "virtual int \fBis_dispatchable\fR (\fBACE_Notification_Buffer\fR &buffer)"
+.br
+.RI "\fIVerify whether the buffer has dispatchable info or not.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_input\fR (ACE_HANDLE handle)"
+.br
+.RI "\fICalled back by the  when a thread wants to unblock us.\fR"
+.ti -1c
+.RI "virtual void \fBmax_notify_iterations\fR (int)"
+.br
+.ti -1c
+.RI "virtual int \fBmax_notify_iterations\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBpurge_pending_notifications\fR (\fBACE_Event_Handler\fR *, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)"
+.br
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Select_Reactor_Impl\fR* \fBselect_reactor_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Pipe\fR \fBnotification_pipe_\fR"
+.br
+.ti -1c
+.RI "int \fBmax_notify_iterations_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Unblock the  from its event loop.
+.PP
+.PP
+ This implementation is necessary for cases where the  is run in a multi-threaded program. In this case, we need to be able to unblock <select> or <poll> when updates occur other than in the main  thread. To do this, we signal an auto-reset event the  is listening on. If an  and  is passed to <notify>, the appropriate <handle_*> method is dispatched in the context of the  thread. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Select_Reactor_Notify::ACE_Select_Reactor_Notify (void)
+.PP
+Default dtor.
+.PP
+.SS ACE_Select_Reactor_Notify::~ACE_Select_Reactor_Notify (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Select_Reactor_Notify::close (void)\fC [virtual]\fR
+.PP
+Destroy.
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS int ACE_Select_Reactor_Notify::dispatch_notifications (int & number_of_active_handles, \fBACE_Handle_Set\fR & rd_mask)\fC [virtual]\fR
+.PP
+Handles pending threads (if any) that are waiting to unblock the .
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS int ACE_Select_Reactor_Notify::dispatch_notify (\fBACE_Notification_Buffer\fR & buffer)\fC [virtual]\fR
+.PP
+Handle one of the notify call on the <handle>. This could be because of a thread trying to unblock the <Reactor_Impl>.
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS void ACE_Select_Reactor_Notify::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS int ACE_Select_Reactor_Notify::handle_input (ACE_HANDLE handle)\fC [virtual]\fR
+.PP
+Called back by the  when a thread wants to unblock us.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS int ACE_Select_Reactor_Notify::is_dispatchable (\fBACE_Notification_Buffer\fR & buffer)\fC [virtual]\fR
+.PP
+Verify whether the buffer has dispatchable info or not.
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS int ACE_Select_Reactor_Notify::max_notify_iterations (void)\fC [virtual]\fR
+.PP
+Get the maximum number of times that the  method will iterate and dispatch the  that are passed in via the notify pipe before breaking out of its <recv> loop. 
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS void ACE_Select_Reactor_Notify::max_notify_iterations (int)\fC [virtual]\fR
+.PP
+Set the maximum number of times that the  method will iterate and dispatch the  that are passed in via the notify pipe before breaking out of its <recv> loop. By default, this is set to -1, which means "iterate until the pipe is empty." Setting this to a value like "1 or 2" will increase "fairness" (and thus prevent starvation) at the expense of slightly higher dispatching overhead. 
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS \fBssize_t\fR ACE_Select_Reactor_Notify::notify (\fBACE_Event_Handler\fR * event_handler = 0, \fBACE_Reactor_Mask\fR mask = ACE_Event_Handler::EXCEPT_MASK, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Called by a thread when it wants to unblock the . This wakeups the  if currently blocked in <select>/<poll>. Pass over both the <Event_Handler> *and* the <mask> to allow the caller to dictate which <Event_Handler> method the  will invoke. The  indicates how long to blocking trying to notify the . If <timeout> == 0, the caller will block until action is possible, else will wait until the relative time specified in *<timeout> elapses). 
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS ACE_HANDLE ACE_Select_Reactor_Notify::notify_handle (void)\fC [virtual]\fR
+.PP
+Returns the ACE_HANDLE of the notify pipe on which the reactor is listening for notifications so that other threads can unblock the Select_Reactor.
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS int ACE_Select_Reactor_Notify::open (\fBACE_Reactor_Impl\fR * wfmo_reactor, \fBACE_Timer_Queue\fR * timer_queue = 0, int disable_notify_pipe = 0)\fC [virtual]\fR
+.PP
+Initialize.
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS int ACE_Select_Reactor_Notify::purge_pending_notifications (\fBACE_Event_Handler\fR *, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [virtual]\fR
+.PP
+Purge any notifications pending in this reactor for the specified  object. If <eh> == 0, all notifications for all handlers are removed (but not any notifications posted just to wake up the reactor itself). Returns the number of notifications purged. Returns -1 on error. 
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SS int ACE_Select_Reactor_Notify::read_notify_pipe (ACE_HANDLE handle, \fBACE_Notification_Buffer\fR & buffer)\fC [virtual]\fR
+.PP
+Read one of the notify call on the <handle> into the <buffer>. This could be because of a thread trying to unblock the <Reactor_Impl>.
+.PP
+Reimplemented from \fBACE_Reactor_Notify\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Select_Reactor_Notify::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS int ACE_Select_Reactor_Notify::max_notify_iterations_\fC [protected]\fR
+.PP
+Keeps track of the maximum number of times that the  method will iterate and dispatch the  that are passed in via the notify pipe before breaking out of its <recv> loop. By default, this is set to -1, which means "iterate until the pipe is empty." 
+.SS \fBACE_Pipe\fR ACE_Select_Reactor_Notify::notification_pipe_\fC [protected]\fR
+.PP
+Contains the  the  is listening on, as well as the  that threads wanting the attention of the  will write to. 
+.SS \fBACE_Select_Reactor_Impl\fR * ACE_Select_Reactor_Notify::select_reactor_\fC [protected]\fR
+.PP
+Keep a back pointer to the . If this value if NULL then the  has been initialized with <disable_notify_pipe>. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

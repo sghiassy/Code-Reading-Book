@@ -1,0 +1,268 @@
+.TH ACE_Service_Repository 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Service_Repository \- Contains all the services offered by a Service Configurator-based application. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Service_Repository.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBDEFAULT_SIZE\fR = ACE_DEFAULT_SERVICE_REPOSITORY_SIZE }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Service_Repository\fR (void)"
+.br
+.RI "\fIInitialize the repository.\fR"
+.ti -1c
+.RI "\fBACE_Service_Repository\fR (int size)"
+.br
+.RI "\fIInitialize the repository.\fR"
+.ti -1c
+.RI "int \fBopen\fR (int size = DEFAULT_SIZE)"
+.br
+.RI "\fIInitialize the repository.\fR"
+.ti -1c
+.RI "\fB~ACE_Service_Repository\fR (void)"
+.br
+.RI "\fIClose down the repository and free up dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the repository and free up dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBfini\fR (void)"
+.br
+.RI "\fIFinalize all the services by calling <fini> and deleting dynamically allocated services.\fR"
+.ti -1c
+.RI "int \fBinsert\fR (const \fBACE_Service_Type\fR *)"
+.br
+.RI "\fIInsert a new service record. Returns -1 when the service repository is full and 0 on success.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const \fBACE_TCHAR\fR name[], const \fBACE_Service_Type\fR **srp = 0, int ignore_suspended = 1)"
+.br
+.ti -1c
+.RI "int \fBremove\fR (const \fBACE_TCHAR\fR[])"
+.br
+.RI "\fIRemove an existing service record.\fR"
+.ti -1c
+.RI "int \fBresume\fR (const \fBACE_TCHAR\fR[], const \fBACE_Service_Type\fR ** = 0)"
+.br
+.RI "\fIResume a service record.\fR"
+.ti -1c
+.RI "int \fBsuspend\fR (const \fBACE_TCHAR\fR[], const \fBACE_Service_Type\fR ** = 0)"
+.br
+.RI "\fISuspend a service record.\fR"
+.ti -1c
+.RI "int \fBcurrent_size\fR (void) const"
+.br
+.RI "\fIReturn the current size of the repository.\fR"
+.ti -1c
+.RI "int \fBtotal_size\fR (void) const"
+.br
+.RI "\fIReturn the total size of the repository.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Service_Repository* \fBinstance\fR (int size = ACE_Service_Repository::DEFAULT_SIZE)"
+.br
+.RI "\fIGet pointer to a process-wide .\fR"
+.ti -1c
+.RI "ACE_Service_Repository* \fBinstance\fR (ACE_Service_Repository *)"
+.br
+.RI "\fISet pointer to a process-wide  and return existing pointer.\fR"
+.ti -1c
+.RI "void \fBclose_singleton\fR (void)"
+.br
+.RI "\fIDelete the dynamically allocated Singleton.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBfind_i\fR (const \fBACE_TCHAR\fR service_name[], const \fBACE_Service_Type\fR ** = 0, int ignore_suspended = 1)"
+.br
+.RI "\fILocates <service_name>. Must be called without locks being held...\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "const \fBACE_Service_Type\fR** \fBservice_vector_\fR"
+.br
+.RI "\fIContains all the configured services.\fR"
+.ti -1c
+.RI "int \fBcurrent_size_\fR"
+.br
+.RI "\fICurrent number of services.\fR"
+.ti -1c
+.RI "int \fBtotal_size_\fR"
+.br
+.RI "\fIMaximum number of services.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Service_Repository* \fBsvc_rep_\fR"
+.br
+.RI "\fIPointer to a process-wide .\fR"
+.ti -1c
+.RI "int \fBdelete_svc_rep_\fR"
+.br
+.RI "\fIMust delete the <svc_rep_> if non-0.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Service_Repository_Iterator\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Contains all the services offered by a Service Configurator-based application.
+.PP
+.PP
+ This class contains a vector of  *'s and allows an administrative entity to centrally manage and control the behavior of application services. Note that if services are removed from the middle of the repository the order won't necessarily be maintained since the <remove> method performs compaction. However, the common case is not to remove services, so typically they are deleted in the reverse order that they were added originally. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIDEFAULT_SIZE\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Service_Repository::ACE_Service_Repository (void)
+.PP
+Initialize the repository.
+.PP
+.SS ACE_Service_Repository::ACE_Service_Repository (int size)
+.PP
+Initialize the repository.
+.PP
+.SS ACE_Service_Repository::~ACE_Service_Repository (void)
+.PP
+Close down the repository and free up dynamically allocated resources.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Service_Repository::close (void)
+.PP
+Close down the repository and free up dynamically allocated resources.
+.PP
+.SS void ACE_Service_Repository::close_singleton (void)\fC [static]\fR
+.PP
+Delete the dynamically allocated Singleton.
+.PP
+.SS int ACE_Service_Repository::current_size (void) const
+.PP
+Return the current size of the repository.
+.PP
+.SS void ACE_Service_Repository::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_Service_Repository::find (const \fBACE_TCHAR\fR name[], const \fBACE_Service_Type\fR ** srp = 0, int ignore_suspended = 1)
+.PP
+Locate an entry with <name> in the table. If <ignore_suspended> is set then only consider services marked as resumed. If the caller wants the located entry, pass back a pointer to the located entry via <srp>. If <name> is not found, -1 is returned. If <name> is found, but it is suspended and the caller wants to ignore suspended services a -2 is returned. 
+.SS int ACE_Service_Repository::find_i (const \fBACE_TCHAR\fR service_name[], const \fBACE_Service_Type\fR ** = 0, int ignore_suspended = 1)\fC [private]\fR
+.PP
+Locates <service_name>. Must be called without locks being held...
+.PP
+.SS int ACE_Service_Repository::fini (void)
+.PP
+Finalize all the services by calling <fini> and deleting dynamically allocated services.
+.PP
+.SS int ACE_Service_Repository::insert (const \fBACE_Service_Type\fR *)
+.PP
+Insert a new service record. Returns -1 when the service repository is full and 0 on success.
+.PP
+.SS ACE_Service_Repository * ACE_Service_Repository::instance (ACE_Service_Repository *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer.
+.PP
+.SS ACE_Service_Repository * ACE_Service_Repository::instance (int size = ACE_Service_Repository::DEFAULT_SIZE)\fC [static]\fR
+.PP
+Get pointer to a process-wide .
+.PP
+.SS int ACE_Service_Repository::open (int size = DEFAULT_SIZE)
+.PP
+Initialize the repository.
+.PP
+.SS int ACE_Service_Repository::remove (const ACE_TCHAR[])
+.PP
+Remove an existing service record.
+.PP
+.SS int ACE_Service_Repository::resume (const ACE_TCHAR[], const \fBACE_Service_Type\fR ** = 0)
+.PP
+Resume a service record.
+.PP
+.SS int ACE_Service_Repository::suspend (const ACE_TCHAR[], const \fBACE_Service_Type\fR ** = 0)
+.PP
+Suspend a service record.
+.PP
+.SS int ACE_Service_Repository::total_size (void) const
+.PP
+Return the total size of the repository.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Service_Repository_Iterator\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Service_Repository::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS int ACE_Service_Repository::current_size_\fC [private]\fR
+.PP
+Current number of services.
+.PP
+.SS int ACE_Service_Repository::delete_svc_rep_\fC [static, private]\fR
+.PP
+Must delete the <svc_rep_> if non-0.
+.PP
+.SS const \fBACE_Service_Type\fR ** ACE_Service_Repository::service_vector_\fC [private]\fR
+.PP
+Contains all the configured services.
+.PP
+.SS ACE_Service_Repository * ACE_Service_Repository::svc_rep_\fC [static, private]\fR
+.PP
+Pointer to a process-wide .
+.PP
+.SS int ACE_Service_Repository::total_size_\fC [private]\fR
+.PP
+Maximum number of services.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

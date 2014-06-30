@@ -1,0 +1,46 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/ibm8514/Imakefile,v 3.5 1996/12/23 06:37:38 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:21:06 rws $
+
+#include <Server.tmpl>
+
+SRCS = 	ibm8514.c cmap.c gc.c fs.c ss.c \
+	gs.c win.c init.c im.c bstor.c \
+	scrin.c blt.c plypt.c \
+	line.c seg.c frect.c text.c \
+	font.c fcach.c \
+	dsline.c dsseg.c ddline.c ddseg.c \
+	imwrite.s imread.s imfill.s imstip.s \
+	gtimg.c fc.c bcach.c
+
+OBJS = 	ibm8514.o cmap.o gc.o fs.o ss.o \
+	gs.o win.o init.o im.o bstor.o \
+	scrin.o blt.o plypt.o \
+	line.o seg.o frect.o text.o \
+	font.o fcach.o \
+	dsline.o dsseg.o ddline.o ddseg.o \
+	imwrite.o imread.o imfill.o imstip.o \
+	gtimg.o fc.o bcach.o
+
+DEFINES=-DPSZ=8
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. \
+	   -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+           -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) -I$(FONTINCSRC) -I../cache
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(8514,$(OBJS))
+
+InstallLinkKitLibrary(8514,$(LINKKITDIR)/drivers)
+
+ObjectFromSpecialSource(ddline,dsline,-DI8514DoubleDash)
+ObjectFromSpecialSource(ddseg,dsseg,-DI8514DoubleDash)
+
+DependTarget()

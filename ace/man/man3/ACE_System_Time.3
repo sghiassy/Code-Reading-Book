@@ -1,0 +1,152 @@
+.TH ACE_System_Time 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_System_Time \- Defines the timer services of the OS interface to access the system time either on the local host or on the central time server in the network. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <System_Time.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBSync_Mode\fR { \fBJump\fR, \fBAdjust\fR }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_System_Time\fR (const \fBACE_TCHAR\fR *poolname = 0)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_System_Time\fR (void)"
+.br
+.RI "\fIDefault destructor.\fR"
+.ti -1c
+.RI "int \fBget_master_system_time\fR (ACE_UINT32 &time_out)"
+.br
+.RI "\fIGet the system time of the central time server.\fR"
+.ti -1c
+.RI "int \fBget_master_system_time\fR (\fBACE_Time_Value\fR &time_out)"
+.br
+.RI "\fIGet the system time of the central time server.\fR"
+.ti -1c
+.RI "int \fBsync_local_system_time\fR (\fBACE_System_Time::Sync_Mode\fR mode)"
+.br
+.RI "\fIsynchronize local system time with the central time server using specified mode.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBget_local_system_time\fR (ACE_UINT32 &time_out)"
+.br
+.RI "\fIGet the local system time, i.e., the value returned by .\fR"
+.ti -1c
+.RI "int \fBget_local_system_time\fR (\fBACE_Time_Value\fR &time_out)"
+.br
+.RI "\fIGet the local system time, i.e., the value returned by .\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Malloc\fR<ACE_MMAP_MEMORY_POOL, \fBACE_Null_Mutex\fR> \fBMALLOC\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Allocator_Adapter\fR<\fBMALLOC\fR> \fBALLOCATOR\fR"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBALLOCATOR\fR* \fBshmem_\fR"
+.br
+.RI "\fIOur allocator (used for obtaining system time from shared memory).\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBpoolname_\fR [MAXPATHLEN + 1]"
+.br
+.RI "\fIThe name of the pool used by the allocator.\fR"
+.ti -1c
+.RI "long* \fBdelta_time_\fR"
+.br
+.RI "\fIPointer to delta time kept in shared memory.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the timer services of the OS interface to access the system time either on the local host or on the central time server in the network.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Allocator_Adapter\fR<\fBMALLOC\fR> ACE_System_Time::ALLOCATOR\fC [private]\fR
+.PP
+.SS typedef \fBACE_Malloc\fR<ACE_MMAP_MEMORY_POOL, \fBACE_Null_Mutex\fR> ACE_System_Time::MALLOC\fC [private]\fR
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_System_Time::Sync_Mode
+.PP
+enumeration types to specify mode of synchronization with master clock. Jump will set local system time directly (thus possibly producing time gaps or ambiguous local system times. Adjust will smoothly slow down or speed up the local system clock to reach the system time of the master clock. 
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIJump\fR \fR
+.TP
+\fB\fIAdjust\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_System_Time::ACE_System_Time (const \fBACE_TCHAR\fR * poolname = 0)
+.PP
+Default constructor.
+.PP
+.SS ACE_System_Time::~ACE_System_Time (void)
+.PP
+Default destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_System_Time::get_local_system_time (\fBACE_Time_Value\fR & time_out)\fC [static]\fR
+.PP
+Get the local system time, i.e., the value returned by .
+.PP
+.SS int ACE_System_Time::get_local_system_time (ACE_UINT32 & time_out)\fC [static]\fR
+.PP
+Get the local system time, i.e., the value returned by .
+.PP
+.SS int ACE_System_Time::get_master_system_time (\fBACE_Time_Value\fR & time_out)
+.PP
+Get the system time of the central time server.
+.PP
+.SS int ACE_System_Time::get_master_system_time (ACE_UINT32 & time_out)
+.PP
+Get the system time of the central time server.
+.PP
+.SS int ACE_System_Time::sync_local_system_time (\fBACE_System_Time::Sync_Mode\fR mode)
+.PP
+synchronize local system time with the central time server using specified mode.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS long * ACE_System_Time::delta_time_\fC [private]\fR
+.PP
+Pointer to delta time kept in shared memory.
+.PP
+.SS \fBACE_TCHAR\fR ACE_System_Time::poolname_[MAXPATHLEN+1]\fC [private]\fR
+.PP
+The name of the pool used by the allocator.
+.PP
+.SS \fBALLOCATOR\fR * ACE_System_Time::shmem_\fC [private]\fR
+.PP
+Our allocator (used for obtaining system time from shared memory).
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

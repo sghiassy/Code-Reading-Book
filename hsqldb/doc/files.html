@@ -1,0 +1,93 @@
+<HTML>
+<HEAD><TITLE>Hypersonic SQL</TITLE></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<H2>hsqldb v.1.61 Download Files</H2>
+
+<P>
+The Standalone and Client/Server version will in
+most cases use files to store all data in a persistent
+and save way to disk. This documentation describes
+the meaning of the files and the mechanisms. 
+<P>
+A database named 'test' is in used in this description.
+The database files will be 'test.script', 'test.properties', 
+'test.data' and 'test.backup'.
+<P>
+<H3>Database Files</H3>
+<UL>
+<LI><STRONG>test.properties</STRONG><BR>
+Contains the filenames and the entry 'modified'. If the entry 
+'modified' is set to 'yes' then the database is eighter running 
+or was the last time not closed correctly (because the close 
+algorithm sets 'modified' to 'no' at the end).
+<LI><STRONG>test.script</STRONG><BR>
+This file contains the SQL statements that makes up the database so far
+(something like the 'Redo-log' or 'Transaction-log', but just text)
+<LI><STRONG>test.data</STRONG><BR>
+This file contains the (binary) data records (not memory tables)
+<LI><STRONG>test.backup</STRONG><BR>
+This is compressed file that contains the backup of the old test.data file.
+</UL>
+<P>
+<H3>Mechanisms</H3>
+<P>
+<STRONG>Database is opened</STRONG>
+<P>
+<UL>
+<LI>Check if test.properties file is in use (algorithm: try to delete and
+re-create; if it works then the database it is not in use).
+<LI>Check in the test.properties file if 'modified=yes'. 
+This would mean last time it was not closed correctly, and thus 
+the test.data file may be corrupted. In this case the 
+'Repair' algorithm is executed (see below) otherwise
+<LI>If in the the test.properties file is 'modified=yes-new-files', then
+the (old) test.backup and test.script files are deleted and the new test.backup.new
+and test.script.new files are renamed.
+<LI>Open the test.script file and execute the commands
+<LI>Append commands to the test.script file
+</UL>
+<P>
+<STRONG>Database is aborted</STRONG>
+<P>
+This may happen by sudden power off, Ctrl+C in Windows, but may
+be simulated using the command SHUTDOWN IMMEDIATELY.
+<P>
+<UL>
+<LI>All files are closed; but the test.script file contains all 
+information to re-do all changes.
+<LI>The test.data file maybe corrupt because the cache in memory was not 
+written completely. 
+<LI>The test.properties still containes 'modified=yes'
+<LI>All files are closed (maybe by the operating system)
+</UL>
+<P>
+<STRONG>Database is closed correctly</STRONG>
+<P>
+This may be done using the command SHUTDOWN, in the 
+Standalone version using Connection.close()
+<P>
+<UL>
+<LI>The test.data file is written completely 
+<LI>The test.backup.new is created (containing the compressed test.data file)
+<LI>The file test.script.new is created using the information in the database 
+(and thus shrinks because no 'update' and 'delete' statements; only simple 'inserts').
+<LI>The entry 'modified' is set to 'yes-new-files'
+<LI>The file test.script is deleted
+<LI>The file test.script.new is renamed to test.script
+<LI>The file test.backup is deleted
+<LI>The file test.backup.new is renamed to test.backup
+<LI>The entry 'modified' is set to 'no'
+</UL>
+<P>
+<STRONG>Repair</STRONG>
+<P>
+The current test.data file is corrupt, but with the old test.data (from the 
+test.backup file) and the current test.script, the database can be made up-to-date:
+<P>
+<UL>
+<LI>Restore the old test.data file from the backup (uncompress the test.backup)
+<LI>Execute all commands in the test.script file.
+<LI>Close the database correctly (including a backup).
+</UL>
+
+</BODY></HTML>

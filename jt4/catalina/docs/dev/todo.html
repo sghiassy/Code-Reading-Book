@@ -1,0 +1,346 @@
+<html>
+<head>
+<title>Catalina TODO List</title>
+</head>
+
+<body bgcolor="white">
+
+<a href="README.html">Home</a>
+
+<p>This document is a living list of the action items related to the
+current development of the Catalina servlet container architecture
+for Tomcat 4.0.</p>
+
+<p>The columns in this report contain the following information:</p>
+<ul>
+<li><b>Priority</b> - A sense of how important the Tomcat development
+    community feels it is to address this issue in the short term.</li>
+<li><b>Action Item</b> - Concise description of the action item
+    to be completed.  Where relevant, Java package names of the
+    primary classes involved are listed in [square brackets]</li>
+<li><b>Volunteers</b> - Names and EMAIL addresses of those developers who
+    have volunteered to assist in the design, implementation, testing, and
+    documentation of this action item's changes to Tomcat.</li>
+</ul>
+
+<p>Additions to, subtractions from, and changes to the action items listed
+here should be discussed and approved on the TOMCAT-DEV mailing list, as
+described on the
+<a href="http://jakarta.apache.org/guidelines/decisions.html">Decision
+Making</a> page on the Jakarta Project web site.  Developers can nominate
+themselves to work on particular action items by asking a Committer to add
+their name and EMAIL address to those items.  The developers working on each
+item should discuss and agree upon the approach to be used for implementing
+the item's changes to the project source code and documentation, prior to
+completing those changes.  Such discussions should take place on the
+TOMCAT-DEV mailing list so that everyone can stay apprised of what is going
+on, or chime in if they want to contribute ideas and suggestions.</p>
+
+<p>For convenience, the action items have been organized into general
+categories, which are presented in alphabetical order.  The following
+categories of actions are currently identified:</p>
+<ul>
+<li><a href="#Architecture">Architecture</a> of the overall server
+<li><a href="#Connectors">Connectors</a> to web servers and HTTP clients
+<li><a href="#Core">Core</a> servlet engine functionality
+<li><a href="#Server">Server Administration</a> functionality
+<li><a href="#Servlet">Servlet</a> provided functionality
+<li><a href="#Session">Session Management</a> functionality
+<li><a href="#Utility">Utility</a> component functionality
+<li><a href="#Valve">Valve</a> provided functionality
+</ul>
+
+<br><br>
+<div align="center"><hr width="75%"</div>
+<br>
+
+<a name="Architecture"></a>
+<div align="center"><h1>Architecture</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Define extensions (if necessary) to the Catalina architecture to
+        support distributed, load-balanced, servlet containers.</td>
+    <td><a href="mailto:Craig.McClanahan@eng.sun.com">Craig McClanahan</a></td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Improve the manageability of Catalina components by adding
+        support classes and interfaces as necessary to meet the requirements
+        of the Java Management Extensions (JMX) specification.</td>
+    <td><a href="mailto:remm@apache.org">Remy Maucherat</a></td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Improve the manageability of Catalina components by adding
+        support classes and interfaces as necessary to meet the requirements
+        of the Avalon framework.</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Define and provide default implementations for logging of server
+        related events and messages, as opposed to the application-level
+        logging provided by <code>Logger</code> implementations.
+        [org.apache.catalina.syslog?]</td>
+    <td>---</td>
+  </tr>
+</table>
+
+
+<a name="Connectors"></a>
+<div align="center"><h1>Connectors</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td align="center">High</td>
+    <td>Design and implement a high-performance Connector implementation
+        that interoperates with the existing <code>mod_jk</code>
+        infrastructure of Tomcat 3.2, to provide either in-process or
+        out-of-process servlet/JSP support for Apache (2.0 required for
+        in-process), Microsoft IIS, Netscape iPlanet, and AOLServer.
+        [org.apache.catalina.connector.modjk]</td>
+     <td><a href="pier@apache.org">Pier Fumigalli</a></td>
+  </tr>
+</table>
+
+
+<a name="Core"></a>
+<div align="center"><h1>Core Servlet Engine Functionality</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td>High</td>
+    <td>Implement the Tomcat 3.x feature of being able to configure a
+        security policy for each deployed web application.</td>
+    <td><a href="glenn@apache.org">Glenn Nielsen</a></td>
+  </tr>
+  <tr>
+    <td>Medium</td>
+    <td>Implement the optional <i>web application environment</i> support
+        described in Section 9.9 of the Servlet API Specification Version 2.2,
+        and Chapter 5 of the Java2 Platform Enterprise Edition Version 1.2
+        Specification.</td>
+    <td>---</td>
+  </tr>
+</table>
+
+
+<a name="Server"></a>
+<div align="center"><h1>Server Administration Functionality</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Design and implement a web application providing server
+        management support for a running Catalina installation.
+        [org.apache.catalina.admin]
+    <td><a href="hoon@us.ibm.com">John Shin</a></td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Improve the ease of installation (and the quality of installation
+        documentation) through the use of installer program technology.</td>
+    <td>---</td>
+  </trd>
+  <tr>
+    <td align="center">Low</td>
+    <td>Port out-of-the-box functionality to install Catalina as a "service"
+        under Microsoft NT, based on the existing code used for Tomcat 3.2.
+        [org.apache.catalina.startup]</td>
+    <td>---</td>
+  </tr>
+</table>
+
+
+<a name="Servlet"></a>
+<div align="center"><h1>Servlet Provided Functionality</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Design and implement a servlet that supports interpretation of
+        web-server-like "server side include" directives, typically
+        found in <code>*.shtml</code> files.
+        [org.apache.catalina.servlets]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Design and implement a servlet that supports interpretation of
+        <code>&lt;servlet&gt;</code> directives, typically
+        found in <code>*.jhtml</code> files.
+        [org.apache.catalina.servlets]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Design and implement a CGI emulation servlet for
+        Catalina.  [org.apache.catalina.servlets]</td>
+    <td><a href="root@xades.com">Martin T. Dengler</a></td>
+  </tr>
+</table>
+
+
+<a name="Session"></a>
+<div align="center"><h1>Session Management Functionality</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Design and implement a <code>Manager</code> implementation that
+        supports swapping of active, but idle, sessions to persistent
+        storage via a suitably configured <code>Store</code> implementation.
+        [org.apache.catalina.session]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Finish design and implementation of a filesystem-based
+        <code>Store</code> implementation.  [org.apache.catalina.session]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Design and implement a JDBC-based <code>Store</code> implementation.
+        [org.apache.catalina.session]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Design and implement a <code>Store</code> implementation based on
+        JavaSpaces and/or IBM's TSpaces frameworks.</td>
+    <td><a href="mailto:jimcook@iname.com">Jim Cook</a></td>
+  </tr>
+</table>
+
+
+<a name="Utility"></a>
+<div align="center"><h1>Utility Component Functionality</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Design and implement a <code>Realm</code> implementation that accesses
+        authentication and role information from a JNDI-accessed directory
+        server.  [org.apache.catalina.realm]</td>
+    <td><a href="mailto:JamesW@cardsetc.com">James W.</a></td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Design and implement a <code>Resources</code> implementation that
+        interacts with a web server Connector (such as the one for Apache)
+        to access web server resources through the connection protocol,
+        rather than as disk files.</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>In <code>LoggerBase</code>, add support for optional "decoration"
+        of logged messages with XML elements.
+	[org.apache.catalina.logger]</td>
+    <td>---</td>
+  </tr>
+</table>
+
+
+<a name="Valve"></a>
+<div align="center"><h1>Valve Provided Functionality</h1></div>
+<table border="1" width="100%">
+  <tr>
+    <th width="10%">Priority</th>
+    <th width="60%">Action Item</th>
+    <th width="30%">Volunteers</th>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Design and implement support for SSL/TLS based authentication.
+        [org.apache.catalina.authenticator]</td>
+    <td><a href="mailto:hoon@raleigh.ibm.com">John Shin</a></td>
+  </tr>
+  <tr>
+    <td align="center">Medium</td>
+    <td>Extend the authentication implementations to operate
+        at the <code>Engine</code> or <code>Host</code> level of the
+        <code>Container</code> hierarchy, not just the <code>Context</code>
+        level, to provide "single sign on" support.</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>In <code>AccessLogValve</code>, implement parsing and pattern matching
+        for more complete emulation of Apache's custom log generation
+        capabilities.</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Design and implement a valve that provides functional support
+        corresponding to the Apache server directives <code>Alias</code>
+        and <code>AliasMatch</code> that support mapping of document trees
+        to be mapped to different locations within the document root.
+        [org.apache.catalina.valves.AliasValve]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Design and implement a valve that provides functional support
+        corresponding to the Apache server directives <code>Redirect</code>,
+        <code>RedirectMatch</code>, and <code>RedirectTemp</code> that
+        support temporary or permanent redirection of matching requests
+        to different locations.
+	[org.apache.catalina.valves.RedirectValve]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Design and implement a valve that provides functional support
+        similar to the Apache server <code>Rewrite</code> family of
+        directives that support transformations on the request URI.
+        [org.apache.catalina.valves.RewriteValve]</td>
+    <td>---</td>
+  </tr>
+  <tr>
+    <td align="center">Low</td>
+    <td>Improve security of the HTTP DIGEST authentication implementation.
+        [org.apache.catalina.security]</td>
+    <td><a href="mailto:remm@apache.org">Remy Maucherat</a></td>
+  </tr>
+</table>
+
+<br>
+<div align="center"><hr width="75%"><font size="2">
+$Id: todo.html,v 1.4 2001/02/19 01:05:52 craigmcc Exp $
+</font></div>
+
+</body>
+</html>

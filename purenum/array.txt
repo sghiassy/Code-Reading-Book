@@ -1,0 +1,64 @@
+------------------
+Purenum 0.4e alpha
+------------------
+array.txt
+------------------
+
+
+ALPHA VERSION 
+
+Some features may not work at all or may not work properly, even if they are
+described later in this document as working properly.
+
+
+INTRODUCTION
+
+This resizable array class provides easy-to-use single- and multi-dimensional
+arrays of bignums.  Resizing is done with single size() call which can also
+redimension the array.  Array indexes are bignums and indexing origin can be
+moved by called zero() with the location of the new origin.  Whole ranges of
+values may be effortlessly inserted into or deleted from existing arrays.  Data
+is accessed thru the familiar C++ [] operator.
+
+
+DETAILS
+
+An easy-to-use yet very powerful array class.
+
+Multidimensional, variable origin, and resizable.  Multidimensional indexes
+are accessed thru the conventional C++ [] syntax.  The origin may be moved
+to any arbitrary bignum position.  Moving the origin is fast... it does not
+touch the array data itself.  After resizing an array, as much data as
+possible is preserved.  Any overlap between the new and old array boundaries
+will still contain the original data after the resize.  This even applies
+when the number of dimensions is changed.
+
+Unfortunantly, the standard C++ array declaration syntax is broken and is
+unusable for this class.  For example to store five Ints in an array: "Array
+a[5]" would be five Arrays (wrong!) and "Int a[5]" would be five Ints (correct)
+but with none of the nice features listed above (wrong!).
+
+So until I can get them to fix ANSI C++ (fat chance) for now an Array must be
+first defined and then seperately dimensioned.  Only these two Array definition
+formats are legal:
+    Array array1;             // empty array (default constructor)
+    -or-
+    Array array1 = array2;    // duplicated array (copy constructor)
+
+Any time after the definition it is legal to dimension the array.  This can
+be done as many times as desired:
+    array1.size(4,4);       // now array1 is 16 Ints arranged in a square grid
+    array1.size(16);        // now array1 is 16 Ints arranged in a line
+    array1.size(8,2,1);     // now array1 is 16 Ints arranged in a rectangle
+
+Resizing an array requires it to also be rezeroed because the origin goes back
+to zero center.
+
+    array1.size(4,4);       // now array1 X ranges from 0 thru 4
+    array1.zero(10,0);      // now array1 X ranges from 10 thru 13
+    array1.size(4,4);       // now array1 X ranges from 0 thru 4 again
+
+See the comments at the bottom of 'testarray.c' for more info about how ANSI
+C++ might be able to be improved by the addition of class array, class pointer,
+and class reference syntaxes.
+

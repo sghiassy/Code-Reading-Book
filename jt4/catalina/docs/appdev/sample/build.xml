@@ -1,0 +1,71 @@
+<project name="Hello, World" default="compile" basedir=".">
+
+<!-- Simple "Hello, World" project to provide a concrete example of
+     the recommendations in the Application Developer's Guide.
+
+     NOTE:  Before using this file as is, you should review the
+     values for the properties that are defined below.
+     In particular, it is assumed that you wish to install this
+     application under context path "/${app.name}" in the Tomcat installation
+     defined by your CATALINA_HOME environment variable.
+-->
+
+  <property name="app.name"       value="myapp"/>
+  <property name="deploy.home"    value="${tomcat.home}/webapps/${app.name}"/>
+  <property name="dist.home"      value="${deploy.home}"/>
+  <property name="dist.src"       value="${app.name}.jar"/>
+  <property name="dist.war"       value="${app.name}.war"/>
+  <property name="javadoc.home"   value="${deploy.home}/javadoc"/>
+
+
+  <target name="prepare">
+    <mkdir  dir="${deploy.home}"/>
+    <copy todir="${deploy.home}">
+      <fileset dir="web"/>
+    </copy>
+    <mkdir  dir="${deploy.home}/WEB-INF"/>
+    <copy  file="etc/web.xml" tofile="${deploy.home}/WEB-INF/web.xml"/>
+    <mkdir  dir="${deploy.home}/WEB-INF/classes"/>
+<!--    
+    <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
+    <copy todir="${deploy.home}/WEB-INF/lib">
+      <fileset dir="lib"/>
+    </copy>
+-->    
+    <mkdir  dir="${javadoc.home}"/>
+  </target>
+
+
+  <target name="clean">
+    <delete dir="${deploy.home}"/>
+  </target>
+
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="src" destdir="${deploy.home}/WEB-INF/classes"
+           classpath="${deploy.home}/WEB-INF/classes"
+           debug="on" optimize="off" deprecation="off"/>
+    <copy   todir="${deploy.home}/WEB-INF/classes">
+      <fileset dir="src" includes="**/*.properties"/>
+    </copy>
+  </target>
+
+
+  <target name="javadoc" depends="prepare">
+    <javadoc sourcepath="src" packagenames="*"
+                destdir="${javadoc.home}"/>
+  </target>
+
+
+  <target name="all" depends="clean,prepare,compile,javadoc"/>
+
+
+  <target name="dist" depends="prepare,compile">
+    <jar jarfile="${dist.home}/${dist.src}"
+         basedir="." includes="*"/>
+    <jar jarfile="${dist.home}/${dist.war}"
+         basedir="${deploy.home}" includes="*"/>
+  </target>
+
+
+</project>

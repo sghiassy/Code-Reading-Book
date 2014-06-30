@@ -1,0 +1,67 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Debugging an application or screensaver</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Debugging an application or screensaver</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Debugging an application or screensaver.</h4>
+Every application has bugs, especially after the first compile. Some bugs are easily tracked down
+and fixed, others are very hard to find. DemoGL provides debug functionality for the developer to
+make it easier to track down application bugs, especially in release-builds, where the compiler debugger
+will not help much.
+<p>
+DemoGL normally doesn't log that much information when starting up or when some event occurs. This can be
+switched off by setting the quickboot variable, DGL_VF_QUICKBOOT, to false, using 
+<a HREF="ref_functions_DEMOGL_SetVariable.htm">DEMOGL_SetVariable</a>. The bootphase of an application will
+take longer on slow machines but a lot more information is logged on the console. Also when TLE's are executed
+or other events occur, they are logged on the console. Errors are always logged on the console, with or without
+having DGL_VF_QUICKBOOT set to false.
+<p>
+From application code, developers can log runtime information on the console by calling
+<a HREF="ref_functions_DEMOGL_ConsoleLogLine.htm">DEMOGL_ConsoleLogLine</a> or it's variable argument variant:
+<a HREF="ref_functions_DEMOGL_ConsoleLogLineV.htm">DEMOGL_ConsoleLogLineV</a>. DEMOGL_ConsoleLogLine is a little
+faster than DEMOGL_ConsoleLogLineV, but has the single string restriction. DEMOGL_ConsoleLogLineV works as
+printf and is a very flexible solution to log runtime variable contents.
+<p>
+Set the console buffer size to a large number. Default the buffer contains 500 lines, but DemoGL logs a lot of info
+so consider if that is enough. If not, change it with <a HREF="ref_functions_DEMOGL_ConsoleSetAppearance.htm">DEMOGL_ConsoleSetAppearance</a>
+where you can also change the number of lines in the debug overlay.
+<p>
+Use the keys F2-F7 to list information about the current running application. To show the real frames per second, press
+F2 to enable that overlay. You can also enable that overlay by default by setting DGL_VF_SHOWFPS to true. To show the
+list of currently created layers, visible and hidden, plus the effects on those layers, press F3. This can be handy when
+effects dissapear while they shouldn't: an effectobject is started on a layer that contained already an effect. Press F4
+to list all registered effects with their names known by DemoGL. This is important because objectnames are case sensitive.
+If TLE's don't behave as planned, use F7 to list the current timeline and all TLE's on it, if they're executed, the current
+timespot on the timeline, all TLE's commands, objectnames and parameters.
+<p>
+To start and stop effects during runtime, use the input prompt. This prompt can be enabled by enabling the debug overlay
+by pressing F5 first and then enable the input prompt by pressing F6. To execute a TLE, simply type it on the input prompt
+with out the timespot parameter and press ENTER. The TLE will be executed immediately. This way, the designer can test
+which effects to place on which layers and if the developer has added variable support to the Receive*() methods in
+the effectclasses, the designer can send parameters to the effects at runtime to check and test what is best.
+<p>
+When developing a screensaver, it's wise to first build it as a normal application, so it won't exit when a key is pressed.
+Then when it runs ok, it can be modified to act as a screensaver. Because DemoGL will take care of all the screensaver
+specific stuff, your application will run as planned when ran as a screensaver if it ran as planned in the form of an
+application. Don't forget to add a RESTART command TLE at the end of the script when creating a multipart screensaver.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

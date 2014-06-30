@@ -1,0 +1,89 @@
+.TH ACE_WIN32_Asynch_Write_Dgram 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WIN32_Asynch_Write_Dgram \- This class is a factory for starting off asynchronous writes on a UDP socket. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <WIN32_Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Write_Dgram_Impl\fR, and \fBACE_WIN32_Asynch_Operation\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WIN32_Asynch_Write_Dgram\fR (\fBACE_WIN32_Proactor\fR *win32_proactor)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_WIN32_Asynch_Write_Dgram\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fBssize_t\fR \fBsend\fR (\fBACE_Message_Block\fR *message_block, size_t &number_of_bytes_sent, int flags, const \fBACE_Addr\fR &addr, const void *act, int priority, int signal_number)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, const void *completion_key, \fBACE_Proactor\fR *proactor)"
+.br
+.ti -1c
+.RI "int \fBcancel\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor\fR (void) const"
+.br
+.RI "\fIReturn the underlying proactor.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WIN32_Asynch_Write_Dgram\fR (void)"
+.br
+.RI "\fIDo-nothing constructor.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class is a factory for starting off asynchronous writes on a UDP socket.
+.PP
+.PP
+ Once <open> is called, multiple asynchronous <writes>s can started using this class. A \fBACE_Asynch_Write_Stream::Result\fR will be passed back to the <handler> when the asynchronous write completes through the  callback. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WIN32_Asynch_Write_Dgram::ACE_WIN32_Asynch_Write_Dgram (\fBACE_WIN32_Proactor\fR * win32_proactor)
+.PP
+Constructor.
+.PP
+.SS virtual ACE_WIN32_Asynch_Write_Dgram::~ACE_WIN32_Asynch_Write_Dgram (void)\fC [virtual]\fR
+.PP
+.SS ACE_WIN32_Asynch_Write_Dgram::ACE_WIN32_Asynch_Write_Dgram (void)\fC [protected]\fR
+.PP
+Do-nothing constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_WIN32_Asynch_Write_Dgram::cancel (void)
+.PP
+This cancels all pending accepts operations that were issued by the calling thread. The function does not cancel asynchronous operations issued by other threads. 
+.PP
+Reimplemented from \fBACE_WIN32_Asynch_Operation\fR.
+.SS int ACE_WIN32_Asynch_Write_Dgram::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle, const void * completion_key, \fBACE_Proactor\fR * proactor)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. 
+.PP
+Reimplemented from \fBACE_WIN32_Asynch_Operation\fR.
+.SS \fBACE_Proactor\fR * ACE_WIN32_Asynch_Write_Dgram::proactor (void) const
+.PP
+Return the underlying proactor.
+.PP
+Reimplemented from \fBACE_WIN32_Asynch_Operation\fR.
+.SS \fBssize_t\fR ACE_WIN32_Asynch_Write_Dgram::send (\fBACE_Message_Block\fR * message_block, size_t & number_of_bytes_sent, int flags, const \fBACE_Addr\fR & addr, const void * act, int priority, int signal_number)\fC [virtual]\fR
+.PP
+This starts off an asynchronous send. Upto <message_block->total_length()> will be sent. <message_block>'s <rd_ptr> will be updated to reflect the sent bytes if the send operation is successfully completed. Return code of 1 means immediate success and <number_of_bytes_sent> is updated to number of bytes sent. The  method will still be called. Return code of 0 means the IO will complete proactively. Return code of -1 means there was an error, use errno to get the error code.
+.PP
+Scatter/gather is supported on WIN32 by using the <message_block->cont()> method. Up to ACE_IOV_MAX <message_block>'s are supported. Upto <message_block->length()> bytes will be sent from each <message block> for a total of <message_block->total_length()> bytes. All <message_block>'s <rd_ptr>'s will be updated to reflect the bytes sent from each <message_block>. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

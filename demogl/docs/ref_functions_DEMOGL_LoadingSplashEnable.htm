@@ -1,0 +1,94 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_LoadingSplashEnable</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_LoadingSplashEnable</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_LoadingSplashEnable</h4>
+<dd>DEMOGL_LoadingSplashEnable enables the viewing of a specified picture during startup of the application. This picture will
+	be blended on top of the system console which is always visible during application startup. 
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_LoadingSplashEnable(
+	<b>const char</b> *<i>pszSplashScreenTexture</i>,
+	<b>const int</b> <i>iFileType</i>, 
+	<b>const float</b> <i>fOpacity</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>pszSplashScreenTexture</i>
+	<dd>Pointer to a zero-terminated string which holds the filename, inclusive relative path, that contains the picture that 
+		will be displayed as the splash screen.
+	<dt><i>iFileType</i>
+	<dd>Specifies the filetype used in the file specified with <i>pszSplashScreenTexture</i>. <i>iFileType</i> can be
+		one of the following values:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>FileType</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_FTYPE_JPGFILE</td>
+			<td WIDTH="70%" VALIGN="TOP">Imagedata stored using the JPEG format.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_FTYPE_TGAFILE</td>
+			<td WIDTH="70%" VALIGN="TOP">Imagedata stored using the TGA format.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_FTYPE_BMPFILE</td>
+			<td WIDTH="70%" VALIGN="TOP">Imagedata stored using the BMP format.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_FTYPE_DDSFILE</td>
+			<td WIDTH="70%" VALIGN="TOP">Imagedata stored using the DDS format (DirectX compressed: DXT1, DXT3 or DXT5 format).</td>
+		</tr>
+		</table>
+		<p>
+	<dt><i>fOpacity</i>
+	<dd>The opacity of the splashscreen. This value is used as the alpha value of the splashscreen when it's blended on top of the 
+		system console. <i>fOpacity</i> can be a value in the range of [0.0, 1.0], with 0.0 totally transparent and 1.0 totally opaque.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd><p>
+<dt><b>Remarks.</b>
+<dd>The splash screen is a screenwide quad textured with the texture in the file <i>pszSplashScreenTexture</i>, using the blending function
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA), and using <i>fOpacity</i> as alpha value in the white quad color. The splash screen
+	is blended on top of the system console, which is always rendered, and below the loading progress bar. If the texture is stored in the DDS 
+	file format, be sure to store it upside down in the DDS tool of the directx sdk. This way it will appear correct in the console.
+	<p>
+	When loading a DDS file, the hardware has to support compressed textures, thus has to support the GL_ARB_texture_compression or
+	GL_EXT_texture_compression extension.
+	<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher). For DDS file support: DemoGL v1.31 (build 0528 or higher) and support for compressed textures
+    in hardware.
+    <p>
+<dt><b>See also.</b>
+<dd>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 01-jun-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

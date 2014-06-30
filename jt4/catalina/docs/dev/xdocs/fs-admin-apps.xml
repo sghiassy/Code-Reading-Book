@@ -1,0 +1,978 @@
+<?xml version="1.0"?>
+<document>
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig McClanahan</author>
+    <title>Administrative Apps - Functional Specification</title>
+    <revision>$Id: fs-admin-apps.xml,v 1.1 2001/06/18 00:01:17 craigmcc Exp $</revision>
+  </properties>
+
+<body>
+
+
+<section name="Overview">
+
+
+  <subsection name="Introduction">
+
+    <p>The purpose of this specification is to define high level requirements
+    for administrative applications that can be used to manage the operation
+    of a running Tomcat 4.0 container.  A variety of <em>Access Methods</em>
+    to the supported administrative functionality shall be supported, to
+    meet varying requirements:</p>
+    <ul>
+    <li><em>As A Scriptable Web Application</em> - The existing
+        <code>Manager</code> web application provides a simple HTTP-based
+        interface for managing Tomcat through commands that are expressed
+        entirely through a request URI.  This is useful in environments
+        where you wish to script administrative commands with tools that
+        can generate HTTP transactions.</li>
+    <li><em>As An HTML-Based Web Application</em> - Use an HTML presentation
+        to provide a GUI-like user interface for humans to interact with the
+        administrative capabilities.</li>
+    <li><em>As SOAP-Based Web Services</em> - The operational commands to
+        administer Tomcat are made available as web services that utilize
+        SOAP message formats.</li>
+    <li><em>As Java Management Extensions (JMX) Commands</em> - The operational
+        commands to administer Tomcat are made available through JMX APIs,
+        for integration into management consoles that utilize them.</li>
+    <li><em>Other Remote Access APIs</em> - Other remote access APIs, such
+        as JINI, RMI, and CORBA can also be utilized to access administrative
+        capabilities.</li>
+    </ul>
+
+    <p>Underlying all of the access methods described above, it is assumed
+    that the actual operations are performed either directly on the
+    corresponding Catalina components (such as calling the
+    <code>Deployer.deploy()</code> method to deploy a new web application),
+    or through a "business logic" layer that can be shared across all of the
+    access methods.  This approach minimizes the cost of adding new
+    administrative capabilities later -- it is only necessary to add the
+    corresponding business logic function, and then write adapters to it for
+    all desired access methods.</p>
+
+    <p>The current status of this functional specification is
+    <strong>PROPOSED</strong>.  It has not yet been discussed and
+    agreed to on the TOMCAT-DEV mailing list.</p>
+
+  </subsection>
+
+
+  <subsection name="External Specifications">
+
+    <p>The implementation of this functionality depends on the following
+    external specifications:</p>
+    <ul>
+    <li><a href="http://java.sun.com/products/jdk/idl/index.html">Java
+        IDL</a> (for CORBA, included in the JDK)</li>
+    <li><a href="http://java.sun.com/products/JavaManagement/index.html">
+        Java Management Extensions</a></li>
+    <li><a href="http://java.sun.com/products/rmi/index.html">Remote
+        Method Invocation</a> (Included in the JDK)</li>
+    </ul>
+
+  </subsection>
+
+
+  <subsection name="Implementation Requirements">
+
+    <p>The implementation of this functionality shall conform to the
+    following requirements:</p>
+    <ul>
+    <li>To the maximum extent feasible, all administrative functions,
+        and the access methods that support them, shall run portably
+        on all platforms where Tomcat 4 itself runs.</li>
+    <li>In a default Tomcat distribution, all administrative capabilities
+        shall be disabled.  It shall be necessary for a system
+        administrator to specifically enable the desired access methods
+        (such as by adding a username/password with a specific role to
+        the Tomcat user's database.</li>
+    <li>Administrative functions shall be realized as direct calls to
+        corresponding Catalina APIs, or through a business logic layer
+        that is independent of the access method used to initiate it.</li>
+    <li>The common business logic components shall be implemented in
+        package <code>org.apache.catalina.admin</code>.</li>
+    <li>The common business logic components shall be built as part of the
+        standard Catalina build process, and made visible in the
+        Catalina class loader.</li>
+    <li>The Java components required for each access method shall be
+        implemented in subpackages of <code>org.apache.catalina.admin</code>.
+        </li>
+    <li>The build scripts should treat each access method as optional,
+        so that it will be built only if the corresponding required
+        APIs are present at build time.</li>
+    <li>It shall be possible to save the configured state of the running
+        Tomcat container such that this state can be reproduced when the
+        container is shut down and restarted.</li>
+    <li>Adminstrative commands to start up and shut down the overall
+        Tomcat container are <strong>out of scope</strong> for the
+        purposes of these applications.  It is assumed that other
+        (usually platform-specific) mechanisms will be used for container
+        startup and shutdown.</li>
+    </ul>
+
+  </subsection>
+
+
+</section>
+
+
+<section name="Dependencies">
+
+
+  <subsection name="Environmental Dependencies">
+
+    <p>The following environmental dependencies must be met in order for
+    administrative applications to operate correctly:</p>
+    <ul>
+    <li>For access methods that require creation of server sockets, the
+        appropriate ports must be configured and available.</li>
+    </ul>
+
+  </subsection>
+
+
+  <subsection name="Container Dependencies">
+
+    <p>Correct operation of administrative applications depends on the
+       following specific features of the surrounding container:</p>
+    <ul>
+    <li>To the maximum extent feasible, Catalina components that offer
+        direct administrative APIs and property setters shall support
+        "live" changes to their operation, without requiring a container
+        restart.</li>
+    </ul>
+
+  </subsection>
+
+
+  <subsection name="External Technologies">
+
+    <p>The availability of the following technologies can be assumed
+    for the implementation and operation of the various access methods
+    and the corresponding administrative business logic:</p>
+    <ul>
+    <li><a href="http://java.sun.com/j2se/">Java 2 Standard Edition</a>
+        (Version 1.2 or later)</li>
+    <li><a href="http://java.sun.com/products/servlet/">Servlet 2.3</a>
+        (supported natively by Tomcat 4.0)</li>
+    <li><a href="http://java.sun.com/products/jsp/">JavaServer Pages 1.2</a>
+        (supported natively by Tomcat 4.0)</li>
+    <li>JavaServer Pages Standard Tag Library 1.0-EA (when available)</li>
+    <li><a href="http://jakarta.apache.org/struts/">Struts Framework</a>
+        (Version 1.0) - MVC Framework for Web Applications</li>
+    <li><strong>TO BE DETERMINED</strong> - Application for hosting SOAP
+        based web services</li>
+    </ul>
+
+  </subsection>
+
+
+</section>
+
+
+<section name="Functionality">
+
+
+  <subsection name="Properties of Administered Objects">
+
+  <h5>Introduction</h5>
+
+  <p>Functional requirements for administrative applications are specified
+  in terms of <em>Administered Objects</em>, whose definitions and detailed
+  properties are listed below.  In general, Administered Objects correspond
+  to components in the Catalina architecture, but these objects are defined
+  separately here for the following reasons:</p>
+  <ul>
+  <li>It is possible that the administrative applications do not expose
+      every possible configurable facet of the underlying components.</li>
+  <li>In some cases, an Administered Object (from the perspective of an
+      administrative operation) is realized by more than one Catalina
+      component, at a finer-grained level of detail.</li>
+  <li>It is necessary to represent the configuration information for a
+      component separately from the component itself (for instance, in
+      order to store that configuration information for later use).</li>
+  <li>It is necessary to represent configuration information (such as
+      a Default Context) when there is no corresponding component instance.
+      </li>
+  <li>Administered Objects, when realized as Java classes, will include
+      methods for administrative operations that have no correspondence
+      to operations performed by the corresponding actual components.</li>
+  </ul>
+
+  <p>It is assumed that the reader is familiar with the overall component
+  architecture of Catalina.  For further information, see the corresponding
+  Developer Documentation.  To distinguish names that are used as both
+  <em>administered Objects</em> and <code>Components</code>, different
+  font presentations are utilized.  Default values for many properties
+  are listed in [square brackets].</p>
+
+  <h5>Access Logger</h5>
+
+  <p>An <em>Access Logger</em> is an optional <code>Valve</code> that can
+  create request access logs in the same formats as those provided by
+  web servers.  Such access logs are useful input to hit count and user
+  access tracking analysis programs.  An Access Logger can be attached to
+  an <em>Engine</em>, a <em>Host</em>, a <em>Context</em>, or a <em>Default
+  Context</em>.</p>
+
+  <p>The standard component implementing an <em>Access Logger</em> is
+  <code>org.apache.catalina.valves.AccessLogValve</code>.  It supports the
+  following configurable properties:</p>
+  <ul>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>directory</code> - Absolute or relative (to $CATALINA_HOME) path
+      of the directory into which access log files are created.
+      [logs].</li>
+  <li><code>pattern</code> - Pattern string defining the fields to be
+      included in the access log output, or "common" for the standard
+      access log pattern.  See
+      <code>org.apache.catalina.valves.AccessLogValve</code> for more
+      information.  [common]</li>
+  <li><code>prefix</code> - Prefix added to the beginning of each log file
+      name created by this access logger.</li>
+  <li><code>resolveHosts</code> - Should IP addresses be resolved to host
+      names in the log?  [false]</li>
+  <li><code>suffix</code> - Suffix added to the end of each log file name
+      created by this access logger.</li>
+  </ul>
+
+  <h5>Connector</h5>
+
+  <p>A <em>Connector</em> is the representation of a communications endpoint
+  by which requests are received from (and responses returned to) a Tomcat
+  client.  The administrative applications shall support those connectors
+  that are commonly utilized in Tomcat installations, as described in detail
+  below.</p>
+
+  <p>For standalone use, the standard connector supporting the HTTP/1.1
+  protocol is <code>org.apache.catalina.connectors.http.HttpConnector</code>.
+  It supports the following configurable properties:</p>
+  <ul>
+  <li><code>acceptCount</code> - The maximum queue length of incoming
+      connections that have not yet been accepted.  [10]</li>
+  <li><code>address</code> - For servers with more than one IP address, the
+      address upon which this connector should listen.  [All Addresses]</li>
+  <li><code>bufferSize</code> - Default input buffer size (in bytes) for
+      requests created by this Connector.  [2048]</li>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>enableLookups</code> - Should we perform DNS lookups on remote
+      IP addresses when <code>request.getRemoteHost()</code> is called?
+      [true]</li>
+  <li><code>maxProcessors</code> - The maximum number of processor threads
+      supported by this connector.  [20]</li>
+  <li><code>minProcessors</code> - The minimum number of processor threads
+      to be created at container startup.  [5]</li>
+  <li><code>port</code> - TCP/IP port number on which this Connector should
+      listen for incoming requests. [8080]</li>
+  <li><code>proxyName</code> - Host name to be returned when an application
+      calls <code>request.getServerName()</code>.  [Value of Host: header]</li>
+  <li><code>proxyPort</code> - Port number to be returned when an application
+      calls <code>request.getServerPort()</code>.  [Same as <code>port</code>]
+      </li>
+  </ul>
+
+  <h5>Context</h5>
+
+  <p>A <em>Context</em> is the representation of an individual web application,
+  which is associated with a corresponding <em>Host</em>.  Note that the
+  administrable properties of a <em>Context</em> do <strong>not</strong>
+  include any settings from inside the web application deployment descriptor
+  for that application.</p>
+
+  <p>The standard component implementing a <em>Context</em> is
+  <code>org.apache.catalina.core.StandardContext</code>.  It supports the
+  following configurable properties:</p>
+  <ul>
+  <li><code>cookies</code> - Should be use cookies for session identifier
+      communication?  [true]</li>
+  <li><code>crossContext</code> - Should calls to
+      <code>ServletContext.getServletContext()</code> return the actual
+      context responsible for the specified path?  [false]</li>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>docBase</code> - The absolute or relative (to the
+      <code>appBase</code> of our owning <em>Host</em>) pathname of a
+      directory containing an unpacked web application, or of a web
+      application archive (WAR) file.</li>
+  <li><code>override</code> - Should settings in this <em>Context</em>
+      override corresponding settings in the <em>Default Context</em>?
+      [false]</li>
+  <li><code>path</code> - Context path for this web application, or an empty
+      string for the root application of a <em>Host</em>.  [Inferred from
+      directory or WAR file name]</li>
+  <li><code>reloadable</code> - Should Tomcat monitor classes in the
+      <code>/WEB-INF/classes</code> directory for changes, and reload the
+      application if they occur?  [false]</li>
+  <li><code>useNaming</code> - Should Tomcat provide a JNDI naming context,
+      containing preconfigured entries and resources, corresponding to the
+      requirements of the Java2 Enterprise Edition specification?  [true]</li>
+  <li><code>workDir</code> - Absolute pathname of a scratch directory that is
+      provided to this web application.  [Automatically assigned relative to
+      $CATALINA_HOME/work]</li>
+  </ul>
+
+  <p>Each <em>Context</em> is owned by a parent <em>Host</em>, and is
+  associated with:</p>
+  <ul>
+  <li>An optional <em>Access Logger</em> that logs all requests processed
+      by this web application.</li>
+  <li>Zero or more <em>Environment Entries</em> representing environment
+      entries for the JNDI naming context associated with a web
+      application.</li>
+  <li>Zero or more <em>JDBC Resources</em> representing database connection
+      pools associated with a web application.</li>
+  <li>A <em>Loader</em> representing the web application class loader used
+      by this web application.</li>
+  <li>An optional <em>Logger</em> that logs all internally generated debug,
+      information, and error messages (including application messages using
+      <code>ServletContext.log()</code>).</li>
+  <li>A <em>Manager</em> representing the session manager used by this
+      web application.</li>
+  <li>An optional <em>Realm</em> used to provide authentication and access
+      control information for this web application.</li>
+  <li>Zero or more <em>Request Filters</em> used to limit access to this
+      web application based on remote host name or IP address.</li>
+  </ul>
+
+  <h5>Default Context</h5>
+
+  <p>A <em>Default Context</em> represents a subset of the configurable
+  properties of a <em>Context</em>, and is used to set defaults for those
+  properties when web applications are automatically deployed.  A <em>Default
+  Context</em> object can be associated with an <em>Engine</em> or a
+  <em>Host</em>.  The following configurable properties are supported:</p>
+  <ul>
+  <li><code>cookies</code> - Should be use cookies for session identifier
+      communication?  [true]</li>
+  <li><code>crossContext</code> - Should calls to
+      <code>ServletContext.getServletContext()</code> return the actual
+      context responsible for the specified path?  [false]</li>
+  <li><code>reloadable</code> - Should Tomcat monitor classes in the
+      <code>/WEB-INF/classes</code> directory for changes, and reload the
+      application if they occur?  [false]</li>
+  <li><code>useNaming</code> - Should Tomcat provide a JNDI naming context,
+      containing preconfigured entries and resources, corresponding to the
+      requirements of the Java2 Enterprise Edition specification?  [true]</li>
+  </ul>
+
+  <p>Each <em>Default Context</em> is owned by a parent <em>Engine</em> or
+  <em>Host</em>, and is associated with:</p>
+  <ul>
+  <li>Zero or more <em>Environment Entries</em> representing environment
+      entries for the JNDI naming context associated with a web
+      application.</li>
+  <li>Zero or more <em>JDBC Resources</em> representing database connection
+      pools associated with a web application.</li>
+  <li>An optional <em>Loader</em> representing default configuration
+      properties for the Loader component of deployed web applications.</li>
+  <li>An optional <em>Manager</em> representing default configuration
+      properties for the Manager component fo deployed web applications.</li>
+  </ul>
+
+  <h5>Default Deployment Descriptor</h5>
+
+  <p>Default web application characteristics are configured in a special
+  deployment descriptor named <code>$CATALINA_HOME/conf/web.xml</code>.  This
+  section describes the configurable components that may be stored there.</p>
+
+  <p><strong>FIXME</strong> - Complete the description of default servlets,
+  default mappings, default MIME types, and so on.</p>
+
+  <h5>Engine</h5>
+
+  <p>An <em>Engine</em> is the representation of the entire Catalina
+  servlet container, and processes all requests for all of the associated
+  virtual hosts and web applications.</p>
+
+  <p>The standard component implementing an <em>Engine</em> is
+  <code>org.apache.catalina.core.StandardEngine</code>.  It supports the
+  following configurable properties:</p>
+  <ul>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>defaultHost</code> - Name of the <em>Host</em> to which requests
+      will be directed if the requested host is unknown.  [localhost]</li>
+  <li><code>name</code> - Logical name of this engine. [Tomcat Stand-Alone]
+      </li>
+  </ul>
+
+  <p>Each <em>Engine</em> is owned by a parent <em>Service</em>, and is
+  associated with:</p>
+  <ul>
+  <li>An optional <em>Access Logger</em> that logs all requests processed
+      by the entire container.</li>
+  <li>A <em>Default Context</em>, representing default properties of a
+      <em>Context</em> for automatically deployed applications for all
+      associated <em>Hosts</em> (unless overridden by a subordinate
+      component).</li>
+  <li>One or more <em>Hosts</em> representing individual virtual hosts
+      supported by this container.</li>
+  <li>A <em>Logger</em> that logs all internally generated debug, information,
+      and error messages (unless overridden by a subordinate component).</li>
+  <li>A <em>Realm</em> used to provide authentication and access control
+      information for all virtual hosts and web applications (unless
+      overridden by a subordinate component).</li>
+  <li>Zero or more <em>Request Filters</em> used to limit access to the
+      entire container based on remote host name or IP address.</li>
+  </ul>
+
+  <h5>Environment Entry</h5>
+
+  <p>An <em>Environment Entry</em> is the representation of a
+  <code>&lt;env-entry&gt;</code> element from a web application deployment
+  descriptor.  It will cause the creation of a corresponding entry in the
+  JNDI naming context provided to the corresponding <em>Context</em>.  The
+  following configurable properties are supported:</p>
+  <ul>
+  <li><code>description</code> - Description of this environment entry.</li>
+  <li><code>name</code> - Environment entry name (relative to the
+      <code>java:comp/env</code> context)</li>
+  <li><code>type</code> - Environment entry type (must be one of the fully
+      qualified Java classes listed in the servlet spec).</li>
+  <li><code>value</code> - Environment entry value (must be convertible from
+      String to the specified <code>type</code>.</li>
+  </ul>
+
+  <h5>Host</h5>
+
+  <p>A <em>Host</em> is the representation of an individual virtual host,
+  which has a unique set of associated web applications.</p>
+
+  <p>The standard component implementing a <em>Host</em> is
+  <code>org.apache.catalina.core.StandardHost</code>.  It supports the
+  following configurable properties:</p>
+  <ul>
+  <li><code>aliases</code> - Zero or more DNS names that are also associated
+      with this host (for example, a particular host might be named
+      <code>www.mycompany.com</code> with an alias <code>company.com</code>).
+      </li>
+  <li><code>appBase</code> - Absolute or relative (to $CATALINA_HOME) path
+      to a directory from which web applications will be automatically
+      deployed.</li>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>name</code> - DNS Name of the virtual host represented by this
+      object.</li>
+  <li><code>unpackWARs</code> - Should web application archive files
+      deployed by this virtual host be unpacked first?  [true]</li>
+  </ul>
+
+  <p>Each <em>Host</em> is owned by a parent <em>Engine</em>, and is
+  associated with:</p>
+  <ul>
+  <li>An optional <em>Access Logger</em> that logs all requests processed
+      by this virtual host.</li>
+  <li>One or more <em>Contexts</em> representing the web applications
+      operating on this <em>Host</em>.</li>
+  <li>A <em>Default Context</em> representing default <em>Context</em>
+      properties for web applications that are automatically deployed
+      by this <em>Host</em>.</li>
+  <li>An optional <em>Logger</em> that logs all internally generated debug,
+      information, and error messages (unless overridden by a subordinate
+      component).</li>
+  <li>A optional <em>Realm</em> used to provide authentication and access
+      control information for all web applications associated with this
+      virtual host (unless overridden by a subordinate component).</li>
+  </ul>
+
+  <p><strong>FIXME</strong> - Should we support configuration of the
+  User Web Applications functionality?</p>
+
+  <h5>JDBC Resource</h5>
+
+  <p>A <em>JDBC Resources</em> represents a database connection pool (i.e.
+  an implementation of <code>javax.sql.DataSource</code> that will be
+  configured and made available in the JNDI naming context associated with
+  a web application.</p>
+
+  <p><strong>FIXME</strong> - properties of this administered object</p>
+
+  <h5>Loader</h5>
+
+  <p>A <em>Loader</em> represents a web application class loader that will
+  be utilized to provide class loading services for a particular
+  <em>Context</em>.</p>
+
+  <p>The standard component implementing a <em>Loader</em> is
+  <code>org.apache.catalina.loader.StandardLoader</code>.  It supports
+  the following configurable properties:</p>
+  <ul>
+  <li><code>checkInterval</code> - Number of seconds between checks for
+      modified classes, if automatic reloading is enabled.  [15]</li>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>reloadable</code> - Should this class loader check for modified
+      classes and initiate automatic reloads?  [Set automatically from the
+      <code>reloadable</code> property of the corresponding <em>Context</em>]
+      </li>
+  </ul>
+
+  <p>Each <em>Loader</em> is owned by a parent <em>Context</em>.</p>
+
+  <h5>Logger</h5>
+
+  <p>A <em>Logger</em> represents an object that stores debugging traces,
+  error messages, and other information on some permanent (or transient)
+  media.  Several standard implementations are provided (with
+  <code>FileLogger</code> being the default).</p>
+
+  <p><code>org.apache.catalina.logger.FileLogger</code> creates disk files
+  in a specified directory, with the filenames being a combination of the
+  specified prefix, the current date, and the specified suffix.  The logger
+  will switch log files automatically on the first logged message after
+  midnight, without requiring a restart of the entire container.  The
+  following configurable properties are supported:</p>
+  <ul>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>directory</code> - Absolute or relative (to $CATALINA_HOME) path
+      of the directory in which log files are created.  [logs]</li>
+  <li><code>prefix</code> - String added to the beginning of generated log
+      file names.  [catalina]</li>
+  <li><code>suffix</code> - String added to the end of generated log file
+      names.  [.log]</li>
+  <li><code>timestamp</code> - Should log messages be date/time stamped?
+      [true]</li>
+  <li><code>verbosity</code> - Minimum verbosity level for messages to be
+      actually written to this logger.  Note that messages that are logged
+      with no verbosity level at all are logged unconditionally.  [0]</li>
+  </ul>
+
+  <p><code>org.apache.catalina.logger.SystemErrLogger</code> logs all messages
+  to the system error stream of the process running the container.  The
+  following configurable properties are supported:</p>
+  <ul>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>verbosity</code> - Minimum verbosity level for messages to be
+      actually written to this logger.  Note that messages that are logged
+      with no verbosity level at all are logged unconditionally.  [0]</li>
+  </ul>
+
+  <p><code>org.apache.catalina.logger.SystemOutLogger</code> logs all messages
+  to the system output stream of the process running the container.  The
+  following configurable properties are supported:</p>
+  <ul>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>verbosity</code> - Minimum verbosity level for messages to be
+      actually written to this logger.  Note that messages that are logged
+      with no verbosity level at all are logged unconditionally.  [0]</li>
+  </ul>
+
+  <p>Each <em>Logger</em> is owned by a parent <em>Engine</em>,
+  <em>Host</em>, or <em>Context</em>.</p>
+
+  <h5>Manager</h5>
+
+  <p>A <em>Manager</em> represents a session manager that will be associated
+  with a particular web application.  <strong>FIXME</strong> - Add support
+  for advanced session managers and their associated Stores.</p>
+
+  <p>The standard component implementing a <em>Manager</em> is
+  <code>org.apache.catalina.session.StandardManager</code>.  It supports
+  the following configurable properties:</p>
+  <ul>
+  <li><code>checkInterval</code> - Number of seconds between checks for
+      expired sessions.  [60]</li>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>entropy</code> - String initialization parameter used to increase
+      the entropy (initial randomness) of the random number generator used to
+      create session identifiers.  [Inferred from engine, host, and context]
+      </li>
+  <li><code>maxActiveSessions</code> - The maximum number of active sessions
+      that are allowed, or -1 for no limit.  [-1]</li>
+  </ul>
+
+  <p>Each <em>Manager</em> is owned by a parent <em>Context</em>.</p>
+
+  <h5>Realm</h5>
+
+  <p>A <em>Realm</em> represents a "database" of information about authorized
+  users, their passwords, and the security roles assigned to them.  This will
+  be used by the container in the implementation of container-managed security
+  in accordance with the Servlet Specification.  Several alternative
+  implementations are supported.</p>
+
+  <p><code>org.apache.catalina.realm.MemoryRealm</code> initializes its user
+  information from a simple XML file at startup time.  If changes are made
+  to the information in this file, the corresponding web applications using
+  it must be restarted for the changes to take effect.  It supports the
+  following configurable properties:</p>
+  <ul>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>pathname</code> - Absolute or relative (to $CATALINA_HOME) path to
+      the XML file containing our user information.  [conf/tomcat-users.xml]
+      </li>
+  </ul>
+
+  <p><code>org.apache.catalina.realm.JDBCRealm</code> uses a relational
+  database (accessed via JDBC APIs) to contain the user information.  Changes
+  in the contents of this database take effect immediately; however, the roles
+  assigned to a particular user are calculated only when the user initially
+  logs on (and not per request).  The following configurable properties
+  are supported:</p>
+  <ul>
+  <li><code>connectionName</code> - Database username to use when establishing
+      a JDBC connection.</li>
+  <li><code>connectionPassword</code> - Database password to use when
+      establishing a JDBC connection.</li>
+  <li><code>connectionURL</code> - Connection URL to use when establishing
+      a JDBC connection.</li>
+  <li><code>debug</code> - Debugging detail level.  [0]</li>
+  <li><code>digest</code> - Name of the <code>MessageDigest</code> algorithm
+      used to encode passwords in the database, or a zero-length string for
+      no encoding.  [Zero-length String]</li>
+  <li><code>driverName</code> - Fully qualified Java class name of the JDBC
+      driver to be utilized.</li>
+  <li><code>roleNameCol</code> - Name of the column, in the User Roles table,
+      which contains the role name.</li>
+  <li><code>userCredCol</code> - Name of the column, in the Users table,
+      which contains the password (encrypted or unencrypted).</li>
+  <li><code>userNameCol</code> - Name of the column, in both the Users and
+      User Roles tables, that contains the username.</li>
+  <li><code>userRoleTable</code> - Name of the User Roles table, which contains
+      one row per security role assigned to a particular user.  This table must
+      contain the columns specified by the <code>userNameCol</code> and
+      <code>roleNameCol</code> properties.</li>
+  <li><code>userTable</code> - Name of the Users table, which contains one row
+      per authorized user.  This table must contain the columns specified by
+      the <code>userNameCol</code> and <code>userCredCol</code> properties.
+      </li>
+  </ul>
+
+  <p><strong>FIXME</strong> - Should we provide mechanisms to edit the contents
+  of a "tomcat-users.xml" file through the admin applications?</p>
+
+  <p>Each <em>Realm</em> is owned by a parent <em>Engine</em>, <em>Host</em>,
+  or <em>Context</em>.</p>
+
+  <h5>Request Filters</h5>
+
+  <p><strong>FIXME</strong> - complete this entry</p>
+
+  <h5>Server</h5>
+
+  <p><strong>FIXME</strong> - complete this entry</p>
+
+  <h5>Service</h5>
+
+  <p><strong>FIXME</strong> - complete this entry</p>
+
+  </subsection>
+
+
+  <subsection name="Supported Administrative Operations">
+
+  <h5>Introduction</h5>
+
+  <p>The administrative operations that are available are described in terms
+  of the corresponding Administered Objects (as defined above), in a manner
+  that is independent of the access method by which these operations are
+  requested.  In general, such operations are relevant only in the context
+  of a particular administered object (and will most likely be realized as
+  method calls on the corresponding Administered Object classes), so they
+  are organized based on the currently "focused" administered object.</p>
+
+  <h5>Access Logger</h5>
+
+  <p>From the perspective of a particular <em>Access Logger</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Engine</em>, <em>Host</em>, or
+      <em>Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Connector</h5>
+
+  <p>From the perspective of a particular <em>Connector</em>, it shall be
+  possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Service</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Context</h5>
+
+  <p>From the perspective of a particular <em>Context</em>, it shall be
+  possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Host</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  <li>Create and configure a new <em>Access Logger</em> associated
+      with this object.</li>
+  <li>Edit the configurable properties of the associated <em>Access
+      Logger</em>.</li>
+  <li>Remove the associated <em>Access Logger</em>.</li>
+  <li>Create and configure a new <em>Environment Entry</em> associated
+      with this object.</li>
+  <li>Select and edit the configurable properties of an associated
+      <em>Environment Entry</em>.</li>
+  <li>Remove an associated <em>Environment Entry</em>.</li>
+  <li>Create and configure a new <em>JDBC Resource</em> associated
+      with this object.</li>
+  <li>Select and edit the configurable properties of an associated
+      <em>JDBC Resource</em>.</li>
+  <li>Remove an associated <em>JDBC Resource</em>.</li>
+  <li>Create and configure a new <em>Loader</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Loader</em>.</li>
+  <li>Remove the associated <em>Loader</em>.</li>
+  <li>Create and configure a new <em>Logger</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Logger</em>.</li>
+  <li>Remove the associated <em>Logger</em>.</li>
+  <li>Create and configure a new <em>Manager</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Manager</em>.</li>
+  <li>Remove the associated <em>Manager</em>.</li>
+  <li>Create and configure a new <em>Realm</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Realm</em>.</li>
+  <li>Remove the associated <em>Realm</em>.</li>
+  <li>Create and configure a new <em>Request Filter</em> associated with
+      this object.</li>
+  <li>Select and edit the configurable properties of an
+      associated <em>Request Filter</em></li>
+  <li>Remove an associated <em>Request Filter</em>.</li>
+  </ul>
+
+  <h5>Default Context</h5>
+
+  <p>From the perspective of a particular <em>Default Context</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Engine</em> or <em>Host</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  <li>Create and configure a new <em>Environment Entry</em> associated
+      with this object.</li>
+  <li>Select and edit the configurable properties of an associated
+      <em>Environment Entry</em>.</li>
+  <li>Remove an associated <em>Environment Entry</em>.</li>
+  <li>Create and configure a new <em>JDBC Resource</em> associated
+      with this object.</li>
+  <li>Select and edit the configurable properties of an associated
+      <em>JDBC Resource</em>.</li>
+  <li>Remove an associated <em>JDBC Resource</em>.</li>
+  </ul>
+
+  <h5>Engine</h5>
+
+  <p>From the perspective of a particular <em>Engine</em>, it shall be
+  possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Service</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  <li>Create and configure a new <em>Access Logger</em> associated
+      with this object.</li>
+  <li>Edit the configurable properties of the associated <em>Access
+      Logger</em>.</li>
+  <li>Remove the associated <em>Access Logger</em>.</li>
+  <li>Create and configure a new <em>Default Context</em> associated
+      with this object.</li>
+  <li>Edit the configurable properties of the associated <em>Default
+      Context</em>.</li>
+  <li>Remove the associated <em>Default Context</em>.</li>
+  <li>Create and configure a new <em>Host</em> associated with
+      this object.</li>
+  <li>Select and edit the configurable properties of an
+      associated <em>Host</em>.</li>
+  <li>Remove an associated <em>Host</em>.</li>
+  <li>Create and configure a new <em>Logger</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Logger</em>.</li>
+  <li>Remove the associated <em>Logger</em>.</li>
+  <li>Create and configure a new <em>Realm</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Realm</em>.</li>
+  <li>Remove the associated <em>Realm</em>.</li>
+  <li>Create and configure a new <em>Request Filter</em> associated with
+      this object.</li>
+  <li>Select and edit the configurable properties of an
+      associated <em>Request Filter</em></li>
+  <li>Remove an associated <em>Request Filter</em>.</li>
+  </ul>
+
+  <h5>Environment Entry</h5>
+
+  <p>From the perspective of a particular <em>Environment Entry</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Context</em> or <em>Default Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Host</h5>
+
+  <p>From the perspective of a particular <em>Host</em>, it shall be
+  possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Engine</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  <li>Create and configure a new <em>Access Logger</em> associated
+      with this object.</li>
+  <li>Edit the configurable properties of the associated <em>Access
+      Logger</em>.</li>
+  <li>Remove the associated <em>Access Logger</em>.</li>
+  <li>Create and configure a new <em>Context</em> associated with
+      this object.</li>
+  <li>Select and edit the configurable properties of an associated
+      <em>Context</em>.</li>
+  <li>Remove an associated <em>Context</em>.</li>
+  <li>Create and configure a new <em>Default Context</em> associated
+      with this object.</li>
+  <li>Edit the configurable properties of the associated <em>Default
+      Context</em>.</li>
+  <li>Remove the associated <em>Default Context</em>.</li>
+  <li>Create and configure a new <em>Logger</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Logger</em>.</li>
+  <li>Remove the associated <em>Logger</em>.</li>
+  <li>Create and configure a new <em>Realm</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Realm</em>.</li>
+  <li>Remove the associated <em>Realm</em>.</li>
+  <li>Create and configure a new <em>Request Filter</em> associated with
+      this object.</li>
+  <li>Select and edit the configurable properties of an
+      associated <em>Request Filter</em></li>
+  <li>Remove an associated <em>Request Filter</em>.</li>
+  </ul>
+
+  <h5>JDBC Resource</h5>
+
+  <p>From the perspective of a particular <em>JDBC Resource</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Context</em> or <em>Default Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Loader</h5>
+
+  <p>From the perspective of a particular <em>Loader</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Logger</h5>
+
+  <p>From the perspective of a particular <em>Logger</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Engine</em>, <em>Host</em>, or
+      <em>Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Manager</h5>
+
+  <p>From the perspective of a particular <em>Manager</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Realm</h5>
+
+  <p>From the perspective of a particular <em>Realm</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Engine</em>, <em>Host</em>, or
+      <em>Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Request Filter</h5>
+
+  <p>From the perspective of a particular <em>Request Filter</em>, it shall
+  be possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Engine</em>, <em>Host</em>, or
+      <em>Context</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  </ul>
+
+  <h5>Server</h5>
+
+  <p>From the perspective of the overall <em>Server</em>, it shall be
+  possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Edit the configurable properties of this object.</li>
+  <li>Create and configure a new <em>Service</em> associated with
+      this object.</li>
+  <li>Select and edit the configurable properties of an associated
+      <em>Service</em>.</li>
+  </ul>
+
+  <h5>Service</h5>
+
+  <p>From the perspective of a particular <em>Service</em>, it shall be
+  possible to perform the following administrative operations:</p>
+  <ul>
+  <li>Navigate to the owning <em>Server</em>.</li>
+  <li>Edit the configurable properties of this object.</li>
+  <li>Create and configure a new <em>Connector</em> associated with
+      this object.</li>
+  <li>Select and edit the configurable properties of an associated
+      <em>Connector</em>.</li>
+  <li>Remove an associated <em>Connector</em>.</li>
+  <li>Create and configure a new <em>Engine</em> associated with
+      this object.</li>
+  <li>Edit the configurable properties of the associated <em>Engine</em>.</li>
+  <li>Remove the associated <em>Engine</em>.</li>
+  </ul>
+
+  </subsection>
+
+
+  <subsection name="Access Method Specific Requirements">
+
+  <h5>Scriptable Web Application</h5>
+
+  <p>An appropriate subset of the administrative operations described above
+  shall be implemented as commands that can be performed by the "Manager"
+  web application.  <strong>FIXME</strong> - Enumerate them.</p>
+
+  <p>In addition, this web application shall conform to the following
+  requirements:</p>
+  <ul>
+  <li>All request URIs shall be protected by a security constraint that
+      requires security role <code>manager</code> for processing.</li>
+  <li>The default user database shall <strong>not</strong> contain any
+      user that has been assigned the role <code>manager</code>.</li>
+  </ul>
+
+  <h5>HTML-Based Web Application</h5>
+
+  <p>The entire suite of administrative operations described above shall be
+  made available through a web application designed for human interaction.
+  In addition, this web application shall conform to the following
+  requirements:</p>
+  <ul>
+  <li>Must be implemented using servlet, JSP, and MVC framework technologies
+      described under "External Technologies", above.</li>
+  <li>Prompts and error messages must be internationalizable to multiple
+      languages.</li>
+  <li>Rendered HTML must be compatible with Netscape Navigator (verson 4.7
+      or later) and Internet Explorer (version 5.0 or later).</li>
+  </ul>
+
+  </subsection>
+
+
+</section>
+
+
+<section name="Testable Assertions">
+
+  <p>In addition the the assertions implied by the functionality requirements
+  listed above, the following additional assertions shall be tested to
+  validate the behavior of <code>JDBCRealm</code>:</p>
+  <ul>
+  </ul>
+
+</section>
+
+
+</body>
+
+</document>

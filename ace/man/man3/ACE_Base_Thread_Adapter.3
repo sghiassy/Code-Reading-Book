@@ -1,0 +1,215 @@
+.TH ACE_Base_Thread_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Base_Thread_Adapter \- Base class for all the Thread_Adapters. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Base_Thread_Adapter.h>\fR
+.PP
+Inherited by \fBACE_OS_Thread_Adapter\fR, and \fBACE_Thread_Adapter\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Base_Thread_Adapter\fR (ACE_THR_FUNC user_func, void *arg, ACE_THR_C_FUNC entry_point = (ACE_THR_C_FUNC) ace_thread_adapter, \fBACE_OS_Thread_Descriptor\fR *td = 0 )"
+.br
+.ti -1c
+.RI "virtual void* \fBinvoke\fR (void) = 0"
+.br
+.RI "\fIVirtual method invoked by the thread entry point.\fR"
+.ti -1c
+.RI "ACE_THR_C_FUNC \fBentry_point\fR (void)"
+.br
+.RI "\fIAccessor for the C entry point function to the OS thread creation routine.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBclose_log_msg\fR (void)"
+.br
+.RI "\fIInvoke the close_log_msg_hook, if it is present.\fR"
+.ti -1c
+.RI "void \fBsync_log_msg\fR (const \fBACE_TCHAR\fR *prog_name)"
+.br
+.RI "\fIInvoke the sync_log_msg_hook, if it is present.\fR"
+.ti -1c
+.RI "\fBACE_OS_Thread_Descriptor\fR* \fBthr_desc_log_msg\fR (void)"
+.br
+.RI "\fIInvoke the thr_desc_log_msg_hook, if it is present.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Base_Thread_Adapter\fR (void)"
+.br
+.RI "\fIDestructor, making it private ensures that objects of this class are allocated on the heap.\fR"
+.ti -1c
+.RI "void \fBinherit_log_msg\fR (void)"
+.br
+.RI "\fIInherit the logging features if the parent thread has an .\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_THR_FUNC \fBuser_func_\fR"
+.br
+.RI "\fIThread startup function passed in by the user (C++ linkage).\fR"
+.ti -1c
+.RI "void* \fBarg_\fR"
+.br
+.RI "\fIArgument to thread startup function.\fR"
+.ti -1c
+.RI "ACE_THR_C_FUNC \fBentry_point_\fR"
+.br
+.RI "\fIEntry point to the underlying OS thread creation call (C linkage).\fR"
+.ti -1c
+.RI "\fBACE_OS_Thread_Descriptor\fR* \fBthr_desc_\fR"
+.br
+.ti -1c
+.RI "\fBACE_OS_Log_Msg_Attributes\fR \fBlog_msg_attributes_\fR"
+.br
+.RI "\fIThe \fBACE_Log_Msg\fR attributes.\fR"
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBset_log_msg_hooks\fR (ACE_INIT_LOG_MSG_HOOK init_hook, ACE_INHERIT_LOG_MSG_HOOK inherit_hook, ACE_CLOSE_LOG_MSG_HOOK close_hook, ACE_SYNC_LOG_MSG_HOOK sync_hook, ACE_THR_DESC_LOG_MSG_HOOK thr_desc)"
+.br
+.RI "\fISet the Log_Msg hooks.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_INIT_LOG_MSG_HOOK \fBinit_log_msg_hook_\fR"
+.br
+.RI "\fIThe hooks to inherit and cleanup the Log_Msg attributes.\fR"
+.ti -1c
+.RI "ACE_INHERIT_LOG_MSG_HOOK \fBinherit_log_msg_hook_\fR"
+.br
+.ti -1c
+.RI "ACE_CLOSE_LOG_MSG_HOOK \fBclose_log_msg_hook_\fR"
+.br
+.ti -1c
+.RI "ACE_SYNC_LOG_MSG_HOOK \fBsync_log_msg_hook_\fR"
+.br
+.ti -1c
+.RI "ACE_THR_DESC_LOG_MSG_HOOK \fBthr_desc_log_msg_hook_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Log_Msg\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Thread_Adapter_Has_Private_Destructor\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Base class for all the Thread_Adapters.
+.PP
+.PP
+ Converts a C++ function into a function  function that can be called from a thread creation routine (e.g., <pthread_create> or <_beginthreadex>) that expects an extern "C" entry point. This class also makes it possible to transparently provide hooks to register a thread with an . This class is used in . In general, the thread that creates an object of this class is different from the thread that calls <invoke> on this object. Therefore, the <invoke> method is responsible for deleting itself. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Base_Thread_Adapter::ACE_Base_Thread_Adapter (ACE_THR_FUNC user_func, void * arg, ACE_THR_C_FUNC entry_point = (ACE_THR_C_FUNC) ace_thread_adapter, \fBACE_OS_Thread_Descriptor\fR * td = 0)
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fItd\fR\fRConstructor.
+.SS ACE_Base_Thread_Adapter::~ACE_Base_Thread_Adapter (void)\fC [protected, virtual]\fR
+.PP
+Destructor, making it private ensures that objects of this class are allocated on the heap.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Base_Thread_Adapter::close_log_msg (void)\fC [static]\fR
+.PP
+Invoke the close_log_msg_hook, if it is present.
+.PP
+.SS ACE_THR_C_FUNC ACE_Base_Thread_Adapter::entry_point (void)
+.PP
+Accessor for the C entry point function to the OS thread creation routine.
+.PP
+.SS void ACE_Base_Thread_Adapter::inherit_log_msg (void)\fC [protected]\fR
+.PP
+Inherit the logging features if the parent thread has an .
+.PP
+.SS void * ACE_Base_Thread_Adapter::invoke (void)\fC [pure virtual]\fR
+.PP
+Virtual method invoked by the thread entry point.
+.PP
+Reimplemented in \fBACE_OS_Thread_Adapter\fR, and \fBACE_Thread_Adapter\fR.
+.SS void ACE_Base_Thread_Adapter::set_log_msg_hooks (ACE_INIT_LOG_MSG_HOOK init_hook, ACE_INHERIT_LOG_MSG_HOOK inherit_hook, ACE_CLOSE_LOG_MSG_HOOK close_hook, ACE_SYNC_LOG_MSG_HOOK sync_hook, ACE_THR_DESC_LOG_MSG_HOOK thr_desc)\fC [static, private]\fR
+.PP
+Set the Log_Msg hooks.
+.PP
+.SS void ACE_Base_Thread_Adapter::sync_log_msg (const \fBACE_TCHAR\fR * prog_name)\fC [static]\fR
+.PP
+Invoke the sync_log_msg_hook, if it is present.
+.PP
+.SS \fBACE_OS_Thread_Descriptor\fR * ACE_Base_Thread_Adapter::thr_desc_log_msg (void)\fC [static]\fR
+.PP
+Invoke the thr_desc_log_msg_hook, if it is present.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Log_Msg\fC [friend]\fR
+.PP
+Allow the \fBACE_Log_Msg\fR class to set its hooks.
+.PP
+.SS class ACE_Thread_Adapter_Has_Private_Destructor\fC [friend]\fR
+.PP
+Friend declaration to avoid compiler warning: only defines a private destructor and has no friends.
+.PP
+Reimplemented in \fBACE_OS_Thread_Adapter\fR, and \fBACE_Thread_Adapter\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS void * ACE_Base_Thread_Adapter::arg_\fC [protected]\fR
+.PP
+Argument to thread startup function.
+.PP
+.SS ACE_CLOSE_LOG_MSG_HOOK ACE_Base_Thread_Adapter::close_log_msg_hook_\fC [static, private]\fR
+.PP
+.SS ACE_THR_C_FUNC ACE_Base_Thread_Adapter::entry_point_\fC [protected]\fR
+.PP
+Entry point to the underlying OS thread creation call (C linkage).
+.PP
+.SS ACE_INHERIT_LOG_MSG_HOOK ACE_Base_Thread_Adapter::inherit_log_msg_hook_\fC [static, private]\fR
+.PP
+.SS ACE_INIT_LOG_MSG_HOOK ACE_Base_Thread_Adapter::init_log_msg_hook_\fC [static, private]\fR
+.PP
+The hooks to inherit and cleanup the Log_Msg attributes.
+.PP
+.SS \fBACE_OS_Log_Msg_Attributes\fR ACE_Base_Thread_Adapter::log_msg_attributes_\fC [protected]\fR
+.PP
+The \fBACE_Log_Msg\fR attributes.
+.PP
+.SS ACE_SYNC_LOG_MSG_HOOK ACE_Base_Thread_Adapter::sync_log_msg_hook_\fC [static, private]\fR
+.PP
+.SS \fBACE_OS_Thread_Descriptor\fR * ACE_Base_Thread_Adapter::thr_desc_\fC [protected]\fR
+.PP
+Optional thread descriptor. Passing this pointer in will force the spawned thread to cache this location in <Log_Msg> and wait until <Thread_Manager> fills in all information in thread descriptor. 
+.SS ACE_THR_DESC_LOG_MSG_HOOK ACE_Base_Thread_Adapter::thr_desc_log_msg_hook_\fC [static, private]\fR
+.PP
+.SS ACE_THR_FUNC ACE_Base_Thread_Adapter::user_func_\fC [protected]\fR
+.PP
+Thread startup function passed in by the user (C++ linkage).
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

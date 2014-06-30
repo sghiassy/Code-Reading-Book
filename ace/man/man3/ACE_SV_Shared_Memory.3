@@ -1,0 +1,194 @@
+.TH ACE_SV_Shared_Memory 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SV_Shared_Memory \- This is a wrapper for System V shared memory. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SV_Shared_Memory.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBACE_CREATE\fR = IPC_CREAT, \fBACE_OPEN\fR = 0 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SV_Shared_Memory\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_SV_Shared_Memory\fR (key_t external_id, size_t size, int create, int perms = ACE_DEFAULT_FILE_PERMS, void *virtual_addr = 0, int flags = 0)"
+.br
+.ti -1c
+.RI "\fBACE_SV_Shared_Memory\fR (ACE_HANDLE internal_id, int flags = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (key_t external_id, size_t size, int create = ACE_SV_Shared_Memory::ACE_OPEN, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.ti -1c
+.RI "int \fBopen_and_attach\fR (key_t external_id, size_t size, int create = ACE_SV_Shared_Memory::ACE_OPEN, int perms = ACE_DEFAULT_FILE_PERMS, void *virtual_addr = 0, int flags = 0)"
+.br
+.ti -1c
+.RI "int \fBattach\fR (void *virtual_addr = 0, int flags =0)"
+.br
+.RI "\fIAttach this shared memory segment.\fR"
+.ti -1c
+.RI "int \fBdetach\fR (void)"
+.br
+.RI "\fIDetach this shared memory segment.\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.RI "\fIRemove this shared memory segment.\fR"
+.ti -1c
+.RI "int \fBcontrol\fR (int cmd, void *buf)"
+.br
+.RI "\fIForward to underlying System V <shmctl>.\fR"
+.ti -1c
+.RI "void* \fBget_segment_ptr\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBget_segment_size\fR (void) const"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBget_id\fR (void) const"
+.br
+.RI "\fIReturn the ID of the shared memory segment (i.e., an ACE_HANDLE).\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBALIGN_WORDB\fR = 8 }"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBround_up\fR (size_t len)"
+.br
+.RI "\fIRound up to an appropriate page size.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_HANDLE \fBinternal_id_\fR"
+.br
+.RI "\fIInternal identifier.\fR"
+.ti -1c
+.RI "int \fBsize_\fR"
+.br
+.RI "\fISize of the mapped segment.\fR"
+.ti -1c
+.RI "void* \fBsegment_ptr_\fR"
+.br
+.RI "\fIPointer to the beginning of the segment.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This is a wrapper for System V shared memory.
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_CREATE\fR \fR
+.TP
+\fB\fIACE_OPEN\fR \fR
+.SS anonymous enum\fC [protected]\fR
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIALIGN_WORDB\fR \fRMost restrictive alignment.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SV_Shared_Memory::ACE_SV_Shared_Memory (void)
+.PP
+.SS ACE_SV_Shared_Memory::ACE_SV_Shared_Memory (key_t external_id, size_t size, int create, int perms = ACE_DEFAULT_FILE_PERMS, void * virtual_addr = 0, int flags = 0)
+.PP
+.SS ACE_SV_Shared_Memory::ACE_SV_Shared_Memory (ACE_HANDLE internal_id, int flags = 0)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SV_Shared_Memory::attach (void * virtual_addr = 0, int flags = 0)
+.PP
+Attach this shared memory segment.
+.PP
+.SS int ACE_SV_Shared_Memory::control (int cmd, void * buf)
+.PP
+Forward to underlying System V <shmctl>.
+.PP
+.SS int ACE_SV_Shared_Memory::detach (void)
+.PP
+Detach this shared memory segment.
+.PP
+.SS void ACE_SV_Shared_Memory::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS ACE_HANDLE ACE_SV_Shared_Memory::get_id (void) const
+.PP
+Return the ID of the shared memory segment (i.e., an ACE_HANDLE).
+.PP
+.SS void* ACE_SV_Shared_Memory::get_segment_ptr (void) const
+.PP
+.SS int ACE_SV_Shared_Memory::get_segment_size (void) const
+.PP
+.SS int ACE_SV_Shared_Memory::open (key_t external_id, size_t size, int create = ACE_SV_Shared_Memory::ACE_OPEN, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+.SS int ACE_SV_Shared_Memory::open_and_attach (key_t external_id, size_t size, int create = ACE_SV_Shared_Memory::ACE_OPEN, int perms = ACE_DEFAULT_FILE_PERMS, void * virtual_addr = 0, int flags = 0)
+.PP
+.SS int ACE_SV_Shared_Memory::remove (void)
+.PP
+Remove this shared memory segment.
+.PP
+.SS int ACE_SV_Shared_Memory::round_up (size_t len)\fC [protected]\fR
+.PP
+Round up to an appropriate page size.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SV_Shared_Memory::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS ACE_HANDLE ACE_SV_Shared_Memory::internal_id_\fC [protected]\fR
+.PP
+Internal identifier.
+.PP
+.SS void * ACE_SV_Shared_Memory::segment_ptr_\fC [protected]\fR
+.PP
+Pointer to the beginning of the segment.
+.PP
+.SS int ACE_SV_Shared_Memory::size_\fC [protected]\fR
+.PP
+Size of the mapped segment.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

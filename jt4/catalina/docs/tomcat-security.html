@@ -1,0 +1,329 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.7 [en] (X11; I; SunOS 5.7 i86pc) [Netscape]">
+   <title>Using the Java SecurityManager with Tomcat</title>
+</head>
+<body text="#000000" bgcolor="#FFFFFF" link="#0000FF" vlink="#FF0000" alink="#000088">
+
+<h1>
+Using the Java SecurityManager with Tomcat</h1>
+
+<ul>
+<li>
+<a href="#why">Why use a SecurityManager?</a></li>
+
+<li>
+<a href="#requirements">System Requirements</a></li>
+
+<li>
+<a href="#precautions">Precautions</a></li>
+
+<li>
+<a href="#permissions">Types of Permissions</a></li>
+
+<li>
+<a href="#custom">Tomcat Custom Permissions</a></li>
+
+<li>
+<a href="#config">Configuring Tomcat for use with a SecurityManager</a></li>
+
+<li>
+<a href="#start">Starting Tomcat with a SecurityManager</a></li>
+
+<li>
+<a href="#trouble">Trouble shooting catalina.policy configuration and Security
+Violations</a></li>
+
+<li>
+<a href="#violation">What happens when the SecurityManager detects a Security
+violation?</a></li>
+</ul>
+
+<h3>
+<a NAME="why"></a>Why use a SecurityManager?</h3>
+The Java SecurityManager is what allows a web browser to run an applet
+in its own sandbox to prevent untrusted code from accessing files on the
+local system, connecting to a host other than the one the applet was loaded
+from, etc.
+<p>In the same way the SecurityManager protects you from an untrusted applet
+running in your browser, use of a SecurityManager while running Tomcat
+can protect your server from trojan servlets, JSP's, JSP beans, and tag
+libraries.&nbsp; Or even inadvertent mistakes.
+<p>Imagine if someone who is authorized to publish JSP's on your site invadvertently
+included the following in their JSP:
+<blockquote>
+<pre>&lt;% System.exit(1); %></pre>
+</blockquote>
+
+<p><br>Every time that JSP was executed by Tomcat, Tomcat would exit.
+<p>Using the Java SecurityManager is just one more line of defense a system
+administrator can use to keep the server secure and reliable.
+<h3>
+<a NAME="requirements"></a>System Requirements</h3>
+Use of the SecurityManager requires a JVM that supports JDK 1.2.
+<br>&nbsp;
+<h3>
+<a NAME="precautions"></a>Precautions</h3>
+Implementation of a SecurityManager in Tomcat has not been fully tested
+or had a security audit. Make sure that you are satisfied with your SecurityManager
+configuration before allowing untrusted users to publish web applications,
+JSP's, servlets, beans, or tag libraries.
+<p>Still, running with a SecurityManager is definitely better than running
+without one.
+<br>&nbsp;
+<h3>
+<a NAME="permissions"></a>Types of Permissions</h3>
+Permission classes are used to define what Permissions a class loaded by
+Tomcat will have.&nbsp; There are a number of Permission classes as part
+of the JDK and you can even create your own Permission class for use in
+your own web applications.
+<p>This is just a short summary of the System SecurityManager Permission
+classes applicable to Tomcat.&nbsp; Please refer to <a href="http://java.sun.com/security/">http://java.sun.com/security/</a>
+for more information on using the Java SecurityManager and the below Permissions.
+<p><b>java.util.PropertyPermission</b>
+<br>&nbsp;&nbsp;&nbsp; Controls read/write access to JVM properties such
+as java.home.
+<p><b>java.lang.RuntimePermission</b>
+<br>&nbsp;&nbsp;&nbsp; Controls use of some System/Runtime functions like
+exit() and exec().
+<p><b>java.io.FilePermission</b>
+<br>&nbsp;&nbsp;&nbsp; Controls read/write/execute access to files and
+directories.
+<p><b>java.net.SocketPermission</b>
+<br>&nbsp;&nbsp;&nbsp; Controls use of network sockets.
+<p><b>java.net.NetPermission</b>
+<br>&nbsp;&nbsp;&nbsp; Controls use of multicast network connections.
+<p><b>java.lang.reflect.ReflectPermission</b>
+<br>&nbsp;&nbsp;&nbsp; Controls use of reflection to do class introspection.
+<p><b>java.security.SecurityPermission</b>
+<br>&nbsp;&nbsp;&nbsp; Controls access to Security methods.
+<p><b>java.security.AllPermission</b>
+<br>&nbsp;&nbsp;&nbsp; Allows access to all permissions, just as if you
+were running Tomcat without a SecurityManager.
+<br>&nbsp;
+<h2>
+<a NAME="custom"></a>Tomcat Custom Permissions</h2>
+Tomcat provides a custom permission class called <b>org.apache.naming.JndiPermission</b>,
+this permission controls read access to JNDI named file based resources.&nbsp;
+The permission name is the JNDI name and there are no actions.&nbsp; A
+trailing '*' can be used to do wild card pattern matching for a JNDI named
+file resource when granting permission.
+<p>Example:
+<p>&nbsp; <tt>permission org.apache.naming.JndiPermission "jndi://localhost/examples/*";</tt>
+<br><tt></tt>&nbsp;
+<h3>
+<a NAME="config"></a>Configuring Tomcat for use with a SecurityManager</h3>
+<b>catalina.policy</b>
+<p>The security policies implemented by the Java SecurityManager are configured
+in the <tt>catalina.policy</tt> file located in the tomcat <tt>conf</tt>
+directory.&nbsp; The <tt>catalina.policy</tt> file replaces any system
+<tt>java.policy</tt>
+file.&nbsp; The
+<tt>catalina.policy</tt> file can be edited by hand or
+you can use the <a href="http://java.sun.com/products/jdk/1.2/docs/tooldocs/solaris/policytool.html">policytool</a>application
+that comes with Java 1.2.
+<p>Entries in the <tt>catalina.policy</tt> file use the standard <tt>java.policy</tt>
+file format as follows:
+<table BORDER=0 CELLPADDING=8 WIDTH="95%" BGCOLOR="#EEEEEE" >
+<tr>
+<td>
+<pre>// Example policy file entry
+
+grant [signedBy &lt;signer> [,codeBase &lt;code source>] {
+&nbsp;&nbsp;&nbsp; permission &lt;class> [&lt;name> [, &lt;action list>]];
+};</pre>
+</td>
+</tr>
+</table>
+The <b>signedBy</b> and <b>codeBase </b>entries are optional when granting
+permissions. Comment lines begin with <tt>//</tt> and end at a new line.
+<p>The codeBase is in the form of a URL and for a file URL can use the
+${java.home} and ${catalina.home} properties which are expanded out to
+the directory paths defined for them.
+<p>Default catalina.policy file
+<table BORDER=0 CELLPADDING=8 WIDTH="95%" BGCOLOR="#EEEEEE" >
+<tr>
+<td>
+<pre>// ============================================================================
+// catalina.corepolicy - Security Policy Permissions for Tomcat 4.0
+//
+// This file contains a default set of security policies to be enforced (by the
+// JVM) when Catalina is executed with the "-security" option.&nbsp; In addition
+// to the permissions granted here, the following additional permissions are
+// granted to the codebase specific to each web application:
+//
+// * Read access to the document root directory
+//
+// $Id: tomcat-security.html,v 1.3 2001/06/29 18:01:37 glenn Exp $
+// ============================================================================
+
+
+// ========== SYSTEM CODE PERMISSIONS =========================================
+
+
+// These permissions apply to javac
+grant codeBase "file:${java.home}/lib/-" {
+&nbsp; permission java.security.AllPermission;
+};
+
+// These permissions apply to all shared system extensions
+grant codeBase "file:${java.home}/jre/lib/ext/-" {
+&nbsp; permission java.security.AllPermission;
+};
+
+// These permissions apply to javac when ${java.home] points at $JAVA_HOME/jre
+grant codeBase "file:${java.home}/../lib/-" {
+&nbsp; permission java.security.AllPermission;
+};
+
+// These permissions apply to all shared system extensions when
+// ${java.home} points at $JAVA_HOME/jre
+grant codeBase "file:${java.home}/lib/ext/-" {
+&nbsp; permission java.security.AllPermission;
+};
+
+
+// ========== CATALINA CODE PERMISSIONS =======================================
+
+
+// These permissions apply to the server startup code
+grant codeBase "file:${catalina.home}/bin/bootstrap.jar" {
+&nbsp; permission java.security.AllPermission;
+};
+
+// These permissions apply to the servlet API classes
+// and those that are shared across all class loaders
+// located in the "common" directory
+grant codeBase "file:${catalina.home}/common/-" {
+&nbsp; permission java.security.AllPermission;
+};
+
+// These permissions apply to the container's core code, plus any additional
+// libraries installed in the "server" directory
+grant codeBase "file:${catalina.home}/server/-" {
+&nbsp; permission java.security.AllPermission;
+};
+
+// These permissions apply to the jasper page compiler
+// located in the "jasper" directory.
+grant codeBase "file:${catalina.home}/jasper/-" {
+&nbsp; permission java.security.AllPermission;
+};&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// These permissions apply to shared web application libraries
+// including the Jasper runtime library installed in the "lib" directory
+grant codeBase "file:${catalina.home}/lib/-" {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.security.AllPermission;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+};&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// These permissions apply to shared web application classes
+// located in the "classes" directory&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+grant codeBase "file:${catalina.home}/classes/-" {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.security.AllPermission;&nbsp;&nbsp;&nbsp;
+};&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// ========== WEB APPLICATION PERMISSIONS =====================================
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+// These permissions are granted by default to all web applications
+// In addition, a web application will be given a read FilePermission
+// and JndiPermission for all files and directories in its document root.
+grant {&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; // Required for JNDI lookup of named JDBC DataSource's and&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; // javamail named MimePart DataSource used to send mail&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.utim.PropertyPermission "java.home", "read";
+&nbsp; permission java.util.PropertyPermission "java.naming.*", "read";
+&nbsp; permission java.util.PropertyPermission "javax.sql.*", "read";&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; // OS Specific properties to allow read access&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.util.PropertyPermission "os.name", "read";
+&nbsp; permission java.util.PropertyPermission "os.version", "read";
+&nbsp; permission java.util.PropertyPermission "os.arch", "read";
+&nbsp; permission java.util.PropertyPermission "file.separator", "read";
+&nbsp; permission java.util.PropertyPermission "path.separator", "read";
+&nbsp; permission java.util.PropertyPermission "line.separator", "read";
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; // JVM properties to allow read access&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.version", "read";
+&nbsp; permission java.util.PropertyPermission "java.vendor", "read";&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.vendor.url", "read";
+&nbsp; permission java.util.PropertyPermission "java.class.version", "read";
+&nbsp; permission java.util.PropertyPermission "java.specification.version", "read";
+&nbsp; permission java.util.PropertyPermission "java.specification.vendor", "read";&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.specification.name", "read";&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.vm.specification.version", "read";
+&nbsp; permission java.util.PropertyPermission "java.vm.specification.vendor", "read";&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.vm.specification.name", "read";&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.vm.version", "read";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.vm.vendor", "read";&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; permission java.util.PropertyPermission "java.vm.name", "read";&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp; // Required for getting BeanInfo
+&nbsp; permission java.lang.RuntimePermission "accessClassInPackage.sun.beans.*";
+
+&nbsp; // Allow read of JAXP compliant XML parser debug
+&nbsp; permission java.util.PropertyPermission "jaxp.debug", "read";
+};
+
+// You can assign additional permissions to particular web applications by
+// adding additional "grant" entries here, based on the code base for that
+// application, /WEB-INF/classes/, or /WEB-INF/lib/ jar files.
+//
+// Different permissions can be granted to JSP pages, classes loaded from
+// the /WEB-INF/classes/ directory, all jar files in the /WEB-INF/lib/
+// directory, or even to individual jar files in the /WEB-INF/lib/ directory.
+//
+// For instance, assume that the standard "examples" application
+// included a JDBC driver that needed to establish a network connection to the
+// corresponding database and used the scrape taglib to get the weather from
+// the NOAA web server.  You might create a "grant" entries like this:
+//
+// The permissions granted to the context root directory apply to JSP pages.
+// grant codeBase "file:${catalina.home}/webapps/examples/-" {
+//   permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
+//   permission java.net.SocketPermission "*.noaa.gov:80", "connect";
+// };
+//
+// The permissions granted to the context WEB-INF/classes directory
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/classes/-" {
+// };
+//
+// The permission granted to your JDBC driver
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/driver.jar!/-" {
+//   permission java.net.SocketPermission "dbhost.mycompany.com:5432", "connect";
+// };
+// The permission granted to the scrape taglib
+// grant codeBase "file:${catalina.home}/webapps/examples/WEB-INF/lib/scrape.jar!/-" {
+//   permission java.net.SocketPermission "*.noaa.gov:80", "connect";          
+// };</pre>
+</td>
+</tr>
+</table>
+
+<h3>
+<a NAME="start"></a>Starting Tomcat with a SecurityManager</h3>
+Once you have configured the catalina.policy file for use with a SecurityManager,
+Tomcat can be started with the SecurityManager in place by using the "-security"
+option to bin/startup.sh.
+<br>&nbsp;
+<h2>
+<a NAME="trouble"></a>Trouble shooting catalina.policy configuration and
+Security Violations</h2>
+You can turn on Java SecurityManager debug logging by settting the environmental
+variable <tt>CATALINA_OPTS=-Djava.security.debug=all</tt>. You will find
+the debug output in the log file <tt>logs/catalina.out</tt>.
+<br>This generates many MB's of output, for more verbose security debug
+output use <tt>CATALINA_OPTS=-Djava.security.debug=access,failure.&nbsp;
+Use the following shell command to determine all the security debug options
+available: java -Djava.security.debug=help</tt>
+<h3>
+<a NAME="violation"></a>What happens when the SecurityManager detects a
+Security violation?</h3>
+The JVM will throw an AccessControlException or a SecurityException when
+the SecurityManager detects a security policy violation.
+<br>&nbsp;
+</body>
+</html>

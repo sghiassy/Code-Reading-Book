@@ -1,0 +1,103 @@
+
+                           XFree86-DGA Extension
+
+The XFree86-DGA extension is an X server extension for allowing client
+programs direct access to the video frame buffer.
+
+This is a brief description of the programming interface for the
+XFree86-DGA extension.  This describes version 1.0, which is the first
+official version.  The interface should remain compatible in future
+versions.  The functions described here are found in the library
+libXxf86dga.a.
+
+Prototypes for these functions can be found in <X11/extensions/xf86dga.h>
+
+  XF86DGAQueryVersion(Display *display, int *majorVersion, int *minorVersion)
+
+     query the XFree86-DGA version
+
+
+  XF86DGAQueryExtension(Display *display, int *eventBase, int *errorBase)
+
+     returns the eventBase and errorBase for the XFree86-DGA extension
+
+
+  XF86DGAQueryDirectVideo(Display *display, int screen, int *flags)
+
+     Query the DirectVideo capabilities of the graphics device. Flags
+     are returned, which may be interpreted as follows (bit masks):
+
+       XF86DGADirectPresent          DirectVideo support is present
+
+
+  XF86DGAGetVideo(Display *display, int screen, char **addr, int *width,
+                  int *bankSize, int *memSize);
+
+     returns a pointer to the start of the video framebuffer (*addr),
+     the line width (*width), memory bank size (*bankSize) and total
+     memory size (*memSize).  Mapping the video framebuffer is a
+     privileged operation on most OSs (usually mmap of /dev/mem),
+     so a program using this must usually be setuid (or perhaps setgid)
+     at least up until the point the function is called.
+
+
+  XF86DGAGetViewPortSize(Display *display, int screen, int *width,
+                         int *height)
+
+     Returns the width (*width) and height (*height) of the view port,
+     which is the part of the framebuffer that is visible on the monitor.
+
+
+  XF86DGADirectVideo(Display *display, int screen, int flags)
+
+     enables/disables Direct Video mode.  When Direct Video mode is
+     enabled, the X server gives up control of the framebuffer to the
+     client.  When flags is zero, Direct Video mode is disabled.  flags
+     may be a bit-wise combination of the following:
+
+       XF86DGADirectGraphics          enable Direct Video mode
+       XF86DGADirectMouse             enable reporting of pointer movement
+                                      as relative motion
+       XF86DGADirectKeyb              enable direct reporting of keyboard
+                                      events
+
+
+  XF86DGASetVidPage(Display *display, int screen, int page)
+
+     Set the framebuffer page.  This is only required for hardware which
+     has a banked memory layout (ie, bankSize < memSize).
+
+
+  XF86DGASetViewPort(Display *display, int screen, int x, int y)
+
+     Set the coordinates of the upper-left corner of the view port to (x,y).
+
+
+  Bool XF86DGAViewPortChanged(Display *display, int screen, int n)
+
+     Checks whether a previous SetViewPort command has been performed
+     by the hardware, that is, whether a vertical retrace has occurred
+     since a previous SetViewPort. This can (must, in fact) be used
+     with page-flipping; you can start writing to the next page only when
+     this function returns TRUE. For some devices this will be the
+     case immediately after SetViewPort, however this may be changed in
+     in the future. The number of pages used is specified with n; it
+     should be 2 for simple page flipping. If n is greater than two
+     (triple or multi-buffering), the function checks whether the
+     (n - 2)-before-last SetViewPort has been performed.
+
+
+  XF86DGAInstallColormap(Display *display, int screen, Colormap cmap)
+
+     Set the current colormap of the display to cmap. XF86DGADirectGraphics
+     must be active on the display/screen before calling
+     XF86DGAInstallColormap or it will produce the error XF86DGAScreenNotActive
+     or XF86DGADirectNotActivated.
+
+
+  int XF86DGAForkApp(int screen)
+
+     Fork the app, parent process hangs around to return non DGA mode should
+     the child exit for any reason. Returns 0, or error returned by fork().
+
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/README.DGA,v 3.5 1996/10/18 15:03:04 dawes Exp $

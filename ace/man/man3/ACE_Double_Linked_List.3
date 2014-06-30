@@ -1,0 +1,276 @@
+.TH ACE_Double_Linked_List 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Double_Linked_List \- A double-linked list implementation. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Containers_T.h>\fR
+.PP
+Inherited by \fBACE_DLList\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Double_Linked_List_Iterator\fR<T> \fBITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Double_Linked_List_Reverse_Iterator\fR<T> \fBREVERSE_ITERATOR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Double_Linked_List\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIconstruction. Use user specified allocation strategy if specified.\fR"
+.ti -1c
+.RI "\fBACE_Double_Linked_List\fR (const ACE_Double_Linked_List<T> &)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Double_Linked_List<T> &)"
+.br
+.RI "\fIAssignment operator.\fR"
+.ti -1c
+.RI "\fB~ACE_Double_Linked_List\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBis_empty\fR (void) const"
+.br
+.RI "\fIReturns 1 if the container is empty, otherwise returns 0.\fR"
+.ti -1c
+.RI "int \fBis_full\fR (void) const"
+.br
+.RI "\fIReturns 1 if the container is full, otherwise returns 0.\fR"
+.ti -1c
+.RI "T* \fBinsert_tail\fR (T *new_item)"
+.br
+.RI "\fIAdds <new_item> to the tail of the list. Returns the new item that was inserted.\fR"
+.ti -1c
+.RI "T* \fBinsert_head\fR (T *new_item)"
+.br
+.RI "\fIAdds <new_item> to the head of the list.Returns the new item that was inserted.\fR"
+.ti -1c
+.RI "T* \fBdelete_head\fR (void)"
+.br
+.ti -1c
+.RI "T* \fBdelete_tail\fR (void)"
+.br
+.ti -1c
+.RI "void \fBreset\fR (void)"
+.br
+.ti -1c
+.RI "int \fBget\fR (T *&item, size_t slot = 0)"
+.br
+.RI "\fIGet the <slot>th element in the set. Returns -1 if the element isn't in the range {0..<size> - 1}, else 0.\fR"
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIThe number of items in the queue.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "int \fBremove\fR (T *n)"
+.br
+.RI "\fIUse DNode address directly.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBdelete_nodes\fR (void)"
+.br
+.RI "\fIDelete all the nodes in the list.\fR"
+.ti -1c
+.RI "void \fBcopy_nodes\fR (const ACE_Double_Linked_List<T> &rhs)"
+.br
+.RI "\fICopy nodes from <rhs> into this list.\fR"
+.ti -1c
+.RI "void \fBinit_head\fR (void)"
+.br
+.RI "\fISetup header pointer. Called after we create the head node in ctor.\fR"
+.ti -1c
+.RI "int \fBinsert_element\fR (T *new_item, int before = 0, T *old_item = 0)"
+.br
+.ti -1c
+.RI "int \fBremove_element\fR (T *item)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "T* \fBhead_\fR"
+.br
+.RI "\fIHead of the circular double-linked list.\fR"
+.ti -1c
+.RI "size_t \fBsize_\fR"
+.br
+.RI "\fISize of this list.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIAllocation Strategy of the queue.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Double_Linked_List_Iterator_Base< T >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Double_Linked_List_Iterator< T >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Double_Linked_List_Reverse_Iterator< T >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Double_Linked_List
+A double-linked list implementation.
+.PP
+.PP
+ This implementation of an unbounded double-linked list uses a circular linked list with a dummy node. It is pretty much like the  except that it allows removing of a specific element from a specific location. Notice that this class is an implementation of a very simply data structure.is *NOT* a container class. You can use the class to implement other contains classes but it is *NOT* a general purpose container class. The parameter class *MUST* has members T* prev and T* next and users of this class are responsible to follow the general rules of using double-linked lists to maintaining the list integrities. If you need a double linked container class, check out the DLList class in this file. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classT> typedef \fBACE_Double_Linked_List_Iterator\fR<T> ACE_Double_Linked_List<T>::ITERATOR
+.PP
+.SS template<classT> typedef \fBACE_Double_Linked_List_Reverse_Iterator\fR<T> ACE_Double_Linked_List<T>::REVERSE_ITERATOR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Double_Linked_List<T>::ACE_Double_Linked_List<T> (\fBACE_Allocator\fR * alloc = 0)
+.PP
+construction. Use user specified allocation strategy if specified.
+.PP
+.SS template<classT> ACE_Double_Linked_List<T>::ACE_Double_Linked_List<T> (const ACE_Double_Linked_List< T >&)
+.PP
+Copy constructor.
+.PP
+.SS template<classT> ACE_Double_Linked_List<T>::~ACE_Double_Linked_List<T> (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> void ACE_Double_Linked_List<T>::copy_nodes (const ACE_Double_Linked_List< T >& rhs)\fC [protected]\fR
+.PP
+Copy nodes from <rhs> into this list.
+.PP
+.SS template<classT> T * ACE_Double_Linked_List<T>::delete_head (void)
+.PP
+Removes and returns the first <item> in the list. Returns internal node's address on success, 0 if the queue was empty. This method will *not* free the internal node. 
+.PP
+Reimplemented in \fBACE_DLList\fR.
+.SS template<classT> void ACE_Double_Linked_List<T>::delete_nodes (void)\fC [protected]\fR
+.PP
+Delete all the nodes in the list.
+.PP
+.SS template<classT> T * ACE_Double_Linked_List<T>::delete_tail (void)
+.PP
+Removes and returns the last <item> in the list. Returns internal nodes's address on success, 0 if the queue was empty. This method will *not* free the internal node. 
+.PP
+Reimplemented in \fBACE_DLList\fR.
+.SS template<classT> void ACE_Double_Linked_List<T>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_DLList\fR.
+.SS template<classT> int ACE_Double_Linked_List<T>::get (T *& item, size_t slot = 0)
+.PP
+Get the <slot>th element in the set. Returns -1 if the element isn't in the range {0..<size> - 1}, else 0.
+.PP
+Reimplemented in \fBACE_DLList\fR.
+.SS template<classT> void ACE_Double_Linked_List<T>::init_head (void)\fC [protected]\fR
+.PP
+Setup header pointer. Called after we create the head node in ctor.
+.PP
+.SS template<classT> int ACE_Double_Linked_List<T>::insert_element (T * new_item, int before = 0, T * old_item = 0)\fC [protected]\fR
+.PP
+Insert a <new_element> into the list. It will be added before or after <old_item>. Default is to insert the new item *after* <head_>. Return 0 if succeed, -1 if error occured. 
+.SS template<classT> T * ACE_Double_Linked_List<T>::insert_head (T * new_item)
+.PP
+Adds <new_item> to the head of the list.Returns the new item that was inserted.
+.PP
+Reimplemented in \fBACE_DLList\fR.
+.SS template<classT> T * ACE_Double_Linked_List<T>::insert_tail (T * new_item)
+.PP
+Adds <new_item> to the tail of the list. Returns the new item that was inserted.
+.PP
+Reimplemented in \fBACE_DLList\fR.
+.SS template<classT> int ACE_Double_Linked_List<T>::is_empty (void) const
+.PP
+Returns 1 if the container is empty, otherwise returns 0.
+.PP
+.SS template<classT> int ACE_Double_Linked_List<T>::is_full (void) const
+.PP
+Returns 1 if the container is full, otherwise returns 0.
+.PP
+.SS template<classT> void ACE_Double_Linked_List<T>::operator= (const ACE_Double_Linked_List< T >&)
+.PP
+Assignment operator.
+.PP
+.SS template<classT> int ACE_Double_Linked_List<T>::remove (T * n)
+.PP
+Use DNode address directly.
+.PP
+.SS template<classT> int ACE_Double_Linked_List<T>::remove_element (T * item)\fC [protected]\fR
+.PP
+Remove an <item> from the list. Return 0 if succeed, -1 otherwise. Notice that this function checks if item is <head_> and either its <next_> or <prev_> is NULL. The function resets item's <next_> and <prev_> to 0 to prevent clobbering the double-linked list if a user tries to remove the same node again. 
+.SS template<classT> void ACE_Double_Linked_List<T>::reset (void)
+.PP
+Reset the  to be empty. Notice that since no one is interested in the items within, This operation will delete all items. 
+.SS template<classT> size_t ACE_Double_Linked_List<T>::size (void) const
+.PP
+The number of items in the queue.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> class \fBACE_Double_Linked_List_Iterator\fR\fC [friend]\fR
+.PP
+Reimplemented in \fBACE_DLList\fR.
+.SS template<classT> class \fBACE_Double_Linked_List_Iterator_Base\fR\fC [friend]\fR
+.PP
+.SS template<classT> class \fBACE_Double_Linked_List_Reverse_Iterator\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Double_Linked_List<T>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classT> \fBACE_Allocator\fR * ACE_Double_Linked_List<T>::allocator_\fC [protected]\fR
+.PP
+Allocation Strategy of the queue.
+.PP
+.SS template<classT> T * ACE_Double_Linked_List<T>::head_\fC [protected]\fR
+.PP
+Head of the circular double-linked list.
+.PP
+.SS template<classT> size_t ACE_Double_Linked_List<T>::size_\fC [protected]\fR
+.PP
+Size of this list.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,576 @@
+.TH ACE_Process_Options 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Process_Options \- Process Options. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Process.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBDEFAULT_COMMAND_LINE_BUF_LEN\fR = 1024, \fBNO_EXEC\fR = 0 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Process_Options\fR (int inherit_environment = 1, int command_line_buf_len = DEFAULT_COMMAND_LINE_BUF_LEN, int env_buf_len = ENVIRONMENT_BUFFER, int max_env_args = MAX_ENVIRONMENT_ARGS)"
+.br
+.ti -1c
+.RI "\fB~ACE_Process_Options\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBset_handles\fR (ACE_HANDLE std_in, ACE_HANDLE std_out = ACE_INVALID_HANDLE, ACE_HANDLE std_err = ACE_INVALID_HANDLE)"
+.br
+.ti -1c
+.RI "int \fBsetenv\fR (const \fBACE_TCHAR\fR *format, ...)"
+.br
+.RI "\fI<format> must be of the form "VARIABLE=VALUE". There can not be any spaces between VARIABLE and the equal sign.\fR"
+.ti -1c
+.RI "int \fBsetenv\fR (const \fBACE_TCHAR\fR *variable_name, const \fBACE_TCHAR\fR *format, ...)"
+.br
+.ti -1c
+.RI "int \fBsetenv\fR (\fBACE_TCHAR\fR *envp[])"
+.br
+.RI "\fISame as above with argv format. <envp> must be null terminated.\fR"
+.ti -1c
+.RI "void \fBworking_directory\fR (const char *wd)"
+.br
+.RI "\fISet the working directory for the process. strlen of <wd> must be <= MAXPATHLEN.\fR"
+.ti -1c
+.RI "void \fBworking_directory\fR (const wchar_t *wd)"
+.br
+.RI "\fIwchar_t version of working_directory.\fR"
+.ti -1c
+.RI "int \fBcommand_line\fR (const \fBACE_TCHAR\fR *format, ...)"
+.br
+.ti -1c
+.RI "int \fBcommand_line\fR (const \fBACE_ANTI_TCHAR\fR *format, ...)"
+.br
+.RI "\fIAnti-TChar version of command_line ().\fR"
+.ti -1c
+.RI "int \fBcommand_line\fR (const \fBACE_TCHAR\fR * const argv[])"
+.br
+.RI "\fISame as above in argv format.  must be null terminated.\fR"
+.ti -1c
+.RI "void \fBprocess_name\fR (const \fBACE_TCHAR\fR *name)"
+.br
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBprocess_name\fR (void)"
+.br
+.RI "\fIReturn the process_name. If the <process_name(name)> set method is not called, this method will return argv[0].\fR"
+.ti -1c
+.RI "u_long \fBcreation_flags\fR (void) const"
+.br
+.RI "\fIGet the creation flags. Set the creation flags.\fR"
+.ti -1c
+.RI "void \fBcreation_flags\fR (u_long)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBworking_directory\fR (void)"
+.br
+.RI "\fICurrent working directory. Returns "" if nothing has been set.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBcommand_line_buf\fR (int *max_len = 0)"
+.br
+.RI "\fIBuffer of command-line options. Returns exactly what was passed to this->command_line. If 
+.TP
+ max_len is not 0, receives the maximum length of the command line buffer.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* const* \fBcommand_line_argv\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBenv_buf\fR (void)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBgetgroup\fR (void) const"
+.br
+.RI "\fIOn UNIX, these methods are used by the  to manage groups of processes.\fR"
+.ti -1c
+.RI "\fBpid_t\fR \fBsetgroup\fR (\fBpid_t\fR pgrp)"
+.br
+.ti -1c
+.RI "int \fBhandle_inheritence\fR (void)"
+.br
+.RI "\fIDefault is TRUE. Allows disabling of handle inheritence.\fR"
+.ti -1c
+.RI "void \fBhandle_inheritence\fR (int)"
+.br
+.ti -1c
+.RI "int \fBpass_handle\fR (ACE_HANDLE)"
+.br
+.RI "\fICause the specified handle to be passed to a child process when it runs a new program image.\fR"
+.ti -1c
+.RI "int \fBdup_handles\fR (\fBACE_Handle_Set\fR &set) const"
+.br
+.RI "\fIGet a copy of the handles the ACE_Process_Options duplicated for the spawned process.\fR"
+.ti -1c
+.RI "int \fBpassed_handles\fR (\fBACE_Handle_Set\fR &set) const"
+.br
+.RI "\fIGet a copy of the handles passed to the spawned process. This will be the set of handles previously passed to 
+.TP
+ \fBpass_handle\fR().\fR"
+.ti -1c
+.RI "void \fBavoid_zombies\fR (int)"
+.br
+.RI "\fISet value for avoid_zombies (has no real effect except on *nix). Get current value for avoid_zombies.\fR"
+.ti -1c
+.RI "int \fBavoid_zombies\fR (void)"
+.br
+.ti -1c
+.RI "ACE_TEXT_STARTUPINFO* \fBstartup_info\fR (void)"
+.br
+.RI "\fIUsed for setting and getting.\fR"
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBget_process_attributes\fR (void) const"
+.br
+.RI "\fIGet the process_attributes. Returns NULL if set_process_attributes has not been set.\fR"
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBset_process_attributes\fR (void)"
+.br
+.RI "\fIIf this is called, a non-null process attributes is sent to CreateProcess.\fR"
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBget_thread_attributes\fR (void) const"
+.br
+.RI "\fIGet the thread_attributes. Returns NULL if set_thread_attributes has not been set.\fR"
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBset_thread_attributes\fR (void)"
+.br
+.RI "\fIIf this is called, a non-null thread attributes is sent to CreateProcess.\fR"
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBMAX_COMMAND_LINE_OPTIONS\fR = 128, \fBENVIRONMENT_BUFFER\fR = 16 * 1024, \fBMAX_ENVIRONMENT_ARGS\fR = 512 }"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBsetenv_i\fR (\fBACE_TCHAR\fR *assignment, int len)"
+.br
+.RI "\fIAdd  to environment_buf_ and adjust environment_argv_. <len> is the strlen of .\fR"
+.ti -1c
+.RI "void \fBinherit_environment\fR (void)"
+.br
+.RI "\fIHelper function to grab win32 environment and stick it in environment_buf_ using this->setenv_i.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBinherit_environment_\fR"
+.br
+.RI "\fIWhether the child process inherits the current process environment.\fR"
+.ti -1c
+.RI "u_long \fBcreation_flags_\fR"
+.br
+.RI "\fIDefault 0.\fR"
+.ti -1c
+.RI "int \fBavoid_zombies_\fR"
+.br
+.RI "\fIAvoid zombies for spawned processes.\fR"
+.ti -1c
+.RI "int \fBenvironment_inherited_\fR"
+.br
+.RI "\fIEnsures once only call to inherit environment.\fR"
+.ti -1c
+.RI "ACE_TEXT_STARTUPINFO \fBstartup_info_\fR"
+.br
+.ti -1c
+.RI "BOOL \fBhandle_inheritence_\fR"
+.br
+.RI "\fIDefault TRUE.\fR"
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBprocess_attributes_\fR"
+.br
+.RI "\fIPointer to security_buf1_.\fR"
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBthread_attributes_\fR"
+.br
+.RI "\fIPointer to security_buf2_.\fR"
+.ti -1c
+.RI "SECURITY_ATTRIBUTES \fBsecurity_buf1_\fR"
+.br
+.RI "\fIData for process_attributes_.\fR"
+.ti -1c
+.RI "SECURITY_ATTRIBUTES \fBsecurity_buf2_\fR"
+.br
+.RI "\fIData for thread_attributes_.\fR"
+.ti -1c
+.RI "int \fBset_handles_called_\fR"
+.br
+.RI "\fIIs 1 if stdhandles was called.\fR"
+.ti -1c
+.RI "int \fBenvironment_buf_index_\fR"
+.br
+.RI "\fIPointer into environment_buf_. This should point to the next free spot.\fR"
+.ti -1c
+.RI "int \fBenvironment_argv_index_\fR"
+.br
+.RI "\fIPointer to environment_argv_.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBenvironment_buf_\fR"
+.br
+.RI "\fIPointer to buffer of the environment settings.\fR"
+.ti -1c
+.RI "int \fBenvironment_buf_len_\fR"
+.br
+.RI "\fISize of the environment buffer. Configurable.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR** \fBenvironment_argv_\fR"
+.br
+.RI "\fIPointers into environment_buf_.\fR"
+.ti -1c
+.RI "int \fBmax_environment_args_\fR"
+.br
+.RI "\fIMaximum number of environment variables. Configurable.\fR"
+.ti -1c
+.RI "int \fBmax_environ_argv_index_\fR"
+.br
+.RI "\fIMaximum index of environment_argv_ buffer.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBworking_directory_\fR [MAXPATHLEN + 1]"
+.br
+.RI "\fIThe current working directory.\fR"
+.ti -1c
+.RI "int \fBcommand_line_argv_calculated_\fR"
+.br
+.RI "\fIEnsures command_line_argv is only calculated once.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBcommand_line_buf_\fR"
+.br
+.RI "\fIPointer to buffer of command-line arguments. E.g., "-f foo -b bar".\fR"
+.ti -1c
+.RI "int \fBcommand_line_buf_len_\fR"
+.br
+.RI "\fIMax length of command_line_buf_.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBcommand_line_argv_\fR [MAX_COMMAND_LINE_OPTIONS]"
+.br
+.RI "\fIArgv-style command-line arguments.\fR"
+.ti -1c
+.RI "\fBpid_t\fR \fBprocess_group_\fR"
+.br
+.RI "\fIProcess-group on Unix; unused on Win32.\fR"
+.ti -1c
+.RI "\fBACE_Handle_Set\fR \fBhandles_passed_\fR"
+.br
+.RI "\fISet of handles that were passed in pass_handle ().\fR"
+.ti -1c
+.RI "\fBACE_Handle_Set\fR \fBdup_handles_\fR"
+.br
+.RI "\fIResults of duplicating handles passed in pass_handle ().\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBprocess_name_\fR [MAXPATHLEN + 1]"
+.br
+.RI "\fIPathname for the process. Relative path or absolute path or just the program name.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Process Options.
+.PP
+.PP
+ This class controls the options passed to <CreateProcess> (or <fork> and <exec>). Notice that on Windows CE, creating a process merely means instantiating a new process. You can't set the handles (since there's no stdin, stdout and stderr,) specify process/thread options, set environment,... So, basically, this class only set the command line and nothing else. Notice that on UNIX platforms, if the <setenv> is used, the <spawn> is using the <execve> system call. It means that the <command_line> should include a full path to the program file (<execve> does not search the PATH). If <setenv> is not used then, the <spawn> is using the <execvp> which searches for the program file in the PATH variable. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIDEFAULT_COMMAND_LINE_BUF_LEN\fR \fR
+.TP
+\fB\fINO_EXEC\fR \fR
+.SS anonymous enum\fC [protected]\fR
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIMAX_COMMAND_LINE_OPTIONS\fR \fR
+.TP
+\fB\fIENVIRONMENT_BUFFER\fR \fR
+.TP
+\fB\fIMAX_ENVIRONMENT_ARGS\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Process_Options::ACE_Process_Options (int inherit_environment = 1, int command_line_buf_len = DEFAULT_COMMAND_LINE_BUF_LEN, int env_buf_len = ENVIRONMENT_BUFFER, int max_env_args = MAX_ENVIRONMENT_ARGS)
+.PP
+If <inherit_environment> == 1, the new process will inherit the environment of the current process. <command_line_buf_len> is the max strlen for command-line arguments. 
+.SS ACE_Process_Options::~ACE_Process_Options (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Process_Options::avoid_zombies (void)
+.PP
+.SS void ACE_Process_Options::avoid_zombies (int)
+.PP
+Set value for avoid_zombies (has no real effect except on *nix). Get current value for avoid_zombies.
+.PP
+.SS int ACE_Process_Options::command_line (const \fBACE_TCHAR\fR *const argv[])
+.PP
+Same as above in argv format.  must be null terminated.
+.PP
+.SS int ACE_Process_Options::command_line (const \fBACE_ANTI_TCHAR\fR * format, ...)
+.PP
+Anti-TChar version of command_line ().
+.PP
+.SS int ACE_Process_Options::command_line (const \fBACE_TCHAR\fR * format, ...)
+.PP
+Set the command-line arguments. <format> can use any printf formats. The first token in <format> should be the path to the application. This can either be a full path, relative path, or just an executable name. If an executable name is used, we rely on the platform's support for searching paths. Since we need a path to run a process, this method *must* be called! Returns 0 on success, -1 on failure. 
+.SS \fBACE_TCHAR\fR *const * ACE_Process_Options::command_line_argv (void)
+.PP
+argv-style command-line options. Parses and modifies the string created from <command_line_>. All spaces not in quotes ("" or '') are replaced with null (\\0) bytes. An argv array is built and returned with each entry pointing to the start of null-terminated string. Returns { 0 } if nothing has been set. 
+.SS \fBACE_TCHAR\fR * ACE_Process_Options::command_line_buf (int * max_len = 0)
+.PP
+Buffer of command-line options. Returns exactly what was passed to this->command_line. If 
+.TP
+ max_len is not 0, receives the maximum length of the command line buffer.
+.PP
+.SS void ACE_Process_Options::creation_flags (u_long)
+.PP
+.SS u_long ACE_Process_Options::creation_flags (void) const
+.PP
+Get the creation flags. Set the creation flags.
+.PP
+.SS int ACE_Process_Options::dup_handles (\fBACE_Handle_Set\fR & set) const
+.PP
+Get a copy of the handles the ACE_Process_Options duplicated for the spawned process.
+.PP
+Any handles created through duplication of those passed into 
+.TP
+ pass_handle are returned in 
+.TP
+ set. 
+.PP
+\fBReturns: \fR
+.in +1c
+ 0 if there were no handles to return; 1 if there were. 
+.SS \fBACE_TCHAR\fR * ACE_Process_Options::env_buf (void)
+.PP
+Null-terminated buffer of null terminated strings. Each string is an environment assignment "VARIABLE=value". This buffer should end with two null characters. 
+.SS LPSECURITY_ATTRIBUTES ACE_Process_Options::get_process_attributes (void) const
+.PP
+Get the process_attributes. Returns NULL if set_process_attributes has not been set.
+.PP
+.SS LPSECURITY_ATTRIBUTES ACE_Process_Options::get_thread_attributes (void) const
+.PP
+Get the thread_attributes. Returns NULL if set_thread_attributes has not been set.
+.PP
+.SS \fBpid_t\fR ACE_Process_Options::getgroup (void) const
+.PP
+On UNIX, these methods are used by the  to manage groups of processes.
+.PP
+.SS void ACE_Process_Options::handle_inheritence (int)
+.PP
+.SS int ACE_Process_Options::handle_inheritence (void)
+.PP
+Default is TRUE. Allows disabling of handle inheritence.
+.PP
+.SS void ACE_Process_Options::inherit_environment (void)\fC [protected]\fR
+.PP
+Helper function to grab win32 environment and stick it in environment_buf_ using this->setenv_i.
+.PP
+.SS int ACE_Process_Options::pass_handle (ACE_HANDLE)
+.PP
+Cause the specified handle to be passed to a child process when it runs a new program image.
+.PP
+The specified handle value will be included in the spawned process's command line as 
+.TP
+ +H 
+.TP
+ handle, if a new program is spawned (always on Win32; else if NO_EXEC is not set in creation flags). The passed handle value will be duplicated if on Win32 less capable than NT. 
+.PP
+\fBReturns: \fR
+.in +1c
+ 0 if success, -1 if failure. 
+.SS int ACE_Process_Options::passed_handles (\fBACE_Handle_Set\fR & set) const
+.PP
+Get a copy of the handles passed to the spawned process. This will be the set of handles previously passed to 
+.TP
+ \fBpass_handle\fR().
+.PP
+Any handles previously passed to 
+.TP
+ pass_handle are returned in 
+.TP
+ set. 
+.PP
+\fBReturns: \fR
+.in +1c
+ 0 if there were no handles to return; 1 if there were. 
+.SS const \fBACE_TCHAR\fR * ACE_Process_Options::process_name (void)
+.PP
+Return the process_name. If the <process_name(name)> set method is not called, this method will return argv[0].
+.PP
+.SS void ACE_Process_Options::process_name (const \fBACE_TCHAR\fR * name)
+.PP
+Specify the full path or relative path, or just the executable name for the process. If this is set, then <name> will be used to create the process instead of argv[0] set in the command line. This is here so that you can supply something other than executable name as argv[0]. 
+.SS int ACE_Process_Options::set_handles (ACE_HANDLE std_in, ACE_HANDLE std_out = ACE_INVALID_HANDLE, ACE_HANDLE std_err = ACE_INVALID_HANDLE)
+.PP
+Set the standard handles of the new process to the respective handles. If you want to affect a subset of the handles, make sure to set the others to ACE_INVALID_HANDLE. Returns 0 on success, -1 on failure. 
+.SS LPSECURITY_ATTRIBUTES ACE_Process_Options::set_process_attributes (void)
+.PP
+If this is called, a non-null process attributes is sent to CreateProcess.
+.PP
+.SS LPSECURITY_ATTRIBUTES ACE_Process_Options::set_thread_attributes (void)
+.PP
+If this is called, a non-null thread attributes is sent to CreateProcess.
+.PP
+.SS int ACE_Process_Options::setenv (\fBACE_TCHAR\fR * envp[])
+.PP
+Same as above with argv format. <envp> must be null terminated.
+.PP
+.SS int ACE_Process_Options::setenv (const \fBACE_TCHAR\fR * variable_name, const \fBACE_TCHAR\fR * format, ...)
+.PP
+Set a single environment variable, <variable_name>. Since different platforms separate each environment variable differently, you must call this method once for each variable. <format> can be any printf format string. So options->setenv ("FOO","one + two = s", "three") will result in "FOO=one + two = three". 
+.SS int ACE_Process_Options::setenv (const \fBACE_TCHAR\fR * format, ...)
+.PP
+<format> must be of the form "VARIABLE=VALUE". There can not be any spaces between VARIABLE and the equal sign.
+.PP
+.SS int ACE_Process_Options::setenv_i (\fBACE_TCHAR\fR * assignment, int len)\fC [protected]\fR
+.PP
+Add  to environment_buf_ and adjust environment_argv_. <len> is the strlen of .
+.PP
+.SS \fBpid_t\fR ACE_Process_Options::setgroup (\fBpid_t\fR pgrp)
+.PP
+.SS ACE_TEXT_STARTUPINFO * ACE_Process_Options::startup_info (void)
+.PP
+Used for setting and getting.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Process_Options::working_directory (void)
+.PP
+Current working directory. Returns "" if nothing has been set.
+.PP
+.SS void ACE_Process_Options::working_directory (const wchar_t * wd)
+.PP
+wchar_t version of working_directory.
+.PP
+.SS void ACE_Process_Options::working_directory (const char * wd)
+.PP
+Set the working directory for the process. strlen of <wd> must be <= MAXPATHLEN.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Process_Options::avoid_zombies_\fC [protected]\fR
+.PP
+Avoid zombies for spawned processes.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Process_Options::command_line_argv_[MAX_COMMAND_LINE_OPTIONS]\fC [protected]\fR
+.PP
+Argv-style command-line arguments.
+.PP
+.SS int ACE_Process_Options::command_line_argv_calculated_\fC [protected]\fR
+.PP
+Ensures command_line_argv is only calculated once.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Process_Options::command_line_buf_\fC [protected]\fR
+.PP
+Pointer to buffer of command-line arguments. E.g., "-f foo -b bar".
+.PP
+.SS int ACE_Process_Options::command_line_buf_len_\fC [protected]\fR
+.PP
+Max length of command_line_buf_.
+.PP
+.SS u_long ACE_Process_Options::creation_flags_\fC [protected]\fR
+.PP
+Default 0.
+.PP
+.SS \fBACE_Handle_Set\fR ACE_Process_Options::dup_handles_\fC [protected]\fR
+.PP
+Results of duplicating handles passed in pass_handle ().
+.PP
+.SS \fBACE_TCHAR\fR ** ACE_Process_Options::environment_argv_\fC [protected]\fR
+.PP
+Pointers into environment_buf_.
+.PP
+.SS int ACE_Process_Options::environment_argv_index_\fC [protected]\fR
+.PP
+Pointer to environment_argv_.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Process_Options::environment_buf_\fC [protected]\fR
+.PP
+Pointer to buffer of the environment settings.
+.PP
+.SS int ACE_Process_Options::environment_buf_index_\fC [protected]\fR
+.PP
+Pointer into environment_buf_. This should point to the next free spot.
+.PP
+.SS int ACE_Process_Options::environment_buf_len_\fC [protected]\fR
+.PP
+Size of the environment buffer. Configurable.
+.PP
+.SS int ACE_Process_Options::environment_inherited_\fC [protected]\fR
+.PP
+Ensures once only call to inherit environment.
+.PP
+.SS BOOL ACE_Process_Options::handle_inheritence_\fC [protected]\fR
+.PP
+Default TRUE.
+.PP
+.SS \fBACE_Handle_Set\fR ACE_Process_Options::handles_passed_\fC [protected]\fR
+.PP
+Set of handles that were passed in pass_handle ().
+.PP
+.SS int ACE_Process_Options::inherit_environment_\fC [protected]\fR
+.PP
+Whether the child process inherits the current process environment.
+.PP
+.SS int ACE_Process_Options::max_environ_argv_index_\fC [protected]\fR
+.PP
+Maximum index of environment_argv_ buffer.
+.PP
+.SS int ACE_Process_Options::max_environment_args_\fC [protected]\fR
+.PP
+Maximum number of environment variables. Configurable.
+.PP
+.SS LPSECURITY_ATTRIBUTES ACE_Process_Options::process_attributes_\fC [protected]\fR
+.PP
+Pointer to security_buf1_.
+.PP
+.SS \fBpid_t\fR ACE_Process_Options::process_group_\fC [protected]\fR
+.PP
+Process-group on Unix; unused on Win32.
+.PP
+.SS \fBACE_TCHAR\fR ACE_Process_Options::process_name_[MAXPATHLEN+1]\fC [protected]\fR
+.PP
+Pathname for the process. Relative path or absolute path or just the program name.
+.PP
+.SS SECURITY_ATTRIBUTES ACE_Process_Options::security_buf1_\fC [protected]\fR
+.PP
+Data for process_attributes_.
+.PP
+.SS SECURITY_ATTRIBUTES ACE_Process_Options::security_buf2_\fC [protected]\fR
+.PP
+Data for thread_attributes_.
+.PP
+.SS int ACE_Process_Options::set_handles_called_\fC [protected]\fR
+.PP
+Is 1 if stdhandles was called.
+.PP
+.SS ACE_TEXT_STARTUPINFO ACE_Process_Options::startup_info_\fC [protected]\fR
+.PP
+.SS LPSECURITY_ATTRIBUTES ACE_Process_Options::thread_attributes_\fC [protected]\fR
+.PP
+Pointer to security_buf2_.
+.PP
+.SS \fBACE_TCHAR\fR ACE_Process_Options::working_directory_[MAXPATHLEN+1]\fC [protected]\fR
+.PP
+The current working directory.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

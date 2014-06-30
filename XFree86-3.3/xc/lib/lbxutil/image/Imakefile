@@ -1,0 +1,38 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/12/04 10:23:58 lehors $
+
+
+
+
+XCOMM $XFree86: xc/lib/lbxutil/image/Imakefile,v 1.2 1997/01/05 11:52:20 dawes Exp $
+
+#define IncSubdir X11
+#include <Library.tmpl>
+
+SRCS = dfaxg42d.c dpackbits.c efaxg42d.c epackbits.c misc.c
+
+OBJS = dfaxg42d.o dpackbits.o efaxg42d.o epackbits.o misc.o
+
+INCLUDES = -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(SERVERSRC)/include -I../../../include/extensions
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalLintTarget($(SRCS))
+
+MKG3STATES = ./mkg3states
+
+g3states.h : mkg3states.c
+	RemoveFiles($@ ProgramTargetName(mkg3states))
+	-HostLinkRule(ProgramTargetName(mkg3states), $(CFLAGS),mkg3states.c,$(LDLIBS))
+	RunProgram(MKG3STATES,> g3_states_h)
+	$(MV) g3_states_h $@
+	RemoveFiles(ProgramTargetName(mkg3states) g3_states_h)
+
+includes:: g3states.h
+
+depend:: g3states.h
+
+clean::
+	RemoveFiles(g3_states_h g3states.h ProgramTargetName(mkg3states))
+
+DependTarget()
+

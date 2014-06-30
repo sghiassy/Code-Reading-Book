@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+          xmlns:log="http://apache.org/xsp/log/2.0"
+          xmlns:capture="http://apache.org/cocoon/capture/1.0"
+>
+  <xsp:structure>
+    <xsp:include>org.apache.avalon.framework.context.ContextException</xsp:include>
+    <xsp:include>org.apache.cocoon.components.search.*</xsp:include>
+    
+    <xsp:include>org.apache.lucene.document.Document</xsp:include>
+    <xsp:include>org.apache.lucene.index.*</xsp:include>
+    <xsp:include>org.apache.lucene.document.*</xsp:include>
+    <xsp:include>org.apache.lucene.store.*</xsp:include>
+    
+    <xsp:include>java.io.*</xsp:include>
+    <xsp:include>java.util.*</xsp:include>
+    <xsp:include>java.net.*</xsp:include>
+  </xsp:structure>
+  
+  <xsp:logic>
+    File workDir = null;
+    /** Contextualize this class */
+    public void contextualize(Context context) throws ContextException {
+      super.contextualize( context );
+      workDir = (File) context.get(Constants.CONTEXT_WORK_DIR);
+    }
+    
+    Directory directory;
+    
+    void init() throws ProcessingException {
+      try {
+        directory = LuceneCocoonHelper.getDirectory( new File( workDir, "index" ), false );
+      } catch (Exception e) {
+        throw new ProcessingException( "Exception in init()!", e );
+      }
+    }
+    
+    int numDocs() throws ProcessingException {
+      try {
+        IndexReader reader = IndexReader.open( directory );
+        int num_docs;
+        num_docs = reader.numDocs();
+        return num_docs;
+      } catch (Exception e) {
+        throw new ProcessingException( "Exception in numDocs()!", e );
+      }
+    }
+    
+    Map allDocuments() throws ProcessingException {
+      try {
+        IndexReader reader = IndexReader.open( directory );
+        
+        HashMap fieldsStatistic = new HashMap();
+        
+        for (int i = 0; i &lt; reader.maxDoc(); i++ ) {
+          if (!reader.isDeleted(i)) {
+            Document document = reader.document(i);
+            Enumeration fields = document.fields();
+            while (fields.hasMoreElements()) {
+              Field f = (Field)fields.nextElement();
+              String name = f.name();
+              String value = f.stringValue();
+              if (value == null) value = "--void--";
+              
+              String fieldStatistic = name + "/" + value;
+              if (fieldsStatistic.get( fieldStatistic ) == null) {
+                fieldsStatistic.put( fieldStatistic, new Integer(1) );
+              } else {
+                Integer sum = (Integer)fieldsStatistic.get( fieldStatistic );
+                int sum_plus = sum.intValue() + 1;
+                fieldsStatistic.put( fieldStatistic, new Integer( sum_plus ) );
+              }
+            }
+          }
+        }
+        return fieldsStatistic;
+        //map.keySet();
+      } catch (Exception e) {
+        throw new ProcessingException( "Exception allDocuments()!", e );
+      }
+    }
+
+    Map allTerms() throws ProcessingException {
+      try {
+        IndexReader reader = IndexReader.open( directory );
+        
+        TermEnum te = reader.terms();
+        HashMap all_fields = new HashMap();
+        while (te.next()) {
+          Term term = te.term();
+          int docfreq = te.docFreq();
+          String field = term.field();
+          if (field != null) {
+            if (all_fields.containsKey( field )) {
+              Integer sum = (Integer)all_fields.get( field );
+              int sum_plus = sum.intValue() + docfreq;
+              all_fields.put( field, new Integer( sum_plus ) );
+            } else {
+              all_fields.put( field, new Integer( docfreq ) );
+            }
+          }
+        }
+        te.close();
+        return all_fields;
+      } catch (Exception e) {
+        throw new ProcessingException( "Exception allDocuments()!", e );
+      }
+    }
+    Map sort( Map map ) {
+      TreeMap treeMap = new TreeMap( map );
+      return treeMap;
+    }
+  </xsp:logic>
+  
+  <page>
+    <xsp:logic>
+      init();
+    </xsp:logic>
+    <title>Index Statistics</title>
+    <content>
+      <para>
+        Statistics:
+      </para>
+      <para>
+        Total Count Of Documents
+        <xsp:expr>String.valueOf(numDocs())</xsp:expr>
+      </para>
+      <para>
+        <table>
+          <tr>
+            <td>Count Of Terms</td><td>Fieldname/Fieldvalue</td>
+          </tr>
+          <xsp:logic>
+            Map all_docs = sort(allDocuments());
+            Iterator it1 = all_docs.keySet().iterator();
+            while (it1.hasNext()) {
+              String k = (String)it1.next();
+              Integer v = (Integer)all_docs.get( k );
+              <xsp:content>
+                <tr>
+                  <td> <xsp:expr>v.toString()</xsp:expr> </td>
+                  <td> <xsp:expr>k</xsp:expr> </td>
+                </tr>
+              </xsp:content>
+            }
+          </xsp:logic>
+        </table>
+      </para>
+      <para>
+        All Terms
+      </para>
+      <para>
+        <table>
+          <tr>
+            <td>Count Of Terms</td><td>Term</td>
+          </tr>
+          <xsp:logic>
+            Map all_terms = sort(allTerms());
+            Iterator it2 = all_terms.keySet().iterator();
+            while (it2.hasNext()) {
+              String k = (String)it2.next();
+              Integer v = (Integer)all_terms.get( k );
+              <xsp:content>
+                <tr>
+                  <td> <xsp:expr>v.toString()</xsp:expr> </td>
+                  <td> <xsp:expr>k</xsp:expr> </td> 
+                </tr>
+              </xsp:content>
+            }
+          </xsp:logic>
+        </table>
+      </para>
+    </content>
+  </page>
+
+</xsp:page>
+

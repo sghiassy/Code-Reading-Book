@@ -1,0 +1,50 @@
+.TH ACE_Log_Msg_Callback 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Log_Msg_Callback \- An interface class used to get logging callbacks. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Log_Msg_Callback.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Log_Msg_Callback\fR (void)"
+.br
+.RI "\fINo-op virtual destructor.\fR"
+.ti -1c
+.RI "virtual void \fBlog\fR (\fBACE_Log_Record\fR &log_record) = 0"
+.br
+.RI "\fICallback routine. This is called when we want to log a message. Since this routine is pure virtual, it must be overwritten by the subclass.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An interface class used to get logging callbacks.
+.PP
+.PP
+ Users who are interested in getting the logging messages directly, can subclass this interface and override the \fBlog\fR() method. They must then register their subclass with the Log_Msg class and make sure that they turn on the \fBACE_Log_Msg::MSG_CALLBACK\fR flag.
+.PP
+Your <log> routine is called with an instance of \fBACE_Log_Record\fR. From this class, you can get the log message, the verbose log message, message type, message priority, and so on.
+.PP
+Remember that there is one Log_Msg object per thread. Therefore, you may need to register your callback object with many  objects (and have the correct synchronization in the <log> method) or have a separate callback object per Log_Msg object. Moreover,  are not inherited when a new thread is spawned, so you'll need to reset these in each new thread. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Log_Msg_Callback::~ACE_Log_Msg_Callback (void)\fC [virtual]\fR
+.PP
+No-op virtual destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Log_Msg_Callback::log (\fBACE_Log_Record\fR & log_record)\fC [pure virtual]\fR
+.PP
+Callback routine. This is called when we want to log a message. Since this routine is pure virtual, it must be overwritten by the subclass.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

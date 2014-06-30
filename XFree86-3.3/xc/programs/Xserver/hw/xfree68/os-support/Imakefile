@@ -1,0 +1,90 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/10/25 11:32:47 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree68/os-support/Imakefile,v 3.2.2.1 1997/05/03 09:45:18 dawes Exp $
+
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+#if defined(SVR3Architecture) 
+# if defined(i386ScoArchitecture)
+OS_SUBDIR = sco
+# else
+OS_SUBDIR = sysv
+# endif
+#endif
+
+#if defined(SVR4Architecture) 
+# if defined(SunArchitecture)
+OS_SUBDIR = solx86
+# else
+OS_SUBDIR = sysv
+# endif
+#endif
+
+#if defined(LinuxArchitecture)
+OS_SUBDIR = linux
+#endif
+
+#if defined(LynxOSArchitecture)
+OS_SUBDIR = lynxos
+#endif
+
+#if defined(i386BsdArchitecture)
+# if defined(BSD386Architecture)
+OS_SUBDIR = bsdi
+# else
+OS_SUBDIR = bsd
+# endif
+#endif
+
+#if defined(i386MachArchitecture) || defined(OsfArchitecture)
+OS_SUBDIR = mach
+#endif
+
+#if defined(AmoebaArchitecture)
+OS_SUBDIR = amoeba
+#endif
+
+#if defined(MinixArchitecture)
+OS_SUBDIR = minix
+#endif
+
+#if defined(OS2Architecture)
+OS_SUBDIR = os2
+#endif
+
+#if defined(i386Sco325Architecture)
+OS_SUBDIR = sco
+#endif
+
+SUBDIRS = $(OS_SUBDIR) misc
+
+SRCS = $(OS_SUBDIR)/?*.c misc/?*.c
+OBJS = $(OS_SUBDIR)/?*.o misc/?*.o
+
+DONES = $(OS_SUBDIR)/DONE misc/DONE
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS) $(OBJS) $(DONES))
+#endif
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)        
+#endif
+
+NormalDepLibraryTarget(xf86_os,$(SUBDIRS) $(DONES),$(OBJS))
+
+ForceSubdirs($(SUBDIRS))
+
+LinkSourceFile(README.OS-lib,$(XF86SRC)/os-support)                             
+LinkSourceFile(xf86_OSlib.h,$(XF86SRC)/os-support)
+
+InstallLinkKitLibrary(xf86_os,$(LINKKITDIR)/lib)
+InstallLinkKitNonExecFile(xf86_OSlib.h,$(LINKKITDIR)/include)
+
+DependSubdirs($(SUBDIRS))
+

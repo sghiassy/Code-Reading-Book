@@ -1,0 +1,104 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_LoadingPBEnable</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_LoadingPBEnable</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_LoadingPBEnable</h4>
+<dd>DEMOGL_LoadingPBEnable enables the progress bar build into DemoGL, plus sets the lower left corner
+	of the progress bar plus the width and height. This progress bar is visible during the startup of the
+	application and will reflect the amount of work done before the effect objects will be executed. 
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_LoadingPBEnable(
+	<b>const int</b> <i>iType</i>,
+	<b>const float</b> <i>fWidth</i>, 
+	<b>const float</b> <i>fHeight</i>,
+	<b>const float</b> <i>fBottomLeftX</i>, 
+	<b>const float</b> <i>fBottomLeftY</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iType</i>
+	<dd>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Progress bar type</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_CNTRL_PGB_LINEAR</td>
+			<td WIDTH="70%" VALIGN="TOP">A linear progress bar is shown with an increasing bar without delineated squares.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_CNTRL_PGB_BLOCKS_2D</td>
+			<td WIDTH="70%" VALIGN="TOP">A progress bar of delineated squares is shown. </td>
+		</tr>
+		</table>
+		<p>
+	<dt><i>fWidth</i>
+	<dd>The width of the progress bar on screen, in (percentage/100). 
+	<dt><i>fHeight</i>
+	<dd>The height of the progress bar on screen, in (percentage of the screen/100).
+	<dt><i>fBottomLeftX</i>
+	<dd>The X coordinate of the bottom left corner of the progress bar, in OpenGL floating point 2D coordinates. (0.0f, 0.0f) is the 
+		bottom left coordinate of the screen.
+	<dt><i>fBottomLeftY</i>
+	<dd>The Y coordinate of the bottom left corner of the progress bar, in OpenGL floating point 2D coordinates. (0.0f, 0.0f) is the 
+		bottom left coordinate of the screen.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd><p>
+<dt><b>Remarks.</b>
+<dd>The progress bar is a 2D component that is rendered on top of the splash screen, during startup of the application. Besides
+	the placement and the size properties, the appeance of the progress bar is also settable, via 
+	<a HREF="ref_functions_DEMOGL_LoadingPBSetAppearance.htm" target="main">DEMOGL_LoadingPBSetAppearance</a>.
+	DemoGL will set the max value of the progress bar to (number of registered effects) + 5. It will automatically
+	tick from the minimum of 0 to that max value every time an internal process has finished, during startup of the
+	application, or an effect is initialized. Keep in mind to use floating point OpenGL 2D coordinates, so the placement and
+	size is resolution independant. Be sure to call this function before you start your application with
+	<a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>, otherwise the progress bar won't show up.
+	When you choose to use DGL_CNTRL_PGB_BLOCKS_2D as <i>iType</i> for the progress bar, the progress bar will have max value
+	amount of 2D delineated squares.
+	<p>
+<dt><b>Example.</b>
+<dd><pre>
+// Enable the progress bar at the bottom of the screen, screenwide.
+// Make it a linear progress bar.
+DEMOGL_LoadingPBEnable(DGL_CNTRL_PGB_LINEAR, 1.0f, 0.02f,  0.0f, 0.0f);
+
+// Set Progress bar appearance. Make it horizontal
+DEMOGL_LoadingPBSetAppearance(true, false, GL_SRC_COLOR, 
+	GL_ONE_MINUS_SRC_COLOR, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f);
+
+	</pre>
+	<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>, 
+	<a HREF="ref_functions_DEMOGL_LoadingPBSetAppearance.htm" target="main">DEMOGL_LoadingPBSetAppearance</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

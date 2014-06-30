@@ -1,0 +1,71 @@
+XCOMM $XConsortium: Imakefile /main/8 1996/12/02 10:21:32 lehors $
+XCOMM $XFree86: xc/programs/Xserver/hw/xnest/Imakefile,v 3.7 1996/12/23 07:09:15 dawes Exp $
+#include <Server.tmpl>
+
+#ifdef OS2Architecture
+SRCS1 = os2Stub.c
+OBJS1 = os2Stub.o
+#endif
+
+SRCS = 	Args.c \
+	Color.c \
+	Cursor.c \
+	Display.c \
+	Events.c \
+	Font.c \
+	GC.c \
+	GCOps.c \
+	GetTime.c \
+	Handlers.c \
+	Init.c \
+	Keyboard.c \
+	Pixmap.c \
+	Pointer.c \
+	Screen.c \
+	TestExt.c \
+	Visual.c \
+	Window.c \
+	stubs.c $(SRCS1)
+
+OBJS = 	Args.o \
+	Color.o \
+	Cursor.o \
+	Display.o \
+	Events.o \
+	Font.o \
+	GC.o \
+	GCOps.o \
+	GetTime.o \
+	Handlers.o \
+	Init.o \
+	Keyboard.o \
+	Pixmap.o \
+	Pointer.o \
+	Screen.o \
+	TestExt.o \
+	Visual.o \
+	Window.o \
+	stubs.o $(OBJS1)
+
+
+INCLUDES = -I$(BUILDINCDIR) -I$(FONTINCSRC) \
+	   -I../../mi -I../../include -I../../os \
+           -I$(EXTINCSRC) -I$(INCLUDESRC) -I.
+
+all:: $(OBJS)
+
+INCLUDES = -I. -I$(XBUILDINCDIR) -I$(FONTINCSRC) \
+	   -I../../mi -I../../include -I../../os  \
+           -I$(EXTINCSRC) -I$(XINCLUDESRC)
+
+LinkSourceFile(stubs.c,../../Xi)
+SpecialCObjectRule(Init,$(ICONFIGFILES),$(EXT_DEFINES))
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(xnest,$(OBJS))
+
+InstallManPage(Xnest,$(MANDIR))
+
+InstallLinkKitLibrary(xnest,$(LINKKITDIR)/lib)
+
+DependTarget()

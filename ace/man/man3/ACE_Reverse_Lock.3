@@ -1,0 +1,164 @@
+.TH ACE_Reverse_Lock 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Reverse_Lock \- A reverse (or anti) lock. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch_T.h>\fR
+.PP
+Inherits \fBACE_Lock\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef ACE_LOCKING_MECHANISM \fBACE_LOCK\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Reverse_Lock\fR (ACE_LOCKING_MECHANISM &lock, \fBACE_Acquire_Method::METHOD_TYPE\fR acquire_method = ACE_Acquire_Method::ACE_REGULAR)"
+.br
+.RI "\fIConstructor. All locking requests will be forwarded to <lock>.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Reverse_Lock\fR (void)"
+.br
+.RI "\fIDestructor. If <lock_> was not passed in by the user, it will be deleted.\fR"
+.ti -1c
+.RI "virtual int \fBacquire\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBrelease\fR (void)"
+.br
+.RI "\fIAcquire the lock.\fR"
+.ti -1c
+.RI "virtual int \fBacquire_read\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBacquire_write\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire_read\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire_write\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire_write_upgrade\fR (void)"
+.br
+.RI "\fIRelease the lock.\fR"
+.ti -1c
+.RI "virtual int \fBremove\fR (void)"
+.br
+.RI "\fIExplicitly destroy the lock.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_LOCKING_MECHANISM& \fBlock_\fR"
+.br
+.RI "\fIThe concrete locking mechanism that all the methods delegate to.\fR"
+.ti -1c
+.RI "\fBACE_Acquire_Method::METHOD_TYPE\fR \fBacquire_method_\fR"
+.br
+.RI "\fIThis indicates what kind of acquire method will be called.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class ACE_LOCKING_MECHANISM>  template class ACE_Reverse_Lock
+A reverse (or anti) lock.
+.PP
+.PP
+ This is an interesting adapter class that changes a lock into a reverse lock, i.e.,  on this class calls <release> on the lock, and <release> on this class calls  on the lock. One motivation for this class is when we temporarily want to release a lock (which we have already acquired) but then reacquire it soon after. An alternative design would be to add a Anti_Guard or Reverse_Guard class which would <release> on construction and  destruction. However, there are *many* varieties of the Guard class and this design choice would lead to at least 6 new classes. One new ACE_Reverse_Lock class seemed more reasonable. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> typedef ACE_LOCKING_MECHANISM ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::ACE_LOCK
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::ACE_Reverse_Lock<ACE_LOCKING_MECHANISM> (ACE_LOCKING_MECHANISM & lock, \fBACE_Acquire_Method::METHOD_TYPE\fR acquire_method = ACE_Acquire_Method::ACE_REGULAR)
+.PP
+Constructor. All locking requests will be forwarded to <lock>.
+.PP
+.SS template<classACE_LOCKING_MECHANISM> ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::~ACE_Reverse_Lock<ACE_LOCKING_MECHANISM> (void)\fC [virtual]\fR
+.PP
+Destructor. If <lock_> was not passed in by the user, it will be deleted.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::acquire (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::acquire_read (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::acquire_write (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::release (void)\fC [virtual]\fR
+.PP
+Acquire the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::remove (void)\fC [virtual]\fR
+.PP
+Explicitly destroy the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::tryacquire (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::tryacquire_read (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::tryacquire_write (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SS template<classACE_LOCKING_MECHANISM> int ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::tryacquire_write_upgrade (void)\fC [virtual]\fR
+.PP
+Release the lock.
+.PP
+Reimplemented from \fBACE_Lock\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classACE_LOCKING_MECHANISM> \fBACE_Acquire_Method::METHOD_TYPE\fR ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::acquire_method_\fC [private]\fR
+.PP
+This indicates what kind of acquire method will be called.
+.PP
+.SS template<classACE_LOCKING_MECHANISM> ACE_LOCKING_MECHANISM & ACE_Reverse_Lock<ACE_LOCKING_MECHANISM>::lock_\fC [private]\fR
+.PP
+The concrete locking mechanism that all the methods delegate to.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

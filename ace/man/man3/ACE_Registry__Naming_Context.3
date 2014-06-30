@@ -1,0 +1,401 @@
+.TH ACE_Registry::Naming_Context 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Registry::Naming_Context \- An context representation. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Registry.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBMAX_OBJECT_NAME_SIZE\fR = BUFSIZ, \fBMAX_CONTEXT_NAME_SIZE\fR = MAXPATHLEN + 1 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBNaming_Context\fR (void)"
+.br
+.RI "\fIEmpty constructor: keys will be NULL.\fR"
+.ti -1c
+.RI "\fBNaming_Context\fR (const HKEY &key)"
+.br
+.RI "\fIConstructor: key_ will be set to <key>.\fR"
+.ti -1c
+.RI "\fB~Naming_Context\fR (void)"
+.br
+.RI "\fIDestructor will call <\fBNaming_Context::close\fR>.\fR"
+.ti -1c
+.RI "int \fBbind_new\fR (const \fBName\fR &name, const \fBObject\fR &object)"
+.br
+.ti -1c
+.RI "int \fBbind_new\fR (const ACE_TString &name, const \fBObject\fR &object)"
+.br
+.ti -1c
+.RI "int \fBbind\fR (const \fBName\fR &name, const \fBObject\fR &object)"
+.br
+.ti -1c
+.RI "int \fBbind\fR (const ACE_TString &name, const \fBObject\fR &object)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const \fBName\fR &name, const \fBObject\fR &object)"
+.br
+.RI "\fIUpdate <object> with <name> in <this> context (Name version).\fR"
+.ti -1c
+.RI "int \fBrebind\fR (const ACE_TString &name, const \fBObject\fR &object)"
+.br
+.RI "\fIUpdate <object> with <name> in <this> context.\fR"
+.ti -1c
+.RI "int \fBresolve\fR (const \fBName\fR &name, \fBObject\fR &object)"
+.br
+.RI "\fIFind <object> with <name> in <this> context (Name version).\fR"
+.ti -1c
+.RI "int \fBresolve\fR (const ACE_TString &name, \fBObject\fR &object)"
+.br
+.RI "\fIFind <object> with <name> in <this> context.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const \fBName\fR &name)"
+.br
+.RI "\fIDelete object with <name> in <this> context (Name version).\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const ACE_TString &name)"
+.br
+.RI "\fIDelete object with <name> in <this> context.\fR"
+.ti -1c
+.RI "int \fBnew_context\fR (Naming_Context &naming_context)"
+.br
+.RI "\fICreate new <naming_context>.\fR"
+.ti -1c
+.RI "int \fBbind_new_context\fR (const \fBName\fR &name, Naming_Context &naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)"
+.br
+.ti -1c
+.RI "int \fBbind_new_context\fR (const ACE_TString &name, Naming_Context &naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)"
+.br
+.RI "\fIInsert <naming_context> with <name> relative to <this> context This will fail if <name> already exists.\fR"
+.ti -1c
+.RI "int \fBbind_context\fR (const \fBName\fR &name, Naming_Context &naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)"
+.br
+.ti -1c
+.RI "int \fBbind_context\fR (const ACE_TString &name, Naming_Context &naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)"
+.br
+.RI "\fIInsert or update <naming_context> with <name> relative to <this> context This will not fail if <name> already exists.\fR"
+.ti -1c
+.RI "int \fBrebind_context\fR (const \fBName\fR &name, Naming_Context &naming_context)"
+.br
+.RI "\fIRename <naming_context> to <name> (Name version).\fR"
+.ti -1c
+.RI "int \fBrebind_context\fR (const ACE_TString &name, Naming_Context &naming_context)"
+.br
+.RI "\fIRename <naming_context> to <name>.\fR"
+.ti -1c
+.RI "int \fBresolve_context\fR (const \fBName\fR &name, Naming_Context &naming_context, u_long security_access = KEY_ALL_ACCESS)"
+.br
+.RI "\fIFind <naming_context> with <name> in <this> context (Name version).\fR"
+.ti -1c
+.RI "int \fBresolve_context\fR (const ACE_TString &name, Naming_Context &naming_context, u_long security_access = KEY_ALL_ACCESS)"
+.br
+.RI "\fIFind <naming_context> with <name> in <this> context.\fR"
+.ti -1c
+.RI "int \fBunbind_context\fR (const \fBName\fR &name)"
+.br
+.RI "\fIRemove naming_context with <name> from <this> context (Name version).\fR"
+.ti -1c
+.RI "int \fBunbind_context\fR (const ACE_TString &name)"
+.br
+.RI "\fIRemove naming_context with <name> from <this> context.\fR"
+.ti -1c
+.RI "int \fBdestroy\fR (void)"
+.br
+.RI "\fISame as <unbind_context> with <this> as naming_context.\fR"
+.ti -1c
+.RI "int \fBlist\fR (u_long how_many, \fBBinding_List\fR &list, \fBBinding_Iterator\fR &iterator)"
+.br
+.ti -1c
+.RI "int \fBlist\fR (\fBBinding_List\fR &list)"
+.br
+.RI "\fIlisting function: iterator creator This gives back a listing of all entries in <this> context.\fR"
+.ti -1c
+.RI "int \fBflush\fR (void)"
+.br
+.RI "\fISync content of context to disk.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose the handle of the context Note: <close> does not call <flush>.\fR"
+.ti -1c
+.RI "HKEY \fBkey\fR (void)"
+.br
+.RI "\fIGet key.\fR"
+.ti -1c
+.RI "HKEY \fBparent\fR (void)"
+.br
+.RI "\fIGet parent.\fR"
+.ti -1c
+.RI "void \fBname\fR (\fBName\fR &name)"
+.br
+.RI "\fIGet name (Name version).\fR"
+.ti -1c
+.RI "void \fBname\fR (ACE_TString &name)"
+.br
+.RI "\fIGet name (String version).\fR"
+.ti -1c
+.RI "ACE_TString \fBname\fR (void)"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBkey\fR (HKEY key)"
+.br
+.RI "\fISet key.\fR"
+.ti -1c
+.RI "void \fBparent\fR (HKEY parent)"
+.br
+.RI "\fISet parent.\fR"
+.ti -1c
+.RI "void \fBname\fR (const \fBName\fR &name)"
+.br
+.RI "\fISet name (Name version).\fR"
+.ti -1c
+.RI "void \fBname\fR (const ACE_TString &name)"
+.br
+.RI "\fISet name (String version).\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBNaming_Context\fR (const Naming_Context &rhs)"
+.br
+.RI "\fIDisallow copy constructors.\fR"
+.ti -1c
+.RI "const Naming_Context& \fBoperator=\fR (const Naming_Context &rhs)"
+.br
+.RI "\fIDisallow assignment.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "HKEY \fBkey_\fR"
+.br
+.RI "\fIKey for self.\fR"
+.ti -1c
+.RI "HKEY \fBparent_key_\fR"
+.br
+.RI "\fIKey for parent.\fR"
+.ti -1c
+.RI "ACE_TString \fBname_\fR"
+.br
+.RI "\fIName of self.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Predefined_Naming_Contexts\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An context representation.
+.PP
+.PP
+ Think about a context as being similar to a directory in a file system. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIMAX_OBJECT_NAME_SIZE\fR \fRMax sizes of names (Not too sure about this value).
+.TP
+\fB\fIMAX_CONTEXT_NAME_SIZE\fR \fRMax size of context name.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Registry::Naming_Context::Naming_Context (void)
+.PP
+Empty constructor: keys will be NULL.
+.PP
+.SS ACE_Registry::Naming_Context::Naming_Context (const HKEY & key)
+.PP
+Constructor: key_ will be set to <key>.
+.PP
+.SS ACE_Registry::Naming_Context::~Naming_Context (void)
+.PP
+Destructor will call <\fBNaming_Context::close\fR>.
+.PP
+.SS ACE_Registry::Naming_Context::Naming_Context (const Naming_Context & rhs)\fC [private]\fR
+.PP
+Disallow copy constructors.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Registry::Naming_Context::bind (const ACE_TString & name, const \fBObject\fR & object)
+.PP
+Insert or update <object> with <name> into <this> context This will not fail if <name> already exists (String version) 
+.SS int ACE_Registry::Naming_Context::bind (const \fBName\fR & name, const \fBObject\fR & object)
+.PP
+Insert or update <object> with <name> into <this> context This will not fail if <name> already exists (Name version) 
+.SS int ACE_Registry::Naming_Context::bind_context (const ACE_TString & name, Naming_Context & naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)
+.PP
+Insert or update <naming_context> with <name> relative to <this> context This will not fail if <name> already exists.
+.PP
+.SS int ACE_Registry::Naming_Context::bind_context (const \fBName\fR & name, Naming_Context & naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)
+.PP
+Insert or update <naming_context> with <name> relative to <this> context This will not fail if <name> already exists (Name version) 
+.SS int ACE_Registry::Naming_Context::bind_new (const ACE_TString & name, const \fBObject\fR & object)
+.PP
+Insert <object> with <name> into <this> context This will fail if <name> already exists (String version) 
+.SS int ACE_Registry::Naming_Context::bind_new (const \fBName\fR & name, const \fBObject\fR & object)
+.PP
+Insert <object> with <name> into <this> context This will fail if <name> already exists (Name version) 
+.SS int ACE_Registry::Naming_Context::bind_new_context (const ACE_TString & name, Naming_Context & naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)
+.PP
+Insert <naming_context> with <name> relative to <this> context This will fail if <name> already exists.
+.PP
+.SS int ACE_Registry::Naming_Context::bind_new_context (const \fBName\fR & name, Naming_Context & naming_context, u_long persistence = REG_OPTION_NON_VOLATILE, u_long security_access = KEY_ALL_ACCESS, LPSECURITY_ATTRIBUTES security_attributes = 0)
+.PP
+Insert <naming_context> with <name> relative to <this> context This will fail if <name> already exists (Name version) 
+.SS int ACE_Registry::Naming_Context::close (void)
+.PP
+Close the handle of the context Note: <close> does not call <flush>.
+.PP
+.SS int ACE_Registry::Naming_Context::destroy (void)
+.PP
+Same as <unbind_context> with <this> as naming_context.
+.PP
+.SS int ACE_Registry::Naming_Context::flush (void)
+.PP
+Sync content of context to disk.
+.PP
+.SS void ACE_Registry::Naming_Context::key (HKEY key)\fC [protected]\fR
+.PP
+Set key.
+.PP
+.SS HKEY ACE_Registry::Naming_Context::key (void)
+.PP
+Get key.
+.PP
+.SS int ACE_Registry::Naming_Context::list (\fBBinding_List\fR & list)
+.PP
+listing function: iterator creator This gives back a listing of all entries in <this> context.
+.PP
+.SS int ACE_Registry::Naming_Context::list (u_long how_many, \fBBinding_List\fR & list, \fBBinding_Iterator\fR & iterator)
+.PP
+listing function: iterator creator This is useful when there are many objects and contexts in <this> context and you only want to look at a few entries at a time 
+.SS void ACE_Registry::Naming_Context::name (const ACE_TString & name)\fC [protected]\fR
+.PP
+Set name (String version).
+.PP
+.SS void ACE_Registry::Naming_Context::name (const \fBName\fR & name)\fC [protected]\fR
+.PP
+Set name (Name version).
+.PP
+.SS ACE_TString ACE_Registry::Naming_Context::name (void)
+.PP
+.SS void ACE_Registry::Naming_Context::name (ACE_TString & name)
+.PP
+Get name (String version).
+.PP
+.SS void ACE_Registry::Naming_Context::name (\fBName\fR & name)
+.PP
+Get name (Name version).
+.PP
+.SS int ACE_Registry::Naming_Context::new_context (Naming_Context & naming_context)
+.PP
+Create new <naming_context>.
+.PP
+.SS const Naming_Context & ACE_Registry::Naming_Context::operator= (const Naming_Context & rhs)\fC [private]\fR
+.PP
+Disallow assignment.
+.PP
+.SS void ACE_Registry::Naming_Context::parent (HKEY parent)\fC [protected]\fR
+.PP
+Set parent.
+.PP
+.SS HKEY ACE_Registry::Naming_Context::parent (void)
+.PP
+Get parent.
+.PP
+.SS int ACE_Registry::Naming_Context::rebind (const ACE_TString & name, const \fBObject\fR & object)
+.PP
+Update <object> with <name> in <this> context.
+.PP
+.SS int ACE_Registry::Naming_Context::rebind (const \fBName\fR & name, const \fBObject\fR & object)
+.PP
+Update <object> with <name> in <this> context (Name version).
+.PP
+.SS int ACE_Registry::Naming_Context::rebind_context (const ACE_TString & name, Naming_Context & naming_context)
+.PP
+Rename <naming_context> to <name>.
+.PP
+.SS int ACE_Registry::Naming_Context::rebind_context (const \fBName\fR & name, Naming_Context & naming_context)
+.PP
+Rename <naming_context> to <name> (Name version).
+.PP
+.SS int ACE_Registry::Naming_Context::resolve (const ACE_TString & name, \fBObject\fR & object)
+.PP
+Find <object> with <name> in <this> context.
+.PP
+.SS int ACE_Registry::Naming_Context::resolve (const \fBName\fR & name, \fBObject\fR & object)
+.PP
+Find <object> with <name> in <this> context (Name version).
+.PP
+.SS int ACE_Registry::Naming_Context::resolve_context (const ACE_TString & name, Naming_Context & naming_context, u_long security_access = KEY_ALL_ACCESS)
+.PP
+Find <naming_context> with <name> in <this> context.
+.PP
+.SS int ACE_Registry::Naming_Context::resolve_context (const \fBName\fR & name, Naming_Context & naming_context, u_long security_access = KEY_ALL_ACCESS)
+.PP
+Find <naming_context> with <name> in <this> context (Name version).
+.PP
+.SS int ACE_Registry::Naming_Context::unbind (const ACE_TString & name)
+.PP
+Delete object with <name> in <this> context.
+.PP
+.SS int ACE_Registry::Naming_Context::unbind (const \fBName\fR & name)
+.PP
+Delete object with <name> in <this> context (Name version).
+.PP
+.SS int ACE_Registry::Naming_Context::unbind_context (const ACE_TString & name)
+.PP
+Remove naming_context with <name> from <this> context.
+.PP
+.SS int ACE_Registry::Naming_Context::unbind_context (const \fBName\fR & name)
+.PP
+Remove naming_context with <name> from <this> context (Name version).
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Predefined_Naming_Contexts\fC [friend]\fR
+.PP
+Friend factory.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS HKEY ACE_Registry::Naming_Context::key_\fC [private]\fR
+.PP
+Key for self.
+.PP
+.SS ACE_TString ACE_Registry::Naming_Context::name_\fC [private]\fR
+.PP
+Name of self.
+.PP
+.SS HKEY ACE_Registry::Naming_Context::parent_key_\fC [private]\fR
+.PP
+Key for parent.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

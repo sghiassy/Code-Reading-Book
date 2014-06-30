@@ -1,0 +1,237 @@
+.TH ACE_Allocator_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Allocator_Adapter \- This class is an Adapter that allows the  to use the <Malloc> class below. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Malloc_T.h>\fR
+.PP
+Inherits \fBACE_Allocator\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef MALLOC \fBALLOCATOR\fR"
+.br
+.ti -1c
+.RI "typedef const void* \fBMEMORY_POOL_OPTIONS\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator_Adapter\fR (const char *pool_name = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Allocator_Adapter\fR (const char *pool_name, const char *lock_name, \fBMEMORY_POOL_OPTIONS\fR options = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Allocator_Adapter\fR (const wchar_t *pool_name)"
+.br
+.ti -1c
+.RI "\fBACE_Allocator_Adapter\fR (const wchar_t *pool_name, const wchar_t *lock_name, \fBMEMORY_POOL_OPTIONS\fR options = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Allocator_Adapter\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual void* \fBmalloc\fR (size_t nbytes)"
+.br
+.RI "\fIAllocate <nbytes>, but don't give them any initial value.\fR"
+.ti -1c
+.RI "virtual void* \fBcalloc\fR (size_t nbytes, char initial_value = '\\0')"
+.br
+.RI "\fIAllocate <nbytes>, giving them all an <initial_value>.\fR"
+.ti -1c
+.RI "virtual void* \fBcalloc\fR (size_t n_elem, size_t elem_size, char initial_value = '\\0')"
+.br
+.RI "\fIAllocate <n_elem> each of size <elem_size>, giving them <initial_value>.\fR"
+.ti -1c
+.RI "virtual void \fBfree\fR (void *ptr)"
+.br
+.RI "\fIFree <ptr> (must have been allocated by ).\fR"
+.ti -1c
+.RI "virtual int \fBremove\fR (void)"
+.br
+.RI "\fIRemove any resources associated with this memory manager.\fR"
+.ti -1c
+.RI "virtual int \fBbind\fR (const char *name, void *pointer, int duplicates = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBtrybind\fR (const char *name, void *&pointer)"
+.br
+.ti -1c
+.RI "virtual int \fBfind\fR (const char *name, void *&pointer)"
+.br
+.RI "\fILocate <name> and pass out parameter via pointer. If found, return 0, Returns -1 if <name> isn't found.\fR"
+.ti -1c
+.RI "virtual int \fBfind\fR (const char *name)"
+.br
+.RI "\fIReturns 0 if the name is in the mapping and -1 if not.\fR"
+.ti -1c
+.RI "virtual int \fBunbind\fR (const char *name)"
+.br
+.RI "\fIUnbind (remove) the name from the map. Don't return the pointer to the caller.\fR"
+.ti -1c
+.RI "virtual int \fBunbind\fR (const char *name, void *&pointer)"
+.br
+.RI "\fIBreak any association of name. Returns the value of pointer in case the caller needs to deallocate memory.\fR"
+.ti -1c
+.RI "virtual int \fBsync\fR (\fBssize_t\fR len = -1, int flags = MS_SYNC)"
+.br
+.ti -1c
+.RI "virtual int \fBsync\fR (void *addr, size_t len, int flags = MS_SYNC)"
+.br
+.RI "\fISync <len> bytes of the memory region to the backing store starting at .\fR"
+.ti -1c
+.RI "virtual int \fBprotect\fR (\fBssize_t\fR len = -1, int prot = PROT_RDWR)"
+.br
+.ti -1c
+.RI "virtual int \fBprotect\fR (void *addr, size_t len, int prot = PROT_RDWR)"
+.br
+.RI "\fIChange the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.\fR"
+.ti -1c
+.RI "\fBALLOCATOR\fR& \fBalloc\fR (void)"
+.br
+.RI "\fIReturns the underlying allocator.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBALLOCATOR\fR \fBallocator_\fR"
+.br
+.RI "\fIALLOCATOR instance, which is owned by the adapter.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class MALLOC>  template class ACE_Allocator_Adapter
+This class is an Adapter that allows the  to use the <Malloc> class below.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classMALLOC> typedef MALLOC ACE_Allocator_Adapter<MALLOC>::ALLOCATOR
+.PP
+.SS template<classMALLOC> typedef const void* ACE_Allocator_Adapter<MALLOC>::MEMORY_POOL_OPTIONS
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classMALLOC> ACE_Allocator_Adapter<MALLOC>::ACE_Allocator_Adapter<MALLOC> (const char * pool_name = 0)
+.PP
+.SS template<classMALLOC> ACE_Allocator_Adapter<MALLOC>::ACE_Allocator_Adapter<MALLOC> (const char * pool_name, const char * lock_name, \fBMEMORY_POOL_OPTIONS\fR options = 0)\fC [inline]\fR
+.PP
+.SS template<classMALLOC> ACE_Allocator_Adapter<MALLOC>::ACE_Allocator_Adapter<MALLOC> (const wchar_t * pool_name)
+.PP
+.SS template<classMALLOC> ACE_Allocator_Adapter<MALLOC>::ACE_Allocator_Adapter<MALLOC> (const wchar_t * pool_name, const wchar_t * lock_name, \fBMEMORY_POOL_OPTIONS\fR options = 0)\fC [inline]\fR
+.PP
+.SS template<classMALLOC> ACE_Allocator_Adapter<MALLOC>::~ACE_Allocator_Adapter<MALLOC> (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classMALLOC> \fBALLOCATOR\fR & ACE_Allocator_Adapter<MALLOC>::alloc (void)
+.PP
+Returns the underlying allocator.
+.PP
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::bind (const char * name, void * pointer, int duplicates = 0)\fC [virtual]\fR
+.PP
+Associate <name> with <pointer>. If <duplicates> == 0 then do not allow duplicate <name>/<pointer> associations, else if <duplicates> != 0 then allow duplicate <name>/<pointer> assocations. Returns 0 if successfully binds (1) a previously unbound <name> or (2) <duplicates> != 0, returns 1 if trying to bind a previously bound <name> and <duplicates> == 0, else returns -1 if a resource failure occurs. 
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> void * ACE_Allocator_Adapter<MALLOC>::calloc (size_t n_elem, size_t elem_size, char initial_value = '\\0')\fC [virtual]\fR
+.PP
+Allocate <n_elem> each of size <elem_size>, giving them <initial_value>.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> void * ACE_Allocator_Adapter<MALLOC>::calloc (size_t nbytes, char initial_value = '\\0')\fC [virtual]\fR
+.PP
+Allocate <nbytes>, giving them all an <initial_value>.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> void ACE_Allocator_Adapter<MALLOC>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of the object.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::find (const char * name)\fC [virtual]\fR
+.PP
+Returns 0 if the name is in the mapping and -1 if not.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::find (const char * name, void *& pointer)\fC [virtual]\fR
+.PP
+Locate <name> and pass out parameter via pointer. If found, return 0, Returns -1 if <name> isn't found.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> void ACE_Allocator_Adapter<MALLOC>::free (void * ptr)\fC [virtual]\fR
+.PP
+Free <ptr> (must have been allocated by ).
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> void * ACE_Allocator_Adapter<MALLOC>::malloc (size_t nbytes)\fC [virtual]\fR
+.PP
+Allocate <nbytes>, but don't give them any initial value.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::protect (void * addr, size_t len, int prot = PROT_RDWR)\fC [virtual]\fR
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at  up to <len> bytes.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::protect (\fBssize_t\fR len = -1, int prot = PROT_RDWR)\fC [virtual]\fR
+.PP
+Change the protection of the pages of the mapped region to <prot> starting at <this->base_addr_> up to <len> bytes. If <len> == -1 then change protection of all pages in the mapped region. 
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::remove (void)\fC [virtual]\fR
+.PP
+Remove any resources associated with this memory manager.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::sync (void * addr, size_t len, int flags = MS_SYNC)\fC [virtual]\fR
+.PP
+Sync <len> bytes of the memory region to the backing store starting at .
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::sync (\fBssize_t\fR len = -1, int flags = MS_SYNC)\fC [virtual]\fR
+.PP
+Sync <len> bytes of the memory region to the backing store starting at <this->base_addr_>. If <len> == -1 then sync the whole region. 
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::trybind (const char * name, void *& pointer)\fC [virtual]\fR
+.PP
+Associate <name> with <pointer>. Does not allow duplicate <name>/<pointer> associations. Returns 0 if successfully binds (1) a previously unbound <name>, 1 if trying to bind a previously bound <name>, or returns -1 if a resource failure occurs. When this call returns <pointer>'s value will always reference the void * that <name> is associated with. Thus, if the caller needs to use <pointer> (e.g., to free it) a copy must be maintained by the caller. 
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::unbind (const char * name, void *& pointer)\fC [virtual]\fR
+.PP
+Break any association of name. Returns the value of pointer in case the caller needs to deallocate memory.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SS template<classMALLOC> int ACE_Allocator_Adapter<MALLOC>::unbind (const char * name)\fC [virtual]\fR
+.PP
+Unbind (remove) the name from the map. Don't return the pointer to the caller.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classMALLOC> \fBALLOCATOR\fR ACE_Allocator_Adapter<MALLOC>::allocator_\fC [private]\fR
+.PP
+ALLOCATOR instance, which is owned by the adapter.
+.PP
+Reimplemented from \fBACE_Allocator\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

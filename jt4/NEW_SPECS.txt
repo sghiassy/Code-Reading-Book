@@ -1,0 +1,147 @@
+			Apache Tomcat 4.0
+			=================
+		New Spec Features Implementation
+		================================
+
+$Id: NEW_SPECS.txt,v 1.7 2000/10/29 00:45:36 craigmcc Exp $
+
+
+Introduction
+============
+
+One of the primary goals of Tomcat 4.0 is to support the new features of the
+Servlet API Specification, version 2.3, and the JavaServer Pages (JSP)
+Specification, version 1.2, that are currently in public review.  This
+document serves as a summary of the current implementation state of the major
+new features of these specifications, at the current point in time.
+
+To give a quick synopsis of the completion state of each new feature, we're
+using a "how would you like your steak" metaphor.  Apologies to all the
+vegetarians out there!
+
+
+Servlet API Specification, version 2.3
+======================================
+
+Application Events [Medium Well]
+--------------------------------
+You can now register event listeners in the web.xml file that receive
+notification when the following events occur:
+- Application startup
+- Application shutdown
+- New, replaced, or removed application (servlet context) attributes
+- Session created
+- Session invalidated or timed out
+- New, replaced, or removed session attributes
+
+Application listener functionality has been added to Catalina, and seems to
+work fairly well.  There are two listeners in the "examples" web application
+that simply log things with ServletContext.log() to show that they were
+reached.
+
+Servlet Filters [Medium]
+------------------------
+You can now register Filters in the web.xml file that are the application
+level analogue to Valves in the Catalina core.  Filters have the following
+general features:
+- Filters can be mapped to either URL patterns or particular servlets
+- Filters can pre-process and post-process requests and responses
+- Filters can wrap the request and/or response objects that are passed on
+  (so you can do content type transformations, for example)
+- Filters can respond to a request and return, instead of passing the request
+  on (for example, you can do authentication challenges at the app level)
+
+Related to this, servlets can now do the same sort of wrapping when they
+pass arguments to a RequestDispatcher.  Previously, you were required to
+pass the original request and response objects received from the container.
+
+Servlet filter functionality has been added to Catalina, and lightly tested,
+although wrapping has not been thoroughly tested yet.  There is a filter in
+the "examples" application that is set up as both path mapped and servlet
+mapped to the invoker servlet ("/servlet/*"), which stores a request attribute
+that is passed on to the servlet that is ultimately executed.
+
+Dependencies on Installed Extensions [Medium]
+---------------------------------------------
+Web applications, or the JAR files in the WEB-INF/lib directory, can now
+declare their dependence on particular versions of external libraries that
+may be provided by the container as shared extensions.  No work has been
+done to implement this capability in Catalina yet.
+
+Internationalization Fixes [Medium]
+-----------------------------------
+Catalina now supports mapping Locales to character sets, and the new
+setCharacterEncoding() method on ServletRequest.
+
+Web Application Classloader [Medium Well]
+-----------------------------------------
+Section 9.6.2 of the Servlet Spec draft describes requirements and suggestions
+related to the classloader provided to a web application.  These requirments
+are currently followed in Catalina.
+
+DTD for Servlet 2.3 Application Deployment Descriptor [Medium Well]
+-------------------------------------------------------------------
+An unofficial version of the DTD for parsing web.xml files is included in
+Catalina (in the source repository it is at "catalina/src/conf/web_23.dtd").
+It will be replaced by the official version when published.
+
+
+JavaServer Pages (JSP) Specification, version 1.2
+=================================================
+
+JSP Include Supports flush="false" [Medium]
+-------------------------------------------
+This change will allow use of <jsp:include> nested within another standard
+or custom tag, allowing the output produced by the included servlet (or
+page) to be buffered and processed.  This change depends on the enhancement
+to RequestDispatcher.include() arguments described above.
+
+XML View of a JSP Page [Medium Rare]
+------------------------------------
+JSP 1.2 implementations will be required to accept input in the XML syntax
+as well as the JSP syntax.  Work is underway based on the existing Jasper
+parser to accept either kind of input.
+
+PropertyEditor.setAsText() Used If Available [Medium Well]
+----------------------------------------------------------
+If the application has registered a PropertyEditor for the Java class of a
+particular property, that editor's setAsText() method will be called to
+convert from text format (such as a request parameter) into the internal
+format of that property.  If no PropertyEditor is available, the previous
+conversion rules will apply.
+
+Custom Tag Libraries can Validate Pages [Medium Rare]
+-----------------------------------------------------
+A new compilation phase is being added that gives custom tag libraries the
+opportunity to examine an XML view of the parsed page, and throw a translation
+time exception if they detect some problems.  Among other things, this can be
+used to validate:
+- Proper nesting of custom tags where the semantics cannot be defined
+  by information in the TLD.
+- Mis-use (or abuse) of JSP or custom tag features.  For example, you could
+  use a validator to prohibit the use of scriptlets.
+
+Enhancements to Iteration Support [Medium Well]
+-----------------------------------------------
+Enhancements to the custom tag mechanism support the ability to perform
+iteration without nesting the body content.  This optimizes the performance
+of a very common case where iteration is used to present results in a table
+(for example), where there is no need to buffer or post-process the data
+rendered for each row.
+
+Custom Tag Libraries Can Declare Application Listeners [Medium]
+-------------------------------------------------------------
+A custom tag library can optionally declare a listener for application events,
+using the new servlet 2.3 capability.
+
+Additional TLD Elements [Rare]
+------------------------------
+Additional TLD elements are being added to reduce the need to write
+TagExtraInfo classes for declaring variables in many simple cases.
+
+Added resetCustomAttributes() to the Tag Interface [Rare]
+---------------------------------------------------------
+Additional method that can be called by the container prior to recycling
+a tag instance more aggressively than was possible in JSP 1.1.
+
+

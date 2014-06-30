@@ -1,0 +1,172 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemSyncCreate</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemSyncCreate</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemSyncCreate</h4>
+<dd>DEMOGL_SoundSystemSyncCreate creates a synchronize object on a given channel that will send a 
+	<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message to all effect objects
+	which Message handler is enabled. DemoGL supports synchronize objects on channels which data is owned by elements of
+	type DGL_SS_MODELEMENT and DGL_SS_MP3ELEMENT.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemSyncCreate(
+	<b>const int</b> <i>iChannelCodeID</i>,
+	<b>const DWORD</b> <i>dwSyncType</i>, 
+	<b>const DWORD</b> <i>dwSyncParam</i>,
+	<b>const DWORD</b> <i>dwSyncFlag</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iChannelCodeID</i>
+	<dd>Specifies the ChannelCodeID of the channel on which the new synchronize object should be created.
+	<dt><i>dwSyncType</i>
+	<dd>Specificies the type of the synchronize object. The legal values for <i>dwSyncType</i> are explained with the
+		<i>dwSyncParam</i> explanation below.
+	<dt><i>dwSyncParam</i>
+	<dd>Specifies the parameter for the <i>dwSyncType</i>. Below are the different sync types and what <i>dwSyncParam</i> 
+		means with that particular sync type.
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8"><b>Sync type</b></td>
+			<td BGCOLOR="#e8e8e8"><b>Description</b></td>
+			<td BGCOLOR="#e8e8e8"><b>dwSyncParam meaning</b></td>
+		</tr>
+		<tr>
+			<td VALIGN="top" class="TDSmallerFont">BASS_SYNC_MUSICPOS</td>
+			<td VALIGN="top" class="TDSmallerFont">Synchronize object that will be triggered when the channel playing the DGL_SS_MODELEMENT data
+				reaches a given position. This position is passed in <i>dwSyncParam</i>. The 
+				<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message
+				send when the synchronize object is triggered will have the position stored as the LPARAM value, in the
+				format: LOWORD = pattern order, HIWORD = row in that pattern.
+			</td>
+			<td VALIGN="top" class="TDSmallerFont">
+				LOWORD = pattern order (0=first, -1=all), HIWORD = row in pattern (0=first, -1=all).
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="top" class="TDSmallerFont">BASS_SYNC_POS</td>
+			<td VALIGN="top" class="TDSmallerFont">Synchronize object that will be triggered when the channel playing the DGL_SS_MP3ELEMENT data
+				reaches a given position. This position is passed in <i>dwSyncParam</i>. The 
+				<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message
+				send when the synchronize object is triggered will have the position stored as the LPARAM value, with the position in bytes.
+			</td>
+			<td VALIGN="top" class="TDSmallerFont">
+				Position in bytes.
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="top" class="TDSmallerFont">BASS_SYNC_MUSICINST</td>
+			<td VALIGN="top" class="TDSmallerFont">Synchronize object that will be triggered when the channel playing the DGL_SS_MODELEMENT data
+				plays a certain instrument (sample for the MOD/S3M/MTM formats)	music (retrigs of samples / instruments not
+				included). This instrument is passed in <i>dwSyncParam</i>. The 
+				<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message
+				send when the synchronize object is triggered will have the instrument plus volume stored as the LPARAM value, in the
+				format: LOWORD = note, HIWORD = volume of that note (0-64)
+			</td>
+			<td VALIGN="top" class="TDSmallerFont">
+				LOWORD = instrument (1=first), HIWORD = note (0=c0...119=b9, -1=all).
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="top" class="TDSmallerFont">BASS_SYNC_END</td>
+			<td VALIGN="top" class="TDSmallerFont">
+				Synchronize object that will be triggered when the channel playing the DGL_SS_MODELEMENT data
+				reaches the end. Note that some MOD/S3M/IT/XM/MTM musics never reach the end, they may jump to another position first.
+			</td>
+			<td VALIGN="top" class="TDSmallerFont">Not used, can be 0.
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="top" class="TDSmallerFont">BASS_SYNC_MUSICFX</td>
+			<td VALIGN="top" class="TDSmallerFont">
+				Synchronize object that will be triggered when the channel playing the DGL_SS_MODELEMENT data
+				plays the sync effect in a MOD/S3M/XM/IT/MTM music. The sync effect is <code>E8x</code> for the 
+				XM/MTM/MOD formats, and <code>S0x</code> for the IT/S3M	formats (where x = a value in the range [0,F], hexadecimal).
+				<i>dwSyncParam</i> specifies what to return as LPARAM parameter in the 
+				<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message.
+			</td>
+			<td VALIGN="top" class="TDSmallerFont">
+				<i>dwSyncParam</i> can have 2 values, 0 or 1.
+				0 means: the position is passed back as LPARAM parameter in the 
+				<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message. Format of 
+				that position is: LOWORD = pattern order, HIWORD = row in that pattern)<br>
+				1 means: the value of <code>x</code> is passed back as LPARAM parameter in the 
+				<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message. 
+			</td>
+		</tr>
+		<table>
+		<p>
+	<dt><i>dwSyncFlag</i>
+	<dd>Specifies a DWORD value that will be passed back as WPARAM of the 
+		<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message when the synchronize
+		object is triggered. You can check which synchronize object did send the received 
+		<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a> message by testing on the
+		dwSyncFlag.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns the <i>SyncID</i>, which is the unique ID a synchronize object can be referenced by in other
+	DemoGL API functions concerning synchronize objects.<br>
+	If the function fails, it returns one of the following error codes:
+	<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Error code</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_COULDNTCREATESYNC</td>
+			<td WIDTH="70%" VALIGN="TOP">The synchronize object could not be created, possibly because the underlying lower level
+			sound library reported an error or the type of the element which owns the data played through the channel given
+			is not compatible with synchronizers.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_CHANNELNOTINUSE</td>
+			<td WIDTH="70%" VALIGN="TOP">The <i>iChannelCodeID</i> value is not found as an active channel.
+			</td>
+		</tr>
+		</table>	
+	<p>
+<dt><b>Remarks.</b>
+<dd>DemoGL supports synchronizer objects on channels which are playing data owned by elements of type DGL_SS_MODELEMENT and DGL_SS_MP3ELEMENT.
+	When an effect object wants to use a trigger, it should enable its Message Handler by calling 
+	<a HREF="ref_functions_DEMOGL_MessageHandlerEnable.htm" target="main">DEMOGL_MessageHandlerEnable</a> otherwise the message sent
+	by the synchronize object executor, <a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a>
+	will not be posted to the effect object. All active effect objects, thus currently running on visible layers, with enabled message 
+	handlers will receive this message, even if they didn't create the synchronize object. When the user switches off music, there is
+	no playing of any sound element is performed, thus there are no sound channels, and thus there will be no synchronize objects. 
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher). When using syncing on DGL_SS_MP3ELEMENTs, you need DemoGL v1.31.923 or higher.
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_MessageHandlerEnable.htm" target="main">DEMOGL_MessageHandlerEnable</a>,
+	<a HREF="ref_messages_WM_DEMOGL_SOUNDSYSTEMSYNC.htm" target="main">WM_DEMOGL_SOUNDSYSTEMSYNC</a>,
+	<a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm" target="main">_SOUNDSYSTEM commands</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 23-sep-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

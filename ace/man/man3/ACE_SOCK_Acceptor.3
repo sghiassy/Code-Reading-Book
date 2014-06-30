@@ -1,0 +1,190 @@
+.TH ACE_SOCK_Acceptor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SOCK_Acceptor \- Defines a factory that creates new s passively. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SOCK_Acceptor.h>\fR
+.PP
+Inherits \fBACE_SOCK\fR.
+.PP
+Inherited by \fBACE_LOCK_SOCK_Acceptor\fR, \fBACE_LSOCK_Acceptor\fR, and \fBACE_MEM_Acceptor\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_INET_Addr\fR \fBPEER_ADDR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_SOCK_Stream\fR \fBPEER_STREAM\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SOCK_Acceptor\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_SOCK_Acceptor\fR (const \fBACE_Addr\fR &local_sap, int reuse_addr = 0, int protocol_family = PF_INET, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.ti -1c
+.RI "\fBACE_SOCK_Acceptor\fR (const \fBACE_Addr\fR &local_sap, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr, int protocol_family, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.RI "\fIInitialize a passive-mode QoS-enabled acceptor socket. Returns 0 on success and -1 on failure.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_Addr\fR &local_sap, int reuse_addr = 0, int protocol_family = PF_INET, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_Addr\fR &local_sap, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr, int protocol_family, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.RI "\fIInitialize a passive-mode QoS-enabled acceptor socket. Returns 0 on success and -1 on failure.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose the socket. Returns 0 on success and -1 on failure.\fR"
+.ti -1c
+.RI "\fB~ACE_SOCK_Acceptor\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBaccept\fR (\fBACE_SOCK_Stream\fR &new_stream, \fBACE_Addr\fR *remote_addr = 0, \fBACE_Time_Value\fR *timeout = 0, int restart = 1, int reset_new_handle = 0) const"
+.br
+.ti -1c
+.RI "int \fBaccept\fR (\fBACE_SOCK_Stream\fR &new_stream, \fBACE_Accept_QoS_Params\fR qos_params, \fBACE_Addr\fR *remote_addr = 0, \fBACE_Time_Value\fR *timeout = 0, int restart = 1, int reset_new_handle = 0) const"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBshared_accept_start\fR (\fBACE_Time_Value\fR *timeout, int restart, int &in_blocking_mode) const"
+.br
+.RI "\fIPerform operations that must occur before  is called.\fR"
+.ti -1c
+.RI "int \fBshared_accept_finish\fR (\fBACE_SOCK_Stream\fR new_stream, int in_blocking_mode, int reset_new_handle) const"
+.br
+.RI "\fIPerform operations that must occur after  is called.\fR"
+.ti -1c
+.RI "int \fBshared_open\fR (const \fBACE_Addr\fR &local_sap, int protocol_family, int backlog)"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBget_remote_addr\fR (\fBACE_Addr\fR &) const"
+.br
+.RI "\fIDo not allow this function to percolate up to this interface...\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines a factory that creates new s passively.
+.PP
+.PP
+ The  has its own "passive-mode" socket. This serves as a factory to create so-called "data-mode" sockets, which are what the  encapsulates. Therefore, by inheriting from ,  gets its very own socket. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_INET_Addr\fR ACE_SOCK_Acceptor::PEER_ADDR
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, and \fBACE_MEM_Acceptor\fR.
+.SS typedef \fBACE_SOCK_Stream\fR ACE_SOCK_Acceptor::PEER_STREAM
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, and \fBACE_MEM_Acceptor\fR.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Acceptor::ACE_SOCK_Acceptor (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_SOCK_Acceptor::ACE_SOCK_Acceptor (const \fBACE_Addr\fR & local_sap, int reuse_addr = 0, int protocol_family = PF_INET, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)
+.PP
+Initialize a passive-mode BSD-style acceptor socket (no QoS). <local_sap> is the address that we're going to listen for connections on. If <reuse_addr> is 1 then we'll use the <SO_REUSEADDR> to reuse this address. 
+.SS ACE_SOCK_Acceptor::ACE_SOCK_Acceptor (const \fBACE_Addr\fR & local_sap, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr, int protocol_family, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)
+.PP
+Initialize a passive-mode QoS-enabled acceptor socket. Returns 0 on success and -1 on failure.
+.PP
+.SS ACE_SOCK_Acceptor::~ACE_SOCK_Acceptor (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SOCK_Acceptor::accept (\fBACE_SOCK_Stream\fR & new_stream, \fBACE_Accept_QoS_Params\fR qos_params, \fBACE_Addr\fR * remote_addr = 0, \fBACE_Time_Value\fR * timeout = 0, int restart = 1, int reset_new_handle = 0) const
+.PP
+Accept a new  connection using the QoS information in <qos_params>. A <timeout> of 0 means block forever, a <timeout> of {0, 0} means poll. <restart> == 1 means "restart if interrupted," i.e., if errno == EINTR. Note that <new_stream> inherits the "blocking mode" of <this> , i.e., if <this> acceptor factory is in non-blocking mode, the <net_stream> will be in non-blocking mode and vice versa. 
+.PP
+Reimplemented in \fBACE_MEM_Acceptor\fR.
+.SS int ACE_SOCK_Acceptor::accept (\fBACE_SOCK_Stream\fR & new_stream, \fBACE_Addr\fR * remote_addr = 0, \fBACE_Time_Value\fR * timeout = 0, int restart = 1, int reset_new_handle = 0) const
+.PP
+Accept a new  connection. A <timeout> of 0 means block forever, a <timeout> of {0, 0} means poll. <restart> == 1 means "restart if interrupted," i.e., if errno == EINTR. Note that <new_stream> inherits the "blocking mode" of <this> , i.e., if <this> acceptor factory is in non-blocking mode, the <net_stream> will be in non-blocking mode and vice versa. 
+.PP
+Reimplemented in \fBACE_LOCK_SOCK_Acceptor\fR, and \fBACE_MEM_Acceptor\fR.
+.SS int ACE_SOCK_Acceptor::close (void)
+.PP
+Close the socket. Returns 0 on success and -1 on failure.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.SS void ACE_SOCK_Acceptor::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, and \fBACE_MEM_Acceptor\fR.
+.SS int ACE_SOCK_Acceptor::get_remote_addr (\fBACE_Addr\fR &) const\fC [private]\fR
+.PP
+Do not allow this function to percolate up to this interface...
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.SS int ACE_SOCK_Acceptor::open (const \fBACE_Addr\fR & local_sap, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr, int protocol_family, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)
+.PP
+Initialize a passive-mode QoS-enabled acceptor socket. Returns 0 on success and -1 on failure.
+.PP
+Reimplemented in \fBACE_MEM_Acceptor\fR.
+.SS int ACE_SOCK_Acceptor::open (const \fBACE_Addr\fR & local_sap, int reuse_addr = 0, int protocol_family = PF_INET, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)
+.PP
+Initialize a passive-mode BSD-style acceptor socket (no QoS). <local_sap> is the address that we're going to listen for connections on. If <reuse_addr> is 1 then we'll use the <SO_REUSEADDR> to reuse this address. Returns 0 on success and -1 on failure. 
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, and \fBACE_MEM_Acceptor\fR.
+.SS int ACE_SOCK_Acceptor::shared_accept_finish (\fBACE_SOCK_Stream\fR new_stream, int in_blocking_mode, int reset_new_handle) const\fC [protected]\fR
+.PP
+Perform operations that must occur after  is called.
+.PP
+.SS int ACE_SOCK_Acceptor::shared_accept_start (\fBACE_Time_Value\fR * timeout, int restart, int & in_blocking_mode) const\fC [protected]\fR
+.PP
+Perform operations that must occur before  is called.
+.PP
+.SS int ACE_SOCK_Acceptor::shared_open (const \fBACE_Addr\fR & local_sap, int protocol_family, int backlog)\fC [protected]\fR
+.PP
+This method factors out the common <open> code and is called by both the QoS-enabled <open> method and the BSD-style <open> method. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Acceptor::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Acceptor\fR, and \fBACE_MEM_Acceptor\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

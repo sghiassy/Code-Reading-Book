@@ -1,0 +1,205 @@
+<HTML>
+<HEAD><TITLE>Hypersonic SQL</TITLE></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+
+<H2>Specifications</H2>
+<P>
+These are the general features:
+<UL>
+<LI>Java, nothing else
+<LI>A full RDBMS (Relational Database Management System)
+<LI><A HREF="#CODESWITCHER">Switchable source code</A> to support both JDK 1.1 and JDK 1.2
+<LI><A HREF="hSqlSyntax.html">Standard SQL (Structured Query Language) syntax</A>
+<LI>Correlated subqueries, inner and outer joins are possible
+<LI>ORDER BY and GROUP BY are supported
+<LI>COUNT, SUM, MIN, MAX, AVG and other functions
+<LI>Transaction support
+<LI>Supports Referential Integrity (foreign keys)
+<LI><A HREF="#STORED">Java Stored Prodecures and Functions</A> can be called
+<LI><A HREF="#SECURITY">Database Security functions</A>
+<LI>95% JDBC interface support
+<LI>All JDBC data types supported, also 'Object'
+<LI><A HREF="hSqlModes.html">In-memory, Standalone and Client-Server operating modes</A>
+<LI>A small WebServer and a Servlet is included
+<LI>It can be used in Applets and Applications
+<LI><A HREF="#AUTOINCREMENT">Autoincrement column support</A>
+<LI>No (real) size limitation for cached tables
+<LI>Indexes can be created for one or many fields
+<LI><A HREF="#METADATA">Metadata support</A>
+<LI><A HREF="#READONLY">Readonly connection and database support</A>
+<LI>An SQL script describing the database can be created
+</UL>
+<P>
+Current restrictions are:
+<UL>
+<LI>GROUP BY is limited
+<LI>HAVING, ANY, ALL are currently not implemented
+<LI>No triggers and views
+<LI>The size of Binary data is limited to about 32 KB (because UTF is used)
+<LI>No server side cursors (here is a workaround for 
+<A HREF="#BIGRESULTS">selecting big results</A>)
+<LI>Empty space in the database file is not always re-used
+(here are <A HREF="#COMPACT">the details and a workaround</A>)
+</UL>
+<P>
+<a NAME="SECURITY"></a>
+<STRONG>Database security</STRONG>
+<P> There is a built-in security system using users, passwords and access rights. 
+  There exists by default a 'System Administrator' with the user name 'sa' and 
+  the password '' (empty password). This special user can create new users, drop 
+  users and grant and revoke access rights for tables to other users. The general 
+  users can only change their own password and connect as another user. All this 
+  user administration can be done by SQL scripts (GRANT, REVOKE). Access can be 
+  granted also to PUBLIC. 
+<P>
+<a NAME="AUTOINCREMENT"></a>
+<STRONG>Identity (autoincrement) column type</STRONG>
+<P>
+Identity columns can be used to serve as automatic unique row 
+identifier for a table. When a new row is added to the table 
+and the identity column is not inserted (or a NULL value is inserted), 
+then Hypersonic SQL provides a unique, incremental value for 
+the column. The identity column is automatically the primary key
+of the table. Only one identity column can be created per table. 
+In Hypersonic SQL, identity values can be updates and values can 
+be inserted in a identity column.
+<P>
+<a NAME="CODESWITCHER"></a>
+<STRONG>Switchable Source Code: CodeSwitcher</STRONG>
+<P>
+Included is CodeSwitcher, a tool to manage different version
+of Java source code. It helps to compile Hypersonic SQL for different
+JDKs. This 'CodeSwitcher' is something like a precompiler in C 
+and C++, but it works directly on the source code and does not make 
+intermediate output and does not create other files. This means 
+the code can be switched to be this or the other version, and then used 
+(edit, compile, debug,...) without loosing code of other versions. All 
+it does is commenting out code that is not used for a version and 'comment 
+in' code that is needed. It is possible to use the Code Switcher in batch 
+operations where multiple versions of an application are built. CodeSwitcher 
+is (of course) a Java application.
+<P>
+<a NAME="METADATA"></a>
+<STRONG>Metadata support</STRONG>
+<P>
+Hypersonic SQL supports system tables that are build dynamically when a query 
+is made to them. This tables provide database metadata. The names 
+of the tables are 'SYSTEM_' followed by the same as the according database 
+meta data function. For example the function 'getColumns' queries the table 'SYSTEM_COLUMNS'. 
+<P>
+There are two additional tables:
+<UL>
+<LI>SYSTEM_CONNECTIONINFO<BR>
+This table contains information about the current connection. All users have
+access to read this system tables.
+</LI>
+<LI>SYSTEM_USERS<BR>
+Returns a resultset with the user names and the admin flag for each user.
+</LI>
+</UL>
+<P>
+<a NAME="READONLY"></a>
+<STRONG>Readonly connection and database support</STRONG>
+<P>
+Connections can be set to readonly using the command SET READONLY [TRUE|FALSE] 
+or using the method Connection.setReadOnly(boolean readonly). Additionally
+the whole database can be put in read-only mode by manually adding the line 'readonly=true'
+to the .properties file. All connections are then automatically readonly. The database
+files will then be opened in readonly mode, and it is thus possible to create a CD 
+with this database.
+
+<P>
+<a NAME="BIGRESULTS"></a>
+<STRONG>Selecting big results / Scanning big tables</STRONG>
+<P>
+One limitation of Hypersonic SQL is that it does currently not support server 
+side cursors. This means the result of a query must always fit in memory, otherwise
+an OutOfMemory error occurs. In the rare situation that a huge resultsets must be 
+processed, then the following workaround can be used: Limit the ResultSet using 
+Statement.setMaxRows(1024), and select multiple 'smaller' blocks. If the table
+is for example 'CREATE TABLE Test(Id INT IDENTITY PRIMARY KEY, Name VARCHAR)' then
+the first block can be selected using 'SELECT * FROM Test ORDER BY Id' and the next 
+block using 'SELECT * FROM Test WHERE Id>(bigest_id) ORDER BY Id' until no more records
+are returned. Don't forget to switch of the limit using setMaxRows(0).
+
+<P>
+<a NAME="#COMPACT"></a>
+<STRONG>Compacting the database</STRONG>
+<P>
+The database file should grow automatically, empty space (after deleting records) 
+should be re-used automatically, and the file should shrink finally if data is deleted.
+<P>
+In Hypersonic SQL, not all of this is things are currently implemented for the .data
+file. In most cases empty space (caused by deleted records) is re-used, because a 
+list of 1024 free blocks is kept. But this list is lost when the database is closed.
+In one case (DROP TABLE) the space is not reclaimed. This is similar to the 
+behaviour of Microsoft Access (MS Access never re-uses the empty space, even in the 
+same session).
+<P>
+To shrink all files to the minimum size, use the SQL command 'SHUTDOWN COMPACT'
+when closing the database. It is a good idea to run this command also before 
+creating a read-only database.
+<P>
+<a NAME="#STORED"></a>
+<STRONG>Java Stored Procedures / Functions</STRONG>
+<P>
+Stored procedures are Java functions that are called
+directly from the SQL language or using an alias.
+Calling Java functions (directly or using the alias) requires 
+that the Java class can be reached by the database (server).
+User defined stored procedures / functions must be places
+where the database server runs. For Hypersonic SQL, stored
+procedures and functions are equal. The syntax for calling functions 
+and stored procedures (inside a SELECT statement for example) is:
+<p>
+SELECT Value, "java.lang.Math.sqrt"(Value) AS SQRT FROM Test
+<P>
+It can be called also without the SELECT, using the command
+CALL. This makes more sense for 'Stored Procedures' but works
+for functions, too:
+<P>
+CALL "java.lang.Math.sqrt"(2.0)
+<P>
+The packacke must be provided, and the name
+must be written as one word, and inside " because otherwise
+it is converted to uppercase (and not found).
+<p>
+An alias can be created using the command CREATE ALIAS:
+<p>
+CREATE ALIAS SQRT FOR "java.lang.Math.sqrt"
+<p>
+When an alias is defined, then the function can be 
+called additionally using this alias:
+<p>
+CALL SQRT(2.0)
+<br>SELECT Value, SQRT(Value) AS SQRT FROM Test
+<P>
+This are the rules when creating user defined functions / stored 
+procedures:
+<UL>
+<LI>The function must be 'public static'
+<LI>Parameters that are not provided by the user are filled with 'null'
+by the system. For example SIN() is equal to SIN(NULL). SIN is the alias
+for java.lang.Math.sin.
+<LI>When a parameter is 'null' and the parameter type in the function
+is a basic data type (for example 'int', 'double') then the function is not called
+at all and 'null' is returned by the system. In the example above
+java.lang.Math.sin(double d) is not called because the parameter d is 'null'.
+<LI>When a parameter can be null, don't use the basic data types 
+(for example int) use the class instead (for example java.lang.Integer).
+  <LI>An example for functions with optional parameters is org.hsqldb.substring(String 
+    s,int start,Integer length): the parameters 'length' is optional. If not provided 
+    by the user, it is filled with 'null' by the system, and the function is called. 
+  <LI>If you need a Connection in your function, just provide a parameters 'Connection'. 
+    This parameter will be filled by Hypersonic SQL. Example is the function org.hsqldb.Library.user(Connection 
+    conn). The function is called by the user with: CALL USER() 
+  <LI>Stored procedures (or 'constants' like PI) with no paramters are called 
+with brackets: PI(). PI alone can be a (table- or column-) name.
+</UL>
+There is also a security mechanism provided: Access to each class
+can be granted / revoked to a user:
+<P>
+GRANT ALL ON "java.lang.Math" TO PUBLIC
+<P> By default, all users have access to java.lang.Math and org.hsqldb.Library. 
+</FONT></BODY></HTML>

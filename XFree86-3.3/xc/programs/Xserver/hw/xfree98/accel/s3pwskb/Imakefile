@@ -1,0 +1,117 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/10/25 15:41:17 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/accel/s3pwskb/Imakefile,v 3.9 1996/12/23 07:06:23 dawes Exp $
+
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS = s3newmmio s3mmio drivers
+
+SRCS = 	s3.c s3misc.c s3cmap.c s3gc.c s3gc16.c s3gc24.c s3gc32.c s3fs.c s3ss.c \
+	s3gs.c s3win.c s3init.c s3im.c s3bstor.c \
+	s3scrin.c s3blt.c s3plypt.c s3ramdacs.c \
+	s3line.c s3seg.c s3frect.c s3text.c \
+	s3font.c s3fcach.c s3Cursor.c s3BtCursor.c vgaHW.c s3dline.c \
+	s3dseg.c s3bcach.c s3gtimg.c s3TiCursor.c s3ELSA.c Ti3026Curs.c \
+	IBMRGBCurs.c s3pc98.c
+
+OBJS = 	s3.o s3misc.o s3cmap.o s3gc.o s3gc16.o s3gc24.o s3gc32.o s3fs.o s3ss.o \
+	s3gs.o s3win.o s3init.o s3im.o s3bstor.o \
+	s3scrin.o s3blt.o s3plypt.o s3ramdacs.o \
+	s3line.o s3seg.o s3frect.o s3text.o \
+	s3font.o s3fcach.o s3Cursor.o s3BtCursor.o vgaHW.o s3dline.o \
+	s3dseg.o s3bcach.o s3gtimg.o s3TiCursor.o s3ELSA.o Ti3026Curs.o \
+	IBMRGBCurs.o s3pc98.o
+
+INCLUDES = -I$(XF98SRC) -I. -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/include -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) \
+	   -I$(FONTSRC)/include -I$(XF86SRC)/vga256/vga -I$(XF98COMSRC) \
+	   -I$(XF86HWSRC) -I$(FONTINCSRC) -I$(XF86OSSRC) \
+	   -I$(XF86SRC)/accel/cache
+
+DEFINES = -DS3_SERVER -DPSZ=8 -DPC98 -DPC98_PW -DPC98_XKB
+
+S3DRIVERS = XF86S3Drivers
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS))
+#endif
+
+ConfigTarget(s3Conf,$(ICONFIGFILES),confS3.SHsuf,$(S3DRIVERS))
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(s3pwskb,$(OBJS))
+
+MakeSubdirs($(SUBDIRS))
+
+LinkSourceFile(vgaHW.c,$(XF86SRC)/vga256/vga)
+
+LinkSourceFile(s3pc98.c,../s3nec)
+LinkSourceFile(s3pc98.h,../s3nec)
+
+LinkSourceFile(IBMRGBCurs.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(Ti3026Curs.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(confS3.sh,$(XF86SRC)/accel/s3)
+LinkSourceFile(confs3.cmd,$(XF86SRC)/accel/s3)
+LinkSourceFile(regs3.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(newmmio.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3Bt485.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3BtCursor.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3Cursor.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3Cursor.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3ELSA.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3ELSA.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3TiCursor.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3bcach.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3blt.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3bstor.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3cmap.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3dline.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3dseg.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3fcach.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3font.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3frect.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3fs.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3gc.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3gc16.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3gc24.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3gc32.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3gs.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3gtimg.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3im.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3im.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3init.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3line.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3linear.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3misc.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3name.h,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3plypt.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3ramdacs.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3scrin.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3seg.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3ss.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3text.c,$(XF86SRC)/accel/s3)
+LinkSourceFile(s3win.c,$(XF86SRC)/accel/s3)
+
+InstallLinkKitLibrary(s3pwskb,$(XF98LINKKITDIR)/drivers98)
+#ifndef DontInstallPC98Version
+InstallLinkKitNonExecFile(confS3.SHsuf,$(XF98LINKKITDIR))
+#endif
+InstallLinkKitNonExecFile(s3.h,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitNonExecFile(regs3.h,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitNonExecFile(newmmio.h,$(XF98LINKKITDIR)/drivers98)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif
+
+DependSubdirs($(SUBDIRS))

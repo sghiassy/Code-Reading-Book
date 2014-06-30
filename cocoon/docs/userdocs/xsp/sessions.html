@@ -1,0 +1,541 @@
+<html xmlns:NetUtils="org.apache.cocoon.util.NetUtils">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Session tracking with Cocoon</title>
+<script type="text/javascript" src="resources/script.js" language="JavaScript"></script>
+</head>
+<body bgcolor="#ffffff" marginheight="4" marginwidth="4" leftmargin="4" topmargin="4" alink="#cc0000" vlink="#0086b2" link="#039acc" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" rowspan="3" height="60" width="135"><img border="0" vspace="0" hspace="0" src="images/logo.gif" height="60" width="135"></td><td background="images/line.gif" colspan="2" align="left" valign="top" height="5" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/line.gif" height="5" width="1"></td><td align="left" valign="top" rowspan="3" height="60" width="29"><img border="0" vspace="0" hspace="0" src="images/right.gif" height="60" width="29"></td>
+</tr>
+<tr>
+<td bgcolor="#0086b2" colspan="2" align="right" valign="top" height="35" width="100%"><img align="right" alt="Session tracking with Cocoon" border="0" vspace="0" hspace="0" src="graphics/sessions-header.jpg_label=Session%20tracking%20with%20Cocoon.jpg"></td>
+</tr>
+<tr>
+<td background="images/bottom.gif" bgcolor="#0086b2" align="left" valign="top" height="20" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/bottom.gif" height="20" width="3"></td><td background="images/bottom.gif" width="288" valign="top" height="20" bgcolor="#0086b2" align="right">
+<table width="288" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('xml');" onMouseOut="rolloverOff('xml');" target="new" href="http://xml.apache.org/"><img onLoad="rolloverLoad('xml', 'images/button-xml-hi.gif', 'images/button-xml-lo.gif');" border="0" vspace="0" hspace="0" name="xml" src="images/button-xml-lo.gif" height="20" width="96" alt="http://xml.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('asf');" onMouseOut="rolloverOff('asf');" target="new" href="http://www.apache.org/"><img onLoad="rolloverLoad('asf', 'images/button-asf-hi.gif', 'images/button-asf-lo.gif');" border="0" vspace="0" hspace="0" name="asf" src="images/button-asf-lo.gif" height="20" width="96" alt="http://www.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('w3c');" onMouseOut="rolloverOff('w3c');" target="new" href="http://www.w3.org/"><img onLoad="rolloverLoad('w3c', 'images/button-w3c-hi.gif', 'images/button-w3c-lo.gif');" border="0" vspace="0" hspace="0" name="w3c" src="images/button-w3c-lo.gif" height="20" width="96" alt="http://www.w3.org/"></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr width="100%">
+<td valign="top" width="120">
+<table width="120" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td valign="top" align="left"><img width="120" vspace="0" src="images/join.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Main')" onMouseOut="rolloverOff('Main')" href="../../index.html"><img onLoad="rolloverLoad('Main', 'graphics/Main-label_over.jpg', 'graphics/Main-label.jpg');" vspace="0" hspace="0" name="Main" width="120" height="12" border="0" src="graphics/Main-label.jpg" alt="Main"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('User Documentation')" onMouseOut="rolloverOff('User Documentation')" href="../index.html"><img onLoad="rolloverLoad('User Documentation', 'graphics/User%20Documentation-label_over.jpg', 'graphics/User%20Documentation-label.jpg');" vspace="0" hspace="0" name="User Documentation" width="120" height="12" border="0" src="graphics/User%20Documentation-label.jpg" alt="User Documentation"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><img alt="XSP" width="120" vspace="0" src="graphics/XSP-separator.jpg" hspace="0" height="20" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP')" onMouseOut="rolloverOff('XSP')" href="xsp.html"><img onLoad="rolloverLoad('XSP', 'graphics/XSP-label_over.jpg', 'graphics/XSP-label.jpg');" vspace="0" hspace="0" name="XSP" width="120" height="12" border="0" src="graphics/XSP-label.jpg" alt="XSP"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP Internals')" onMouseOut="rolloverOff('XSP Internals')" href="xsp-internals.html"><img onLoad="rolloverLoad('XSP Internals', 'graphics/XSP%20Internals-label_over.jpg', 'graphics/XSP%20Internals-label.jpg');" vspace="0" hspace="0" name="XSP Internals" width="120" height="12" border="0" src="graphics/XSP%20Internals-label.jpg" alt="XSP Internals"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP Logicsheets')" onMouseOut="rolloverOff('XSP Logicsheets')" href="logicsheet-concepts.html"><img onLoad="rolloverLoad('XSP Logicsheets', 'graphics/XSP%20Logicsheets-label_over.jpg', 'graphics/XSP%20Logicsheets-label.jpg');" vspace="0" hspace="0" name="XSP Logicsheets" width="120" height="12" border="0" src="graphics/XSP%20Logicsheets-label.jpg" alt="XSP Logicsheets"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XSP Guide')" onMouseOut="rolloverOff('XSP Guide')" href="logicsheet.html"><img onLoad="rolloverLoad('XSP Guide', 'graphics/XSP%20Guide-label_over.jpg', 'graphics/XSP%20Guide-label.jpg');" vspace="0" hspace="0" name="XSP Guide" width="120" height="12" border="0" src="graphics/XSP%20Guide-label.jpg" alt="XSP Guide"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Session Logicsheet')" onMouseOut="rolloverOff('Session Logicsheet')" href="session.html"><img onLoad="rolloverLoad('Session Logicsheet', 'graphics/Session%20Logicsheet-label_over.jpg', 'graphics/Session%20Logicsheet-label.jpg');" vspace="0" hspace="0" name="Session Logicsheet" width="120" height="12" border="0" src="graphics/Session%20Logicsheet-label.jpg" alt="Session Logicsheet"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Sessions')" onMouseOut="rolloverOff('Sessions')" href="sessions.html"><img onLoad="rolloverLoad('Sessions', 'graphics/Sessions-label_over.jpg', 'graphics/Sessions-label.jpg');" vspace="0" hspace="0" name="Sessions" width="120" height="12" border="0" src="graphics/Sessions-label.jpg" alt="Sessions"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Request Logicsheet')" onMouseOut="rolloverOff('Request Logicsheet')" href="request.html"><img onLoad="rolloverLoad('Request Logicsheet', 'graphics/Request%20Logicsheet-label_over.jpg', 'graphics/Request%20Logicsheet-label.jpg');" vspace="0" hspace="0" name="Request Logicsheet" width="120" height="12" border="0" src="graphics/Request%20Logicsheet-label.jpg" alt="Request Logicsheet"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('ESQL Logicsheet')" onMouseOut="rolloverOff('ESQL Logicsheet')" href="esql.html"><img onLoad="rolloverLoad('ESQL Logicsheet', 'graphics/ESQL%20Logicsheet-label_over.jpg', 'graphics/ESQL%20Logicsheet-label.jpg');" vspace="0" hspace="0" name="ESQL Logicsheet" width="120" height="12" border="0" src="graphics/ESQL%20Logicsheet-label.jpg" alt="ESQL Logicsheet"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Forms')" onMouseOut="rolloverOff('Forms')" href="logicsheet-forms.html"><img onLoad="rolloverLoad('Forms', 'graphics/Forms-label_over.jpg', 'graphics/Forms-label.jpg');" vspace="0" hspace="0" name="Forms" width="120" height="12" border="0" src="graphics/Forms-label.jpg" alt="Forms"></a></td>
+</tr>
+<tr>
+<td align="left" valign="top"><img width="120" vspace="0" src="images/close.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+</table>
+</td><td>
+<table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td height="10" width="100%"></td>
+</tr>
+<tr>
+<td>
+
+  
+
+  
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Introduction</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Goal</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+        
+<p align="justify">
+         Maintaining state is a common problem for web server frameworks
+         because HTTP is a stateless protocol. There are many solutions known
+         to obtain stateful information. Client-side storage of state information
+         like the usage of cookies will not be discussed here, since this depends
+         heavily on the client's browser. Since Cocoon is a server-side framework,
+         storing visitor information at the server side will give full access
+         to the list of all visitors, to what they have done, and what they are
+         doing.
+         </p>
+         
+<p align="justify">Please always think a little while if you really want to set up
+         session management. Less scalability and performance is the dark
+         side of keeping user sessions at the server-side. Each user session consumes
+         memory, disk, and CPU, and it is always recommended that you be careful to
+         system resources before wasting it.
+         </p>
+         
+<p align="justify">
+         If you decided to set up session tracking, Cocoon offers you:
+         </p>
+          
+<blockquote>
+<ul>
+            
+<li>creation of new session IDs</li>
+            
+<li>full session control by the underlying Servlet API 2.2 servlet engine</li>
+            
+<li>cookie- and URI-based session management</li>
+            
+<li>automatic link rewrite if you like your XSP pages to be URI-session-aware</li>
+          
+</ul>
+</blockquote>
+         
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+
+        
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>The session:encode-url template</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+        
+<p align="justify">
+        To enable Cocoon for URI-based session IDs, an XSP template with the name
+        <code><font face="courier, monospaced">session:encode-url</font></code> will do this for you. It uses the
+        <code><font face="courier, monospaced">encodeURL</font></code> method from the Servlet API which encodes
+        an URL in a way that a session ID is being attached. Consult your
+        servlet engine documentation for information about what the <code><font face="courier, monospaced">encodeURL</font></code>
+        method returns. For example, the Tomcat
+        engine adds a string <code><font face="courier, monospaced">;jsession=</font></code> followed by an MD5 hash
+        to the URL, but only if the client's browser does not accept cookies.
+        </p>
+
+        
+<p align="justify">Here is the fragment for the <code><font face="courier, monospaced">session:encode-url</font></code> from session.xsl:</p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;!-- encode an URL with the session ID --&gt;
+&lt;xsl:template match="session:encode-url"&gt;
+  &lt;xsl:variable name="href"&gt;
+      "&lt;xsl:value-of select="@href"/&gt;"
+  &lt;/xsl:variable&gt;
+
+  &lt;xsp:element name="a"&gt;
+    &lt;xsp:attribute name="href"&gt;
+      &lt;xsp:expr&gt;
+        response.encodeURL(String.valueOf(&lt;xsl:copy-of select="$href"/&gt;))
+      &lt;/xsp:expr&gt;
+    &lt;/xsp:attribute&gt;
+    &lt;xsl:value-of select="."/&gt;
+  &lt;/xsp:element&gt;
+
+&lt;/xsl:template&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+         
+<p align="justify">
+         As you might wonder, the XSP template constructs a HTML tag <code><font face="courier, monospaced">&lt;a&gt;</font></code> with an
+         attribute <code><font face="courier, monospaced">href</font></code> which is enough for most of the cases.
+         Other methods, like XLink, are planned to be supported at a later time when
+         final W3C recommendations are out.
+         </p>
+
+         
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+         
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Creating new sessions</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+         
+<p align="justify">
+         The best place of a web site where new sessions should be created is the entry point
+         where all or most of the visitors step in. After creating the session, or
+         retrieving an old session, the visitor is redirected to a start page.
+         In Cocoon, you must edit your sitemap in order to
+         specify this interesting point of session creation.
+         The <code><font face="courier, monospaced">map-redirect-to</font></code>
+         has an extra attribute <code><font face="courier, monospaced">session</font></code>, which can be set to <code><font face="courier, monospaced">true</font></code>
+         or <code><font face="courier, monospaced">false</font></code>. The former will generate a new session ID if needed
+         by invoking the Servlet API method <code><font face="courier, monospaced">session = request.getSession(true)</font></code>,
+         while the latter ignores session ID handling.
+         </p>
+
+         
+<p align="justify">
+         How can Cocoon recognize URIs with appended session IDs? The answer is:
+         Cocoon can match a wildcard against your sessionized pages and keeps happy.
+         So please do not forget to append an asterisk '*' to your patterns in the pipelines.
+         </p>
+
+         
+<p align="justify">
+         This fragment from <code><font face="courier, monospaced">sitemap.xsl</font></code> shows how you can add a
+         <code><font face="courier, monospaced">map:redirect-to</font></code> to
+         your Cocoon framework with session handling at the root URL for your
+         web application:
+         </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+ &lt;map:pipelines&gt;
+  &lt;map:pipeline&gt;
+
+   &lt;map:match pattern=""&gt;
+     &lt;map:redirect-to session="true" uri="welcome"/&gt;
+   &lt;/map:match&gt;
+
+   &lt;map:match pattern="welcome*"&gt;
+    &lt;map:generate type="file" src="site/welcome.xml"/&gt;
+    &lt;map:transform src="stylesheets/welcome.xsl"/&gt;
+    &lt;map:serialize/&gt;
+   &lt;/map:match&gt;
+
+   &lt;map:match pattern="**.xsp*"&gt;
+    &lt;map:generate type="serverpages" src="site/{1}.xsp"/&gt;
+    &lt;map:transform src="stylesheets/dynamic-page2html.xsl"/&gt;
+    &lt;map:serialize/&gt;
+   &lt;/map:match&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+               
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+            
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+            
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Example</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+              
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>A simple XSP page with session ID</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+              
+<p align="justify">
+              Here you can see the source of an XSP example of how the
+              session feature can be used.
+              The example is located in a file named <code><font face="courier, monospaced">sessionpage.xsp</font></code>
+              and it displays the received session ID together with a rewritten
+              link to the page itself. Depending on your browser settings,
+              you will see nothing (because your browser prefers crunching cookies)
+              or a session ID is encoded into the URL. After clicking on the
+              link named "Follow me!", the session ID is taken into the URL, and
+              the session tracking is established.
+              </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
+
+&lt;xsp:page
+   language="java"
+   xmlns:xsp="http://apache.org/xsp"
+   xmlns:session="http://apache.org/xsp/session/2.0"
+   xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+&gt;
+
+&lt;!-- a simple session page by J&amp;ouml;rg Prante &lt;joerg@7val.com&gt; --&gt;
+
+&lt;page&gt;
+  &lt;title&gt;A Simple URI-based Session Example&lt;/title&gt;
+  &lt;content&gt;
+    &lt;para&gt; &lt;xsp-request:get-uri as="xml"/&gt; &lt;/para&gt;
+    &lt;para&gt; Session ID = &lt;session:get-id as="xml"/&gt; &lt;/para&gt;
+    &lt;para&gt;
+      Encode URL Test =
+      &lt;session:encode-url href="sessionpage.xsp"&gt;Follow me!&lt;/session:encode-url&gt;
+    &lt;/para&gt;
+  &lt;/content&gt;
+&lt;/page&gt;
+
+&lt;/xsp:page&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+      
+<p align="justify">
+      If you have been successful with installing the session feature and
+      the example file, the following HTML output will be generated by
+      Cocoon from the above <code><font face="courier, monospaced">sessionpage.xsp</font></code> example, which shows
+      how the rewritten link looks like. Please don't ask
+      why the session ID in the generated link is different from yours.
+      </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;!DOCTYPE HTML PUBLIC
+    "-//W3C//DTD HTML 4.0//EN"
+    "http://www.w3.org/TR/WD-html-in-xml/DTD/xhtml1-strict.dtd"&gt;
+&lt;html&gt;&lt;head&gt;&lt;title&gt;
+     A Simple URI Session Example
+  &lt;/title&gt;&lt;/head&gt;&lt;body vlink="blue" link="blue" alink="red" bgcolor="white"&gt;
+
+  &lt;h2 style="color: navy; text-align: center"&gt;
+     A Simple URI Session Example
+  &lt;/h2&gt;
+
+  &lt;content&gt;
+
+  &lt;p align="left"&gt;&lt;i&gt;
+     &lt;b xmlns:xsp-response="http://apache.org/xsp/response/2.0"
+        xmlns:xsp-request="http://apache.org/xsp/request/2.0"&gt;sessionpage.xsp&lt;/b&gt;
+  &lt;/i&gt;&lt;/p&gt;
+
+  &lt;p align="left"&gt;&lt;i&gt;
+     Session ID =
+     &lt;session:id&gt;F3E9575442D1899760A0B231D0042281&lt;/session:id&gt;
+  &lt;/i&gt;&lt;/p&gt;
+
+  &lt;p align="left"&gt;&lt;i&gt;
+    Encode URL Test =
+    &lt;a href="sessionpage.xsp;jsessionid=F3E9575442D1899760A0B231D0042281"&gt;Follow me!&lt;/a&gt;
+  &lt;/i&gt;&lt;/p&gt;
+  &lt;/content&gt;
+
+&lt;/body&gt;&lt;/html&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+         
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+      
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+      
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Log analysis of sessions</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+      
+<p align="justify">
+        To be done.
+      </p>
+
+      
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td bgcolor="#0086b2"><img width="1" src="images/dot.gif" height="1"></td>
+</tr>
+<tr>
+<td align="center"><font size="-1" face="arial,helvetica,sanserif" color="#0086b2"><i>Copyright &copy; 1999-2002 The Apache Software Foundation. All Rights Reserved.</i></font></td>
+</tr>
+</table>
+</body>
+</html>

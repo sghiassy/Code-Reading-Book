@@ -1,0 +1,42 @@
+XCOMM $XConsortium: Imakefile /main/57 1996/09/28 16:43:46 rws $
+#define DoNormalLib NormalLibXext
+#define DoSharedLib SharedLibXext
+#define DoDebugLib DebugLibXext
+#define DoProfileLib ProfileLibXext
+#define LibName Xext
+#define SoRev SOXEXTREV
+#define LibHeaders NO
+
+#include <Threads.tmpl>
+
+#ifdef SharedXextReqs
+REQUIREDLIBS = SharedXextReqs
+#endif
+
+#if HasShm
+      SHMSRCS = XShm.c
+      SHMOBJS = XShm.o
+#endif
+
+#if BuildLBX
+      LBXSRCS = XLbx.c
+      LBXOBJS = XLbx.o
+#endif
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+      DEFINES = $(ALLOC_DEFINES)
+     INCLUDES = -I$(XLIBSRC) -I$(EXTINCSRC)
+         SRCS = globals.c extutil.c XMultibuf.c XShape.c $(SHMSRCS)  \
+		MITMisc.c XTestExt1.c XSync.c Xdbe.c $(LBXSRCS) \
+		XSecurity.c XAppgroup.c
+         OBJS = globals.o extutil.o XMultibuf.o XShape.o $(SHMOBJS) \
+		MITMisc.o XTestExt1.o XSync.o Xdbe.o $(LBXOBJS) \
+		XSecurity.o XAppgroup.o
+     LINTLIBS = $(LINTXLIB)
+
+#include <Library.tmpl>
+
+DependTarget()

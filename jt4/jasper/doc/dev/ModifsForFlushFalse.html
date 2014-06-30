@@ -1,0 +1,68 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <title>Modifications to support flush="false" in jsp:include</title>
+</head>
+<body>
+
+<h1>&lt;jsp:include ... flush="false" &gt; </h1>
+<hr>
+<h2>Classes Modified</h2>
+
+<h3>IncludeGenerator</h3>
+<ul>
+<li>flush is not a required parameter anymore. Default value is "false".
+<li>generated code now flushes the buffer or not prior to calling
+  pagecontext.include() depending on the flush value
+</ul>
+
+<h3>PageContextImpl</h3>
+<ul>
+<li>set the value of isIncluded when the page context is initialized
+include()
+<li>flush in an include is not done in pageContext anymore.
+  This is handled prior to calling the include() so we can flush or not
+  depending on the value of the flush attribute.
+<li>A ServletResponseWrapperInclude object is now passed as the Response
+  (the including page JspWriter is what gets returned in getWriter())
+release()
+<li>if isIncluded() 
+<ul>
+<li>     flush the current jspWriter into the including
+     page JspWriter
+</ul>
+<li>else
+<ul>
+<li>     flush through (recursive) the buffer
+</ul>
+</ul>
+
+<h3>JspParseEventListener</h3>
+<ul>
+<li>generateFooter(): do not generate the code to flush the buffer anymore
+  this will be handled in pageContext.release() which will
+  flush the buffer in a way that depends whether the
+  page is being included or not.
+</ul>
+<h3>messages.properties</h3>
+<ul>
+<li>add jsp.error.include.flush.invalid.value
+</ul>
+
+<h2>New files</h2>
+<H3>ServletResponseWrapperInclude</h3>
+
+<hr>
+<h2>Issues</h2>
+Implementation of this new feature has brought up a few issues
+which have been submitted to the expert group. Implementation will
+be revised once we get clarifications.
+<p>
+Specifically:
+<ul>
+<li>A forward done in an included page yields an infinite
+    loop because the jsp engine has no way of knowing that the
+    include request attributes should be ignored.
+<li>Not clear what the impact of a forward performed within an 
+    included page should be on the output buffers.
+</ul>

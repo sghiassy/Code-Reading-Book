@@ -1,0 +1,103 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:The console</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>The console</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>The console.</h4>
+DemoGL contains a console that is toggled visible or hidden when the TAB key or the '~' key is pressed. 
+The console is included for developers using DemoGL in their applications. DemoGL logs all kinds of
+information on the console, developers can also log information on it and it has an input prompt that
+allows the developer to execute TLE's immediately from that command prompt. 
+<p>
+During the bootphase, DemoGL displays the console and logs all kinds of information, which can be made
+invisible by placing a splashscreen on the console during the bootphase (see 
+<a HREF="ref_functions_DEMOGL_LoadingSplashEnable.htm">DEMOGL_LoadingSplashEnable</a> for details). Also 
+during bootphase, a progress bar can be made visible, displaying the status of the bootphase 
+(see <a HREF="ref_functions_DEMOGL_LoadingPBEnable.htm">DEMOGL_LoadingPBEnable</a> and
+<a HREF="ref_functions_DEMOGL_LoadingPBSetAppearance.htm">DEMOGL_LoadingPBSetAppearance</a> for details).
+<p>
+When the bootphase is finished and application execution starts, DemoGL will hide the console, remove the
+splash screen and progress bar and will start the application. If no effectobject is started this will result
+in a black screen. The developer can bring up the console (make it visible) by pressing the TAB or '~' key. 
+<p>
+<center>
+<img SRC="images/dglconsole.jpg" BORDER="0" WIDTH="400" HEIGHT="300">
+<p class="SmallFontREF">
+The DemoGL console just after the start of the execution of the example application mentioned in
+<a HREF="about_whatisdemogl.htm">What is DemoGL?</a>.
+</p>
+</center>
+<p>
+The console itself contains a buffer that holds lines of text. This buffer can be much larger than the size
+of the console. When the buffer is larger than the amount of lines the console can display, you can scroll
+through the buffer by using the UP and DOWN arrowkeys and the PgUp and PgDown keys. The developer can specify the
+size of the console buffer, the length of the lines on screen and the amount of lines on screen, using the function
+<a HREF="ref_functions_DEMOGL_ConsoleSetAppearance.htm">DEMOGL_ConsoleSetAppearance</a>. The background of the console
+is a texture stored in the directory <b>systex</b> and is called <b>cnslbg.jpg</b>. The font is stored on two textures
+in the same directory, with filenames: <b>fnt_cnl.bmp</b> and <b>fnt_cnr.bmp</b>. The placement of the systex directory
+is depending on whether the developer decides to load from a datafile (a zipped archive) or a directory. See for
+more details <a href="about_datafile.htm">I/O Support</a> in this About DemoGL manual.
+<p>
+The console can visualize system information when certain keys are pressed. Below is the list of keys currently supported
+in DemoGL. All keys work when the console is hidden or visible so you don't have to activate the console first. 
+<ul>
+	<li><b>F1</b>. Displays help about the supported keys on the console.
+	<li><b>F2</b>. Toggles FPS counter on or off. This is an overlay at the bottom of the screen on top of all layers.
+	<li><b>F3</b>. Displays all layers currently created in DemoGL, the effectobjects on those layers and if the layers are
+	    visible or not. This list is displayed on the console.
+	<li><b>F4</b>. Displays all registered effectobjects on the console.
+	<li><b>F5</b>. Toggles the debug overlay on or off. The debugoverlay is displayed on top of the layers visible when the
+	    console is hidden and it contains the last X lines of the consolebuffer, the current position on the timeline and
+	    when activated, a commandprompt. The amount of X is 8 by default but changable with 
+	    <a HREF="ref_functions_DEMOGL_LoadingPBSetAppearance.htm">DEMOGL_LoadingPBSetAppearance</a>. 
+	<li><b>F6</b>. Toggles the input prompt on or off. This option is only available when the debug overlay is activated.
+		The input prompt is visible in the console and in the overlay and share the same contents so typing in something
+		on the input prompt in the debug overlay has the same effect as typing on the input prompt on the console.
+	<li><b>F7</b>. Displays the complete set of defined TLE's, the current timespot on the timeline, if TLE's are executed
+		or not, the commands plus objectnames of each TLE and all parameters specified with these TLE's. This list is displayed
+		on the console. If you've specified a lot of TLE's in your script, be sure the console buffer can handle a lot of lines.
+</ul>
+<p>
+When the console is made visible, all effectobject execution stops, since no layers are rendered. All TLE execution continues.
+When a TLE is typed in on the input prompt, you have to omit the timespot parameter of the TLE so the syntax of a TLE typed
+in on the input prompt is:
+<pre>
+	objectname;command;[parameter1;...parameter64;]
+</pre>
+See for more information about TLE's: <a HREF="about_script.htm">The script</a> in this About DemoGL manual. 
+<p>
+The information DemoGL logs on the console is prefixed with a 3 character short marker. The marker is the phase DemoGL is in
+when the information was logged. For developers using DemoGL this 3 character information is not important, but if you're modifying
+DemoGL it can be useful. See for more information about these prefixes, DemoGL system states and other related information the
+DemoGL sourcecode documentation that is distributed with the DemoGL v1.3 sourcecode.
+<p> 
+A developer can log custom information on the console by using the functions 
+<a HREF="ref_functions_DEMOGL_ConsoleLogLine.htm">DEMOGL_ConsoleLogLine</a> and 
+<a HREF="ref_functions_DEMOGL_ConsoleLogLineV.htm">DEMOGL_ConsoleLogLineV</a>. See the DemoGL Reference manual for more details about
+these functions. 
+<p>
+Because the console is ment for developers, it should be possible to lock the keys that will bring up the console and bring up certain
+other overlays like the debugoverlay, input prompt and FPS counter. A developer can lock out these features by using the function
+<a HREF="ref_functions_DEMOGL_SetVariable.htm">DEMOGL_SetVariable</a> to set a lock variable in DemoGL. See the DemoGL Reference
+manual for more details about setting variables using DEMOGL_SetVariable.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

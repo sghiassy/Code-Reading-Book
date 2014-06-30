@@ -1,0 +1,57 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/10/25 06:20:54 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/sis/Imakefile,v 3.9 1997/01/18 06:56:49 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = sis86c201.c sis_bank.s sis_curs.c sis_BitBlt.c sis_blitter.c\
+	sis_solid.c sis_blt16.c sis_pntwin.c sis_FillRct.c sis_FillSt.c\
+	sis_colexp.c sis_teblt8.c sis_textblt.s sis_accel.c
+
+OBJS = sis86c201.o sis_bank.o sis_curs.o sis_BitBlt.o sis_blitter.o\
+	sis_solid.o sis_blt16.o sis_pntwin.o sis_FillRct.o sis_FillSt.o\
+	sis_colexp.o sis_teblt8.o sis_textblt.o sis_accel.o
+  
+DEFINES = -DPSZ=8
+
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/cfb \
+	   -I../../vga -I../../../xaa -I$(SERVERSRC)/include \
+	   -I$(XINCLUDESRC) -I$(FONTINCSRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(sis_drv,$(OBJS))
+
+InstallLinkKitNonExecFile(sis86c201.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_bank.s,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_curs.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/sis)
+
+InstallLinkKitNonExecFile(sis_accel.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_blt16.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_blitter.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_BitBlt.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_solid.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_Blitter.h,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_driver.h,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_pntwin.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_FillRct.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_FillSt.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_colexp.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_teblt8.c,$(LINKKITDIR)/drivers/vga256/sis)
+InstallLinkKitNonExecFile(sis_textblt.s,$(LINKKITDIR)/drivers/vga256/sis)
+
+DependTarget()

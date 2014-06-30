@@ -1,0 +1,169 @@
+.TH ACE_Thread_Timer_Queue_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Thread_Timer_Queue_Adapter \- Adapts a Timer_Queue using a separate thread for dispatching. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Timer_Queue_Adapters.h>\fR
+.PP
+Inherits \fBACE_Task_Base\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef TQ \fBTIMER_QUEUE\fR"
+.br
+.RI "\fITrait for the underlying queue type.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Timer_Queue_Adapter\fR (\fBACE_Thread_Manager\fR * = ACE_Thread_Manager::instance ())"
+.br
+.RI "\fICreates the timer queue. Activation of the task is the user's responsibility.\fR"
+.ti -1c
+.RI "long \fBschedule\fR (\fBACE_Event_Handler\fR *handler, const void *act, const \fBACE_Time_Value\fR &delay, const \fBACE_Time_Value\fR &interval = \fBACE_Time_Value::zero\fR)"
+.br
+.RI "\fISchedule the timer according to the semantics of the <TQ>; wakes up the dispatching thread.\fR"
+.ti -1c
+.RI "int \fBcancel\fR (long timer_id, const void **act = 0)"
+.br
+.RI "\fICancel the <timer_id> add return the  parameter if an address is passed in. Also wakes up the dispatching thread.\fR"
+.ti -1c
+.RI "virtual int \fBsvc\fR (void)"
+.br
+.RI "\fIRuns the dispatching thread.\fR"
+.ti -1c
+.RI "virtual void \fBdeactivate\fR (void)"
+.br
+.RI "\fIInform the dispatching thread that it should terminate.\fR"
+.ti -1c
+.RI "ACE_SYNCH_MUTEX& \fBmutex\fR (void)"
+.br
+.RI "\fIAccess the locking mechanism, useful for iteration.\fR"
+.ti -1c
+.RI "TQ& \fBtimer_queue\fR (void)"
+.br
+.RI "\fIAccess the implementation queue, useful for iteration.\fR"
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBthr_id\fR (void)"
+.br
+.RI "\fIReturn the thread id of our active object.\fR"
+.ti -1c
+.RI "virtual int \fBactivate\fR (long flags = THR_NEW_LWP | THR_JOINABLE, int n_threads = 1, int force_active = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, \fBACE_Task_Base\fR *task = 0, \fBACE_hthread_t\fR thread_handles[] = 0, void *stack[] = 0, size_t stack_size[] = 0, \fBACE_thread_t\fR thread_names[] = 0)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "TQ \fBtimer_queue_\fR"
+.br
+.RI "\fIThe underlying Timer_Queue.\fR"
+.ti -1c
+.RI "ACE_SYNCH_CONDITION \fBcondition_\fR"
+.br
+.ti -1c
+.RI "ACE_SYNCH_MUTEX \fBmutex_\fR"
+.br
+.RI "\fIThe mutual exclusion mechanism which is required to use the <condition_>.\fR"
+.ti -1c
+.RI "int \fBactive_\fR"
+.br
+.RI "\fIWhen deactivate is called this variable turns to false and the dispatching thread is signalled, to terminate its main loop.\fR"
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBthr_id_\fR"
+.br
+.RI "\fIThread id of our active object task.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TQ>  template class ACE_Thread_Timer_Queue_Adapter
+Adapts a Timer_Queue using a separate thread for dispatching.
+.PP
+.PP
+ This implementation of a Timer_Queue uses a separate thread to dispatch the timers. The base queue need not be thread safe, this class takes all the necessary locks.
+.PP
+\fBNote: \fR
+.in +1c
+ This is a case were template parameters will be useful, but (IMHO) the effort and portability problems discourage their use. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classTQ> typedef TQ ACE_Thread_Timer_Queue_Adapter<TQ>::TIMER_QUEUE
+.PP
+Trait for the underlying queue type.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTQ> ACE_Thread_Timer_Queue_Adapter<TQ>::ACE_Thread_Timer_Queue_Adapter<TQ> (\fBACE_Thread_Manager\fR * = ACE_Thread_Manager::instance ())
+.PP
+Creates the timer queue. Activation of the task is the user's responsibility.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTQ> int ACE_Thread_Timer_Queue_Adapter<TQ>::activate (long flags = THR_NEW_LWP | THR_JOINABLE, int n_threads = 1, int force_active = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, int grp_id = -1, \fBACE_Task_Base\fR * task = 0, \fBACE_hthread_t\fR thread_handles[] = 0, void * stack[] = 0, size_t stack_size[] = 0, \fBACE_thread_t\fR thread_names[] = 0)\fC [virtual]\fR
+.PP
+We override the default  method so that we can ensure that only a single thread is ever spawned. Otherwise, too many weird things can happen... 
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS template<classTQ> int ACE_Thread_Timer_Queue_Adapter<TQ>::cancel (long timer_id, const void ** act = 0)
+.PP
+Cancel the <timer_id> add return the  parameter if an address is passed in. Also wakes up the dispatching thread.
+.PP
+.SS template<classTQ> void ACE_Thread_Timer_Queue_Adapter<TQ>::deactivate (void)\fC [virtual]\fR
+.PP
+Inform the dispatching thread that it should terminate.
+.PP
+.SS template<classTQ> ACE_SYNCH_MUTEX & ACE_Thread_Timer_Queue_Adapter<TQ>::mutex (void)
+.PP
+Access the locking mechanism, useful for iteration.
+.PP
+.SS template<classTQ> long ACE_Thread_Timer_Queue_Adapter<TQ>::schedule (\fBACE_Event_Handler\fR * handler, const void * act, const \fBACE_Time_Value\fR & delay, const \fBACE_Time_Value\fR & interval = \fBACE_Time_Value::zero\fR)
+.PP
+Schedule the timer according to the semantics of the <TQ>; wakes up the dispatching thread.
+.PP
+.SS template<classTQ> int ACE_Thread_Timer_Queue_Adapter<TQ>::svc (void)\fC [virtual]\fR
+.PP
+Runs the dispatching thread.
+.PP
+Reimplemented from \fBACE_Task_Base\fR.
+.SS template<classTQ> \fBACE_thread_t\fR ACE_Thread_Timer_Queue_Adapter<TQ>::thr_id (void)
+.PP
+Return the thread id of our active object.
+.PP
+.SS template<classTQ> TQ & ACE_Thread_Timer_Queue_Adapter<TQ>::timer_queue (void)
+.PP
+Access the implementation queue, useful for iteration.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTQ> int ACE_Thread_Timer_Queue_Adapter<TQ>::active_\fC [private]\fR
+.PP
+When deactivate is called this variable turns to false and the dispatching thread is signalled, to terminate its main loop.
+.PP
+.SS template<classTQ> ACE_SYNCH_CONDITION ACE_Thread_Timer_Queue_Adapter<TQ>::condition_\fC [private]\fR
+.PP
+The dispatching thread sleeps on this condition while waiting to dispatch the next timer; it is used to wake it up if there is a change on the timer queue. 
+.SS template<classTQ> ACE_SYNCH_MUTEX ACE_Thread_Timer_Queue_Adapter<TQ>::mutex_\fC [private]\fR
+.PP
+The mutual exclusion mechanism which is required to use the <condition_>.
+.PP
+.SS template<classTQ> \fBACE_thread_t\fR ACE_Thread_Timer_Queue_Adapter<TQ>::thr_id_\fC [private]\fR
+.PP
+Thread id of our active object task.
+.PP
+.SS template<classTQ> TQ ACE_Thread_Timer_Queue_Adapter<TQ>::timer_queue_\fC [private]\fR
+.PP
+The underlying Timer_Queue.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

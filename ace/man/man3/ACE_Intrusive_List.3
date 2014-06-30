@@ -1,0 +1,190 @@
+.TH ACE_Intrusive_List 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Intrusive_List \- Implement an intrusive double linked list. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Intrusive_List.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Intrusive_List\fR (void)"
+.br
+.RI "\fIConstructor. Use user specified allocation strategy if specified.\fR"
+.ti -1c
+.RI "\fB~ACE_Intrusive_List\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBempty\fR (void) const"
+.br
+.RI "\fIReturns 1 if the container is empty, otherwise returns 0.\fR"
+.ti -1c
+.RI "void \fBpush_front\fR (T *node)"
+.br
+.RI "\fIInsert an element at the beginning of the list.\fR"
+.ti -1c
+.RI "void \fBpush_back\fR (T *node)"
+.br
+.RI "\fIInsert an element at the end of the list.\fR"
+.ti -1c
+.RI "T* \fBpop_front\fR (void)"
+.br
+.RI "\fIRemove the element at the beginning of the list.\fR"
+.ti -1c
+.RI "T* \fBpop_back\fR (void)"
+.br
+.RI "\fIRemove the element at the end of the list.\fR"
+.ti -1c
+.RI "T* \fBhead\fR (void) const"
+.br
+.RI "\fIGet the element at the head of the queue.\fR"
+.ti -1c
+.RI "T* \fBtail\fR (void) const"
+.br
+.RI "\fIGet the element at the tail of the queue.\fR"
+.ti -1c
+.RI "void \fBremove\fR (T *node)"
+.br
+.RI "\fIRemove a element from the list.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBremove_i\fR (T *node)"
+.br
+.RI "\fIRemove a element from the list.\fR"
+.in -1c
+.PP
+.RI "\fBDisallow copying\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBACE_Intrusive_List\fR (const ACE_Intrusive_List<T> &)"
+.br
+.ti -1c
+.RI "ACE_Intrusive_List<T>& \fBoperator=\fR (const ACE_Intrusive_List<T> &)"
+.br
+.in -1c
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "T* \fBhead_\fR"
+.br
+.RI "\fIHead and tail of the list.\fR"
+.ti -1c
+.RI "T* \fBtail_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Intrusive_List
+Implement an intrusive double linked list.
+.PP
+.PP
+ Intrusive lists assume that the elements they contain the pointers required to build the list. They are useful as light-weight containers and free-lists.
+.PP
+The template argument T must implement the following methods:
+.PP
+.TP
+T* T::next () const;
+.TP
+void T::next (T *);
+.TP
+T* T::prev () const;
+.TP
+void T::prev (T* );A simple way to satisfy the Intrusive_List requirements would be to implement a helper class:
+.PP
+class My_Object : public \fBACE_Intrusive_List_Node\fR<My_Object> {
+.br
+ ....
+.br
+ };
+.br
+
+.PP
+typedef ACE_Intrusive_List<My_Object> My_Object_List;
+.PP
+However, \fBACE\fR is supported on platforms that would surely get confused using such templates.
+.PP
+\fB\fBTodo: \fR\fR
+.in +1c
+The \fBACE_Message_Queue\fR is an example of an intrusive list (or queue) but it is not implemented in terms of this class. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Intrusive_List<T>::ACE_Intrusive_List<T> (void)
+.PP
+Constructor. Use user specified allocation strategy if specified.
+.PP
+.SS template<classT> ACE_Intrusive_List<T>::~ACE_Intrusive_List<T> (void)
+.PP
+Destructor.
+.PP
+.SS template<classT> ACE_Intrusive_List<T>::ACE_Intrusive_List<T> (const ACE_Intrusive_List< T >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> int ACE_Intrusive_List<T>::empty (void) const
+.PP
+Returns 1 if the container is empty, otherwise returns 0.
+.PP
+.SS template<classT> T * ACE_Intrusive_List<T>::head (void) const
+.PP
+Get the element at the head of the queue.
+.PP
+.SS template<classT> ACE_Intrusive_List< T >& ACE_Intrusive_List<T>::operator=<T> (const ACE_Intrusive_List< T >&)\fC [private]\fR
+.PP
+.SS template<classT> T * ACE_Intrusive_List<T>::pop_back (void)
+.PP
+Remove the element at the end of the list.
+.PP
+.SS template<classT> T * ACE_Intrusive_List<T>::pop_front (void)
+.PP
+Remove the element at the beginning of the list.
+.PP
+.SS template<classT> void ACE_Intrusive_List<T>::push_back (T * node)
+.PP
+Insert an element at the end of the list.
+.PP
+.SS template<classT> void ACE_Intrusive_List<T>::push_front (T * node)
+.PP
+Insert an element at the beginning of the list.
+.PP
+.SS template<classT> void ACE_Intrusive_List<T>::remove (T * node)
+.PP
+Remove a element from the list.
+.PP
+Verify that the element is still in the list before removing it. 
+.SS template<classT> void ACE_Intrusive_List<T>::remove_i (T * node)\fC [private]\fR
+.PP
+Remove a element from the list.
+.PP
+No attempts are performed to check if T* really belongs to the list. The effects of removing an invalid element are unspecified 
+.SS template<classT> T * ACE_Intrusive_List<T>::tail (void) const
+.PP
+Get the element at the tail of the queue.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> T * ACE_Intrusive_List<T>::head_\fC [private]\fR
+.PP
+Head and tail of the list.
+.PP
+.SS template<classT> T * ACE_Intrusive_List<T>::tail_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

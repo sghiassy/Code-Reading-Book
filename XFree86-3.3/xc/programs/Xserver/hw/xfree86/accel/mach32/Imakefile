@@ -1,0 +1,48 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/mach32/Imakefile,v 3.10 1996/12/23 06:38:17 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:21:12 rws $
+
+#include <Server.tmpl>
+
+SRCS = 	mach32.c mach32cmap.c mach32gc.c mach32fs.c mach32ss.c \
+	mach32gs.c mach32win.c mach32init.c mach32im.c mach32bstor.c \
+	mach32scrin.c mach32blt.c mach32plypt.c \
+	mach32line.c mach32line1r.c mach32seg.c mach32frect.c mach32text.c \
+	mach32font.c mach32fcach.c mach32bc.c mach32pntwn.c ativga.c \
+	mach32curs.c mach32gtimg.c mach32mem.c mach32dline.c mach32dseg.c \
+	vgaHW.c
+
+OBJS = 	mach32.o mach32cmap.o mach32gc.o mach32fs.o mach32ss.o \
+	mach32gs.o mach32win.o mach32init.o mach32im.o mach32bstor.o \
+	mach32scrin.o mach32blt.o mach32plypt.o \
+	mach32line.o mach32line1r.o mach32seg.o mach32frect.o mach32text.o \
+	mach32font.o mach32fcach.o mach32bc.o mach32pntwn.o ativga.o \
+	mach32curs.o mach32gtimg.o mach32mem.o mach32dline.o mach32dseg.o \
+	vgaHW.o
+
+INCLUDES = -I$(XF86COMSRC) -I. -I$(XF86SRC)/vga256/vga \
+	   -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+           -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) -I$(FONTSRC)/include \
+	   -I$(FONTINCSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+	   -I$(XF86SRC)/accel/cache
+
+DEFINES = -DMACH32_SERVER -DPSZ=8
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(mach32,$(OBJS))
+
+LinkSourceFile(vgaHW.c,../../vga256/vga)
+ObjectFromSpecialSource(mach32line1r,mach32line,-DONE_RECT)
+
+InstallLinkKitLibrary(mach32,$(LINKKITDIR)/drivers)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

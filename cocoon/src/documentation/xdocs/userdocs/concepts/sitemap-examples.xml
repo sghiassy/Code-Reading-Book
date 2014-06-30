@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Example sitemap snippets</title>
+  <subtitle>Explanations of some sitemaps</subtitle>
+  <version>0.1</version> 
+  <type>Technical document</type> 
+  <authors>
+   <person name="David Crossley" email="crossley@indexgeo.com.au"/>
+  </authors>
+ </header>
+
+ <body>
+ <s1 title="Overview">
+  <p>
+   The following explanations describe how some sections of the sitemaps
+   operate. For overview, see the general
+   <link href="sitemap.html">Sitemap</link> document and the specific
+   userdocs.
+  </p>
+ </s1>
+
+ <s1 title="C2 documentation">
+  <p>
+   The Cocoon documentation XML files are located at 
+   <code>documentation/xdocs/*.xml</code> and sub-directories.
+   The sitemap at <code>documentation/sitemap.xmap</code> does most of the
+   work. It is used by <code>build docs</code> and it also mounted by the
+   main sitemap to handle requests for documentation as a servlet.
+  </p>
+
+  <p>
+   Each match is presented and described in turn.
+  </p>
+
+<source><![CDATA[
+Match #1 ...
+   <!-- ================  C2 documentation  ================= -->
+   <map:match pattern="">
+    <map:redirect-to uri="index.html"/>
+   </map:match>
+]]></source>
+
+  <p>
+   Just a convenience for redirecting the null pattern to the home page.
+  </p>
+
+<source><![CDATA[
+Match #2 ...
+   <map:match pattern="*.html">
+    <map:aggregate element="site">
+     <map:part src="cocoon:/book-{1}.xml"/>
+     <map:part src="cocoon:/body-{1}.xml"/>
+    </map:aggregate>
+    <map:transform src="stylesheets/site2xhtml.xsl">
+     <map:parameter name="use-request-parameters" value="true"/>
+     <map:parameter name="header" value="graphics/{1}-header.jpg"/>
+    </map:transform>
+    <map:serialize/>
+   </map:match>
+]]></source>
+
+  <p>
+   Generates the response for a top-level page (e.g. index.html).
+   Note that lower-level pages (e.g. userdocs/index.html) do not match
+   here and are processed in a similar way by Match #3.
+  </p>
+
+  <p>
+   Each document is composed of two separate parts: the side-panel menu and
+   the actual page content. Each part is build separately and then aggregated.
+   Consider the example of the home page (index.html). 
+   The side-panel content comes from <code>documentation/xdocs/book.xml</code>
+   (and is handled by the pipeline <code>book-index.xml</code>).
+   The actual page content comes from <code>documentation/xdocs/index.xml</code>
+   (and is handled by the pipeline <code>body-index.xml</code>).
+  </p>
+
+  <p>
+   So Match #2 generates an intermediate XML file by aggregating the XML output
+   from the two pipelines and wrapping it with a <code>&lt;site&gt;</code>
+   element. (The <code>cocoon:/</code> protocol means &quot;Use the relevant
+   pipeline from the current sitemap&quot;.)
+   The output stream is then transformed to XHTML and serialized.
+  </p>
+
+<source><![CDATA[
+Match #3 ...
+   <map:match pattern="**/*.html">
+    <map:aggregate element="site">
+     <map:part src="cocoon:/{1}/book-{1}/{2}.xml"/>
+     <map:part src="cocoon:/body-{1}/{2}.xml"/>
+    </map:aggregate>
+    <map:transform src="stylesheets/site2xhtml.xsl">
+       <map:parameter name="use-request-parameters" value="true"/>
+       <map:parameter name="header" value="graphics/{2}-header.jpg"/>
+     </map:transform>
+    <map:serialize/>
+   </map:match>
+]]></source>
+
+  <p>
+   This is similar to Match #2, except that it deals with documents in
+   sub-directories. For the side-panel, this uses the <code>book.xml</code>
+   found in each relevant directory.
+  </p>
+
+<source><![CDATA[
+Match #4 ...
+   <map:match pattern="**book-**.xml">
+     <map:generate src="xdocs/{1}book.xml"/>
+       <map:transform src="stylesheets/book2menu.xsl">
+         <map:parameter name="use-request-parameters" value="true"/>
+         <map:parameter name="resource" value="{2}.html"/>
+       </map:transform>
+     <map:serialize type="xml"/>
+   </map:match>
+]]></source>
+
+  <p>
+   This produces the additional structured content for the relevant
+   side-panel menu. Note that this is the only match that serializes to
+   XML (the others have the default HTML).
+  </p>
+
+  <p>
+   In essence, this Match #4 is called from Match #2 via the
+   <code>cocoon:/</code> protocol and is aggregated with the output of Match #6
+  </p>
+
+<source><![CDATA[
+Match #5 ...
+   <map:match pattern="body-todo.xml">
+     <map:generate src="xdocs/todo.xml"/>
+     <map:transform src="stylesheets/todo2document.xsl"/>
+     <map:transform src="stylesheets/document2html.xsl"/>
+     <map:serialize/>
+   </map:match>
+
+   <map:match pattern="body-changes.xml">
+     <map:generate src="xdocs/changes.xml"/>
+     <map:transform src="stylesheets/changes2document.xsl"/>
+     <map:transform src="stylesheets/document2html.xsl"/>
+     <map:serialize/>
+   </map:match>
+
+   <map:match pattern="body-faq.xml">
+     <map:generate src="xdocs/faq.xml"/>
+     <map:transform src="stylesheets/faq2document.xsl"/>
+     <map:transform src="stylesheets/document2html.xsl"/>
+     <map:serialize/>
+   </map:match>
+]]></source>
+
+  <p>
+   These matches are for special cases. Note that they are defined before
+   the general body-*.xml match. Remember that the sitemap reads from top to
+   bottom and the first encountered match is used.
+  </p>
+
+  <p>
+   These special-cases need to transform the content into XML files that
+   conform to document-v10.dtd first.
+  </p>
+
+<source><![CDATA[
+Match #6 ...
+   <map:match pattern="body-**.xml">
+     <map:generate src="xdocs/{1}.xml"/>
+     <map:transform src="stylesheets/document2html.xsl"/>
+     <map:serialize/>
+   </map:match>
+]]></source>
+
+  <p>
+   This match handles the bodies of all other the other documents
+   (which are natively conforming to document-v10.dtd).
+  </p>
+
+  <p>
+   In essence, this Match #6 is called from Match #2 via the
+   <code>cocoon:/</code> protocol and is aggregated with the output of Match #4
+  </p>
+
+ </s1>
+
+ </body>
+</document>

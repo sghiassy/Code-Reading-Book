@@ -1,0 +1,88 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/10/19 19:10:09 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree68/etc/Imakefile,v 3.2.2.1 1997/05/03 09:45:13 dawes Exp $
+
+#include <Server.tmpl>
+
+#if !BuildServersOnly
+#ifdef SunArchitecture
+   TERMFILES = xterm.termcap xterm.terminfo
+#else
+   TERMFILES = sun.termcap sun.terminfo xterm.termcap xterm.terminfo
+#endif
+#endif
+
+PREINST = preinst.sh
+POSTINST = postinst.sh
+
+       FILES = $(CONFIGFILES) $(TERMFILES) \
+               $(PATCHFILES) $(XDMCONF) \
+               xmodmap.std $(MISCFILES) $(POSTINST) $(PREINST)
+    INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+	       -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+all:: $(FILES)
+
+#if defined(FreeBSDArchitecture) || defined(NetBSDArchitecture)
+       SRCS1 = kbd_mode.c
+     DEFINES = XFree86ConsoleDefines
+
+all:: kbd_mode
+
+SingleProgramTarget(kbd_mode,kbd_mode.o,NullParameter,NullParameter)
+
+InstallProgram(kbd_mode,$(BINDIR))
+InstallManPage(kbd_mode,$(MANDIR))
+#endif
+
+#if BuildScanpci
+       SRCS2 = scanpci.c
+
+#if defined(NetBSDArchitecture) && OSMajorVersion >= 1 && OSMinorVersion >= 1
+SYS_LIBRARIES = -li386
+#endif
+
+AllTarget(ProgramTargetName(scanpci))
+
+NormalProgramTarget(scanpci,scanpci.o,NullParameter,NullParameter,NullParameter)
+InstallProgram(scanpci,$(BINDIR))
+#endif
+
+#if JoystickSupport || Joystick2Support
+       SRCS3 = joycal.c
+
+AllTarget(ProgramTargetName(joycal))
+
+NormalProgramTarget(joycal,joycal.o,NullParameter,NullParameter,NullParameter)
+InstallProgram(joycal,$(BINDIR))
+#endif
+
+        SRCS = $(SRCS1) $(SRCS2) $(SRCS3)
+
+InstallMultipleDestFlags(install,$(FILES),$(LIBDIR)/etc,$(INSTDATFLAGS))
+
+#if !BuildServersOnly
+LinkFile(xterm.termcap,$(PROGRAMSRC)/xterm/termcap)
+LinkFile(xterm.terminfo,$(PROGRAMSRC)/xterm/terminfo)
+#endif
+
+LinkSourceFile(joycal.c,$(XF86SRC)/etc)
+LinkSourceFile(kbd_mode.c,$(XF86SRC)/etc)
+LinkSourceFile(kbd_mode.man,$(XF86SRC)/etc)
+LinkSourceFile(preinst.sh,$(XF86SRC)/etc)
+LinkSourceFile(postinst.sh,$(XF86SRC)/etc)
+LinkSourceFile(scanpci.c,$(XF86SRC)/etc)
+LinkSourceFile(sun.tcap,$(XF86SRC)/etc)
+LinkSourceFile(sun.tinfo,$(XF86SRC)/etc)
+LinkSourceFile(vga.bdf,$(XF86SRC)/etc)
+LinkSourceFile(xmodmap.std,$(XF86SRC)/etc)
+
+LinkFile(sun.termcap,sun.tcap)
+LinkFile(sun.terminfo,sun.tinfo)
+
+NormalLibraryObjectRule()
+DependTarget()
+

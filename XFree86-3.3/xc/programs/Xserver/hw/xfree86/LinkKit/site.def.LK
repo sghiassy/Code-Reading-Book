@@ -1,0 +1,295 @@
+XCOMM $XConsortium: site.def.LK /main/12 1996/10/28 04:23:14 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/LinkKit/site.def.LK,v 3.25.2.3 1997/05/17 12:25:09 dawes Exp $
+
+/* Configuration file for Server Link Kit */
+
+/*
+ * Change these definitions if you need to override the defaults:
+ */
+
+/*
+ * HasGcc: defaults:
+ *		SVR3,4:		YES
+ *		Mach, *BSD:	YES
+ */
+/* #define HasGcc 		NO */
+
+/*
+ * HasGcc2: (should also set HasGcc)
+ *	    defaults:
+ *		SVR3,4:		YES
+ *		Mach, *BSD:	YES
+ */
+/* #define HasGcc2		NO */
+
+/*
+ * The default optimization flags for GCC 2.x.  -fno-strength-reduce is here to
+ * work around a bug in -O2 for GCC 2.x on i86 platforms.  If you are using a
+ * version that doesn't have this bug, you can uncomment the following and
+ * remove '-fno-strength-reduce'.
+ *
+#define DefaultGcc2i386Opt	-O2 -fno-strength-reduce
+ */
+
+/*
+ * Uncomment this if your default tools (eg, gcc, ld, as, etc) are
+ * not the Linux ELF versions.
+ *
+#define LinuxElfDefault		NO
+ */
+
+/*
+ * To use ELF format shared libraries for Linux, uncomment this.
+ * Note: gcc-2.6.0-941008 and gas-941008 (or later) is required for this.
+ * Check linux.cf if you have problems regarding the location of elf-aware
+ * gcc and gas binaries.
+ *
+ * The default setting of this is the same as the setting of LinuxElfDefault
+ *
+#define UseElfFormat		YES
+ */
+
+/*
+ * For Linux, this should match the binutils version you are using.  This
+ * example is for 2.6.0.7.  See linux.cf for the default setting.
+ *
+#define BinUtilsVersion		2607
+ */
+
+/*
+ * If the LinkKit you are using was built with gcc2, and you are using
+ * a different compiler:
+ *   1. Install libgcc.a in a directory searched by your 'ld'
+ *   2. Set NeedLibGcc to YES
+ */
+#define NeedLibGcc		NO
+
+/*
+ * If you want to use the GNU malloc library, uncomment this
+ *
+#define UseGnuMalloc		YES
+ */
+
+/*
+ * Set this to whatever is required to access the GNU malloc library.
+ * The default is '-lgmalloc'.
+ *
+#define GnuMallocLibrary	-L/usr/local/lib -lgmalloc
+ */
+
+/*
+ * Server configuration parameters
+ */
+
+/* The SVGA colour server */
+#define XF86SVGAServer		YES
+
+/* The 16-colour VGA server */
+#define XF86VGA16Server		YES
+
+/* Dual headed 16-colour VGA + mono server */
+#define XF86VGA16DualServer	YES
+
+/* The VGA mono server */
+#define XF86MonoServer		YES
+
+/* Dual headed VGA mono server */
+#define XF86MonoDualServer	YES
+
+/* The S3 servers */
+#define XF86S3Server		YES
+#define XF86S3VServer		YES
+
+/* The IBM 8514/A server */
+#define XF86I8514Server		YES
+
+/* The Mach8 server */
+#define XF86Mach8Server		YES
+
+/* The Mach32 server */
+#define XF86Mach32Server	YES
+
+/* The Mach64 server */
+#define XF86Mach64Server	YES
+
+/* The P9000 server */
+#define XF86P9000Server		YES
+
+/* The AGX server */
+#define XF86AGXServer		YES
+
+/* The W32 server */
+#define XF86W32Server		YES
+
+/* The I128 server */
+#define XF86I128Server		YES
+
+/* The TGA server */
+#define XF86TGAServer		NO
+
+/* The Linux/m68k Frame Buffer Device server */
+#define XF68FBDevServer		NO
+
+/*
+ * PC98 X servers
+ *
+#define XF98EGCServer		YES
+#define XF98GANBWAPServer	YES
+#define XF98NEC480Server	YES
+#define XF98NKVNECServer	YES
+#define XF98WABSServer		YES
+#define XF98WABEPServer		YES
+#define XF98WSNAServer		YES
+#define XF98TGUIServer		YES
+#define XF98NECS3Server		YES
+#define XF98PWSKBServer		YES
+#define XF98PWLBServer		YES
+#define XF98GA968Server		YES
+ */
+
+/* Xnest server */
+#define XnestServer		YES
+
+/*
+ * Set the default server (ie the one that gets the sym-link to "X")
+ *
+#define ServerToInstall	XF86_S3
+ */
+
+#define XF86SvgaDrivers		nv et4000 et3000 pvga1 gvga ati sis tvga8900 \
+				cirrus ncr77c22 mga oak al2101 ali cl64xx \
+				video7 chips ark mx realtek apm generic
+
+#define XF86Vga16Drivers	/*et4000*/ et3000 ncr77c22 ati sis tvga8900 oak \
+				cl64xx generic 
+
+#define XF86Vga2Drivers		/*et4000*/ et3000 pvga1 gvga ati sis tvga8900 \
+				/*cirrus*/ ncr77c22 oak cl64xx generic
+
+#define XF86MonoDrivers		hgc1280 sigma apollo hercules
+
+#define XF86W32Drivers		et4000w32
+
+/*
+ * If you only run the X server under xdm the X servers don't need to be
+ * installed SetUID, and you may comment out the lines below.  If you run
+ * the servers by hand (with xinit or startx), then they do need to be
+ * installed SetUID on most OSs.
+ * Consult your system administrator before making the X server setuid.
+ */
+#if !defined(i386MachArchitecture) && !defined(OS2Architecture)
+#define InstallXserverSetUID	YES
+#endif
+
+/*
+ * X Extensions support
+ */
+
+/*
+ * If you want to load PEX and XIE as modules set the following to YES 
+ * Don't forget to also set BuildPexExt and BuildXieExt to YES below
+ */
+#define ExtensionsDynamicModules      NO
+
+/*
+ * If you want PEX (and this LinkKit was built with PEX support), set
+ * the following to YES
+ */
+#define BuildPexExt		NO
+
+/*
+ * If you want XIE, set the following to YES
+ */
+#define BuildXIE		NO
+
+/*
+ * If you want GLX, set the following to YES
+ */
+#define BuildGlxExt		NO
+
+/*
+ * If you don't want DBE, uncomment the following
+ *
+#define BuildDBE		NO
+ */
+
+/*
+ * If you don't want the RECORD extension, uncomment the following
+ *
+#define BuildRECORD		NO
+ */
+
+/*
+ * If you don't want the ScreenSaver extension (and this LinkKit was
+ * built with support for it), set the following to NO
+ */
+#define BuildScreenSaverExt	YES
+
+/*
+ * If you don't want the VidMode extension (and this LinkKit was built
+ * with support for it), uncomment the following
+ *
+#define BuildXF86VidModeExt	NO
+ */
+
+/*
+ * If you don't want the XFree86 Miscellaneous extension (and this
+ * LinkKit was built with support for it), uncomment the following
+ *
+#define BuildXF86MiscExt	NO
+ */
+
+/*
+ * If you want the Multibuffer extension (and this LinkKit was built
+ * with support for it), uncomment the following
+ *
+#define BuildMultibuffer	YES
+ */
+
+/*
+ * If you don't want the MIT Miscellaneous extension, uncomment the following
+ *
+#define BuildMITMiscExt		NO
+ */
+
+/*
+ * If you don't want the XTEST extension, uncomment the following
+ *
+#define BuildTestExt		NO
+ */
+
+/*
+ * If you don't want the XSYNC entension (and this LinkKit was built
+ * with support for it), uncomment the following
+ *
+#define BuildSyncExt		NO
+ */
+
+/*
+ * If you don't want the XC Miscellaneous extension, uncomment the following
+ *
+#define BuildXCMiscExt		NO
+ */
+
+/*
+ * If you don't want the BIGREQS extension (and this LinkKit was built
+ * with support for it), uncomment the following
+ *
+#define BuildBigReqsExt		NO
+ */
+
+/*
+ * If you don't want the Shape extension (and this LinkKit was built 
+ * with support for it), uncomment the following
+ *
+#define BuildShapeExt		NO
+ */
+
+/* If you are using a different ProjectRoot, set it here */
+
+#define ProjectRoot /usr/X11R6

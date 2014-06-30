@@ -1,0 +1,360 @@
+.TH ACE_WFMO_Reactor_Handler_Repository 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WFMO_Reactor_Handler_Repository \- Used to map s onto the appropriate  * and other information. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <WFMO_Reactor.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WFMO_Reactor_Handler_Repository\fR (\fBACE_WFMO_Reactor\fR &wfmo_reactor)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_WFMO_Reactor_Handler_Repository\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (size_t size)"
+.br
+.RI "\fIInitialize the repository of the approriate <size>.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the handler repository.\fR"
+.ti -1c
+.RI "int \fBbind\fR (ACE_HANDLE, \fBACE_Event_Handler\fR *)"
+.br
+.RI "\fIBind the  to the . This is for the simple event entry.\fR"
+.ti -1c
+.RI "int \fBbind_i\fR (int io_entry, \fBACE_Event_Handler\fR *event_handler, long network_events, ACE_HANDLE io_handle, ACE_HANDLE event_handle, int delete_event)"
+.br
+.RI "\fIInsert I/O <Event_Handler> entry into the system. This method assumes that the lock are head *before* this method is invoked.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (ACE_HANDLE, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRemove the binding of  in accordance with the <mask>.\fR"
+.ti -1c
+.RI "int \fBunbind_i\fR (ACE_HANDLE, \fBACE_Reactor_Mask\fR mask, int &changes_required)"
+.br
+.RI "\fINon-lock-grabbing version of <unbind>.\fR"
+.ti -1c
+.RI "void \fBunbind_all\fR (void)"
+.br
+.RI "\fIRemove all bindings of  tuples.\fR"
+.ti -1c
+.RI "int \fBinvalid_handle\fR (ACE_HANDLE handle) const"
+.br
+.ti -1c
+.RI "size_t \fBmax_handlep1\fR (void) const"
+.br
+.RI "\fIMaximum ACE_HANDLE value, plus 1.\fR"
+.ti -1c
+.RI "ACE_HANDLE* \fBhandles\fR (void) const"
+.br
+.RI "\fIPointer to the beginning of the current array of  *'s.\fR"
+.ti -1c
+.RI "\fBCurrent_Info\fR* \fBcurrent_info\fR (void) const"
+.br
+.RI "\fIPointer to the beginning of the current array of  *'s.\fR"
+.ti -1c
+.RI "virtual int \fBchanges_required\fR (void)"
+.br
+.RI "\fICheck if changes to the handle set are required.\fR"
+.ti -1c
+.RI "virtual int \fBmake_changes\fR (void)"
+.br
+.RI "\fIMake changes to the handle set.\fR"
+.ti -1c
+.RI "int \fBscheduled_for_deletion\fR (size_t slot) const"
+.br
+.RI "\fICheck to see if <slot> has been scheduled for deletion.\fR"
+.ti -1c
+.RI "int \fBmodify_network_events_i\fR (ACE_HANDLE io_handle, \fBACE_Reactor_Mask\fR new_masks, \fBACE_Reactor_Mask\fR &old_masks, long &new_network_events, ACE_HANDLE &event_handle, int &delete_event, int operation)"
+.br
+.ti -1c
+.RI "\fBACE_Reactor_Mask\fR \fBbit_ops\fR (long &existing_masks, \fBACE_Reactor_Mask\fR to_be_removed_masks, int operation)"
+.br
+.RI "\fIThis method is used to change the network mask left (if any) after a remove request to <WFMO_Reactor>.\fR"
+.ti -1c
+.RI "int \fBsuspend_handler_i\fR (ACE_HANDLE handle, int &changes_required)"
+.br
+.RI "\fITemporarily suspend entry.\fR"
+.ti -1c
+.RI "int \fBresume_handler_i\fR (ACE_HANDLE handle, int &changes_required)"
+.br
+.RI "\fIResume suspended entry.\fR"
+.ti -1c
+.RI "int \fBmake_changes_in_current_infos\fR (void)"
+.br
+.RI "\fIDeletions and suspensions in current_info_.\fR"
+.ti -1c
+.RI "int \fBmake_changes_in_suspension_infos\fR (void)"
+.br
+.RI "\fIDeletions and resumptions in current_suspended_info_.\fR"
+.ti -1c
+.RI "int \fBmake_changes_in_to_be_added_infos\fR (void)"
+.br
+.RI "\fIDeletions in to_be_added_info_, or transfers to current_info_ or current_suspended_info_ from to_be_added_info_.\fR"
+.ti -1c
+.RI "int \fBremove_handler_i\fR (size_t slot, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRemoves the  at <slot> from the table.\fR"
+.ti -1c
+.RI "int \fBremove_suspended_handler_i\fR (size_t slot, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRemoves the  at <slot> from the table.\fR"
+.ti -1c
+.RI "int \fBremove_to_be_added_handler_i\fR (size_t slot, \fBACE_Reactor_Mask\fR to_be_removed_masks)"
+.br
+.RI "\fIRemoves the  at <slot> from the table.\fR"
+.ti -1c
+.RI "int \fBhandler\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Event_Handler\fR **event_handler = 0)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WFMO_Reactor\fR& \fBwfmo_reactor_\fR"
+.br
+.RI "\fIReference to our <WFMO_Reactor>.\fR"
+.ti -1c
+.RI "size_t \fBmax_size_\fR"
+.br
+.RI "\fIMaximum number of handles.\fR"
+.ti -1c
+.RI "ACE_HANDLE* \fBcurrent_handles_\fR"
+.br
+.ti -1c
+.RI "\fBCurrent_Info\fR* \fBcurrent_info_\fR"
+.br
+.RI "\fIArray of current entries in the table.\fR"
+.ti -1c
+.RI "size_t \fBmax_handlep1_\fR"
+.br
+.RI "\fIA count of the number of active handles.\fR"
+.ti -1c
+.RI "\fBTo_Be_Added_Info\fR* \fBto_be_added_info_\fR"
+.br
+.RI "\fIInformation for entries to be added.\fR"
+.ti -1c
+.RI "size_t \fBhandles_to_be_added_\fR"
+.br
+.RI "\fINumber of records to be added.\fR"
+.ti -1c
+.RI "\fBSuspended_Info\fR* \fBcurrent_suspended_info_\fR"
+.br
+.RI "\fICurrently suspended handles.\fR"
+.ti -1c
+.RI "size_t \fBsuspended_handles_\fR"
+.br
+.RI "\fINumber of currently suspended handles.\fR"
+.ti -1c
+.RI "size_t \fBhandles_to_be_suspended_\fR"
+.br
+.RI "\fINumber of records to be suspended.\fR"
+.ti -1c
+.RI "size_t \fBhandles_to_be_resumed_\fR"
+.br
+.RI "\fINumber of records to be resumed.\fR"
+.ti -1c
+.RI "size_t \fBhandles_to_be_deleted_\fR"
+.br
+.RI "\fINumber of records to be deleted.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_WFMO_Reactor\fR"
+.br
+.ti -1c
+.RI "class \fBACE_WFMO_Reactor_Test\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Used to map s onto the appropriate  * and other information.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WFMO_Reactor_Handler_Repository::ACE_WFMO_Reactor_Handler_Repository (\fBACE_WFMO_Reactor\fR & wfmo_reactor)
+.PP
+Constructor.
+.PP
+.SS ACE_WFMO_Reactor_Handler_Repository::~ACE_WFMO_Reactor_Handler_Repository (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_WFMO_Reactor_Handler_Repository::bind (ACE_HANDLE, \fBACE_Event_Handler\fR *)
+.PP
+Bind the  to the . This is for the simple event entry.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::bind_i (int io_entry, \fBACE_Event_Handler\fR * event_handler, long network_events, ACE_HANDLE io_handle, ACE_HANDLE event_handle, int delete_event)
+.PP
+Insert I/O <Event_Handler> entry into the system. This method assumes that the lock are head *before* this method is invoked.
+.PP
+.SS \fBACE_Reactor_Mask\fR ACE_WFMO_Reactor_Handler_Repository::bit_ops (long & existing_masks, \fBACE_Reactor_Mask\fR to_be_removed_masks, int operation)
+.PP
+This method is used to change the network mask left (if any) after a remove request to <WFMO_Reactor>.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::changes_required (void)\fC [virtual]\fR
+.PP
+Check if changes to the handle set are required.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::close (void)
+.PP
+Close down the handler repository.
+.PP
+.SS \fBCurrent_Info\fR * ACE_WFMO_Reactor_Handler_Repository::current_info (void) const
+.PP
+Pointer to the beginning of the current array of  *'s.
+.PP
+.SS void ACE_WFMO_Reactor_Handler_Repository::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::handler (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Event_Handler\fR ** event_handler = 0)
+.PP
+Check to see if <handle> is associated with a valid Event_Handler bound to <mask>. Return the <event_handler> associated with this <handler> if <event_handler> != 0. 
+.SS ACE_HANDLE * ACE_WFMO_Reactor_Handler_Repository::handles (void) const
+.PP
+Pointer to the beginning of the current array of  *'s.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::invalid_handle (ACE_HANDLE handle) const
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::make_changes (void)\fC [virtual]\fR
+.PP
+Make changes to the handle set.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::make_changes_in_current_infos (void)
+.PP
+Deletions and suspensions in current_info_.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::make_changes_in_suspension_infos (void)
+.PP
+Deletions and resumptions in current_suspended_info_.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::make_changes_in_to_be_added_infos (void)
+.PP
+Deletions in to_be_added_info_, or transfers to current_info_ or current_suspended_info_ from to_be_added_info_.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::max_handlep1 (void) const
+.PP
+Maximum ACE_HANDLE value, plus 1.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::modify_network_events_i (ACE_HANDLE io_handle, \fBACE_Reactor_Mask\fR new_masks, \fBACE_Reactor_Mask\fR & old_masks, long & new_network_events, ACE_HANDLE & event_handle, int & delete_event, int operation)
+.PP
+This method is used to calculate the network mask after a mask_op request to <WFMO_Reactor>. Note that because the <Event_Handler> may already be in the handler repository, we may have to find the old event and the old network events 
+.SS int ACE_WFMO_Reactor_Handler_Repository::open (size_t size)
+.PP
+Initialize the repository of the approriate <size>.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::remove_handler_i (size_t slot, \fBACE_Reactor_Mask\fR mask)
+.PP
+Removes the  at <slot> from the table.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::remove_suspended_handler_i (size_t slot, \fBACE_Reactor_Mask\fR mask)
+.PP
+Removes the  at <slot> from the table.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::remove_to_be_added_handler_i (size_t slot, \fBACE_Reactor_Mask\fR to_be_removed_masks)
+.PP
+Removes the  at <slot> from the table.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::resume_handler_i (ACE_HANDLE handle, int & changes_required)
+.PP
+Resume suspended entry.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::scheduled_for_deletion (size_t slot) const
+.PP
+Check to see if <slot> has been scheduled for deletion.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::suspend_handler_i (ACE_HANDLE handle, int & changes_required)
+.PP
+Temporarily suspend entry.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::unbind (ACE_HANDLE, \fBACE_Reactor_Mask\fR mask)
+.PP
+Remove the binding of  in accordance with the <mask>.
+.PP
+.SS void ACE_WFMO_Reactor_Handler_Repository::unbind_all (void)
+.PP
+Remove all bindings of  tuples.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::unbind_i (ACE_HANDLE, \fBACE_Reactor_Mask\fR mask, int & changes_required)
+.PP
+Non-lock-grabbing version of <unbind>.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_WFMO_Reactor\fC [friend]\fR
+.PP
+.SS class ACE_WFMO_Reactor_Test\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_HANDLE * ACE_WFMO_Reactor_Handler_Repository::current_handles_\fC [protected]\fR
+.PP
+Array of  passed to <WaitForMultipleObjects>. This is not part of the structure as the handle array needs to be passed directly to <WaitForMultipleObjects>. 
+.SS \fBCurrent_Info\fR * ACE_WFMO_Reactor_Handler_Repository::current_info_\fC [protected]\fR
+.PP
+Array of current entries in the table.
+.PP
+.SS \fBSuspended_Info\fR * ACE_WFMO_Reactor_Handler_Repository::current_suspended_info_\fC [protected]\fR
+.PP
+Currently suspended handles.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::handles_to_be_added_\fC [protected]\fR
+.PP
+Number of records to be added.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::handles_to_be_deleted_\fC [protected]\fR
+.PP
+Number of records to be deleted.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::handles_to_be_resumed_\fC [protected]\fR
+.PP
+Number of records to be resumed.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::handles_to_be_suspended_\fC [protected]\fR
+.PP
+Number of records to be suspended.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::max_handlep1_\fC [protected]\fR
+.PP
+A count of the number of active handles.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::max_size_\fC [protected]\fR
+.PP
+Maximum number of handles.
+.PP
+.SS size_t ACE_WFMO_Reactor_Handler_Repository::suspended_handles_\fC [protected]\fR
+.PP
+Number of currently suspended handles.
+.PP
+.SS \fBTo_Be_Added_Info\fR * ACE_WFMO_Reactor_Handler_Repository::to_be_added_info_\fC [protected]\fR
+.PP
+Information for entries to be added.
+.PP
+.SS \fBACE_WFMO_Reactor\fR & ACE_WFMO_Reactor_Handler_Repository::wfmo_reactor_\fC [protected]\fR
+.PP
+Reference to our <WFMO_Reactor>.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

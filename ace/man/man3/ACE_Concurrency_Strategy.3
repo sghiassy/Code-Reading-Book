@@ -1,0 +1,91 @@
+.TH ACE_Concurrency_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Concurrency_Strategy \- Defines the interface for specifying a concurrency strategy for a SVC_HANDLER. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Strategies_T.h>\fR
+.PP
+Inherited by \fBACE_NOOP_Concurrency_Strategy\fR, \fBACE_Process_Strategy\fR, \fBACE_Reactive_Strategy\fR, and \fBACE_Thread_Strategy\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Concurrency_Strategy\fR (int flags = 0)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual int \fBactivate_svc_handler\fR (SVC_HANDLER *svc_handler, void *arg = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Concurrency_Strategy\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBflags_\fR"
+.br
+.RI "\fIFlags that are parsed to set options for the connected <SVC_HANDLER>.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER>  template class ACE_Concurrency_Strategy
+Defines the interface for specifying a concurrency strategy for a SVC_HANDLER.
+.PP
+.PP
+ Default behavior is to activate the SVC_HANDLER by calling its <open> method (which allows the SVC_HANDLER to define its own concurrency strategy). However, subclasses can override this default strategy to do more sophisticated concurrency activations (such as creating the SVC_HANDLER as an active object via multi-threading or multi-processing). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_Concurrency_Strategy<SVC_HANDLER>::ACE_Concurrency_Strategy<SVC_HANDLER> (int flags = 0)
+.PP
+Constructor.
+.PP
+.SS template<classSVC_HANDLER> virtual ACE_Concurrency_Strategy<SVC_HANDLER>::~ACE_Concurrency_Strategy<SVC_HANDLER> (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> int ACE_Concurrency_Strategy<SVC_HANDLER>::activate_svc_handler (SVC_HANDLER * svc_handler, void * arg = 0)\fC [virtual]\fR
+.PP
+Activate the <svc_handler> with an appropriate concurrency strategy. The default behavior of this method is to activate the SVC_HANDLER by calling its <open> method (which allows the SVC_HANDLER to define its own concurrency strategy). 
+.PP
+Reimplemented in \fBACE_Reactive_Strategy\fR, \fBACE_Thread_Strategy\fR, \fBACE_Process_Strategy\fR, and \fBACE_NOOP_Concurrency_Strategy\fR.
+.SS template<classSVC_HANDLER> void ACE_Concurrency_Strategy<SVC_HANDLER>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Reactive_Strategy\fR, \fBACE_Thread_Strategy\fR, and \fBACE_Process_Strategy\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_Concurrency_Strategy<SVC_HANDLER>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_Reactive_Strategy\fR, \fBACE_Thread_Strategy\fR, and \fBACE_Process_Strategy\fR.
+.SS template<classSVC_HANDLER> int ACE_Concurrency_Strategy<SVC_HANDLER>::flags_\fC [protected]\fR
+.PP
+Flags that are parsed to set options for the connected <SVC_HANDLER>.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

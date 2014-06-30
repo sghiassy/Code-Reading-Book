@@ -1,0 +1,30 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/sco/Imakefile,v 3.1 1996/12/23 06:50:47 dawes Exp $
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/4 1996/09/28 17:24:25 rws $
+
+#include <Server.tmpl>
+
+SRCS = sco_init.c sco_video.c sco_io.c bios_devmem.c mapVT_noop.c VTsw_sco.c \
+       sysv_kbd.c std_kbdEv.c sysv_tty.c std_mseEv.c sco_mouse.c
+
+OBJS = sco_init.o sco_video.o sco_io.o bios_devmem.o mapVT_noop.o VTsw_sco.o \
+       sysv_kbd.o std_kbdEv.o sysv_tty.o std_mseEv.o sco_mouse.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+
+ObjectFromSpecialSource(bios_devmem,../shared/bios_devmem,/**/)
+ObjectFromSpecialSource(mapVT_noop,../shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(sysv_kbd,../shared/sysv_kbd,/**/)
+ObjectFromSpecialSource(std_kbdEv,../shared/std_kbdEv,/**/)
+ObjectFromSpecialSource(sysv_tty,../shared/sysv_tty,/**/)
+ObjectFromSpecialSource(std_mseEv,../shared/std_mseEv,/**/)
+
+DependTarget()
+

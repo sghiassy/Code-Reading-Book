@@ -1,0 +1,45 @@
+XCOMM $XConsortium: Imakefile /main/9 1996/09/28 17:12:28 rws $
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS=ngle input
+
+SRCS = \
+	ddx_info.c \
+	hpCursorUtils.c \
+	hpInit.c
+	
+OBJS = \
+	ddx_info.o \
+	hpCursorUtils.o \
+	hpInit.o \
+    	ngle/ngle.o \
+	input/libhp.a
+
+LOBJS = \
+	ddx_info.ln \
+	hpCursorUtils.ln \
+	hpInit.ln
+
+DEFINES = $(ANSI_DEFINES) -DOSMAJORVERSION=OSMajorVersion
+
+LIB_DEFINES = -DLIBDIR=\"$(LIBDIR)\"
+
+INCLUDES = -I. -I./include -I./input -I../../mfb -I../../cfb -I../../mi \
+	-I../../include -I$(XINCLUDESRC) -I$(EXTINCSRC) -I$(FONTINCSRC) 
+
+LINTLIBS = ../../dix/llib-ldix.ln ../../os/4.2bsd/llib-los.ln \
+	../mfb/llib-lmfb.ln ../mi/llib-lmi.ln ../cfb/llib-lcfb.ln
+
+all::
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+
+NormalLibraryObjectRule()
+NormalRelocatableTarget(hp,$(OBJS))
+SpecialCObjectRule(hpInit,$(ICONFIGFILES),$(LIB_DEFINES))
+DependTarget()
+InstallManPage(Xhp,$(MANDIR))
+

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document> 
+  <header> 
+	 <title>Overview of Apache Cocoon</title>
+	 <version>0.2</version> 
+	 <type>Overview document</type> 
+	 <authors><person name="Tom Klaasen" email="tom.klaasen@the-ecorp.com"/> 
+	 </authors> 
+  </header> 
+  <body> 
+	 <s1 title="What is Apache Cocoon"> 
+		<p>Cocoon is an XML publishing framework. It allows you to define XML
+		  documents and transformations to be applied on it, to eventually generate a
+		  presentation format of your choice (HTML, PDF, SVG, ...).</p> 
+		<p>Cocoon also gives you the possibility to apply logic to your XML files
+		  (so that the XML pipeline can be dynamic).</p> 
+
+    <p>The <link href="userdocs/index.html">User documentation</link>
+     and especially <link href="userdocs/concepts/index.html">Concepts</link>
+     will help to understand Cocoon.
+    </p>
+   </s1> 
+
+   <anchor id="samples"/>
+   <s1 title="Examples and demonstration applications"> 
+    <p>
+     There are a whole suite of sample applications to demonstrate the power
+     of Cocoon. These samples are available from the "welcome" page after
+     you have downloaded, built, and installed the distribution.
+     Each example portrays a different aspect of the vast capabilities of
+     Cocoon.
+    </p>
+
+    <p>
+     It will greatly assist your understanding of Cocoon to investigate
+     behind-the-scenes, to find out how each sample is processed. Do this
+     by looking at the actual XML documents provided in the distribution at
+     <code>webapp/docs/samples/</code> and by consulting the sitemap to see
+     the processing steps that are defined.
+    </p>
+   </s1> 
+
+   <s1 title="Overview of XML document processing"> 
+    <p>This section gives a general overview of how an XML document is
+     handled by Cocoon. See also the document
+     <link href="userdocs/concepts/index.html">Understanding Cocoon</link> for explanation of
+     the separation of content, style, logic and management functions.
+    </p> 
+
+		<s2 title="Pipeline"> 
+		  <p>Cocoon relies on the pipeline model: an XML document is pushed
+			 through a pipeline, that exists in several transformation steps of your
+			 document. Every pipeline begins with a generator, continues with zero or more
+			 transformers, and ends with a serializer. This can be compared to the
+			 "servlet-chaining" concept of a servlet engine. We'll explain the components of
+			 the pipeline now in more detail.</p> 
+		  <s3 title="Generator"> 
+			 <p>The Generator is the starting point for the pipeline. It is
+				responsible for delivering SAX events down the pipeline.</p> 
+			 <p>The simplest Generator is the FileGenerator: it takes a local XML
+				document, parses it, and sends the SAX events down the pipeline. </p> 
+			 <p>The Generator is constructed to be independent of the concept
+				"file". If you are able to generate SAX events from another source, you can use
+				that without having to go via a temporary file.</p> 
+		  </s3> 
+		  <s3 title="Transformer"> 
+			 <p>A Transformer can be compared to an XSL: it gets an XML document
+				(or SAX events), and generates another XML document (or SAX events).</p> 
+			 <p>The simplest Transformer is the XalanTransformer: it applies an
+				XSL to the SAX events it receives.</p> 
+		  </s3> 
+		  <s3 title="Serializer"> 
+			 <p>A Serializer is responsible for transforming SAX events to a
+				presentation format. For actors looking at the back of the pipeline, it looks
+				like a static file is delivered. So a browser can receive HTML, and will not be
+				able to tell the difference with a static file on the filesystem of the server.
+				</p> 
+			 <p>We have Serializers for generating HTML, XML, PDF, VRML, WAP, and
+				of course you can create your own.</p> 
+			 <p>The simplest Serializer is the XMLSerializer: it receives the SAX
+				events from up the pipeline, and returns a "human-readable" XML file.</p> 
+		  </s3> 
+		</s2> 
+	 </s1> 
+  </body>
+</document>

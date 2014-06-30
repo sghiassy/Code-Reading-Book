@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+  <header>
+	 <title>Caching</title>
+	 <version>0.9</version>
+	 <type>Technical document</type>
+	 <authors><person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+	 </authors>
+	 <abstract>This document explains the basic caching algorithm of Apache Cocoon.</abstract>
+  </header>
+  <body>
+	 <s1 title="Goal">
+		<p>This document explains the basic caching algorithm of Apache Cocoon.</p>
+	 </s1>
+	 <s1 title="Overview">
+		<p>The caching algorithm of Cocoon has a very flexible and powerful design.
+               The algorithms and components used are not hardcoded into the core of 
+               Cocoon. They can be configured using Avalon components.</p>
+            <p>This document describes the components available for caching,
+               how they can be configured and how to implement your own cacheable components.
+            </p>
+	 </s1>
+	 <s1 title="Caching of event pipelines">
+		<p>The algorithm used for caching depends on the event pipeline configured. 
+               For more information about configuration see the chapter below.</p>
+            <p>The following subchapters describe the available caching algorithms.</p>
+		<s2 title="The CachingEventPipeline">
+			<p>The CachingEventPipelineuses a very easy but effective approach
+                     to cache the event pipelines of a request: The pipeline process
+                     is cached up to the most possible point.</p>
+                  <p>Each sitemap component (generator or transformer) which might be
+                     cacheable must implement the Cacheable interface. When the
+                     event pipeline is processed each sitemap component starting with
+                     the generator is asked if it implements this interface. This
+                     test stops either when the first component does not implement
+                     the Cacheable interface or when the first cacheable component is
+                     currently not cacheable for any reasons (more about this in a moment).</p>
+			<p>The Cacheable interface declares a method <code>generateKey()</code>
+                     which must produce a unique key for this sitemap component inside
+                     the component space. For example the FileGenerator generates a hash
+                     of the source argument (the xml document read). All parameters/values
+                     which are used for the processing of the request by the generator must
+                     be used for this key. If, e.g. the request parameters are used by
+                     the component, it must build a key with respect to the current request
+                     parameters.</p>
+			<p>If for any reason the sitemap component detects that the current request
+                     is not cacheable it can simply return <code>0</code> as the key. This has
+                     the same effect as not declaring the Cacheable interface.</p>
+			<p>Now after the key is build for this particular request, it is looked up
+                     in the cache if it exists. If not, the new request is generated and cached
+                     for further requests.</p>
+                  <p>If a cached response is found for the key, the caching algorithm checks
+                     if this response is still valid. For this check each cacheable component
+                     returns a validity object when the method <code>generateValidity</code>
+                     is invoked. (If a cacheable component returns <code>null</code> it
+                     is temporarily not cacheable, like returning <code>0</code> for the key.)</p>
+                  <p>A <code>CacheValidity</code> object contains all information the component
+                     needs to verify if the cached content is still valid. For example the
+                     file generator stores the last modification date of the xml document parsed
+                     in the validity object.</p>
+                  <p>When a response is cached all validity objects are stored together with
+                     the cached response in the cache. Actually the <code>CachedEventObject</code>
+                     is stored which encapsulates all this information.</p>
+                  <p>When a new response is generated and the key is build, the caching
+                     algorithm also collects all uptodate cache validity objects. So if the
+                     cached response is found in the cache these validity objects are compared.
+                     If they are valid (or equal) the cached response is used and feed into
+                     the pipeline. If they are not valid any more the cached response is removed
+                     from the cache, the new response is generated and then stored together with
+                     the new validity objects in the cache.</p>
+			<s3 title="Examples">
+				<p>If you have the following pipeline:</p>
+                        <p>Generator[type=file|src=a.xml] -> Transformer[type="xslt"|src=a.xsl] -> Serializer</p>
+				<p>The file generator is cacheable and generates a key which hashes the src 
+         			   (or the filename) to build the key. The cache
+                           validity object uses the last modification date of the xml file.</p>
+				<p>The xslt transformer is cacheable and generates a key which hashes
+                           the filename to build the unique key. The cache validity object
+                           uses the last modification date of the xml file.</p>
+				<p>Both keys are used to build a unique key for this pipeline,
+                           the first time it is invoked its response is cached. The second time
+                           this pipeline is called, the cached content is get from the cache.
+                           If it is still valid, the cached content is directly feed into
+                           the serializer.</p>
+				<p>Only part of the following pipeline is cached:</p>
+                        <p>Generator[type=file|src=a.xml] -> Transformer[type="xslt"|src=a.xsl] -> Transformer[type=sql] -> Transformer[type="xslt"|src=b.xsl] -> Serializer</p>
+				<p>The file generator is cacheable and generates a key which hashes the src 
+         			   (or the filename) to build the key. The cache
+                           validity object uses the last modification date of the xml file.</p>
+				<p>The xslt transformer is cacheable and generates a key which hashes
+                           the filename to build the unique key. The cache validity object
+                           uses the last modification date of the xml file.</p>
+				<p>The sql transformer is not cacheable, so the caching algorithm stops
+ 				   at this point although the last transformer is cacheable.</p>
+				<p>So the cached response is absolutely the same as in the first example
+                           and therefore the unique key build from the two keys (from the
+                           generator and the first transformer) is the same as in the first example.
+				   The only difference is when the cached response is used. It is not
+                           feed into the serializer but into the sql transformer.</p>
+			</s3>
+		</s2>
+		<s2 title="The XMLSerializer/XMLDeserializer">
+			<p>The caching of the sax events is implemented by two Avalon components: 
+                     The XMLSerializer and the XMLDeserializer. The XMLSerializer gets
+                     sax events and creates an object which is used by the XMLDeserializer
+                     to recreate these sax events.</p>
+			<s3 title="org.apache.cocoon.components.sax.XMLByteStreamCompiler">
+			      <p>The <code>XMLByteStreamCompiler</code>compiles sax events into a byte stream.</p>
+			</s3>
+			<s3 title="org.apache.cocoon.components.sax.XMLByteStreamInterpreter">
+				<p>The <code>XMLByteStreamInterpreter</code> is the counterpart of the 
+				   <code>XMLByteStreamCompiler</code>. It interprets the byte
+                           stream and creates sax events.</p>
+			</s3>
+		</s2>
+            <s2 title="The Event Cache">
+			<p>The event cache contains the cached event pipelines (or the
+                     <code>CachedEventObject</code>). It is another Avalon component which 
+                     can be configured. It is possible to use the memory as a cache, 
+                     or the file system or a combination of both etc. This depends on 
+                     the used/configured event cache.
+                  </p>
+		</s2>
+	 </s1>
+	 <s1 title="Caching of stream pipelines">
+		<p>The algorithm used for caching depends on the configured stream pipeline. 
+               For more information about configuration see the chapter below.</p>
+            <p>The following subchapters describe the available caching algorithms.</p>
+		<s2 title="The CachingStreamPipeline">
+			<p>The <code>CachingStreamPipeline</code> uses a very easy but effective approach
+                     to cache the stream pipelines of a request: If the underlying
+                     event stream and the serializer is cacheable the request is cached.
+                     If a reader is used instead and it is cacheable, the response
+                     is cached, too.</p>
+			<p>An event pipeline is cacheable if it implements the <code>CacheableEventPipeline</code>
+                     interface. It generates a unique key for this event pipeline
+                     and delivers the cache validity objects. The current CachingEventPipeline
+                     for example is cacheable if all sitemap components are cacheable,
+                     this includes the generator and all transformers. The generated key
+                     is build upon the returned keys of the sitemap components and
+                     the validity objects are the collected validity objects from the 
+                     sitemap components. If the response is cacheable the <code>CachingStreamPipeline</code>
+                     informs the <code>CacheableEventPipeline</code> by calling the
+                     method <code>setStreamPipelineCaches</code>. The event pipeline
+                     can now decide if it also wants to cache the response thus nearly
+                     duplicating the cached contents.</p>
+			<p>A serializer is cacheable if it implements the <code>Cacheable</code> interface.
+                     In the case of a serializer the implementation is in most cases very
+                     simple as a serializer often has no other input than the sax events. In
+                     this case the key for this serializer can be a simple constant value
+                     and the validity object is the <code>NOPCacheValidity</code>.</p>
+                  <p>A reader is cacheable if it implements the <code>Cacheable</code> 
+                     interface.</p>
+                  <p>When a response is cached all validity objects are stored together with
+                     the cached response, which is actually a byte array, in the cache. 
+                     The <code>CachedStreamObject</code> encapsulates all this information.</p>
+                  <p>When a new response is generated and the key is build, the caching
+                     algorithm collects all uptodate cache validity objects. So if the
+                     cached response is found in the cache these validity objects are compared.
+                     If they are valid (or equal) the cached response is used and directly
+                     returned. If they are not valid any more the cached response is removed
+                     from the cache, the new response is generated and then stored together with
+                     the new validity objects in the cache.</p>
+		</s2>
+            <s2 title="The Stream Cache">
+			<p>The stream cache contains the cached stream pipelines (or the
+                     <code>CachedStreamObject</code>). It is another
+                     Avalon component which can be configured. It is possible to use
+                     the memory as a cache, or the file system or a combination of both
+                     etc. This depends on the used/configured event cache.
+                  </p>
+		</s2>
+	 </s1>
+	 <s1 title="Configuration">
+		<p>The caching of Cocoon can be completely configured by different Avalon
+               components. This chapter describes which roles must/can be changed
+               to tune up your Cocoon system.</p>
+		<s2 title="The Stream and the Event Pipeline">
+			<p>The stream and the event pipeline are represented by two Avalon 
+                     components which can be configured in the cocoon.xconf:</p>
+    <source>
+     <![CDATA[
+<event-pipeline
+    class="org.apache.cocoon.components.pipeline.CachingEventPipeline"/>
+
+<stream-pipeline
+    class="org.apache.cocoon.components.pipeline.CachingStreamPipeline"/>
+     ]]>
+    </source> 
+			<p>If you want to completely turn off caching, use the following
+                     definitions:</p>
+    <source>
+     <![CDATA[
+<event-pipeline
+    class="org.apache.cocoon.components.pipeline.NonCachingEventPipeline"/>
+
+<stream-pipeline
+    class="org.apache.cocoon.components.pipeline.NonCachingStreamPipeline"/>
+     ]]>
+    </source> 		</s2>
+			<s2 title="The XMLSerializer/XMLDeserializer">
+			<p>The XMLSerializer and XMLDeserialzer are two Avalon components which
+			   can be configured in the cocoon.xconf:</p>
+    <source>
+     <![CDATA[
+<xml-serializer
+    class="org.apache.cocoon.components.sax.XMLByteStreamCompiler"/>
+
+<xml-deserializer
+    class="org.apache.cocoon.components.sax.XMLByteStreamInterpreter"/>
+     ]]>
+    </source> 
+			<p>You must assure that the correct (or matching) deserializer is 
+                     configured for the serializer.</p>
+		</s2>
+		<s2 title="Event Cache and Stream Cache">
+			<p>The EventCache and the StreamCache are two Avalon components which
+			   can be configured in the cocoon.xconf:</p>
+    <source>
+     <![CDATA[
+<event-cache class="org.apache.cocoon.caching.EventMemoryCache"/>
+
+<stream-cache class="org.apache.cocoon.caching.StreamMemoryCache"/>
+     ]]>
+    </source>
+		</s2>
+ 	 </s1>
+	 <s1 title="Java APIs">
+		<p>For more information on the java apis refer directly to the
+               javadocs of Cocoon.</p>
+            <p>The most important packages are:</p>
+		<ol>
+			<li><code>org.apache.cocoon.caching</code>: This package declares all interfaces for caching.</li>
+			<li><code>org.apache.cocoon.components.pipeline</code>: The interfaces and implementations of the pipelines.</li>
+		</ol>
+  	 </s1>
+	 <s1 title="Utility classes">
+		<s2 title="Hash Util">
+			<p>The <code>org.apache.cocoon.util.HashUtil</code> class provides some
+                     methods for the <link href="http://www.serve.net/buz/hash.adt/java.000.html">BuzHash algorithm by Robert Uzgalis</link>.</p>
+    <source>
+     <![CDATA[
+       package org.apache.cocoon.util;
+
+       public class HashUtil {
+
+         public static long hash(String arg);
+         public static long hash(StringBuffer arg);
+       }
+     ]]>
+    </source>
+		</s2>
+  	 </s1>
+  </body>
+</document>

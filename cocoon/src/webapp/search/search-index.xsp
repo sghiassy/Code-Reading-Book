@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+          xmlns:log="http://apache.org/xsp/log/2.0"
+          xmlns:capture="http://apache.org/cocoon/capture/1.0"
+>
+  <xsp:structure>
+    <xsp:include>org.apache.avalon.framework.context.ContextException</xsp:include>
+    <xsp:include>org.apache.avalon.framework.component.ComponentException</xsp:include>
+    
+    <xsp:include>org.apache.cocoon.ProcessingException</xsp:include>
+    <xsp:include>org.apache.cocoon.components.language.markup.xsp.XSPUtil</xsp:include>
+    
+    <xsp:include>org.apache.cocoon.components.search.*</xsp:include>
+    
+    <xsp:include>org.apache.lucene.analysis.Analyzer</xsp:include>
+    <xsp:include>org.apache.lucene.store.*</xsp:include>
+    <xsp:include>org.apache.lucene.document.*</xsp:include>
+    <xsp:include>org.apache.lucene.search.Hits</xsp:include>
+    
+    <xsp:include>java.util.*</xsp:include>
+    
+  </xsp:structure>
+
+  <xsp:logic>
+    File workDir = null;
+    /** Contextualize this class */
+    public void contextualize(Context context) throws ContextException {
+      super.contextualize( context );
+      workDir = (File) context.get(Constants.CONTEXT_WORK_DIR);
+    }
+    
+    LuceneCocoonSearcher lcs;
+    Directory directory;
+    Analyzer analyzer = LuceneCocoonHelper.getAnalyzer( "org.apache.lucene.analysis.standard.StandardAnalyzer" );
+  
+    Hits search( String query_string ) throws ProcessingException {
+      Hits hits = null;
+      try {
+        lcs = (LuceneCocoonSearcher)this.manager.lookup( LuceneCocoonSearcher.ROLE );
+        lcs.setAnalyzer( analyzer );
+        if (directory == null) {
+          directory = LuceneCocoonHelper.getDirectory( new File( workDir, "index" ), false );
+        }
+        lcs.setDirectory( directory );
+        hits = lcs.search( query_string, LuceneXMLIndexer.BODY_FIELD );
+        start = 0;
+        end = Math.min(hits.length(), start + hitsPerPage);
+      } catch (IOException ioe) {
+        // ignore ??
+        throw new ProcessingException( "IOException in search", ioe );
+      } catch (ProcessingException pe) {
+        // ignore ??
+        Throwable t = pe.getCause();
+        if (t instanceof org.apache.lucene.queryParser.ParseException) {
+          // ignore it or write info about reason
+        } else {
+          throw new ProcessingException( "ProcessingException in search", pe );
+        }
+      } catch (ComponentException ce) {
+        // ignore ??
+        throw new ProcessingException( "ComponentException in search", ce );
+      } finally {
+        if (lcs != null) {
+          this.manager.release( lcs );
+        }
+        lcs = null;
+      }
+      
+      return hits;
+    }
+    int hitsPerPage = 10;
+    int start = 0;
+    int end = 0; 
+    Hits hits;
+    LuceneCocoonPager luceneCocoonPager;
+  </xsp:logic>
+
+  <page>
+    <xsp:logic>
+      String queryString = <xsp-request:get-parameter name="queryString" default=""/>;
+      boolean findIt = "Find!".equals( <xsp-request:get-parameter name="find"/> );
+      Integer startIndex = null;
+      Integer pageLength = null;
+      try {
+        if (<xsp-request:get-parameter name="previous"/> != null) {
+          startIndex = new Integer( <xsp-request:get-parameter name="startPreviousIndex" default="0"/> );
+        } else if (<xsp-request:get-parameter name="next"/> != null) {
+          startIndex = new Integer( <xsp-request:get-parameter name="startNextIndex"/> );
+        } else {
+          startIndex = new Integer( 0 );
+        }
+        pageLength = new Integer( <xsp-request:get-parameter name="pageLength" default="10"/> );
+      } catch (NumberFormatException nfe) {
+        // ignore it
+      }
+    </xsp:logic>
+    
+    <title>Cocoon XML Search Interface</title>
+    <content>
+      <a href="http://jakarta.apache.org/lucene/"><img border="0" alt="Lucene Logo" src="images/lucene_green_300.gif"/></a>
+      <para>
+        <font size="-1">
+          <a target="_blank" href="statistic">Index Statistics</a> |
+          <a href="welcome">Welcome</a>
+        </font>
+      </para>
+      <para>
+        <form action="search">
+          <input type="text" name="queryString" size="60">
+            <xsp:attribute name="value"><xsp:expr>queryString</xsp:expr></xsp:attribute>
+          </input>
+          <input type="submit" name="find" value="Find!"/>
+        </form>
+      </para>
+      <para>
+        Help by example (see also the
+        <a href="http://www.lucene.com/cgi-bin/faq/faqmanager.cgi">Lucene FAQ</a>)
+        <table cellspacing="2" cellpadding="2">
+          <tr bgcolor="#dddedd" valign="top">
+          <td width="50%"><font size="-2" >
+            <ul>
+              <li>free AND "text search"
+                Search for documents which contain the word "free" and the 
+                phrase "text search"
+              </li>
+              <li>+text search
+                Search for documents which must contain the word "text" and 
+                optionally contain the word "search".
+              </li>
+              <li>giants -football
+                Search for "giants" but omit documents containing "football"
+              </li>
+            </ul>
+          </font></td>
+          
+          <td><font size="-2">
+            <ul>
+              <li>body:john
+                Search for documents containing "john" in the  body field.
+                The field "body" is used by default.
+                Thus query "body:john" is equivalent to query "john".
+              </li>
+              <li>s1@title:cocoon
+                Search for documents containing "cocoon" in the
+                using field s1@title, ie searching in
+                title attribute of s1 element of xml document.
+              </li>
+            </ul>
+          </font></td>
+          </tr>
+        </table>
+      </para>
+      <para>
+        SearchResult:
+        <xsp:logic>
+          if (queryString != null &amp;&amp; queryString.length() != 0) {
+            
+            // do the search, search results are available in hits
+            hits = search( queryString );
+            luceneCocoonPager = new LuceneCocoonPager( hits );
+            if (startIndex != null &amp;&amp; pageLength != null) {
+              luceneCocoonPager.setStartIndex( startIndex.intValue() );
+              luceneCocoonPager.setCountOfHitsPerPage( pageLength.intValue() );
+            }
+            <xsp:content>
+              Total Hits: <xsp:expr>hits.length()</xsp:expr>
+            </xsp:content>
+          }
+        </xsp:logic>
+      </para>
+      <para>
+        <table width="90%" cellpadding="4" border="1">
+          <tr>
+            <td>Score</td><td>Count</td><td>URL</td>
+          </tr>
+          <xsp:logic>
+            if (luceneCocoonPager!= null &amp;&amp; luceneCocoonPager.hasNext()) {
+              int counter = luceneCocoonPager.getStartIndex();
+              List l = (List)luceneCocoonPager.next();
+              Iterator i = l.iterator();
+              for (; i.hasNext(); counter++) {
+                LuceneCocoonPager.HitWrapper hw = (LuceneCocoonPager.HitWrapper)i.next();
+                Document doc = hw.getDocument();
+                float score = hw.getScore();
+                String url = doc.get( LuceneXMLIndexer.URL_FIELD );
+                
+                <xsp:content>
+                  <tr>
+                    <td> <xsp:expr>String.valueOf((int)(score * 100.0f))</xsp:expr>% </td> 
+                    <td> <xsp:expr>String.valueOf(counter + 1)</xsp:expr> </td>
+                    <td>
+                      <a target="_blank">
+                        <xsp:attribute name="href"><xsp:expr>url</xsp:expr></xsp:attribute>
+                        <xsp:expr>url</xsp:expr>
+                      </a>
+                    </td>
+                  </tr>
+                </xsp:content>
+              }
+            }
+          </xsp:logic>
+        </table>
+      </para>
+      <para>
+        <xsp:logic>
+          if (luceneCocoonPager!= null &amp;&amp; luceneCocoonPager != null &amp;&amp; 
+            (luceneCocoonPager.hasNext() || luceneCocoonPager.hasPrevious())) {
+            <xsp:content>
+              <form action="search">
+                <input type="hidden" name="queryString">
+                  <xsp:attribute name="value"><xsp:expr>String.valueOf(queryString)</xsp:expr></xsp:attribute>
+                </input>
+                <input type="hidden" name="pageLength">
+                  <xsp:attribute name="value"><xsp:expr>String.valueOf(luceneCocoonPager.getCountOfHitsPerPage())</xsp:expr></xsp:attribute>
+                </input>
+                <xsp:logic>
+                  if (luceneCocoonPager.hasPrevious()) {
+                    <input type="hidden" name="startPreviousIndex">
+                      <xsp:attribute name="value"><xsp:expr>String.valueOf(luceneCocoonPager.previousIndex())</xsp:expr></xsp:attribute>
+                    </input>
+                    <input type="submit" name="previous" value="previous"/>
+                  }
+                </xsp:logic>
+                &#160;
+                <xsp:logic>
+                  if (luceneCocoonPager.hasNext()) {
+                    <input type="hidden" name="startNextIndex">
+                      <xsp:attribute name="value"><xsp:expr>String.valueOf(luceneCocoonPager.nextIndex())</xsp:expr></xsp:attribute>
+                    </input>
+                    <input type="submit" name="next" value="next"/>
+                  }
+                </xsp:logic>
+              </form>
+            </xsp:content>
+          }
+        </xsp:logic>
+      </para>
+    </content>
+  </page>
+
+</xsp:page>
+

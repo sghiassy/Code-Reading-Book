@@ -1,0 +1,108 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemFreeElement</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemFreeElement</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemFreeElement</h4>
+<dd>DEMOGL_SoundSystemFreeElement removes a loaded sound element from the sound system. After calling <b>DEMOGL_SoundSystemFreeElement</b>
+	the given sound element is no longer available and refering to this sound element in script commands or in DemoGL API calls will
+	result in an error. You load sound elements with 
+	<a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a>.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemFreeElement(
+	<b>const int</b> <i>iElementCodeID</i>,
+	<b>const int</b> <i>iElementType</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iElementCodeID</i>
+	<dd>Specifies the ElementCodeID of the channel which should be removed from the sound system.
+	<dt><i>iElementType</i>
+	<dd>Specifies of which type the to be freed sound element is.
+		iElementType can be one of the following sound element types:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Sound element type</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_MP3ELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element stored in the MP3 standard, i.e. MPEG v1.0 and v2.0 layer3.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_MODELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">Sound element stored in one of the following formats: MOD, XM, IT, S3M or MTM.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_SAMPLEELEMENT</td>
+			<td WIDTH="70%" VALIGN="TOP">
+				Sound element stored in the standard windows PCM format, or compressed with a custom CODEC.
+				When you use a custom CODEC, this CODEC is required to be installed on the user's computer for 
+				the WAV to be decoded. So, you should either distribute the CODEC with your 
+				software, or use a CODEC that comes with Windows (eg. Microsoft ADPCM).
+			</td>
+		</tr>
+		</table>
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns one of the following error codes:
+	<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Error code</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_ILLEGALELEMENTID</td>
+			<td WIDTH="70%" VALIGN="TOP">The <i>iElementCodeID</i> value is not found as a loaded sound element.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_ILLEGALELEMENTTYPE</td>
+			<td WIDTH="70%" VALIGN="TOP">The <i>iElementType</i> specified is not known.
+			</td>
+		</tr>
+		</table>	
+	<p>
+<dt><b>Remarks.</b>
+<dd>DemoGL keeps track of multiple loads of the same sound element data. If a sound element is loaded more than once, calling
+	<b>DEMOGL_SoundSystemFreeElement</b> won't remove it from the sound system because more references to this same
+	sound element exist. When the last reference frees the sound element it will be removed from the sound system. This
+	totally transparent to the caller of <b>DEMOGL_SoundSystemFreeElement</b> who will receive a success even if the
+	sound element is not removed because other references exist. 
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a>,
+	<a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm" target="main">_SOUNDSYSTEM commands</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 18-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

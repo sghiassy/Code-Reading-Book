@@ -1,0 +1,22 @@
+XCOMM $XConsortium: Imakefile /main/8 1996/11/17 14:49:40 rws $
+
+#include <Server.tmpl>
+
+ DEFINES = ConnectionFlags $(RPC_DEFINES) \
+                AllocateLocalDefines ServerOSDefines $(SIGNAL_DEFINES)
+INCLUDES = -I../include -I$(TOP)/include -I$(EXTINCSRC) \
+           -I../../../include/extensions
+
+    SRCS = connection.c io.c WaitFor.c osinit.c
+
+    OBJS = connection.o io.o WaitFor.o osinit.o
+ 
+NormalLibraryObjectRule()
+NormalLibraryTarget(os,$(OBJS))
+LintLibraryTarget(os,$(SRCS))
+NormalLintTarget($(SRCS))
+
+SpecialCObjectRule(io,$(ICONFIGFILES),$(EXT_DEFINES))
+
+DependTarget()
+

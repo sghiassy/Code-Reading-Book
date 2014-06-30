@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>JSP Generator</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+		 </authors>
+		 <abstract>This document describes the jsp generator of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="JSP Generator">
+			<p>The JspGenerator selects a JSPEngine component. The JSPEngine component
+                          launches a JSP servlet engine of your servlet container, 
+                          feeds the HttpRequest into the 
+                          JSP servlet engine, and pipes the jsp response as SAX events into Cocoon.
+                          The JSP page is specified by the HttpRequest.
+                        </p>
+                        <p>
+                          This way you can continue to use your JSP pages. 
+                          Your migration from JSP to XSP may be done step by step. 
+                          You may specify your JSP pages either as JSP scriptlets or as JSP-XML.
+                          But keep in mind that your JSP output should be valid XML.
+                        </p>
+			<ul>
+				<li>Name : jsp</li>
+				<li>Class: org.apache.cocoon.generation.JspGenerator</li>
+				<li>Cacheable: ?.</li>
+			</ul>
+<source>
+     <![CDATA[
+  <map:generate type="jsp"/>
+     ]]>
+</source>
+		</s1>
+                <s1 title="JSPEngine">
+                  <p>As JSP servlet engines are implemented differently, you may have to
+                    select the appropriate JSPEngine component. 
+                    The default is a JSPEngine working with Tomcat's JSP servlet engine Jasper.
+                    You may override the cocoon.roles by your own my.roles, as described 
+                    in the <link href="../../faq.html">FAQs</link>.
+                  </p>
+                  <p>The JSPEngine component of Tomcat's JSPEngine is implemented in JSPEngineImpl. 
+                    If you want to use another JSPEngine component, you may specify it in a my.roles file.
+                    The following sample specify in file WEB-INF/my.roles a JSPEngine workging with WebLogicServer:
+                  </p>
+<source>
+  <![CDATA[
+<?xml version="1.0"?>
+<role-list>
+  <role name="org.apache.cocoon.components.jsp.JSPEngine"
+    shorthand="jsp-engine"
+    default-class="org.apache.cocoon.components.jsp.JSPEngineImplWLS"/>
+</role-list>
+  ]]>
+</source>
+                  <p>Defining the file my.roles this way you must ensure that your 
+                    cocoon.xconf refernces my.roles, like that:
+                  </p>
+<source>
+  <![CDATA[
+   ...
+   <cocoon version="2.0" user-roles="WEB-INF/my.roles">
+   ...
+  ]]>
+</source>
+
+                  <p>Currently there are tree JSPEngine components available:
+                  </p>
+                  <table>
+                    <tr><th>JSPEngine</th><th>ServletEngine</th></tr>
+                    <tr><td>JSPEngineImpl</td><td>Tomcat, generic jsp servlet class</td></tr>
+                    <tr><td>JSPEngineImplWLS</td><td>WebLogic 5.1, 6.0(?)</td></tr>
+                    <tr><td>JSPEngineImplNamedDispactcherInclude</td><td>Generic JSP Servlet</td></tr>
+                  </table>
+                  <p>The next sections describe the settings of the JSPEngine components.
+                  </p>
+                  <s2 title="JSPEngineImpl">
+                    <p>This JSPEngine is the default engine selected in cocoon.roles. 
+                      By default it uses Tomcats' JASPER  JSP servlet engine.
+                    </p>
+                    <p>Running under a different JSP servlet engine, you can try to change the settings
+                      in cocoon.xconf, by modifying parameter name servlet-class to your needs.
+                    </p>
+<source><![CDATA[
+  <jsp-engine>
+    <parameter name="servlet-class" value="my.servlet.MyJspServletOfMyServletEngine"/>
+  </jsp-engine>
+  ]]>
+</source>                    
+                    <p>JSPEngineImpl instances directly the JSP servlet engine class, and services
+                      HttpRequest to this instance.
+                    </p>
+                    <p>JSPEngineImplNamedDispatcherInclude delegates the selection of a JSP servlet engine
+                      instance to the servlet engine. It selects by servlet-name, and not by servlet-class.
+                      This is the key differences of these two implementations.
+                    </p>
+                  </s2>
+                  <s2 title="JSPEngineImplWLS">
+                    <p>This JSPEngine is implemented especially for WebLogic 5.1. WebLogic 6.0, and WebLogic 6.1
+                      may work, too. JSPEngineImplWLS finds the named request dispatch for jsp, the jsp response
+                      is piped into Cocoon.
+                    </p>
+                    <p>The name of the JSP servlet is by default set to '*.jsp'. This is the default servlet name
+                      of the JSP servlet engine under WLS. You may adopt the parameter servlet-name to your needs.
+                    </p>
+                    <p>If you want to specify a different JSP servlet name, you can change the settings
+                      in cocoon.xconf, by modifying the parameter servlet-name.
+                    </p>
+<source><![CDATA[
+  <jsp-engine>
+    <parameter name="servlet-name" value="MyNameOfMyJspServletOfMyServletEngine"/>
+  </jsp-engine>
+  ]]>
+</source>
+                  </s2>
+                  <s2 title="JSPEngineImplNamedDispatcherInclude">
+                    <p>This JSPEngine is implemented like JSPEnginImplWLS without using any WebLogic classes.
+                      You may try to use this JSPEngine if JSPEngineImpl does not meet your requirements.
+                    </p>
+                    <p>The name of the JSP servlet is by default set to '*.jsp'. This is the default servlet name
+                      of the jsp servlet engine under WLS. You may adopt the parameter servlet-name to your needs.
+                    </p>
+                    <p>If you want to specify a different JSP servlet name, you can change the settings
+                      in cocoon.xconf, by modifying the parameter servlet-name.
+                    </p>
+<source><![CDATA[
+  <jsp-engine>
+    <parameter name="servlet-name" value="MyNameOfMyJspServletOfMyServletEngine"/>
+  </jsp-engine>
+  ]]>
+</source>
+                  </s2>
+                </s1>
+	</body>
+</document>

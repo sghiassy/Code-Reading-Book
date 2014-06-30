@@ -1,0 +1,219 @@
+.TH ACE_MEM_Acceptor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_MEM_Acceptor \- Defines the format and interface for the acceptor side of the local mmap stream. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <MEM_Acceptor.h>\fR
+.PP
+Inherits \fBACE_SOCK_Acceptor\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_MEM_Addr\fR \fBPEER_ADDR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_MEM_Stream\fR \fBPEER_STREAM\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_MEM_Acceptor\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_MEM_Acceptor\fR (void)"
+.br
+.RI "\fIdestructor.\fR"
+.ti -1c
+.RI "\fBACE_MEM_Acceptor\fR (const \fBACE_MEM_Addr\fR &remote_sap, int reuse_addr = 0, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.RI "\fIInitiate a passive mode socket.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_MEM_Addr\fR &local_sap, int reuse_addr = 0, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.ti -1c
+.RI "int \fBaccept\fR (\fBACE_MEM_Stream\fR &new_ipc_sap, \fBACE_MEM_Addr\fR *remote_addr = 0, \fBACE_Time_Value\fR *timeout = 0, int restart = 1, int reset_new_handle = 0)"
+.br
+.RI "\fIAccept a new data transfer connection.\fR"
+.ti -1c
+.RI "int \fBshared_accept_finish\fR (\fBACE_MEM_Stream\fR new_stream, int in_blocking_mode, int reset_new_handle) const"
+.br
+.RI "\fIPerform operations that must occur after  is called.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBmmap_prefix\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBmmap_prefix\fR (const \fBACE_TCHAR\fR *prefix)"
+.br
+.ti -1c
+.RI "\fBACE_MEM_IO::Signal_Strategy\fR \fBpreferred_strategy\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBpreferred_strategy\fR (\fBACE_MEM_IO::Signal_Strategy\fR strategy)"
+.br
+.ti -1c
+.RI "int \fBget_local_addr\fR (\fBACE_MEM_Addr\fR &) const"
+.br
+.RI "\fIReturn the local endpoint address in the referenced . Returns 0 if successful, else -1.\fR"
+.ti -1c
+.RI "\fBACE_MEM_SAP::MALLOC_OPTIONS\fR& \fBmalloc_options\fR (void)"
+.br
+.RI "\fIAccessor to the mmap options.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_Addr\fR &local_sap, int reuse_addr = 0, int protocol_family = PF_INET, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_Addr\fR &local_sap, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr, int protocol_family, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)"
+.br
+.RI "\fIInitialize a passive-mode QoS-enabled acceptor socket. Returns 0 on success and -1 on failure.\fR"
+.ti -1c
+.RI "int \fBaccept\fR (\fBACE_SOCK_Stream\fR &new_stream, \fBACE_Addr\fR *remote_addr = 0, \fBACE_Time_Value\fR *timeout = 0, int restart = 1, int reset_new_handle = 0) const"
+.br
+.ti -1c
+.RI "int \fBaccept\fR (\fBACE_SOCK_Stream\fR &new_stream, \fBACE_Accept_QoS_Params\fR qos_params, \fBACE_Addr\fR *remote_addr = 0, \fBACE_Time_Value\fR *timeout = 0, int restart = 1, int reset_new_handle = 0) const"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBmmap_prefix_\fR"
+.br
+.RI "\fIThe filename prefix of the created mmap files. It should contains the absolute path name of the file.\fR"
+.ti -1c
+.RI "\fBACE_MEM_SAP::MALLOC_OPTIONS\fR \fBmalloc_options_\fR"
+.br
+.RI "\fIA cached MALLOC_OPTIONS. MEM_Accaptor use it to create the shared mamory malloc upon every incoming connection.\fR"
+.ti -1c
+.RI "\fBACE_MEM_IO::Signal_Strategy\fR \fBpreferred_strategy_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the format and interface for the acceptor side of the local mmap stream.
+.PP
+.PP
+ This class should be modified to prevent user passing a non-localhost endpoint as the acceptor listen point because it doesn't make any sense at all to make the listening endpoint visible (or connectable) anywhere outside of this machine. However, the type of endpoint is left as  so we can later changed to use UNIX sockets with mmap stream if so desired. (Currently, using UNIX socket with this class will not work.) 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_MEM_Addr\fR ACE_MEM_Acceptor::PEER_ADDR
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SS typedef \fBACE_MEM_Stream\fR ACE_MEM_Acceptor::PEER_STREAM
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_MEM_Acceptor::ACE_MEM_Acceptor (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_MEM_Acceptor::~ACE_MEM_Acceptor (void)
+.PP
+destructor.
+.PP
+.SS ACE_MEM_Acceptor::ACE_MEM_Acceptor (const \fBACE_MEM_Addr\fR & remote_sap, int reuse_addr = 0, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)
+.PP
+Initiate a passive mode socket.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_MEM_Acceptor::accept (\fBACE_SOCK_Stream\fR & new_stream, \fBACE_Accept_QoS_Params\fR qos_params, \fBACE_Addr\fR * remote_addr = 0, \fBACE_Time_Value\fR * timeout = 0, int restart = 1, int reset_new_handle = 0) const\fC [protected]\fR
+.PP
+Accept a new  connection using the QoS information in <qos_params>. A <timeout> of 0 means block forever, a <timeout> of {0, 0} means poll. <restart> == 1 means "restart if interrupted," i.e., if errno == EINTR. Note that <new_stream> inherits the "blocking mode" of <this> , i.e., if <this> acceptor factory is in non-blocking mode, the <net_stream> will be in non-blocking mode and vice versa. 
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SS int ACE_MEM_Acceptor::accept (\fBACE_SOCK_Stream\fR & new_stream, \fBACE_Addr\fR * remote_addr = 0, \fBACE_Time_Value\fR * timeout = 0, int restart = 1, int reset_new_handle = 0) const\fC [protected]\fR
+.PP
+Accept a new  connection. A <timeout> of 0 means block forever, a <timeout> of {0, 0} means poll. <restart> == 1 means "restart if interrupted," i.e., if errno == EINTR. Note that <new_stream> inherits the "blocking mode" of <this> , i.e., if <this> acceptor factory is in non-blocking mode, the <net_stream> will be in non-blocking mode and vice versa. 
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SS int ACE_MEM_Acceptor::accept (\fBACE_MEM_Stream\fR & new_ipc_sap, \fBACE_MEM_Addr\fR * remote_addr = 0, \fBACE_Time_Value\fR * timeout = 0, int restart = 1, int reset_new_handle = 0)
+.PP
+Accept a new data transfer connection.
+.PP
+.SS void ACE_MEM_Acceptor::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SS int ACE_MEM_Acceptor::get_local_addr (\fBACE_MEM_Addr\fR &) const
+.PP
+Return the local endpoint address in the referenced . Returns 0 if successful, else -1.
+.PP
+.SS \fBACE_MEM_SAP::MALLOC_OPTIONS\fR & ACE_MEM_Acceptor::malloc_options (void)
+.PP
+Accessor to the mmap options.
+.PP
+.SS void ACE_MEM_Acceptor::mmap_prefix (const \fBACE_TCHAR\fR * prefix)
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_MEM_Acceptor::mmap_prefix (void) const
+.PP
+Accessor/mutator of mmap filename prefix. By default, the <mmap_prefix_> is not set and the mmap filename is ${(TMP|TEMP)}//ACE_MEM_Acceptor_(port-number)_(&stream), otherwise, it is <mmap_prefix_>_(port-number)_(&stream), <mmap_prefix_> should include _absolute_ path so the connector within the same host can located the mmap file. Example: /tmp/mmapfile. 
+.SS int ACE_MEM_Acceptor::open (const \fBACE_Addr\fR & local_sap, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags, int reuse_addr, int protocol_family, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)\fC [protected]\fR
+.PP
+Initialize a passive-mode QoS-enabled acceptor socket. Returns 0 on success and -1 on failure.
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SS int ACE_MEM_Acceptor::open (const \fBACE_Addr\fR & local_sap, int reuse_addr = 0, int protocol_family = PF_INET, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)\fC [protected]\fR
+.PP
+Initialize a passive-mode BSD-style acceptor socket (no QoS). <local_sap> is the address that we're going to listen for connections on. If <reuse_addr> is 1 then we'll use the <SO_REUSEADDR> to reuse this address. Returns 0 on success and -1 on failure. 
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SS int ACE_MEM_Acceptor::open (const \fBACE_MEM_Addr\fR & local_sap, int reuse_addr = 0, int backlog = ACE_DEFAULT_BACKLOG, int protocol = 0)
+.PP
+Initialize a passive-mode BSD-style acceptor socket (no QoS). <local_sap> is the address that we're going to listen for connections on. If <reuse_addr> is 1 then we'll use the <SO_REUSEADDR> to reuse this address. Returns 0 on success and -1 on failure. 
+.SS void ACE_MEM_Acceptor::preferred_strategy (\fBACE_MEM_IO::Signal_Strategy\fR strategy)
+.PP
+.SS \fBACE_MEM_IO::Signal_Strategy\fR ACE_MEM_Acceptor::preferred_strategy (void) const
+.PP
+.SS int ACE_MEM_Acceptor::shared_accept_finish (\fBACE_MEM_Stream\fR new_stream, int in_blocking_mode, int reset_new_handle) const
+.PP
+Perform operations that must occur after  is called.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_MEM_Acceptor::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SOCK_Acceptor\fR.
+.SS \fBACE_MEM_SAP::MALLOC_OPTIONS\fR ACE_MEM_Acceptor::malloc_options_\fC [private]\fR
+.PP
+A cached MALLOC_OPTIONS. MEM_Accaptor use it to create the shared mamory malloc upon every incoming connection.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_MEM_Acceptor::mmap_prefix_\fC [private]\fR
+.PP
+The filename prefix of the created mmap files. It should contains the absolute path name of the file.
+.PP
+.SS \fBACE_MEM_IO::Signal_Strategy\fR ACE_MEM_Acceptor::preferred_strategy_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

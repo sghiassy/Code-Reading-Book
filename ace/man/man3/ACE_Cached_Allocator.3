@@ -1,0 +1,110 @@
+.TH ACE_Cached_Allocator 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Cached_Allocator \- Create a cached memory poll with <n_chunks> chunks each with sizeof (TYPE) size. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Malloc_T.h>\fR
+.PP
+Inherits \fBACE_New_Allocator\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Cached_Allocator\fR (size_t n_chunks)"
+.br
+.RI "\fICreate a cached memory poll with <n_chunks> chunks each with sizeof (TYPE) size.\fR"
+.ti -1c
+.RI "\fB~ACE_Cached_Allocator\fR (void)"
+.br
+.RI "\fIclear things up.\fR"
+.ti -1c
+.RI "void* \fBmalloc\fR (size_t nbytes = sizeof (T))"
+.br
+.ti -1c
+.RI "virtual void* \fBcalloc\fR (size_t nbytes, char initial_value = '\\0')"
+.br
+.ti -1c
+.RI "virtual void* \fBcalloc\fR (size_t n_elem, size_t elem_size, char initial_value = '\\0')"
+.br
+.RI "\fIThis method is a no-op and just returns 0 since the free list only works with fixed sized entities.\fR"
+.ti -1c
+.RI "void \fBfree\fR (void *)"
+.br
+.RI "\fIReturn a chunk of memory back to free list cache.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "char* \fBpool_\fR"
+.br
+.RI "\fIRemember how we allocate the memory in the first place so we can clear things up later.\fR"
+.ti -1c
+.RI "\fBACE_Locked_Free_List\fR<\fBACE_Cached_Mem_Pool_Node\fR<T>, ACE_LOCK> \fBfree_list_\fR"
+.br
+.RI "\fIMaintain a cached memory free list.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T, class ACE_LOCK>  template class ACE_Cached_Allocator
+Create a cached memory poll with <n_chunks> chunks each with sizeof (TYPE) size.
+.PP
+.PP
+ This class enables caching of dynamically allocated, fixed-sized classes. Notice that the \fCsizeof (TYPE)\fR must be greater than or equal to \fC sizeof (void*) \fR for this to work properly.
+.PP
+\fBSee also: \fR
+.in +1c
+ \fBACE_Cached_Mem_Pool_Node\fR 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT, classACE_LOCK> ACE_Cached_Allocator<T, ACE_LOCK>::ACE_Cached_Allocator<T, ACE_LOCK> (size_t n_chunks)
+.PP
+Create a cached memory poll with <n_chunks> chunks each with sizeof (TYPE) size.
+.PP
+.SS template<classT, classACE_LOCK> ACE_Cached_Allocator<T, ACE_LOCK>::~ACE_Cached_Allocator<T, ACE_LOCK> (void)
+.PP
+clear things up.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT, classACE_LOCK> void * ACE_Cached_Allocator<T, ACE_LOCK>::calloc (size_t n_elem, size_t elem_size, char initial_value = '\\0')\fC [virtual]\fR
+.PP
+This method is a no-op and just returns 0 since the free list only works with fixed sized entities.
+.PP
+Reimplemented from \fBACE_New_Allocator\fR.
+.SS template<classT, classACE_LOCK> void * ACE_Cached_Allocator<T, ACE_LOCK>::calloc (size_t nbytes, char initial_value = '\\0')\fC [virtual]\fR
+.PP
+Get a chunk of memory from free list cache, giving them <initial_value>. Note that <nbytes> is only checked to make sure that it's <= to sizeof T, and is otherwise ignored since <malloc> always returns a pointer to an item of sizeof (T). 
+.PP
+Reimplemented from \fBACE_New_Allocator\fR.
+.SS template<classT, classACE_LOCK> void ACE_Cached_Allocator<T, ACE_LOCK>::free (void * ptr)\fC [virtual]\fR
+.PP
+Return a chunk of memory back to free list cache.
+.PP
+Reimplemented from \fBACE_New_Allocator\fR.
+.SS template<classT, classACE_LOCK> void * ACE_Cached_Allocator<T, ACE_LOCK>::malloc (size_t nbytes = sizeof (T))\fC [virtual]\fR
+.PP
+Get a chunk of memory from free list cache. Note that <nbytes> is only checked to make sure that it's <= to sizeof T, and is otherwise ignored since <malloc> always returns a pointer to an item of sizeof (T). 
+.PP
+Reimplemented from \fBACE_New_Allocator\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT, classACE_LOCK> \fBACE_Locked_Free_List\fR< \fBACE_Cached_Mem_Pool_Node\fR< T >,ACE_LOCK > ACE_Cached_Allocator<T, ACE_LOCK>::free_list_\fC [private]\fR
+.PP
+Maintain a cached memory free list.
+.PP
+.SS template<classT, classACE_LOCK> char * ACE_Cached_Allocator<T, ACE_LOCK>::pool_\fC [private]\fR
+.PP
+Remember how we allocate the memory in the first place so we can clear things up later.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

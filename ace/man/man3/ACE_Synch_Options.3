@@ -1,0 +1,208 @@
+.TH ACE_Synch_Options 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Synch_Options \- Contains the values of options used to determine the synchronous and asynchronous behavior. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch_Options.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBUSE_REACTOR\fR = 01, \fBUSE_TIMEOUT\fR = 02 }"
+.br
+.RI "\fIOptions flags for controlling synchronization.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Synch_Options\fR (u_long options = 0, const \fBACE_Time_Value\fR &timeout = \fBACE_Time_Value::zero\fR, const void *arg = 0)"
+.br
+.RI "\fIInitialize the Synch_Options based on parameters.\fR"
+.ti -1c
+.RI "\fB~ACE_Synch_Options\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "void \fBset\fR (u_long options = 0, const \fBACE_Time_Value\fR &timeout = \fBACE_Time_Value::zero\fR, const void *arg = 0)"
+.br
+.RI "\fIInitialize the Synch_Options based on parameters.\fR"
+.ti -1c
+.RI "int \fBoperator[]\fR (u_long option) const"
+.br
+.RI "\fIGet method for determining which options are enabled.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (u_long option)"
+.br
+.RI "\fISet method for enabling certain options.\fR"
+.ti -1c
+.RI "const void* \fBarg\fR (void) const"
+.br
+.RI "\fIReturns the "magic cookie" argument.\fR"
+.ti -1c
+.RI "void \fBarg\fR (const void *)"
+.br
+.RI "\fISet the "magic cookie" argument.\fR"
+.ti -1c
+.RI "const \fBACE_Time_Value\fR& \fBtimeout\fR (void) const"
+.br
+.RI "\fIReturns a reference to the <Time_Value>. This value only makes sense if (*this)[USE_TIMEOUT] is true.\fR"
+.ti -1c
+.RI "void \fBtimeout\fR (const \fBACE_Time_Value\fR &tv)"
+.br
+.RI "\fISet the <Time_Value>.\fR"
+.ti -1c
+.RI "const \fBACE_Time_Value\fR* \fBtime_value\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Synch_Options \fBdefaults\fR"
+.br
+.RI "\fIThis is the default setting for options, which will block synchronously.\fR"
+.ti -1c
+.RI "ACE_Synch_Options \fBsynch\fR"
+.br
+.RI "\fIThis is the default synchronous setting.\fR"
+.ti -1c
+.RI "ACE_Synch_Options \fBasynch\fR"
+.br
+.RI "\fIThis is the default asynchronous setting.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "u_long \fBoptions_\fR"
+.br
+.RI "\fIKeeps track of the enabled options.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBtimeout_\fR"
+.br
+.RI "\fIAmount of time to wait for timeouts.\fR"
+.ti -1c
+.RI "const void* \fBarg_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Contains the values of options used to determine the synchronous and asynchronous behavior.
+.PP
+.PP
+ Values support the following behavior (TV == "timeout" and UR == "use \fBACE_Reactor\fR"):
+.PP
+\fC | Parameters | Description | |TV | UR | |-----|----------|------------------------------- | | |NULL | yes | infinite timeout (using \fBACE_Reactor\fR) | | |time | yes | try asynch transaction for | | the specified time (using \fBACE_Reactor\fR) | | |0,0 | yes | poll; try, if EWOULDBLOCK, | | then return immediately | | (using \fBACE_Reactor\fR) | | |NULL | no | block forever (don't use \fBACE_Reactor\fR) | | |time | no | do a blocking transaction | | for the specified time | | (don't use \fBACE_Reactor\fR) | | |0,0 | no | poll; but do not initiate a | | nonblocking transaction | | (don't use \fBACE_Reactor\fR) \fR 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+Options flags for controlling synchronization.
+.PP
+Note that these flags can be bit-wise "or'd" together if both options are desired. 
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIUSE_REACTOR\fR \fRUse the Reactor.
+.TP
+\fB\fIUSE_TIMEOUT\fR \fRInterprete the Time_Value.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Synch_Options::ACE_Synch_Options (u_long options = 0, const \fBACE_Time_Value\fR & timeout = \fBACE_Time_Value::zero\fR, const void * arg = 0)
+.PP
+Initialize the Synch_Options based on parameters.
+.PP
+.SS ACE_Synch_Options::~ACE_Synch_Options (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Synch_Options::arg (const void *)
+.PP
+Set the "magic cookie" argument.
+.PP
+.SS const void * ACE_Synch_Options::arg (void) const
+.PP
+Returns the "magic cookie" argument.
+.PP
+.SS void ACE_Synch_Options::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS void ACE_Synch_Options::operator= (u_long option)
+.PP
+Set method for enabling certain options.
+.PP
+.SS int ACE_Synch_Options::operator[] (u_long option) const
+.PP
+Get method for determining which options are enabled.
+.PP
+.SS void ACE_Synch_Options::set (u_long options = 0, const \fBACE_Time_Value\fR & timeout = \fBACE_Time_Value::zero\fR, const void * arg = 0)
+.PP
+Initialize the Synch_Options based on parameters.
+.PP
+.SS const \fBACE_Time_Value\fR * ACE_Synch_Options::time_value (void) const
+.PP
+Returns the address of the timeout <Time_Value> if (*this)[USE_TIMEOUT] is true, else 0. This should be used with care, e.g., the timeout pointer should not be stored in a manner that will lead to dangling pointers... 
+.SS void ACE_Synch_Options::timeout (const \fBACE_Time_Value\fR & tv)
+.PP
+Set the <Time_Value>.
+.PP
+.SS const \fBACE_Time_Value\fR & ACE_Synch_Options::timeout (void) const
+.PP
+Returns a reference to the <Time_Value>. This value only makes sense if (*this)[USE_TIMEOUT] is true.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Synch_Options::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS const void * ACE_Synch_Options::arg_\fC [private]\fR
+.PP
+"Magic cookie" always passed in as an argument to the \fBACE_Reactor\fR's <schedule_timer> method. Used to communicate values for asynchronous programming. 
+.SS ACE_Synch_Options ACE_Synch_Options::asynch\fC [static]\fR
+.PP
+This is the default asynchronous setting.
+.PP
+.SS ACE_Synch_Options ACE_Synch_Options::defaults\fC [static]\fR
+.PP
+This is the default setting for options, which will block synchronously.
+.PP
+.SS u_long ACE_Synch_Options::options_\fC [private]\fR
+.PP
+Keeps track of the enabled options.
+.PP
+.SS ACE_Synch_Options ACE_Synch_Options::synch\fC [static]\fR
+.PP
+This is the default synchronous setting.
+.PP
+.SS \fBACE_Time_Value\fR ACE_Synch_Options::timeout_\fC [private]\fR
+.PP
+Amount of time to wait for timeouts.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

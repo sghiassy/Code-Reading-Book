@@ -1,0 +1,31 @@
+XCOMM $XFree86: xc/lib/Xxf86misc/Imakefile,v 3.0 1996/01/16 15:01:46 dawes Exp $
+#define DoNormalLib NormalLibXxf86misc
+#define DoSharedLib SharedLibXxf86misc
+#define DoDebugLib DebugLibXxf86misc
+#define DoProfileLib ProfileLibXxf86misc
+#define LibName Xxf86misc
+#define SoRev SOXXF86MISCREV
+#define LibHeaders NO
+
+#include <Threads.tmpl>
+
+#ifdef SharedXxf86miscReqs
+REQUIREDLIBS = SharedXxf86miscReqs
+#endif
+
+XF86MISCSRCS = XF86Misc.c
+XF86MISCOBJS = XF86Misc.o
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+      DEFINES = $(ALLOC_DEFINES)
+     INCLUDES = -I$(XLIBSRC) -I$(EXTINCSRC)
+         SRCS = $(XF86MISCSRCS)
+         OBJS = $(XF86MISCOBJS)
+     LINTLIBS = $(LINTXLIB)
+
+#include <Library.tmpl>
+
+DependTarget()

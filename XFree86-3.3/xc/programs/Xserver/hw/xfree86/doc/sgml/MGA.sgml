@@ -1,0 +1,149 @@
+<!DOCTYPE linuxdoc PUBLIC "-//XFree86//DTD linuxdoc//EN">
+
+<article>
+<title>Information for Matrox Millennium/Mystique Users
+<author>The XFree86 Project Inc.
+<date>16 May 1997
+<toc>
+
+<sect>Supported hardware
+<p>
+The current MGA driver in the SVGA server supports the Matrox Millennium 
+(MGA2064W) with Ti3026 RAMDAC. It has been tested with 175, 220MHz, and
+250MHz cards with 2MB, 4MB and 8MB WRAM. 
+It also supports, for the first time, Matrox Mystique (MGA1064SG) board tested up to 135 MHz for 2 and 4 MB configs.
+
+NOTE: This driver is pretty new, and not everything works like you expect
+it to. It shouldn't crash your machine, but you may have video artifacts
+or missing lines. Please report any and all problems to
+<htmlurl name="XFree86@Xfree86.org" url="mailto:XFree86@Xfree86.org">
+using the appropriate bug report sheet. 
+
+<sect>Features:
+<p>
+<itemize>
+<item>Basic support for the Matrox Millennium video adapter
+
+<itemize>
+<item>uses linear frame buffer
+<item>it should be possible to reach resolutions up to 1920x1024
+<item>it should be possible to use pixel depths of 8, 16, 24, and 32 bits
+  per pixel (256 pseudo colour, "high colour", "packed true colour",
+  "true colour"). 
+<item>supports VESA Display Power Management Signaling (DPMS)
+<item>supports RGB Sync-on-Green
+<item>supports DGA
+<item>has the following accelerations:
+<itemize>
+  <item>lines
+  <item>most bitblts
+  <item>filled rectangles
+  <item>cached pixmaps
+  <item>many more...
+</itemize>
+The Millennium server is fairly well accelerated, and is one of the fastest
+XFree86 3.3 Xservers. Future work will concentrate on fixing
+remaining bugs.
+</itemize>
+
+<item>Basic support for the Matrox Mystique video adapter
+<itemize>
+<item>uses linear frame buffer
+<item>it should be possible to reach resolutions up to 1280x1024
+<item>it should be possible to use pixel depths of 8, 16, 24, and 32 bits
+  per pixel (256 pseudo colour, "high colour", "packed true colour",
+  "true colour"). 
+<item>supports VESA Display Power Management Signaling (DPMS)
+<item>has the following accelerations (may be with some bugs):
+<itemize>
+  <item>lines
+  <item>most bitblts
+  <item>filled rectangles
+  <item>cached pixmaps
+  <item>NOTE: If acceleration do not work properly, you had rather to insert:
+Option "noaccel" 
+line in the Device section of XF86Config file. It will be slower but will work better.
+</itemize>
+</itemize>
+</itemize>
+
+
+<sect>Future Features (in order from highest to lowest priority)
+<p>
+
+<itemize>
+<item>more hardware acceleration (more primitive operations, etc)
+<item>hw cursor for Mystique board
+<item>more chipsets and RAMDACs
+<item>3D acceleration using Mesa
+</itemize>
+
+<sect>Technical Note:
+<p>
+
+This driver only supports:
+<itemize>
+<item>the MGA Storm (MGA2064W) chipset with the TI
+(TVP) 3026 RAMDAC. Matrox have only so far made 175, 220 and 250 MHz boards
+with these two components, although a 135 MHz RAMDAC part exists.
+
+<item>the MGA Storm (MGA1064SG) chipset with integrated 170 MHz RAMDAC
+
+<item>We will eventually provide support for the other Matrox chipsets (once the
+Millennium driver is at a far enough stage and more people with other cards
+join the effort), including the Impression, Atlas, Genesis etc. 
+
+At the moment, however, only the Millennium and Mystique are supported.
+</itemize>
+
+<sect>Configuration:
+<p>
+
+The server auto-detects WRAM size and RAMDAC speed. Do not bother putting 
+these in your "Device" section, as they will be overridden. The TVP3026 and MGA1064SG have a programmable clock generator, so probing and setting clocks is unnecessary as
+well.
+
+The "nolinear" option is currently unsupported - do not use this
+
+The options "noaccel" or "no_bitblt" turn off BitBlt Engine and other
+accelerated functions.
+
+<sect>Known solutions for some problems:
+<p>
+
+<itemize>
+<item>the driver doesn't support some values of HTotal parameter in
+Modelines in the XF86Config file. If you get flickering vertical stripes on
+the screen, try to change this parameter +/- 8.
+</itemize>
+
+<sect>Authors
+<p>
+
+Radoslaw Kapitan, <it>kapitan@student.uci.agh.edu.pl</it>
+
+and:
+
+<itemize>
+<item>Andrew Vanderstock, <it>vanderaj@mail2.svhm.org.au</it>
+<item>Angsar Hockmann, <it>Ansgar.Hockmann@hrz.uni-dortmund.de</it>
+<item>Michael Will, <it>Michael.Will@student.uni-tuebingen.de</it>
+<item>Andrew Mileski, <it>aem@ott.hookup.net</it>
+<item>Stephen Pitts, <it>pitts2@memphisonline.com</it>
+<item>Dirk Hohndel, <it>hohndel@XFree86.Org</it>
+<item>Leonard N. Zubkoff, <it>lnz@dandelion.com</it>
+<item>Mark Vojkovich, <it>mvojkovi@sdcc10.ucsd.edu</it>
+<item>Harm Hanemaayer, <it>H.Hanemaayer@inter.nl.net</it>
+<item>Guy Desbief, <it>g.desbief@aix.pacwan.net</it>
+</itemize>
+
+Visit the <url name = "Matrox Millennium XServer for XFree86 Home Page"
+url="http://www.bf.rmit.edu.au/~ajv/xf86-matrox.html">
+to keep up to date with the latest news, new sources, etc.
+
+
+<verb>
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/MGA.sgml,v 3.4.2.4 1997/05/31 13:34:40 dawes Exp $
+</verb>
+
+</article>

@@ -1,0 +1,410 @@
+.TH ACE_POSIX_AIOCB_Proactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_POSIX_AIOCB_Proactor \- This Proactor makes use of Asynchronous I/O Control Blocks (AIOCB) to notify/get the completion status of the  operations issued. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <POSIX_Proactor.h>\fR
+.PP
+Inherits \fBACE_POSIX_Proactor\fR.
+.PP
+Inherited by \fBACE_POSIX_SIG_Proactor\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_POSIX_AIOCB_Proactor\fR (size_t nmaxop = ACE_AIO_DEFAULT_SIZE)"
+.br
+.RI "\fIConstructor defines max number asynchronous operations which can be started at the same time.\fR"
+.ti -1c
+.RI "virtual \fBProactor_Type\fR \fBget_impl_type\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_POSIX_AIOCB_Proactor\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR &wait_time)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBpost_completion\fR (\fBACE_POSIX_Asynch_Result\fR *result)"
+.br
+.RI "\fIPost a result to the completion port of the Proactor.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Stream_Impl\fR* \fBcreate_asynch_read_stream\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_Stream.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Stream_Impl\fR* \fBcreate_asynch_write_stream\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_Stream.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Dgram_Impl\fR* \fBcreate_asynch_read_dgram\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_Dgram.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Dgram_Impl\fR* \fBcreate_asynch_write_dgram\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_Dgram.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_File_Impl\fR* \fBcreate_asynch_read_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_File_Impl\fR* \fBcreate_asynch_write_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Accept_Impl\fR* \fBcreate_asynch_accept\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Accept.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Transmit_File_Impl\fR* \fBcreate_asynch_transmit_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Transmit_File.\fR"
+.ti -1c
+.RI "virtual int \fBcancel_aio\fR (ACE_HANDLE h)"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_POSIX_AIOCB_Proactor\fR (size_t nmaxop, \fBACE_POSIX_Proactor::Proactor_Type\fR ptype)"
+.br
+.RI "\fISpecial constructor for ACE_SUN_Proactor and \fBACE_POSIX_SIG_Proactor\fR.\fR"
+.ti -1c
+.RI "void \fBcreate_notify_manager\fR (void)"
+.br
+.RI "\fICall these methods from derived class when virtual table is built.\fR"
+.ti -1c
+.RI "void \fBdelete_notify_manager\fR (void)"
+.br
+.ti -1c
+.RI "void \fBcheck_max_aio_num\fR (void)"
+.br
+.RI "\fIDefine the maximum number of asynchronous I/O requests for the current OS.\fR"
+.ti -1c
+.RI "void \fBset_notify_handle\fR (ACE_HANDLE h)"
+.br
+.RI "\fITo identify requests from Notify_Pipe_Manager.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (u_long milli_seconds)"
+.br
+.ti -1c
+.RI "void \fBapplication_specific_code\fR (\fBACE_POSIX_Asynch_Result\fR *asynch_result, u_long bytes_transferred, int success, const void *completion_key, u_long error)"
+.br
+.RI "\fIWe will call the base class's application_specific_code from here.\fR"
+.ti -1c
+.RI "virtual int \fBregister_and_start_aio\fR (\fBACE_POSIX_Asynch_Result\fR *result, int op)"
+.br
+.ti -1c
+.RI "virtual int \fBstart_aio\fR (\fBACE_POSIX_Asynch_Result\fR *result)"
+.br
+.RI "\fIOp code now is saved in \fBACE_POSIX_Asynch_Result\fR.\fR"
+.ti -1c
+.RI "int \fBstart_deferred_aio\fR ()"
+.br
+.RI "\fIStart deferred AIO if necessary.\fR"
+.ti -1c
+.RI "virtual int \fBcancel_aiocb\fR ( \fBACE_POSIX_Asynch_Result\fR * result )"
+.br
+.RI "\fICancel running or deferred AIO.\fR"
+.ti -1c
+.RI "\fBACE_POSIX_Asynch_Result\fR* \fBfind_completed_aio\fR (int &error_status, int &return_status, size_t &index, size_t &count)"
+.br
+.RI "\fIExtract the results of aio.\fR"
+.ti -1c
+.RI "virtual int \fBallocate_aio_slot\fR (\fBACE_POSIX_Asynch_Result\fR *result)"
+.br
+.RI "\fIFind free slot to store result and \fBaiocb\fR pointer.\fR"
+.ti -1c
+.RI "virtual int \fBnotify_completion\fR ( int sig_num )"
+.br
+.RI "\fINotify queue of "post_completed" ACE_POSIX_Asynch_Results called from post_completion method.\fR"
+.ti -1c
+.RI "int \fBputq_result\fR (\fBACE_POSIX_Asynch_Result\fR *result)"
+.br
+.RI "\fIPut "post_completed" result into the internal queue.\fR"
+.ti -1c
+.RI "\fBACE_POSIX_Asynch_Result\fR* \fBgetq_result\fR (void)"
+.br
+.RI "\fIGet "post_completed" result from the internal queue.\fR"
+.ti -1c
+.RI "int \fBclear_result_queue\fR (void)"
+.br
+.RI "\fIClear the internal results queue.\fR"
+.ti -1c
+.RI "int \fBprocess_result_queue\fR (void)"
+.br
+.RI "\fIProcess the internal results queue.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_AIOCB_Notify_Pipe_Manager* \fBaiocb_notify_pipe_manager_\fR"
+.br
+.RI "\fIThis class takes care of doing  when we use AIO_CONTROL_BLOCKS strategy.\fR"
+.ti -1c
+.RI "\fBaiocb\fR** \fBaiocb_list_\fR"
+.br
+.RI "\fIUse a dynamically allocated array to keep track of all the aio's issued currently.\fR"
+.ti -1c
+.RI "\fBACE_POSIX_Asynch_Result\fR** \fBresult_list_\fR"
+.br
+.ti -1c
+.RI "size_t \fBaiocb_list_max_size_\fR"
+.br
+.RI "\fITo maintain the maximum size of the array (list).\fR"
+.ti -1c
+.RI "size_t \fBaiocb_list_cur_size_\fR"
+.br
+.RI "\fITo maintain the current size of the array (list).\fR"
+.ti -1c
+.RI "ACE_SYNCH_MUTEX \fBmutex_\fR"
+.br
+.RI "\fIMutex to protect work with lists.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBnotify_pipe_read_handle_\fR"
+.br
+.RI "\fIThe purpose of this member is only to identify asynchronous request from NotifyManager. We will reserve for it always slot 0 in the list of \fBaiocb\fR's to be sure that don't lose notifications.\fR"
+.ti -1c
+.RI "size_t \fBnum_deferred_aiocb_\fR"
+.br
+.RI "\fInumber of \fBACE_POSIX_Asynch_Result\fR's waiting for start i.e. deferred AIOs.\fR"
+.ti -1c
+.RI "size_t \fBnum_started_aio_\fR"
+.br
+.RI "\fINumber active,i.e. running requests.\fR"
+.ti -1c
+.RI "\fBACE_Unbounded_Queue\fR<\fBACE_POSIX_Asynch_Result\fR *> \fBresult_queue_\fR"
+.br
+.RI "\fIQueue which keeps "post_completed" \fBACE_POSIX_Asynch_Result\fR's.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_AIOCB_Notify_Pipe_Manager\fR"
+.br
+.ti -1c
+.RI "class \fBACE_POSIX_AIOCB_Asynch_Operation\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This Proactor makes use of Asynchronous I/O Control Blocks (AIOCB) to notify/get the completion status of the  operations issued.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_POSIX_AIOCB_Proactor::ACE_POSIX_AIOCB_Proactor (size_t nmaxop = ACE_AIO_DEFAULT_SIZE)
+.PP
+Constructor defines max number asynchronous operations which can be started at the same time.
+.PP
+.SS ACE_POSIX_AIOCB_Proactor::~ACE_POSIX_AIOCB_Proactor (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS ACE_POSIX_AIOCB_Proactor::ACE_POSIX_AIOCB_Proactor (size_t nmaxop, \fBACE_POSIX_Proactor::Proactor_Type\fR ptype)\fC [protected]\fR
+.PP
+Special constructor for ACE_SUN_Proactor and \fBACE_POSIX_SIG_Proactor\fR.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_POSIX_AIOCB_Proactor::allocate_aio_slot (\fBACE_POSIX_Asynch_Result\fR * result)\fC [protected, virtual]\fR
+.PP
+Find free slot to store result and \fBaiocb\fR pointer.
+.PP
+Reimplemented in \fBACE_POSIX_SIG_Proactor\fR.
+.SS void ACE_POSIX_AIOCB_Proactor::application_specific_code (\fBACE_POSIX_Asynch_Result\fR * asynch_result, u_long bytes_transferred, int success, const void * completion_key, u_long error)\fC [protected]\fR
+.PP
+We will call the base class's application_specific_code from here.
+.PP
+Reimplemented from \fBACE_POSIX_Proactor\fR.
+.SS int ACE_POSIX_AIOCB_Proactor::cancel_aio (ACE_HANDLE h)\fC [virtual]\fR
+.PP
+This method should be called from  \fBACE_POSIX_Asynch_Operation::cancel\fR() instead of usual aio_cancel. For all deferred AIO requests with handle "h" it removes its from the lists and notifies user. For all running AIO requests with handle "h" it calls aio_cancel. According to the POSIX standards we will receive ECANCELED for all aio_canceled AIO requests later on return from aio_suspend 
+.SS int ACE_POSIX_AIOCB_Proactor::cancel_aiocb (\fBACE_POSIX_Asynch_Result\fR * result)\fC [protected, virtual]\fR
+.PP
+Cancel running or deferred AIO.
+.PP
+.SS void ACE_POSIX_AIOCB_Proactor::check_max_aio_num (void)\fC [protected]\fR
+.PP
+Define the maximum number of asynchronous I/O requests for the current OS.
+.PP
+.SS int ACE_POSIX_AIOCB_Proactor::clear_result_queue (void)\fC [protected]\fR
+.PP
+Clear the internal results queue.
+.PP
+.SS virtual \fBACE_Asynch_Accept_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_accept (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Accept.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_Dgram_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_read_dgram (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_Dgram.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_File_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_read_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_File.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_Stream_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_read_stream (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_Stream.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Transmit_File_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_transmit_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Transmit_File.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_Dgram_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_write_dgram (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_Dgram.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_File_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_write_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_File.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_Stream_Impl\fR* ACE_POSIX_AIOCB_Proactor::create_asynch_write_stream (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_Stream.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS void ACE_POSIX_AIOCB_Proactor::create_notify_manager (void)\fC [protected]\fR
+.PP
+Call these methods from derived class when virtual table is built.
+.PP
+.SS void ACE_POSIX_AIOCB_Proactor::delete_notify_manager (void)\fC [protected]\fR
+.PP
+.SS \fBACE_POSIX_Asynch_Result\fR * ACE_POSIX_AIOCB_Proactor::find_completed_aio (int & error_status, int & return_status, size_t & index, size_t & count)\fC [protected]\fR
+.PP
+Extract the results of aio.
+.PP
+.SS virtual \fBProactor_Type\fR ACE_POSIX_AIOCB_Proactor::get_impl_type (void)\fC [virtual]\fR
+.PP
+Reimplemented from \fBACE_POSIX_Proactor\fR.
+.PP
+Reimplemented in \fBACE_POSIX_SIG_Proactor\fR.
+.SS \fBACE_POSIX_Asynch_Result\fR * ACE_POSIX_AIOCB_Proactor::getq_result (void)\fC [protected]\fR
+.PP
+Get "post_completed" result from the internal queue.
+.PP
+.SS int ACE_POSIX_AIOCB_Proactor::handle_events (u_long milli_seconds)\fC [protected, virtual]\fR
+.PP
+Dispatch a single set of events. If <milli_seconds> elapses before any events occur, return 0. Return 1 if a completion dispatched. Return -1 on errors. 
+.PP
+Reimplemented in \fBACE_POSIX_SIG_Proactor\fR.
+.SS int ACE_POSIX_AIOCB_Proactor::handle_events (void)\fC [virtual]\fR
+.PP
+Block indefinitely until at least one event is dispatched. Dispatch a single set of events. If <wait_time> elapses before any events occur, return 0. Return 1 on success i.e., when a completion is dispatched, non-zero (-1) on errors and errno is set accordingly. 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.PP
+Reimplemented in \fBACE_POSIX_SIG_Proactor\fR.
+.SS int ACE_POSIX_AIOCB_Proactor::handle_events (\fBACE_Time_Value\fR & wait_time)\fC [virtual]\fR
+.PP
+Dispatch a single set of events. If <wait_time> elapses before any events occur, return 0. Return 1 on success i.e., when a completion is dispatched, non-zero (-1) on errors and errno is set accordingly. 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.PP
+Reimplemented in \fBACE_POSIX_SIG_Proactor\fR.
+.SS int ACE_POSIX_AIOCB_Proactor::notify_completion (int sig_num)\fC [protected, virtual]\fR
+.PP
+Notify queue of "post_completed" ACE_POSIX_Asynch_Results called from post_completion method.
+.PP
+Reimplemented in \fBACE_POSIX_SIG_Proactor\fR.
+.SS int ACE_POSIX_AIOCB_Proactor::post_completion (\fBACE_POSIX_Asynch_Result\fR * result)\fC [virtual]\fR
+.PP
+Post a result to the completion port of the Proactor.
+.PP
+Reimplemented from \fBACE_POSIX_Proactor\fR.
+.SS int ACE_POSIX_AIOCB_Proactor::process_result_queue (void)\fC [protected]\fR
+.PP
+Process the internal results queue.
+.PP
+.SS int ACE_POSIX_AIOCB_Proactor::putq_result (\fBACE_POSIX_Asynch_Result\fR * result)\fC [protected]\fR
+.PP
+Put "post_completed" result into the internal queue.
+.PP
+.SS virtual int ACE_POSIX_AIOCB_Proactor::register_and_start_aio (\fBACE_POSIX_Asynch_Result\fR * result, int op)\fC [protected, virtual]\fR
+.PP
+.SS void ACE_POSIX_AIOCB_Proactor::set_notify_handle (ACE_HANDLE h)\fC [protected]\fR
+.PP
+To identify requests from Notify_Pipe_Manager.
+.PP
+.SS int ACE_POSIX_AIOCB_Proactor::start_aio (\fBACE_POSIX_Asynch_Result\fR * result)\fC [protected, virtual]\fR
+.PP
+Op code now is saved in \fBACE_POSIX_Asynch_Result\fR.
+.PP
+.SS int ACE_POSIX_AIOCB_Proactor::start_deferred_aio ()\fC [protected]\fR
+.PP
+Start deferred AIO if necessary.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_AIOCB_Notify_Pipe_Manager\fC [friend]\fR
+.PP
+Handler needs to call application specific code.
+.PP
+.SS class ACE_POSIX_AIOCB_Asynch_Operation\fC [friend]\fR
+.PP
+This class does the registering of Asynch Operations with the Proactor which is necessary in the AIOCB strategy.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBaiocb\fR ** ACE_POSIX_AIOCB_Proactor::aiocb_list_\fC [protected]\fR
+.PP
+Use a dynamically allocated array to keep track of all the aio's issued currently.
+.PP
+.SS size_t ACE_POSIX_AIOCB_Proactor::aiocb_list_cur_size_\fC [protected]\fR
+.PP
+To maintain the current size of the array (list).
+.PP
+.SS size_t ACE_POSIX_AIOCB_Proactor::aiocb_list_max_size_\fC [protected]\fR
+.PP
+To maintain the maximum size of the array (list).
+.PP
+.SS ACE_AIOCB_Notify_Pipe_Manager * ACE_POSIX_AIOCB_Proactor::aiocb_notify_pipe_manager_\fC [protected]\fR
+.PP
+This class takes care of doing  when we use AIO_CONTROL_BLOCKS strategy.
+.PP
+.SS ACE_SYNCH_MUTEX ACE_POSIX_AIOCB_Proactor::mutex_\fC [protected]\fR
+.PP
+Mutex to protect work with lists.
+.PP
+.SS ACE_HANDLE ACE_POSIX_AIOCB_Proactor::notify_pipe_read_handle_\fC [protected]\fR
+.PP
+The purpose of this member is only to identify asynchronous request from NotifyManager. We will reserve for it always slot 0 in the list of \fBaiocb\fR's to be sure that don't lose notifications.
+.PP
+.SS size_t ACE_POSIX_AIOCB_Proactor::num_deferred_aiocb_\fC [protected]\fR
+.PP
+number of \fBACE_POSIX_Asynch_Result\fR's waiting for start i.e. deferred AIOs.
+.PP
+.SS size_t ACE_POSIX_AIOCB_Proactor::num_started_aio_\fC [protected]\fR
+.PP
+Number active,i.e. running requests.
+.PP
+.SS \fBACE_POSIX_Asynch_Result\fR ** ACE_POSIX_AIOCB_Proactor::result_list_\fC [protected]\fR
+.PP
+.SS \fBACE_Unbounded_Queue\fR< \fBACE_POSIX_Asynch_Result\fR *> ACE_POSIX_AIOCB_Proactor::result_queue_\fC [protected]\fR
+.PP
+Queue which keeps "post_completed" \fBACE_POSIX_Asynch_Result\fR's.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

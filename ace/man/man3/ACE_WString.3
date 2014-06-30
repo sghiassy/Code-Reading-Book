@@ -1,0 +1,442 @@
+.TH ACE_WString 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WString \- This class provides a wrapper facade for C wide strings. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SString.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WString\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_WString\fR (const char *s, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that copies <s> into dynamically allocated memory.\fR"
+.ti -1c
+.RI "\fBACE_WString\fR (const \fBACE_WSTRING_TYPE\fR *s, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that copies <s> into dynamically allocated memory.\fR"
+.ti -1c
+.RI "\fBACE_WString\fR (const \fBACE_USHORT16\fR *s, size_t len, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that takes in a ushort16 string (mainly used by the \fBACE\fR Name_Space classes).\fR"
+.ti -1c
+.RI "\fBACE_WString\fR (const \fBACE_WSTRING_TYPE\fR *s, size_t len, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that copies <len> ACE_WSTRING_TYPE's of <s> into dynamically allocated memory (will NUL terminate the result).\fR"
+.ti -1c
+.RI "\fBACE_WString\fR (size_t len, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that dynamically allocates memory for <len> + 1 ACE_WSTRING_TYPE characters. The newly created memory is set memset to 0.\fR"
+.ti -1c
+.RI "\fBACE_WString\fR (const ACE_WString &s)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "\fBACE_WString\fR (\fBACE_WSTRING_TYPE\fR c, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor that copies <c> into dynamically allocated memory.\fR"
+.ti -1c
+.RI "\fB~ACE_WString\fR (void)"
+.br
+.RI "\fIDeletes the memory...\fR"
+.ti -1c
+.RI "\fBACE_WSTRING_TYPE\fR \fBoperator[]\fR (size_t slot) const"
+.br
+.RI "\fIReturn the <slot'th> character in the string (doesn't perform bounds checking).\fR"
+.ti -1c
+.RI "\fBACE_WSTRING_TYPE\fR& \fBoperator[]\fR (size_t slot)"
+.br
+.RI "\fIReturn the <slot'th> character by reference in the string (doesn't perform bounds checking).\fR"
+.ti -1c
+.RI "ACE_WString& \fBoperator=\fR (const ACE_WString &)"
+.br
+.RI "\fIAssignment operator(does copy memory).\fR"
+.ti -1c
+.RI "void \fBset\fR (const \fBACE_WSTRING_TYPE\fR *s)"
+.br
+.RI "\fICopy <s>.\fR"
+.ti -1c
+.RI "void \fBset\fR (const \fBACE_WSTRING_TYPE\fR *s, size_t len)"
+.br
+.RI "\fICopy <len> bytes of <s> (will NUL terminate the result).\fR"
+.ti -1c
+.RI "void \fBclear\fR ()"
+.br
+.RI "\fIClear this string.\fR"
+.ti -1c
+.RI "ACE_WString \fBsubstring\fR (size_t offset, \fBssize_t\fR length = -1) const"
+.br
+.ti -1c
+.RI "ACE_WString \fBsubstr\fR (size_t offset, \fBssize_t\fR length = -1) const"
+.br
+.RI "\fISame as substring.\fR"
+.ti -1c
+.RI "ACE_WString& \fBoperator+=\fR (const ACE_WString &)"
+.br
+.RI "\fIConcat operator(does copy memory).\fR"
+.ti -1c
+.RI "ACE_WString& \fBoperator+=\fR (const \fBACE_WSTRING_TYPE\fR *)"
+.br
+.RI "\fIConcat operator(does copy memory).\fR"
+.ti -1c
+.RI "u_long \fBhash\fR (void) const"
+.br
+.RI "\fIReturns a hash value for this string.\fR"
+.ti -1c
+.RI "size_t \fBlength\fR (void) const"
+.br
+.RI "\fIReturn the length of the string.\fR"
+.ti -1c
+.RI "size_t \fBbuffer_size\fR (void) const"
+.br
+.RI "\fIReturn the size of the buffer.\fR"
+.ti -1c
+.RI "\fBACE_WSTRING_TYPE\fR* \fBrep\fR (void) const"
+.br
+.RI "\fIGets a copy of the underlying pointer.\fR"
+.ti -1c
+.RI "char* \fBchar_rep\fR (void) const"
+.br
+.RI "\fITransform into a copy of the ASCII character representation. (caller must delete).\fR"
+.ti -1c
+.RI "\fBACE_USHORT16\fR* \fBushort_rep\fR (void) const"
+.br
+.RI "\fITransform into a copy of a USHORT16 representation (caller must delete). Note, behavior is undefined when sizeof (wchar_t) != 2.\fR"
+.ti -1c
+.RI "const \fBACE_WSTRING_TYPE\fR* \fBfast_rep\fR (void) const"
+.br
+.RI "\fIGet at the underlying representation directly!\fR"
+.ti -1c
+.RI "const \fBACE_WSTRING_TYPE\fR* \fBc_str\fR (void) const"
+.br
+.RI "\fISame as STL String's <c_str> and <fast_rep>.\fR"
+.ti -1c
+.RI "int \fBstrstr\fR (const ACE_WString &s) const"
+.br
+.RI "\fIComparison operator that will match substrings. Returns the slot of the first location that matches, else -1.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const ACE_WString &str, int pos = 0) const"
+.br
+.RI "\fIFind <str> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const \fBACE_WSTRING_TYPE\fR *s, int pos = 0) const"
+.br
+.RI "\fIFind <s> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.\fR"
+.ti -1c
+.RI "int \fBfind\fR (\fBACE_WSTRING_TYPE\fR c, int pos = 0) const"
+.br
+.RI "\fIFind <c> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.\fR"
+.ti -1c
+.RI "int \fBrfind\fR (\fBACE_WSTRING_TYPE\fR c, int pos = \fBnpos\fR) const"
+.br
+.RI "\fIFind <c> starting at pos (counting from the end). Returns the slot of the first location that matches, else npos.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_WString &s) const"
+.br
+.RI "\fIEquality comparison operator(must match entire string).\fR"
+.ti -1c
+.RI "int \fBoperator<\fR (const ACE_WString &s) const"
+.br
+.RI "\fILess than comparison operator.\fR"
+.ti -1c
+.RI "int \fBoperator>\fR (const ACE_WString &s) const"
+.br
+.RI "\fIGreater than comparison operator.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_WString &s) const"
+.br
+.RI "\fIInequality comparison operator.\fR"
+.ti -1c
+.RI "int \fBcompare\fR (const ACE_WString &s) const"
+.br
+.RI "\fIPerforms a <strcmp>-style comparison.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "void \fBresize\fR (size_t len)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "size_t \fBstrlen\fR (const \fBACE_WSTRING_TYPE\fR *)"
+.br
+.RI "\fIComputes the length of a "0" terminated ACE_WSTRING_TYPE *.\fR"
+.ti -1c
+.RI "const \fBACE_WSTRING_TYPE\fR* \fBstrstr\fR (const \fBACE_WSTRING_TYPE\fR *s1, const \fBACE_WSTRING_TYPE\fR *s2)"
+.br
+.RI "\fITraditional style strstr.\fR"
+.in -1c
+.SS Static Public Attributes
+
+.in +1c
+.ti -1c
+.RI "const int \fBnpos\fR"
+.br
+.RI "\fINo position constant.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBcheck_allocate\fR (size_t len)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIPointer to a memory allocator.\fR"
+.ti -1c
+.RI "size_t \fBbuf_len_\fR"
+.br
+.RI "\fISize of the buffer of the ACE_WString.\fR"
+.ti -1c
+.RI "size_t \fBlen_\fR"
+.br
+.RI "\fILength of the ACE_WString.\fR"
+.ti -1c
+.RI "\fBACE_WSTRING_TYPE\fR* \fBrep_\fR"
+.br
+.RI "\fIPointer to data.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WSTRING_TYPE\fR \fBNULL_WString_\fR"
+.br
+.RI "\fIRepresents the "NULL" string to simplify the internal logic.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class provides a wrapper facade for C wide strings.
+.PP
+.PP
+ This class uses an  to allocate memory. The user can make this a persistant class by providing an  with a persistable memory pool. This class is optimized for efficiency, so it doesn't provide any internal locking. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WString::ACE_WString (\fBACE_Allocator\fR * alloc = 0)
+.PP
+Default constructor.
+.PP
+.SS ACE_WString::ACE_WString (const char * s, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that copies <s> into dynamically allocated memory.
+.PP
+.SS ACE_WString::ACE_WString (const \fBACE_WSTRING_TYPE\fR * s, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that copies <s> into dynamically allocated memory.
+.PP
+.SS ACE_WString::ACE_WString (const \fBACE_USHORT16\fR * s, size_t len, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that takes in a ushort16 string (mainly used by the \fBACE\fR Name_Space classes).
+.PP
+.SS ACE_WString::ACE_WString (const \fBACE_WSTRING_TYPE\fR * s, size_t len, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that copies <len> ACE_WSTRING_TYPE's of <s> into dynamically allocated memory (will NUL terminate the result).
+.PP
+.SS ACE_WString::ACE_WString (size_t len, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that dynamically allocates memory for <len> + 1 ACE_WSTRING_TYPE characters. The newly created memory is set memset to 0.
+.PP
+.SS ACE_WString::ACE_WString (const ACE_WString & s)
+.PP
+Copy constructor.
+.PP
+.SS ACE_WString::ACE_WString (\fBACE_WSTRING_TYPE\fR c, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor that copies <c> into dynamically allocated memory.
+.PP
+.SS ACE_WString::~ACE_WString (void)
+.PP
+Deletes the memory...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS size_t ACE_WString::buffer_size (void) const
+.PP
+Return the size of the buffer.
+.PP
+.SS const \fBACE_WSTRING_TYPE\fR * ACE_WString::c_str (void) const
+.PP
+Same as STL String's <c_str> and <fast_rep>.
+.PP
+.SS char * ACE_WString::char_rep (void) const
+.PP
+Transform into a copy of the ASCII character representation. (caller must delete).
+.PP
+.SS void ACE_WString::check_allocate (size_t len)\fC [private]\fR
+.PP
+This method checks the size of the buffer. If the size of the buffer is not large enough the buffer will be resized. All new allocated space is zero'd out after this operation. 
+.SS void ACE_WString::clear ()
+.PP
+Clear this string.
+.PP
+.SS int ACE_WString::compare (const ACE_WString & s) const
+.PP
+Performs a <strcmp>-style comparison.
+.PP
+.SS void ACE_WString::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS const \fBACE_WSTRING_TYPE\fR * ACE_WString::fast_rep (void) const
+.PP
+Get at the underlying representation directly!
+.PP
+.SS int ACE_WString::find (\fBACE_WSTRING_TYPE\fR c, int pos = 0) const
+.PP
+Find <c> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.
+.PP
+.SS int ACE_WString::find (const \fBACE_WSTRING_TYPE\fR * s, int pos = 0) const
+.PP
+Find <s> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.
+.PP
+.SS int ACE_WString::find (const ACE_WString & str, int pos = 0) const
+.PP
+Find <str> starting at pos. Returns the slot of the first location that matches (will be >= pos), else npos.
+.PP
+.SS u_long ACE_WString::hash (void) const
+.PP
+Returns a hash value for this string.
+.PP
+.SS size_t ACE_WString::length (void) const
+.PP
+Return the length of the string.
+.PP
+.SS int ACE_WString::operator!= (const ACE_WString & s) const
+.PP
+Inequality comparison operator.
+.PP
+.SS ACE_WString & ACE_WString::operator+= (const \fBACE_WSTRING_TYPE\fR *)
+.PP
+Concat operator(does copy memory).
+.PP
+.SS ACE_WString & ACE_WString::operator+= (const ACE_WString &)
+.PP
+Concat operator(does copy memory).
+.PP
+.SS int ACE_WString::operator< (const ACE_WString & s) const
+.PP
+Less than comparison operator.
+.PP
+.SS ACE_WString & ACE_WString::operator= (const ACE_WString &)
+.PP
+Assignment operator(does copy memory).
+.PP
+.SS int ACE_WString::operator== (const ACE_WString & s) const
+.PP
+Equality comparison operator(must match entire string).
+.PP
+.SS int ACE_WString::operator> (const ACE_WString & s) const
+.PP
+Greater than comparison operator.
+.PP
+.SS \fBACE_WSTRING_TYPE\fR & ACE_WString::operator[] (size_t slot)
+.PP
+Return the <slot'th> character by reference in the string (doesn't perform bounds checking).
+.PP
+.SS \fBACE_WSTRING_TYPE\fR ACE_WString::operator[] (size_t slot) const
+.PP
+Return the <slot'th> character in the string (doesn't perform bounds checking).
+.PP
+.SS \fBACE_WSTRING_TYPE\fR * ACE_WString::rep (void) const
+.PP
+Gets a copy of the underlying pointer.
+.PP
+.SS void ACE_WString::resize (size_t len)
+.PP
+This method is designed for high-performance. Please use with care ;-) If the current size of the string is less than <len>, the string is resized to the new length. The data is zero'd out after this operation. 
+.SS int ACE_WString::rfind (\fBACE_WSTRING_TYPE\fR c, int pos = \fBnpos\fR) const
+.PP
+Find <c> starting at pos (counting from the end). Returns the slot of the first location that matches, else npos.
+.PP
+.SS void ACE_WString::set (const \fBACE_WSTRING_TYPE\fR * s, size_t len)
+.PP
+Copy <len> bytes of <s> (will NUL terminate the result).
+.PP
+.SS void ACE_WString::set (const \fBACE_WSTRING_TYPE\fR * s)
+.PP
+Copy <s>.
+.PP
+.SS size_t ACE_WString::strlen (const \fBACE_WSTRING_TYPE\fR *)\fC [static]\fR
+.PP
+Computes the length of a "0" terminated ACE_WSTRING_TYPE *.
+.PP
+.SS const \fBACE_WSTRING_TYPE\fR * ACE_WString::strstr (const \fBACE_WSTRING_TYPE\fR * s1, const \fBACE_WSTRING_TYPE\fR * s2)\fC [static]\fR
+.PP
+Traditional style strstr.
+.PP
+.SS int ACE_WString::strstr (const ACE_WString & s) const
+.PP
+Comparison operator that will match substrings. Returns the slot of the first location that matches, else -1.
+.PP
+.SS ACE_WString ACE_WString::substr (size_t offset, \fBssize_t\fR length = -1) const
+.PP
+Same as substring.
+.PP
+.SS ACE_WString ACE_WString::substring (size_t offset, \fBssize_t\fR length = -1) const
+.PP
+Return a substring given an offset and length, if length == -1 use rest of str return empty substring if offset or offset/length are invalid. 
+.SS \fBACE_USHORT16\fR * ACE_WString::ushort_rep (void) const
+.PP
+Transform into a copy of a USHORT16 representation (caller must delete). Note, behavior is undefined when sizeof (wchar_t) != 2.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_WString::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS \fBACE_WSTRING_TYPE\fR ACE_WString::NULL_WString_\fC [static, private]\fR
+.PP
+Represents the "NULL" string to simplify the internal logic.
+.PP
+.SS \fBACE_Allocator\fR * ACE_WString::allocator_\fC [private]\fR
+.PP
+Pointer to a memory allocator.
+.PP
+.SS size_t ACE_WString::buf_len_\fC [private]\fR
+.PP
+Size of the buffer of the ACE_WString.
+.PP
+.SS size_t ACE_WString::len_\fC [private]\fR
+.PP
+Length of the ACE_WString.
+.PP
+.SS const int ACE_WString::npos\fC [static]\fR
+.PP
+No position constant.
+.PP
+.SS \fBACE_WSTRING_TYPE\fR * ACE_WString::rep_\fC [private]\fR
+.PP
+Pointer to data.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

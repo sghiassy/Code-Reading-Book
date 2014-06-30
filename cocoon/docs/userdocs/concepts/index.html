@@ -1,0 +1,1785 @@
+<html xmlns:NetUtils="org.apache.cocoon.util.NetUtils">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Understanding Apache Cocoon</title>
+<script type="text/javascript" src="resources/script.js" language="JavaScript"></script>
+</head>
+<body bgcolor="#ffffff" marginheight="4" marginwidth="4" leftmargin="4" topmargin="4" alink="#cc0000" vlink="#0086b2" link="#039acc" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" rowspan="3" height="60" width="135"><img border="0" vspace="0" hspace="0" src="images/logo.gif" height="60" width="135"></td><td background="images/line.gif" colspan="2" align="left" valign="top" height="5" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/line.gif" height="5" width="1"></td><td align="left" valign="top" rowspan="3" height="60" width="29"><img border="0" vspace="0" hspace="0" src="images/right.gif" height="60" width="29"></td>
+</tr>
+<tr>
+<td bgcolor="#0086b2" colspan="2" align="right" valign="top" height="35" width="100%"><img align="right" alt="Understanding Apache Cocoon" border="0" vspace="0" hspace="0" src="graphics/index-header.jpg_label=Understanding%20Apache%20Cocoon.jpg"></td>
+</tr>
+<tr>
+<td background="images/bottom.gif" bgcolor="#0086b2" align="left" valign="top" height="20" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/bottom.gif" height="20" width="3"></td><td background="images/bottom.gif" width="288" valign="top" height="20" bgcolor="#0086b2" align="right">
+<table width="288" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('xml');" onMouseOut="rolloverOff('xml');" target="new" href="http://xml.apache.org/"><img onLoad="rolloverLoad('xml', 'images/button-xml-hi.gif', 'images/button-xml-lo.gif');" border="0" vspace="0" hspace="0" name="xml" src="images/button-xml-lo.gif" height="20" width="96" alt="http://xml.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('asf');" onMouseOut="rolloverOff('asf');" target="new" href="http://www.apache.org/"><img onLoad="rolloverLoad('asf', 'images/button-asf-hi.gif', 'images/button-asf-lo.gif');" border="0" vspace="0" hspace="0" name="asf" src="images/button-asf-lo.gif" height="20" width="96" alt="http://www.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('w3c');" onMouseOut="rolloverOff('w3c');" target="new" href="http://www.w3.org/"><img onLoad="rolloverLoad('w3c', 'images/button-w3c-hi.gif', 'images/button-w3c-lo.gif');" border="0" vspace="0" hspace="0" name="w3c" src="images/button-w3c-lo.gif" height="20" width="96" alt="http://www.w3.org/"></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr width="100%">
+<td valign="top" width="120">
+<table width="120" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td valign="top" align="left"><img width="120" vspace="0" src="images/join.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Main')" onMouseOut="rolloverOff('Main')" href="../../index.html"><img onLoad="rolloverLoad('Main', 'graphics/Main-label_over.jpg', 'graphics/Main-label.jpg');" vspace="0" hspace="0" name="Main" width="120" height="12" border="0" src="graphics/Main-label.jpg" alt="Main"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('User Documentation')" onMouseOut="rolloverOff('User Documentation')" href="../index.html"><img onLoad="rolloverLoad('User Documentation', 'graphics/User%20Documentation-label_over.jpg', 'graphics/User%20Documentation-label.jpg');" vspace="0" hspace="0" name="User Documentation" width="120" height="12" border="0" src="graphics/User%20Documentation-label.jpg" alt="User Documentation"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><img alt="Concepts" width="120" vspace="0" src="graphics/Concepts-separator.jpg" hspace="0" height="20" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Overview')" onMouseOut="rolloverOff('Overview')" href="index.html"><img onLoad="rolloverLoad('Overview', 'graphics/Overview-label_over.jpg', 'graphics/Overview-label.jpg');" vspace="0" hspace="0" name="Overview" width="120" height="12" border="0" src="graphics/Overview-label.jpg" alt="Overview"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Sitemap')" onMouseOut="rolloverOff('Sitemap')" href="sitemap.html"><img onLoad="rolloverLoad('Sitemap', 'graphics/Sitemap-label_over.jpg', 'graphics/Sitemap-label.jpg');" vspace="0" hspace="0" name="Sitemap" width="120" height="12" border="0" src="graphics/Sitemap-label.jpg" alt="Sitemap"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Views')" onMouseOut="rolloverOff('Views')" href="views.html"><img onLoad="rolloverLoad('Views', 'graphics/Views-label_over.jpg', 'graphics/Views-label.jpg');" vspace="0" hspace="0" name="Views" width="120" height="12" border="0" src="graphics/Views-label.jpg" alt="Views"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Caching')" onMouseOut="rolloverOff('Caching')" href="caching.html"><img onLoad="rolloverLoad('Caching', 'graphics/Caching-label_over.jpg', 'graphics/Caching-label.jpg');" vspace="0" hspace="0" name="Caching" width="120" height="12" border="0" src="graphics/Caching-label.jpg" alt="Caching"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Actions')" onMouseOut="rolloverOff('Actions')" href="actions.html"><img onLoad="rolloverLoad('Actions', 'graphics/Actions-label_over.jpg', 'graphics/Actions-label.jpg');" vspace="0" hspace="0" name="Actions" width="120" height="12" border="0" src="graphics/Actions-label.jpg" alt="Actions"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Matchers and Selectors')" onMouseOut="rolloverOff('Matchers and Selectors')" href="matchers_selectors.html"><img onLoad="rolloverLoad('Matchers and Selectors', 'graphics/Matchers%20and%20Selectors-label_over.jpg', 'graphics/Matchers%20and%20Selectors-label.jpg');" vspace="0" hspace="0" name="Matchers and Selectors" width="120" height="12" border="0" src="graphics/Matchers%20and%20Selectors-label.jpg" alt="Matchers and Selectors"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Entity Catalogs')" onMouseOut="rolloverOff('Entity Catalogs')" href="catalog.html"><img onLoad="rolloverLoad('Entity Catalogs', 'graphics/Entity%20Catalogs-label_over.jpg', 'graphics/Entity%20Catalogs-label.jpg');" vspace="0" hspace="0" name="Entity Catalogs" width="120" height="12" border="0" src="graphics/Entity%20Catalogs-label.jpg" alt="Entity Catalogs"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('MRUMemoryStore')" onMouseOut="rolloverOff('MRUMemoryStore')" href="mrustore.html"><img onLoad="rolloverLoad('MRUMemoryStore', 'graphics/MRUMemoryStore-label_over.jpg', 'graphics/MRUMemoryStore-label.jpg');" vspace="0" hspace="0" name="MRUMemoryStore" width="120" height="12" border="0" src="graphics/MRUMemoryStore-label.jpg" alt="MRUMemoryStore"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('StoreJanitor')" onMouseOut="rolloverOff('StoreJanitor')" href="storejanitor.html"><img onLoad="rolloverLoad('StoreJanitor', 'graphics/StoreJanitor-label_over.jpg', 'graphics/StoreJanitor-label.jpg');" vspace="0" hspace="0" name="StoreJanitor" width="120" height="12" border="0" src="graphics/StoreJanitor-label.jpg" alt="StoreJanitor"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XMLSearching')" onMouseOut="rolloverOff('XMLSearching')" href="xmlsearching.html"><img onLoad="rolloverLoad('XMLSearching', 'graphics/XMLSearching-label_over.jpg', 'graphics/XMLSearching-label.jpg');" vspace="0" hspace="0" name="XMLSearching" width="120" height="12" border="0" src="graphics/XMLSearching-label.jpg" alt="XMLSearching"></a></td>
+</tr>
+<tr>
+<td align="left" valign="top"><img width="120" vspace="0" src="images/close.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+</table>
+</td><td>
+<table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td height="10" width="100%"></td>
+</tr>
+<tr>
+<td> 
+ 
+
+ 
+   
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Overview</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+     
+<p align="justify">
+     This document is intended for both Users and Developers 
+     and presents an overall picture of Apache Cocoon.
+     </p>
+
+     
+<blockquote>
+<ul>
+       
+<li>
+         
+<a href="#pre-requisites">
+           Prerequisites
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#a-little-history">
+           A Little History
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#what-problems">
+           What problem does Cocoon solve?
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#basic-mechanisms">
+           Basic Mechanisms.
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#c2-architecture">
+           Architecture.
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#c2-abstractions">
+           Abstraction.
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#cocoon-configuration">
+           Apache Cocoon Configuration.
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#work-area">
+           Apache Cocoon Work Area.
+         </a>
+       
+</li>
+       
+<li>
+         
+<a href="#use-with-tomcat">
+           Use with Tomcat
+         </a>
+       
+</li>
+     
+</ul>
+</blockquote>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+  
+<a name="pre-requisites">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Prerequisites</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">What You Should know:</p> 
+    
+<blockquote>
+<ul> 
+         
+<li>XML, XML Namespaces</li>
+         
+<li>Basics of XPath, XSLT</li>
+         
+<li>Java language</li>
+         
+<li>Servlets, HTTP</li>
+    
+</ul>
+</blockquote> 
+    
+<p align="justify">What You need not know:</p> 
+    
+<blockquote>
+<ul> 
+         
+<li>Cocoon 1</li>
+    
+</ul>
+</blockquote> 
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="a-little-history">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>A Little History</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Cocoon 1</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul> 
+            
+<li>Cocoon project was founded in Jan. 1999 by Stefano Mazzocchi as an open source project under Apache Software Foundation.</li>
+            
+<li>Started as a simple servlet for XSL styling of XML content.</li>
+            
+<li>Was based on DOM level 1 API. This choice turned out to be quite limiting for speed/memory efficiency.</li>
+            
+<li>Used reactor pattern to connect components. This allowed the reaction instructions to be placed inside the documents.  Though appealing, it caused difficulties in managing highly dynamic web-sites.</li>
+            
+<li>Allowed context overlap to happen by having processing instructions in documents/stylesheets.</li>
+      
+</ul>
+</blockquote> 
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Apache Cocoon</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul> 
+            
+<li>A separate codebase to incorporate Cocoon 1 learnings.</li>
+            
+<li>Designed for execution speed/memory efficiency and scalability to process very large documents by switching processing model from DOM to SAX.</li>
+            
+<li>Centralizes the management functions by allowing processing pipeline specification in a sitemap (an XML file), replacing the embedded processing instruction model.</li>
+            
+<li>Better support for pre-compilation, pre-generation and caching for better performance.</li>
+      
+</ul>
+</blockquote>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="what-problems">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>What problem does Cocoon solve?</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">Basic problem to be solved:</p>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Separation of content, style, logic and management functions in an XML content based web site (and web services).</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="159" width="313" alt="The Apache Cocoon Pyramid Model of Contracts" src="images/pyramid-model.gif"></p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Data Mapping</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="174" width="339" alt="The Apache Cocoon Data Mapping" src="images/data-mapping.gif"></p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="basic-mechanisms">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Basic Mechanisms.</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">Basic mechanisms for processing XML documents:</p>
+    
+<blockquote>
+<ul>
+      
+<li>Dispatching based on Matchers.</li>
+      
+<li>Generation of XML documents (from content, logic, Relation DB, objects or any combination) through Generators</li>
+      
+<li>Transformation (to another XML, objects or any combination) of XML documents through Transformers</li>
+      
+<li>Aggregation of XML documents through Aggregators</li>
+      
+<li>Rendering XML through Serializers</li>
+    
+</ul>
+</blockquote>
+    
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="386" width="288" alt="Basic Mechanisms" src="images/basic-mechanism.gif"></p>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Pipeline Processing</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+        
+<p align="justify">Sequence of Interactions</p>
+        
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="347" width="613" alt="Interaction Sequence" src="images/interaction-sequence.gif"></p>
+        
+<p align="justify">Pipeline</p>
+        
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="223" width="713" alt="Pipeline" src="images/pipeline.gif"></p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="c2-architecture">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Architecture.</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="349" width="430" alt="Architecture" src="images/architecture.gif"></p>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Core Cocoon</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul>
+        
+<li>Avalon framework for logging, configuration, threading, context etc.</li>
+        
+<li>Caching mechanism</li>
+        
+<li>Pipeline handling</li>
+        
+<li>Program generation, compilation, loading and execution.</li>
+        
+<li>Base classes for generation, transformation, serialization, components.</li>
+        
+<li>...</li>
+      
+</ul>
+</blockquote>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Cocoon Components</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul>
+        
+<li>Specific generators</li>
+        
+<li>Specific transformers</li>
+        
+<li>Specific matchers</li>
+        
+<li>Specific serializers</li>
+        
+<li>...</li>
+      
+</ul>
+</blockquote>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Built-in Logicsheets</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul>
+        
+<li>sitemap.xsl</li>
+        
+<li>xsp.xsl</li>
+        
+<li>esql.xsl</li>
+        
+<li>request.xsl</li>
+        
+<li>response.xsl</li>
+        
+<li>...</li>
+      
+</ul>
+</blockquote>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Site specific configuration, components, logicsheets and content</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul>
+        
+<li>...</li>
+      
+</ul>
+</blockquote>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="c2-abstractions">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Abstraction.</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>eXtensible Server Pages (XSPs)</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">An XSP page is an XML page with following requirements:</p>
+        
+<blockquote>
+<ul>
+          
+<li>The document root must be <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code>
+</li>
+          
+<li>It must have language declaration as an attribute in the <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code> element.</li>
+          
+<li>It must have namespace declaration for xsp as an attribute in the <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code> element.</li>
+          
+<li>For an XSP to be useful, it must also require at least an <code><font face="courier, monospaced">&lt;xsp:logic&gt;</font></code> and an <code><font face="courier, monospaced">&lt;xsp:expr&gt;</font></code> element.</li>
+        
+</ul>
+</blockquote>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;
+
+&lt;xsp:page language="java" xmlns:xsp="http://apache.org/xsp"&gt;
+
+  &lt;xsp:logic&gt;
+  static private int counter = 0;
+  private synchronized int count()
+  {
+    return counter++;
+  }
+  &lt;/xsp:logic&gt;
+
+  &lt;page&gt;
+  &lt;p&gt;I have been requested &lt;xsp:expr&gt;count()&lt;/xsp:expr&gt; times.&lt;/p&gt;
+  &lt;/page&gt;
+
+&lt;/xsp:page&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+      
+<p align="justify">An XSP page is used by a generator to generate XML document.</p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>XSP Processing (Code Generation)</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+package org.apache.cocoon.www.docs.samples.xsp;
+
+import java.io.File;
+// A bunch of other imports 
+
+public class counter_xsp extends XSPGenerator {
+   // .. Bookkeeping stuff commented out.
+  /* User Class Declarations */
+  static private int counter = 0;
+  private synchronized int count() {
+    return counter++;
+  }
+  /* Generate XML data. */
+  public void generate() throws SAXException {
+    this.contentHandler.startDocument();
+    AttributesImpl xspAttr = new AttributesImpl();
+    this.contentHandler.startPrefixMapping("xsp", "http://apache.org/xsp");
+    this.contentHandler.startElement("", "page", "page", xspAttr);
+    // Statements to build the XML document (Omitted)
+    this.contentHandler.endElement("", "page", "page");
+    this.contentHandler.endPrefixMapping("xsp");
+    this.contentHandler.endDocument();
+  }
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Ways of Creating XSPs</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="-1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Embedded Logic</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul>
+        
+<li>Code is embedded in the XML page</li>
+        
+<li>No separation of content and logic</li>
+        
+<li>Okay for small examples but terrible for large systems.</li>
+      
+</ul>
+</blockquote>
+      
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="384" width="323" alt="ways of creating xsp's" src="images/xsp-way.gif"></p>
+      
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+      
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="-1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Included Logicsheet</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul>
+        
+<li>Code is in a separate logicsheet (an XSL file)</li>
+        
+<li>Effective separation of content and logic</li>
+        
+<li>Preferred way to create XSPs</li>
+      
+</ul>
+</blockquote>
+      
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="403" width="318" alt="ways of creating xsp's" src="images/xsp-way2.gif"></p>
+      
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+      
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="-1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Logicsheet as tag library</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<blockquote>
+<ul>
+        
+<li>The logicsheet is packaged as a reusable tag library and registered with Cocoon in cocoon.xconf file.</li>
+        
+<li>Tag library has a namespace declaration, declared in the original logicsheet and matched in <code><font face="courier, monospaced">&lt;xsp:page&gt;</font></code> xmlns:... attribute.</li>
+        
+<li>Effective separation of content, logic and management</li>
+      
+</ul>
+</blockquote>
+      
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="409" width="344" alt="ways of creating xsp's" src="images/xsp-way3.gif"></p>
+      
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Sitemap</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0"&gt;
+
+&lt;map:components&gt;
+...
+&lt;/map:components&gt;
+
+&lt;map:views&gt;
+...
+&lt;/map:views&gt;
+&lt;map:pipelines&gt;
+&lt;map:pipeline&gt;
+&lt;map:match&gt; 
+...
+&lt;/map:match&gt;
+...
+&lt;/map:pipeline&gt;
+...
+&lt;/map:pipelines&gt;
+...
+&lt;/map:sitemap&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+      
+<p align="justify">Sitemap contains configuration information for a Cocoon engine:</p>
+        
+<blockquote>
+<ul>
+           
+<li>list of matchers</li>
+           
+<li>list of generators</li>
+           
+<li>list of transformers</li>
+           
+<li>list of readers</li>
+           
+<li>list of serializers</li>
+           
+<li>list of selectors</li>
+           
+<li>list of processing pipelines with match patterns</li>
+           
+<li>...</li>
+        
+</ul>
+</blockquote>
+      
+<p align="justify">Sitemap is an XML file corresponding to a sitemap DTD.</p>
+      
+<p align="justify">Sitemap can be edited to add new elements.</p>
+      
+<p align="justify">Sitemap is generated into a program and is compiled into an executable unit.</p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Matchers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">A Matcher attempts to match an URI with a specified pattern for dispatching the request to a specific processing pipeline.</p>
+      
+<p align="justify">Different types of matchers:</p>
+        
+<blockquote>
+<ul>
+           
+<li>wildcard matcher</li>
+           
+<li>regexp matcher</li>
+        
+</ul>
+</blockquote>
+      
+<p align="justify">More matchers can be added without modifying Cocoon.</p>
+      
+<p align="justify">Matchers help in specifying a specific pipeline processing for a group of URIs.</p>
+      
+<p align="justify">Sitemap entries for different types of matchers</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;map:matchers default="wildcard"&gt;
+ &lt;map:matcher name="wildcard" factory="org.apache.cocoon.matching.WildcardURIMatcherFactory"/&gt;
+ &lt;map:matcher name="regexp" factory="org.apache.cocoon.matching.RegexpURIMatcherFactory"/&gt;
+&lt;/map:matchers&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+      
+<p align="justify">Pipeline entries in sitemap file</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;map:match pattern="jsp/*"&gt;
+  &lt;map:generate type="jsp" src="/docs/samples/jsp/{1}.jsp"/&gt;
+  ...
+  &lt;/map:match&gt;
+&lt;map:match pattern="hello.pdf"&gt;
+&lt;/map:match
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Generators</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">A Generator is used to create an XML structure from an input source (file, directory, stream ...)</p>
+      
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="409" width="344" alt="ways of creating xsp's" src="images/xsp-way3.gif"></p>
+      
+<p align="justify">Different types of generators:</p>
+        
+<blockquote>
+<ul>
+           
+<li>file generator</li>
+           
+<li>directory generator</li>
+           
+<li>XSP generator</li>
+           
+<li>JSP generator</li>
+           
+<li>Request generator</li>
+           
+<li>...</li>
+        
+</ul>
+</blockquote>
+      
+<p align="justify">More generators can be added without modifying Cocoon.</p>
+      
+<p align="justify">Sitemap entries for different types of generators</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;map:generators default="file"&gt;
+ &lt;map:generator name="file"
+                src="org.apache.cocoon.generation.FileGenerator"
+                label="content"/&gt;
+ &lt;map:generator name="directory"
+                src="org.apache.cocoon.generation.DirectoryGenerator"
+                label="content"/&gt;
+ &lt;map:generator name="serverpages"
+                src="org.apache.cocoon.generation.ServerPagesGenerator"
+                label="content"/&gt;
+ &lt;map:generator name="request"
+                src="org.apache.cocoon.generation.RequestGenerator"/&gt;
+ ...
+&lt;/map:generators&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+      
+<p align="justify">A sample generator entries in a pipeline</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;map:match pattern="hello.html"&gt;
+    &lt;map:generate src="docs/samples/hello-page.xml"/&gt;
+    &lt;map:transform src="stylesheets/page/simple-page2html.xsl"/&gt;
+    &lt;map:serialize type="html"/&gt;
+&lt;/map:match&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+      
+<p align="justify">A Generator turns an XML document, after applying appropriate transformations, into a compiled program whose output is an XML document.</p>
+      
+<p align="justify">An XSP generator applies all the logicsheets specified in the source XML file before generating the program.</p>
+      
+<p align="justify">Generators cache the compiled programs for better runtime efficiency.</p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Transformers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">A Transformer is used to map an input XML structure into another XML structure.</p>
+      
+<p align="justify">Different types of transformers:</p>
+        
+<blockquote>
+<ul>
+           
+<li>XSLT Transformer</li>
+           
+<li>Log Transformer</li>
+           
+<li>SQL Transformer</li>
+           
+<li>I18N Transformer</li>
+           
+<li>...</li>
+        
+</ul>
+</blockquote>
+      
+<p align="justify">Log Transformer is a good debugging tool.</p>
+      
+<p align="justify">More transformers can be added without modifying Cocoon.</p>
+      
+<p align="justify">Sitemap entries for different types of transformers</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;map:transformers default="xslt"&gt;
+   &lt;map:transformer name="xslt" src="org.apache.cocoon.transformation.TraxTransformer"&gt;
+    &lt;use-store map:value="true"/&gt;
+    &lt;use-request-parameters map:value="false"/&gt;
+    &lt;use-browser-capabilities-db map:value="false"/&gt;
+   &lt;/map:transformer&gt;
+   &lt;map:transformer name="log" src="org.apache.cocoon.transformation.LogTransformer"/&gt;
+...
+
+&lt;/map:transformers&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+      
+<p align="justify">A sample transformer entry in a pipeline</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;map:match pattern="hello.html"&gt;
+ &lt;map:generate src="docs/samples/hello-page.xml"/&gt;
+ &lt;map:transform src="stylesheets/page/simple-page2html.xsl"/&gt;
+ &lt;map:serialize type="html"/&gt;
+&lt;/map:match&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Serializers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">A Serializer is used to render an input XML structure into some other format (not necessarily XML)</p>
+      
+<p align="justify">Different types of serializers:</p>
+        
+<blockquote>
+<ul>
+           
+<li>HTML Serializer</li>
+           
+<li>FOP Serializer</li>
+           
+<li>Text Serializer</li>
+           
+<li>XML Serializer</li>
+           
+<li>...</li>
+        
+</ul>
+</blockquote>
+      
+<p align="justify">More serializers can be added without modifying Cocoon.</p>
+      
+<p align="justify">Sitemap entries for different types of serializers</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;map:serializers default="html"&gt;
+ &lt;map:serializer name="xml"
+                 mime-type="text/xml"
+                 src="org.apache.cocoon.serialization.XMLSerializer"/&gt;
+ &lt;map:serializer name="html"
+                 mime-type="text/html"
+                 src="org.apache.cocoon.serialization.HTMLSerializer"/&gt;
+ &lt;map:serializer name="fo2pdf"
+                 mime-type="application/pdf"
+                 src="org.apache.cocoon.serialization.FOPSerializer"/&gt;
+ &lt;map:serializer name="vrml"
+                 mime-type="model/vrml"
+                 src="org.apache.cocoon.serialization.TextSerializer"/&gt;
+ ...
+&lt;/map:serializers&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+      
+<p align="justify">A sample serializer entry in a pipeline</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+ &lt;map:match pattern="hello.html"&gt;
+    &lt;map:generate src="docs/samples/hello-page.xml"/&gt;
+    &lt;map:transform src="stylesheets/page/simple-page2html.xsl"/&gt;
+    &lt;map:serialize type="html"/&gt;
+   &lt;/map:match&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Pipeline Processing</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">The sitemap configuration allows dynamic setup of processing pipelines consisting of a generator, multiple transformers and a serializer.</p>
+      
+<p align="justify">Requests are dispatched to a pipeline based on request URI and the pipeline matching pattern (either with wildcards or as a regexp)</p>
+      
+<p align="justify">The pipeline is setup in the generated file <code><font face="courier, monospaced">sitemap_xmap.java</font></code> (This file gets generated [possibly asynchronously] everytime the <code><font face="courier, monospaced">sitemap.xmap</font></code> is modified.</p>
+      
+<p align="center">
+<img hspace="4" vspace="4" border="0" height="341" width="379" alt="Pipeline Entry" src="images/pipeline2.gif"></p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Logicsheets</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+      
+<p align="justify">Logicsheets are XSL files with an associated namespace.</p>
+      
+<p align="justify">Primary mechanism to add program logic (code) to XSPs.</p>
+      
+<p align="justify">These need to be registered in configuration file cocoon.xconf.</p>
+      
+<p align="justify">Logicsheets are used by the generator to transform XML structure before generating program.</p>
+      
+<p align="justify">Cocoon comes with a no. of built-in logic sheets:</p>
+        
+<blockquote>
+<ul>
+           
+<li>request.xsl</li>
+           
+<li>response.xsl</li>
+           
+<li>session.xsl</li>
+           
+<li>cookie.xsl</li>
+           
+<li>esql.xsl</li>
+           
+<li>log.xsl</li>
+           
+<li>...</li>
+        
+</ul>
+</blockquote>
+      
+<p align="justify">Log.xsl structure</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;xsl:stylesheet  version="1.0"
+                 xmlns:xsp="http://apache.org/xsp"
+                 xmlns:log="http://apache.org/xsp/log"
+                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"&gt;
+
+&lt;xsl:template match="log:logger"&gt;
+... variable and xsp:logic statements ...
+&lt;/xsl:template&gt;
+
+&lt;xsl:template match="log:debug"&gt;
+  &lt;xsp:logic&gt;
+   if(getLogger() != null)
+     getLogger().debug("&lt;xsl:value-of select="."/&gt;");    
+  &lt;/xsp:logic&gt;  
+&lt;/xsl:template&gt;
+&lt;xsl:template match="log:error"&gt;
+...  
+&lt;/xsl:template&gt;
+&lt;/xsl:stylesheet&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+      
+<p align="justify">A sample use</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;xsp:page language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:log="http://apache.org/xsp/log"&gt;
+
+  &lt;page&gt;
+  &lt;log:logger name="test" filename="test.log"/&gt;
+  &lt;log:debug&gt;Test Message&lt;/log:debug&gt;
+  &lt;/page&gt;
+&lt;/xsp:page&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="cocoon-configuration">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Apache Cocoon Configuration.</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">Cocoon is highly configurable. Main configuration files, assuming Cocoon deployment as a servlet in a servlet container, are (directory locations assume Tomcat servlet container):</p>
+    
+<blockquote>
+<ul>
+       
+<li>
+<code><font face="courier, monospaced">sitemap.xmap</font></code>: the sitemap file. By default, located in <code><font face="courier, monospaced">$TOMCAT_HOME/webapps/cocoon</font></code> directory.</li>
+       
+<li>
+<code><font face="courier, monospaced">cocoon.xconf</font></code>: configuration file having logicsheet registrations. Specifies, sitemap.xmap location and other such parameters. By default, located in <code><font face="courier, monospaced">$TOMCAT_HOME/webapps/cocoon</font></code> directory.</li>
+       
+<li>
+<code><font face="courier, monospaced">web.xml</font></code>: servlet deployment descriptor. Specifies location of cocoon.xconf, log file location and other such parameters. Located in <code><font face="courier, monospaced">$TOMCAT_HOME/webapps/cocoon/WEB-INF</font></code> directory.</li>
+       
+<li>
+<code><font face="courier, monospaced">cocoon.roles</font></code>: mapping file for Core Cocoon components name and implementation classes. For example, if you want to use a parser other than the default one, you need to modify this file.</li>
+    
+</ul>
+</blockquote>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="work-area">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Apache Cocoon Work Area</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">Cocoon produces execution log entries for debugging/auditing.</p>
+    
+<blockquote>
+<ul>
+       
+<li>The amount of data to be logged can be controlled by
+       log-level parameter in web.xml file. The default is DEBUG
+       (maximum data).</li>
+       
+<li>By default, the log file is:
+       <code><font face="courier, monospaced">$TOMCAT_HOME/webapps/cocoon/WEB-INF/logs/cocoon.log</font></code>.</li>
+    
+</ul>
+</blockquote>
+
+    
+<p align="justify">Cocoon keeps the generated .java files in a directory tree
+    starting at (by default):<br>
+    
+<code><font face="courier, monospaced">$TOMCAT_HOME/webapps/work/localhost_8080%2Fcocoon/org/apache/cocoon/www</font></code>.</p>
+
+
+<p align="justify">You can find sitemap_xmap.java here.</p>
+
+    
+<p align="justify">Files created by LogTransformer are kept (by default) in <code><font face="courier, monospaced">$TOMCAT_HOME</font></code> directory.</p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<a name="use-with-tomcat">
+<!--anchor--></a>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Use with Tomcat</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">Download Tomcat from Apache site.</p>
+    
+<p align="justify">Download Cocoon sources from Apache CVS. [Command assume UNIX Bourne shell]</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+export CVSROOT=:pserver:anoncvs@cvs.apache.org:/home/cvspublic 
+cvs login 
+Password: anoncvs 
+cvs checkout xml-cocoon2
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+    
+<p align="justify">Build sources as per instruction in Install file.</p>
+    
+<p align="justify">Move the <code><font face="courier, monospaced">cocoon.war</font></code> file to <code><font face="courier, monospaced">$TOMCAT_HOME/webapps</font></code> directory.</p>
+    
+<p align="justify">Start the servlet engine. Type-in the URL <code><font face="courier, monospaced">http://localhost:8080/cocoon</font></code> in your browser. You should see the Cocoon welcome message.</p>
+    
+<p align="justify">Consult Install file if you face problems.</p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td bgcolor="#0086b2"><img width="1" src="images/dot.gif" height="1"></td>
+</tr>
+<tr>
+<td align="center"><font size="-1" face="arial,helvetica,sanserif" color="#0086b2"><i>Copyright &copy; 1999-2002 The Apache Software Foundation. All Rights Reserved.</i></font></td>
+</tr>
+</table>
+</body>
+</html>

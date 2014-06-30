@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>LDAP Transformer</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+		 </authors>
+		 <abstract>This document describes the LDAP transformer of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="LDAP Transformer">
+			<p>
+                   The <code>LDAPTransformer</code> is a class that can be plugged into a pipeline
+                   to transform the SAX events which passes through this transformer into queries
+                   to an ldap interface and transforms the response to SAX events which are passed
+                   on in the pipeline.
+                  </p>
+			<ul>
+				<li>Name : ldap</li>
+				<li>Class: org.apache.cocoon.transformation.LDAPTransformer</li>
+				<li>Cacheable: no.</li>
+			</ul>
+			<p>This transformer is optional and not available in the binary distribution.
+                     However if you want to use it, you have to retrieve the jndi package,
+                     copy the jar file into the lib directory of Cocoon and rebuild.
+                  </p>
+                  <p>
+ The file will be specified in a parameter tag in the sitemap pipeline to the
+ transformer as follows:
+</p>
+ <source>
+  &lt;map:transform type="ldap"/&gt;
+  </source>
+  <p>
+ The following DTD is valid:<br/>
+ &lt;!ELEMENT execute-query (attribute+ | show-attribute? | scope? | initializer? | authentication? | error-element? | sax-error?  doc-element? | row-element? | version? | serverurl? | rootdn? | password? | deref-link? | count-limit? | searchbase, filter)&gt;<br/>
+ &lt;!ELEMENT execute-increment (attribute | show-attribute? | scope? | initializer? | authentication? | error-element? | sax-error? | doc-element? | row-element? | version? | serverurl? | rootdn? | password? | deref-link? | count-limit? | searchbase, filter)&gt;<br/>
+ increments (+1) an integer attribute on a directory-server (ldap)<br/>
+ <br/>
+ &lt;!ELEMENT initializer (#PCDATA)&gt;* (default: "com.sun.jndi.ldap.LdapCtxFactory")<br/>
+ &lt;!ELEMENT authentication (#PCDATA)&gt;* (default: "simple")<br/>
+ &lt;!ELEMENT version (#PCDATA)&gt;* (default: "2")<br/>
+ &lt;!ELEMENT serverurl (#PCDATA)&gt;*<br/>
+ &lt;!ELEMENT port (#PCDATA)&gt;* (default: 389)<br/>
+ &lt;!ELEMENT rootdn (#PCDATA)&gt;*<br/>
+ &lt;!ELEMENT password (#PCDATA)&gt;*<br/>
+ &lt;!ELEMENT scope (ONELEVEL_SCOPE | SUBTREE_SCOPE | OBJECT_SCOPE)&gt;* (default: ONELEVEL_SCOPE)<br/>
+ &lt;!ELEMENT searchbase (#PCDATA)&gt;*<br/>
+ &lt;!ELEMENT doc-element (#PCDATA)&gt;* (default: "doc-element")<br/>
+ &lt;!ELEMENT row-element (#PCDATA)&gt;* (default: "row-element")<br/>
+ &lt;!ELEMENT error-element (#PCDATA)&gt;* (default: "ldap-error") (in case of error returned error tag)<br/>
+ &lt;!ELEMENT sax_error (TRUE  | FALSE)&gt;* (default: FALSE) (throws SAX-Exception instead of error tag)<br/>
+ &lt;!ELEMENT attribute (#PCDATA)&gt;<br/>
+ &lt;!ELEMENT show-attribute (TRUE | FALSE)&gt; (default: TRUE)<br/>
+ &lt;!ELEMENT filter (#PCDATA | execute-query)&gt;<br/>
+ &lt;!ELEMENT deref-link (TRUE | FALSE)&gt; (default: FALSE)<br/>
+ &lt;!ELEMENT count-limit (#PCDATA)&gt; (integer default: 0 -> no limit)<br/>
+ &lt;!ELEMENT time-limit (#PCDATA)&gt; (integer default: 0 -> infinite)<br/>
+ &lt;!ELEMENT debug (TRUE  | FALSE)&gt;* (default: FALSE)<br/> 
+can also be defined as parameter in the sitemap.
+</p>
+		</s1>
+	</body>
+</document>

@@ -1,0 +1,82 @@
+XCOMM $XConsortium: Imakefile /main/28 1996/11/03 19:33:19 kaleb $
+XCOMM $XFree86: xc/programs/xfs/Imakefile,v 3.7.2.1 1997/05/03 09:50:59 dawes Exp $
+#undef ServerDefines
+#include <Server.tmpl>
+#define	IHaveSubdirs
+
+OSDIR = os
+DIFSDIR = difs
+
+OSLIB = $(OSDIR)/LibraryTargetName(os)
+DIFSLIB = $(DIFSDIR)/LibraryTargetName(difs)
+SYSLIBS = MathLibrary
+#if GzipFontCompression
+ZLIB = GzipLibrary
+#endif
+#ifdef i386SVR3Architecture
+#ifndef i386Sco325Architecture
+BSDEMUL = $(DEPXBSDLIB)
+#endif
+#endif
+
+FSDIRS = $(OSDIR) $(DIFSDIR) $(PCFDIRS)
+FSLIBS = $(DIFSLIB) $(DEPFONTLIB) $(DIFSLIB) $(OSLIB) $(BSDEMUL)
+
+SUBDIRS = $(FSDIRS)
+
+FSLIBDIR = $(LIBDIR)/fs
+FSERRORS = $(FSLIBDIR)/fs-errors
+DEFAULTFONTPATH = DefaultFontPath
+SITE_CONFIG = -DDEFAULTFONTPATH=$(DEFAULTFONTPATH) -DFSERRORS=$(FSERRORS)
+
+#if HasParallelMake
+MakeMutex(config $(FSDIRS) $(FSLIBS))
+#endif
+
+#if HasGnuMake
+$(FSLIBS): config $(SUBDIRS)
+#endif
+
+all:: config
+
+#ifndef LynxOSArchitecture
+ServerTarget(xfs,$(FSDIRS),NullParameter,$(FSLIBS),$(SYSLIBS) $(ZLIB))
+#else
+ServerTarget(xfs,$(FSDIRS),difs/main.o,$(FSLIBS),$(SYSLIBS) $(ZLIB))
+#endif
+
+CppFileTarget(config,config.cpp,$(SITE_CONFIG),$(ICONFIGFILES))
+
+InstallManPage(xfs,$(MANDIR))
+
+#if InstallFSConfig
+InstallNonExecFile(config,$(FSLIBDIR))
+#else
+InstallNonExecFileNoClobber(config,$(FSLIBDIR))
+#endif
+
+#if HasCodeCenter
+debug_xfs:
+	XCOMM cd difs
+	XCOMM make debug_src
+	XCOMM cd ../os
+	XCOMM make debug_src
+	XCOMM cd ../../../lib/font/bitmap
+	XCOMM make debug_src
+	XCOMM cd ../fontfile
+	XCOMM make debug_src
+	XCOMM cd ../fc
+	XCOMM make debug_src
+	XCOMM cd ../Speedo
+	XCOMM make debug_src
+	XCOMM cd ../Type1
+	XCOMM make debug_src
+	XCOMM cd ../util
+	XCOMM make debug_src
+	XCOMM unload atom.c miscutil.c
+	XCOMM cd ../../../programs/xfs
+#endif
+
+DependSubdirs($(SUBDIRS))
+
+ForceSubdirs($(SUBDIRS))

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "#ifndef _PROTOTYPES_H" > ${BASEDIR}/prototypes.h
+echo "#define _PROTOTYPES_H" >> ${BASEDIR}/prototypes.h
+echo >> ${BASEDIR}/prototypes.h
+
+for i in ${TESTPROGS}; do
+	if ${CXX} ${CXXFLAGS} -c ${INCLUDE_FLAGS} $i; then
+		echo $i good
+	else
+		head -n 1 $i | sed "s/\/\* //" | sed "s/\*\///" >> ${BASEDIR}/prototypes.h
+	fi
+done
+echo >> ${BASEDIR}/prototypes.h
+echo "#endif	// _PROTOTYPES_H" >> ${BASEDIR}/prototypes.h

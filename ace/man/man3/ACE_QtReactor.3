@@ -1,0 +1,262 @@
+.TH ACE_QtReactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_QtReactor \- An object-oriented event demultiplexor and event handler dispatcher that uses the Qt Library. This class declaration also uses the extension facilities provided by the Qt. So, readers of the class declaration should not be upset with the appearence of the Keywords like Q_OBJECT, private slots etc. They are specific to Qt which uses these as a call back methods implementation mechanism. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <QtReactor.h>\fR
+.PP
+Inherits \fBQObject\fR, and \fBACE_Select_Reactor_T\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_QtReactor\fR (QApplication *qapp = NULL, size_t size = DEFAULT_SIZE, int restart = 0, \fBACE_Sig_Handler\fR *handler = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_QtReactor\fR (void)"
+.br
+.ti -1c
+.RI "void \fBqapplication\fR (QApplication *qapp)"
+.br
+.ti -1c
+.RI "virtual long \fBschedule_timer\fR (\fBACE_Event_Handler\fR *handler, const void *arg, const \fBACE_Time_Value\fR &delay_time, const \fBACE_Time_Value\fR &interval)"
+.br
+.ti -1c
+.RI "virtual int \fBcancel_timer\fR (\fBACE_Event_Handler\fR *handler, int dont_call_handle_close = 1)"
+.br
+.ti -1c
+.RI "virtual int \fBcancel_timer\fR (long timer_id, const void **arg = 0, int dont_call_handle_close = 1)"
+.br
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Map_Manager\fR<ACE_HANDLE, QSocketNotifier *, \fBACE_Null_Mutex\fR> \fBMAP\fR"
+.br
+.RI "\fITypedef of a map.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBregister_handler_i\fR (ACE_HANDLE handle, \fBACE_Event_Handler\fR *handler, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRegister a single <handler>.\fR"
+.ti -1c
+.RI "virtual int \fBregister_handler_i\fR (const \fBACE_Handle_Set\fR &handles, \fBACE_Event_Handler\fR *handler, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRegister a set of <handlers> with Qt.\fR"
+.ti -1c
+.RI "virtual int \fBremove_handler_i\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRemove the <handler> associated with this <handle>.\fR"
+.ti -1c
+.RI "virtual int \fBremove_handler_i\fR (const \fBACE_Handle_Set\fR &handles, \fBACE_Reactor_Mask\fR mask)"
+.br
+.RI "\fIRemove a set of <handles>.\fR"
+.ti -1c
+.RI "virtual int \fBwait_for_multiple_events\fR (\fBACE_Select_Reactor_Handle_Set\fR &handle_set, \fBACE_Time_Value\fR *max_wait_time)"
+.br
+.RI "\fIWait for events to occur.\fR"
+.ti -1c
+.RI "virtual int \fBQtWaitForMultipleEvents\fR (int width, \fBACE_Select_Reactor_Handle_Set\fR &wait_set, \fBACE_Time_Value\fR *max_wait_time)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "QApplication* \fBqapp_\fR"
+.br
+.RI "\fISome Qt stuff that we need to have.\fR"
+.ti -1c
+.RI "\fBMAP\fR \fBread_notifier_\fR"
+.br
+.RI "\fIA notifier for a read.\fR"
+.ti -1c
+.RI "\fBMAP\fR \fBwrite_notifier_\fR"
+.br
+.RI "\fIA write notifier.\fR"
+.ti -1c
+.RI "\fBMAP\fR \fBexception_notifier_\fR"
+.br
+.RI "\fIAn exception notifier.\fR"
+.ti -1c
+.RI "QTimer* \fBqtime_\fR"
+.br
+.RI "\fIThe timer class that would provide timer-sgnals & single-shot timers.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBreset_timeout\fR (void)"
+.br
+.RI "\fIThis method ensures there's an Qt timeout for the first timeout in the Reactor's Timer_Queue.\fR"
+.ti -1c
+.RI "\fBACE_QtReactor\fR (const ACE_QtReactor &)"
+.br
+.RI "\fIDeny access since member-wise won't work...\fR"
+.ti -1c
+.RI "ACE_QtReactor& \fBoperator=\fR (const ACE_QtReactor &)"
+.br
+.in -1c
+.SS Private Slots
+
+.in +1c
+.ti -1c
+.RI "void \fBread_event\fR (int FD)"
+.br
+.RI "\fIDispatch a Read Event.\fR"
+.ti -1c
+.RI "void \fBwrite_event\fR (int FD)"
+.br
+.RI "\fIDispatch a Write Event.\fR"
+.ti -1c
+.RI "void \fBexception_event\fR (int FD)"
+.br
+.RI "\fIDispatch an exception event.\fR"
+.ti -1c
+.RI "void \fBtimeout_event\fR (void)"
+.br
+.RI "\fIDispach a timeout event.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An object-oriented event demultiplexor and event handler dispatcher that uses the Qt Library. This class declaration also uses the extension facilities provided by the Qt. So, readers of the class declaration should not be upset with the appearence of the Keywords like Q_OBJECT, private slots etc. They are specific to Qt which uses these as a call back methods implementation mechanism.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Map_Manager\fR<ACE_HANDLE, QSocketNotifier *, \fBACE_Null_Mutex\fR> ACE_QtReactor::MAP\fC [protected]\fR
+.PP
+Typedef of a map.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_QtReactor::ACE_QtReactor (QApplication * qapp = NULL, size_t size = DEFAULT_SIZE, int restart = 0, \fBACE_Sig_Handler\fR * handler = 0)
+.PP
+.SS virtual ACE_QtReactor::~ACE_QtReactor (void)\fC [virtual]\fR
+.PP
+.SS ACE_QtReactor::ACE_QtReactor (const ACE_QtReactor &)\fC [private]\fR
+.PP
+Deny access since member-wise won't work...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS virtual int ACE_QtReactor::QtWaitForMultipleEvents (int width, \fBACE_Select_Reactor_Handle_Set\fR & wait_set, \fBACE_Time_Value\fR * max_wait_time)\fC [protected, virtual]\fR
+.PP
+.SS virtual int ACE_QtReactor::cancel_timer (long timer_id, const void ** arg = 0, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel the single  that matches the <timer_id> value (which was returned from the <schedule> method). If arg is non-NULL then it will be set to point to the ``magic cookie'' argument passed in when the <Event_Handler> was registered. This makes it possible to free up the memory and avoid memory leaks. If <dont_call_handle_close> is 0 then the <handle_close> method of <event_handler> will be invoked. Returns 1 if cancellation succeeded and 0 if the <timer_id> wasn't found. 
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS virtual int ACE_QtReactor::cancel_timer (\fBACE_Event_Handler\fR * handler, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel all <event_handlers> that match the address of <event_handler>. If <dont_call_handle_close> is 0 then the <handle_close> method of <event_handler> will be invoked. Returns number of handler's cancelled. 
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS void ACE_QtReactor::exception_event (int FD)\fC [private, slot]\fR
+.PP
+Dispatch an exception event.
+.PP
+.SS ACE_QtReactor& ACE_QtReactor::operator= (const ACE_QtReactor &)\fC [private]\fR
+.PP
+.SS void ACE_QtReactor::qapplication (QApplication * qapp)
+.PP
+.SS void ACE_QtReactor::read_event (int FD)\fC [private, slot]\fR
+.PP
+Dispatch a Read Event.
+.PP
+.SS int ACE_QtReactor::register_handler_i (const \fBACE_Handle_Set\fR & handles, \fBACE_Event_Handler\fR * handler, \fBACE_Reactor_Mask\fR mask)\fC [protected, virtual]\fR
+.PP
+Register a set of <handlers> with Qt.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_QtReactor::register_handler_i (ACE_HANDLE handle, \fBACE_Event_Handler\fR * handler, \fBACE_Reactor_Mask\fR mask)\fC [protected, virtual]\fR
+.PP
+Register a single <handler>.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_QtReactor::remove_handler_i (const \fBACE_Handle_Set\fR & handles, \fBACE_Reactor_Mask\fR mask)\fC [protected, virtual]\fR
+.PP
+Remove a set of <handles>.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_QtReactor::remove_handler_i (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask)\fC [protected, virtual]\fR
+.PP
+Remove the <handler> associated with this <handle>.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS void ACE_QtReactor::reset_timeout (void)\fC [private]\fR
+.PP
+This method ensures there's an Qt timeout for the first timeout in the Reactor's Timer_Queue.
+.PP
+.SS virtual long ACE_QtReactor::schedule_timer (\fBACE_Event_Handler\fR * handler, const void * arg, const \fBACE_Time_Value\fR & delay_time, const \fBACE_Time_Value\fR & interval)\fC [virtual]\fR
+.PP
+Schedule an \fBACE_Event_Handler\fR that will expire after an amount of time. The return value of this method, a timer_id value, uniquely identifies the event_handler in the \fBACE_Reactor\fR's internal list of timers. This timer_id value can be used to cancel the timer with the \fBcancel_timer\fR() call.
+.PP
+\fBSee also: \fR
+.in +1c
+ \fBcancel_timer\fR() ,  \fBreset_timer_interval\fR()
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIevent_handler\fR\fR event handler to schedule on reactor 
+.TP
+\fB\fIarg\fR\fR argument passed to the handle_timeout() method of event_handler  
+.TP
+\fB\fIdelta\fR\fR time interval after which the timer will expire 
+.TP
+\fB\fIinterval\fR\fR time interval after which the timer will be automatically rescheduled 
+.PP
+\fBReturns: \fR
+.in +1c
+ -1 on failure, a timer_id value on success 
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS void ACE_QtReactor::timeout_event (void)\fC [private, slot]\fR
+.PP
+Dispach a timeout event.
+.PP
+.SS int ACE_QtReactor::wait_for_multiple_events (\fBACE_Select_Reactor_Handle_Set\fR & handle_set, \fBACE_Time_Value\fR * max_wait_time)\fC [protected, virtual]\fR
+.PP
+Wait for events to occur.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS void ACE_QtReactor::write_event (int FD)\fC [private, slot]\fR
+.PP
+Dispatch a Write Event.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBMAP\fR ACE_QtReactor::exception_notifier_\fC [protected]\fR
+.PP
+An exception notifier.
+.PP
+.SS QApplication * ACE_QtReactor::qapp_\fC [protected]\fR
+.PP
+Some Qt stuff that we need to have.
+.PP
+.SS QTimer * ACE_QtReactor::qtime_\fC [protected]\fR
+.PP
+The timer class that would provide timer-sgnals & single-shot timers.
+.PP
+.SS \fBMAP\fR ACE_QtReactor::read_notifier_\fC [protected]\fR
+.PP
+A notifier for a read.
+.PP
+.SS \fBMAP\fR ACE_QtReactor::write_notifier_\fC [protected]\fR
+.PP
+A write notifier.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

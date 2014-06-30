@@ -1,0 +1,170 @@
+XCOMM $XConsortium: Imakefile /main/10 1996/10/25 10:34:08 kaleb $
+
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/vga/Imakefile,v 3.16 1996/12/28 08:19:12 dawes Exp $
+#include <Server.tmpl>
+
+#ifdef i386Architecture
+FSRCS =  fBitBlt.s fFillCopy.s fFillOr.s fFillAnd.s \
+         fFillXor.s fFillSet.s vgabres.s vgalineH.s vgalineV.s
+BSRCS = BitBlt.s BitBlt2.s Box.s Line.s VHLine.s vgaBank.s
+
+FOBJS =  fBitBlt.o fFillCopy.o fFillOr.o fFillAnd.o \
+         fFillXor.o fFillSet.o vgabres.o vgalineH.o vgalineV.o
+BOBJS = BitBlt.o BitBlt2.o Box.o Line.o VHLine.o vgaBank.o
+#else
+FSRCS = vgaBltFillc.c vgaLinec.c
+BSRCS = vgaBankc.c
+
+FOBJS = vgaBltFillc.o vgaLinec.o
+BOBJS = vgaBankc.o
+#endif
+
+SRCS =	 vgagc.c vgawindow.c vgascrinit.c \
+	 vgapntwin.c vgapwinS.c vgabitblt.c \
+	 vgafillsp.c vgasetsp.c vgaimage.c \
+	 vgagetsp.c vgafillrct.c vgaBitBlt1.c \
+	 vgasolidC.c vgasolidCS.c vgasolidX.c \
+	 vgasolidO.c vgasolidA.c vgasolidG.c \
+	 vgatile32C.c vgatile32G.c \
+	 vgatileoddC.c vgatileoddG.c \
+	 vgazerarcC.c vgazerarcX.c vgazerarcG.c \
+	 vgafillarcC.c vgafillarcG.c \
+	 vgategblt.c vgabstore.c vga8cppl.c \
+	 vgabltC.c vgabltCS.c vgabltX.c vgabltO.c vgabltG.c \
+	 vgateblt8.c vgateblt8S.c vgaglblt8.c vgaglrop8.c \
+	 vgapush8.c vgarctstp8.c vgarctstp8S.c vgapolypnt.c \
+	 vgaline.c vgalineS.c vgabresd.c \
+	 vgalined.c vgasegd.c vgaseg.c vgasegS.c \
+	 vgaply1rctC.c vgaply1rctG.c vgafuncs.c \
+	 SpeedUpBlt.c $(BSRCS) \
+	 vgaBanks.c $(FSRCS) vgaHW.c vga.c vgaCmap.c \
+	 vgaPCI.c vgatables.c
+
+OBJS =   vgagc.o vgawindow.o vgascrinit.o \
+	 vgagetsp.o vgafillrct.o vgaimage.o \
+	 vgasolidC.o vgasolidCS.o vgasolidX.o \
+	 vgasolidO.o vgasolidA.o vgasolidG.o \
+	 vgatile32C.o vgatile32G.o \
+	 vgatileoddC.o vgatileoddG.o \
+	 vgafillsp.o vgasetsp.o \
+	 vgapntwin.o vgapwinS.o vgaBitBlt1.o \
+	 vgazerarcC.o vgazerarcX.o vgazerarcG.o \
+	 vgafillarcC.o vgafillarcG.o \
+	 vgategblt.o vgabstore.o vga8cppl.o \
+	 vgateblt8.o vgateblt8S.o vgaglblt8.o vgaglrop8.o \
+	 vgarctstp8.o vgarctstp8S.o vgapolypnt.o \
+	 vgaline.o vgalineS.o vgabresd.o \
+	 vgalined.o vgasegd.o vgaseg.o vgasegS.o \
+	 vgabitblt.o vgabltC.o vgabltCS.o vgabltX.o \
+	 vgabltO.o vgabltG.o \
+	 vgapush8.o vgaply1rctC.o vgaply1rctG.o $(STIPPLEOBJ) vgafuncs.o \
+	 SpeedUpBlt.o $(BOBJS) \
+	 vgaBanks.o $(FOBJS) vgaHW.o vga.o vgaCmap.o \
+	 vgaPCI.o vgatables.o
+
+   INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+	      -I$(SERVERSRC)/cfb -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+              -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(FONTINCSRC) \
+	      -I../../xaa
+   LINTLIBS = ../../../dix/llib-ldix.ln ../../../os/llib-los.ln \
+	     ../../mfb/llib-lmfb.ln ../../mi/llib-lmi.ln
+
+#if DirtyStartup
+STARTUPDEFINES = -DDIRTY_STARTUP
+#endif
+
+    DEFINES = $(SPEEDUPDEFINES) $(STARTUPDEFINES) -DPSZ=8
+
+#ifdef i386Architecture
+SUDEFINE = -DSPEEDUP
+#endif
+
+VGADRIVERS = XF86Vga256Drivers
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalLintTarget($(SRCS))
+
+ObjectFromSpecialSource(vgaBanks,../enhanced/gBanks,NullParameter)
+#ifdef i386Architecture
+ObjectFromSpecialAsmSource(BitBlt,../enhanced/suBitBlt,NullParameter)
+ObjectFromSpecialAsmSource(BitBlt2,../enhanced/suBBlt2,NullParameter)
+ObjectFromSpecialAsmSource(Box,../enhanced/suBox,NullParameter)
+ObjectFromSpecialAsmSource(Line,../enhanced/suLine,NullParameter)
+ObjectFromSpecialAsmSource(VHLine,../enhanced/suVHLine,NullParameter)
+ObjectFromSpecialAsmSource(vgabres,../enhanced/fLineBres,NullParameter)
+ObjectFromSpecialAsmSource(vgalineH,../enhanced/fLineH,NullParameter)
+ObjectFromSpecialAsmSource(vgalineV,../enhanced/fLineV,NullParameter)
+LinkSourceFile(fBitBlt.s,../enhanced)
+LinkSourceFile(fFill.s,../enhanced)
+LinkSourceFile(fFillSet.s,../enhanced)
+#else
+LinkSourceFile(vgaBltFillc.c,../enhanced)
+LinkSourceFile(vgaLinec.c,../enhanced)
+#endif
+LinkFile(vgaBitBlt1.c,../enhanced/vgaBitBlt.c)
+LinkSourceFile(SpeedUpBlt.c,../enhanced)
+LinkSourceFile(vgaFasm.h,../enhanced)
+
+ObjectFromSpecialSource(vgaseg,vgaline,-DPOLYSEGMENT)
+ObjectFromSpecialSource(vgasegd,vgalined,-DPOLYSEGMENT)
+ObjectFromSpecialSource(vgaglrop8,vgaglblt8,-DGLYPHROP)
+SpecialObjectRule(vgaglblt8.o,vgaglblt8.c,$(STIPPLEDEF))
+
+ObjectFromSpecialSource(vgalineS,vgaline,$(SUDEFINE))
+ObjectFromSpecialSource(vgasegS,vgaline,$(SUDEFINE) -DPOLYSEGMENT)
+ObjectFromSpecialSource(vgateblt8S,vgateblt8,$(SUDEFINE))
+ObjectFromSpecialSource(vgarctstp8S,vgarctstp8,$(SUDEFINE))
+
+ObjectFromSpecialSource(vgafillarcC,vgafillarc,-DRROP=GXcopy)
+ObjectFromSpecialSource(vgafillarcG,vgafillarc,-DRROP=GXset)
+
+ObjectFromSpecialSource(vgazerarcC,vgazerarc,-DRROP=GXcopy)
+ObjectFromSpecialSource(vgazerarcX,vgazerarc,-DRROP=GXxor)
+ObjectFromSpecialSource(vgazerarcG,vgazerarc,-DRROP=GXset)
+
+ObjectFromSpecialSource(vgabltCS,vgablt,-DMROP=Mcopy $(SUDEFINE))
+ObjectFromSpecialSource(vgabltX,vgablt,-DMROP=Mxor)
+ObjectFromSpecialSource(vgabltO,vgablt,-DMROP=Mor)
+ObjectFromSpecialSource(vgabltG,vgablt,-DMROP=0)
+
+ObjectFromSpecialSource(vgasolidC,vgasolid,-DRROP=GXcopy)
+ObjectFromSpecialSource(vgasolidCS,vgasolid,-DRROP=GXcopy $(SUDEFINE))
+ObjectFromSpecialSource(vgasolidX,vgasolid,-DRROP=GXxor)
+ObjectFromSpecialSource(vgasolidO,vgasolid,-DRROP=GXor)
+ObjectFromSpecialSource(vgasolidA,vgasolid,-DRROP=GXand)
+ObjectFromSpecialSource(vgasolidG,vgasolid,-DRROP=GXset)
+
+ObjectFromSpecialSource(vgatile32C,vgatile32,-DMROP=Mcopy)
+ObjectFromSpecialSource(vgatile32G,vgatile32,-DMROP=0)
+
+ObjectFromSpecialSource(vgatileoddC,vgatileodd,-DMROP=Mcopy)
+ObjectFromSpecialSource(vgatileoddG,vgatileodd,-DMROP=0)
+
+ObjectFromSpecialSource(vgaply1rctC,vgaply1rct,-DRROP=GXcopy)
+ObjectFromSpecialSource(vgaply1rctG,vgaply1rct,-DRROP=GXset)
+
+#ifdef i386Architecture
+ObjectFromSpecialAsmSource(fFillAnd,fFill,-DRROP=GXAnd)
+ObjectFromSpecialAsmSource(fFillCopy,fFill,-DRROP=GXCopy)
+ObjectFromSpecialAsmSource(fFillOr,fFill,-DRROP=GXOr)
+ObjectFromSpecialAsmSource(fFillXor,fFill,-DRROP=GXXor)
+#endif
+
+InstallLinkKitNonExecFile(vga.h,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(vga256.h,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(vgaBank.h,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(vgaFasm.h,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(vgaHW.c,$(LINKKITDIR)/VGADriverDoc)
+InstallLinkKitNonExecFile(vgaPCI.h,$(LINKKITDIR)/drivers)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

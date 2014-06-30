@@ -1,0 +1,573 @@
+.TH ACE_Proactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Proactor \- A manager for asynchronous event demultiplexing. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Proactor.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_Queue_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_QUEUE\fR"
+.br
+.RI "\fIPublic type.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Proactor\fR (\fBACE_Proactor_Impl\fR *implementation = 0, int delete_implementation = 0, \fBTIMER_QUEUE\fR *tq = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Proactor\fR (void)"
+.br
+.RI "\fIVirtual destruction.\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIClose the IO completion port.\fR"
+.ti -1c
+.RI "virtual int \fBregister_handle\fR (ACE_HANDLE handle, const void *completion_key)"
+.br
+.RI "\fIThis method adds the <handle> to the I/O completion port. This function is a no-op function for Unix systems and returns 0;.\fR"
+.ti -1c
+.RI "virtual long \fBschedule_timer\fR (\fBACE_Handler\fR &handler, const void *act, const \fBACE_Time_Value\fR &time)"
+.br
+.ti -1c
+.RI "virtual long \fBschedule_repeating_timer\fR (\fBACE_Handler\fR &handler, const void *act, const \fBACE_Time_Value\fR &interval)"
+.br
+.ti -1c
+.RI "virtual long \fBschedule_timer\fR (\fBACE_Handler\fR &handler, const void *act, const \fBACE_Time_Value\fR &time, const \fBACE_Time_Value\fR &interval)"
+.br
+.RI "\fIThis combines the above two methods into one. Mostly for backward compatibility.\fR"
+.ti -1c
+.RI "virtual int \fBcancel_timer\fR (\fBACE_Handler\fR &handler, int dont_call_handle_close = 1)"
+.br
+.RI "\fICancel all timers associated with this <handler>. Returns number of timers cancelled.\fR"
+.ti -1c
+.RI "virtual int \fBcancel_timer\fR (long timer_id, const void **act = 0, int dont_call_handle_close = 1)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR &wait_time)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (void)"
+.br
+.ti -1c
+.RI "int \fBwake_up_dispatch_threads\fR (void)"
+.br
+.RI "\fIAdd wakeup dispatch threads (reinit).\fR"
+.ti -1c
+.RI "int \fBclose_dispatch_threads\fR (int wait)"
+.br
+.RI "\fIClose all dispatch threads.\fR"
+.ti -1c
+.RI "size_t \fBnumber_of_threads\fR (void) const"
+.br
+.RI "\fINumber of thread used as a parameter to CreatIoCompletionPort.\fR"
+.ti -1c
+.RI "void \fBnumber_of_threads\fR (size_t threads)"
+.br
+.ti -1c
+.RI "\fBTIMER_QUEUE\fR* \fBtimer_queue\fR (void) const"
+.br
+.RI "\fIGet/Set timer queue.\fR"
+.ti -1c
+.RI "void \fBtimer_queue\fR (\fBTIMER_QUEUE\fR *timer_queue)"
+.br
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.ti -1c
+.RI "virtual \fBACE_Proactor_Impl\fR* \fBimplementation\fR (void) const"
+.br
+.RI "\fIGet the implementation class.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Stream_Impl\fR* \fBcreate_asynch_read_stream\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_Stream.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Stream_Impl\fR* \fBcreate_asynch_write_stream\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_Stream.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_File_Impl\fR* \fBcreate_asynch_read_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_File_Impl\fR* \fBcreate_asynch_write_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Accept_Impl\fR* \fBcreate_asynch_accept\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Accept.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Transmit_File_Impl\fR* \fBcreate_asynch_transmit_file\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Transmit_File.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Dgram_Impl\fR* \fBcreate_asynch_read_dgram\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Read_Dgram.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Dgram_Impl\fR* \fBcreate_asynch_write_dgram\fR (void)"
+.br
+.RI "\fICreate the correct implementation class for doing Asynch_Write_Dgram.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Stream_Result_Impl\fR* \fBcreate_asynch_read_stream_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void* act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_Stream::Result\fR class.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Stream_Result_Impl\fR* \fBcreate_asynch_write_stream_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_write, const void* act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_Stream::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_File_Result_Impl\fR* \fBcreate_asynch_read_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void* act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_File_Result_Impl\fR* \fBcreate_asynch_write_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_write, const void* act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Dgram_Result_Impl\fR* \fBcreate_asynch_read_dgram_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR *message_block, size_t bytes_to_read, int flags, int protocol_family, const void* act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_Dgram::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Dgram_Result_Impl\fR* \fBcreate_asynch_write_dgram_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR *message_block, size_t bytes_to_write, int flags, const void* act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_Dgram::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Accept_Result_Impl\fR* \fBcreate_asynch_accept_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE listen_handle, ACE_HANDLE accept_handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void* act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Accept::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Transmit_File_Result_Impl\fR* \fBcreate_asynch_transmit_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE socket, ACE_HANDLE file, \fBACE_Asynch_Transmit_File::Header_And_Trailer\fR *header_and_trailer, u_long bytes_to_write, u_long offset, u_long offset_high, u_long bytes_per_send, u_long flags, const void *act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Transmit_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Result_Impl\fR* \fBcreate_asynch_timer\fR (\fBACE_Handler\fR &handler, const void *act, const \fBACE_Time_Value\fR &tv, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Proactor* \fBinstance\fR (size_t threads = 0)"
+.br
+.RI "\fIGet pointer to a process-wide . <threads> should be part of another method.\fR"
+.ti -1c
+.RI "ACE_Proactor* \fBinstance\fR (ACE_Proactor *)"
+.br
+.RI "\fISet pointer to a process-wide  and return existing pointer.\fR"
+.ti -1c
+.RI "void \fBclose_singleton\fR (void)"
+.br
+.RI "\fIDelete the dynamically allocated Singleton.\fR"
+.ti -1c
+.RI "void \fBcleanup\fR (void *instance, void *arg)"
+.br
+.RI "\fICleanup method, used by the  to destroy the singleton.\fR"
+.ti -1c
+.RI "int \fBrun_event_loop\fR (void)"
+.br
+.RI "\fIRun the event loop until the  method returns -1 or the <end_event_loop> method is invoked.\fR"
+.ti -1c
+.RI "int \fBrun_event_loop\fR (\fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBend_event_loop\fR (void)"
+.br
+.ti -1c
+.RI "int \fBreset_event_loop\fR (void)"
+.br
+.ti -1c
+.RI "int \fBevent_loop_done\fR (void)"
+.br
+.RI "\fIReport if the  event loop is finished.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual void \fBimplementation\fR (\fBACE_Proactor_Impl\fR *implementation)"
+.br
+.RI "\fISet the implementation class.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Proactor_Impl\fR* \fBimplementation_\fR"
+.br
+.RI "\fIDelegation/implementation class that all methods will be forwarded to.\fR"
+.ti -1c
+.RI "int \fBdelete_implementation_\fR"
+.br
+.RI "\fIFlag used to indicate whether we are responsible for cleaning up the implementation instance.\fR"
+.ti -1c
+.RI "ACE_Proactor_Timer_Handler* \fBtimer_handler_\fR"
+.br
+.RI "\fIHandles timeout events.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR \fBthr_mgr_\fR"
+.br
+.RI "\fIThis will manage the thread in the Timer_Handler.\fR"
+.ti -1c
+.RI "\fBTIMER_QUEUE\fR* \fBtimer_queue_\fR"
+.br
+.RI "\fITimer Queue.\fR"
+.ti -1c
+.RI "int \fBdelete_timer_queue_\fR"
+.br
+.RI "\fIFlag on whether to delete the timer queue.\fR"
+.in -1c
+.SS Static Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBpost_wakeup_completions\fR (int how_many)"
+.br
+.in -1c
+.SS Static Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Proactor* \fBproactor_\fR"
+.br
+.RI "\fIPointer to a process-wide .\fR"
+.ti -1c
+.RI "int \fBdelete_proactor_\fR"
+.br
+.RI "\fIMust delete the <proactor_> if non-0.\fR"
+.ti -1c
+.RI "\fBsig_atomic_t\fR \fBend_event_loop_\fR"
+.br
+.RI "\fITerminate the proactor event loop.\fR"
+.ti -1c
+.RI "\fBsig_atomic_t\fR \fBevent_loop_thread_count_\fR"
+.br
+.RI "\fINumber of threads in the event loop.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_Queue_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_QUEUE_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Timer_List_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_LIST\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Timer_List_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_LIST_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Timer_Heap_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_HEAP\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Timer_Heap_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_HEAP_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Timer_Wheel_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_WHEEL\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Timer_Wheel_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_WHEEL_ITERATOR\fR"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Proactor\fR (const ACE_Proactor &)"
+.br
+.RI "\fIDeny access since member-wise won't work...\fR"
+.ti -1c
+.RI "ACE_Proactor& \fBoperator=\fR (const ACE_Proactor &)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Proactor_Timer_Handler\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A manager for asynchronous event demultiplexing.
+.PP
+.PP
+ See the Proactor pattern description at http://www.cs.wustl.edu/~schmidt/proactor.ps.gz for more details. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Timer_Heap_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_HEAP\fC [private]\fR
+.PP
+.SS typedef \fBACE_Timer_Heap_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_HEAP_ITERATOR\fC [private]\fR
+.PP
+.SS typedef \fBACE_Timer_List_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_LIST\fC [private]\fR
+.PP
+.SS typedef \fBACE_Timer_List_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_LIST_ITERATOR\fC [private]\fR
+.PP
+.SS typedef \fBACE_Timer_Queue_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_QUEUE
+.PP
+Public type.
+.PP
+.SS typedef \fBACE_Timer_Queue_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_QUEUE_ITERATOR\fC [private]\fR
+.PP
+.SS typedef \fBACE_Timer_Wheel_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_WHEEL\fC [private]\fR
+.PP
+.SS typedef \fBACE_Timer_Wheel_Iterator_T\fR<\fBACE_Handler\fR *, \fBACE_Proactor_Handle_Timeout_Upcall\fR, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor::TIMER_WHEEL_ITERATOR\fC [private]\fR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Proactor::ACE_Proactor (\fBACE_Proactor_Impl\fR * implementation = 0, int delete_implementation = 0, \fBTIMER_QUEUE\fR * tq = 0)
+.PP
+Constructor. If <implementation> is 0, the correct implementation object will be created. <delete_implementation> flag determines whether the implementation object should be deleted by the Proactor or not. If <tq> is 0, a new TIMER_QUEUE is created. 
+.SS ACE_Proactor::~ACE_Proactor (void)\fC [virtual]\fR
+.PP
+Virtual destruction.
+.PP
+.SS ACE_Proactor::ACE_Proactor (const ACE_Proactor &)\fC [private]\fR
+.PP
+Deny access since member-wise won't work...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Proactor::cancel_timer (long timer_id, const void ** act = 0, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel the single  that matches the <timer_id> value (which was returned from the <schedule> method). If  is non-NULL then it will be set to point to the ``magic cookie'' argument passed in when the <Handler> was registered. This makes it possible to free up the memory and avoid memory leaks. Returns 1 if cancellation succeeded and 0 if the <timer_id> wasn't found. 
+.SS int ACE_Proactor::cancel_timer (\fBACE_Handler\fR & handler, int dont_call_handle_close = 1)\fC [virtual]\fR
+.PP
+Cancel all timers associated with this <handler>. Returns number of timers cancelled.
+.PP
+.SS void ACE_Proactor::cleanup (void * instance, void * arg)\fC [static]\fR
+.PP
+Cleanup method, used by the  to destroy the singleton.
+.PP
+.SS int ACE_Proactor::close (void)\fC [virtual]\fR
+.PP
+Close the IO completion port.
+.PP
+.SS int ACE_Proactor::close_dispatch_threads (int wait)
+.PP
+Close all dispatch threads.
+.PP
+.SS void ACE_Proactor::close_singleton (void)\fC [static]\fR
+.PP
+Delete the dynamically allocated Singleton.
+.PP
+.SS \fBACE_Asynch_Accept_Impl\fR * ACE_Proactor::create_asynch_accept (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Accept.
+.PP
+.SS \fBACE_Asynch_Accept_Result_Impl\fR * ACE_Proactor::create_asynch_accept_result (\fBACE_Handler\fR & handler, ACE_HANDLE listen_handle, ACE_HANDLE accept_handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Accept::Result\fR.
+.PP
+.SS \fBACE_Asynch_Read_Dgram_Impl\fR * ACE_Proactor::create_asynch_read_dgram (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_Dgram.
+.PP
+.SS \fBACE_Asynch_Read_Dgram_Result_Impl\fR * ACE_Proactor::create_asynch_read_dgram_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR * message_block, size_t bytes_to_read, int flags, int protocol_family, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_Dgram::Result\fR.
+.PP
+.SS \fBACE_Asynch_Read_File_Impl\fR * ACE_Proactor::create_asynch_read_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_File.
+.PP
+.SS \fBACE_Asynch_Read_File_Result_Impl\fR * ACE_Proactor::create_asynch_read_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_File::Result\fR.
+.PP
+.SS \fBACE_Asynch_Read_Stream_Impl\fR * ACE_Proactor::create_asynch_read_stream (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Read_Stream.
+.PP
+.SS \fBACE_Asynch_Read_Stream_Result_Impl\fR * ACE_Proactor::create_asynch_read_stream_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_Stream::Result\fR class.
+.PP
+.SS \fBACE_Asynch_Result_Impl\fR * ACE_Proactor::create_asynch_timer (\fBACE_Handler\fR & handler, const void * act, const \fBACE_Time_Value\fR & tv, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create a timer result object which can be used with the Timer mechanism of the Proactor. If <signal_number> is -1, <POSIX_SIG_Proactor> will create a Timer object with a meaningful signal number, choosing the largest signal number from the signal mask of the Proactor. 
+.SS \fBACE_Asynch_Transmit_File_Impl\fR * ACE_Proactor::create_asynch_transmit_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Transmit_File.
+.PP
+.SS \fBACE_Asynch_Transmit_File_Result_Impl\fR * ACE_Proactor::create_asynch_transmit_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE socket, ACE_HANDLE file, \fBACE_Asynch_Transmit_File::Header_And_Trailer\fR * header_and_trailer, u_long bytes_to_write, u_long offset, u_long offset_high, u_long bytes_per_send, u_long flags, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Transmit_File::Result\fR.
+.PP
+.SS \fBACE_Asynch_Write_Dgram_Impl\fR * ACE_Proactor::create_asynch_write_dgram (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_Dgram.
+.PP
+.SS \fBACE_Asynch_Write_Dgram_Result_Impl\fR * ACE_Proactor::create_asynch_write_dgram_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR * message_block, size_t bytes_to_write, int flags, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_Dgram::Result\fR.
+.PP
+.SS \fBACE_Asynch_Write_File_Impl\fR * ACE_Proactor::create_asynch_write_file (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_File.
+.PP
+.SS \fBACE_Asynch_Write_File_Result_Impl\fR * ACE_Proactor::create_asynch_write_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_write, const void * act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_File::Result\fR.
+.PP
+.SS \fBACE_Asynch_Write_Stream_Impl\fR * ACE_Proactor::create_asynch_write_stream (void)\fC [virtual]\fR
+.PP
+Create the correct implementation class for doing Asynch_Write_Stream.
+.PP
+.SS \fBACE_Asynch_Write_Stream_Result_Impl\fR * ACE_Proactor::create_asynch_write_stream_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_write, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_Stream::Result\fR.
+.PP
+.SS int ACE_Proactor::end_event_loop (void)\fC [static]\fR
+.PP
+Instruct the  to terminate its event loop. This method wakes up all the threads blocked on waiting for completions and end the event loop. 
+.SS int ACE_Proactor::event_loop_done (void)\fC [static]\fR
+.PP
+Report if the  event loop is finished.
+.PP
+.SS ACE_HANDLE ACE_Proactor::get_handle (void) const\fC [virtual]\fR
+.PP
+Get the event handle. It is a no-op in POSIX platforms and it returns ACE_INVALID_HANDLE. 
+.SS int ACE_Proactor::handle_events (void)\fC [virtual]\fR
+.PP
+Block indefinitely until at least one event is dispatched. 
+.PP
+\fBReturns: \fR
+.in +1c
+ Returns 1 when a completion is dispatched. On error, returns -1 and sets errno accordingly. 
+.SS int ACE_Proactor::handle_events (\fBACE_Time_Value\fR & wait_time)\fC [virtual]\fR
+.PP
+Dispatch a single set of events, waiting up to a specified time limit if necessary. 
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIwait_time\fR\fR the time to wait for an event to occur. This is a relative time. On successful return, the time is updated to reflect the amount of time spent waiting for event(s) to occur. 
+.PP
+\fBReturns: \fR
+.in +1c
+ Returns 0 if no events occur before the wait_time expires. Returns 1 when a completion is dispatched. On error, returns -1 and sets errno accordingly. 
+.SS void ACE_Proactor::implementation (\fBACE_Proactor_Impl\fR * implementation)\fC [protected, virtual]\fR
+.PP
+Set the implementation class.
+.PP
+.SS \fBACE_Proactor_Impl\fR * ACE_Proactor::implementation (void) const\fC [virtual]\fR
+.PP
+Get the implementation class.
+.PP
+.SS ACE_Proactor * ACE_Proactor::instance (ACE_Proactor *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer.
+.PP
+.SS ACE_Proactor * ACE_Proactor::instance (size_t threads = 0)\fC [static]\fR
+.PP
+Get pointer to a process-wide . <threads> should be part of another method.
+.PP
+.SS void ACE_Proactor::number_of_threads (size_t threads)
+.PP
+.SS size_t ACE_Proactor::number_of_threads (void) const
+.PP
+Number of thread used as a parameter to CreatIoCompletionPort.
+.PP
+.SS ACE_Proactor& ACE_Proactor::operator= (const ACE_Proactor &)\fC [private]\fR
+.PP
+.SS int ACE_Proactor::post_wakeup_completions (int how_many)\fC [static, protected]\fR
+.PP
+Post <how_many> completions to the completion port so that all threads can wake up. This is used in conjunction with the <run_event_loop>. 
+.SS int ACE_Proactor::register_handle (ACE_HANDLE handle, const void * completion_key)\fC [virtual]\fR
+.PP
+This method adds the <handle> to the I/O completion port. This function is a no-op function for Unix systems and returns 0;.
+.PP
+.SS int ACE_Proactor::reset_event_loop (void)\fC [static]\fR
+.PP
+Resets the  static so that the <run_event_loop> method can be restarted. 
+.SS int ACE_Proactor::run_event_loop (\fBACE_Time_Value\fR & tv)\fC [static]\fR
+.PP
+Run the event loop until the  method returns -1, the <end_event_loop> method is invoked, or the  expires. 
+.SS int ACE_Proactor::run_event_loop (void)\fC [static]\fR
+.PP
+Run the event loop until the  method returns -1 or the <end_event_loop> method is invoked.
+.PP
+.SS virtual long ACE_Proactor::schedule_repeating_timer (\fBACE_Handler\fR & handler, const void * act, const \fBACE_Time_Value\fR & interval)\fC [virtual]\fR
+.PP
+.SS long ACE_Proactor::schedule_timer (\fBACE_Handler\fR & handler, const void * act, const \fBACE_Time_Value\fR & time, const \fBACE_Time_Value\fR & interval)\fC [virtual]\fR
+.PP
+This combines the above two methods into one. Mostly for backward compatibility.
+.PP
+.SS long ACE_Proactor::schedule_timer (\fBACE_Handler\fR & handler, const void * act, const \fBACE_Time_Value\fR & time)\fC [virtual]\fR
+.PP
+Schedule a <handler> that will expire after <time>. If it expires then  is passed in as the value to the <handler>'s <handle_timeout> callback method. This method returns a <timer_id>. This <timer_id> can be used to cancel a timer before it expires. The cancellation ensures that <timer_ids> are unique up to values of greater than 2 billion timers. As long as timers don't stay around longer than this there should be no problems with accidentally deleting the wrong timer. Returns -1 on failure (which is guaranteed never to be a valid <timer_id>). 
+.SS void ACE_Proactor::timer_queue (\fBTIMER_QUEUE\fR * timer_queue)
+.PP
+.SS \fBTIMER_QUEUE\fR * ACE_Proactor::timer_queue (void) const
+.PP
+Get/Set timer queue.
+.PP
+.SS int ACE_Proactor::wake_up_dispatch_threads (void)
+.PP
+Add wakeup dispatch threads (reinit).
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Proactor_Timer_Handler\fC [friend]\fR
+.PP
+Timer handler runs a thread and manages the timers, on behalf of the Proactor.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Proactor::delete_implementation_\fC [protected]\fR
+.PP
+Flag used to indicate whether we are responsible for cleaning up the implementation instance.
+.PP
+.SS int ACE_Proactor::delete_proactor_\fC [static, protected]\fR
+.PP
+Must delete the <proactor_> if non-0.
+.PP
+.SS int ACE_Proactor::delete_timer_queue_\fC [protected]\fR
+.PP
+Flag on whether to delete the timer queue.
+.PP
+.SS \fBsig_atomic_t\fR ACE_Proactor::end_event_loop_\fC [static, protected]\fR
+.PP
+Terminate the proactor event loop.
+.PP
+.SS \fBsig_atomic_t\fR ACE_Proactor::event_loop_thread_count_\fC [static, protected]\fR
+.PP
+Number of threads in the event loop.
+.PP
+.SS \fBACE_Proactor_Impl\fR * ACE_Proactor::implementation_\fC [protected]\fR
+.PP
+Delegation/implementation class that all methods will be forwarded to.
+.PP
+.SS ACE_Proactor * ACE_Proactor::proactor_\fC [static, protected]\fR
+.PP
+Pointer to a process-wide .
+.PP
+.SS \fBACE_Thread_Manager\fR ACE_Proactor::thr_mgr_\fC [protected]\fR
+.PP
+This will manage the thread in the Timer_Handler.
+.PP
+.SS ACE_Proactor_Timer_Handler * ACE_Proactor::timer_handler_\fC [protected]\fR
+.PP
+Handles timeout events.
+.PP
+.SS \fBTIMER_QUEUE\fR * ACE_Proactor::timer_queue_\fC [protected]\fR
+.PP
+Timer Queue.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

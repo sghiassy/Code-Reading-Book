@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>cTwIG - Cocoon Two Idiots Guide - Basic XSP Processing</title>
+		<authors>
+			<person name="Jeremy Aston" email="jez@pigbite.com"/>
+		</authors>
+	</header>
+
+	<body>
+		<s1 title="Transformations">
+			<s2 title="Basic XSP Processing">
+				<p>XSP allows you to incorporate logic into the XML file thus providing capabilities analogous to ASP, JSP, CFM, PHP etc.  The advantage is that the logic is not tied to the rendering since a stylesheet is separately applied.  The results of the code are wrapped up in a tag which is what can be referenced in the stylesheet.</p>
+				<p>Take the following XML file (<fork href="sample/transformations/basic02/basic02-01.xml">basic02-01.xml</fork>):</p>
+				<source><![CDATA[
+  <?xml version="1.0"?>
+  <xsp:page 
+	  xmlns:xsp="http://apache.org/xsp"
+  >
+
+    <page>
+      <xsp:logic>
+        String msg = "Hello world!";
+      </xsp:logic>
+
+      <title>
+        Basic XSP Processing Example - BASIC02-01.XML
+    	</title>
+
+      <greeting>
+        <xsp:expr>msg</xsp:expr>
+      </greeting>
+    </page>
+  </xsp:page>]]></source>
+				<p>We have now wrapped the previous file up with an xsp:page tag and added some logic that assigns "Hello World" to a string and uses the xsp:expr tag to insert that in place of the previous text in the greeting tag.   <em>Please note that this example uses "http://apache.org/xsp" as the namespace.  This is different to older C1 based examples and should be used instead.  If you do not then this examples may not work and any logicsheet example definitely will not work.</em></p>
+				<p>To render this we need to tell Cocoon that this file is an XSP file.  This is easier if we either name the file as .xsp and/or put it in an XSP folder.  For now just put it in {TOMCAT_HOME}\webapps\cocoon\ctwig\xsp, keeping the .xml extension.  You can now add the following to the sitemap.xmap file:</p>
+				<source><![CDATA[
+  <map:match pattern="ctwig/xsp/*"> 
+    <map:generate type="serverpages" src="ctwig/xsp/{1}"/> 
+    <map:transform type="xslt" src="ctwig/basic01-01.xsl"/> 
+    <map:serialize/> 
+  </map:match>]]></source>
+				<p>What this does is to force any file in the ctwig/xsp folder to be processed using the "serverpages" (XSP) generator, then rendered with the same XSL stylesheet as in the Basic01 example.  Note that we are telling C2 that the stylesheet is in the ctwig folder.</p>
+				<p>You can test this code by calling <fork href="http://localhost:8080/cocoon/ctwig/xsp/basic02-01.xml">http://localhost:8080/cocoon/ctwig/xsp/basic02-01.xml</fork></p>
+				<p>The one downside with this approach is that you can end up with XML files that contain lots of logic along with the rest of the data.  This becomes as confusing to read as when the logic is mixed with the presentation so does not really solve all the issues that are inherent to the ASP/JSP type approach.  The solution is to use <link href="ctwig-basic03.html">logicsheets</link>.</p>
+			</s2>
+		</s1>
+	</body>
+</document>

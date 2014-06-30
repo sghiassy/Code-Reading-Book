@@ -1,0 +1,286 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SetVariable(3)</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SetVariable</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SetVariable</h4>
+<dd>DEMOGL_SetVariable comes in three versions: one integer variables, one for string variables and one for boolean variables.
+	<b>DEMOGL_SetVariable</b> sets variables DemoGL works with and control the look, feel and behaviour of the application, during
+	startup and / or runtime. Furthermore these variables are needed to tell DemoGL where to find data needed by the application and
+	how to retrieve that data.
+	<p>
+	<hr align="left" width="40%" <B>Variant 1:</b>
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_SetVariable(
+	<b>const int</b> <i>iFlag</i>,
+	<b>const int</b> <i>iValue</i>
+);
+	</pre>
+	<p>
+	<hr align="left" width="40%" <B>Variant 2:</b>
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_SetVariable(
+	<b>const int</b> <i>iFlag</i>,
+	<b>const bool</b> <i>bValue</i>
+);
+	</pre>
+	<p>
+	<hr align="left" width="40%" <B>Variant 3:</b>
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_SetVariable(
+	<b>const int</b> <i>iFlag</i>,
+	<b>const char</b> *<i>pszValue</i>
+);
+	</pre>
+	<p>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iFlag</i>
+	<dd>Specifies for whichs variable the value passed is ment. Can be one of the following values:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8"><b>iFlag</b></td>
+			<td BGCOLOR="#e8e8e8"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_VSYNC</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Switches on/off VSYNC in the driver, if the driver supports this. When <i>true</i> DemoGL
+				will switch ON VSYNC immediately, which means the OpenGL driver will wait with the backbuffer-
+				frontbuffer flip when the vertical retrace takes place, which is dependant on the frequency of
+				the user's monitor.
+				<p>
+				<b>Default:</b> false<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_FILESRC</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if DemoGL should read all data from a directory or from a datafile. When <i>iValue</i>
+				is DGL_FSRC_LOADFROMDATAFILE, DGL_VF_SRCDIR specifies which dir inside the datafile should be
+				used and which datafile is specified by DGL_VF_DATAFILENAME. When <i>iValue</i> is
+				DGL_FSRC_LOADFROMDIR, DGL_VFSRCDIR specifies the sourcedirectory where to read from and 
+				DGL_VF_DATAFILENAME is ignored.
+				<p>
+				<b>Default:</b> DGL_FSRC_LOADFROMDATAFILE<br>
+				<b>Type:</b> int
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_SRCDIR</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies which sourcedirectory DemoGL should use to read the data from. If DGL_VF_FILESRC is
+				DGL_FSRC_LOADFROMDATAFILE, DGL_VF_SRCDIR specifies the directory inside the datafile to see as
+				root directory which contains all directories and files to read the datafiles from. If DGL_VF_FILESRC
+				is DGL_FSRC_LOADFROMDIR, DGL_VF_SRCDIR specifies the actual directory on disk where to read the
+				datafiles from. DGL_VF_SRCDIR is placed before each filename passed to DemoGL to make the complete
+				filename to use for loading.
+				<p>
+				<b>Default:</b> &quot;&quot;<br>
+				<b>Type:</b> pointer to a string
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_DATAFILENAME</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies which file DemoGL should see as datafile. A datafile is a normal ZIP file. When
+				DGL_VF_FILESRC is DGL_FSRC_LOADFROMDIR, DGL_VF_DATAFILENAME is ignored.
+				<p>
+				<b>Default:</b> &quot;demodat.zip&quot;<br>
+				<b>Type:</b> pointer to a string
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_SCRIPTFILENAME</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies the filename of the application script. This script contains the timeline event commands
+				and controls the execution behaviour of the application: when does what happen.
+				<p>
+				<b>Default:</b> &quot;demoflow&quot;<br>
+				<b>Type:</b> pointer to a string
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_SHOWFPS</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if the FPS (frames per second) counter is visible (true) or not (false). Setting this
+				variable will have effect in the next frame. It's equivalent by pressing F2 during application
+				execution. The effectiveness of this variable depends on DGL_VF_NEVERSHOWFPS. If DGL_VF_NEVERSHOWFPS
+				is false, DGL_VF_SHOWFPS has no effect: the FPS counter will never show.
+				<p>
+				<b>Default:</b> false<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_NEVERSHOWFPS</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if the FPS (frames per second) counter can be toggled on / off (false) or that it should be locked (true).
+				When DGL_VF_NEVERSHOWFPS is true, pressing F2 or setting DGL_VF_SHOWFPS doesn't have any effect: the FPS counter won't
+				show up.
+				<p>
+				<b>Default:</b> false<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_NEVERSHOWCONSOLE</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if the console can be made visible (false) or not (true). When DGL_VF_NEVERSHOWCONSOLE is true, pressing
+				one of the keys that make the system console be visible instead of the effects will not have any effect: the console
+				will never appear.
+				<p>
+				<b>Default:</b> false<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_SHOWDEBUGINFO</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if the debug info overlay is visible (true) or not (false) during normal execution when the
+				system console is not visible. Setting this	variable will have effect in the next frame. 
+				It's equivalent by pressing F5 during application execution. The effectiveness of this variable depends 
+				on DGL_VF_NEVERSHOWDEBUGINFO. If DGL_VF_NEVERSHOWDEBUGINFO is false, DGL_VF_SHOWDEBUGINFO has no effect: 
+				the debug info overlay will never show. The debug info overlay is essentially a copy of a part of the system console
+				content, so you can see what is logged to the console during normal application execution. Debug info has to be
+				on to be able to switch on the input prompt by pressing F6. So locking the debug info overlay using
+				DGL_VF_NEVERSHOWDEBUGINFO will also lock the input prompt.
+				<p>
+				<b>Default:</b> false<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_NEVERSHOWDEBUGINFO</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if the debug info overlay can be made visible (false) or not (true), and thus also if the input prompt
+				can be switched on or not. When DGL_VF_NEVERSHOWDEBUGINFO is true, pressing F5 or setting DGL_VF_SHOWDEBUGINFO
+				to true won't have any effect: the debug info overlay and with that the possibility to switch on the inputprompt
+				will never show up.
+				<p>
+				<b>Default:</b> false<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_NEVERRESCALETEXTURES</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if DemoGL should switch on (false) or off (true) the checkbox in the startup dialog which allows the user
+				to select if textures used by the application and managed by DemoGL should be rescaled when the videocard can't handle
+				the textures because the size(s) of the textures exceed the maximum limits of the videocard. Voodoo3's have f.e. a
+				maximum limit of 256x256 pixels per texture. Using a 512x512 texture in an application will cause an OpenGL error
+				on a Voodoo3, which results in that the texture won't show up. When the user is able to select the checkbox on the
+				startup dialog, DemoGL will rescale any texture, by preserving proportions, to a size that can be handled by the
+				videocard. Of course this can lead to blurry textures, since the textures are scaled down, so the developer can
+				decide if the user is able to rescale or not, by setting DGL_VF_NEVERRESCALETEXTURES to true (the user is not able
+				to select rescaling) or false (the user is able to select rescaling). Rescaling is done using the glu32 functions.
+				<p>
+				<b>Default:</b> true<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_QUICKBOOT</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if DemoGL should log to the system console every message produced during startup of the application (false) 
+				or that is should log to the system console only error messages (true). During development it's handy to have the 
+				complete messagelog in the system console, but this can be a bit slow during application startup. Specifying true for
+				DGL_VF_QUICKBOOT will only report the very necessary messages and all errormessages, resulting in a very fast
+				startup, which is what you want when you release your application.
+				<p>
+				<b>Default:</b> true<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_USERENDERFRAMEEX</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if DemoGL should use the effect object's method <i>RenderFrame</i> or the new method <i>RenderFrameEx</i> when
+				an effect object should be rendered. RenderFrameEx is the same as RenderFrame but it also receives the layer number the
+				effectobject is running on. This can be handy when you want to run a <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a>
+				derived effect class on more than one layer, and you start the instance of that effect class on more than one layer. You can
+				then make the effect behave differently on each layer, by including special rendercode in the RenderFrameEx method of 
+				the effect class which uses the layer number. It best works with multiple instances of the same effect class, running
+				on their own layers. You should create and register these instances in the WinMain function.
+				<p>
+				<b>Default:</b> false<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_INITFAILURERESPONSE</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies what DemoGL should do when the Init method of a <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> derived
+				class fails during the startup of the application. When DGL_VF_INITFAILURERESPONSE is DGL_AIFF_IGNORE and the Init method
+				reports as returnvalue SYS_NOK, nothing is done and DemoGL continues as nothing happened. When DGL_VF_INITFAILURERESPONSE is
+				set to DGL_AIFF_DIE and the Init method of an effect object reports SYS_NOK, DemoGL will abort further execution and 
+				<a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a> will return to the caller. When DGL_VF_INITFAILURERESPONSE
+				is DGL_AIFF_REMOVE and the Init method of an effect object reports SYS_NOK, DemoGL will remove the effect object from
+				the effect store, like it was never registered. All commands in the script will fail, but execution of the application
+				continues.
+				<p>
+				<b>Default:</b> DGL_AIFF_IGNORE<br>
+				<b>Type:</b> int
+			</td>
+		</tr>
+		<tr>
+			<td VALIGN="TOP" class="TDSmallerFont">DGL_VF_SWAPBUFFERS</td>
+			<td VALIGN="TOP" class="TDSmallerFont">
+				Specifies if DemoGL should swap the back- and frontbuffer when all layers have been drawn (true) or not (false). Setting this
+				parameters has effect in the current rendercycle, thus immediately, so it's important when you set this variable when you
+				want to use this feature during runtime. A possible usage can be that you want to render all layers in the backbuffer, create
+				a texture of that backbuffer and clear the backbuffer again, then render another scene with the texture just created.
+				<p>
+				<b>Default:</b> true<br>
+				<b>Type:</b> bool
+			</td>
+		</tr>
+		</table>
+	</dl>
+	<p>
+<dt><b>Return values.</b>
+<dd><p>
+<dt><b>Remarks.</b>
+<dd>It's important you set the values you want to use in your application as early as possible, preferably as
+	one of the first statements in the WinMain function, especially parameters needed for loading data from disk, f.e. DemoGL can't
+	load the script, needed for execution, when it doesn't know which datafile to use to load the script from. Other variables
+	can be set/reset as much as needed during execution. 
+	<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>,
+	<a HREF="ref_classes_CEffect.htm" target="main">CEffect</a>,
+	<a HREF="ref_definitionsanddefaults.htm" target="main">Definitions and defaults</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

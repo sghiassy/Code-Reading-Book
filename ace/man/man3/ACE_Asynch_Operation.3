@@ -1,0 +1,129 @@
+.TH ACE_Asynch_Operation 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Asynch_Operation \- This is an interface base class for all asynch operations. The resposiblility of this class is to forward all methods to its delegation/implementation class, e.g.,  or . 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_IO.h>\fR
+.PP
+Inherited by \fBACE_Asynch_Accept\fR, \fBACE_Asynch_Read_Dgram\fR, \fBACE_Asynch_Read_Stream\fR, \fBACE_Asynch_Transmit_File\fR, \fBACE_Asynch_Write_Dgram\fR, and \fBACE_Asynch_Write_Stream\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, const void *completion_key, \fBACE_Proactor\fR *proactor)"
+.br
+.ti -1c
+.RI "int \fBcancel\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor\fR (void) const"
+.br
+.RI "\fIReturn the underlying proactor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Asynch_Operation\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Operation\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_Asynch_Operation_Impl\fR* \fBimplementation\fR (void) const"
+.br
+.RI "\fIReturn the underlying implementation class.\fR"
+.ti -1c
+.RI "void \fBimplementation\fR (\fBACE_Asynch_Operation_Impl\fR *implementation)"
+.br
+.RI "\fISet the implementation class.\fR"
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBget_proactor\fR (\fBACE_Proactor\fR *user_proactor, \fBACE_Handler\fR &handler) const"
+.br
+.RI "\fIGet a proactor for/from the user.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Operation_Impl\fR* \fBimplementation_\fR"
+.br
+.RI "\fIImplementation class.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This is an interface base class for all asynch operations. The resposiblility of this class is to forward all methods to its delegation/implementation class, e.g.,  or .
+.PP
+.PP
+ There are some attributes and functionality which is common to all asychronous operations. The delegation classes of this class will factor out this code. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Asynch_Operation::~ACE_Asynch_Operation (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS ACE_Asynch_Operation::ACE_Asynch_Operation (void)\fC [protected]\fR
+.PP
+Constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Asynch_Operation::cancel (void)
+.PP
+(Attempts to) cancel the asynchronous operation pending against the <handle> registered with this Operation.
+.PP
+All completion notifications for the I/O operations will occur normally.
+.PP
+= Return Values:
+.PP
+-1 : Operation failed. (can get only in POSIX). 0 : All the operations were cancelled. 1 : All the operations were already finished in this handle. Unable to cancel them. 2 : Atleast one of the requested operations cannot be cancelled.
+.PP
+There is slight difference in the semantics between NT and POSIX platforms which is given below.
+.PP
+= Win32 :
+.PP
+cancels all pending accepts operations that were issued by the calling thread. The function does not cancel asynchronous operations issued by other threads. All I/O operations that are canceled will complete with the error ERROR_OPERATION_ABORTED.
+.PP
+= POSIX:
+.PP
+Attempts to cancel one or more asynchronous I/O requests currently outstanding against the <handle> registered in this operation. For requested operations that are successfully canceled, the associated error status is set to ECANCELED. 
+.SS \fBACE_Proactor\fR * ACE_Asynch_Operation::get_proactor (\fBACE_Proactor\fR * user_proactor, \fBACE_Handler\fR & handler) const\fC [protected]\fR
+.PP
+Get a proactor for/from the user.
+.PP
+.SS void ACE_Asynch_Operation::implementation (\fBACE_Asynch_Operation_Impl\fR * implementation)\fC [protected]\fR
+.PP
+Set the implementation class.
+.PP
+.SS \fBACE_Asynch_Operation_Impl\fR * ACE_Asynch_Operation::implementation (void) const\fC [protected]\fR
+.PP
+Return the underlying implementation class.
+.PP
+Reimplemented in \fBACE_Asynch_Read_Stream\fR, \fBACE_Asynch_Write_Stream\fR, \fBACE_Asynch_Read_File\fR, \fBACE_Asynch_Write_File\fR, \fBACE_Asynch_Accept\fR, \fBACE_Asynch_Transmit_File\fR, \fBACE_Asynch_Read_Dgram\fR, and \fBACE_Asynch_Write_Dgram\fR.
+.SS int ACE_Asynch_Operation::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle, const void * completion_key, \fBACE_Proactor\fR * proactor)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. 
+.PP
+Reimplemented in \fBACE_Asynch_Read_Stream\fR, \fBACE_Asynch_Write_Stream\fR, \fBACE_Asynch_Read_File\fR, \fBACE_Asynch_Write_File\fR, \fBACE_Asynch_Accept\fR, \fBACE_Asynch_Transmit_File\fR, \fBACE_Asynch_Read_Dgram\fR, and \fBACE_Asynch_Write_Dgram\fR.
+.SS \fBACE_Proactor\fR * ACE_Asynch_Operation::proactor (void) const
+.PP
+Return the underlying proactor.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Asynch_Operation_Impl\fR * ACE_Asynch_Operation::implementation_\fC [protected]\fR
+.PP
+Implementation class.
+.PP
+Reimplemented in \fBACE_Asynch_Read_Stream\fR, \fBACE_Asynch_Write_Stream\fR, \fBACE_Asynch_Read_File\fR, \fBACE_Asynch_Write_File\fR, \fBACE_Asynch_Accept\fR, \fBACE_Asynch_Transmit_File\fR, \fBACE_Asynch_Read_Dgram\fR, and \fBACE_Asynch_Write_Dgram\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

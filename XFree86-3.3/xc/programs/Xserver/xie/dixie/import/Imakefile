@@ -1,0 +1,30 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/09/28 16:55:32 rws $
+XCOMM $XFree86: xc/programs/Xserver/XIE/dixie/import/Imakefile,v 3.2 1996/12/23 06:26:45 dawes Exp $
+XCOMM build device independent import element objects
+#include <Server.tmpl>
+
+SRCS1 = iclut.c icphoto.c idraw.c idrawp.c ilut.c iphoto.c
+OBJS1 = iclut.o icphoto.o idraw.o idrawp.o ilut.o iphoto.o
+
+#if BuildDIS
+DEFINES = -DXIE_DIS
+#else
+SRCS2 = icroi.c iroi.c
+OBJS2 = icroi.o iroi.o
+#endif
+
+       SRCS = $(SRCS1) $(SRCS2)
+
+       OBJS = $(OBJS1) $(OBJS2)
+
+   INCLUDES = -I../../include -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(EXTINCSRC)
+   LINTLIBS = ../export/llib-lexp.ln ../import/llib-limp.ln \
+              ../process/llib-lproc.ln ../request/llib-lreq.ln
+
+#define DoSharedLib	XieDynamicModule
+#include <ServerLib.tmpl>
+SubdirLibraryRule($(OBJS))
+LintLibraryTarget(imp,$(SRCS))
+NormalLintTarget($(SRCS))
+
+DependTarget()

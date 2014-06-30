@@ -1,0 +1,1211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>The Sitemap</title>
+  <authors>
+   <person name="Giacomo Pati" email="Giacomo.Pati@pwr.ch"/>
+   <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
+   <person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+   <person name="Bernhard Huber" email="berni_huber@a1.net"/>
+  </authors>
+ </header>
+
+ <body>
+
+  <s1 title="The Sitemap">
+   <s2 title="Introduction">
+    <p>
+     This document is used as a working draft for 
+     Apache Cocoon architects to understand the issues associated with 
+     sitemaps and XML publishing in general. It must be considered as a working 
+     draft and may be updated at any time.
+    </p>
+
+    <p>
+     See the <link href="../index.html">User documentation</link>
+     for details about configuration of each sitemap component.
+     See the <link href="sitemap-examples.html">Example sitemap snippets</link>.
+     Explore each <code>sitemap.xmap</code> in the distribution, to see
+     how the various situations are handled.
+    </p>
+ 
+    <p>
+     This document is based on ideas and design patterns inspired by Stefano 
+     Mazzocchi (stefano@apache.org) and Pierpaolo Fumagalli (pier@apache.org)
+     but grew as a collaborative effort to provide a solid foundation of
+     design patterns and usability guidelines to create a solid foundation
+     of sitemap programmability and usability to the Cocoon Publishing 
+     Framework.
+    </p>
+ 
+    <p>
+     This is one of the few examples where open source is transformed into
+     "open development" leading both the implementation and the pure research
+     around software development and usability.
+    </p>
+   </s2>
+
+   <s2 title="Goals">
+ 
+    <p>
+     The goal of the sitemap is to allow non-programmers to create web sites
+     and web applications built from logic components and XML documents.
+    </p>
+ 
+    <p>
+     It finds inspiration from both Apache's httpd.conf/.htaccess files as well
+     as from Servlet API 2.2 WAR archives. It uses concepts such as Cascading
+     from W3C CSS, as well as declarative approaches integrated into the W3C 
+     XSLT language. It also uses some element/attribute equivalence patterns 
+     used in W3C RDF.
+    </p>
+ 
+    <p>
+     The following goals were identified as engineering constraints:
+    </p>
+ 
+    <ol>
+     <li>minimal verbosity is of maximum importance.</li>
+     <li>the schema should be sufficiently expressive to allow learning by
+      examples.</li>
+     <li>sitemap authoring should not require assistive tools, but be
+      sufficiently future-compatible to allow them.</li>
+     <li>sitemaps must scale along with the site and should not impose growth
+      limitation to the site as a whole nor limit its administration with size
+      increase.</li>
+     <li>sitemaps should contain all the information required to Cocoon to
+      generate all the requests it receives.</li>
+     <li>sitemaps should contain information for both dynamic operation as
+      well as offline generation.</li>
+     <li>uri mapping should be powerful enough to allow every possible mapping
+      need.</li>
+     <li>basic web-serving functionalities (redirection, error pages,
+      resource authorisation) should be provided.</li>
+     <li>sitemaps should not limit Cocoon's intrinsic modular extensibility.</li>
+     <li>resources must be matched with all possible state variables, not
+      only with URI (http parameters, environment variables, server
+      parameters, time, etc...).</li>
+     <li>sitemaps should embed the notion of "semantic resources" to be
+      future-compatible with semantic crawling and indexing.</li>
+     <li>sitemaps should be flexible enough to allow a complete web site to
+      be built with Cocoon.</li>
+    </ol>
+   </s2>
+
+   <s2 title="The Structure">
+    <p>
+     The Sitemap has the following general structure:
+    </p>
+  
+    <source>
+<![CDATA[
+  <?xml version="1.0"?>
+
+  <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    <map:components/>
+    <map:views/>
+    <map:resources/>
+    <map:action-sets/>
+    <map:pipelines/>
+  </map:sitemap>
+]]>
+    </source>
+   </s2>
+
+   <s2 title="The &lt;map:sitemap&gt;">
+    <source>
+<![CDATA[
+  <map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+]]>
+    </source>
+
+    <p>
+     The default namespaces are used mainly for versioning, instead of using 
+     attributes such as version="1.0" which could create confusion. People are 
+     used to writing URIs with no spelling mistakes, while versioning could be 
+     used for their own sitemap versions and this might break operation.
+    </p>
+
+    <p>  
+     The versioning schema will be "major.minor" where major will be increased
+     by one each time a new release breaks backwards compatibility, while minor
+     is increased each time a change has been made that doesn't create
+     backwards compatibility problems.
+    </p>
+   </s2>
+
+   <s2 title="The &lt;map:components&gt;">
+    <source>
+<![CDATA[
+<map:components>
+  <map:generators/>
+  <map:transformers/>
+  <map:serializers/>
+  <map:readers/>
+  <map:selectors/>
+  <map:matchers/>
+  <map:actions/>
+</map:components>
+]]>
+    </source>
+
+    <s3 title="Common Attributes of Components">
+     <p>
+      All components have some common attributes. The list below will show and explain them:
+     </p>
+
+     <dl>
+      <dt>name</dt>
+      <dd>Gives the component an identifying name by which it may be referenced in the pipeline section.</dd>
+      <dt>src</dt>
+      <dd>Specifies the class implementing this component.</dd>
+     </dl>
+    </s3>
+
+    <s3 title="Component Parameters">
+     <p>
+      All components are configured with parameters specified in their child elements at component instantiation time.
+      The following example shows how to specify a <code>&lt;use-request-parameter&gt;</code> parameter for an XSLT
+      transformation component: </p>
+  
+     <source>
+<![CDATA[
+<map:components>
+  <map:transformer name="xslt"
+     src="org.apache.cocoon.transformation.TraxTransformer">
+     <!-- This is a parameter to the transformer component -->
+     <use-request-parameters>false</use-request-parameters>
+  </map:transformer>
+</map:components>
+]]>
+     </source>
+     <p>
+       The name and meaning of the parameters are dependent on the component.
+     </p>
+    </s3>
+
+    <s3 title="Generators">
+     <p>
+      A <link href="#interface-generator"><code>Generator</code></link> generates XML content as SAX events and initializes the pipeline processing. 
+     </p>
+
+     <source>
+<![CDATA[
+<map:generators default="file">
+  <map:generator name="file"  src="org.apache.cocoon.generation.FileGenerator"/>
+  <map:generator name="dir"  src="MyDirGenerator"/>
+  <map:generator name="serverpages"
+                 src="org.apache.cocoon.generation.ServerPagesGenerator">
+   ...
+  </map:generator>
+</map:generators>
+]]>
+     </source>
+
+     <p>
+      The <code>default</code> attribute on <code>&lt;map:generators&gt;</code> specifies the type 
+      of generator to use if none is specified in a pipeline.
+     </p>
+    </s3>
+
+    <s3 title="Transformers">
+     <p>
+      A <link href="#interface-transformer"><code>Transformer</code></link> transforms SAX events into other SAX events.
+     </p>
+
+     <source>
+<![CDATA[
+<map:transformers default="xslt">
+  <map:transformer name="xslt" 
+                   src="org.apache.cocoon.transformation.TraxTransformer">
+    <use-request-parameters>false</use-request-parameters>
+    <use-browser-capabilities-db>false</use-browser-capabilities-db>
+  </map:transformer>
+  <map:transformer name="xinclude" 
+                   src="org.apache.cocoon.transformation.XIncludeTransformer"/>
+</map:transformers>
+]]>
+     </source>
+
+     <p>
+      The <code>default</code> attribute on <code>&lt;map:transformers&gt;</code> specifies the type 
+      of transformer to use if none is specified in a pipeline.
+     </p>
+    </s3>
+
+    <s3 title="Serializers">
+     <p>
+      A <link href="#interface-serializer"><code>Serializer</code></link> transforms SAX events 
+      in binary or char streams for final client consumption.
+     </p>
+
+     <source>
+<![CDATA[
+<map:serializers default="html">
+  <map:serializer name="html" mime-type="text/html" 
+                  src="org.apache.cocoon.serialization.HTMLSerializer">
+    <doctype-public>-//W3C//DTD HTML 4.0 Transitional//EN</doctype-public>
+    <doctype-system>http://www.w3.org/TR/REC-html40/loose.dtd</doctype-system>
+    <omit-xml-declaration>true</omit-xml-declaration>
+    <encoding>UTF-8</encoding>
+    <indent>1</indent>
+  </map:serializer>
+
+  <map:serializer name="wap" mime-type="text/vnd.wap.wml" 
+     src="org.apache.cocoon.serialization.XMLSerializer">
+    <doctype-public>-//WAPFORUM//DTD WML 1.1//EN</doctype-public>
+    <doctype-system>http://www.wapforum.org/DTD/wml_1.1.xml</doctype-system>
+    <encoding>UTF-8</encoding>
+  </map:serializer>
+
+  <map:serializer name="svg2jpeg" mime-type="image/jpeg" 
+                  src="org.apache.cocoon.serialization.SVGSerializer">
+    <parameter name="background_color" type="color" value="#00FF00"/>
+  </map:serializer>
+
+  <map:serializer name="svg2png" mime-type="image/png" 
+                  src="org.apache.cocoon.serialization.SVGSerializer">
+  </map:serializer>
+</map:serializers>
+]]>
+     </source>
+
+     <p>
+      The <code>default</code> attribute on <code>&lt;map:serializers&gt;</code> specifies the type 
+      of serializer to use if none is specified in a pipeline.
+     </p>
+    </s3>
+
+    <s3 title="Selectors">
+     <p>
+       A <link href="#interface-selector"><code>Selector</code></link> is used to implement basic
+       conditional logic (<code>if-then-else</code> or <code>switch</code>) inside the sitemap.
+       As can be seen in the <link href="#interface-selector"><code>Selector</code></link>
+       interface, this functionality decomposes into the ability to evaluate a boolean
+       condition.</p>
+     <source>
+<![CDATA[
+<map:selectors default="browser">
+  <map:selector name="load"
+                src="org.apache.cocoon.selection.MachineLoadSelector">
+   ...
+  </map:selector>
+
+  <map:selector name="user"
+                src="org.apache.cocoon.selection.AuthenticationSelector">
+   ...
+  </map:selector>
+
+  <map:selector name="browser" 
+                src="org.apache.cocoon.selection.BrowserSelector">
+    <browser name="explorer" useragent="MSIE"/>
+    <browser name="lynx" useragent="Lynx"/>
+    <browser name="mozilla5" useragent="Mozilla/5"/>
+    <browser name="mozilla5" useragent="Netscape6/"/>
+    <browser name="netscape" useragent="Mozilla"/>
+   ...
+  </map:selection>
+</map:selection>
+]]>
+     </source>
+
+     <p>
+      The <code>default</code> attribute on <code>&lt;map:selectors&gt;</code> specifies the type 
+      of selector to use if none is specified in a pipeline.
+     </p>
+
+    </s3>
+
+    <s3 title="Matchers">
+     <p>
+      A <link href="#interface-matcher"><code>Matcher</code></link> maps a pattern to a resource.
+     </p>
+     <source>
+<![CDATA[
+<map:matchers default="wildcard">
+  <map:matcher name="wildcard" 
+               src="org.apache.cocoon.matching.WildcardURIMatcher">
+   ...
+  </map:matcher>
+
+  <map:matcher name="regexp" 
+               src="org.apache.cocoon.matching.RegexpURIMatcher">
+   ...
+  </map:matcher>
+</map:matchers>
+]]>
+     </source>
+
+     <p>
+      The <code>default</code> attribute on <code>&lt;map:matchers&gt;</code> specifies the type 
+      of matcher to use if none is specified in a pipeline.
+     </p>
+
+    </s3>
+
+    <s3 title="Actions">
+     <p>
+      An <link href="#interface-action"><code>Action</code></link> is a sitemap component
+      that manipulates runtime parameters based on request and application state.
+      An Action's result is available in the sitemap as map of name/value pairs.
+      Detailed information on actions may be found in <link href="actions.html">the Actions
+      section</link>.
+     </p>
+     <source>
+<![CDATA[
+<map:actions>
+  <map:action name="add-employee"
+              src="org.apache.cocoon.acting.DatabaseAddAction"/>
+  <map:action name="locale"
+              src="org.apache.cocoon.acting.LocaleAction"/>
+  <map:action name="request"
+              src="org.apache.cocoon.acting.RequestParamAction"/>
+  <map:action name="form-validator"
+              src="org.apache.cocoon.acting.FormValidatorAction"/>
+</map:actions>
+]]>
+     </source>
+
+    </s3>
+   </s2>
+
+   <s2 title="The &lt;map:views&gt;">
+    <p>
+     The <code>&lt;map:view&gt;</code> element defines different view
+     of the site. Views are defined independent of pipelines and might
+     be used with any pipeline defined in the sitemap. For more on views 
+     read <link href="views.html">the Views section</link>.
+    </p>
+   
+    <source>
+<![CDATA[
+<map:views>
+  <map:view name="content" from-label="content">
+    <map:serialize type="xml"/>
+  </map:view>
+
+  <map:view name="links" from-position="last">
+    <map:serialize type="links"/>
+  </map:view>
+</map:views>
+]]>
+    </source>
+   </s2>
+
+   <s2 title="The &lt;map:resources&gt;">
+    <p>
+     The <code>&lt;map:resource&gt;</code> element is used as a placeholder for pipelines
+     that are used several times inside the document. This element
+     is redundant and its functionality is not directly related
+     to the sitemap, but could be cloned by the use of internal
+     XInclude, for example
+    </p>
+   
+    <p>
+     <code>&lt;xinclude:include href="#xpointer(resource[@name='Access refused'])"/&gt;</code> 
+    </p>
+   
+    <p>
+     but given the usability constraints and very specific operation
+     it is much easier to include such an element instead of forcing
+     the use of xinclude/xpointer.
+    </p>
+    <source>
+<![CDATA[
+<map:resources>
+  <map:resource name="Access refused">
+    <map:generate src="./error-pages/restricted.xml"/>
+    <map:transform src="./stylesheets/general-browser.xsl"/>
+    <map:serialize status-code="401"/>
+  </map:resource>
+</map:resources>
+]]>
+    </source>
+   </s2>
+
+   <s2 title="The &lt;map:action-sets&gt;">
+    <p>
+     The <code>&lt;map:action-set&gt;</code> element is used to arrange actions in
+     groups (See <link href="actions.html">the Actions section</link> for details).
+    </p>
+
+    <source>
+<![CDATA[
+<map:action-sets>
+  <map:action-set name="employee">
+   <map:act type="add-employee" action="Add"/>
+   <map:act type="del-employee" action="Delete"/>
+   <map:act type="upd-employee" action="Update"/>
+   <map:act type="sel-employee" action="Select"/>
+  </map:action-set>
+</map:action-sets>
+]]>
+    </source>
+
+   </s2>
+  </s1>
+ 
+  <s1 title="Pipelines">
+   <s2 title="Introduction">
+    <p>
+     Cocoon relies on the pipeline model: an XML document is pushed through a pipeline, 
+     that exists in several transformation steps of your document. 
+     Every pipeline begins with a generator, continues with zero or more transformers, 
+     and ends with a serializer. Beside this normal processing each pipeline 
+     may define its own error handling, too.
+    </p>
+    <p>
+      Beside using the various components, you can use matchers, and selectors to choose a 
+      specific pipeline processing. Aggregation allows you to build a hierarchy of pipelines.
+    </p>
+    <p>
+      Using views allows you to define exit points in a pipeline.
+    </p>
+   </s2>
+   <s2 title="Define a Pipeline">
+     <p>
+       Defining a pipeline is simple. 
+       Just write a <code>map:pipeline</code> element inside the
+       <code>map:pipelines</code> element.
+     </p>
+       <fixme author="Bernhard Huber">
+         Explain optional attribute <code>internal-only</code>
+       </fixme>
+     
+   </s2>
+   <s2 title="Pipeline Elements">
+     <p>
+       Having defined a pipeline you can use following sitemap elements:
+     </p>
+     <table>
+      <tr><th>Element</th><th>Description</th></tr>
+      <tr><td>map:match</td><td>Selects pipeline processing depending on matching</td></tr>
+      <tr><td>map:select, map:when, map:otherwise</td><td>Selects pipeline processing depending on selecting</td></tr>
+      <tr><td>map:mount</td><td>Mounts a sub sitemap</td></tr>
+      <tr><td>map:redirect-to</td><td>Redirects to a another URI</td></tr>
+      <tr><td>map:call</td><td>Goto another pipeline fragment</td></tr>
+      <tr><td>map:parameter</td><td>Defines additional parameters for the sitemap components</td></tr>
+      <tr><td>map:act</td><td>Peform action processing</td></tr>
+      <tr><td>map:generate</td><td>Defines the generation step</td></tr>
+      <tr><td>map:aggregate, map:part</td><td>Defines an alternate generation step by mergine pipelines</td></tr>
+      <tr><td>map:transform</td><td>Defines zero or more transformation steps</td></tr>
+      <tr><td>map:serialize</td><td>Defines the final serialization step</td></tr>
+      <tr><td>map:handle-errors</td><td>Handles processing errors</td></tr>
+     </table>
+     <p>
+      The usage of these sitemap elements is explained in the following sections in more detail.
+     </p>
+   </s2>
+   
+   <s2 title="Matching">
+    <p>
+     These powerful sitemap components allow Cocoon to associate a pure "virtual" URI space
+     to a given set of instructions that describe how to generate, 
+     transform and present the requested resource(s) to the client. 
+    </p>
+    <p>See also 
+      <link href="matchers_selectors.html">Implementing Matchers And Selectors</link>
+    </p>
+   </s2>
+   
+   <s2 title="Selecting And Testing">
+    <p>
+     Selectors in Apache Cocoon have a role similar to matchers while being more flexible. 
+     Like matchers they are designed to test something against a part of the 
+     environment (the request URI, headers, cookies and so on), but unlike matchers they 
+     can be active decision driving components. 
+     A matcher allows only for simple "yes/no" decisions: the match can be succesful or not, 
+     if it is the pipeline is executed, if not it's simply ignored. 
+     Selectors go a step further allowing for more complex use cases, 
+     where there is need for a decision to be made according to a multiple chance scenario.
+     In short you can think of matchers as an "if" statement, while selectors have 
+     all the power of an "if-else if-else" or "switch-case" construct. 
+     The selector syntax is similar will be familiar to people 
+     using the XSLT <code><![CDATA[<xsl:test> statement]]></code>.
+    </p>
+    <p>See also 
+      <link href="matchers_selectors.html">Implementing Matchers And Selectors</link>
+    </p>
+   </s2>
+   
+   <s2 title="Acting">
+    <p>
+      Apache Cocoon has a rich set of tools for publishing web documents, 
+      and while XSP and Generators provide alot of functionality, they still mix content
+      and logic to a certain degree. The Action was created to fill that gap.
+      Because the Cocoon Sitemap provides a mechanism to select the pipeline at run time, 
+      we surmised that sometimes we need to adjust the pipeline based on runtime parameters,
+      or even the contents of the Request parameter. 
+      Without the use of Actions this would make the sitemap almost incomprehensible.
+    </p>
+    <p>See also 
+      <link href="actions.html">Creating And Using Actions</link>
+    </p>
+   </s2>
+   <s2 title="Generating">
+    <p>
+      A generator is the starting point of an xml pipeline. 
+      It generates XML content as SAX events and initialize the pipeline processing. 
+    </p>
+    <p>
+     See also 
+      <link href="../generators/generators.html">
+        Generators in Cocoon.
+      </link>
+    </p>
+   </s2>
+   <s2 title="Aggregating">
+    <p>
+     Beside defining one generator which produces xml content you can define an aggregator.
+     An aggregator has one more parts defining the sources of xml content.
+     The parts of an aggregator are merged being the xml content of the aggregator.
+     The name of the parent element of all merged-in parts is defines by the attribute
+     element in side the aggregate element.
+    </p>
+    <p>
+     You can define an aggregator in places where you define a generator. Defining an aggregator
+     is simple. The example belows defines an aggregate, the merged in parts will become children
+     of element <code>the-aggregated-content</code>.
+    </p>
+    <source><![CDATA[
+<map:aggregate element="the-aggregated-content">
+  <!-- define your map:parts here -->
+</map:aggregate>
+    ]]></source>
+    <p>
+     Defining an aggregator implicits defining the parts building up the content of
+     an aggregate.
+    </p>
+    <p>
+     Define parts inside of an aggregate. You can define as source of a part a URL.
+     The following list of examples summarizes some useful part sources:
+    </p>
+    <ul>
+     <li>
+      Use <code>http://foo/bar</code> to merge in xml content via http protocol, 
+      received from machine foo.
+     </li>
+     <li>
+      Use <code>context://servlet-context-path/foo/bar</code> to merge in xml content
+      from the servlet context.
+     </li>
+     <li>
+      Use <code>cocoon:/current-sitmap-pipeline/foo/bar</code> to merge in xml content
+      from the current sitemap. 
+      The appropriate pipeline is selected matching <code>current-sitemap-pipeline</code>.
+     </li>
+     <li>
+      Use <code>cocoon://root-sitmap-pipeline/foo/bar</code> to merge in xml content
+      from the root sitemap. 
+      The appropriate pipeline is selected matching <code>root-sitemap-pipeline</code>.
+     </li>
+     <li>
+      Use <code>resource://class-path-context/foo/bar</code> to merge in xml content
+      from the classpath.
+     </li>
+     <li>
+      Use <code>jar:http://www.foo.com/bar/jar.jar!/foo/bar</code> to merge in xml content
+      coming from a jar via http connection. 
+     </li>
+     <li>
+      Use <code>file://foo/bar</code> to merge in xml content from the filesystem.
+     </li>
+     <li>
+      Depending on your setup you may use 
+      <code>nfs:</code>, <code>jndi:</code> protocols, too.
+     </li>
+    </ul>
+    <p>
+     Defining a part element of an aggregate is simple.
+     A part element specifies by its src attribute the source of the xml content.
+    </p>
+    <p>
+     The following example is taken from the documentation sitemap. 
+     The xml content of pipelines matching <code>book-*.xml</code>, and <code>body-*.xml</code>
+     is aggregated having root element site.
+    </p>
+    <source><![CDATA[
+<map:match pattern="*.html">
+ <map:aggregate element="site">
+  <map:part src="cocoon:/book-{1}.xml"/>
+  <map:part src="cocoon:/body-{1}.xml"/>
+ </map:aggregate>
+ ...
+    ]]></source>
+    <p>
+     The aggregated xml content may look like this:
+    </p>
+    <source><![CDATA[
+<site>
+ <menu>
+  <!-- content of book xml --> 
+  ...
+ </menu>
+ <document>
+  <!-- content of body xml -->
+  ...
+ </document>
+</site>
+    ]]></source>
+   </s2>
+   <s2 title="Transforming">
+    <p>
+     A transformer is the central point in the pipeline. 
+     It transform SAX events in SAX events. 
+    </p>
+    <p>
+     See also 
+      <link href="../transformers/transformers.html">
+        Transformers in Cocoon.
+      </link>
+    </p>
+   </s2>
+   <s2 title="Serializing">
+    <p>
+     A serializer is the end point of an xml pipeline. 
+     It transform SAX events in binary or char streams for final client consumption. 
+    </p>
+    <p>
+     See also 
+      <link href="../serializers/serializers.html">
+        Serializers in Cocoon.
+      </link>
+    </p>
+   </s2>
+   <s2 title="Handling Errors">
+    <p>
+     Each pipeline may define its error handling. 
+     A error handler is specialized pipeline having a pre-configures generator.
+     Each error handler uses the generator named <code>!error-notifier!</code>.
+     Thus you do not define a generator inside the error handler.
+     Beside this issue you configure the error handler like a pipeline.
+     Thus you can choose your transformer, and serializer, and 
+     all other features of pipeline processing.
+    </p>
+    <p>
+     You may define the error handler as last element of a pipeline.
+     A error handler may have a type attribute describing which error
+     is handled. By default an error handler handles status code 500.
+    </p>
+    <p>
+     The following example defines an error handler, transforming the content
+     of the error content by the xslt, and i18n transformer, 
+     and finally serializing html.
+    </p>
+    <source><![CDATA[
+<map:pipeline>
+...
+ <map:error-handler type="500">
+  <map:transform type="xslt" src="error2html"/>
+  <map:transform type="i18n"/>
+  <map:serialize/>
+ </map:error-handler>
+</map:pipeline>
+    ]]></source>
+   </s2>
+
+   <s2 title="Viewing">
+    <p>
+     Basically, views let you specify exit points of your pipelines 
+     that are taken whenever a particular view is requested. 
+     The processing continues with the definitions in the requested view. 
+     The advantage over selectors that could achieve the same is, that these 
+     exit points are not necessarily declared for each pipeline individually, 
+     but once per sitemap.
+    </p>
+   </s2>
+   <s2 title="Redirecting">
+    <p>
+     Redirecting forwards the the request. You may externally send an
+     redirect response to the client. The behaviour is controlled by
+     using the approriate attributes of the element <code>redirect-to</code>.
+    </p>
+    <p>
+     The attribute <code>uri</code> defines the target of redirect.
+     The target is sent as redirect response to the client.
+     The optional attribute <code>session</code> specifies, if the redirect 
+     should happen inside of a session or not. Setting <code>session</code> to
+     <code>yes</code>, or <code>true</code> will persist a session across
+     the redirect response. Use enable the session option if you use http session
+     within your web application.
+    </p>
+    <p>
+     The following example redirects to a welcome page:
+    </p>
+    <source><![CDATA[
+<map:pipeline>
+ <map:match pattern="">
+  <map:redirect-to uri="welcome"/>
+ </map:match>
+ <map:match pattern="welcome">
+ ...
+</map:pipeline>
+    ]]></source>
+   </s2>
+   <s2 title="Calling resources">   
+    <p>Calling resources is dissimilar to redirects as the client does
+    not notice this.</p>
+    <p> When calling a resource, arbitrary parameters can be
+    specified. They will be available to the processing later on, just
+    like the parameters set by e.g. matchers or actions. Calling a
+    resource always creates a new map of parameters. Like redirects,
+    calls to a resource never return.</p>
+    <p>
+     The following example calls a sitemap resource:
+    </p>
+    <source><![CDATA[
+<map:resources>
+ <map:resource name="resource-1">
+  <map:generate src="resources/{target}.xml">
+  ...
+</map:resource>
+<map:pipeline>
+ <map:match pattern="forward-to">
+  <map:call resource="resource-1">
+   <map:parameter name="target" value="target-1"/>
+  </map:call>
+ ...
+</map:pipeline>
+    ]]></source>
+    </s2>
+    <s2 title="Mounting sitemaps">
+     <s3 title="Introduction">
+    <p>
+       Mount points allow sitemaps to be cascaded and site management
+       workload to be parallelized. This creates a tree of sitemaps with
+       the main sitemap at the root and possibly several sub-sitemaps
+       as nodes and leaves.
+     </p>
+     <p>The sub-sitemaps serve two important goals: scalability and
+      simplification of maintenance. The different sub-sitemaps are independent
+      and don't affect each other.
+    </p>
+     <source>
+<![CDATA[
+<map:match pattern="faq/*"> 
+  <map:mount uri-prefix="faq" check-reload="no" src="faq/sitemap.xmap"/> 
+</map:match> 
+]]>
+    </source>
+    <p>
+     The src attribute is where the sub-sitemap is located. If it ends in a slash
+     "sitemap.xmap" is appended to find the sitemap, otherwise the src
+     value is used. A check-reload attribute can be used to determine if the
+     modification date of the sub-sitemap file should be checked. 
+     The uri-prefix is the part that should be removed from the request URI.
+     The engine will correctly check for a trailing slash (which you may
+     write, of course).
+     If in the example above "faq/cocoon" is requested, "faq/" is removed from
+     the URI and "cocoon" is passed to the sub-sitemap which is loaded
+     from "faq/sitemap.xmap".
+     </p>
+     <p>
+     Sitemap components (generators, transformers, etc.) in a sitemap are accessible 
+     from a sub-sitemap by their names. This is due to the fact that each sitemap has its 
+     own SitemapComponentManager and they are arranged in the same hierarchical 
+     structure as the sitemaps are and thus knows which are their parent 
+     SitemapComponentManager and can ask it for a SitemapComponent it doesn't know about.
+     </p>
+    </s3>
+    <s3 title="Use Cases">
+     <p>
+     Usually you use the same SitemapComponents over and over again in your sub-sitemaps. 
+     And because you have a contract between the parent and sub sitemaps (the uri-prefix) you 
+     can deliver common SitemapComponents from the parent sitemap to your sub-sitemaps as well.
+     If you break a sitemap all its sub-sitemaps are broken as well (because of the hierarchical arrangement).
+     </p>
+     <p>
+     However you can create independent sub-sitemaps, which meet the following goals:
+     </p>
+     <ol>
+      <li>Simplify site construction</li>
+      <li>Reduce risk of "bad' sitemap entries killing whole site</li>
+      <li>Ease deployment of pre-built applications</li>
+      <li>Keep sitemap files an understandable and manageable size</li>
+     </ol>
+     <p>
+     Just build a main sitemap with the minimum needs: A matcher and a selector. 
+     These two components allow to select and direct to mount two other sitemaps.
+     These sub-sitemaps load the components they need (which includes generators
+     and transformers etc...) and have the map elements for that site/application.
+     The benefit is that each sitemap is completely independent of each other and
+     any error in that sitemap does not kill any other sitemap. 
+     </p>
+     <p>
+     Here is an example of a main sitemap. You will notice that it is using a selector that
+     matches on host name of the request, but any matcher or selector would work
+     at this point. Both sub-sitemaps are mounted at the root level.
+     </p>
+     <source>
+<![CDATA[
+<?xml version="1.0"?> 
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+  <!-- Components =============================== -->
+  <map:components>
+    <map:matchers default="wildcard">
+      <map:matcher name="wildcard"
+                   src="org.apache.cocoon.matching.WildcardURIMatcher"/>
+    </map:matchers>
+
+    <map:selectors default="host">
+      <map:selector name="host"
+                    src="org.apache.cocoon.selection.HostSelector">
+        <host name="fee" value="www.foo.com"/>
+      </map:selector>
+    </map:selectors>
+
+  </map:components>
+  <!-- Pipelines ================================ -->
+  <map:pipelines>
+    <map:pipeline>
+
+      <map:select type="host">
+        <map:when test="fee">
+          <map:mount uri-prefix="" src="fee.xmap"/>
+        </map:when>
+        <map:otherwise>
+          <map:mount uri-prefix="" src="foo.xmap"/>
+        </map:otherwise>
+      </map:select>
+
+    </map:pipeline>
+  </map:pipelines>
+</map:sitemap>
+]]>
+     </source>
+    </s3>
+    <s3 title="Reloading">
+     <p>The reloading of the sub-sitemaps can be configured by two attributes,
+       "check-reload" and "reload-method".</p>
+     <source>
+<![CDATA[
+<map:match pattern="faq/*"> 
+  <map:mount uri-prefix="faq/" check-reload="no" 
+     src="faq/sitemap.xmap" reload-method="asynchron"/> 
+</map:match> 
+]]>
+     </source>
+     <p>
+      The "check-reload" attribute specifies whether the sitemap should be reloaded (regenerated) if
+      it's source XML (sitemap.xmap) is modified.  If "check-reload" is set to "no", the sitemap is
+      only generated on the first request for this sitemap.  If "check-reload" is set to "yes" (the
+      default), the "reload-method" attribute determines how the sitemap is
+      regenerated if it had changed.
+    </p>
+    <p>
+      If "reload-method" is set to "asynchron" (the default), then the next request for the changed
+      sitemap causes it to be regenerated in the background, and the request is served with the old
+      one. All subsequent requests are served with the old sitemap until the regeneration in the
+      background has finished. If the reload-method is set to "synchron", the sitemap is first
+      regenerated and then the request is processed.
+     </p>
+    </s3>
+   </s2>
+  </s1>
+
+  <s1 title="Protocols">
+   <p>In the sitemap, you can use all protocols nearly everywhere
+    (except for in <code>map:redirect</code>).
+   </p>
+
+   <p>Inside your components, you can also use these protocols whenever you
+    have a <code>SourceResolver</code> handy.
+   </p>
+
+   <ul>
+    <li><code>context://</code>
+     - get a resource using the servlet context
+    </li>
+    <li><code>cocoon:/</code>
+     - get a pipeline from the current sitemap
+    </li>
+    <li><code>cocoon://</code>
+     - get a pipeline using the root sitemap
+    </li>
+    <li><code>resource://</code>
+     - get a resource from the context classloader
+    </li>
+   </ul>
+  </s1>
+
+  <s1 title="Interface specifications">
+   <anchor id="interface-XMLProducer"/>
+   <s2 title="XMLProducer">
+    <p>
+     This interfaces identifies classes that produce XML data, sending SAX
+     events to the configured <code>XMLConsumer</code>.<br/>
+     It is beyond the scope of this interface to specify a way in which the XML
+     data production is started.
+    </p>
+
+    <source>
+<![CDATA[
+public interface XMLProducer {
+
+    /** Set the <code>XMLConsumer</code> that will receive XML data. */
+    public void setConsumer(XMLConsumer consumer);
+
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-XMLConsumer"/>
+   <s2 title="XMLConsumer">
+    <p>
+     This interfaces identifies classes that consume XML data, receiving 
+     notification of SAX events.<br/>
+     This interface unites the idea of SAX <code>ContentHandler</code> and
+     <code>LexicalHandler</code>.
+    </p>
+
+    <source>
+<![CDATA[
+public interface XMLConsumer extends ContentHandler, LexicalHandler {
+
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-XMLPipe"/>
+   <s2 title="XMLPipe">
+    <p>
+     This interfaces identifies classes that consume XML data, receiving 
+     notification of SAX events, and also that produce XML data, sending SAX
+     events to the configured <code>XMLConsumer</code>.<br/>
+     This interface unites the idea of <code>XMLProducer</code> and
+     <code>XMLConsumer</code>.
+    </p>
+
+    <source>
+<![CDATA[
+public interface XMLPipe extends XMLConsumer , XMLProducer {
+
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-sitemap-model-component"/>
+   <s2 title="SitemapModelComponent">
+    <p>
+     All sitemap components producing XML must implement this interface:
+    </p>
+
+    <source>
+<![CDATA[
+public interface SitemapModelComponent extends Component {
+
+    /**
+     * Set the <code>SourceResolver</code>, objectModel <code>Map</code>,
+     * the source and sitemap <code>Parameters</code> used to process the request.
+     */
+    void setup(SourceResolver resolver, Map objectModel, String src,
+               Parameters par)
+    throws ProcessingException, SAXException, IOException;
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-sitemap-output-component"/>
+   <s2 title="SitemapOutputComponent">
+    <p>
+     All sitemap components creating the output must implement this interface:
+    </p>
+
+    <source>
+<![CDATA[
+public interface SitemapOutputComponent extends Component {
+
+    /**
+     * Set the <code>OutputStream</code> where the requested resource should
+     * be serialized.
+     */
+    void setOutputStream(OutputStream out) throws IOException;
+
+    /**
+     * Get the mime-type of the output of this <code>Component</code>.
+     */
+    String getMimeType();
+
+    /**
+     * Test if the component wants to set the content length
+     */
+    boolean shouldSetContentLength();
+}
+]]>
+    </source>
+   </s2>
+   <anchor id="interface-generator"/>
+   <s2 title="Generator">
+    <p>
+     A <code>Generator</code> must implement at least the following interface:
+    </p>
+
+    <source>
+<![CDATA[
+public interface Generator extends XMLProducer, SitemapModelComponent {
+
+    String ROLE = "org.apache.cocoon.generation.Generator";
+
+    public void generate()
+    throws IOException, SAXException, ProcessingException;
+
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-transformer"/>
+   <s2 title="Transformer">
+    <p>
+     A <code>Transformer</code> must implement at least the following interface:
+    </p>
+
+    <source>
+<![CDATA[
+public interface Transformer 
+extends   XMLPipe, SitemapModelComponent {
+
+    String ROLE = "org.apache.cocoon.transformation.Transformer";
+
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-serializer"/>
+   <s2 title="Serializer">
+    <p>
+     A <code>Serializer</code> gets the <code>OutputStream</code> where the XML should 
+     be serialized with the following interface:
+    </p>
+
+    <source>
+<![CDATA[
+public interface Serializer extends XMLConsumer, SitemapOutputComponent {
+
+    String ROLE = "org.apache.cocoon.serialization.Serializer";
+
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-selector"/>
+   <s2 title="Selector">
+    <p>
+     A <code>Selector</code> gets an expression to evaluate and signals the evaluation with a 
+     boolean value.
+    </p>
+
+    <source>
+<![CDATA[
+public interface Selector extends Component {
+
+    String ROLE = "org.apache.cocoon.selection.Selector";
+
+    /**
+     * Selectors test pattern against some objects in a <code>Map</code>
+     * model and signals success with the returned boolean value
+     * @param expression  The expression to test.
+     * @param objectModel The <code>Map</code> containing object of the
+     *                    calling environment which may be used
+     *                    to select values to test the expression.
+     * @param parameters  The sitemap parameters, as specified by
+     *                    &lt;parameter/&gt; tags.
+     * @return boolean    Signals successfull test.
+     */
+    boolean select (String expression, Map objectModel, Parameters parameters);      
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-matcher"/>
+   <s2 title="Matcher">
+    <p>
+     A <code>Matcher</code> matches a pattern against any value:
+    </p>
+
+    <source>
+<![CDATA[
+public interface Matcher extends Component {
+
+    String ROLE = "org.apache.cocoon.matching.Matcher";
+
+    /**
+     * Matches the pattern against some <code>Request</code> values
+     * and returns a <code>Map</code> object with replacements
+     * for wildcards contained in the pattern.
+     * @param pattern     The pattern to match against. Depending on the
+     *                    implementation the pattern can contain wildcards
+     *                    or regular expressions.
+     * @param objectModel The <code>Map</code> with object of the
+     *                    calling environment which can be used
+     *                    to select values this matchers matches against.
+     * @return Map        The returned <code>Map</code> object with
+     *                    replacements for wildcards/regular-expressions
+     *                    contained in the pattern.
+     *                    If the return value is null there was no match.
+     */
+    Map match (String pattern, Map objectModel, Parameters parameters);      
+}
+]]>
+    </source>
+   </s2>
+
+   <anchor id="interface-action"/>
+   <s2 title="Action">
+    <p>
+     An <code>Action</code> processes input <code>objectModel</code> and returns results
+     in a <code>Map</code>:
+    </p>
+
+    <source>
+<![CDATA[
+public interface Action extends Component, ThreadSafe {
+
+    String ROLE = "org.apache.cocoon.acting.Action";
+
+    /**
+     * Controls the processing against some values of the
+     * <code>Dictionary</code> objectModel and returns a
+     * <code>Map</code> object with values used in subsequent
+     * sitemap substitution patterns.
+     *
+     * NOTE: It is important that <code>Action<code> classes are
+     * written in a thread safe manner.
+     *
+     * @param resolver    The <code>SourceResolver</code> in charge
+     * @param objectModel The <code>Map</code> with object of the
+     *                    calling environment which can be used
+     *                    to select values this controller may need
+     *                    (ie Request, Response).
+     * @param source      A source <code>String</code> to the Action
+     * @param parameters  The <code>Parameters</code> for this invocation
+     * @return Map        The returned <code>Map</code> object with
+     *                    sitemap substitution values which can be used
+     *                    in subsequent elements attributes like src=
+     *                    using a xpath like expression: src="mydir/{myval}/foo"
+     *                    If the return value is null the processing inside
+     *                    the <map:act> element of the sitemap will
+     *                    be skipped.
+     * @exception Exception Indicates something is totally wrong
+     */
+    Map act(Redirector redirector, SourceResolver resolver, Map objectModel,
+            String source, Parameters par)
+    throws Exception;
+}
+]]>
+    </source>
+   </s2>
+  </s1>
+ 
+ </body>
+</document>

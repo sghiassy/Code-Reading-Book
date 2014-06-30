@@ -1,0 +1,189 @@
+/*************************************************
+* Filter Source File                             *
+* (C) 1999-2001 The OpenCL Project               *
+*************************************************/
+
+#include <opencl/filters.h>
+
+namespace OpenCL {
+
+/*************************************************
+* Write data into a StreamCipherFilter           *
+*************************************************/
+template<typename S>
+void StreamCipherFilter<S>::write(const byte input[], u32bit length)
+   {
+   while(length)
+      {
+      u32bit copied = std::min(length, buffer.size());
+      cipher.encrypt(input, buffer, copied);
+      send(buffer, copied);
+      input += copied;
+      length -= copied;
+      }
+   }
+
+/*************************************************
+* Complete a calculation by a HashFilter         *
+*************************************************/
+template<typename H>
+void HashFilter<H>::final()
+   {
+   static const u32bit HASHLENGTH = H::HASHLENGTH;
+   SecureBuffer<byte, HASHLENGTH> output;
+   hash.final(output);
+   send(output, std::min(out_len, output.size()));
+   }
+
+/*************************************************
+* Complete a calculation by a MACFilter          *
+*************************************************/
+template<typename M>
+void MACFilter<M>::final()
+   {
+   static const u32bit MACLENGTH = M::MACLENGTH;
+   SecureBuffer<byte, MACLENGTH> output;
+   mac.final(output);
+   send(output, std::min(out_len, output.size()));
+   }
+
+/*************************************************
+* Write data into an EncoderFilter               *
+*************************************************/
+template<typename E>
+void EncoderFilter<E>::write(const byte input[], u32bit length)
+   {
+   buffer.copy(position, input, length);
+   if(position + length >= BUFFERSIZE)
+      {
+      encode(buffer, BUFFERSIZE);
+      input += (BUFFERSIZE - position);
+      length -= (BUFFERSIZE - position);
+      while(length >= BUFFERSIZE)
+         {
+         encode(input, BUFFERSIZE);
+         input += BUFFERSIZE;
+         length -= BUFFERSIZE;
+         }
+      buffer.copy(input, length);
+      position = 0;
+      }
+   position += length;
+   }
+
+/*************************************************
+* Encode several full blocks                     *
+*************************************************/
+template<typename E>
+void EncoderFilter<E>::encode(const byte blocks[], u32bit size)
+   {
+   if(size < INPUTSIZE) return;
+   for(u32bit j = 0; j < size; j += INPUTSIZE)
+      {
+      E::encode(blocks + j, out);
+      output_buffer();
+      }
+   }
+
+/*************************************************
+* Complete encoding with an EncoderFilter        *
+*************************************************/
+template<typename E>
+void EncoderFilter<E>::final()
+   {
+   u32bit start_of_last_block = INPUTSIZE * (position / INPUTSIZE),
+          left_over = position % INPUTSIZE;
+   encode(buffer, start_of_last_block);
+
+   if(left_over)
+      {
+      SecureBuffer<byte, INPUTSIZE> remainder(buffer + start_of_last_block,
+                                              left_over);
+      E::encode(remainder, out);
+      u32bit empty_bits = 8 * (INPUTSIZE - left_over),
+             index = OUTPUTSIZE - 1;
+      while(empty_bits >= 8)
+         {
+         out[index--] = '=';
+         empty_bits -= E::CODE_BITS;
+         }
+      output_buffer();
+      }
+   if(counter && LINEBREAKS)
+      { send('\n'); counter = 0; }
+   }
+
+/*************************************************
+* Output data from an EncoderFilter              *
+*************************************************/
+template<typename E>
+void EncoderFilter<E>::output_buffer()
+   {
+   if(LINEBREAKS)
+      {
+      u32bit remaining = out.size();
+      while(remaining)
+         {
+         u32bit sent = std::min(LINELENGTH - counter, remaining);
+         send(out + out.size() - remaining, sent);
+         counter += sent;
+         remaining -= sent;
+         if(counter == LINELENGTH) { send('\n'); counter = 0; }
+         }
+      }
+   else
+      send(out, out.size());
+   }
+
+/*************************************************
+* Write data into a DecoderFilter                *
+*************************************************/
+template<typename E>
+void DecoderFilter<E>::write(const byte input[], u32bit length)
+   {
+   for(u32bit j = 0; j != length; j++)
+      {
+      if(is_valid(input[j])) buffer[position++] = input[j];
+      if(position == BUFFERSIZE)
+         { decode(buffer, BUFFERSIZE); position = 0; }
+      }
+
+   }
+
+/*************************************************
+* Decode several full blocks                     *
+*************************************************/
+template<typename E>
+void DecoderFilter<E>::decode(const byte blocks[], u32bit size)
+   {
+   if(size < INPUTSIZE) return;
+   for(u32bit j = 0; j < size; j += INPUTSIZE)
+      {
+      E::decode(blocks + j, out);
+      send(out, out.size());
+      }
+   }
+
+/*************************************************
+* Complete decoding with a DecoderFilter         *
+*************************************************/
+template<typename E>
+void DecoderFilter<E>::final()
+   {
+   if(position != 0)
+      {
+      u32bit start_of_last_block = INPUTSIZE * (position / INPUTSIZE),
+             left_over = position % INPUTSIZE;
+      decode(buffer, start_of_last_block);
+
+      if(left_over)
+         {
+         SecureBuffer<byte, INPUTSIZE> remainder(buffer + start_of_last_block,
+                                                 left_over);
+         E::decode(remainder, out);
+         send(out, ((left_over == 1) ? (1) : (left_over - 1)));
+         }
+      }
+   }
+
+}

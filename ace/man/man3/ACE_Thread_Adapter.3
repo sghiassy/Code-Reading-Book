@@ -1,0 +1,105 @@
+.TH ACE_Thread_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Thread_Adapter \- Converts a C++ function into a function  function that can be called from a thread creation routine (e.g., <pthread_create> or <_beginthreadex>) that expects an extern "C" entry point. This class also makes it possible to transparently provide hooks to register a thread with an . 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Thread_Adapter.h>\fR
+.PP
+Inherits \fBACE_Base_Thread_Adapter\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Adapter\fR (ACE_THR_FUNC user_func, void *arg, ACE_THR_C_FUNC entry_point = (ACE_THR_C_FUNC) ace_thread_adapter, \fBACE_Thread_Manager\fR *thr_mgr = 0, \fBACE_Thread_Descriptor\fR *td = 0 )"
+.br
+.ti -1c
+.RI "virtual void* \fBinvoke\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBthr_mgr\fR (void)"
+.br
+.RI "\fIAccessor for the optional <Thread_Manager>.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fB~ACE_Thread_Adapter\fR (void)"
+.br
+.RI "\fIEnsure that this object must be allocated on the heap.\fR"
+.ti -1c
+.RI "virtual void* \fBinvoke_i\fR (void)"
+.br
+.RI "\fICalled by invoke, mainly here to separate the SEH stuff because SEH on Win32 doesn't compile with local vars with destructors.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBthr_mgr_\fR"
+.br
+.RI "\fIOptional thread manager.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Thread_Adapter_Has_Private_Destructor\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Converts a C++ function into a function  function that can be called from a thread creation routine (e.g., <pthread_create> or <_beginthreadex>) that expects an extern "C" entry point. This class also makes it possible to transparently provide hooks to register a thread with an .
+.PP
+.PP
+ This class is used in . In general, the thread that creates an object of this class is different from the thread that calls <invoke> on this object. Therefore, the <invoke> method is responsible for deleting itself. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Thread_Adapter::ACE_Thread_Adapter (ACE_THR_FUNC user_func, void * arg, ACE_THR_C_FUNC entry_point = (ACE_THR_C_FUNC) ace_thread_adapter, \fBACE_Thread_Manager\fR * thr_mgr = 0, \fBACE_Thread_Descriptor\fR * td = 0)
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fItd\fR\fRConstructor.
+.SS ACE_Thread_Adapter::~ACE_Thread_Adapter (void)\fC [private]\fR
+.PP
+Ensure that this object must be allocated on the heap.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void * ACE_Thread_Adapter::invoke (void)\fC [virtual]\fR
+.PP
+Execute the <user_func_> with the . This function deletes <this>, thereby rendering the object useless after the call returns. 
+.PP
+Reimplemented from \fBACE_Base_Thread_Adapter\fR.
+.SS void * ACE_Thread_Adapter::invoke_i (void)\fC [private, virtual]\fR
+.PP
+Called by invoke, mainly here to separate the SEH stuff because SEH on Win32 doesn't compile with local vars with destructors.
+.PP
+.SS \fBACE_Thread_Manager\fR * ACE_Thread_Adapter::thr_mgr (void)
+.PP
+Accessor for the optional <Thread_Manager>.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Thread_Adapter_Has_Private_Destructor\fC [friend]\fR
+.PP
+Friend declaration to avoid compiler warning: only defines a private destructor and has no friends.
+.PP
+Reimplemented from \fBACE_Base_Thread_Adapter\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Thread_Manager\fR * ACE_Thread_Adapter::thr_mgr_\fC [private]\fR
+.PP
+Optional thread manager.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,89 @@
+.TH ACE_Errno_Guard 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Errno_Guard \- Provides a wrapper to improve performance when thread-specific errno must be saved and restored in a block of code. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS_Errno.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Errno_Guard\fR (ACE_ERRNO_TYPE &errno_ref, int error)"
+.br
+.RI "\fIStash the value of <error> into <error_> and initialize the <errno_ptr_> to the address of <errno_ref>.\fR"
+.ti -1c
+.RI "\fBACE_Errno_Guard\fR (ACE_ERRNO_TYPE &errno_ref)"
+.br
+.RI "\fIStash the value of <errno> into <error_> and initialize the <errno_ptr_> to the address of <errno_ref>.\fR"
+.ti -1c
+.RI "\fB~ACE_Errno_Guard\fR (void)"
+.br
+.RI "\fIReset the value of <errno> to <error>.\fR"
+.ti -1c
+.RI "int \fBoperator=\fR (int error)"
+.br
+.RI "\fIAssign <error> to <error_>.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (int error)"
+.br
+.RI "\fICompare <error> with <error_> for equality.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (int error)"
+.br
+.RI "\fICompare <error> with <error_> for inequality.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBerror_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Provides a wrapper to improve performance when thread-specific errno must be saved and restored in a block of code.
+.PP
+.PP
+ The typical use-case for this is the following: int error = errno; call_some_function_that_might_change_errno (); errno = error; This can be replaced with { ACE_Errno_Guard guard (errno); call_some_function_that_might_change_errno (); } This implementation is more elegant and more efficient since it avoids an unnecessary second access to thread-specific storage by caching a pointer to the value of errno in TSS. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Errno_Guard::ACE_Errno_Guard (ACE_ERRNO_TYPE & errno_ref, int error)
+.PP
+Stash the value of <error> into <error_> and initialize the <errno_ptr_> to the address of <errno_ref>.
+.PP
+.SS ACE_Errno_Guard::ACE_Errno_Guard (ACE_ERRNO_TYPE & errno_ref)
+.PP
+Stash the value of <errno> into <error_> and initialize the <errno_ptr_> to the address of <errno_ref>.
+.PP
+.SS ACE_Errno_Guard::~ACE_Errno_Guard (void)
+.PP
+Reset the value of <errno> to <error>.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Errno_Guard::operator!= (int error)
+.PP
+Compare <error> with <error_> for inequality.
+.PP
+.SS int ACE_Errno_Guard::operator= (int error)
+.PP
+Assign <error> to <error_>.
+.PP
+.SS int ACE_Errno_Guard::operator== (int error)
+.PP
+Compare <error> with <error_> for equality.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Errno_Guard::error_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

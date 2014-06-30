@@ -1,0 +1,287 @@
+.TH ACE_Token 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Token \- Class that acquires, renews, and releases a synchronization token that is serviced in strict FIFO ordering and that also supports (1) recursion and (2) readers/writer semantics. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Token.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Token\fR (const \fBACE_TCHAR\fR *name = 0, void * = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Token\fR (void)"
+.br
+.ti -1c
+.RI "int \fBacquire\fR (void (*sleep_hook)(void *), void *arg = 0, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "int \fBacquire\fR (\fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual void \fBsleep_hook\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrenew\fR (int requeue_position = 0, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "int \fBtryacquire\fR (void)"
+.br
+.RI "\fIBecome interface-compliant with other lock mechanisms (implements a non-blocking ).\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.RI "\fIShuts down the ACE_Token instance.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.RI "\fIRelinquish the token. If there are any waiters then the next one in line gets it.\fR"
+.ti -1c
+.RI "int \fBacquire_read\fR (void)"
+.br
+.RI "\fIBehave like acquire but in a lower priority. It should probably be called acquire_yield.\fR"
+.ti -1c
+.RI "int \fBacquire_read\fR (void (*sleep_hook)(void *), void *arg = 0, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIMore sophisticate version of acquire_read.\fR"
+.ti -1c
+.RI "int \fBacquire_write\fR (void)"
+.br
+.RI "\fIJust calls .\fR"
+.ti -1c
+.RI "int \fBacquire_write\fR (void (*sleep_hook)(void *), void *arg = 0, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIMore sophisticate version of acquire_write.\fR"
+.ti -1c
+.RI "int \fBtryacquire_read\fR (void)"
+.br
+.RI "\fILower priority try_acquire.\fR"
+.ti -1c
+.RI "int \fBtryacquire_write\fR (void)"
+.br
+.RI "\fIJust calls <tryacquire>.\fR"
+.ti -1c
+.RI "int \fBtryacquire_write_upgrade\fR (void)"
+.br
+.RI "\fIAssumes the caller has acquired the token and returns 0.\fR"
+.ti -1c
+.RI "int \fBwaiters\fR (void)"
+.br
+.RI "\fIReturn the number of threads that are currently waiting to get the token.\fR"
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBcurrent_owner\fR (void)"
+.br
+.RI "\fIReturn the id of the current thread that owns the token.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBACE_Token_Op_Type\fR { \fBREAD_TOKEN\fR = 1, \fBWRITE_TOKEN\fR }"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBshared_acquire\fR (void (*sleep_hook_func)(void *), void *arg, \fBACE_Time_Value\fR *timeout, \fBACE_Token_Op_Type\fR op_type)"
+.br
+.RI "\fIImplements the  and <tryacquire> methods above.\fR"
+.ti -1c
+.RI "void \fBwakeup_next_waiter\fR (void)"
+.br
+.RI "\fIWake next in line for ownership.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Token_Queue\fR \fBwriters_\fR"
+.br
+.RI "\fIA queue of writer threads.\fR"
+.ti -1c
+.RI "\fBACE_Token_Queue\fR \fBreaders_\fR"
+.br
+.RI "\fIA queue of reader threads.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Mutex\fR \fBlock_\fR"
+.br
+.RI "\fI\fBACE_Thread_Mutex\fR used to lock internal data structures.\fR"
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBowner_\fR"
+.br
+.RI "\fICurrent owner of the token.\fR"
+.ti -1c
+.RI "int \fBin_use_\fR"
+.br
+.RI "\fISome thread (i.e., <owner_>) is using the token. We need this extra variable to deal with POSIX pthreads madness...\fR"
+.ti -1c
+.RI "int \fBwaiters_\fR"
+.br
+.RI "\fINumber of waiters.\fR"
+.ti -1c
+.RI "int \fBnesting_level_\fR"
+.br
+.RI "\fICurrent nesting level.\fR"
+.ti -1c
+.RI "\fBACE_Condition_Attributes\fR \fBattributes_\fR"
+.br
+.RI "\fIThe attributes for the condition variables, optimizes lock time.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Class that acquires, renews, and releases a synchronization token that is serviced in strict FIFO ordering and that also supports (1) recursion and (2) readers/writer semantics.
+.PP
+.PP
+ This class is a more general-purpose synchronization mechanism than many native OS mutexes. For example, it implements "recursive mutex" semantics, where a thread that owns the token can reacquire it without deadlocking. If the same thread calls  multiple times, however, it must call <release> an equal number of times before the token is actually released. Threads that are blocked awaiting the token are serviced in strict FIFO order as other threads release the token (Solaris and Pthread mutexes don't strictly enforce an acquisition order). There are two FIFO lists within the class. Write acquires always have higher priority over read acquires. Which means, if you use both write/read operations, care must be taken to avoid starvation on the readers. Notice that the read/write acquire operations do not have the usual semantic of reader/writer locks. Only one reader can acquire the token at a time (which is different from the usual reader/writer locks where several readers can acquire a lock at the same time as long as there is no writer waiting for the lock). We choose the names to (1) borrow the semantic to give writers higher priority and (2) support a common interface for all locking classes in \fBACE\fR. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_Token::ACE_Token_Op_Type\fC [private]\fR
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIREAD_TOKEN\fR \fR
+.TP
+\fB\fIWRITE_TOKEN\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Token::ACE_Token (const \fBACE_TCHAR\fR * name = 0, void * = 0)
+.PP
+.SS virtual ACE_Token::~ACE_Token (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Token::acquire (\fBACE_Time_Value\fR * timeout = 0)
+.PP
+This behaves just like the previous  method, except that it invokes the virtual function called <sleep_hook> that can be overridden by a subclass of ACE_Token. 
+.SS int ACE_Token::acquire (void(* sleep_hook)(void *), void * arg = 0, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Acquire the token, sleeping until it is obtained or until the expiration of <timeout>, which is treated as "absolute" time. If some other thread currently holds the token then <sleep_hook> is called before our thread goes to sleep. This <sleep_hook> can be used by the requesting thread to unblock a token-holder that is sleeping, e.g., by means of writing to a pipe (the \fBACE\fR \fBACE_Reactor\fR uses this functionality). Return values: 0 if acquires without calling <sleep_hook> 1 if <sleep_hook> is called. 2 if the token is signaled. -1 if failure or timeout occurs (if timeout occurs errno == ETIME) If <timeout> == <&\fBACE_Time_Value::zero\fR> then acquire has polling semantics (and does *not* call <sleep_hook>). 
+.SS int ACE_Token::acquire_read (void(* sleep_hook)(void *), void * arg = 0, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+More sophisticate version of acquire_read.
+.PP
+.SS int ACE_Token::acquire_read (void)
+.PP
+Behave like acquire but in a lower priority. It should probably be called acquire_yield.
+.PP
+.SS int ACE_Token::acquire_write (void(* sleep_hook)(void *), void * arg = 0, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+More sophisticate version of acquire_write.
+.PP
+.SS int ACE_Token::acquire_write (void)
+.PP
+Just calls .
+.PP
+.SS \fBACE_thread_t\fR ACE_Token::current_owner (void)
+.PP
+Return the id of the current thread that owns the token.
+.PP
+.SS void ACE_Token::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_Token::release (void)
+.PP
+Relinquish the token. If there are any waiters then the next one in line gets it.
+.PP
+.SS int ACE_Token::remove (void)
+.PP
+Shuts down the ACE_Token instance.
+.PP
+.SS int ACE_Token::renew (int requeue_position = 0, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+An optimized method that efficiently reacquires the token if no other threads are waiting. This is useful for situations where you don't want to degrade the quality of service if there are other threads waiting to get the token. If <requeue_position> == -1 and there are other threads waiting to obtain the token we are queued at the end of the list of waiters. If <requeue_position> > -1 then it indicates how many entries to skip over before inserting our thread into the list of waiters (e.g., <requeue_position> == 0 means "insert at front of the queue"). Renew has the rather odd semantics such that if there are other waiting threads it will give up the token even if the nesting_level_ > 1. I'm not sure if this is really the right thing to do (since it makes it possible for shared data to be changed unexpectedly) so use with caution... This method maintians the original token priority. As in , the <timeout> value is an absolute time. 
+.SS int ACE_Token::shared_acquire (void(* sleep_hook_func)(void *), void * arg, \fBACE_Time_Value\fR * timeout, \fBACE_Token_Op_Type\fR op_type)\fC [private]\fR
+.PP
+Implements the  and <tryacquire> methods above.
+.PP
+.SS void ACE_Token::sleep_hook (void)\fC [virtual]\fR
+.PP
+This should be overridden by a subclass to define the appropriate behavior before  goes to sleep. By default, this is a no-op... 
+.SS int ACE_Token::tryacquire (void)
+.PP
+Become interface-compliant with other lock mechanisms (implements a non-blocking ).
+.PP
+.SS int ACE_Token::tryacquire_read (void)
+.PP
+Lower priority try_acquire.
+.PP
+.SS int ACE_Token::tryacquire_write (void)
+.PP
+Just calls <tryacquire>.
+.PP
+.SS int ACE_Token::tryacquire_write_upgrade (void)
+.PP
+Assumes the caller has acquired the token and returns 0.
+.PP
+.SS int ACE_Token::waiters (void)
+.PP
+Return the number of threads that are currently waiting to get the token.
+.PP
+.SS void ACE_Token::wakeup_next_waiter (void)\fC [private]\fR
+.PP
+Wake next in line for ownership.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Token::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS \fBACE_Condition_Attributes\fR ACE_Token::attributes_\fC [private]\fR
+.PP
+The attributes for the condition variables, optimizes lock time.
+.PP
+.SS int ACE_Token::in_use_\fC [private]\fR
+.PP
+Some thread (i.e., <owner_>) is using the token. We need this extra variable to deal with POSIX pthreads madness...
+.PP
+.SS \fBACE_Thread_Mutex\fR ACE_Token::lock_\fC [private]\fR
+.PP
+\fBACE_Thread_Mutex\fR used to lock internal data structures.
+.PP
+.SS int ACE_Token::nesting_level_\fC [private]\fR
+.PP
+Current nesting level.
+.PP
+.SS \fBACE_thread_t\fR ACE_Token::owner_\fC [private]\fR
+.PP
+Current owner of the token.
+.PP
+.SS \fBACE_Token_Queue\fR ACE_Token::readers_\fC [private]\fR
+.PP
+A queue of reader threads.
+.PP
+.SS int ACE_Token::waiters_\fC [private]\fR
+.PP
+Number of waiters.
+.PP
+.SS \fBACE_Token_Queue\fR ACE_Token::writers_\fC [private]\fR
+.PP
+A queue of writer threads.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

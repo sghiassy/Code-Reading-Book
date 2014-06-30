@@ -1,0 +1,56 @@
+.TH ACE_Svc_Conf_Lexer_Guard 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Svc_Conf_Lexer_Guard \- "Guard" that ensures lexer buffer stack manipulation is exception-safe. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Svc_Conf_Lexer_Guard.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Svc_Conf_Lexer_Guard\fR (FILE *file)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_Svc_Conf_Lexer_Guard\fR (const \fBACE_TCHAR\fR *directive)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fB~ACE_Svc_Conf_Lexer_Guard\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+"Guard" that ensures lexer buffer stack manipulation is exception-safe.
+.PP
+.PP
+ Buffers are allocated and deallocated when scanning a file or a string. This class utilizes the "guard" idiom to perform stack pushing and popping before and after parsing/scanning. 
+.PP
+ The underlying stack allows nested scans to occur. For example, while scanning a `svc.conf' file, a Service Object's init() method could invoke a Service Configurator directive, which would require "moving" the current lexer state out of the way (pushing it onto the stack implementation). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Svc_Conf_Lexer_Guard::ACE_Svc_Conf_Lexer_Guard (FILE * file)
+.PP
+Constructor.
+.PP
+Create a new buffer to be used when scanning a new Service Configurator file, push it onto the underlying buffer stack, and make it the current buffer. 
+.SS ACE_Svc_Conf_Lexer_Guard::ACE_Svc_Conf_Lexer_Guard (const \fBACE_TCHAR\fR * directive)
+.PP
+Constructor.
+.PP
+Create a new buffer to be used when scanning a new Service Configurator directive, push it onto the underlying buffer stack, and make it the current buffer. 
+.SS ACE_Svc_Conf_Lexer_Guard::~ACE_Svc_Conf_Lexer_Guard (void)
+.PP
+Destructor.
+.PP
+Pop the current buffer off of the underlying buffer stack, and make the previous buffer (i.e. the one on the top of the stack), the current buffer. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

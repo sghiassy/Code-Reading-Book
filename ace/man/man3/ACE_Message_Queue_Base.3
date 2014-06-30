@@ -1,0 +1,234 @@
+.TH ACE_Message_Queue_Base 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Message_Queue_Base \- Workaround HP/C++ compiler bug with enums in templates. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Message_Queue.h>\fR
+.PP
+Inherited by \fBACE_Message_Queue\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBDEFAULT_HWM\fR = 16 * 1024, \fBDEFAULT_LWM\fR = 16 * 1024, \fBWAS_ACTIVE\fR = 1, \fBWAS_INACTIVE\fR = 2 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Queue_Base\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBclose\fR (void) = 0"
+.br
+.RI "\fIClose down the message queue and release all resources.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Message_Queue_Base\fR (void)"
+.br
+.RI "\fIClose down the message queue and release all resources.\fR"
+.ti -1c
+.RI "virtual int \fBpeek_dequeue_head\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBenqueue_tail\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBenqueue\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBdequeue_head\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBdequeue\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBis_full\fR (void) = 0"
+.br
+.RI "\fITrue if queue is full, else false. True if queue is empty, else false.\fR"
+.ti -1c
+.RI "virtual int \fBis_empty\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual size_t \fBmessage_bytes\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual size_t \fBmessage_length\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual size_t \fBmessage_count\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBmessage_bytes\fR (size_t new_size) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBmessage_length\fR (size_t new_length) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBdeactivate\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBactivate\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBdeactivated\fR (void) = 0"
+.br
+.RI "\fIReturns true if <deactivated_> is enabled.\fR"
+.ti -1c
+.RI "virtual \fBACE_Notification_Strategy\fR* \fBnotification_strategy\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBnotification_strategy\fR (\fBACE_Notification_Strategy\fR *s) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const = 0"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Message_Queue_Base &)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Queue_Base\fR (const ACE_Message_Queue_Base &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Workaround HP/C++ compiler bug with enums in templates.
+.PP
+.PP
+ The ever lamest HP/C++ compiler seems to fail if enums are defined inside a template, hence we have to move them into a base class. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIDEFAULT_HWM\fR \fRDefault high watermark (16 K).
+.TP
+\fB\fIDEFAULT_LWM\fR \fRDefault low watermark (same as high water mark).
+.TP
+\fB\fIWAS_ACTIVE\fR \fRMessage queue was active before  or <deactivate>.
+.TP
+\fB\fIWAS_INACTIVE\fR \fRMessage queue was inactive before  or <deactivate>.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Message_Queue_Base::ACE_Message_Queue_Base (void)
+.PP
+.SS ACE_Message_Queue_Base::~ACE_Message_Queue_Base (void)\fC [virtual]\fR
+.PP
+Close down the message queue and release all resources.
+.PP
+.SS ACE_Message_Queue_Base::ACE_Message_Queue_Base (const ACE_Message_Queue_Base &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Message_Queue_Base::activate (void)\fC [pure virtual]\fR
+.PP
+Reactivate the queue so that threads can enqueue and dequeue messages again. Returns WAS_INACTIVE if queue was inactive before the call and WAS_ACTIVE if queue was active before the call. 
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS int ACE_Message_Queue_Base::close (void)\fC [pure virtual]\fR
+.PP
+Close down the message queue and release all resources.
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS int ACE_Message_Queue_Base::deactivate (void)\fC [pure virtual]\fR
+.PP
+Deactivate the queue and wakeup all threads waiting on the queue so they can continue. No messages are removed from the queue, however. Any other operations called until the queue is activated again will immediately return -1 with <errno> == ESHUTDOWN. Returns WAS_INACTIVE if queue was inactive before the call and WAS_ACTIVE if queue was active before the call. 
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS int ACE_Message_Queue_Base::deactivated (void)\fC [pure virtual]\fR
+.PP
+Returns true if <deactivated_> is enabled.
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS virtual int ACE_Message_Queue_Base::dequeue (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS int ACE_Message_Queue_Base::dequeue_head (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [pure virtual]\fR
+.PP
+Dequeue and return the  at the head of the queue. Returns number of items in queue if the call succeeds or -1 otherwise. Dequeue and return the  at the head of the queue. Returns number of items in queue if the call succeeds or -1 otherwise. 
+.PP
+Reimplemented in \fBACE_Message_Queue\fR, and \fBACE_Dynamic_Message_Queue\fR.
+.SS void ACE_Message_Queue_Base::dump (void) const\fC [pure virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Message_Queue\fR, and \fBACE_Dynamic_Message_Queue\fR.
+.SS virtual int ACE_Message_Queue_Base::enqueue (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS int ACE_Message_Queue_Base::enqueue_tail (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [pure virtual]\fR
+.PP
+Enqueue a  into the tail of the queue. Returns number of items in queue if the call succeeds or -1 otherwise. Enqueue a  into the tail of the queue. Returns number of items in queue if the call succeeds or -1 otherwise. 
+.PP
+Reimplemented in \fBACE_Message_Queue\fR, and \fBACE_Dynamic_Message_Queue\fR.
+.SS virtual int ACE_Message_Queue_Base::is_empty (void)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS int ACE_Message_Queue_Base::is_full (void)\fC [pure virtual]\fR
+.PP
+True if queue is full, else false. True if queue is empty, else false.
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS void ACE_Message_Queue_Base::message_bytes (size_t new_size)\fC [pure virtual]\fR
+.PP
+New value of the number of total bytes on the queue, i.e., sum of the message block sizes. New value of the number of total length on the queue, i.e., sum of the message block lengths. 
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS size_t ACE_Message_Queue_Base::message_bytes (void)\fC [pure virtual]\fR
+.PP
+Number of total bytes on the queue, i.e., sum of the message block sizes. Number of total length on the queue, i.e., sum of the message block lengths. Number of total messages on the queue. 
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS virtual size_t ACE_Message_Queue_Base::message_count (void)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS virtual void ACE_Message_Queue_Base::message_length (size_t new_length)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS virtual size_t ACE_Message_Queue_Base::message_length (void)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS virtual void ACE_Message_Queue_Base::notification_strategy (\fBACE_Notification_Strategy\fR * s)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS virtual \fBACE_Notification_Strategy\fR* ACE_Message_Queue_Base::notification_strategy (void)\fC [pure virtual]\fR
+.PP
+Reimplemented in \fBACE_Message_Queue\fR.
+.SS void ACE_Message_Queue_Base::operator= (const ACE_Message_Queue_Base &)\fC [private]\fR
+.PP
+.SS int ACE_Message_Queue_Base::peek_dequeue_head (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [pure virtual]\fR
+.PP
+Retrieve the first  without removing it. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. If the <timeout> elapses without receiving a message -1 is returned and <errno> is set to <EWOULDBLOCK>. If the queue is deactivated -1 is returned and <errno> is set to <ESHUTDOWN>. Otherwise, returns -1 on failure, else the number of items still on the queue. 
+.PP
+Reimplemented in \fBACE_Message_Queue\fR, and \fBACE_Dynamic_Message_Queue\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Message_Queue_Base::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_Message_Queue\fR, and \fBACE_Dynamic_Message_Queue\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

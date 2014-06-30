@@ -1,0 +1,408 @@
+.TH ACE_Cached_Connect_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Cached_Connect_Strategy \- A connection strategy which caches connections to peers (represented by <SVC_HANDLER> instances), thereby allowing subsequent re-use of unused, but available, connections. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Strategies_T.h>\fR
+.PP
+Inherits \fBACE_Connection_Recycling_Strategy\fR, and \fBACE_Connect_Strategy< SVC_HANDLER,ACE_PEER_CONNECTOR_2 >\fR.
+.PP
+Inherited by \fBACE_Cached_Connect_Strategy_Ex\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef ACE_Cached_Connect_Strategy<SVC_HANDLER, ACE_PEER_CONNECTOR_2, MUTEX> \fBSELF\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Creation_Strategy\fR<SVC_HANDLER> \fBCREATION_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> \fBCONCURRENCY_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Recycling_Strategy\fR<SVC_HANDLER> \fBRECYCLING_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Connect_Strategy\fR<SVC_HANDLER, ACE_PEER_CONNECTOR_2> \fBCONNECT_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Refcounted_Hash_Recyclable\fR<ACE_PEER_CONNECTOR_ADDR> \fBREFCOUNTED_HASH_RECYCLABLE_ADDRESS\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Manager\fR<\fBREFCOUNTED_HASH_RECYCLABLE_ADDRESS\fR, SVC_HANDLER *, \fBACE_Null_Mutex\fR> \fBCONNECTION_MAP\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Iterator\fR<\fBREFCOUNTED_HASH_RECYCLABLE_ADDRESS\fR, SVC_HANDLER *, \fBACE_Null_Mutex\fR> \fBCONNECTION_MAP_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Entry\fR<\fBREFCOUNTED_HASH_RECYCLABLE_ADDRESS\fR, SVC_HANDLER *> \fBCONNECTION_MAP_ENTRY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Reverse_Lock\fR<MUTEX> \fBREVERSE_MUTEX\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Cached_Connect_Strategy\fR (\fBACE_Creation_Strategy\fR<SVC_HANDLER> *cre_s = 0, \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> *con_s = 0, \fBACE_Recycling_Strategy\fR<SVC_HANDLER> *rec_s = 0, MUTEX *mutex = 0, int delete_mutex = 0)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Cached_Connect_Strategy\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (\fBACE_Creation_Strategy\fR<SVC_HANDLER> *cre_s, \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> *con_s, \fBACE_Recycling_Strategy\fR<SVC_HANDLER> *rec_s)"
+.br
+.RI "\fIThis methods allow you to change the strategies used by the cached connector.\fR"
+.ti -1c
+.RI "virtual int \fBmake_svc_handler\fR (SVC_HANDLER *&sh)"
+.br
+.RI "\fITemplate method for making a new <svc_handler>.\fR"
+.ti -1c
+.RI "virtual int \fBactivate_svc_handler\fR (SVC_HANDLER *svc_handler)"
+.br
+.RI "\fITemplate method for activating a new <svc_handler>.\fR"
+.ti -1c
+.RI "virtual int \fBassign_recycler\fR (SVC_HANDLER *svc_handler, \fBACE_Connection_Recycling_Strategy\fR *recycler, const void *recycling_act)"
+.br
+.RI "\fITemplate method for setting the recycler information of the svc_handler.\fR"
+.ti -1c
+.RI "virtual int \fBprepare_for_recycling\fR (SVC_HANDLER *svc_handler)"
+.br
+.RI "\fITemplate method for preparing the svc_handler for recycling.\fR"
+.ti -1c
+.RI "virtual int \fBconnect_svc_handler\fR (SVC_HANDLER *&sh, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms)"
+.br
+.ti -1c
+.RI "virtual int \fBconnect_svc_handler\fR (SVC_HANDLER *&sh, SVC_HANDLER *&sh_copy, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms)"
+.br
+.ti -1c
+.RI "virtual int \fBpurge\fR (const void *recycling_act)"
+.br
+.RI "\fIRemove from cache.\fR"
+.ti -1c
+.RI "virtual int \fBcache\fR (const void *recycling_act)"
+.br
+.RI "\fIAdd to cache.\fR"
+.ti -1c
+.RI "virtual int \fBrecycle_state\fR (const void *recycling_act, \fBACE_Recyclable_State\fR new_state)"
+.br
+.RI "\fIGet/Set <recycle_state>.\fR"
+.ti -1c
+.RI "virtual \fBACE_Recyclable_State\fR \fBrecycle_state\fR (const void *recycling_act) const"
+.br
+.RI "\fIGet/Set <recycle_state>.\fR"
+.ti -1c
+.RI "virtual int \fBmark_as_closed\fR (const void *recycling_act)"
+.br
+.RI "\fIMark as closed.\fR"
+.ti -1c
+.RI "virtual int \fBmark_as_closed_i\fR (const void *recycling_act)"
+.br
+.ti -1c
+.RI "virtual int \fBcleanup_hint\fR (const void *recycling_act, void **act_holder = 0)"
+.br
+.RI "\fICleanup hint and reset <*act_holder> to zero if .\fR"
+.ti -1c
+.RI "virtual \fBACE_Creation_Strategy\fR<SVC_HANDLER>* \fBcreation_strategy\fR (void) const"
+.br
+.ti -1c
+.RI "virtual \fBACE_Recycling_Strategy\fR<SVC_HANDLER>* \fBrecycling_strategy\fR (void) const"
+.br
+.ti -1c
+.RI "virtual \fBACE_Concurrency_Strategy\fR<SVC_HANDLER>* \fBconcurrency_strategy\fR (void) const"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBnew_connection\fR (SVC_HANDLER *&sh, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms)"
+.br
+.RI "\fICreates a new connection.\fR"
+.ti -1c
+.RI "int \fBfind\fR (\fBACE_Refcounted_Hash_Recyclable\fR<ACE_PEER_CONNECTOR_ADDR> &search_addr, \fBACE_Hash_Map_Entry\fR<\fBACE_Refcounted_Hash_Recyclable\fR<ACE_PEER_CONNECTOR_ADDR>, SVC_HANDLER *> *&entry)"
+.br
+.RI "\fIFind an idle handle.\fR"
+.ti -1c
+.RI "virtual int \fBpurge_i\fR (const void *recycling_act)"
+.br
+.RI "\fIRemove from cache (non-locking version).\fR"
+.ti -1c
+.RI "virtual int \fBcache_i\fR (const void *recycling_act)"
+.br
+.RI "\fIAdd to cache (non-locking version).\fR"
+.ti -1c
+.RI "virtual int \fBrecycle_state_i\fR (const void *recycling_act, \fBACE_Recyclable_State\fR new_state)"
+.br
+.RI "\fIGet/Set <recycle_state> (non-locking version).\fR"
+.ti -1c
+.RI "virtual \fBACE_Recyclable_State\fR \fBrecycle_state_i\fR (const void *recycling_act) const"
+.br
+.ti -1c
+.RI "virtual int \fBcleanup_hint_i\fR (const void *recycling_act, void **act_holder)"
+.br
+.RI "\fICleanup hint and reset <*act_holder> to zero if .\fR"
+.ti -1c
+.RI "int \fBcheck_hint_i\fR (SVC_HANDLER *&sh, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms, \fBACE_Hash_Map_Entry\fR<\fBACE_Refcounted_Hash_Recyclable\fR<ACE_PEER_CONNECTOR_ADDR>, SVC_HANDLER *> *&entry, int &found)"
+.br
+.ti -1c
+.RI "int \fBfind_or_create_svc_handler_i\fR (SVC_HANDLER *&sh, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms, \fBACE_Hash_Map_Entry\fR<\fBACE_Refcounted_Hash_Recyclable\fR<ACE_PEER_CONNECTOR_ADDR>, SVC_HANDLER *> *&entry, int &found)"
+.br
+.ti -1c
+.RI "virtual int \fBconnect_svc_handler_i\fR (SVC_HANDLER *&sh, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms, int &found)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBCONNECTION_MAP\fR \fBconnection_map_\fR"
+.br
+.RI "\fITable that maintains the cache of connected <SVC_HANDLER>s.\fR"
+.ti -1c
+.RI "MUTEX* \fBlock_\fR"
+.br
+.RI "\fIMutual exclusion for this object.\fR"
+.ti -1c
+.RI "int \fBdelete_lock_\fR"
+.br
+.RI "\fIMutual exclusion for this object.\fR"
+.ti -1c
+.RI "\fBREVERSE_MUTEX\fR* \fBreverse_lock_\fR"
+.br
+.RI "\fIReverse lock.\fR"
+.ti -1c
+.RI "\fBCREATION_STRATEGY\fR* \fBcreation_strategy_\fR"
+.br
+.RI "\fICreation strategy for an <Connector>.\fR"
+.ti -1c
+.RI "int \fBdelete_creation_strategy_\fR"
+.br
+.RI "\fI1 if <Connector> created the creation strategy and thus should delete it, else 0.\fR"
+.ti -1c
+.RI "\fBCONCURRENCY_STRATEGY\fR* \fBconcurrency_strategy_\fR"
+.br
+.RI "\fIConcurrency strategy for an <Connector>.\fR"
+.ti -1c
+.RI "int \fBdelete_concurrency_strategy_\fR"
+.br
+.RI "\fI1 if <Connector> created the concurrency strategy and thus should delete it, else 0.\fR"
+.ti -1c
+.RI "\fBRECYCLING_STRATEGY\fR* \fBrecycling_strategy_\fR"
+.br
+.RI "\fIRecycling strategy for an <Connector>.\fR"
+.ti -1c
+.RI "int \fBdelete_recycling_strategy_\fR"
+.br
+.RI "\fI1 if <Connector> created the recycling strategy and thus should delete it, else 0.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER, ACE_PEER_CONNECTOR_1, class MUTEX>  template class ACE_Cached_Connect_Strategy
+A connection strategy which caches connections to peers (represented by <SVC_HANDLER> instances), thereby allowing subsequent re-use of unused, but available, connections.
+.PP
+.PP
+  is intended to be used as a plug-in connection strategy for . It's added value is re-use of established connections. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::CONCURRENCY_STRATEGY
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Hash_Map_Manager\fR<\fBREFCOUNTED_HASH_RECYCLABLE_ADDRESS\fR, SVC_HANDLER *, \fBACE_Null_Mutex\fR> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::CONNECTION_MAP
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Hash_Map_Entry\fR<\fBREFCOUNTED_HASH_RECYCLABLE_ADDRESS\fR, SVC_HANDLER *> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::CONNECTION_MAP_ENTRY
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Hash_Map_Iterator\fR<\fBREFCOUNTED_HASH_RECYCLABLE_ADDRESS\fR, SVC_HANDLER *, \fBACE_Null_Mutex\fR> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::CONNECTION_MAP_ITERATOR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Connect_Strategy\fR<SVC_HANDLER, ACE_PEER_CONNECTOR_2> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::CONNECT_STRATEGY
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Creation_Strategy\fR<SVC_HANDLER> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::CREATION_STRATEGY
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Recycling_Strategy\fR<SVC_HANDLER> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::RECYCLING_STRATEGY
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Refcounted_Hash_Recyclable\fR<ACE_PEER_CONNECTOR_ADDR> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::REFCOUNTED_HASH_RECYCLABLE_ADDRESS
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR, and \fBACE_Bounded_Cached_Connect_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef \fBACE_Reverse_Lock\fR<MUTEX> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::REVERSE_MUTEX
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> typedef ACE_Cached_Connect_Strategy<SVC_HANDLER, ACE_PEER_CONNECTOR_2, MUTEX> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::SELF
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX> (\fBACE_Creation_Strategy\fR< SVC_HANDLER >* cre_s = 0, \fBACE_Concurrency_Strategy\fR< SVC_HANDLER >* con_s = 0, \fBACE_Recycling_Strategy\fR< SVC_HANDLER >* rec_s = 0, MUTEX * mutex = 0, int delete_mutex = 0)
+.PP
+Constructor.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::~ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX> (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::activate_svc_handler (SVC_HANDLER * svc_handler)\fC [virtual]\fR
+.PP
+Template method for activating a new <svc_handler>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::assign_recycler (SVC_HANDLER * svc_handler, \fBACE_Connection_Recycling_Strategy\fR * recycler, const void * recycling_act)\fC [virtual]\fR
+.PP
+Template method for setting the recycler information of the svc_handler.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::cache (const void * recycling_act)\fC [virtual]\fR
+.PP
+Add to cache.
+.PP
+Reimplemented from \fBACE_Connection_Recycling_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::cache_i (const void * recycling_act)\fC [protected, virtual]\fR
+.PP
+Add to cache (non-locking version).
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::check_hint_i (SVC_HANDLER *& sh, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms, \fBACE_Hash_Map_Entry\fR< \fBACE_Refcounted_Hash_Recyclable\fR< ACE_PEER_CONNECTOR_ADDR >,SVC_HANDLER *>*& entry, int & found)\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::cleanup_hint (const void * recycling_act, void ** act_holder = 0)\fC [virtual]\fR
+.PP
+Cleanup hint and reset <*act_holder> to zero if .
+.PP
+Reimplemented from \fBACE_Connection_Recycling_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::cleanup_hint_i (const void * recycling_act, void ** act_holder)\fC [protected, virtual]\fR
+.PP
+Cleanup hint and reset <*act_holder> to zero if .
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> virtual \fBACE_Concurrency_Strategy\fR<SVC_HANDLER>* ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::concurrency_strategy (void) const\fC [virtual]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> virtual int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::connect_svc_handler (SVC_HANDLER *& sh, SVC_HANDLER *& sh_copy, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms)\fC [virtual]\fR
+.PP
+The default behavior delegates to the <connect> method of the <PEER_CONNECTOR::connect>. Please check the documentation in \fBConnector.h\fR for more details. 
+.PP
+Reimplemented from \fBACE_Connect_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::connect_svc_handler (SVC_HANDLER *& sh, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms)\fC [virtual]\fR
+.PP
+Checks to see if there is already a <SVC_HANDLER> in the cache connected to the <remote_addr>. If so, we return this pointer. Otherwise we establish the connection, put it into the cache, and return the <SVC_HANDLER> pointer. <[NOTE]>: the <{reuse_addr}> argument does NOT control re-use of addresses in the cache. Rather, if the underlying protocol requires a "dead time" prior to re-use of its addresses (TCP is a classic example of this), <{and}> the protocol provides a means by which to defeat the dead time, setting this argument to non-zero will defeat the dead-time requirement. <{Dev. Note: We might want to consider enhancing the interface at some point so that this also controls re-use of the cache.}> 
+.PP
+Reimplemented from \fBACE_Connect_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> virtual int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::connect_svc_handler_i (SVC_HANDLER *& sh, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms, int & found)\fC [protected, virtual]\fR
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> virtual \fBACE_Creation_Strategy\fR<SVC_HANDLER>* ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::creation_strategy (void) const\fC [virtual]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::find (\fBACE_Refcounted_Hash_Recyclable\fR< ACE_PEER_CONNECTOR_ADDR >& search_addr, \fBACE_Hash_Map_Entry\fR< \fBACE_Refcounted_Hash_Recyclable\fR< ACE_PEER_CONNECTOR_ADDR >,SVC_HANDLER *>*& entry)\fC [protected]\fR
+.PP
+Find an idle handle.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::find_or_create_svc_handler_i (SVC_HANDLER *& sh, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms, \fBACE_Hash_Map_Entry\fR< \fBACE_Refcounted_Hash_Recyclable\fR< ACE_PEER_CONNECTOR_ADDR >,SVC_HANDLER *>*& entry, int & found)\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::make_svc_handler (SVC_HANDLER *& sh)\fC [virtual]\fR
+.PP
+Template method for making a new <svc_handler>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::mark_as_closed (const void * recycling_act)\fC [virtual]\fR
+.PP
+Mark as closed.
+.PP
+Reimplemented from \fBACE_Connection_Recycling_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::mark_as_closed_i (const void * recycling_act)\fC [virtual]\fR
+.PP
+Mark as closed (non-locking version). This method needs to be public as it is used in the cleanup of handlers where teh locked version causes a deadlock. 
+.PP
+Reimplemented from \fBACE_Connection_Recycling_Strategy\fR.
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::new_connection (SVC_HANDLER *& sh, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms)\fC [protected, virtual]\fR
+.PP
+Creates a new connection.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::open (\fBACE_Creation_Strategy\fR< SVC_HANDLER >* cre_s, \fBACE_Concurrency_Strategy\fR< SVC_HANDLER >* con_s, \fBACE_Recycling_Strategy\fR< SVC_HANDLER >* rec_s)\fC [virtual]\fR
+.PP
+This methods allow you to change the strategies used by the cached connector.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::prepare_for_recycling (SVC_HANDLER * svc_handler)\fC [virtual]\fR
+.PP
+Template method for preparing the svc_handler for recycling.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::purge (const void * recycling_act)\fC [virtual]\fR
+.PP
+Remove from cache.
+.PP
+Reimplemented from \fBACE_Connection_Recycling_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::purge_i (const void * recycling_act)\fC [protected, virtual]\fR
+.PP
+Remove from cache (non-locking version).
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> virtual \fBACE_Recyclable_State\fR ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::recycle_state (const void * recycling_act) const\fC [virtual]\fR
+.PP
+Get/Set <recycle_state>.
+.PP
+Reimplemented from \fBACE_Connection_Recycling_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::recycle_state (const void * recycling_act, \fBACE_Recyclable_State\fR new_state)\fC [virtual]\fR
+.PP
+Get/Set <recycle_state>.
+.PP
+Reimplemented from \fBACE_Connection_Recycling_Strategy\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> virtual \fBACE_Recyclable_State\fR ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::recycle_state_i (const void * recycling_act) const\fC [protected, virtual]\fR
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::recycle_state_i (const void * recycling_act, \fBACE_Recyclable_State\fR new_state)\fC [protected, virtual]\fR
+.PP
+Get/Set <recycle_state> (non-locking version).
+.PP
+Reimplemented in \fBACE_Cached_Connect_Strategy_Ex\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> virtual \fBACE_Recycling_Strategy\fR<SVC_HANDLER>* ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::recycling_strategy (void) const\fC [virtual]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> \fBCONCURRENCY_STRATEGY\fR * ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::concurrency_strategy_\fC [protected]\fR
+.PP
+Concurrency strategy for an <Connector>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> \fBCONNECTION_MAP\fR ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::connection_map_\fC [protected]\fR
+.PP
+Table that maintains the cache of connected <SVC_HANDLER>s.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> \fBCREATION_STRATEGY\fR * ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::creation_strategy_\fC [protected]\fR
+.PP
+Creation strategy for an <Connector>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::delete_concurrency_strategy_\fC [protected]\fR
+.PP
+1 if <Connector> created the concurrency strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::delete_creation_strategy_\fC [protected]\fR
+.PP
+1 if <Connector> created the creation strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::delete_lock_\fC [protected]\fR
+.PP
+Mutual exclusion for this object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> int ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::delete_recycling_strategy_\fC [protected]\fR
+.PP
+1 if <Connector> created the recycling strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> MUTEX * ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::lock_\fC [protected]\fR
+.PP
+Mutual exclusion for this object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> \fBRECYCLING_STRATEGY\fR * ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::recycling_strategy_\fC [protected]\fR
+.PP
+Recycling strategy for an <Connector>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1, classMUTEX> \fBREVERSE_MUTEX\fR * ACE_Cached_Connect_Strategy<SVC_HANDLER, , MUTEX>::reverse_lock_\fC [protected]\fR
+.PP
+Reverse lock.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

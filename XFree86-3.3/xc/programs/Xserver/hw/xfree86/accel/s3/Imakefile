@@ -1,0 +1,68 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/s3/Imakefile,v 3.20 1996/12/23 06:41:19 dawes Exp $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/s3/Imakefile,v 3.20 1996/12/23 06:41:19 dawes Exp $
+
+
+
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS = s3newmmio s3mmio drivers
+
+SRCS = 	s3.c s3misc.c s3cmap.c s3gc.c s3gc16.c s3gc24.c s3gc32.c s3fs.c s3ss.c \
+	s3gs.c s3win.c s3init.c s3im.c s3bstor.c \
+	s3scrin.c s3blt.c s3plypt.c s3ramdacs.c \
+	s3line.c s3seg.c s3frect.c s3text.c \
+	s3font.c s3fcach.c s3Cursor.c s3BtCursor.c vgaHW.c s3dline.c \
+	s3dseg.c s3bcach.c s3gtimg.c s3TiCursor.c s3ELSA.c Ti3026Curs.c \
+	IBMRGBCurs.c
+
+OBJS = 	s3.o s3misc.o s3cmap.o s3gc.o s3gc16.o s3gc24.o s3gc32.o s3fs.o s3ss.o \
+	s3gs.o s3win.o s3init.o s3im.o s3bstor.o \
+	s3scrin.o s3blt.o s3plypt.o s3ramdacs.o \
+	s3line.o s3seg.o s3frect.o s3text.o \
+	s3font.o s3fcach.o s3Cursor.o s3BtCursor.o vgaHW.o s3dline.o \
+	s3dseg.o s3bcach.o s3gtimg.o s3TiCursor.o s3ELSA.o Ti3026Curs.o \
+	IBMRGBCurs.o
+
+INCLUDES = -I$(XF86SRC) -I. -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/include -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) \
+	   -I$(FONTSRC)/include -I$(XF86SRC)/vga256/vga -I$(XF86COMSRC) \
+	   -I$(XF86HWSRC) -I$(FONTINCSRC) -I$(XF86OSSRC) \
+	   -I$(XF86SRC)/accel/cache
+
+DEFINES = -DS3_SERVER -DPSZ=8
+
+S3DRIVERS = XF86S3Drivers
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS))
+#endif
+
+ConfigTarget(s3Conf,$(ICONFIGFILES),confS3.SHsuf,$(S3DRIVERS))
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(s3,$(OBJS))
+
+MakeSubdirs($(SUBDIRS))
+
+LinkSourceFile(vgaHW.c,../../vga256/vga)
+
+InstallLinkKitLibrary(s3,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(confS3.SHsuf,$(LINKKITDIR))
+InstallLinkKitNonExecFile(newmmio.h,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(regs3.h,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(s3.h,$(LINKKITDIR)/drivers)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif
+
+DependSubdirs($(SUBDIRS))

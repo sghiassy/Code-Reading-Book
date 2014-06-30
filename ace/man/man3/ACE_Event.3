@@ -1,0 +1,160 @@
+.TH ACE_Event 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Event \- A wrapper around the Win32 event locking mechanism. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch.h>\fR
+.PP
+Inherited by \fBACE_Auto_Event\fR, and \fBACE_Manual_Event\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Event\fR (int manual_reset = 0, int initial_state = 0, int type = USYNC_THREAD, const \fBACE_TCHAR\fR *name = 0, void *arg = 0)"
+.br
+.RI "\fIConstructor that creates event.\fR"
+.ti -1c
+.RI "\fB~ACE_Event\fR (void)"
+.br
+.RI "\fIImplicitly destroy the event variable.\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.ti -1c
+.RI "ACE_event_t \fBhandle\fR (void) const"
+.br
+.RI "\fIUnderlying handle to event.\fR"
+.ti -1c
+.RI "void \fBhandle\fR (ACE_event_t new_handle)"
+.br
+.ti -1c
+.RI "int \fBwait\fR (void)"
+.br
+.ti -1c
+.RI "int \fBwait\fR (const \fBACE_Time_Value\fR *abstime)"
+.br
+.RI "\fISame as \fBwait\fR() above, but this one can be timed  is absolute time-of-day.\fR"
+.ti -1c
+.RI "int \fBsignal\fR (void)"
+.br
+.ti -1c
+.RI "int \fBpulse\fR (void)"
+.br
+.ti -1c
+.RI "int \fBreset\fR (void)"
+.br
+.RI "\fISet to nonsignaled state.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_event_t \fBhandle_\fR"
+.br
+.RI "\fIThe underlying handle.\fR"
+.ti -1c
+.RI "int \fBremoved_\fR"
+.br
+.RI "\fIKeeps track of whether <remove> has been called yet to avoid multiple <remove> calls, e.g., explicitly and implicitly in the destructor. This flag isn't protected by a lock, so make sure that you don't have multiple threads simultaneously calling <remove> on the same object, which is a bad idea anyway...\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Event\fR (const ACE_Event& event)"
+.br
+.ti -1c
+.RI "const ACE_Event& \fBoperator=\fR (const ACE_Event &rhs)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A wrapper around the Win32 event locking mechanism.
+.PP
+.PP
+ Portable implementation of an Event mechanism, which is native to Win32, but must be emulated on UNIX. Note that this only provides global naming and <USYNC_PROCESS> support on Win32 machines. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Event::ACE_Event (int manual_reset = 0, int initial_state = 0, int type = USYNC_THREAD, const \fBACE_TCHAR\fR * name = 0, void * arg = 0)
+.PP
+Constructor that creates event.
+.PP
+.SS ACE_Event::~ACE_Event (void)
+.PP
+Implicitly destroy the event variable.
+.PP
+.SS ACE_Event::ACE_Event (const ACE_Event & event)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Event::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Manual_Event\fR, and \fBACE_Auto_Event\fR.
+.SS void ACE_Event::handle (ACE_event_t new_handle)
+.PP
+Set the underlying handle to event. Note that this method assumes ownership of the <handle> and will close it down in <remove>. If you want the <handle> to stay open when <remove> is called make sure to call <dup> on the <handle> before closing it. You are responsible for the closing the existing <handle> before overwriting it. 
+.SS ACE_event_t ACE_Event::handle (void) const
+.PP
+Underlying handle to event.
+.PP
+.SS const ACE_Event& ACE_Event::operator= (const ACE_Event & rhs)\fC [private]\fR
+.PP
+.SS int ACE_Event::pulse (void)
+.PP
+if MANUAL reset wakeup all waiting threads and reset event else AUTO reset wakeup one waiting thread (if present) and reset event 
+.SS int ACE_Event::remove (void)
+.PP
+Explicitly destroy the event variable. Note that only one thread should call this method since it doesn't protect against race conditions. 
+.SS int ACE_Event::reset (void)
+.PP
+Set to nonsignaled state.
+.PP
+.SS int ACE_Event::signal (void)
+.PP
+if MANUAL reset wake up all waiting threads set to signaled state else AUTO reset if no thread is waiting, set to signaled state if thread(s) are waiting, wake up one waiting thread and reset event 
+.SS int ACE_Event::wait (const \fBACE_Time_Value\fR * abstime)
+.PP
+Same as \fBwait\fR() above, but this one can be timed  is absolute time-of-day.
+.PP
+.SS int ACE_Event::wait (void)
+.PP
+if MANUAL reset sleep till the event becomes signaled event remains signaled after \fBwait\fR() completes. else AUTO reset sleep till the event becomes signaled event resets \fBwait\fR() completes. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Event::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_Manual_Event\fR, and \fBACE_Auto_Event\fR.
+.SS ACE_event_t ACE_Event::handle_\fC [protected]\fR
+.PP
+The underlying handle.
+.PP
+.SS int ACE_Event::removed_\fC [protected]\fR
+.PP
+Keeps track of whether <remove> has been called yet to avoid multiple <remove> calls, e.g., explicitly and implicitly in the destructor. This flag isn't protected by a lock, so make sure that you don't have multiple threads simultaneously calling <remove> on the same object, which is a bad idea anyway...
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,248 @@
+.TH ACE_Task 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Task \- Primary interface for application message processing, as well as input and output message queueing. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Task_T.h>\fR
+.PP
+Inherits \fBACE_Task_Base\fR.
+.PP
+Inherited by \fBACE_NT_Service\fR, \fBACE_Stream_Head\fR, \fBACE_Stream_Tail\fR, \fBACE_Svc_Handler\fR, and \fBACE_Thru_Task\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Task\fR (\fBACE_Thread_Manager\fR *thr_mgr = 0, \fBACE_Message_Queue\fR<ACE_SYNCH_USE> *mq = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Task\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "\fBACE_Message_Queue\fR<ACE_SYNCH_USE>* \fBmsg_queue\fR (void)"
+.br
+.RI "\fIGets the message queue associated with this task.\fR"
+.ti -1c
+.RI "void \fBmsg_queue\fR (\fBACE_Message_Queue\fR<ACE_SYNCH_USE> *)"
+.br
+.RI "\fISets the message queue associated with this task.\fR"
+.ti -1c
+.RI "int \fBputq\fR (\fBACE_Message_Block\fR *, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIInsert message into the message queue. Note that <timeout> uses <{absolute}> time rather than <{relative}> time.\fR"
+.ti -1c
+.RI "int \fBgetq\fR (\fBACE_Message_Block\fR *&mb, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIExtract the first message from the queue (blocking). Note that <timeout> uses <{absolute}> time rather than <{relative}> time.\fR"
+.ti -1c
+.RI "int \fBungetq\fR (\fBACE_Message_Block\fR *, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIReturn a message to the queue. Note that <timeout> uses <{absolute}> time rather than <{relative}> time.\fR"
+.ti -1c
+.RI "int \fBreply\fR (\fBACE_Message_Block\fR *, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "int \fBput_next\fR (\fBACE_Message_Block\fR *msg, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "int \fBcan_put\fR (\fBACE_Message_Block\fR *)"
+.br
+.RI "\fITests whether we can enqueue a message without blocking.\fR"
+.ti -1c
+.RI "\fBconst\fR \fBACE_TCHAR\fR* \fBname\fR (void) \fBconst\fR"
+.br
+.RI "\fIReturn the name of the enclosing Module if there's one associated with the Task, else returns 0.\fR"
+.ti -1c
+.RI "ACE_Task<ACE_SYNCH_USE>* \fBnext\fR (void)"
+.br
+.RI "\fIGet next Task pointer. Set next Task pointer.\fR"
+.ti -1c
+.RI "void \fBnext\fR (ACE_Task<ACE_SYNCH_USE> *)"
+.br
+.ti -1c
+.RI "ACE_Task<ACE_SYNCH_USE>* \fBsibling\fR (void)"
+.br
+.RI "\fIReturn the Task's sibling if there's one associated with the Task's Module, else returns 0.\fR"
+.ti -1c
+.RI "int \fBflush\fR (u_long flag = ACE_Task_Flags::ACE_FLUSHALL)"
+.br
+.ti -1c
+.RI "void \fBwater_marks\fR (\fBACE_IO_Cntl_Msg::ACE_IO_Cntl_Cmds\fR, size_t)"
+.br
+.RI "\fIManipulate watermarks.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) \fBconst\fR"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "module void \fBconst\fR"
+.br
+.RI "\fIReturn the Task's Module if there is one, else returns 0.\fR"
+.ti -1c
+.RI "\fBACE_Message_Queue\fR<ACE_SYNCH_USE>* \fBmsg_queue_\fR"
+.br
+.RI "\fIQueue of messages on the ACE_Task..\fR"
+.ti -1c
+.RI "int \fBdelete_msg_queue_\fR"
+.br
+.RI "\fI1 if should delete Message_Queue, 0 otherwise.\fR"
+.ti -1c
+.RI "\fBACE_Module\fR<ACE_SYNCH_USE>* \fBmod_\fR"
+.br
+.RI "\fIBack-pointer to the enclosing module.\fR"
+.ti -1c
+.RI "ACE_Task<ACE_SYNCH_USE>* \fBnext_\fR"
+.br
+.RI "\fIPointer to adjacent ACE_Task.\fR"
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (\fBconst\fR ACE_Task< _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T > &)"
+.br
+.ti -1c
+.RI "\fBACE_Task\fR (\fBconst\fR ACE_Task< _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T > &)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Module< ACE_SYNCH_USE >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Module_Type\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_SYNCH_DECL>  template class ACE_Task
+Primary interface for application message processing, as well as input and output message queueing.
+.PP
+.PP
+ This class serves as the basis for passive and active objects in \fBACE\fR. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Task<>::ACE_Task<> (\fBACE_Thread_Manager\fR * thr_mgr = 0, \fBACE_Message_Queue\fR< ACE_SYNCH_USE >* mq = 0)
+.PP
+Initialize a Task, supplying a thread manager and a message queue. If the user doesn't supply a \fBACE_Message_Queue\fR pointer then we'll allocate one dynamically. Otherwise, we'll use the one passed as a parameter. 
+.SS template<ACE_SYNCH_DECL> ACE_Task<>::~ACE_Task<> (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Task<>::ACE_Task<> (\fBconst\fR ACE_Task< _ACE_SYNCH_MUTEX_T,_ACE_SYNCH_CONDITION_T >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::can_put (\fBACE_Message_Block\fR *)
+.PP
+Tests whether we can enqueue a message without blocking.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Task<>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Stream_Head\fR, \fBACE_Stream_Tail\fR, \fBACE_Thru_Task\fR, \fBACE_Svc_Handler\fR, and \fBACE_Buffered_Svc_Handler\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::flush (u_long flag = ACE_Task_Flags::ACE_FLUSHALL)
+.PP
+Flush the queue. Note that if this conflicts with the C++ \fBiostream\fR <flush> function, just rewrite the \fBiostream\fR function as ::<flush>. 
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::getq (\fBACE_Message_Block\fR *& mb, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Extract the first message from the queue (blocking). Note that <timeout> uses <{absolute}> time rather than <{relative}> time.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Task<>::msg_queue (\fBACE_Message_Queue\fR< ACE_SYNCH_USE >*)
+.PP
+Sets the message queue associated with this task.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Queue\fR< ACE_SYNCH_USE >* ACE_Task<>::msg_queue (void)
+.PP
+Gets the message queue associated with this task.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBconst\fR \fBACE_TCHAR\fR * ACE_Task<>::name (void) const
+.PP
+Return the name of the enclosing Module if there's one associated with the Task, else returns 0.
+.PP
+Reimplemented in \fBACE_NT_Service\fR.
+.SS template<ACE_SYNCH_DECL> void ACE_Task<>::next (ACE_Task< ACE_SYNCH_USE >*)
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Task< ACE_SYNCH_USE >* ACE_Task<>::next (void)
+.PP
+Get next Task pointer. Set next Task pointer.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Task<>::operator= (\fBconst\fR ACE_Task< _ACE_SYNCH_MUTEX_T,_ACE_SYNCH_CONDITION_T >&)\fC [private]\fR
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::put_next (\fBACE_Message_Block\fR * msg, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Transfer message to the adjacent ACE_Task in a \fBACE_Stream\fR. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. 
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::putq (\fBACE_Message_Block\fR *, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Insert message into the message queue. Note that <timeout> uses <{absolute}> time rather than <{relative}> time.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::reply (\fBACE_Message_Block\fR *, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Turn the message around and send it back down the Stream. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. 
+.SS template<ACE_SYNCH_DECL> ACE_Task< ACE_SYNCH_USE >* ACE_Task<>::sibling (void)
+.PP
+Return the Task's sibling if there's one associated with the Task's Module, else returns 0.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::ungetq (\fBACE_Message_Block\fR *, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Return a message to the queue. Note that <timeout> uses <{absolute}> time rather than <{relative}> time.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Task<>::water_marks (\fBACE_IO_Cntl_Msg::ACE_IO_Cntl_Cmds\fR, size_t)
+.PP
+Manipulate watermarks.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> class \fBACE_Module\fR\fC [friend]\fR
+.PP
+.SS template<ACE_SYNCH_DECL> class ACE_Module_Type\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Task<>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_NT_Service\fR, \fBACE_Stream_Head\fR, \fBACE_Stream_Tail\fR, and \fBACE_Thru_Task\fR.
+.SS template<ACE_SYNCH_DECL> module void ACE_Task<>::const
+.PP
+Return the Task's Module if there is one, else returns 0.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Task<>::delete_msg_queue_
+.PP
+1 if should delete Message_Queue, 0 otherwise.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Module\fR< ACE_SYNCH_USE >* ACE_Task<>::mod_
+.PP
+Back-pointer to the enclosing module.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Queue\fR< ACE_SYNCH_USE >* ACE_Task<>::msg_queue_
+.PP
+Queue of messages on the ACE_Task..
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Task< ACE_SYNCH_USE >* ACE_Task<>::next_
+.PP
+Pointer to adjacent ACE_Task.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

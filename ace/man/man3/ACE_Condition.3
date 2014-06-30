@@ -1,0 +1,147 @@
+.TH ACE_Condition 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Condition \- ACE_Condition variable wrapper, which allows threads to block until shared data changes state. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch_T.h>\fR
+.PP
+Inherited by \fBACE_Thread_Condition\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Condition\fR (MUTEX &m, int type = USYNC_THREAD, const \fBACE_TCHAR\fR *name = 0, void *arg = 0)"
+.br
+.RI "\fIInitialize the condition variable.\fR"
+.ti -1c
+.RI "\fB~ACE_Condition\fR (void)"
+.br
+.RI "\fIImplicitly destroy the condition variable.\fR"
+.ti -1c
+.RI "int \fBwait\fR (const \fBACE_Time_Value\fR *abstime)"
+.br
+.ti -1c
+.RI "int \fBwait\fR (void)"
+.br
+.RI "\fIBlock on condition.\fR"
+.ti -1c
+.RI "int \fBwait\fR (MUTEX &mutex, const \fBACE_Time_Value\fR *abstime = 0)"
+.br
+.ti -1c
+.RI "int \fBsignal\fR (void)"
+.br
+.RI "\fISignal one waiting thread.\fR"
+.ti -1c
+.RI "int \fBbroadcast\fR (void)"
+.br
+.RI "\fISignal *all* waiting threads.\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.RI "\fIExplicitly destroy the condition variable.\fR"
+.ti -1c
+.RI "MUTEX& \fBmutex\fR (void)"
+.br
+.RI "\fIReturns a reference to the underlying mutex_;.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_cond_t \fBcond_\fR"
+.br
+.RI "\fICondition variable.\fR"
+.ti -1c
+.RI "MUTEX& \fBmutex_\fR"
+.br
+.RI "\fIReference to mutex lock.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Condition<MUTEX> &)"
+.br
+.ti -1c
+.RI "\fBACE_Condition\fR (const ACE_Condition<MUTEX> &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class MUTEX>  template class ACE_Condition
+ACE_Condition variable wrapper, which allows threads to block until shared data changes state.
+.PP
+.PP
+ A condition variable enables threads to atomically block and test the condition under the protection of a mutual exclu- sion lock (mutex) until the condition is satisfied. That is, the mutex must have been held by the thread before calling wait or signal on the condition. If the condition is false, a thread blocks on a condition variable and atomically releases the mutex that is waiting for the condition to change. If another thread changes the condition, it may wake up waiting threads by signaling the associated condition variable. The waiting threads, upon awakening, reacquire the mutex and re-evaluate the condition. Note, you can only parameterize  with  or . 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classMUTEX> ACE_Condition<MUTEX>::ACE_Condition<MUTEX> (MUTEX & m, int type = USYNC_THREAD, const \fBACE_TCHAR\fR * name = 0, void * arg = 0)
+.PP
+Initialize the condition variable.
+.PP
+.SS template<classMUTEX> ACE_Condition<MUTEX>::~ACE_Condition<MUTEX> (void)
+.PP
+Implicitly destroy the condition variable.
+.PP
+.SS template<classMUTEX> ACE_Condition<MUTEX>::ACE_Condition<MUTEX> (const ACE_Condition< MUTEX >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classMUTEX> int ACE_Condition<MUTEX>::broadcast (void)
+.PP
+Signal *all* waiting threads.
+.PP
+.SS template<classMUTEX> void ACE_Condition<MUTEX>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Thread_Condition\fR.
+.SS template<classMUTEX> MUTEX & ACE_Condition<MUTEX>::mutex (void)
+.PP
+Returns a reference to the underlying mutex_;.
+.PP
+.SS template<classMUTEX> void ACE_Condition<MUTEX>::operator= (const ACE_Condition< MUTEX >&)\fC [private]\fR
+.PP
+.SS template<classMUTEX> int ACE_Condition<MUTEX>::remove (void)
+.PP
+Explicitly destroy the condition variable.
+.PP
+.SS template<classMUTEX> int ACE_Condition<MUTEX>::signal (void)
+.PP
+Signal one waiting thread.
+.PP
+.SS template<classMUTEX> int ACE_Condition<MUTEX>::wait (MUTEX & mutex, const \fBACE_Time_Value\fR * abstime = 0)
+.PP
+Block on condition or until absolute time-of-day has passed. If abstime == 0 use "blocking" \fBwait\fR() semantics on the <mutex> passed as a parameter (this is useful if you need to store the <Condition> in shared memory). Else, if  != 0 and the call times out before the condition is signaled <wait> returns -1 and sets errno to ETIME. 
+.SS template<classMUTEX> int ACE_Condition<MUTEX>::wait (void)
+.PP
+Block on condition.
+.PP
+.SS template<classMUTEX> int ACE_Condition<MUTEX>::wait (const \fBACE_Time_Value\fR * abstime)
+.PP
+Block on condition, or until absolute time-of-day has passed. If abstime == 0 use "blocking" <wait> semantics. Else, if  != 0 and the call times out before the condition is signaled <wait> returns -1 and sets errno to ETIME. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classMUTEX> ACE_cond_t ACE_Condition<MUTEX>::cond_\fC [protected]\fR
+.PP
+Condition variable.
+.PP
+.SS template<classMUTEX> MUTEX & ACE_Condition<MUTEX>::mutex_\fC [protected]\fR
+.PP
+Reference to mutex lock.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

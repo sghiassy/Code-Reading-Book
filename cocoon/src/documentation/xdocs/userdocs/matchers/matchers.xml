@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>Matchers</title>
+		<subtitle>in Cocoon</subtitle>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+			<person name="Gianugo Rabellino" email="gianugo@rabellino.it"/>
+		 </authors>
+		 <abstract>This document describes all available matchers of Cocoon.</abstract>
+	</header>
+	<body>
+		 <s1 title="Goal">
+			<p>
+      This document lists all available matchers of Apache Cocoon and
+      describes their purpose.
+      See also the concepts document
+      <link href="../concepts/matchers_selectors.html">Using and Implementing
+      Matchers and Selectors</link>.
+      </p>
+		 </s1>
+		 <s1 title="Overview">
+			<p>
+      Matchers are a core component of Cocoon. These powerful sitemap
+      components allow Cocoon to associate a pure
+      "virtual" URI space to a given set of instructions that describe
+      how to generate, transform and present the requested resource(s) to
+      the client.
+      </p>
+      <p>
+      Cocoon is driven by the client request. A request typically
+      contains a URI, some parameters, cookies, and much more. The 
+      request, along with the Cocoon environment, is the entry 
+      point to decide what will be the sitemap instructions to be 
+      used. The mechanism to decide what will be the instruction 
+      driving the Cocoon process for a given request
+      is based on matching a request element against a pattern given
+      as a matcher's parameter. If the match operation is successful
+      processing starts.
+      </p>
+      <p>
+      As an example, consider the following sitemap snippet:
+      </p>
+<source>
+<![CDATA[
+<map:match pattern="body-faq.xml">
+  <map:generate src="xdocs/faq.xml"/>
+  <map:transform src="stylesheets/faq2document.xsl"/>
+  <map:transform src="stylesheets/document2html.xsl"/>
+  <map:serialize/>
+</map:match>
+
+<map:match pattern="body-**.xml">
+  <map:generate src="xdocs/{1}.xml"/>
+  <map:transform src="stylesheets/document2html.xsl"/>
+  <map:serialize/>
+</map:match>
+]]>   
+</source>
+      <p>
+      Here the two sitemap entries are mapped to different virtual URIs using
+      the default matcher (based on a wildcard intepretation of the request
+      URI) in a different way: the first one 
+      uses an exact match ("body-faq.xml"), meaning that only a Request URI
+      that exactly matches the string will result in a successful match. The
+      second one uses a wildcard pattern, meaning that every request 
+      starting with  "body-" and ending with ".xml" will satisfy the matcher's
+      requirement: thus requesting a resource such as "book-cocoon.xml" 
+      would turn out in the sitemap matching the request and starting
+      the second pipeline.
+      </p>
+		 </s1>
+     <s1 title="Order">
+       <p>
+       It's important to understand that Cocoon is based on a "first match"
+       approach. The request is matched against the different "map:match"
+       entries in the order in which they are specified in the sitemap: as soon
+       as a match is successful the pipeline is chosen and started. This means
+       that more specific patterns must appear before generic ones: in the 
+       example above if the two pipelines were in a different order a request
+       for "body-faq.xml" would never work properly, since the generic 
+       "book-**.xml" pattern would be matched first (this is a well known 
+       concept especially in router and firewall configurations). 
+       </p>
+     </s1>
+     <s1 title="Tokenization">
+       <p>
+       Another important feature of matchers is tokenization. Every "variable"
+       part of the pattern being matched will be kept in memory by Cocoon for 
+       further reuse and will be available in the next sitemap instructions 
+       as a numbered argument. This means that, using once again the previous 
+       example, when a request URI such as "body-index.xml" comes in and the 
+       second pipeline is choosen, the string that matches the "**" wildcard,
+       containing the value "index", is available in the sitemap as a parameter 
+       identified by {1}. This string can be used as the parameter for the 
+       generator which will evaluate the symbol resolving it to the string 
+       "index" and look for a file named "xdocs/index.html".  
+       </p>
+     </s1>
+     <s1 title="Wildcard and regular expressions">
+       <p>
+       Most of Cocoon matchers are built using two different techniques:
+       regular expressions and wildcards.
+       Regular expressions (or regexps) are a well known and powerful 
+       system for pattern matching: learning to master them it's outside 
+       the scope of this document, but there is a lot of documentation 
+       available on the web regarding this topic.
+       </p>
+       <p>
+       While being so powerful, regexps can just be overkill for most of 
+       typical Cocoon use cases where only simple matching operations
+       have to be performed. This is why Cocoon offers a simplified
+       pattern matching system based on a small set of very simple rules:
+       </p>
+       <ul>
+        <li>
+        An asterisk ('*') matches zero or more of  characters
+        up to the occurrence of a '/' character (which is intended as
+        a path separator). If a string such as /cocoon/docs/index.html is
+        matched against the pattern '/*/*.index.html' the match is <em>not</em>
+        succesful: the first asterisk would match only up to the first path
+        separator, resulting in the "cocoon" string. Using this technique
+        a correct pattern would be '/*/*/*.html'.
+        </li>
+        <li>
+        A string made of two asterisks ('**') matches zero or more 
+        characters, this time including the path separator (the character
+        '/'). Using the the example above the string would be matched by
+        the /**/*.html' pattern: the double asterisk would match also the
+        path separator and would resolve in the "cocoon/docs" string.
+        </li>
+        <li>
+        As with regexps the backslash character ('\') is used as an 
+        escape sequence. The string '\*' will match an actual asterisk
+        while a double backslash ('\\') will match the character '\'. A
+        pattern such as "**/a-\*-is-born.html" would match only strings
+        such as "documents/movies/a-*-is-born.html" or 
+        'a/very/long/path/a-*-is-born.html'. It would <em>not</em> match
+        a string such as 'docs/a-star-is-born.html'.
+        </li>
+       </ul>
+     </s1>
+		 <s1 title="The Matchers in Cocoon">
+       <ul>
+				 <li><strong>WildCard URI matcher</strong>(The default matcher): matches the URI against a wildcard pattern</li>
+				 <li><strong>Regexp URI matcher:</strong> 
+         matches the URI against a fully blown regular expression</li>
+				 <li><strong>Request parameter 
+         matcher:</strong> matches a request parameters given as a pattern. If
+         the parameter exists, its value is available for later substitution
+         </li>
+				 <li><strong>Wildcard request parameter matcher:</strong> matches a wildcard 
+         given as a pattern against the <strong>value</strong> of the configured 
+         parameter
+         </li>
+				 <li><strong>Wildcard session parameter matcher</strong>: same as the 
+         request parameter, but it matches a session parameter</li>
+			</ul>
+		</s1>
+	</body>
+</document>

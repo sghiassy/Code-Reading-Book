@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document><header><title>ESQL Taglib</title>
+<authors>
+<person name="Donald A. Ball Jr." email="balld@webslingerz.com"/>
+<person name="Robin Green" email="greenrd@hotmail.com"/>
+</authors></header><body>
+
+	<s1 title="Description">
+
+    <p>The ESQL logicsheet is an 
+XSP logicsheet that performs sql queries and serializes their 
+results as XML. This allows you to work with data from a wide variety of different sources when using Apache Cocoon.
+</p>
+
+    <p>It has a number of important advantages over the old (deprecated) SQL logicsheet and SQL processor.
+     For example, it allows you to mix esql with other logicsheets. It also
+     supports prepared statements (which gives you automatic parameter escaping), multiple encodings
+     in a single query and even multiple resultsets on one statement (if supported from database)!</p>
+
+    <p>The name was chosen merely to emphasise the fact that this is an extended version of the old sql logicsheet -
+       esql still uses standard SQL syntax. In fact, it is just a conversion wrapper around your JDBC database
+       driver, so it supports no more and no less SQL syntax than your JDBC driver supports.
+    </p>
+	</s1>
+
+	<s1 title="Installation">
+		<p>Check your <code>cocoon.xconf</code> for this line and add it if it's not already there:</p>
+		<source><![CDATA[
+<builtin-logicsheet>
+  <parameter name="prefix" value="esql"/>
+  <parameter name="uri" value="http://apache.org/cocoon/SQL/v2"/>
+  <parameter name="href"
+  value="resource://org/apache/cocoon/components/language/markup/xsp/java/esql.xsl"/>
+</builtin-logicsheet>
+]]></source>
+	</s1>
+
+	<s1 title="Configuration">
+		<p>Map the</p>
+		<source>http://apache.org/cocoon/SQL/v2</source>
+		<p>namespace to the esql prefix. Elements in the esql taglib namespace will be interpreted as input to 
+the esql taglib and will be stripped from the output.</p>
+		<p>This is typically done like this:</p>
+		<source><![CDATA[
+<xsp:page
+      language="java"
+      xmlns:xsp="http://apache.org/xsp"
+	  xmlns:esql="http://apache.org/cocoon/SQL/v2"
+>
+. . .
+</xsp:page>
+]]></source>
+	</s1>
+	<s1 title="Usage and Examples">
+          <p>At the moment documentation on esql is quite thin on the ground - however, it should be enough to get
+          you started.
+          In the <code>docs/samples/xsp</code> directory you will find <code>esql.xsp</code>, which is an example
+          of two esql queries, demonstrating "nested" queries and dynamic prepared statements. However, much more
+          comprehensive is the <strong>schema</strong> in <code>esql.xsd</code> which is a formal specification,
+          written in the W3C standard language XML Schema, of every single esql element and attribute.
+          It is fairly human-readable and includes comments for the purpose of each tag.</p>
+
+          <p>A fairly common example is to list a query result in a table. Notice that esql:results and esql:no-results
+          are mutual exclusive. So only one of them will be in your XML tree. This example takes a connection from a
+          datasource defined in <code>cocoon.xconf</code>:</p>
+
+          <source><![CDATA[
+<esql:connection>
+  <esql:pool>connectionName</esql:pool>
+  <esql:execute-query>
+    <esql:query>SELECT mycolumn1,mycolumn2 FROM table</esql:query>
+    <esql:results>
+      <table>
+        <esql:row-results>
+          <tr>
+             <td><esql:get-string column="mycolumn1"/></td>
+             <td><esql:get-string column="mycolumn2"/></td>
+          </tr>
+        </esql:row-results>
+      </table>
+    </esql:results>
+    <esql:no-results>
+       <p>Sorry, no results!</p>
+    </esql:no-results>
+  </esql:execute-query>
+</esql:connection>]]>
+</source>
+
+	   <p>For more complex lists, often nested queries are
+	   needed. Esql allows arbitrary nesting of queries. However,
+	   you can do table joins and then insert a header and footer
+	   whenever a "watched" column value changes using the
+	   <code>&lt;esql:group/&gt;</code> and
+	   <code>&lt;esql:member/&gt;</code> tags.  It follows the
+	   nesting ideology of <code>&lt;xsp:logic&gt;
+	   ... &lt;xsp:content&gt;&lt;/&gt;&lt;/&gt;</code>You can
+	   nest <code>&lt;esql:group&gt;</code> and
+	   <code>&lt;esql:member&gt;</code> indefinately.</p>
+
+	   <source><![CDATA[
+<esql:execute-query>
+  <esql:query>
+    select committeeName, title, firstName, middleName, lastName, suffix,
+status from committeeMember left join directoryInformation using(userid)
+left join committee on committee.id=committeeMember.committeeid order by
+committeeName asc
+  </esql:query>
+  <esql:results>
+    <esql:row-results>
+      <esql:group group-on="committeeName">
+        <h2><esql:get-string column="committeeName"/></h2>
+        <ul>
+          <esql:member>
+            <li>
+              <esql:get-string column="title"/>
+              <esql:get-string column="firstName"/>
+              <esql:get-string column="middleName"/>
+              <esql:get-string column="lastName"/>
+              <esql:get-string column="suffix"/>
+            </li>
+          </esql:member>
+        </ul>
+      </esql:group>
+    </esql:row-results>
+  </esql:results>
+</esql:execute-query>]]>
+          </source>
+
+          <p>The ultimate reference, is of course the source code, which is an XSLT logicsheet contained in the
+          file <code>src/org/apache/cocoon/components/language/markup/xsp/java/esql.xsl</code></p>
+
+          <p>Of course, we would be very grateful for any improvements on this documentation
+            or further examples - please send them to
+           <link href="mailto:cocoon-users@xml.apache.org">cocoon-users@xml.apache.org</link>!</p>
+
+	</s1>
+
+
+    <s1 title="Template Descriptions">
+      <table>
+          <tr>
+           <th>Tag</th>
+           <th>Description</th>
+          </tr>
+          <tr><td>esql:row-results//esql:get-columns</td>
+          <td>results in a set of elements whose names are the names of the columns. the elements each have one text child, whose value is the value of the column interpreted as a string. No special formatting is allowed here. If you want to mess around with the names of the elements or the value of the text field, use the type-specific get methods and write out the result fragment yourself. For Cocoon 2 only, this outputs structured types as well. Here sql-list or sql-set contains several sql-list-item or sql-set-item element that again contain the actual data.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-string</td>
+          <td>returns the value of the given column as a string</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-date</td>
+          <td>returns the value of the given column as a date. if a format attribute exists, its value is taken to be a date format string as defined in java.text.SimpleDateFormat, and the result is formatted accordingly.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-time</td>
+          <td>returns the value of the given column as a time. if a format attribute exists, its value is taken to be a date format string as defined in java.text.SimpleDateFormat, and the result is formatted accordingly.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-timestamp</td>
+          <td>returns the value of the given column as a timestamp. if a format attribute exists, its value is taken to be a date format string as defined in java.text.SimpleDateFormat, and the result is formatted accordingly.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-boolean</td>
+          <td>returns the value of the given column as true or false</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-double</td>
+          <td>returns the value of the given column as a double. if a format attribute exists, its value is taken to be a decimal format string as defined in java.text.DecimalFormat, and the result is formatted accordingly.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-float</td>
+          <td>returns the value of the given column as a float. if a format attribute exists, its value is taken to be a decimal format string as defined in java.text.DecimalFormat, and the result is formatted accordingly.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-int</td>
+          <td>returns the value of the given column as an integer</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-long</td>
+          <td>returns the value of the given column as a long</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-short</td>
+          <td>returns the value of the given column as a short</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-ascii</td>
+          <td>returns the value of the given column as a clob</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-object</td>
+          <td>returns the value of the given column as an object</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-array</td>
+          <td>returns the value of the given column as an java.sql.Array. This is frequently used for collection 
+	      datatypes like lists, sets, bags etc.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-struct</td>
+          <td>returns the value of the given column as a java.sql.Struct. This is frequently used for row types.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-xml</td>
+          <td>returns the value of the given column interpreted as an xml fragment.
+ The fragment is parsed by the default xsp parser and the document element is returned.
+ If a root attribute exists, its value is taken to be the name of an element to wrap around the contents of
+ the fragment before parsing.</td>
+ </tr>
+          <tr><td>esql:results//esql:get-column-count</td>
+          <td>returns the number of columns in the resultset.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-row-position|esql:results//esql:get-row-position</td>
+          <td>returns the position of the current row in the result set</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-column-name</td>
+          <td>returns the name of the given column. the column must be specified by number, not name.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-column-label</td>
+          <td>returns the label of the given column. the column must be specified by number, not name.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:get-column-type-name</td>
+          <td>returns the name of the type of the given column. the column must be specified by number, not name.</td>
+          </tr>
+          <tr><td>esql:row-results//esql:is-null</td>
+          <td>allows null-column testing. Evaluates to a Java expression, which is true when the referred column contains a null-value for the current resultset row</td>
+          </tr>
+          <tr><td>esql:error-results//esql:get-message</td>
+          <td>returns the message of the current exception</td>
+          </tr>
+          <tr><td>esql:error-results//esql:to-string</td>
+          <td>returns the current exception as a string</td>
+          </tr>
+          <tr><td>esql:error-results//esql:get-stacktrace</td>
+          <td>returns the stacktrace of the current exception</td>
+          </tr>
+          <tr><td>esql:results/esql:get-metadata</td>
+          <td>returns the metadata associated with the current resultset</td>
+          </tr>
+          <tr><td>esql:results/esql:get-resultset</td>
+          <td>returns the current resultset</td>
+          </tr>
+	  <tr><td>esql:group</td>
+	  <td>Allows header and footer elements around groups of consecutive records with identical values in column named by @group-on.  Facilitates a single query with joins to be used in lieu of some nested queries.</td>
+          </tr>
+	  <tr><td>esql:member</td>
+	  <td>Used in conjunction with and nested inside esql:group.  Formatting for individual records goes within esql:member. Header and footer stuff goes in between group and member.</td>
+	  </tr>
+          <tr><td>@*|node()</td>
+          <td>used internally to determine which column is the given column. if a column attribute exists and its value is a number, it is taken to be the column's position. if the value is not a number, it is taken to be the column's name. if a column attribute does not exist, an esql:column element is assumed to exist and to render as a string (after all of the xsp instructions have been evaluated), which is taken to be the column's name.</td>
+          </tr>
+       </table>
+      </s1>
+
+</body></document>

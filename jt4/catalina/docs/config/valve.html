@@ -1,0 +1,309 @@
+<html>
+<head>
+<title>The 'Valve' Component</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>The <u>Valve</u> Component</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Common Attributes">[Common Attributes]</a>
+<a href="#Standard Implementation Attributes">[Standard Implementation Attributes]</a>
+<br>
+</div>
+
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>A <strong>Valve</strong> component represents an instance of a specified
+Java class that will be involved in the processing of each request and response
+handled by the <strong>Container</strong> within which it is nested,
+as follows:</p>
+<ul>
+<li>A Valve nested inside an <a href="engine.html">Engine</a> will process
+    all requests received by any <strong>Connector</strong> associated with
+    the <a href="service.html">Service</a> in which this Engine is nested.</li>
+<li>A Valve nested inside a <a href="host.html">Host</a> will process all
+    requests received by the associated <a href="engine.html">Engine</a> and
+    directed to the specified virtual host, but not requests directed to any
+    other virtual host associated with that Engine.</li>
+<li>A Valve nested inside a <a href="context.html">Context</a> will process
+    all requests received by the associated <a href="host.html">Host</a>, and
+    mapped to the specified web application, but not requests mapped to any
+    other web application associated with that Host.</li>
+</ul>
+
+<p>Valves are typically used to implement optional features for the associated
+Container.  See the "Special Features" section of the documentation on
+<a href="engine.html">Engine</a>, <a href="host.html">host</a>, and
+<a href="context.html">Context</a> Containers for more information about the
+Valves designed to be associated with each Container type.  This page
+summarizes the configuration information for all standard Valve implementations
+that are provided with Catalina.</p>
+
+<br>
+
+
+<a name="Common Attributes"></a>
+<h2>Common Attributes</h2>
+
+<p>All implementations of the <strong>Valve</strong> component support the
+following attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>className</code></td>
+    <td>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.catalina.Valve</code> interface.
+        Because there is no single standard implementation, this attribute
+        is required.  See <a href="#Standard Implementation Attributes">
+        Standard Implementation Attributes</a> for the names of the
+        supported classes.
+    </td>
+  </tr>
+
+</table>
+
+<br>
+
+
+<a name="Standard Implementation Attributes"></a>
+<h2>Standard Implementation Attributes</h2>
+
+<p>Unlike most other Catalina components, there is not a single standard
+implementation of the <strong>Valve</strong> component available.  Instead,
+a variety of standard implementations, with different functional purposes,
+are available for your use.  To select one, use the specified value for the
+<code>className</code> attribute, and configure the remaining attributes
+as described below.</p>
+
+
+<a name="AccessLogValve"></a>
+<h3>Access Log Valve (<code>org.apache.catalina.valve.AccessLogValve</code>)</h3>
+
+<p>The <strong>Access Log Valve</strong> creates log files in the same format
+as those created by standard web servers.  These logs can later be analyzed
+by standard log analysis tools to track page hit counts, user session activity,
+and so on.  The access log Valve shares many configuration characteristics with
+the <a href="logger.html#FileLogger">File Logger</a>
+components used to record internal event, exception, and debugging output from
+Catalina components, including the automatic rollover of log files at
+midnight each night.  An Access Log Valve can be associated with an
+<a href="engine.html">Engine</a>, <a href="host.html">Host</a>, or
+<a href="context.html">Context</a> Container, and will log requests processed
+by the associated Container and any nested Containers.</p>
+
+<p>The Access Log Valve supports the following additional attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>directory</code></td>
+    <td>Relative or absolute pathname of the directory into which log
+        files will be created.  If a relative path is specified, it is
+        interpreted as relative to $CATALINA_HOME.  If no directory is
+        specified, the default value is "logs" (relative to the
+        Catalina home directory).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>pattern</code></td>
+    <td>A formatting layout identifying the various information fields
+        from the request and response to be logged, or the word
+        <code>common</code> to select the standard Common Log Format.
+        See below for more information on pattern variables.  If no
+        value is specified, the <code>common</code> format is utilized.
+  </tr>
+
+  <tr>
+    <td><code>prefix</code></td>
+    <td>The prefix added to the front of each log file name.  If not
+        specified, the default value is "access_log.".  To specify no
+        prefix, use a zero-length string.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>resolveHosts</code></td>
+    <td>Should the IP address of the remote client for each request be
+        resolved to the corresponding host name (via a DNS lookup)?  You
+        might wish to turn off host resolution to improve performance
+        in high activity web applications.  If not specified, the default
+        value is <code>false</code>, indicating that remote host resolution
+        will not take place.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>suffix</code></td>
+    <td>The suffix added to the end of each log file name.  If not
+        specified, the default value is "".  To specify no suffix,
+        use a zero-length string.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>timestamp</code></td>
+    <td>Should log messages be date/time stamped?  Set this value to
+        <code>true</code> or <code>false</code>.  If not specified,
+        log messages will not be date/time stamped.
+    </td>
+  </tr>
+
+</table>
+
+<p>Values for the <code>pattern</code> attribute are made up of literal text
+strings, and pattern identifiers prefixed by the <strong>%</strong> character,
+which cause replacement by the corresponding variable value from the current
+request and response.  The following pattern codes are supported:</p>
+<ul>
+<li><b>%a</b> - Remote IP address</li>
+<li><b>%A</b> - Local IP address</li>
+<li><b>%b</b> - Bytes sent, excluding HTTP headers, or '-' if zero</li>
+<li><b>%B</b> - Bytes sent, excluding HTTP headers</li>
+<li><b>%h</b> - Remote host name (or IP address if resolveHosts is false)</li>
+<li><b>%H</b> - Request protocol</li>
+<li><b>%l</b> - Remote logical username from identd (always returns '-')</li>
+<li><b>%m</b> - Request method (GET, POST, etc.)</li>
+<li><b>%p</b> - Local port on which this request was received</li>
+<li><b>%q</b> - Query string (prepended with a '?' if it exists)</li>
+<li><b>%r</b> - First line of the request (method and request URI)</li>
+<li><b>%s</b> - HTTP status code of the response</li>
+<li><b>%t</b> - Date and time, in Common Log Format</li>
+<li><b>%u</b> - Remote user that was authenticated (if any), else '-'</li>
+<li><b>%U</b> - Requested URL path</li>
+<li><b>&v</b> - Local server name</li>
+</ul>
+
+<p>If you specify a pattern of <code>common</code>, or do not specify a pattern
+at all, the common pattern <code>%h %l %u %t "%r" %s %b</code> is used, which
+corresponds to the default logging format for many web servers.</p>
+
+
+<a name="RemoteAddressFilter"></a>
+<h3>Remote Address Filter (<code>org.apache.catalina.valve.RemoteAddrValve</code>)</h3>
+
+<p>The <strong>Remote Address Filter</strong> allows you to compare the IP
+address of the client that submitted this request against one or more
+<em>regular expressions</em>, and either allow the request to continue
+or refuse to process a request from this client based on the outcome of the
+comparison.  A Remote Address Filter can be associated with an
+<a href="engine.html">Engine</a>, <a href="host.html">Host</a>, or
+<a href="context.html">Context</a> Container, and will filter requests
+processed by the associated Container and any nested Containers.</p>
+
+<p>The Remote Address Filter supports the following additional attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td>allow</td>
+    <td>A comma-separated list of <em>regular expression</em> patterns that
+        the remote client's IP address is compared to.  If this attribute is
+        specified, the remote address <strong>must</strong> match at least
+        one of the patterns to be allowed.  If this attribute is not
+        specified, all requests are allowed unless the remote address
+        matches a <code>deny</code> pattern.
+    </td>
+  </tr>
+
+  <tr>
+    <td>deny</td>
+    <td>A comma-separated list of <em>regular expression</em> patterns that
+        the remote client's IP address is compared to.  If this attribute is
+        specified, the remote address <strong>must not</strong> match any of
+        the specified patterns to be allowed.  If this attribute is not
+        specified, any request where the remote address matches one of the
+        <code>accept</code> patterns is allowed.
+    </td>
+  </tr>
+
+</table>
+
+
+<a name="RemoteHostFilter"></a>
+<h3>Remote Host Filter (<code>org.apache.catalina.valve.RemoteHostValve</code>)</h3>
+
+<p>The <strong>Remote Host Filter</strong> allows you to compare the remote
+host address of the client that submitted this request against one or more
+<em>regular expressions</em>, and either allow the request to continue
+or refuse to process a request from this client based on the outcome of the
+comparison.  A Remote Host Filter can be associated with an
+<a href="engine.html">Engine</a>, <a href="host.html">Host</a>, or
+<a href="context.html">Context</a> Container, and will filter requests
+processed by the associated Container and any nested Containers.</p>
+
+<p>The Remote Address Host supports the following additional attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td>allow</td>
+    <td>A comma-separated list of <em>regular expression</em> patterns that
+        the remote client's host address is compared to.  If this attribute is
+        specified, the remote address <strong>must</strong> match at least
+        one of the patterns to be allowed.  If this attribute is not
+        specified, all requests are allowed unless the remote address
+        matches a <code>deny</code> pattern.
+    </td>
+  </tr>
+
+  <tr>
+    <td>deny</td>
+    <td>A comma-separated list of <em>regular expression</em> patterns that
+        the remote client's host address is compared to.  If this attribute is
+        specified, the remote address <strong>must not</strong> match any of
+        the specified patterns to be allowed.  If this attribute is not
+        specified, any request where the remote address matches one of the
+        <code>accept</code> patterns is allowed.
+    </td>
+  </tr>
+
+</table>
+
+
+<a name="RequestDumperValve"></a>
+<h3>Request Dumper Valve (<code>org.apache.catalina.valve.RequestDumperValve</code>)</h3>
+
+<p>The <strong>Request Dumper Valve</strong> is a debugging tool that lets you
+insert a component that dumps the HTTP headers associated with the specified
+request (before processing) and response (after processing) to the
+<a href="logger.html">Logger</a> that is associated with our corresponding
+Container.  It is especially useful when trying to debug problems related to
+headers or cookies sent by an HTTP client.  A Request Dumper Filter can be
+associated with an <a href="engine.html">Engine</a>,
+<a href="host.html">Host</a>, or <a href="context.html">Context</a> Container,
+and will log requests processed by the associated Container and any nested
+Containers.</p>
+
+<p>The Request Dumper Filter supports no additional attributes.</p>
+
+<br>
+
+
+</body>
+</html>

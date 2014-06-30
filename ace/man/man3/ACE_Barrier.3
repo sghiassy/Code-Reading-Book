@@ -1,0 +1,138 @@
+.TH ACE_Barrier 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Barrier \- Implements "barrier synchronization". 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch.h>\fR
+.PP
+Inherited by \fBACE_Thread_Barrier\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Barrier\fR (u_int count, const \fBACE_TCHAR\fR *name = 0, void *arg = 0)"
+.br
+.RI "\fIInitialize the barrier to synchronize <count> threads.\fR"
+.ti -1c
+.RI "\fB~ACE_Barrier\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBwait\fR (void)"
+.br
+.RI "\fIBlock the caller until all <count> threads have called <wait> and then allow all the caller threads to continue in parallel.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Mutex\fR \fBlock_\fR"
+.br
+.RI "\fISerialize access to the barrier state.\fR"
+.ti -1c
+.RI "int \fBcurrent_generation_\fR"
+.br
+.RI "\fIEither 0 or 1, depending on whether we are the first generation of waiters or the next generation of waiters.\fR"
+.ti -1c
+.RI "int \fBcount_\fR"
+.br
+.RI "\fITotal number of threads that can be waiting at any one time.\fR"
+.ti -1c
+.RI "\fBACE_Sub_Barrier\fR \fBsub_barrier_1_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Sub_Barrier\fR \fBsub_barrier_2_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Sub_Barrier\fR* \fBsub_barrier_\fR [2]"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Barrier &)"
+.br
+.ti -1c
+.RI "\fBACE_Barrier\fR (const ACE_Barrier &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Implements "barrier synchronization".
+.PP
+.PP
+ This class allows <count> number of threads to synchronize their completion of (one round of) a task, which is known as "barrier synchronization". The implementation uses a "sub-barrier generation numbering" scheme to avoid overhead and to ensure that all threads wait to leave the barrier correct. This code is based on an article from SunOpsis Vol. 4, No. 1 by Richard Marejka (Richard.Marejka@canada.sun.com). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Barrier::ACE_Barrier (u_int count, const \fBACE_TCHAR\fR * name = 0, void * arg = 0)
+.PP
+Initialize the barrier to synchronize <count> threads.
+.PP
+.SS ACE_Barrier::~ACE_Barrier (void)
+.PP
+Default dtor.
+.PP
+.SS ACE_Barrier::ACE_Barrier (const ACE_Barrier &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Barrier::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Thread_Barrier\fR.
+.SS void ACE_Barrier::operator= (const ACE_Barrier &)\fC [private]\fR
+.PP
+.SS int ACE_Barrier::wait (void)
+.PP
+Block the caller until all <count> threads have called <wait> and then allow all the caller threads to continue in parallel.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Barrier::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_Thread_Barrier\fR.
+.SS int ACE_Barrier::count_\fC [protected]\fR
+.PP
+Total number of threads that can be waiting at any one time.
+.PP
+.SS int ACE_Barrier::current_generation_\fC [protected]\fR
+.PP
+Either 0 or 1, depending on whether we are the first generation of waiters or the next generation of waiters.
+.PP
+.SS \fBACE_Thread_Mutex\fR ACE_Barrier::lock_\fC [protected]\fR
+.PP
+Serialize access to the barrier state.
+.PP
+.SS \fBACE_Sub_Barrier\fR * ACE_Barrier::sub_barrier_[2]\fC [protected]\fR
+.PP
+.SS \fBACE_Sub_Barrier\fR ACE_Barrier::sub_barrier_1_\fC [protected]\fR
+.PP
+We keep two <sub_barriers>, one for the first "generation" of waiters, and one for the next "generation" of waiters. This efficiently solves the problem of what to do if all the first generation waiters don't leave the barrier before one of the threads calls \fBwait\fR() again (i.e., starts up the next generation barrier). 
+.SS \fBACE_Sub_Barrier\fR ACE_Barrier::sub_barrier_2_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

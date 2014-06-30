@@ -1,0 +1,138 @@
+.TH ACE_Async_Timer_Queue_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Async_Timer_Queue_Adapter \- Adapts a <TQ> to be run asynchronously. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Timer_Queue_Adapters.h>\fR
+.PP
+Inherits \fBACE_Event_Handler\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef TQ \fBTIMER_QUEUE\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Async_Timer_Queue_Adapter\fR (\fBACE_Sig_Set\fR *mask = 0)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "long \fBschedule\fR (\fBACE_Event_Handler\fR *type, const void *act, const \fBACE_Time_Value\fR &delay, const \fBACE_Time_Value\fR &interval = \fBACE_Time_Value::zero\fR)"
+.br
+.RI "\fISchedule the timer according to the semantics of the .\fR"
+.ti -1c
+.RI "int \fBcancel\fR (long timer_id, const void **act = 0)"
+.br
+.RI "\fICancel the <timer_id> and pass back the  if an address is passed in.\fR"
+.ti -1c
+.RI "int \fBexpire\fR (void)"
+.br
+.RI "\fIDispatch all timers whose values are <= <cur_time>. Returns the number of timers canceled.\fR"
+.ti -1c
+.RI "TQ& \fBtimer_queue\fR (void)"
+.br
+.RI "\fIAccess the underlying <TIMER_QUEUE>.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBschedule_ualarm\fR (void)"
+.br
+.RI "\fIPerform the logic to compute the new ualarm(2) setting.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_signal\fR (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)"
+.br
+.RI "\fICalled back by <SIGALRM> handler.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Sig_Handler\fR \fBsig_handler_\fR"
+.br
+.RI "\fIHandler for the <SIGALRM> signal, so that we can access our state without requiring any global variables.\fR"
+.ti -1c
+.RI "TQ \fBtimer_queue_\fR"
+.br
+.RI "\fIImplementation of the timer queue (e.g., , , etc.).\fR"
+.ti -1c
+.RI "\fBACE_Sig_Set\fR \fBmask_\fR"
+.br
+.RI "\fIMask of signals to be blocked when we're servicing <SIGALRM>.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TQ>  template class ACE_Async_Timer_Queue_Adapter
+Adapts a <TQ> to be run asynchronously.
+.PP
+.PP
+ This implementation uses the <ualarm> call, which generates the SIGARLM signal that is caught by this class. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classTQ> typedef TQ ACE_Async_Timer_Queue_Adapter<TQ>::TIMER_QUEUE
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTQ> ACE_Async_Timer_Queue_Adapter<TQ>::ACE_Async_Timer_Queue_Adapter<TQ> (\fBACE_Sig_Set\fR * mask = 0)
+.PP
+Constructor.
+.PP
+Register the SIGALRM handler. If <mask> == 0 then block all signals when <SIGALRM> is run. Otherwise, just block the signals indicated in <mask>. 
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTQ> int ACE_Async_Timer_Queue_Adapter<TQ>::cancel (long timer_id, const void ** act = 0)
+.PP
+Cancel the <timer_id> and pass back the  if an address is passed in.
+.PP
+.SS template<classTQ> int ACE_Async_Timer_Queue_Adapter<TQ>::expire (void)
+.PP
+Dispatch all timers whose values are <= <cur_time>. Returns the number of timers canceled.
+.PP
+.SS template<classTQ> int ACE_Async_Timer_Queue_Adapter<TQ>::handle_signal (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)\fC [private, virtual]\fR
+.PP
+Called back by <SIGALRM> handler.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classTQ> long ACE_Async_Timer_Queue_Adapter<TQ>::schedule (\fBACE_Event_Handler\fR * type, const void * act, const \fBACE_Time_Value\fR & delay, const \fBACE_Time_Value\fR & interval = \fBACE_Time_Value::zero\fR)
+.PP
+Schedule the timer according to the semantics of the .
+.PP
+Tthis timer gets dispatched via a signal, rather than by a user calling <expire>. Note that interval timers are not implemented yet. 
+.SS template<classTQ> int ACE_Async_Timer_Queue_Adapter<TQ>::schedule_ualarm (void)\fC [private, virtual]\fR
+.PP
+Perform the logic to compute the new ualarm(2) setting.
+.PP
+.SS template<classTQ> TQ & ACE_Async_Timer_Queue_Adapter<TQ>::timer_queue (void)
+.PP
+Access the underlying <TIMER_QUEUE>.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTQ> \fBACE_Sig_Set\fR ACE_Async_Timer_Queue_Adapter<TQ>::mask_\fC [private]\fR
+.PP
+Mask of signals to be blocked when we're servicing <SIGALRM>.
+.PP
+.SS template<classTQ> \fBACE_Sig_Handler\fR ACE_Async_Timer_Queue_Adapter<TQ>::sig_handler_\fC [private]\fR
+.PP
+Handler for the <SIGALRM> signal, so that we can access our state without requiring any global variables.
+.PP
+.SS template<classTQ> TQ ACE_Async_Timer_Queue_Adapter<TQ>::timer_queue_\fC [private]\fR
+.PP
+Implementation of the timer queue (e.g., , , etc.).
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

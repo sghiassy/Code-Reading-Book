@@ -1,0 +1,63 @@
+.TH Dump_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Dump_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/Synch.h"\fR
+.br
+\fC#include "ace/Dump_T.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Dumpable\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Dumpable_Ptr\fR"
+.br
+.ti -1c
+.RI "class \fBACE_ODB\fR"
+.br
+.ti -1c
+.RI "struct \fBACE_ODB::Tuple\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBDump.h\fR,v 4.15 2001/07/31 14:17:24 shuston Exp
+.PP
+A prototype mechanism that allow all \fBACE\fR objects to be registered with a central in-memory "database" that can dump the state of all live \fBACE\fR objects (e.g., from within a debugger).
+.PP
+The macros which allow easy registration and removal of objects to be dumped (ACE_REGISTER_OBJECT and ACE_REMOVE_OBJECT) are turned into no-ops by compiling with the ACE_NDEBUG macro defined. This allows usage to be removed in "release mode" builds without changing code.
+.PP
+There are several interesting aspects to this design:
+.PP
+1. It uses the External Polymorphism pattern to avoid having to derive all \fBACE\fR classes from a common base class that has virtual methods (this is crucial to avoid unnecessary overhead). In addition, there is no additional space added to \fBACE\fR objects (this is crucial to maintain binary layout compatibility).
+.PP
+2. This mechanism can be conditionally compiled in order to completely disable this feature entirely. Moreover, by using macros there are relatively few changes to \fBACE\fR code.
+.PP
+3. This mechanism copes with single-inheritance hierarchies of dumpable classes. In such cases we typically want only one dump, corresponding to the most derived instance. Thanks to Christian Millour (chris@etca.fr) for illustrating how to do this. Note, however, that this scheme doesn't generalize to work with multiple-inheritance or virtual base classes.
+.PP
+Future work includes:
+.PP
+1. Using a dynamic object table rather than a static table
+.PP
+2. Adding support to allow particular classes of objects to be selectively dumped.
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Doug Schmidt
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

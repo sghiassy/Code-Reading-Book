@@ -1,0 +1,942 @@
+.\" $XFree86: xc/programs/Xserver/hw/xfree86/XF86_Acc.man,v 3.58.2.3 1997/05/24 13:55:52 dawes Exp $ 
+.TH XF86_Accel 1 "Version 3.3"  "XFree86"
+.SH NAME
+XF86_Accel - accelerated X Window System servers for
+UNIX on x86 and Alpha platforms with an S3, Mach8, Mach32, Mach64, P9000, AGX,
+ET4000/W32, ET6000, I128, TGA, or 8514/A accelerator board
+.SH SYNOPSIS
+.B XF86_S3
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_S3V
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_Mach8
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_Mach32
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_Mach64
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_P9000
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_AGX
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_W32
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_I128
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_TGA
+[:displaynumber] [ option ] ...
+.LP
+.B XF86_8514
+[:displaynumber] [ option ] ...
+.SH DESCRIPTION
+.I XF86_S3
+is an 8-bit PseudoColor, 16-bit TrueColor and 32-bit TrueColor server for
+S3 graphic accelerator boards.  Note, 16-bit and 32-bit operation is not
+supported on all S3 accelerator boards.  Refer to \fIREADME.S3\fP for
+details of which boards are supported at which depths.
+.PP
+.I XF86_S3V
+is an 8-bit PseudoColor and 16-bit TrueColor server for
+S3 ViRGE and ViRGE/VX graphic accelerator boards.
+.PP
+.I XF86_Mach8
+is an 8-bit PseudoColor server for ATI Mach8 graphic accelerator boards. 
+.PP
+.I XF86_Mach32
+is an 8-bit PseudoColor and 16-bit TrueColor server for ATI Mach32
+graphic accelerator boards.  Note, 16-bit operation is not supported on
+all Mach32 accelerator boards.  Refer to \fIREADME.Mach32\fP for details
+of which RAMDACs are supported at which depths.
+.PP
+.I XF86_Mach64
+is an 8-bit PseudoColor, 16-bit TrueColor, and 32-bit TrueColor server
+for ATI Mach64 graphic accelerator boards.  Note, 16-bit and 32-bit
+operation is not supported for all RAMDACs.  Refer to
+\fIREADME.Mach64\fP for details of which RAMDACs are supported at
+which depths.
+.PP
+.I XF86_P9000
+is an 8-bit PseudoColor, 16-bit TrueColor, and 32-bit TrueColor
+server for Weitek Power 9000 (P9000) graphic accelerator boards. 
+.PP
+.I XF86_AGX
+is an 8-bit PseudoColor and 16-bit TrueColor server for AGX/XGA graphic
+accelerator boards.
+.PP
+.I XF86_W32
+is an 8-bit PseudoColor server for ET4000/W32, ET4000/W32i, ET4000/W32p and
+ET6000 graphic accelerator boards. For 16, 24 and 32 bits per pixel support
+on the ET6000, try the XF86_SVGA server.
+.PP
+.I XF86_I128
+is an server for Number Nine Imagine 128
+graphic accelerator boards.
+.PP
+.I XF86_TGA
+is an server for Digital's 21030 (TGA) chipset.  This server is available only
+for Alpha platforms.
+.PP
+.I XF86_8514
+is an 8-bit PseudoColor server for 8514/A graphic accelerator boards.  
+.PP
+These are derived from the
+.I X386
+server provided with X11R5, and from the
+.I X8514
+server developed by Kevin Martin <martin@cs.unc.edu>.
+.SH CONFIGURATIONS
+.PP
+The servers support the following chipsets:
+.RS .5i
+.TP 13
+XF86_S3:
+86C911, 86C924, 86C801, 86C805, 86C805i, 86C928, 86C928-P,
+86C732 (Trio32), 86C764 (Trio64), 86C765 (Trio64V+), 86C864, 86C868,
+86C964, 86C968
+.TP 13
+XF86_S3V:
+86C325 (ViRGE), 86C375 (ViRGE/DX), 86C385 (ViRGE/GX), 86C988 (ViRGE/VX)
+.TP 13
+XF86_Mach8:
+ATI Mach8, ATI Mach32
+.TP 13
+XF86_Mach32:
+ATI Mach32
+.TP 13
+XF86_Mach64:
+ATI Mach64 (GX, CT, ET, VT, GT)
+.TP 13
+XF86_P9000:
+Diamond Viper VLB, Diamond Viper PCI, Orchid P9000, and some clones
+(Weitek P9000)
+.TP 13
+XF86_AGX:
+AGX-010, AGX-014, AGX-015, AGX-016, XGA-1, XGA-2
+.TP 13
+XF86_W32:
+ET4000/W32, ET4000/W32i, ET3000/W32p, ET6000
+.TP 13
+XF86_I128:
+Number Nine Imagine 128 series 1 and 2
+.TP 13
+XF86_TGA:
+DEC 21030
+.TP 13
+XF86_8514:
+IBM 8514/A and true clones
+.RE
+.PP
+For S3 virtual resolutions up to (approximately)
+1152x800 are supported, using  (up to) 1Mb of display memory
+(the S3 uses an internal width of 1280 for some older chips,
+hence 1Mb can't support 1152x900).
+Physical resolutions up to 1280x1024 (1600x1280 on some cards) are
+possible using 2Mb or more of display memory (virtual resolution is
+dependent solely on the amount of memory installed, with the maximum
+virtual width being 2048, and max virtual height is 4096).
+.PP
+Similar resolutions are supported on the Mach64.  Refer to
+\fIREADME.Mach64\fP for configuration details.
+.PP
+Similar resolutions are supported on the Mach32.
+For the Mach32, the maximum virtual width is 1536, and the maximum virtual
+height is 1280.
+.PP
+For Mach8, the maximum virtual width is 1024.
+.PP
+For 8514 the maximum resolution is 1024x768.
+.PP
+For the AGX chips, maximum resolution depends upon the chip revision
+and amount of available display memory. 
+Refer to \fIREADME.agx\fP for configuration details.
+.PP
+For the P9000, the virtual and physical resolutions must be the
+same.  With sufficient memory, resolutions up to 1280x1024 are supported.
+.PP
+All the servers which support 24 bit visuals currently do so using a 32 bit
+per pixel configuration where 8 bits in every 32 bits is unused.  This needs
+to be taken into account when calculating the maximum virtual display size
+that can be supported at this depth.
+.SH OPTIONS
+In addition to the normal server options described in the \fIXserver(1)\fP
+manual page, these servers accept some more command line switches,
+as described in the 
+.I XFree86(1) 
+manpage.
+.sp
+The Mach64, Mach32, S3, S3V, P9000 and AGX servers support more than 8 bit
+color.
+The Mach32, S3V and AGX servers support 16 bit TrueColor and the Mach64, S3, 
+I128, and P9000 servers support 16 and 32 bit TrueColor.  
+The 32 bit TrueColor mode only uses
+24 bits per pixel for color information (giving you 16 million
+colors).  These modes may be used by specifying the \fB\-bpp\fP
+option as specified in the
+.I XFree86(1) 
+manpage.
+.SH SETUP
+.I XFree86
+uses a configuration file called \fBXF86Config\fP for its initial setup.  
+See the 
+.I XF86Config(4/5)
+manpage for general details. Here only the
+parts specific to the
+.I XF86_S3, XF86_S3V, XF86_Mach8, XF86_Mach32, XF86_Mach64, XF86_P9000,
+.I XF86_AGX, XF86_W32, XF86_TGA, XF86_I128,
+and 
+.I XF86_8514
+servers are explained.
+.PP
+Entries for the \fBDevice\fP section in the XF86Config file include:
+.br
+.ne 3i
+.TP 8
+.B Chipset \fI"name"\fP
+specifies a chipset so the correct driver can be used.  Possible chipsets
+are:
+.sp
+XF86_S3:
+.RS 1.5i
+.TP 12
+s3_generic
+(for a standard IO driven server) 
+.TP 12
+mmio_928
+(for a memory mapped IO driven server on 86C928, 86C732, 86C764, 86C864, 86C868, 86C964 and 86C968 boards)
+.TP 12
+newmmio
+(for a newer memory mapped IO driven server on 86C765, 86C868, and 86C968 boards)
+.RE
+.RS 8
+.PP
+XF86_S3V:
+.RE
+.RS 1.5i
+.TP 12
+s3_virge
+.RE
+.RS 8
+.PP
+XF86_Mach8:
+.RE
+.RS 1.5i
+.TP 12
+mach8
+(to force the Mach8 server to run on Mach32 boards)
+.RE
+.RS 8
+.PP
+XF86_Mach32:
+.RE
+.RS 1.5i
+.PP
+mach32
+.RE
+.RS 8
+.PP
+XF86_Mach64:
+.RE
+.RS 1.5i
+.PP
+mach64
+.RE
+.RS 8
+.PP
+XF86_P9000:
+.RE
+.RS 1.5i
+.PP
+vipervlb
+(for the Diamond Viper VLB)
+.TP 12
+viperpci
+(for the Diamond Viper PCI)
+.TP 12
+orchidp9000
+(for the Orchid P9000 and many generic P9000-based boards)
+.RE
+.RS 8
+.PP
+XF86_AGX:
+.RE
+.RS 1.5i
+.PP
+agx-016
+.TP 12
+agx-015
+.TP 12
+agx-014
+.TP 12
+agx-010
+.TP 12
+xga-2
+.TP 12
+xga-1
+(note: Only the agx-016, agx-015, agx-014 and XGA-2 have been tested.
+Refer to \fIREADME.agx\fP before attempting to use.)
+.RE
+.RS 8
+.PP
+XF86_W32:
+.RE
+.RS 1.5i
+.PP
+et4000w32
+.TP 12
+et4000w32i
+.TP 12
+et4000w32i_rev_b
+.TP 12
+et4000w32i_rev_c
+.TP 12
+et4000w32p_rev_a
+.TP 12
+et4000w32p_rev_b
+.TP 12
+et4000w32p_rev_c
+.TP 12
+et4000w32p_rev_d
+.TP 12
+et6000
+.RE
+.RS 8
+.PP
+XF86_I128:
+.RE
+.RS 1.5i
+.PP
+i128
+.RE
+.RS 8
+.PP
+XF86_TGA:
+.RE
+.RS 1.5i
+.PP
+tga
+.RE
+.RS 8
+.PP
+XF86_8514:
+.RE
+.RS 1.5i
+.PP
+ibm8514
+.RE
+.TP 8
+.B Clocks \fIclock ...\fP
+For boards with non-programmable clock chips, the clocks can be specified
+here (see \fIXF86Config(4/5)\fP).  The P9000 server no longer requires
+a \fBClocks\fP line.  It will work the same way as other servers with
+a programmable clock chip (i.e., use the clocks as specified in the
+Modes).  Note, clocks over 110\ Mhz are not recommended or supported
+by the P9000 server.  The Mach64 server also does not require a
+\fBClocks\fP line since the clocks are normally read directly from the
+video card's BIOS or programmed as required.  For the Mach64 server,
+the clocks given in the XF86Config file are ignored unless the
+"no_bios_clocks" option is given (see below).
+.TP 8
+.B ClockChip \fI"clockchip-type"\fP
+For boards with programmable clock chips (except with the 
+P9000 and AGX servers), the name of the clock chip is given.  
+The only supported values for the W32 server
+are \fB"icd2061a"\fP, \fB"dcs2834"\fP, \fB"ics5341"\fP and \fB"stg1703"\fP.
+Possible values for the S3 server
+include \fB"icd2061a"\fP, \fB"ics9161a"\fP, \fB"dcs2834"\fP, \fB"sc11412"\fP,
+\fB"s3gendac"\fP, \fB"s3_sdac"\fP, \fB"ti3025"\fP, \fB"ti3026"\fP,
+\fB"ti3030"\fP, \fB"ics2595"\fP,
+\fB"ics5300"\fP, \fB"ics5342"\fP, \fB"ch8391"\fP,
+\fB"stg1703"\fP, \fB"att20c408"\fP, \fB"att20c409"\fP, \fB"att20c499"\fP,
+and \fB"ibm_rgb5xx"\fP.
+Possible values for the Mach64 server include \fB"ati18818"\fP,
+\fB"ics2595"\fP, \fB"stg1703"\fP, \fB"ch8398"\fP, \fB"ibm_rgb514"\fP and
+\fB"att20c408"\fP.
+The only possible clockchip value for the ET6000 is \fB"et6000"\fP.
+.TP 8
+.B Ramdac \fI"ramdac-type"\fP
+This specifies the type of RAMDAC used on the board.  Only the S3,
+AGX, Mach32, Mach64, and W32 servers use this.
+.sp
+\fBnormal\fP - (S3, AGX, W32) Card does not have one of the other RAMDACs
+mentioned here.  This option is only required for the S3 server if the server 
+incorrectly detects one of those other RAMDACs. 
+The AGX server does not yet auto-detect RAMDACs, this 
+is the default if no RAMDAC is specified.
+Use this option for W32 server if it incorrectly identifies
+your RAMDAC or if RAMDAC detection fails entirely.
+.sp
+\fBatt20c490\fP - (S3, AGX, Mach32) Card has an AT&T 20C490 or AT&T 20C491
+RAMDAC.
+When the \fBdac_8_bit\fP option is specified, these
+RAMDACs may be operated in 8 bit per RGB mode.  It also allows 16bpp
+operation with 801/805/928 boards.  True AT&T 20C490 RAMDACs should be
+auto-detected by the S3 server.  This RAMDAC must be specified explicitly
+in other cases.
+Note that 8 bit per RGB mode does not
+appear to work with the Winbond 82C490 RAMDACs (which SuperProbe identifies
+as AT&T 20C492).  16bpp works fine with the Winbond 82C490.
+The Diamond SS2410 RAMDAC is reported to be compatible when operating in
+15bpp mode (not 16bpp).  The Chrontel 8391 appears to be compatible in
+all modes.
+.sp
+\fBsc15025\fP - (S3, AGX) Card has a Sierra SC15025 or SC15026 RAMDAC.
+The S3 server has code to auto-detect this RAMDAC.
+.sp
+\fBsc11482\fP - (S3) Card has a Sierra SC11482, SC11483 or SC11484 RAMDAC.
+The S3 server has code to auto-detect this RAMDAC.
+.sp
+\fBsc11485\fP - (S3) Card has a Sierra SC11485, SC11487 or SC11489 RAMDAC.
+The S3 server will detect these RAMDACs as a \fBsc11482\fP, so this option
+must be specified to take advantage of extra features (they support
+16bpp, 15bpp and 8bpp while the others only support 15bpp and 8bpp).
+.sp
+\fBbt485\fP - (S3) Card has a BrookTree Bt485 or Bt9485 RAMDAC.  This must
+be specified if the server fails to detect it.
+.sp
+\fBatt20c505\fP - (S3) Card has an AT&T 20C505 RAMDAC.  This must be specified
+either if the server fails to detect the 20C505, or if the card has a Bt485
+RAMDAC and there are problems using clocks higher than 67.5Mhz.
+.sp
+\fBatt20c498\fP - (S3) Card has an AT&T 20C498 or 21C498 RAMDAC.
+This must be specified if the server fails to detect it.
+.sp
+\fBatt22c498\fP - (S3) Card has an AT&T 22C498 RAMDAC.
+This must be specified if the server fails to detect it.
+.sp
+\fBibm_rgb514\fP - (S3) Card has an IBM RGB514 RAMDAC.
+This must be specified if the server fails to detect it.
+.sp
+\fBibm_rgb524\fP - (S3) Card has an IBM RGB524 RAMDAC.
+This must be specified if the server fails to detect it.
+.sp
+\fBibm_rgb525\fP - (S3) Card has an IBM RGB525 RAMDAC.
+This must be specified if the server fails to detect it.
+.sp
+\fBibm_rgb526\fP - (S3) Card has an IBM RGB526 RAMDAC.
+This must be specified if the server fails to detect it.
+.sp
+\fBibm_rgb528\fP - (S3) Card has an IBM RGB528 RAMDAC.
+This must be specified if the server fails to detect it.
+.sp
+\fBstg1700\fP - (S3) Card has an STG1700 RAMDAC.  This must be specified
+if the server fails to detect it.
+.sp
+\fBstg1703\fP - (S3,W32) Card has an STG1703 RAMDAC.  This must be specified
+if the server fails to detect it. Using the W32 server you MUST explicitly 
+set the STG1703 as ClockChip to be able to use the programming capabilities.
+.sp
+\fBs3gendac\fP - (S3) Card has an S3 86C708 GENDAC.
+This RAMDAC does not support 8 bit per RGB mode (don't specify
+the \fBdac_8_bit\fP option).
+It allows 16bpp operation with 801/805 boards.  There is currently no
+auto-detection for this RAMDAC.  
+.sp
+\fBs3_sdac\fP - (S3) Card has an S3 86C716 SDAC RAMDAC.  This must be specified
+if the server fails to detect it.
+.sp
+\fBics5300\fP - (S3) Card has an ICS5300 RAMDAC.  This must be specified
+if the server fails to detect it (the server will recognise this as
+an S3 GENDAC which is OK).
+.sp
+\fBics5341\fP - (W32) Card has an ICS5341 RAMDAC.  This must be specified
+if the server fails to detect it. For pixel clocks higher than 86MHz the
+server uses pixel multiplexing which seems to fail in a small band around
+90MHz on most boards. While the ICS5341 RAMDAC is usually recognized as 
+RAMDAC you MUST set it as ClockChip to be able to use the programming 
+capabilities.
+.sp
+\fBics5342\fP - (S3) Card has an ICS5342 RAMDAC.  This must be specified
+if the server fails to detect it (the server will recognise this as
+an S3 SDAC which is OK).
+.sp
+\fBti3020\fP - (S3) Card has a TI ViewPoint Ti3020 RAMDAC.  This must
+be specified if the server fails to detect the Ti3020.
+Note that pixel multiplexing will be used for this RAMDAC if any mode
+requires a dot clock higher than 70MHz.
+.sp
+\fBti3025\fP - (S3) Card has a TI ViewPoint Ti3025 RAMDAC.  This must
+be specified if the server fails to detect the Ti3025.
+.sp
+\fBti3026\fP - (S3) Card has a TI ViewPoint Ti3026 RAMDAC.  This must
+be specified if the server fails to detect the Ti3026.
+.sp
+\fBti3030\fP - (S3) Card has a TI ViewPoint Ti3030 RAMDAC.  This must
+be specified if the server fails to detect the Ti3030.
+.sp
+\fBbt481\fP - (AGX, Mach32) Card has a BrookTree Bt481 RAMDAC.
+.sp
+\fBbt482\fP - (AGX) Card has a BrookTree Bt482 RAMDAC.
+.sp
+\fBherc_dual_dac\fP - (AGX) Card (Hercules Graphite Pro) has both the
+84-pin (Bt485 or AT&T20C505) and 44-pin (Bt481 or Bt482) RAMDACs installed.
+.sp
+\fBherc_small_dac\fP - (AGX) Card (Hercules Graphite Pro) has only the
+44-pin (Bt481 or Bt482) RAMDAC installed.
+.sp
+\fBati68875\fP - (Mach64, Mach32) Card has an ATI 68875 RAMDAC.  This must
+be specified if the server fails to detect it.
+.sp
+\fBtlc34075\fP - (Mach64, Mach32) Card has a TI 34075 RAMDAC.  This must be
+specified if the server fails to detect it.
+.sp
+\fBati68860\fP - (Mach64) Card has an ATI 68860 RAMDAC.  This must be
+specified if the server fails to detect it.
+.sp
+\fBati68880\fP - (Mach64) Card has an ATI 68860 RAMDAC.  This must be
+specified if the server fails to detect it.
+.sp
+\fBstg1702\fP - (Mach64) Card has an STG1702 RAMDAC.  This must be
+specified if the server fails to detect it.
+.sp
+\fBch8398\fP - (Mach64) Card has an Chrontel 8398 RAMDAC.  This must
+be specified if the server fails to detect it.
+.sp
+\fBatt20c408\fP - (Mach64) Card has an AT&T 20C408 RAMDAC.  This must
+be specified if the server fails to detect it.
+.TP 8
+.B IOBase \fIioaddress\fP
+specified the base address for extended IO registers.  This is only
+used by the AGX server, and by the P9000 server for the Viper PCI.
+For details of how to use it, refer to \fIREADME.agx\fP and
+\fIREADME.P9000\fP.
+.TP 8
+.B MemBase \fImemaddress\fP
+specifies the hard-wired part of the linear framebuffer base address.  This
+option is only used by the P9000, S3, Mach64, Mach32, and TGA servers
+(and only when using a
+linear framebuffer).  For the S3 server, the hard-wired part is the high
+10 bits of the 32-bit address (ie \fImemaddress\fP is masked with
+\fI0xFFC00000\fP).  Note: this should not be required for the 864 and later
+chips where the entire framebuffer address is software-selectable, or for
+PCI cards.  Also, note
+that the in versions prior to 3.1.1, the S3 server used only the top 6 bits
+of \fImemaddress\fP, and ored it with 0x3C00000.  To get the same behaviour,
+or 0x3C00000 with the value given previously.
+For the Mach32 server, the mask is \fI0xF8000000\fP
+(except for PCI cards, where the membase setting is ignored).
+.sp
+This option must be specified with the P9000 server.  With local bus
+Diamond Vipers the value of \fImemaddress\fP can be either
+\fI0x80000000\fP, \fI0x20000000\fP, or \fI0xA0000000\fP.  The default
+is \fI0x80000000\fP.  Any value should work as long as it does not
+conflict with another device already at that address.
+For the Viper PCI, refer to \fIREADME.P9000\fP.
+For the Orchid P9000, the base address may be \fI0xC0000000\fP,
+\fI0xD0000000\fP or \fI0xE0000000\fP, and must correspond the the
+board's jumper setting.
+.sp
+Note: The S3 server will normally probe for this address automatically.
+Setting this option overrides that probe.  This is not normally recommended
+because the failure of the server's probe usually indicates problems in
+using the linear framebuffer.
+.sp
+Note: The Mach64 server requires the memory aperture.  For ISA bus
+video cards, this means that the aperture must be enabled and the
+aperture address must be set to a value less than 16Mb (which means
+that, on ISA systems only, to use the Mach64 server you must have 12Mb
+of main memory or less).  Normally the Mach64 server will use
+pre-defined values for this address, but setting this option will
+override the pre-defined address.
+.sp
+The Mach32 server should not require the use of this option under normal
+circumstances.
+.TP 8
+.B COPBase \fIbaseaddress\fP
+This sets the coprocessor base address for the AGX server.  Refer to
+\fIREADME.agx\fP for details.
+.TP 8
+.B Instance \fIinstance\fP
+This sets the XGA instance number for the AGX server.  Refer to
+\fIREADME.agx\fP for details.
+.TP 8
+.B S3MClk \fImemclk\fP
+This allows the video card's memory clock value to be specified.  This is
+only used for 805i, 864 and Trio32/64 cards, and the value should not normally be
+given here for cards with an S3 Gendac or Trio64).  This entry doesn't
+change the card's memory clock, but it is used to calculate the DRAM
+timing parameters.  For further details refer to \fIREADME.S3\fP.
+.TP 8
+.B S3MNAdjust \fIM N\fP
+This allows some memory timing parameters to be adjusted for DRAM
+cards.  This entry is not normally required.
+.TP 8
+.B S3RefClk \fIrefclk\fP
+This allows the PLL reference clock to be specified.  This may be required
+for some cards that use the IBM RGB5xx RAMDACs.  The value is in MHz.
+For further details refer to \fIREADME.S3\fP.
+.PP
+\fBOption\fP flags may be specified in either the \fBDevice\fP section
+or the \fBDisplay\fP subsection of the XF86Config file.
+.TP 8
+.B Option \fI"optionstring"\fP
+allows the user to select certain options provided by the drivers.  Currently 
+the following strings are recognized:
+.sp
+\fBnomemaccess\fP - (S3) disable direct access to video memory.  This option
+is ignored for the 864 and 964 chips.
+.sp
+\fBnoaccel\fP - (AGX, P9000) disable hardware acceleration for the P9000,
+and disables the font cache with the AGX.
+.sp
+\fBvram_128\fP - (AGX, P9000) when memory probe fails, use if you have
+128Kx8 VRAMs.
+.sp
+\fBvram_256\fP - (AGX, P9000) when memory probe fails, use if you don't have
+128Kx8 VRAMs.
+.sp
+\fBnolinear\fP - (S3 and Mach32) disable use of a linear-mapped framebuffer.
+.sp
+\fBti3020_curs\fP - (S3) Enables the Ti3020's internal HW cursor. (Default)
+.sp
+\fBno_ti3020_curs\fP - (S3) Disables the Ti3020's internal HW cursor.
+.sp
+\fBsw_cursor\fP - (S3, Mach32, Mach64, P9000, AGX) Disable the hardware cursor.
+.sp
+\fBdac_8_bit\fP - (S3, Mach32, Mach64, AGX) Enables 8-bit per RGB.
+Currently only
+supported with the Ti3020/5/6, Bt485, AT&T 20C505, AT&T 20C490/1,
+Sierra SC15025/6, AT&T 20C498 and STG1700/3, IBM RGB5xx (S3 server),
+Bt481 and Bt482 (AGX server),
+ATI68875/TLC34075/Bt885 (Mach32 server),
+ATI68875, TLC34075, ATI68860, ATI68880, STG1702, and STG1703 (Mach64
+server) RAMDACs.  This is now set by default in the S3 server when
+one of the above RAMDACs other than the AT&T 20C490/1 is used. Is
+also the default for the AGX server, except for the default VGA
+"normal" RAMDAC.
+.sp
+\fBdac_6_bit\fP - (S3, AGX) Force 6-bit per RGB in cases where 8-bit mode
+would automatically be enabled.
+.sp
+\fBsync_on_green\fP - (S3, P9000) Enables generation of sync on the green
+signal on cards with Bt485, AT&T 20C505, Ti3020/5/6 or IBM RGB5xx RAMDACs.  \fBNote:\fP
+Although these RAMDACs support sync on green, it won't work on many cards
+because of the way they are designed.
+.sp
+\fBpower_saver\fP - (S3, Mach64) This option enables the server
+to use the power saving features of VESA DPMS compatible monitors.
+The suspend level is currently only supported for the Mach64 and for
+the 732, 764, 864, 868, 964, 968 S3 chips.  Refer to the \fIXF86Config(4/5)\fP
+manual page for details of how to set the timeouts for the different levels
+of operation.  This option is experimental.
+.sp
+\fBintel_gx\fP - (Mach32) Sets the hard-wired offset for the linear
+framebuffer correctly for the Intel GX Pro cards.  This option is equivalent
+to setting the \fBmembase\fP to \fI0x78000000\fP.
+.sp
+\fBspea_mercury\fP - (S3) Enables pixel multiplex support for SPEA Mercury
+cards (928 + Bt485 RAMDAC).  For these cards, pixel multiplexing is required
+in order to use dot clocks higher than 67.5\ MHz and to access more than
+1MB of video memory.  Pixel multiplexing is currently supported only for
+non-interlaced modes, and modes with a physical width no smaller than 1024.
+.sp
+\fBstb_pegasus\fP - (S3) Enables pixel multiplex support for STB Pegasus
+cards (928 + Bt485 RAMDAC).  For these cards, pixel multiplexing is
+required in order to use dot clocks higher than 67.5\ MHz.  Pixel
+multiplexing is currently supported only for non-interlaced modes, and
+modes with a physical width no smaller than 1024.
+.sp
+\fBnumber_nine\fP - (S3) Enables pixel multiplex support for Number Nine
+GXe level 10, 11, 12 cards (928 + Bt485 RAMDAC).
+For these cards, pixel
+multiplexing is required in order to use dot clocks higher than 85\ MHz.
+Pixel multiplexing is currently supported only for non-interlaced modes,
+and modes with a physical width no smaller than 800.
+This option is also required for some other Number Nine cards (eg,
+GXE64 and GXE64pro).
+.sp
+\fBdiamond\fP - (S3) This option may be required for some Diamond cards
+(in particular, the 964/968 VRAM cards).
+.sp
+\fBelsa_w1000pro\fP - (S3) Enables support for the ELSA Winner 1000 PRO.
+This option is not usually required because the board can be auto-detected.
+.sp
+\fBelsa_w1000isa\fP - (S3) Enables support for the ELSA Winner 1000 ISA.
+This option is not usually required because the board can be auto-detected.
+.sp
+\fBelsa_w2000pro\fP - (S3) Enables support for the ELSA Winner 2000 PRO.
+This option is not usually required because the board can be auto-detected.
+.sp
+\fBpci_hack\fP - (S3) Enables a workaround for problems seen with some
+PCI 928 cards on machines with a buggy SMC UART.
+.sp
+\fBs3_964_bt485_vclk\fP - (S3) Enables a workaround for possible problems
+on cards using the 964 and Bt485.
+.sp
+\fBgenoa\fP, \fBstb\fP, \fBhercules\fP or \fBnumber_nine\fP, - (S3) 
+These options may used to select different defaults for the blank delay 
+settings for untested cards with IBM RGB5xx RAMDACs to avoid 
+pixel wrapping problems.
+.sp
+.ig
+\fBs3_invert_vclk\fP - (S3) Inverts the VRAM clock.
+.sp
+..
+\fBslow_vram\fP - (S3) Adjusts the VRAM timings for cards using slow
+VRAM.  This is required for some Diamond Stealth 64 VRAM and
+Hercules Terminator 64 cards.
+.sp
+\fBfast_vram\fP - (S3) Adjusts the VRAM timings for faster VRAM access.
+There will be display errors and pixel garbage if your card can't support
+it.
+.sp
+\fBslow_dram\fP - (W32) Adjusts the DRAM refresh for cards with
+slow DRAM. Try this if your monitor goes into power save mode with the
+W32 server and older W32 cards.
+.sp
+\fBslow_dram_refresh\fP - (S3) Adjusts the DRAM refresh for cards with
+slow DRAM to avoid lines of corrupted pixels when switching modes.
+.sp
+\fBpci_burst_on\fP - (W32) Turns on the PCI burst for the W32p chipset.
+Use this if your picture looks distorted and your mouse leaves trails
+behind with burst disabled.
+.sp
+\fBpci_burst_off\fP - (W32) Turns off the PCI burst for the W32p chipset.
+Use this if your picture looks distorted and your mouse leaves trails
+behind with burst enabled.
+.sp
+\fBw32_interleave_on\fP - (W32) Turns on the memory interleave for the 
+W32i and W32p chipset.  Try this if your server runs stable with it.
+.sp
+\fBw32_interleave_off\fP - (W32) Turns off the memory interleave for the
+W32i and W32p chipset.  Try this if your picture looks distorted or you
+don't get a picture at all.
+.sp
+\fBno_block_write\fP - (Mach64) Disables the block write mode on
+certain types of VRAM Mach64 cards.  If noise or shadows appear on the
+screen, this option should remove them.
+.sp
+\fBblock_write\fP - (Mach64) Enables the block write mode on certain
+types of VRAM Mach64 cards.  Normally the Mach64 server will
+automatically determine if the card can handle block write mode, but
+this option will override the probe result.
+.sp
+\fBno_bios_clocks\fP - (Mach64) The Mach64 server normally reads the
+clocks from the BIOS.  This option overrides the BIOS clocks and
+forces the server to use the clocks given in the XF86Config file.
+.sp
+\fBno_program_clocks\fP - (Mach64) The Mach64 server will
+automatically detect the clock chip and programs it directly from the
+video modes given.  This option disables the clock chip programming
+and forces the use of the pre-programmed clocks either read from the
+BIOS or given on the Clocks line in the XF86Config file.
+.sp
+\fBclkdiv2\fP - for all accelerated chipsets using a set of discrete clocks
+(i.e. not using a programmable ClockChip or a ClockProg, like older S3 cards
+and most ET4000W32 cards). With this option enabled, the accelerated driver
+can also use all the clocks mentionned in the clocks line divided by 2,
+presenting the server with twice as many clocks to choose from, especially
+in the low- and mid-range. This is useful for creating very low resolution
+modes like 320x200, because the lowest available clock on many cards (25.175
+MHz) is too high to create a standard 320x200 mode. A few SVGA chips don't
+support this option, causing a distorted screen (S3-805 rev C and P are
+known to have this problem).
+.sp
+There are also numerous tuning options for the AGX server.  Refer to
+\fIREADME.agx\fP for details.
+.PP
+Note that \fIXFree86\fP has some internal capabilities to determine
+what hardware
+it is running on. Thus normally the keywords \fIchipset\fP, \fIclocks\fP,
+and \fIvideoram\fP don't have to be specified.  But there
+may be occasions when this autodetection mechanism fails, (for example, too
+high of load on the machine when you start the server).  For cases like this,
+one should first run the server on an unloaded machine, look at the
+results of the autodetection (that are printed out during server startup)
+and then explicitly specify these parameters in the configuration file.
+\fBIt is recommended that all parameters, especially Clock values,
+be specified in the XF86Config file.\fP
+.SH FILES
+.TP 30
+<XRoot>/bin/XF86_S3
+The 8, 16, and 32-bit color X server for S3
+.TP 30
+<XRoot>/bin/XF86_S3V
+The 8, and 16-bit color X server for S3 ViRGE
+.TP 30
+<XRoot>/bin/XF86_Mach8
+The 8-bit color X server for Mach8
+.TP 30
+<XRoot>/bin/XF86_Mach32
+The 8, and 16-bit color X server for Mach32
+.TP 30
+<XRoot>/bin/XF86_Mach64
+The 8, 16, and 32-bit color X server for Mach64
+.TP 30
+<XRoot>/bin/XF86_P9000
+The 8, 16, and 32-bit color X server for the P9000
+.TP 30
+<XRoot>/bin/XF86_AGX
+The 8, and 16-bit color X server for AGX and XGA
+.TP 30
+<XRoot>/bin/XF86_W32
+The 8-bit color X server for ET4000/W32 and ET6000
+.TP 30
+<XRoot>/bin/XF86_I128
+The 8, 16 and 32-bit color X server for Imagine 128
+.TP 30
+<XRoot>/bin/XF86_TGA
+The 8-bit color X server for DEC TGA
+.TP 30
+<XRoot>/bin/XF86_8514
+The 8-bit color X server for IBM 8514 and true compatibles
+.TP 30
+/etc/XF86Config
+Server configuration file
+.TP 30
+<XRoot>/lib/X11/XF86Config
+Server configuration file (secondary location)
+.TP 30
+<XRoot>/lib/X11/doc/README.agx
+Extra documentation for the AGX server
+.TP 30
+<XRoot>/lib/X11/doc/README.P9000
+Extra documentation for the P9000 server
+.TP 30
+<XRoot>/lib/X11/doc/README.S3
+Extra documentation for the S3 server
+.TP 30
+<XRoot>/lib/X11/doc/README.W32
+Extra documentation for the W32 server
+.LP
+Note: <XRoot> refers to the root of the X11 install tree.
+.SH "SEE ALSO"
+X(1), Xserver(1), XFree86(1), XF86Config(4/5), xvidtune(1), xdm(1),
+xf86config(1), xinit(1)
+.SH AUTHORS
+.PP
+In addition to the authors of \fIXFree86\fP the following people
+contributed major work to this server:
+.PP
+.nf
+Kevin Martin,       \fImartin@cs.unc.edu\fP
+Jon Tombs,          \fItombs@XFree86.org\fP
+Rik Faith,          \fIfaith@cs.unc.edu\fP
+.fi
+.RS 8
+Did the overall work on the base accelerated servers.
+.RE
+.PP
+.nf
+David Dawes,        \fIdawes@XFree86.org\fP
+Dirk Hohndel,       \fIhohndel@XFree86.org\fP
+David Wexelblat,    \fIdwex@XFree86.org\fP
+.fi
+.RS 8
+Merged their work into XFree86.
+.RE
+.PP
+.nf
+Jon Tombs,          \fItombs@XFree86.org\fP
+David Wexelblat,    \fIdwex@XFree86.org\fP
+David Dawes,        \fIdawes@XFree86.org\fP
+Amancio Hasty,      \fIhasty@netcom.com\fP
+Robin Cutshaw,      \fIrobin@XFree86.org\fP
+Norbert Distler,    \fINorbert.Distler@physik.tu-muenchen.de\fP
+Leonard N. Zubkoff, \fIlnz@dandelion.com\fP
+Harald Koenig,      \fIkoenig@tat.physik.uni-tuebingen.de\fP
+Bernhard Bender,    \fIbr@elsa.mhs.compuserve.com\fP
+Hans Nasten,        \fInasten@everyware.se\fP
+Dirk Hohndel,       \fIhohndel@XFree86.org\fP
+Joe Moss,           \fIjoe@morton.rain.com\fP
+.fi
+.RS 8
+Development and improvement of the S3 specific code.
+.RE
+.PP
+.nf
+Kevin Martin,       \fImartin@cs.unc.edu\fP
+Rik Faith,          \fIfaith@cs.unc.edu\fP
+Tiago Gons,         \fItiago@comosjn.hobby.nl\fP
+Hans Nasten,        \fInasten@everyware.se\fP
+Scott Laird,        \fIscott@laird.com\fP
+.fi
+.RS 8
+Development and improvement of the Mach8 and 8514/A specific code.
+.RE
+.PP
+.nf
+Kevin Martin,       \fImartin@cs.unc.edu\fP
+Rik Faith,          \fIfaith@cs.unc.edu\fP
+Mike Bernson,       \fImike@mbsun.mlb.org\fP
+Mark Weaver,        \fIMark_Weaver@brown.edu\fP
+Craig Groeschel,    \fIcraig@metrolink.com\fP
+Bryan Feir,         \fIjenora@istar.ca\fP
+.fi
+.RS 8
+Development and improvement of the Mach32 specific code.
+.RE
+.PP
+.nf
+Kevin Martin,       \fImartin@cs.unc.edu\fP
+.fi
+.RS 8
+Development of the Mach64 specific code.
+.RE
+.PP
+.nf
+Erik Nygren,        \fInygren@mit.edu\fP
+Harry Langenbacher, \fIharry@brain.jpl.nasa.gov\fP
+Chris Mason,        \fIclmtch@osfmail.isc.rit.edu\fP
+Henrik Harmsen,     \fIharmsen@eritel.se\fP
+.fi
+.RS 8
+Development and improvement of the P9000 specific code.
+.RE
+.PP
+.nf
+Henry Worth,        \fIhenry.worth@amail.amdahl.com\fP
+.fi
+.RS 8
+Development of the AGX specific code.
+.RE
+.PP
+.nf
+Glenn Lai,          \fIglenn@cs.utexas.edu\fP
+Dirk Hohndel,       \fIhohndel@XFree86.org\fP
+Koen Gadeyne,       \fIkoen.gadeyne@barco.com\fP 
+.fi
+.RS 8
+Development of the ET4000/W32 and ET6000 specific code.
+.RE
+.PP
+See also the
+.I XFree86(1)
+manual page.
+.SH BUGS
+.PP
+Some S3 cards with Bt485 RAMDACs are currently restricted to
+dot-clocks less than 85MHz.
+.sp
+The P9000 server may still have problems with cards other than the
+Diamond Viper VLB.  There may still be problems with VGA mode
+restoration, but these should almost never occur.  Using physical
+resolutions different from the virtual resolution is not supported and
+is not possible with the P9000.  Use at dot-clocks greater than 110 MHz is
+not recommended and not supported.  Diamond claims that 135 MHz is the
+maximum clock speed, but some of their bt485's are not rated that
+high.  If you do not have a 135 MHz bt485 on your Viper, contact
+Diamond tech support and they will send you an RMA number to replace
+the board.  Acceleration is being added in slowly.  At the present,
+only CopyArea and MoveWindow and DrawLine are implemented.  Other accelerated
+features are being tested and may be available in the next release.
+There seems to be a problem with olvwm when used with xdm and VT
+switching.  The cursor will be messed up when you return to a VT
+if the cursor changed while you were in the VT.
+.sp
+The ET6000 server is quite new, and therefor not very thoroughly tested.
+Accelerated support is present, but doesn't use the full potential of the
+ET6000 chip (yet).
+.SH CONTACT INFO
+\fIXFree86\fP source is available from the FTP server
+\fIftp.XFree86.Org\fP and mirrors.  Send email to
+\fIXFree86@XFree86.Org\fP for details.
+.\" $XConsortium: XF86_Acc.man /main/26 1996/12/09 17:33:05 kaleb $

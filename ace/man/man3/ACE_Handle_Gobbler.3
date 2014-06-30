@@ -1,0 +1,85 @@
+.TH ACE_Handle_Gobbler 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Handle_Gobbler \- This class gobbles up handles. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Handle_Gobbler.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fB~ACE_Handle_Gobbler\fR (void)"
+.br
+.RI "\fIDestructor. Cleans up any remaining handles.\fR"
+.ti -1c
+.RI "int \fBconsume_handles\fR (size_t n_handles_to_keep_available)"
+.br
+.ti -1c
+.RI "int \fBfree_handles\fR (size_t n_handles)"
+.br
+.RI "\fIFree up <n_handles>.\fR"
+.ti -1c
+.RI "void \fBclose_remaining_handles\fR (void)"
+.br
+.RI "\fIAll remaining handles are closed.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Unbounded_Set\fR<ACE_HANDLE> \fBHANDLE_SET\fR"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBHANDLE_SET\fR \fBhandle_set_\fR"
+.br
+.RI "\fIThe container which holds the open descriptors.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class gobbles up handles.
+.PP
+.PP
+ This is useful when we need to control the number of handles available for a process. This class is mostly used for testing purposes. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Unbounded_Set\fR<ACE_HANDLE> ACE_Handle_Gobbler::HANDLE_SET\fC [private]\fR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Handle_Gobbler::~ACE_Handle_Gobbler (void)\fC [inline]\fR
+.PP
+Destructor. Cleans up any remaining handles.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Handle_Gobbler::close_remaining_handles (void)\fC [inline]\fR
+.PP
+All remaining handles are closed.
+.PP
+.SS int ACE_Handle_Gobbler::consume_handles (size_t n_handles_to_keep_available)\fC [inline]\fR
+.PP
+Handles are opened continously until the process runs out of them, and then <n_handles_to_keep_available> handles are closed (freed) thereby making them usable in the future. 
+.SS int ACE_Handle_Gobbler::free_handles (size_t n_handles)\fC [inline]\fR
+.PP
+Free up <n_handles>.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBHANDLE_SET\fR ACE_Handle_Gobbler::handle_set_\fC [private]\fR
+.PP
+The container which holds the open descriptors.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

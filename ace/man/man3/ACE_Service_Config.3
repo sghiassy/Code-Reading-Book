@@ -1,0 +1,497 @@
+.TH ACE_Service_Config 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Service_Config \- Supplies common server operations for dynamic and static configuration of services. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Service_Config.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBMAX_SERVICES\fR = ACE_DEFAULT_SERVICE_REPOSITORY_SIZE }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Service_Config\fR (int ignore_static_svcs = 1, size_t size = ACE_Service_Config::MAX_SERVICES, int signum = SIGHUP)"
+.br
+.RI "\fIInitialize the Service Repository.\fR"
+.ti -1c
+.RI "\fBACE_Service_Config\fR (const \fBACE_TCHAR\fR program_name[], const \fBACE_TCHAR\fR *logger_key = ACE_DEFAULT_LOGGER_KEY)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Service_Config\fR (void)"
+.br
+.RI "\fIPerform user-specified close activities and remove dynamic memory.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBopen_i\fR (const \fBACE_TCHAR\fR program_name[], const \fBACE_TCHAR\fR *logger_key = ACE_DEFAULT_LOGGER_KEY, int ignore_default_svc_conf_file = 0, int ignore_debug_flag = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_TCHAR\fR program_name[], const \fBACE_TCHAR\fR *logger_key = ACE_DEFAULT_LOGGER_KEY, int ignore_static_svcs = 1, int ignore_default_svc_conf_file = 0, int ignore_debug_flag = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (int argc, \fBACE_TCHAR\fR *argv[], const \fBACE_TCHAR\fR *logger_key = ACE_DEFAULT_LOGGER_KEY, int ignore_static_svcs = 1, int ignore_default_svc_conf = 0, int ignore_debug_flag = 0)"
+.br
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fITidy up and perform last rites when ACE_Service_Config is shut down. This method calls <close_svcs>. Returns 0.\fR"
+.ti -1c
+.RI "int \fBfini_svcs\fR (void)"
+.br
+.RI "\fIPerform user-specified close hooks and possibly delete all of the configured services in the <Service_Repository>.\fR"
+.ti -1c
+.RI "int \fBclose_svcs\fR (void)"
+.br
+.ti -1c
+.RI "int \fBclose_singletons\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun_reactor_event_loop\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrun_reactor_event_loop\fR (\fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBend_reactor_event_loop\fR (void)"
+.br
+.ti -1c
+.RI "int \fBreactor_event_loop_done\fR (void)"
+.br
+.ti -1c
+.RI "int \fBreconfig_occurred\fR (void)"
+.br
+.RI "\fITrue if reconfiguration occurred.\fR"
+.ti -1c
+.RI "void \fBreconfig_occurred\fR (int)"
+.br
+.RI "\fIIndicate that reconfiguration occurred.\fR"
+.ti -1c
+.RI "void \fBreconfigure\fR (void)"
+.br
+.RI "\fIPerform the reconfiguration process.\fR"
+.ti -1c
+.RI "\fBACE_STATIC_SVCS\fR* \fBstatic_svcs\fR (void)"
+.br
+.RI "\fIReturns a pointer to the list of statically linked services.\fR"
+.ti -1c
+.RI "\fBACE_Reactor\fR* \fBreactor\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Reactor\fR* \fBreactor\fR (\fBACE_Reactor\fR *)"
+.br
+.ti -1c
+.RI "\fBACE_Service_Repository\fR* \fBsvc_rep\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Service_Repository\fR* \fBsvc_rep\fR (\fBACE_Service_Repository\fR *)"
+.br
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBthr_mgr\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBthr_mgr\fR (\fBACE_Thread_Manager\fR *)"
+.br
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBalloc\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBalloc\fR (\fBACE_Allocator\fR *)"
+.br
+.ti -1c
+.RI "int \fBinitialize\fR (const \fBACE_Service_Type\fR *, \fBACE_TCHAR\fR parameters[])"
+.br
+.RI "\fIDynamically link the shared object file and retrieve a pointer to the designated shared object in this file.\fR"
+.ti -1c
+.RI "int \fBinitialize\fR (const \fBACE_TCHAR\fR svc_name[], \fBACE_TCHAR\fR parameters[])"
+.br
+.RI "\fIInitialize and activate a statically <svc_name> service.\fR"
+.ti -1c
+.RI "int \fBresume\fR (const \fBACE_TCHAR\fR svc_name[])"
+.br
+.RI "\fIResume a <svc_name> that was previously suspended or has not yet been resumed (e.g., a static service).\fR"
+.ti -1c
+.RI "int \fBsuspend\fR (const \fBACE_TCHAR\fR svc_name[])"
+.br
+.ti -1c
+.RI "int \fBremove\fR (const \fBACE_TCHAR\fR svc_name[])"
+.br
+.RI "\fITotally remove <svc_name> from the daemon by removing it from the \fBACE_Reactor\fR, and unlinking it if necessary.\fR"
+.ti -1c
+.RI "ACE_INLINE void \fBsignal_handler\fR (\fBACE_Sig_Adapter\fR *)"
+.br
+.RI "\fISet the signal_handler;for internal use by \fBACE_Object_Manager\fR only.\fR"
+.ti -1c
+.RI "int \fBprocess_directive\fR (const \fBACE_TCHAR\fR directive[])"
+.br
+.RI "\fIProcess one service configuration <directive>, which is passed as a string. Returns the number of errors that occurred.\fR"
+.ti -1c
+.RI "int \fBprocess_directive\fR (const \fBACE_Static_Svc_Descriptor\fR &ssd, int force_replace = 0)"
+.br
+.RI "\fIProcess one static service definition.\fR"
+.ti -1c
+.RI "int \fBprocess_directives\fR (void)"
+.br
+.ti -1c
+.RI "void \fBhandle_signal\fR (int sig, \fBsiginfo_t\fR *, \fBucontext_t\fR *)"
+.br
+.RI "\fIHandles signals to trigger reconfigurations.\fR"
+.ti -1c
+.RI "int \fBparse_args\fR (int, \fBACE_TCHAR\fR *argv[])"
+.br
+.in -1c
+.SS Static Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBprocess_commandline_directives\fR (void)"
+.br
+.RI "\fIProcess service configuration requests that were provided on the command-line. Returns the number of errors that occurred.\fR"
+.ti -1c
+.RI "int \fBprocess_directives_i\fR (void)"
+.br
+.ti -1c
+.RI "int \fBstart_daemon\fR (void)"
+.br
+.RI "\fIBecome a daemon.\fR"
+.ti -1c
+.RI "int \fBload_static_svcs\fR (void)"
+.br
+.RI "\fIAdd the default statically-linked services to the .\fR"
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBinit_svc_conf_file_queue\fR (void)"
+.br
+.RI "\fIInitialize the <svc_conf_file_queue_> if necessary.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBlogger_key_\fR"
+.br
+.RI "\fIIndicates where to write the logging output. This is typically either a \fBSTREAM\fR pipe or a socket address.\fR"
+.ti -1c
+.RI "\fBACE_STATIC_SVCS\fR* \fBstatic_svcs_\fR"
+.br
+.RI "\fISingleton repository of statically linked services.\fR"
+.ti -1c
+.RI "\fBACE_SVC_QUEUE\fR* \fBsvc_queue_\fR"
+.br
+.RI "\fIQueue of services specified on the command-line.\fR"
+.ti -1c
+.RI "\fBACE_SVC_QUEUE\fR* \fBsvc_conf_file_queue_\fR"
+.br
+.RI "\fIQueue of svc.conf files specified on the command-line. This should probably be made to handle unicode filenames...\fR"
+.ti -1c
+.RI "\fBsig_atomic_t\fR \fBreconfig_occurred_\fR"
+.br
+.RI "\fITrue if reconfiguration occurred.\fR"
+.ti -1c
+.RI "int \fBbe_a_daemon_\fR"
+.br
+.RI "\fIShall we become a daemon process?\fR"
+.ti -1c
+.RI "int \fBno_static_svcs_\fR"
+.br
+.RI "\fIShould we avoid loading the static services?\fR"
+.ti -1c
+.RI "int \fBsignum_\fR"
+.br
+.RI "\fINumber of the signal used to trigger reconfiguration.\fR"
+.ti -1c
+.RI "\fBACE_Sig_Adapter\fR* \fBsignal_handler_\fR"
+.br
+.RI "\fIHandles the reconfiguration signals.\fR"
+.ti -1c
+.RI "int \fBis_initialized_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Supplies common server operations for dynamic and static configuration of services.
+.PP
+.PP
+ The  uses the Monostate pattern. Therefore, you can only have one of these instantiated per-process. NOTE: the signal_handler_ static member is allocated by the . The  constructor uses signal_handler_. Therefore, if the program has any static  objects, there might be initialization order problems. They can be minimized, but not eliminated, by _not_ defining . 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIMAX_SERVICES\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Service_Config::ACE_Service_Config (int ignore_static_svcs = 1, size_t size = ACE_Service_Config::MAX_SERVICES, int signum = SIGHUP)
+.PP
+Initialize the Service Repository.
+.PP
+.SS ACE_Service_Config::ACE_Service_Config (const \fBACE_TCHAR\fR program_name[], const \fBACE_TCHAR\fR * logger_key = ACE_DEFAULT_LOGGER_KEY)
+.PP
+Performs an open without parsing command-line arguments. The <logger_key> indicates where to write the logging output, which is typically either a \fBSTREAM\fR pipe or a socket address. 
+.SS ACE_Service_Config::~ACE_Service_Config (void)\fC [virtual]\fR
+.PP
+Perform user-specified close activities and remove dynamic memory.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS \fBACE_Allocator\fR * ACE_Service_Config::alloc (\fBACE_Allocator\fR *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer. DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS \fBACE_Allocator\fR * ACE_Service_Config::alloc (void)\fC [static]\fR
+.PP
+Get pointer to a default . DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS int ACE_Service_Config::close (void)\fC [static]\fR
+.PP
+Tidy up and perform last rites when ACE_Service_Config is shut down. This method calls <close_svcs>. Returns 0.
+.PP
+.SS int ACE_Service_Config::close_singletons (void)\fC [static]\fR
+.PP
+Delete the dynamically allocated Singletons (i.e., the <Reactor>, <Proactor>, <ReactorEx>, and <Thread_Manager>. Returns 0. 
+.SS int ACE_Service_Config::close_svcs (void)\fC [static]\fR
+.PP
+Perform user-specified close hooks on all of the configured services in the <Service_Repository>, then delete the <Service_Repository> itself. Returns 0. 
+.SS void ACE_Service_Config::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_Service_Config::end_reactor_event_loop (void)\fC [static]\fR
+.PP
+Instruct the  to terminate its event loop and notifies the  so that it can wake up and close down gracefully. DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS int ACE_Service_Config::fini_svcs (void)\fC [static]\fR
+.PP
+Perform user-specified close hooks and possibly delete all of the configured services in the <Service_Repository>.
+.PP
+.SS void ACE_Service_Config::handle_signal (int sig, \fBsiginfo_t\fR *, \fBucontext_t\fR *)\fC [static]\fR
+.PP
+Handles signals to trigger reconfigurations.
+.PP
+.SS int ACE_Service_Config::init_svc_conf_file_queue (void)\fC [static, private]\fR
+.PP
+Initialize the <svc_conf_file_queue_> if necessary.
+.PP
+.SS int ACE_Service_Config::initialize (const \fBACE_TCHAR\fR svc_name[], \fBACE_TCHAR\fR parameters[])\fC [static]\fR
+.PP
+Initialize and activate a statically <svc_name> service.
+.PP
+.SS int ACE_Service_Config::initialize (const \fBACE_Service_Type\fR *, \fBACE_TCHAR\fR parameters[])\fC [static]\fR
+.PP
+Dynamically link the shared object file and retrieve a pointer to the designated shared object in this file.
+.PP
+.SS int ACE_Service_Config::load_static_svcs (void)\fC [static, protected]\fR
+.PP
+Add the default statically-linked services to the .
+.PP
+.SS int ACE_Service_Config::open (int argc, \fBACE_TCHAR\fR * argv[], const \fBACE_TCHAR\fR * logger_key = ACE_DEFAULT_LOGGER_KEY, int ignore_static_svcs = 1, int ignore_default_svc_conf = 0, int ignore_debug_flag = 0)\fC [static]\fR
+.PP
+This is the primary entry point into the ACE_Service_Config (the constructor just handles simple initializations). It parses arguments passed in from  and  parameters. The arguments that are valid in a call to this method include:
+.PP
+.TP
+'-b' Option to indicate that we should be a daemon
+.TP
+'-d' Turn on debugging mode
+.TP
+'-f' Option to read in the list of svc.conf file names
+.TP
+'-k' Option to read a wide string where in the logger output can be written
+.TP
+'-y' Option required to use statically linked services. A static service repostory will be constructed if the flag is used. Use this flag to override the default <ignore_static_svcs> flag at run-time.
+.TP
+'-n' Option to avoid using any statically linked services, which eliminates the need to construct the static service repository.
+.TP
+'-S' Option to read in the list of services on the command-line Please observe the difference between options '-f' that looks for a list of files and here a list of services.Returns number of errors that occurred on failure and 0 otherwise.
+.PP
+The <logger_key> indicates where to write the logging output, which is typically either a \fBSTREAM\fR pipe or a socket address. If <ignore_static_svcs> is 1 then static services are not loaded, otherwise, they are loaded. If <ignore_default_svc_conf_file> is non-0 then the <svc.conf> configuration file will be ignored. Returns zero upon success, -1 if the file is not found or cannot be opened (errno is set accordingly), otherwise returns the number of errors encountered loading the services in the specified svc.conf configuration file. If <ignore_debug_flag> is non-0 then the application is responsible for setting the  appropriately. 
+.SS int ACE_Service_Config::open (const \fBACE_TCHAR\fR program_name[], const \fBACE_TCHAR\fR * logger_key = ACE_DEFAULT_LOGGER_KEY, int ignore_static_svcs = 1, int ignore_default_svc_conf_file = 0, int ignore_debug_flag = 0)\fC [static]\fR
+.PP
+Performs an open without parsing command-line arguments. The <logger_key> indicates where to write the logging output, which is typically either a \fBSTREAM\fR pipe or a socket address. If <ignore_static_svcs> is 1 then static services are not loaded, otherwise, they are loaded. If <ignore_default_svc_conf_file> is non-0 then the <svc.conf> configuration file will be ignored. Returns zero upon success, -1 if the file is not found or cannot be opened (errno is set accordingly), otherwise returns the number of errors encountered loading the services in the specified svc.conf configuration file. If <ignore_debug_flag> is non-0 then the application is responsible for setting the  appropriately. 
+.SS int ACE_Service_Config::open_i (const \fBACE_TCHAR\fR program_name[], const \fBACE_TCHAR\fR * logger_key = ACE_DEFAULT_LOGGER_KEY, int ignore_default_svc_conf_file = 0, int ignore_debug_flag = 0)\fC [static]\fR
+.PP
+Performs an open without parsing command-line arguments. The <logger_key> indicates where to write the logging output, which is typically either a \fBSTREAM\fR pipe or a socket address. If <ignore_default_svc_conf_file> is non-0 then the "svc.conf" file will be ignored. If <ignore_debug_flag> is non-0 then the application is responsible for setting the  appropriately. Returns number of errors that occurred on failure and 0 otherwise. 
+.SS int ACE_Service_Config::parse_args (int, \fBACE_TCHAR\fR * argv[])\fC [static]\fR
+.PP
+Handle the command-line options intended for the . Note that  is assumed to be the program name. The arguments that are valid in a call to this method are
+.TP
+'-b' Option to indicate that we should be a daemon
+.TP
+'-d' Turn on debugging mode
+.TP
+'-f' Option to read in the list of svc.conf file names
+.TP
+'-k' Option to read a wide string where in the logger output can be written
+.TP
+'-y' Turn on the flag for a repository of statically linked services
+.TP
+'-n' Need not have a repository of statically linked services
+.TP
+'-S' Option to read in the list of services on the command-line Please observe the difference between options '-f' that looks for a list of files and here a list of services. 
+.SS int ACE_Service_Config::process_commandline_directives (void)\fC [static, protected]\fR
+.PP
+Process service configuration requests that were provided on the command-line. Returns the number of errors that occurred.
+.PP
+.SS int ACE_Service_Config::process_directive (const \fBACE_Static_Svc_Descriptor\fR & ssd, int force_replace = 0)\fC [static]\fR
+.PP
+Process one static service definition.
+.PP
+Load a new static service into the \fBACE_Service_Repository\fR.
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIssd\fR\fR Service descriptor, see the document of \fBACE_Static_Svc_Descriptor\fR for more details.
+.TP
+\fB\fIforce_replace\fR\fR If set the new service descriptor replaces any previous instance in the \fBACE_Service_Repository\fR.
+.PP
+\fBReturns: \fR
+.in +1c
+ Returns -1 if the service cannot be 'loaded'. 
+.SS int ACE_Service_Config::process_directive (const \fBACE_TCHAR\fR directive[])\fC [static]\fR
+.PP
+Process one service configuration <directive>, which is passed as a string. Returns the number of errors that occurred.
+.PP
+.SS int ACE_Service_Config::process_directives (void)\fC [static]\fR
+.PP
+Process (or re-process) service configuration requests that are provided in the svc.conf file(s). Returns the number of errors that occurred. 
+.SS int ACE_Service_Config::process_directives_i (void)\fC [static, protected]\fR
+.PP
+This is the implementation function that <process_directives> and <process_directive> both call. Returns the number of errors that occurred. 
+.SS \fBACE_Reactor\fR * ACE_Service_Config::reactor (\fBACE_Reactor\fR *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer. DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS \fBACE_Reactor\fR * ACE_Service_Config::reactor (void)\fC [static]\fR
+.PP
+Get pointer to a process-wide . DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS int ACE_Service_Config::reactor_event_loop_done (void)\fC [static]\fR
+.PP
+Report if the Reactor's event loop is finished. DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS void ACE_Service_Config::reconfig_occurred (int)\fC [static]\fR
+.PP
+Indicate that reconfiguration occurred.
+.PP
+.SS int ACE_Service_Config::reconfig_occurred (void)\fC [static]\fR
+.PP
+True if reconfiguration occurred.
+.PP
+.SS void ACE_Service_Config::reconfigure (void)\fC [static]\fR
+.PP
+Perform the reconfiguration process.
+.PP
+.SS int ACE_Service_Config::remove (const \fBACE_TCHAR\fR svc_name[])\fC [static]\fR
+.PP
+Totally remove <svc_name> from the daemon by removing it from the \fBACE_Reactor\fR, and unlinking it if necessary.
+.PP
+.SS int ACE_Service_Config::resume (const \fBACE_TCHAR\fR svc_name[])\fC [static]\fR
+.PP
+Resume a <svc_name> that was previously suspended or has not yet been resumed (e.g., a static service).
+.PP
+.SS int ACE_Service_Config::run_reactor_event_loop (\fBACE_Time_Value\fR & tv)\fC [static]\fR
+.PP
+Run the event loop until the  method returns -1, the <end_reactor_event_loop> method is invoked, or the  expires. DO NOT USE THIS METHOD. It may be unsupported in future releases. <Use \fBACE_Reactor::run_event_loop\fR> instead. 
+.SS int ACE_Service_Config::run_reactor_event_loop (void)\fC [static]\fR
+.PP
+Run the event loop until the  method returns -1 or the <end_reactor_event_loop> method is invoked. DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS ACE_INLINE void ACE_Service_Config::signal_handler (\fBACE_Sig_Adapter\fR *)\fC [static]\fR
+.PP
+Set the signal_handler;for internal use by \fBACE_Object_Manager\fR only.
+.PP
+.SS int ACE_Service_Config::start_daemon (void)\fC [static, protected]\fR
+.PP
+Become a daemon.
+.PP
+.SS \fBACE_STATIC_SVCS\fR * ACE_Service_Config::static_svcs (void)\fC [static]\fR
+.PP
+Returns a pointer to the list of statically linked services.
+.PP
+.SS int ACE_Service_Config::suspend (const \fBACE_TCHAR\fR svc_name[])\fC [static]\fR
+.PP
+Suspend <svc_name>. Note that this will not unlink the service from the daemon if it was dynamically linked, it will mark it as being suspended in the Service Repository and call the <suspend> member function on the appropriate . A service can be resumed later on by calling the <RESUME> member function... 
+.SS \fBACE_Service_Repository\fR * ACE_Service_Config::svc_rep (\fBACE_Service_Repository\fR *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer. DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS \fBACE_Service_Repository\fR * ACE_Service_Config::svc_rep (void)\fC [static]\fR
+.PP
+Get pointer to a process-wide . DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SS \fBACE_Thread_Manager\fR * ACE_Service_Config::thr_mgr (\fBACE_Thread_Manager\fR *)\fC [static]\fR
+.PP
+Set pointer to a process-wide  and return existing pointer. DO NOT USE THIS METHOD. It may be unsupported in future releases. Use \fBACE_Thread_Manager::instance\fR() instead. 
+.SS \fBACE_Thread_Manager\fR * ACE_Service_Config::thr_mgr (void)\fC [static]\fR
+.PP
+Get pointer to a process-wide . DO NOT USE THIS METHOD. It may be unsupported in future releases. Use  instead. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Service_Config::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS int ACE_Service_Config::be_a_daemon_\fC [static, private]\fR
+.PP
+Shall we become a daemon process?
+.PP
+.SS int ACE_Service_Config::is_initialized_\fC [static, private]\fR
+.PP
+Keep track of whether the  is already initialized. If so, we can't allow <yyparse> to be called since it's not reentrant. This variable is incremented by the  method and decremented by the  method. 
+.SS const \fBACE_TCHAR\fR * ACE_Service_Config::logger_key_\fC [static, private]\fR
+.PP
+Indicates where to write the logging output. This is typically either a \fBSTREAM\fR pipe or a socket address.
+.PP
+.SS int ACE_Service_Config::no_static_svcs_\fC [static, private]\fR
+.PP
+Should we avoid loading the static services?
+.PP
+.SS \fBsig_atomic_t\fR ACE_Service_Config::reconfig_occurred_\fC [static, private]\fR
+.PP
+True if reconfiguration occurred.
+.PP
+.SS \fBACE_Sig_Adapter\fR * ACE_Service_Config::signal_handler_\fC [static, private]\fR
+.PP
+Handles the reconfiguration signals.
+.PP
+.SS int ACE_Service_Config::signum_\fC [static, private]\fR
+.PP
+Number of the signal used to trigger reconfiguration.
+.PP
+.SS \fBACE_STATIC_SVCS\fR * ACE_Service_Config::static_svcs_\fC [static, private]\fR
+.PP
+Singleton repository of statically linked services.
+.PP
+.SS \fBACE_SVC_QUEUE\fR * ACE_Service_Config::svc_conf_file_queue_\fC [static, private]\fR
+.PP
+Queue of svc.conf files specified on the command-line. This should probably be made to handle unicode filenames...
+.PP
+@ 
+.SS \fBACE_SVC_QUEUE\fR * ACE_Service_Config::svc_queue_\fC [static, private]\fR
+.PP
+Queue of services specified on the command-line.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

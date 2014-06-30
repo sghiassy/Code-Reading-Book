@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>cTwIG - Cocoon Two Idiots Guide - Basic XSP/Logicsheet Processing</title>
+		<authors>
+			<person name="Jeremy Aston" email="jez@pigbite.com"/>
+		</authors>
+	</header>
+
+	<body>
+		<s1 title="Transformations">
+			<s2 title="Basic XSP/Logicsheet Processing">
+				<p>By allowing you to wrap logic up in the XML page, C2 has given us a route to remove the logic from the presentation yet get the advantages of having a dynamic pages serving technology.  The only issue is that it effectively just shifts the maintenance headache into yet another part of the architecture.  The C2 developers have been dead bright however and incorporated the idea of a logicsheet to solve this problem.</p>
+				<p>A logicsheet allows you to take the logic out of the XSP page and put it into a seperate stylesheet.  You then identify the logic and reference the identifier from your XML file.  C2, using basic XML/XSL transforming logic, then takes care of replacing the reference to the logic in the XML with the actual logic from the logicsheet when the XSP file is processed.  The resultant XML stream can then be rendered using an XSL stylesheet as normal.  The main benefits are that:</p>
+				<ul>
+					<li>XML data files are not made confused with the addition of complex logic</li>
+					<li>Libraries of logic can be built up and reused</li>
+					<li>Maintenance of logic is made easier</li>
+					<li>It is really cool to do!</li>
+				</ul>
+				<p>Take the following example XSP page (<fork href="sample/transformations/basic03/basic03-01.xml">basic03-01.xml</fork>) that refers to a logicsheet:</p>
+				<source><![CDATA[
+<?xml version="1.0"?>
+<xsp:page 
+	xmlns:xsp="http://apache.org/xsp"
+  xmlns:ctwig="http://www.pigbite.com/xsl"
+>
+
+<page>
+  <title>
+    Basic XSP/Logicsheet Processing Example - BASIC03-01.XML
+  </title>
+  <greeting>
+    <ctwig:greeting/>
+  </greeting>
+</page>
+</xsp:page>]]></source>
+				<p>The only difference between this and the previous example is that we have added a new namespace reference to the logicsheet (xmlns:ctwig="http://www.pigbite.com/xsl") and replace the logic with a reference to the an id, effectively analogous to a command or function call, in the the logicsheet (<![CDATA[<ctwig:greeting/>]]>).  Whatever ctwig:greeting does will replace the reference, which is sitting inside the <![CDATA[<greeting>]]> tag.</p>
+				<p>The logicsheet looks like this (<fork href="sample/transformations/logicsheet/ctwig.xsl">ctwig.xsl</fork>):</p>
+				<source><![CDATA[
+<?xml version="1.0"?>
+<xsl:stylesheet
+  xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xsp="http://apache.org/xsp"
+  xmlns:ctwig="http://www.pigbite.com/xsl"
+  version="1.0">
+
+<xsl:template match="ctwig:greeting">
+ 
+  <xsp:logic>
+    String msg = "Hello World";
+  </xsp:logic>
+
+  <xsp:expr>msg</xsp:expr>
+</xsl:template>
+
+<xsl:template match="@*|node()" priority="-1">
+ <xsl:copy>
+  <xsl:apply-templates select="@*|node()"/>
+ </xsl:copy>
+</xsl:template>
+
+</xsl:stylesheet>]]></source>
+				<p>You will note that the logicsheet has a reference to the ctwig namespace.  This <strong>must</strong> match the namespace used in the XSP page.  The logicsheet uses a standard XSL template match to find the reference to "ctwig:greeting" and replace it with the logic.</p>
+				<p><em>Again, please note that this example uses "http://apache.org/xsp" as the XSP namespace.  This is different to older C1 based examples and should be used instead.  If you do not then any logicsheet example definitely will not work.</em></p>
+				<p>To make this work firstly make sure that basic3-01.xml in the {TOMCAT_HOME}\webapps\cocoon\ctwig\xsp folder.  This will allow it to be captured by the same sitemap command that is used in the previous examples.  Secondly, make sure that the ctwig logicsheet (ctwig.xsl) is in {TOMCAT_HOME}/webapps/cocoon/WEB-INF/classes/com/pigbite/logicsheets folder.  The final thing to do is to add a reference to the logicsheet source in to C2 so it knows where to go and find it.  This is done by adding the following construct to {TOMCAT_HOME}\webapps\cocoon\cocoon.xconf:</p>
+				<source><![CDATA[
+  <builtin-logicsheet>
+    <parameter name="prefix" value="ctwig"/>
+    <parameter name="uri" value="http://www.pigbite.com/xsl"/>
+    <parameter name="href" value="resource://com/pigbite/logicsheets/ctwig.xsl"/>
+  </builtin-logicsheet>]]></source>
+				<p>Here we are using the "resource:" protocol to access the logicsheet.  This logicsheet could sit inside a JAR file that is referenced on the classpath, however it can also sit under the classes folder in the WEB-INF folder, as is the case in this example.</p>
+				<p>You can also use a "file:" protocol in the form:</p>
+				<source><![CDATA[
+<parameter
+   name="href"
+   value="file:///{TOMCAT_HOME}/webapps/cocoon/ctwig/logicsheet/ctwig.xsl">]]></source>
+				<p>Obviously replace {TOMCAT_HOME} with whatever the actual path is on your machine (e.g. d:\java\tomcat).  Note the use of three forward slashes after the "file:".  This is so that it properly refers to the root, you still have to include the drive letter however.</p>
+				<p>Again, the URI parameter <strong>must</strong> be the same as the namespace declarations for everything to get properly resolved.</p>
+				<p>To test this code call <fork href="http://localhost:8080/cocoon/ctwig/xsp/basic03-01.xml">http://localhost:8080/cocoon/ctwig/xsp/basic03-01.xml</fork></p>
+
+			</s2>
+		</s1>
+	</body>
+</document>

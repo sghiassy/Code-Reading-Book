@@ -1,0 +1,117 @@
+.TH ACE_WIN32_Asynch_Operation 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WIN32_Asynch_Operation \- This class abstracts out the common things needed for implementing Asynch_Operation for WIN32 platform. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <WIN32_Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Operation_Impl\fR.
+.PP
+Inherited by \fBACE_WIN32_Asynch_Accept\fR, \fBACE_WIN32_Asynch_Read_Dgram\fR, \fBACE_WIN32_Asynch_Read_Stream\fR, \fBACE_WIN32_Asynch_Transmit_File\fR, \fBACE_WIN32_Asynch_Write_Dgram\fR, and \fBACE_WIN32_Asynch_Write_Stream\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, const void *completion_key, \fBACE_Proactor\fR *proactor)"
+.br
+.ti -1c
+.RI "int \fBcancel\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor\fR (void) const"
+.br
+.RI "\fIReturn the underlying proactor.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WIN32_Asynch_Operation\fR (\fBACE_WIN32_Proactor\fR *win32_proactor)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_WIN32_Asynch_Operation\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WIN32_Proactor\fR* \fBwin32_proactor_\fR"
+.br
+.RI "\fIWIn32 Proactor.\fR"
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor_\fR"
+.br
+.RI "\fIProactor that this asynch IO is registered with.\fR"
+.ti -1c
+.RI "\fBACE_Handler\fR* \fBhandler_\fR"
+.br
+.RI "\fIHandler that will receive the callback.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle_\fR"
+.br
+.RI "\fII/O handle used for reading.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class abstracts out the common things needed for implementing Asynch_Operation for WIN32 platform.
+.PP
+.PP
+ 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WIN32_Asynch_Operation::ACE_WIN32_Asynch_Operation (\fBACE_WIN32_Proactor\fR * win32_proactor)\fC [protected]\fR
+.PP
+Constructor.
+.PP
+.SS ACE_WIN32_Asynch_Operation::~ACE_WIN32_Asynch_Operation (void)\fC [protected, virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_WIN32_Asynch_Operation::cancel (void)
+.PP
+This cancels all pending accepts operations that were issued by the calling thread. The function does not cancel asynchronous operations issued by other threads. 
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream\fR, \fBACE_WIN32_Asynch_Write_Stream\fR, \fBACE_WIN32_Asynch_Read_File\fR, \fBACE_WIN32_Asynch_Write_File\fR, \fBACE_WIN32_Asynch_Accept\fR, \fBACE_WIN32_Asynch_Transmit_File\fR, \fBACE_WIN32_Asynch_Read_Dgram\fR, and \fBACE_WIN32_Asynch_Write_Dgram\fR.
+.SS int ACE_WIN32_Asynch_Operation::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle, const void * completion_key, \fBACE_Proactor\fR * proactor)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. 
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream\fR, \fBACE_WIN32_Asynch_Write_Stream\fR, \fBACE_WIN32_Asynch_Read_File\fR, \fBACE_WIN32_Asynch_Write_File\fR, \fBACE_WIN32_Asynch_Accept\fR, \fBACE_WIN32_Asynch_Transmit_File\fR, \fBACE_WIN32_Asynch_Read_Dgram\fR, and \fBACE_WIN32_Asynch_Write_Dgram\fR.
+.SS \fBACE_Proactor\fR * ACE_WIN32_Asynch_Operation::proactor (void) const
+.PP
+Return the underlying proactor.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream\fR, \fBACE_WIN32_Asynch_Write_Stream\fR, \fBACE_WIN32_Asynch_Read_File\fR, \fBACE_WIN32_Asynch_Write_File\fR, \fBACE_WIN32_Asynch_Accept\fR, \fBACE_WIN32_Asynch_Transmit_File\fR, \fBACE_WIN32_Asynch_Read_Dgram\fR, and \fBACE_WIN32_Asynch_Write_Dgram\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_HANDLE ACE_WIN32_Asynch_Operation::handle_\fC [protected]\fR
+.PP
+I/O handle used for reading.
+.PP
+.SS \fBACE_Handler\fR * ACE_WIN32_Asynch_Operation::handler_\fC [protected]\fR
+.PP
+Handler that will receive the callback.
+.PP
+.SS \fBACE_Proactor\fR * ACE_WIN32_Asynch_Operation::proactor_\fC [protected]\fR
+.PP
+Proactor that this asynch IO is registered with.
+.PP
+.SS \fBACE_WIN32_Proactor\fR * ACE_WIN32_Asynch_Operation::win32_proactor_\fC [protected]\fR
+.PP
+WIn32 Proactor.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

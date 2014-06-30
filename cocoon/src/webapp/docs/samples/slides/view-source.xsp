@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<!-- Written by Ricardo Rocha <rrocha@plenix.org> -->
+<!-- Fixed for version 2.0 by Davanum Srinivas <dims@yahoo.com> -->
+
+<!-- A quick'n'dirty XML colorizer -->
+
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+>
+
+  <xsp:structure>
+   <xsp:include>java.net.*</xsp:include>
+   <xsp:include>org.w3c.dom.*</xsp:include>
+   <xsp:include>org.apache.cocoon.xml.dom.DOMStreamer</xsp:include>
+   <xsp:include>org.apache.cocoon.xml.dom.DOMBuilder</xsp:include>
+   <xsp:include>org.apache.cocoon.components.parser.Parser</xsp:include>
+   <xsp:include>org.apache.cocoon.components.url.URLFactory</xsp:include>
+  </xsp:structure>
+
+  <xsp:logic><![CDATA[
+    private static final String ATTR_NAME_COLOR = "darkblue";
+    private static final String ATTR_VALUE_COLOR = "navy";
+    private static final String COMMENT_COLOR = "gray";
+    private static final String DELIMITER_COLOR = "blue";
+    private static final String ELEMENT_COLOR = "navy";
+    private static final String ENTITY_REF_COLOR = "navy";
+    private static final String PI_COLOR = "darkred";
+    private static final String TEXT_COLOR = "black";
+    private static final String CUSTOM_ELEMENT_COLOR = "green";
+    private static final String XSL_ELEMENT_COLOR = "purple";
+    private static final String XSP_ELEMENT_COLOR = "green";
+    private static final String XSP_TEXT_COLOR = "red";
+
+    protected void colorize(Node node, Document factory, org.xml.sax.ContentHandler contentHandler) throws SAXException {
+      Element element = factory.createElement("pre");
+      DocumentFragment fragment = factory.createDocumentFragment();
+      element.appendChild(doColorize(node, factory, 0, TEXT_COLOR));
+      DOMStreamer ds = new DOMStreamer (contentHandler);
+      ds.stream (element);
+    }
+
+    protected static DocumentFragment
+      doColorize(Node node, Document factory, int level, String textColor)
+    {
+      Element result = null;
+      DocumentFragment fragment = factory.createDocumentFragment();
+
+      switch (node.getNodeType()) {
+        case Node.CDATA_SECTION_NODE:
+          result = factory.createElement("font");
+          result.setAttribute("color", DELIMITER_COLOR);
+          result.appendChild(factory.createTextNode("<![CDATA["));
+          fragment.appendChild(result);
+
+          result = factory.createElement("font");
+          result.setAttribute("color", textColor);
+          result.appendChild(factory.createTextNode(node.getNodeValue()));
+          fragment.appendChild(result);
+
+          result = factory.createElement("font");
+          result.setAttribute("color", DELIMITER_COLOR);
+          // I know the thing below is ugly, but man, nexted CDATA are a pain in the ass!
+          result.appendChild(factory.createTextNode("]]]]>&gt;<![CDATA["));
+          fragment.appendChild(result);
+
+          break;
+        case Node.ELEMENT_NODE: {
+          Element element = (Element) node;
+
+          result = factory.createElement("font");
+          result.setAttribute("color", DELIMITER_COLOR);
+          result.appendChild(factory.createTextNode("<"));
+          fragment.appendChild(result);
+
+          String tagColor = ELEMENT_COLOR;
+          String tagName = element.getTagName();
+
+          if (tagName.startsWith("xsp:")) {
+            tagColor = XSP_ELEMENT_COLOR;
+          } else if (tagName.startsWith("xsl:")) {
+            tagColor = XSL_ELEMENT_COLOR;
+          } else if (tagName.indexOf(':') >= 0) {
+            tagColor = CUSTOM_ELEMENT_COLOR;
+          }
+
+          result = factory.createElement("font");
+          result.setAttribute("color", tagColor);
+          result.appendChild(factory.createTextNode(tagName));
+          fragment.appendChild(result);
+
+          NamedNodeMap attributes = element.getAttributes();
+          int attributeCount = attributes.getLength();
+
+          for (int i = 0; i < attributeCount; i++) {
+            Attr attribute = (Attr) attributes.item(i);
+
+            result = factory.createElement("font");
+            result.setAttribute("color", ATTR_NAME_COLOR);
+            result.appendChild(
+              factory.createTextNode(" " + attribute.getName() + "=")
+            );
+            fragment.appendChild(result);
+
+            result = factory.createElement("font");
+            result.setAttribute("color", ATTR_VALUE_COLOR);
+            result.appendChild(
+              factory.createTextNode("\"" + attribute.getValue() + "\"")
+            );
+            fragment.appendChild(result);
+          }
+
+          NodeList nodeList = element.getChildNodes();
+          int childCount = nodeList.getLength();
+
+          result = factory.createElement("font");
+          result.setAttribute("color", DELIMITER_COLOR);
+          result.appendChild(
+            factory.createTextNode((childCount == 0 ? "/" : "") + ">")
+          );
+          fragment.appendChild(result);
+
+          if (tagName.startsWith("xsp:")) {
+            textColor = XSP_TEXT_COLOR;
+          } else {
+            textColor = TEXT_COLOR;
+          }
+
+          result = factory.createElement("font");
+          result.setAttribute("color", textColor);
+
+          for (int i = 0; i < childCount; i++) {
+            result.appendChild(
+              doColorize(nodeList.item(i), factory, level + 1, textColor)
+            );
+          }
+          fragment.appendChild(result);
+
+          if (childCount > 0) {
+            result = factory.createElement("font");
+            result.setAttribute("color", DELIMITER_COLOR);
+            result.appendChild(factory.createTextNode("</"));
+            fragment.appendChild(result);
+
+            result = factory.createElement("font");
+            result.setAttribute("color", tagColor);
+            result.appendChild(factory.createTextNode(tagName));
+            fragment.appendChild(result);
+
+            result = factory.createElement("font");
+            result.setAttribute("color", DELIMITER_COLOR);
+            result.appendChild(factory.createTextNode(">"));
+            fragment.appendChild(result);
+          }
+
+          break;
+        }
+        case Node.DOCUMENT_NODE:
+        case Node.DOCUMENT_FRAGMENT_NODE: {
+          NodeList nodeList = node.getChildNodes();
+          int childCount = nodeList.getLength();
+
+          for (int i = 0; i < childCount; i++) {
+            fragment.appendChild(
+              doColorize(nodeList.item(i), factory, level + 1, textColor)
+            );
+          }
+
+          break;
+        }
+        case Node.COMMENT_NODE:
+          result = factory.createElement("font");
+          result.setAttribute("color", COMMENT_COLOR);
+
+          result.appendChild(
+            factory.createTextNode(
+              "<!-- " + node.getNodeValue() + " -->\n"
+            )
+          );
+
+          fragment.appendChild(result);
+
+          break;
+        case Node.PROCESSING_INSTRUCTION_NODE:
+          ProcessingInstruction pi = (ProcessingInstruction) node;
+
+          result = factory.createElement("font");
+          result.setAttribute("color", DELIMITER_COLOR);
+          result.appendChild(factory.createTextNode("<?"));
+          fragment.appendChild(result);
+
+          result = factory.createElement("font");
+          result.setAttribute("color", PI_COLOR);
+          result.appendChild(factory.createTextNode(pi.getTarget() + " " + pi.getData()));
+          fragment.appendChild(result);
+
+          result = factory.createElement("font");
+          result.setAttribute("color", DELIMITER_COLOR);
+          result.appendChild(factory.createTextNode("?>\n"));
+          fragment.appendChild(result);
+
+          break;
+        case Node.ENTITY_REFERENCE_NODE:
+          result = factory.createElement("font");
+          result.setAttribute("color", ENTITY_REF_COLOR);
+          result.appendChild(
+            factory.createTextNode("<" + node.getNodeValue() + ";")
+          );
+          fragment.appendChild(result);
+
+          break;
+        case Node.TEXT_NODE:
+          fragment.appendChild(factory.createTextNode(node.getNodeValue()));
+          break;
+        default:
+          break;
+      }
+
+      return fragment;
+    }
+  ]]></xsp:logic>
+
+  <html>
+    <xsp:logic>
+    </xsp:logic>
+    <head>
+      <title>Source Code</title>
+      <link rel="stylesheet" type="text/css" href="style" title="Style"/>
+    </head>
+
+    <body>
+      <xsp:logic>
+        String filename = request.getParameter("filename");
+        if (filename != null) {
+
+          <h3 style="color:navy; text-align: center">
+            <xsp:expr>filename</xsp:expr>
+          </h3>
+        
+          Parser newParser = null;
+          URLFactory factory = null;
+
+          try {
+              newParser = (Parser) this.manager.lookup(Parser.ROLE);
+              factory = (URLFactory) this.manager.lookup(URLFactory.ROLE);
+              Document document = newParser.newDocument();
+
+              DOMBuilder builder = new DOMBuilder(newParser);
+              newParser.setContentHandler(builder);
+              newParser.setLexicalHandler(builder);
+              URL url = factory.getURL(filename);
+              InputSource is = new InputSource(url.openStream());
+              newParser.parse(is);
+
+              this.colorize(builder.getDocument(), document, this.contentHandler);    
+          } catch (SAXException e){
+              getLogger().debug("SAXException in colorize", e);
+              throw e;
+          } catch (org.w3c.dom.DOMException e){
+              getLogger().debug("DOMException in colorize", e);
+              throw e;
+          } catch (Exception e) {
+              getLogger().error("Could not include page", e);
+          } finally {
+              this.manager.release((Component) factory);
+              this.manager.release((Component) newParser);
+          }
+        } else {
+          <h3 style="color:navy; text-align: center">
+            Need <em>filename</em> or <em>url</em> parameters to work
+          </h3>
+        }
+      </xsp:logic>
+    </body>
+  </html>
+</xsp:page>
+

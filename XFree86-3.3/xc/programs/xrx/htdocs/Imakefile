@@ -1,0 +1,29 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/12/03 19:39:14 rws $
+
+#ifndef HtmlDir
+#define HtmlDir /usr/xc/Jigsaw/Jigsaw/WWW
+#endif
+#ifndef WebServer
+#define WebServer cambridge.x.org:8001
+#endif
+
+      HTMLDIR = HtmlDir
+    WEBSERVER = WebServer
+
+#define RxTarget(name)							@@\
+all:: name.rx								@@\
+									@@\
+name.rx: name								@@\
+	sed -e s/WEBSERVER/$(WEBSERVER)/g name >$@			@@\
+									@@\
+InstallNonExecFile(name.rx,$(HTMLDIR))					@@\
+InstallNonExecFile(name.html,$(HTMLDIR))
+
+RxTarget(bitmap)
+RxTarget(dtcm)
+RxTarget(excel)
+RxTarget(xclock)
+RxTarget(xload)
+
+clean::
+	$(RM) *.rx

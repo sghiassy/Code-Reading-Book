@@ -1,0 +1,47 @@
+XCOMM $XConsortium: Imakefile /main/12 1996/09/04 09:36:17 kaleb $
+XCOMM $XFree86: xc/programs/xkbcomp/Imakefile,v 3.3 1996/12/23 07:11:35 dawes Exp $
+#define IHaveSubdirs
+#define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
+
+          SRCS = xkbcomp.c xkbscan.c expr.c vmod.c indicators.c misc.c \
+		 keymap.c keycodes.c keytypes.c compat.c action.c alias.c \
+		 symbols.c geometry.c xkbpath.c listing.c \
+		 xkbparse.c parseutils.c utils.c
+          OBJS = xkbcomp.o xkbscan.o expr.o vmod.o indicators.o misc.o alias.o \
+		 keymap.o keycodes.o keytypes.o compat.o action.o \
+		 symbols.o geometry.o xkbpath.o listing.o \
+		 xkbparse.o parseutils.o utils.o
+        DEPLIBS = $(DEPXKBFILELIB) $(DEPXLIBONLY)
+LOCAL_LIBRARIES = $(XKBFILELIB) $(XLIB)
+        SUBDIRS = compat geometry keycodes keymap semantics symbols types \
+		  compiled rules
+
+ROOT_DEFINES = -DDFLT_XKB_CONFIG_ROOT=\"$(LIBDIR)/xkb\"
+
+INCLUDES = -I$(EXTINCSRC)
+
+all::
+
+SpecialCObjectRule(xkbpath,$(ICONFIGFILES),$(ROOT_DEFINES))
+
+YaccFile(xkbparse,$(YFLAGS))
+
+install::
+	@echo "Creating $(LIBDIR)/xkb and $(LIBDIR)/xkb/compiled"
+	MakeDir($(DESTDIR)$(LIBDIR)/xkb)
+	MakeDir($(DESTDIR)$(LIBDIR)/xkb/compiled)
+
+InstallProgram(xkbcomp,$(LIBDIR)/xkb)
+
+clean::
+	RemoveFiles(test.h *.xkm *.xkb)
+
+ComplexProgramTarget(xkbcomp)
+
+#ifdef OS2Architecture
+all::
+	$(CP) ProgramTargetName(xkbcomp) /
+#endif
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))

@@ -1,0 +1,208 @@
+.TH ACE_Arg_Shifter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Arg_Shifter \- This ADT shifts known args to the back of the argv vector, so deeper levels of argument parsing can locate the yet unprocessed arguments at the beginning of the vector. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Arg_Shifter.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Arg_Shifter\fR (int& argc, \fBACE_TCHAR\fR **argv, \fBACE_TCHAR\fR **temp = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_Arg_Shifter\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBget_current\fR (void) const"
+.br
+.RI "\fIGet the current head of the vector.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBget_the_parameter\fR (const \fBACE_TCHAR\fR* flag)"
+.br
+.ti -1c
+.RI "int \fBcur_arg_strncasecmp\fR (const \fBACE_TCHAR\fR *flag)"
+.br
+.ti -1c
+.RI "int \fBconsume_arg\fR (int number = 1)"
+.br
+.RI "\fIConsume <number> argument(s) by sticking them/it on the end of the vector.\fR"
+.ti -1c
+.RI "int \fBignore_arg\fR (int number = 1)"
+.br
+.RI "\fIPlace <number> arguments in the same relative order ahead of the known arguemnts in the vector.\fR"
+.ti -1c
+.RI "int \fBis_anything_left\fR (void) const"
+.br
+.RI "\fIReturns the number of args left to see in the vector.\fR"
+.ti -1c
+.RI "int \fBis_option_next\fR (void) const"
+.br
+.RI "\fIReturns 1 if there's a next item in the vector and it begins with '-'.\fR"
+.ti -1c
+.RI "int \fBis_parameter_next\fR (void) const"
+.br
+.RI "\fIReturns 1 if there's a next item in the vector and it doesn't begin with '-'.\fR"
+.ti -1c
+.RI "int \fBnum_ignored_args\fR (void) const"
+.br
+.RI "\fIReturns the number of irrelevant args seen.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int& \fBargc_\fR"
+.br
+.RI "\fIThe size of the argument vector.\fR"
+.ti -1c
+.RI "int \fBtotal_size_\fR"
+.br
+.RI "\fIThe size of argv_.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR** \fBtemp_\fR"
+.br
+.RI "\fIThe temporary array over which we traverse.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR** \fBargv_\fR"
+.br
+.RI "\fIThe array in which the arguments are reordered.\fR"
+.ti -1c
+.RI "int \fBcurrent_index_\fR"
+.br
+.RI "\fIThe element in <temp_> we're currently examining.\fR"
+.ti -1c
+.RI "int \fBback_\fR"
+.br
+.RI "\fIThe index of  in which we'll stick the next unknown argument.\fR"
+.ti -1c
+.RI "int \fBfront_\fR"
+.br
+.RI "\fIThe index of  in which we'll stick the next known argument.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This ADT shifts known args to the back of the argv vector, so deeper levels of argument parsing can locate the yet unprocessed arguments at the beginning of the vector.
+.PP
+.PP
+ The  copies the pointers of the argv vector into a temporary array. As the  iterates over the temp, is places known arguments in the rear of the argv and unknown ones in the beginning. So, after having visited all the arguments in the temp vector,  has placed all the unknown arguments in their original order at the front of argv. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Arg_Shifter::ACE_Arg_Shifter (int & argc, \fBACE_TCHAR\fR ** argv, \fBACE_TCHAR\fR ** temp = 0)
+.PP
+Initialize the  to the vector over which to iterate, also providing the temporary array if the client doesn't want the arg_shifter to dynamically allocate its own. If internal dynamic allocation fails, the  will set all the indices to the end of the vector, forbidding iteration. Following iteration over argv, the argc value will contain the number of unconsumed arguments. 
+.SS ACE_Arg_Shifter::~ACE_Arg_Shifter (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Arg_Shifter::consume_arg (int number = 1)
+.PP
+Consume <number> argument(s) by sticking them/it on the end of the vector.
+.PP
+.SS int ACE_Arg_Shifter::cur_arg_strncasecmp (const \fBACE_TCHAR\fR * flag)
+.PP
+Check if the current argument matches (case insensitive) <flag>
+.PP
+------------------------------------------------------------
+.PP
+Case A: Perfect Match (case insensitive) 0 is returned.
+.PP
+ie: when current_arg = "-foobar" or "-FOOBAR" or "-fooBAR" this->cur_arg_strncasecmp ("-FooBar); will return 0
+.PP
+------------------------------------------------------------
+.PP
+Case B: Perfect Match (case insensitive) but the current_arg is longer than the flag. Returns a number equal to the index in the char* indicating the start of the extra characters
+.PP
+ie: when current_arg = "-foobar98023" this->cur_arg_strncasecmp ("-FooBar); will return 7
+.PP
+Notice: this number will always be > 0
+.PP
+------------------------------------------------------------
+.PP
+Case C: If neither of Case A or B is met (no match) then -1 is returned 
+.SS \fBACE_TCHAR\fR * ACE_Arg_Shifter::get_current (void) const
+.PP
+Get the current head of the vector.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Arg_Shifter::get_the_parameter (const \fBACE_TCHAR\fR * flag)
+.PP
+If the <flag> matches the current_arg of arg shifter this method will attempt to return the associated parameter value
+.PP
+Safe to call without checking that a current arg exists
+.PP
+In the following examples, a pointer to the char* "value" is ret
+.PP
+eg: main -foobar value, main -FooBar value main -FOOBARvalue
+.PP
+all of the above will all match the <flag> == -FooBar and will return a char* to "value"
+.PP
+main -foobar 4 would succeed and return a char* to "4" main -foobar -4 does not succeed (-4 is not a parameter) but instead, would return 0
+.PP
+0 is returned: If the current argument does not match flag If there is no parameter found after a 'matched' flag
+.PP
+If the flag is matched and the flag and paramter DO NOT RUN together, the flag is consumed, the parameter is returned, and the new current argument is the parameter value. ie '-foobarflag VALUE' leaves the new cur arg == "VALUE"
+.PP
+If the flag is matched and the flag and parameter RUN together '-foobarflagVALUE', the flag is NOT consumed and the cur arg is left pointing to the entire flag/value pair 
+.SS int ACE_Arg_Shifter::ignore_arg (int number = 1)
+.PP
+Place <number> arguments in the same relative order ahead of the known arguemnts in the vector.
+.PP
+.SS int ACE_Arg_Shifter::is_anything_left (void) const
+.PP
+Returns the number of args left to see in the vector.
+.PP
+.SS int ACE_Arg_Shifter::is_option_next (void) const
+.PP
+Returns 1 if there's a next item in the vector and it begins with '-'.
+.PP
+.SS int ACE_Arg_Shifter::is_parameter_next (void) const
+.PP
+Returns 1 if there's a next item in the vector and it doesn't begin with '-'.
+.PP
+.SS int ACE_Arg_Shifter::num_ignored_args (void) const
+.PP
+Returns the number of irrelevant args seen.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int & ACE_Arg_Shifter::argc_\fC [private]\fR
+.PP
+The size of the argument vector.
+.PP
+.SS \fBACE_TCHAR\fR ** ACE_Arg_Shifter::argv_\fC [private]\fR
+.PP
+The array in which the arguments are reordered.
+.PP
+.SS int ACE_Arg_Shifter::back_\fC [private]\fR
+.PP
+The index of  in which we'll stick the next unknown argument.
+.PP
+.SS int ACE_Arg_Shifter::current_index_\fC [private]\fR
+.PP
+The element in <temp_> we're currently examining.
+.PP
+.SS int ACE_Arg_Shifter::front_\fC [private]\fR
+.PP
+The index of  in which we'll stick the next known argument.
+.PP
+.SS \fBACE_TCHAR\fR ** ACE_Arg_Shifter::temp_\fC [private]\fR
+.PP
+The temporary array over which we traverse.
+.PP
+.SS int ACE_Arg_Shifter::total_size_\fC [private]\fR
+.PP
+The size of argv_.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

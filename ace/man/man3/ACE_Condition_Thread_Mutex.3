@@ -1,0 +1,168 @@
+.TH ACE_Condition_Thread_Mutex 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Condition_Thread_Mutex \- \fBACE_Condition\fR variable wrapper written using ACE_Mutexes This allows threads to block until shared data changes state. A condition variable enables threads to atomically block and test the condition under the protection of a mutual exclu- sion lock (mutex) until the condition is satisfied. That is, the mutex must have been held by the thread before calling wait or signal on the condition. If the condition is false, a thread blocks on a condition variable and atomically releases the mutex that is waiting for the condition to change. If another thread changes the condition, it may wake up waiting threads by signaling the associated condition variable. The waiting threads, upon awakening, reacquire the mutex and re-evaluate the condition. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Condition_Thread_Mutex\fR (const \fBACE_Thread_Mutex\fR &m, const \fBACE_TCHAR\fR *name = 0, void *arg = 0)"
+.br
+.RI "\fIInitialize the condition variable.\fR"
+.ti -1c
+.RI "\fBACE_Condition_Thread_Mutex\fR (const \fBACE_Thread_Mutex\fR &m, \fBACE_Condition_Attributes\fR &attributes, const \fBACE_TCHAR\fR *name = 0, void *arg = 0)"
+.br
+.RI "\fIInitialize the condition variable.\fR"
+.ti -1c
+.RI "\fB~ACE_Condition_Thread_Mutex\fR (void)"
+.br
+.RI "\fIImplicitly destroy the condition variable.\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.ti -1c
+.RI "int \fBwait\fR (const \fBACE_Time_Value\fR *abstime)"
+.br
+.ti -1c
+.RI "int \fBwait\fR (void)"
+.br
+.RI "\fIBlock on condition.\fR"
+.ti -1c
+.RI "int \fBwait\fR (\fBACE_Thread_Mutex\fR &mutex, const \fBACE_Time_Value\fR *abstime = 0)"
+.br
+.ti -1c
+.RI "int \fBsignal\fR (void)"
+.br
+.RI "\fISignal one waiting thread.\fR"
+.ti -1c
+.RI "int \fBbroadcast\fR (void)"
+.br
+.RI "\fISignal *all* waiting threads.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Mutex\fR& \fBmutex\fR (void)"
+.br
+.RI "\fIReturns a reference to the underlying mutex_;.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_cond_t \fBcond_\fR"
+.br
+.RI "\fICondition variable.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Mutex\fR& \fBmutex_\fR"
+.br
+.RI "\fIReference to mutex lock.\fR"
+.ti -1c
+.RI "int \fBremoved_\fR"
+.br
+.RI "\fIKeeps track of whether <remove> has been called yet to avoid multiple <remove> calls, e.g., explicitly and implicitly in the destructor. This flag isn't protected by a lock, so make sure that you don't have multiple threads simultaneously calling <remove> on the same object, which is a bad idea anyway...\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Condition_Thread_Mutex &)"
+.br
+.ti -1c
+.RI "\fBACE_Condition_Thread_Mutex\fR (const ACE_Condition_Thread_Mutex &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+\fBACE_Condition\fR variable wrapper written using ACE_Mutexes This allows threads to block until shared data changes state. A condition variable enables threads to atomically block and test the condition under the protection of a mutual exclu- sion lock (mutex) until the condition is satisfied. That is, the mutex must have been held by the thread before calling wait or signal on the condition. If the condition is false, a thread blocks on a condition variable and atomically releases the mutex that is waiting for the condition to change. If another thread changes the condition, it may wake up waiting threads by signaling the associated condition variable. The waiting threads, upon awakening, reacquire the mutex and re-evaluate the condition.
+.PP
+.PP
+ This should be an instantiation of \fBACE_Condition\fR but problems with compilers precludes this... 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Condition_Thread_Mutex::ACE_Condition_Thread_Mutex (const \fBACE_Thread_Mutex\fR & m, const \fBACE_TCHAR\fR * name = 0, void * arg = 0)
+.PP
+Initialize the condition variable.
+.PP
+.SS ACE_Condition_Thread_Mutex::ACE_Condition_Thread_Mutex (const \fBACE_Thread_Mutex\fR & m, \fBACE_Condition_Attributes\fR & attributes, const \fBACE_TCHAR\fR * name = 0, void * arg = 0)
+.PP
+Initialize the condition variable.
+.PP
+.SS ACE_Condition_Thread_Mutex::~ACE_Condition_Thread_Mutex (void)
+.PP
+Implicitly destroy the condition variable.
+.PP
+.SS ACE_Condition_Thread_Mutex::ACE_Condition_Thread_Mutex (const ACE_Condition_Thread_Mutex &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Condition_Thread_Mutex::broadcast (void)
+.PP
+Signal *all* waiting threads.
+.PP
+.SS void ACE_Condition_Thread_Mutex::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS \fBACE_Thread_Mutex\fR & ACE_Condition_Thread_Mutex::mutex (void)
+.PP
+Returns a reference to the underlying mutex_;.
+.PP
+.SS void ACE_Condition_Thread_Mutex::operator= (const ACE_Condition_Thread_Mutex &)\fC [private]\fR
+.PP
+.SS int ACE_Condition_Thread_Mutex::remove (void)
+.PP
+Explicitly destroy the condition variable. Note that only one thread should call this method since it doesn't protect against race conditions. 
+.SS int ACE_Condition_Thread_Mutex::signal (void)
+.PP
+Signal one waiting thread.
+.PP
+.SS int ACE_Condition_Thread_Mutex::wait (\fBACE_Thread_Mutex\fR & mutex, const \fBACE_Time_Value\fR * abstime = 0)
+.PP
+Block on condition or until absolute time-of-day has passed. If abstime == 0 use "blocking" \fBwait\fR() semantics on the <mutex> passed as a parameter (this is useful if you need to store the <Condition> in shared memory). Else, if  != 0 and the call times out before the condition is signaled <wait> returns -1 and sets errno to ETIME. 
+.SS int ACE_Condition_Thread_Mutex::wait (void)
+.PP
+Block on condition.
+.PP
+.SS int ACE_Condition_Thread_Mutex::wait (const \fBACE_Time_Value\fR * abstime)
+.PP
+Block on condition, or until absolute time-of-day has passed. If abstime == 0 use "blocking" <wait> semantics. Else, if  != 0 and the call times out before the condition is signaled <wait> returns -1 and sets errno to ETIME. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Condition_Thread_Mutex::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS ACE_cond_t ACE_Condition_Thread_Mutex::cond_\fC [protected]\fR
+.PP
+Condition variable.
+.PP
+.SS \fBACE_Thread_Mutex\fR & ACE_Condition_Thread_Mutex::mutex_\fC [protected]\fR
+.PP
+Reference to mutex lock.
+.PP
+.SS int ACE_Condition_Thread_Mutex::removed_\fC [protected]\fR
+.PP
+Keeps track of whether <remove> has been called yet to avoid multiple <remove> calls, e.g., explicitly and implicitly in the destructor. This flag isn't protected by a lock, so make sure that you don't have multiple threads simultaneously calling <remove> on the same object, which is a bad idea anyway...
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

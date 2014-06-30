@@ -1,0 +1,1127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>How to develop Web Applications</title>
+  <authors>
+   <person name="Berin Loritsch" email="bloritsch@apache.org"/>
+   <person name="John Morrison" email="morrijr@apache.org"/>
+  </authors>
+ </header>
+
+ <body>
+
+ <s1 title="Introduction">
+  <p>Apache Cocoon is an XML publishing framework. It allows you to define XML
+     documents and transformations to be applied on it, to eventually
+     generate a presentation format of your choice (HTML, PDF, SVG, etc.).
+     Cocoon also gives you the possibility to have logic in your XML files
+     (so that the XML file itself can become dynamically generated).</p>
+  <p>Cocoon is developed on top of the Avalon Server Framework, which is a
+     stable and scalable framework.  You can find out more about Avalon in
+     this document: (ref: Avalon White Paper).  I highly suggest reading
+     this white paper as it covers many concepts that are key to Cocoon,
+     namely Separation of Concerns (SOC) and Inversion of Control (IoC).
+     It also covers foundational aspects of the Avalon Framework, so you
+     can have a better understanding on how Cocoon is structured.</p>
+  <p>Cocoon helps you separate out concern areas for web development.
+     The areas addressed are Logic, Content, Style, and Management.  There
+     are different mechanisms for each.</p>
+  <p>In order to learn how to use Cocoon, first make sure that you
+     <link href="installing/index.html">install</link> it properly, then investigate
+     the many <link href="overview.html#samples">samples</link>.
+     The following screenshots come from the
+     &quot;<code>tutorial</code>&quot; that is provided with Cocoon.
+     After you have built the main source as per the installation
+     instructions, you can also do
+     &quot;<code>build tutorialwebapp</code>&quot; to see this tutorial
+     in action.</p>
+
+  <s2 title="Separating Concerns">
+    <p>Cocoon is designed to allow Developers, Business Analysts,
+       Designers, and Administrators to work with each other without breaking
+       the other person's contribution.  The problem with using just JSPs, ASPs,
+       or ColdFusion templates is that all of the look, feel, and logic are
+       intertwined.  That means that maintenance is much more difficult, and the
+       project's true costs are delayed until the customer wants feature
+       enhancements or bugs fixed.  This also means that if the site design is
+       introduced late in the game, the cost of revamping the site becomes much
+       higher.</p>
+    <s3 title="Developers">
+      <p>Developer's jobs are to create the business logic and object model
+         behind the web application.  They are more concerned with functionality
+         than with layout or the words displayed on a screen.  These are the
+         people that will develop the Actions (Components that only process
+         information) and the hooks for how to get the necessary information
+         from business objects.</p>
+    </s3>
+    <s3 title="Business Analysts">
+      <p>The Business Analysts are the people who are concerned with the words
+         displayed on the screen, and to a certain extent, the layout.
+         Typically, they will be using the work done by the developer to put
+         together a generic markup that will be transformed into the results.
+         In small development environments, many times the developer takes on
+         both this role and the developer role.  Typically, the business analyst
+         will be working with the markup language that goes into the 
+         generator.</p>
+    </s3>
+    <s3 title="Designers">
+      <p>The designer is the person or group of people who are responsible to
+         provide the final look and feel of a site.  The designer does all the
+         graphics and HTML code.  In Cocoon, they will be working with the
+         Transformers that take an input and structure it in a final
+         presentation.</p>
+    </s3>
+    <s3 title="Administrators">
+      <p>The administrator is responsible for the sitemap which maps the URI
+         space to the different pipelines in Cocoon.  A pipeline is a path from
+         a Generator to a Serializer.  This means, that the administrator
+         decides that all requests for a resource with a &quot;.html&quot;
+         extension starts out as XML and ends up as HTML.  The Administrator
+         will work closely with the Designers and the Developers.  In the
+         absence of a dedicated administrator, one developer should assume that
+         role.  It is important that developers do not get bogged down in this
+         one Component.</p>
+    </s3>
+  </s2>
+  <s2 title="Development Style">
+    <p>You have to decide early on whether you will develop from a Business
+       Markup perspective, or develop from a Document Markup perspective.  They
+       have different ways of approaching the same problem.  Both approaches
+       have its tradeoffs.  In the end, you will find that you will need a
+       combination of different aspects of the two approaches.</p>
+    <s3 title="Business Markup Centric">
+      <p>This approach makes the Business Object the center of attention for
+         development.  This approach formalizes your business objects, and makes
+         sure that you always represent a business object in a standard manner. 
+         It&apos;s limitations come to bear when you have cases when you need
+         two different objects that need to be represented on the same logical
+         page.</p>
+    </s3>
+    <s3 title="Document Markup Centric">
+      <p>This approach feels the most natural to developers who come from
+         backgrounds with scripting languages.  This approach is a bit more
+         flexible in that you represent a page logically, with the wording as
+         the center of attention.  With this approach, it is up to the developer
+         to ensure that the business object is represented in a consistent
+         manner.</p>
+    </s3>
+    <s3 title="Hybrid Approach">
+      <p>We will develop a hybrid approach to development in this paper.  What
+         this means is that we start with a Document Markup Centric approach,
+         and add in support for specific Business Markup as it is needed.  In
+         the end, this is the most flexible and maintainable method for
+         development.</p>
+    </s3>
+  </s2>
+  <s2 title="The Concept">
+    <p>For the sake of this paper, we are going to develop a very simple
+       database-backed application that manages users and departments.  Each
+       element has a name and an identifier.  A department can have many
+       employees, but each employee can only have one department.  We will be
+       able to create, change, and delete both employees and departments.</p>
+    <s3 title="The SQL">
+<source>
+  <![CDATA[
+CREATE TABLE department {
+    department_id INT NOT NULL,
+    department_name VARCHAR (64) NOT NULL
+};
+
+CREATE TABLE employee {
+    employee_id INT NOT NULL,
+    employee_name VARCHAR (64) NOT NULL,
+    department_id INT NOT NULL
+};
+
+ALTER TABLE department ADD
+    PRIMARY KEY pkDepartment (department_id);
+
+ALTER TABLE employee ADD
+    PRIMARY KEY pkEmployee (employee_id);
+
+ALTER TABLE employee ADD
+    FOREIGN KEY department_id (department.department_id);
+  ]]>
+</source>
+    </s3>
+    <s3 title="Facilities">
+      <ol>
+        <li>Create Department (need name only)</li>
+        <li>Update Department (change name, reassign potential employees to
+          department, create employee for department)</li>
+        <li>Delete Department</li>
+        <li>Find Department (by name, or by ID)</li>
+        <li>Create Employee (need name and department-create department if
+          needed)</li>
+        <li>Update Employee (change name, reassign department-create
+          department if needed)</li>
+        <li>Delete Employee</li>
+        <li>Find Employees (by name, by ID, or by Department)</li>
+      </ol>
+    </s3>
+    <s3 title="Layouts">
+     <p><link href="tutorial-shots.html">Various screenshots</link>
+      are available as a separate document, to portray the layout of
+      interfaces and results pages - apply your own style.</p>
+    </s3>
+  </s2>
+ </s1>
+ <s1 title="Diving In">
+  <p>In order to do anything in Cocoon, you will need a sitemap.  At this point
+     we will not go into detail but we will show you how to put an entry in so
+     you can see your stuff.  In most development situations, the sitemap will
+     be set up for you.  Since we want to start with a clean slate, take the
+     sitemap that comes with Cocoon's 
+     <link href="overview.html#samples">samples</link>
+     and clear out everything under
+     the <code>&lt;map:pipelines&gt;</code> tag.  Next, you will add an entry
+     in the same location that looks like this:</p>
+<source>
+  <![CDATA[
+<map:pipeline>
+   <map:match pattern="">
+     <map:redirect-to uri="home.html"/>
+   </map:match>
+
+   <map:match pattern="**.xml">
+     <map:generate src="docs/{1}.xml"/>
+     <map:serialize type="xml"/>
+   </map:match>
+
+   <map:match pattern="**.html">
+     <map:generate src="docs/{1}.xml"/>
+     <map:transform src="stylesheets/ipms.xsl"/>
+     <map:serialize/>
+   </map:match>
+
+   <map:match pattern="images/**.gif">
+    <map:read src="resources/images/{1}.gif" mime-type="image/gif"/>
+   </map:match>
+
+   <map:match pattern="images/**.jpg">
+    <map:read src="resources/images/{1}.jpg" mime-type="image/jpg"/>
+   </map:match>
+
+   <map:match pattern="images/**.png">
+    <map:read src="resources/images/{1}.png" mime-type="image/png"/>
+   </map:match>
+
+   <map:match pattern="resources/**.css">
+     <map:read src="resources/styles/{1}.css" mime-type="text/css"/>
+   </map:match>
+
+   <map:match pattern="resources/**.js">
+     <map:read src="resource/styles/{1}.js"
+               mime-type="application/x-javascript"/>
+   </map:match>
+
+  <map:handle-errors>
+    <map:transform src="stylesheets/system/error2html.xsl"/>
+    <map:serialize status-code="500"/>
+  </map:handle-errors>
+</map:pipeline>
+  ]]>
+</source>
+    <p>What this does is tell the sitemap that we want to capture all URLs
+       with a &quot;.xml&quot; extension, and find an equivalent file in the
+       &quot;docs&quot; subdirectory.  We are not performing any transformations
+       at this time.  The Sitemap is really a site administrator&apos;s job to
+       maintain.  There are some exceptions to this general rule, but we will
+       discuss them when needed.  We will use the Document Markup specified in
+       the StyleBook DTD format.</p>
+   <s2 title="Creating the Pages">
+    <p>Since we are only looking at XML right now, we need to make sure our
+       pages conform to the markup standards.  You will see how well this comes
+       in handy for debugging XSP (XML Server Pages) markup.  Since we already
+       have the Layout specified, and the database created, we will create our
+       markup.</p>
+    <p>Our home page is going to be really simple: a list of links that take us
+       to the main pages.</p>
+<source>
+  <![CDATA[
+<document>
+  <header>
+    <title>Home Page</title>
+  </header>
+  <body>
+    <s1 title="Welcome to Personnel Administrator">
+      <p>
+        Welcome to our Personnel Administrator.  You
+        can perform one of the following functions:
+      </p>
+      <ul>
+        <li>
+          <link href="search-dept.html">Search Departments</link>
+        </li>
+        <li>
+          <link href="search-empl.html">Search Employees</link>
+        </li>
+        <li>
+          <link href="create-dept.html">Create Departments</link>
+        </li>
+        <li>
+          <link href="edit-dept.html">Edit a Department</link>
+        </li>
+        <li>
+          <link href="create-empl.html">Create Employee</link>
+        </li>
+        <li>
+          <link href="edit-empl.html">Edit an Employee</link>
+        </li>
+      </ul>
+    </s1>
+  </body>
+</document>
+  ]]>
+</source>
+     <p>Even though this doesn&apos;t look like much right now, we have two
+        entries: &quot;**.xml&quot; and &quot;**.html&quot; for the same
+        resource.  Look at &quot;home.html&quot;, and see how it looks now.
+        Quite a difference.  Don&apos;t remove the entry for viewing the page
+        as XML yet.  We need to use it to debug our XSP pages later.</p>
+     <s3 title="Our First Form">
+       <p>For now, we are going to skip the search functionality, and jump to
+          our &quot;create&quot; templates.  It is important to realize the
+          proper method of form handling.  While it is possible to create XSP
+          pages that perform the logic for you, this approach is not very
+          maintainable.  We also have to choose whether we will directly access
+          the database, or encapsulate that logic in objects.</p>
+       <p>The tradeoffs are that the direct SQL access is faster to get started,
+          but that it is harder to maintain in the end.  You may decide to start
+          with the direct SQL access at the beginning of a project, and build
+          the objects later.  With that in mind, we will use some functionality
+          that Cocoon has built in to make this approach a little easier.
+          Cocoon has a group of Database actions that allow you to map form
+          fields to dynamically created SQL calls.  It also has a logicsheet
+          that makes creating SQL bound pages a little easier.</p>
+       <p>Our first form is the &quot;Create a Department&quot; form.  The
+          website specification is missing the tags for form building, we will
+          provide an example here:</p>
+<source>
+  <![CDATA[
+<document>
+  <header>
+    <title>Department</title>
+  </header>
+  <body>
+    <s1 title="Create a Department">
+      <form handler="create-dept.html">
+        <p>
+          You can create a department by typing in the
+          name and pressing the "submit" button.
+        </p>
+        <p>
+          Name: <text name="name" size="30" required="true"/>
+        </p>
+        <submit name="Create Department"/>
+        <note>
+          * These fields are required.
+        </note>
+      </form>
+    </s1>
+  </body>
+</document> 
+  ]]>
+</source>
+       <p>It is important to note that the &quot;submit&quot; tag is transformed
+          into an HTML submit button with the name &quot;cocoon-action&quot;.
+          The &quot;cocoon-action&quot; form parameter is a magic value that
+          Cocoon uses to select a specific action from a group of actions that
+          only gets executed during that time.  You will find that this page
+          displays correctly, but does not do anything yet.  The handler is
+          where the navigation goes once you click on the
+          &quot;Create Department&quot; button on the screen.  What we are going
+          to do is create one confirmation page for all the Department and
+          Employee pages.</p>
+       <p>Cocoon has a FormValidatorAction that will take care of ensuring the
+          input results are acceptable.  It also has the following database
+          actions for your convenience: DatabaseAddAction, DatabaseUpdateAction,
+          DatabaseDeleteAction, and DatabaseAuthenticatorAction.  We will only
+          need the Add, Update, and Delete actions for our simple webapp.  In
+          order to prepare them, we create an XML configuration file that tells
+          the actions how to map request parameters to database tables and place
+          constraints on the parameters.  For the Department form group, it will
+          look like this:</p>
+<source>
+  <![CDATA[
+<root>
+  <!-
+      The "parameter" elements identify the root constraints for
+      the FormValidatorAction.  We are specifying that the "id"
+      parameter is an integer (it limits to "long", "double",
+      "boolean", and "string").  We are specifying that the "name"
+      parameter is a string that is at least 5 characters--but no
+      more than 64 characters.
+  -->
+  <parameter name="id" type="long"/>
+  <parameter name="name" type="string" min-len="5" max-len="64"/>
+
+  <!-
+      Each constraint set is used when we are defining a new way
+      of validating a form.  We define our constraint sets by
+      function.  Since we have the same basic form that is driving
+      the FormValidator, we have an update set and an add set.
+
+      Note that you can impose additional constraints than the
+      default constraints listed above.  Also, you do not "have"
+      to enforce a constraint.  Each "validate" element below
+      identifies the parameter constraints we are enforcing.
+
+      For more information view the JavaDocs for 
+      AbstractValidatorAction
+  -->
+  <constraint-set name="update">
+    <validate name="name"/>
+    <validate name="id" nullable="no" min="1"/>
+  </constraint-set>
+
+  <constraint-set name="add">
+    <validate name="name"/>
+  </constraint-set>
+
+  <!--
+       This is where we identify our table mappings so that the
+       Database Actions can work their magic.  Note that the
+       parameter names are the same as above--as well as the same
+       as form parameter names.
+
+       First we tell the Database Actions that we are using the
+       "personnel" connection pool we set up in <code>cocoon.xconf</code>.
+       This file should be set up by the site administrator.
+
+       We also tell the Database Actions the structure of the table
+       we will be populating.  The keys are used to identify which
+       columns will be treated as keys--they are treated different
+       when the different SQL statements are created.  Note that
+       there is a "mode" attribute in the key element.  The mode
+       refers to how new keys will be generated.  There are three
+       modes: "automatic" keys are generated by the database,
+       "manual" keys are generated by manually finding the largest
+       value and incrementing it, and finally "form" keys take the
+       key value from a parameter on the form.
+
+       Both keys and values serve to map parameter names to table
+       columns, converting the value into the native type.  For a
+       list of supported types check out the JavaDocs for
+       AbstractDatabaseAction.
+  -->
+  <connection>personnel</connection>
+  <table name="department">
+    <keys>
+      <key param="id" dbcol="department_id" type="int" mode="manual"/>
+    </keys>
+    <values>
+      <value param="name" dbcol="department_name" type="string"/>
+    </values>
+  </table>
+</root>
+  ]]>
+</source>
+       <p>After you create the descriptor file, you will have to create some
+          entries in the Sitemap so you can take advantage of the form
+          descriptor.  First, the Sitemap has to be able to know how to
+          reference the Actions we want.  To do that, alter the
+          &quot;map:actions&quot; section to list all the actions we need:</p>
+<source>
+  <![CDATA[
+<map:actions>
+   <map:action name="dbAdd"
+               src="org.apache.cocoon.acting.DatabaseAddAction"/>
+   <map:action name="dbDel"
+               src="org.apache.cocoon.acting.DatabaseDeleteAction"/>
+   <map:action name="dbUpd"
+               src="org.apache.cocoon.acting.DatabaseUpdateAction"/>
+   <map:action name="form"
+               src="org.apache.cocoon.acting.FormValidatorAction"/>
+</map:actions>
+  ]]>
+</source>
+       <p>Lastly, we want to create an action set.  An action set is a group of
+          actions that will be applied at once.  If the action set entry has an
+          &quot;action&quot; parameter, then the specific action is only
+          executed when the magic &quot;cocoon-action&quot; request parameter
+          matches the value of the &quot;action&quot; parameter.  For our
+          purposes, the action set we are defining is listed below (defined in
+          the sitemap):</p>
+<source>
+  <![CDATA[
+<map:action-sets>
+  <map:action-set name="process">
+   <map:act type="form" action="Create Department">
+     <map:parameter name="validate-set" value="add"/>
+     <map:act type="dbAdd"/>
+   </map:act>
+   <map:act type="form" action="Update Department">
+     <map:parameter name="validate-set" value="update"/>
+     <map:act type="dbUpd"/>
+   </map:act>
+   <map:act type="dbDel" action="Delete Department"/>
+  </map:action-set>
+</map:action-sets>
+  ]]>
+</source>
+       <p>Now that we have defined the actions we want, with the parameters that
+          control them during run-time, we can use it in our pipeline.</p>
+<source>
+  <![CDATA[
+<map:match pattern="*-dept.html">
+  <map:act set="process">
+    <map:parameter name="descriptor"
+                   value="context://docs/department-form.xml"/>
+    <map:parameter name="form-descriptor"
+                   value="context://docs/department-form.xml"/>
+    <map:generate type="serverpages" src="docs/confirm-dept.xsp"/>
+    <map:transform src="stylesheets/ipms.xsl"/>
+    <map:serialize/>
+  </map:act>
+  <map:generate type="serverpages" src="docs/{1}-dept.xsp"/>
+  <map:transform src="stylesheets/ipms.xsl"/>
+  <map:serialize/>
+</map:match>
+
+<map:match pattern="*-dept.xml">
+  <map:act set="process">
+    <map:parameter name="descriptor"
+                   value="context://docs/department-form.xml"/>
+    <map:parameter name="form-descriptor"
+                   value="context://docs/department-form.xml"/>
+    <map:generate type="serverpages" src="docs/confirm-dept.xsp"/>
+    <map:serialize type="xml"/>
+  </map:act>
+  <map:generate type="serverpages" src="docs/{1}-dept.xsp"/>
+  <map:serialize type="xml"/>
+</map:match>
+  ]]>
+</source>
+       <p>This may not seem clear what is happening right now.  The way actions
+          work is if they return a null, nothing inside the &quot;map:act&quot;
+          entry will execute, and the request processing will flow through to
+          the second &quot;map:generate&quot; section.  This is a side affect of
+          using the FormValidatorAction.  If we choose to create our own
+          business objects and form validation framework (see the
+          &quot;epos&quot; repository in SourceSafe), we are not constrained by
+          this construct.</p>
+       <p>In addition, we changed the type of generator we are using: we have
+          made it a &quot;serverpages&quot; (or XSP) generator.  We made the
+          transition now so that we can report information on what failed to the
+          user.  First, we need to convert our &quot;create-dept.xml&quot; file
+          to an XSP page so that we can see the page again (right now we will
+          get an error).  To do this, simply add a new tag to the base of the
+          document called &quot;xsp:page&quot; declaring the XSP namespace.  The
+          change will look like this:</p>
+<source>
+  <![CDATA[
+<xsp:page xmlns:xsp="http://apache.org/xsp">
+  <!-- The original document will be embedded here -->
+</xsp:page>
+  ]]>
+</source>
+       <p>To complete the transformation, we usually change the extension to
+          &quot;.xsp&quot; so we know what we are dealing with at a glance.
+          Create a new file called &quot;confirm.xsp&quot; with the following
+          contents:</p>
+<source>
+  <![CDATA[
+<xsp:page xmlns:xsp="http://apache.org/xsp">
+<document>
+  <header>
+    <title>Department</title>
+  </header>
+  <body>
+    <s1 title="Department Processed">
+      <p>
+        You have successfully processed the department.
+      </p>
+    </s1>
+  </body>
+</document>
+</xsp:page>
+  ]]>
+</source>          
+      <s4 title="Adding support for Error Reporting">
+        <p>In order to successfully report errors processing the page, add
+           another namespace declaration to the &quot;xsp:page&quot; element.
+           The final form page will look like this:</p>
+<source>
+  <![CDATA[
+<xsp:page xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-formval="http://apache.org/xsp/form-validator/2.0">
+<document>
+  <header>
+    <title>Department</title>
+  </header>
+  <body>
+    <s1 title="Create a Department">
+      <form handler="create-dept.html">
+        <p>
+          You can create a department by typing in the
+          name and pressing the "submit" button.
+        </p>
+        <p>
+          Name: <text name="name" size="30" required="true"/><br />
+	       <xsp:logic>
+	         if (<xsp-formval:is-toosmall name="name"/>) {
+	             <xsp:text>"Name" must be at least 5 characters</xsp:text>
+	         } else if (<xsp-formval:is-toolarge name="name"/>) {
+	             <xsp:text>"Name" was too long</xsp:text>
+	         }
+	       </xsp:logic>
+        </p>
+        <submit name="Create Department"/>
+        <note>
+          * These fields are required.
+        </note>
+      </form>
+    </s1>
+  </body>
+</document>
+</xsp:page>
+  ]]>
+</source>           
+      </s4>
+     </s3>
+     <s3 title="Adding Database Support with the ESQL Logicsheet">
+      <p>The &quot;Create Employee&quot; page is going to require database
+         access so that we know which Department a new employee is assigned to.
+         This is fairly easy to accomplish with the ESQL Logicsheet.  Again,
+         when you use the ESQL logicsheet, you lose some of your separation of
+         concerns.</p>
+<source>
+  <![CDATA[
+<xsp:page xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-formval="http://apache.org/xsp/form-validator/2.0"
+          xmlns:esql="http://apache.org/cocoon/SQL/v2">
+<document>
+  <header>
+    <title>Employee</title>
+  </header>
+  <body>
+    <s1 title="Create an Employee">
+      <form handler="create-empl.html">
+        <p>
+          You can create a department by typing in the
+          name and pressing the "submit" button.
+        </p>
+        <p>
+          Name: <text name="name" size="30" required="true"/><br />
+	       <xsp:logic>
+	         if (<xsp-formval:is-null name="name"/>) {
+	             <xsp:text>"Name" cannot be empty</xsp:text>
+	         } else if (<xsp-formval:is-toolarge name="name"/>) {
+	             <xsp:text>"Name" was too long</xsp:text>
+	         }
+	       </xsp:logic>
+        </p>
+        <p>
+          Department:
+          <select name="department">
+            <esql:connection>
+
+              <!-- declare the connection pool we are using -->
+              <esql:pool>personnel</esql:pool>
+
+              <!-- query execution blocks can be repeated -->
+              <esql:execute-query>
+
+                <!-- Find all departments and order them -->
+                <esql:query>
+                  SELECT department_id, department_name
+                  FROM department ORDER BY department_name
+                </esql:query>
+
+               <!-- What to do with the results -->
+                <esql:results>
+                  <!--
+                       A successful query that returns results
+                       executes this block.  You can also embed
+                       more "execute-query" blocks inside the
+                       row-results.  That way you can have queries
+                       that filter information based on the results
+                       of other queries.
+                  -->
+                  <esql:row-results>
+                    <option>
+                      <xsp:attribute name="name">
+                        <esql:get-string column="department_id"/>
+                      </xsp:attribute>
+                      <esql:get-string column="department_name"/>
+                    </option>
+                  </esql:row-results>
+                  <!--
+                       Other result types are "no-results" and
+                       "error-results".  A successful query that
+                       does not return results (an empty resultset)
+                       will use the XML embedded in the "no-results"
+                       section.  An unsuccessful query that throws
+                       an exception will use the XML embedded in
+                       the "error-results" section.
+                  -->
+                </esql:results>
+              </esql:execute-query>
+            </esql:connection>
+          </select>
+        </p>
+        <submit name="Create Employee"/>
+        <note>
+          * These fields are required.
+        </note>
+      </form>
+    </s1>
+  </body>
+</document>
+</xsp:page>
+  ]]>
+</source>
+      <p>As you can see ESQL is flexible and powerful, but the cost of that
+         flexibility is a loss of readability.  Using a logicsheet to wrap
+         information in a business object is another alternative.  Notice how
+         ESQL works:</p>
+       <ul>
+        <li>First, we specify our connection information which will apply to
+              all queries in the ESQL structure.</li>
+        <li>Next, we specify our first query we are going to use.  Note that
+              you can nest queries as well as have more than one in an
+              &quot;esql:connection&quot; element.</li>
+        <li>Lastly, we specify how we process the results.  There are three
+              different types of results: &quot;esql:row-results&quot;, 
+              &quot;esql:no-results&quot;, and &quot;esql:error-results&quot;.
+              This allows you to handle different scenarios easily.  It is
+              inside the individual results elements that we can nest new
+              queries to process.</li>
+       </ul>
+       <s4 title="A Note About Actions">
+        <p>Actions are the bread and butter of logic processing in Cocoon.
+           There are a number of approaches that you can take when developing
+           Actions.  You can create a specific action for each piece of
+           business logic.  This approach is very heavy handed and requires you
+           to spend a lot of development time creating actions.</p>
+        <p>The preferred method for creating actions is to provide a generic
+           action that can handle a wide range of specific actions.  The
+           Database Actions and Validator Actions are examples of this approach.
+           They will read a configuration file specified by a parameter, and
+           they will modify the specific results based on the configuration
+           file.  In order to take advantage of this for your own Actions, you
+           can extend the AbstractComplimentaryConfigurationAction.  Basically
+           what it does is encapsulate the logic for reading and caching the
+           Configuration information for your Action.</p>
+       </s4>
+     </s3>
+   </s2>
+   <s2 title="Redirects">
+      <p>Most web developers agree that redirecting a user based on input is a
+         valuable and necessary part of web development.  In Cocoon there are
+         only two locations where you can issue redirects: the Sitemap and
+         Actions.  In essence, Cocoon does require you to plan so that redirects
+         are only used when necessary.</p>
+      <p>One approach that is good to use is to require all traffic to go
+         through a URL controlling action.  The Action will test to see if the
+         user is logged in, and if not will send them to the login page.
+         Another derivation on this approach is to test for a user&apos;s role,
+         and if they do not have access redirect them to a different page.</p>
+   </s2>
+   <s2 title="Writing an Action">
+     <p>Writing an action is as simple as writing a Component that conforms to
+        the Action interface.  Be sure to examine the different Actions that are
+        in the org.apache.cocoon.acting package - you might find some abstract
+        actions that you can extend.  Actions are Avalon Components, so you may
+        want to read Avalon&apos;s Whitepaper for more information.</p>
+     <note>Actions will return a map that contains values that the sitemap
+           administrator can use in the sitemap.  If the Action returns a null,
+           then anything inside the &quot;map:act&quot; element will not be
+           executed.</note>
+     <s3 title="Return Values">
+      <p>The Action interface specifies that it returns a Map.  This Map is
+         used for value substitution in the sitemap, and communicating
+         information to other Actions.  When an Action is specified in the
+         sitemap, it uses the following syntax:</p>
+<source>
+  <![CDATA[
+<map:act type="my-action">
+  <map:generate src="{source}"/>
+  <map:transform src="doc2{theme}"/>
+  <map:serialize/>
+</map:act>
+  ]]>
+</source>
+      <p>The above code snippet assumes you have an Action with the name
+         &quot;my-action&quot; already specified.  It also assumes that there
+         are two &quot;parameters&quot; returned from the action in the Map. The
+         sitemap queries the returned Map for the &quot;source&quot; and
+         &quot;theme&quot; values, and substitutes their values in place of the
+         curly braces that referenced it.  In other words, when it sees the
+         &quot;map:generate&quot; with an src attribute of &quot;{source}&quot;
+         it looks in the Map.  For our discussion, let us say the value stored
+         is &quot;index.xml&quot;.  The Sitemap will perform the substitution
+         so that the src attribute now containts &quot;index.xml&quot;.</p>
+      <p>In the case that the above the action might return a null value.  In
+         that case, everything inside the &quot;map:act&quot; element is
+         skipped.  You can use this to good advantage like the *ValidatorActions
+         do.  If everything is validated correctly, they return a Map.  If there
+         is an error, they return a null, and place the information in Request
+         attributes.</p>
+     </s3>
+   </s2>
+ </s1>
+ <s1 title="Cocoon Supplied Components">
+  <p>Cocoon supplies a number of different Components for your use.  The types
+     of Components we will discuss here are Generators, Transformers,
+     Serializers, Readers, and Actions.  This are the important Components that
+     allow you to do you job.</p>
+  <s2 title="Generators">
+    <p>A Generator will create SAX events for a SAX stream-whether it reads from
+       an input stream or it generates it on the fly.  All built in generators
+       are in the package &quot;org.apache.cocoon.generation&quot;.</p>
+    <s3 title="DirectoryGenerator">
+      <p>Reads a directory, and builds an XML document based on the contents.
+         You can pass parameters to it to control how it behaves (note
+         parameter names are case sensitive):</p>
+      <ul>
+        <li>dateFormat - a format string that you would use in the Java
+              SimpleDateFormat object</li>
+        <li>depth - the maximum number of directories deep the generator will
+              look (defaults to 1)</li>
+        <li>root - a regular expression to find the root directory</li>
+        <li>include - a regular expression to declare the files/directories
+              that will be included in the list</li>
+        <li>exclude - a regular expression to declare the files/directories
+              that will not be included in the list</li>
+      </ul>
+      <p>When you use this Generator, you must have the Jakarta Regexp package
+         installed in your WEB-INF/libs directory.  Also, the DirectoryGenerator
+         is not Cacheable so the results will be generated fresh each time.</p>
+      <p>The resulting XML looks like this:</p>
+<source>
+  <![CDATA[
+<?xml version="1.0"?>
+
+<directory xmlns="http://apache.org/cocoon/directory/2.0"
+           name="C:\path\dir\"
+           lastModified="135432153351"
+           date="11 Jun 2001">
+  <file name="C:\path\dir\file.xml" lastModified="135432153351"
+        date="11 Jun 2001"/>
+</directory>
+  ]]>
+</source>
+    </s3>
+    <s3 title="FileGenerator">
+      <p>This generator and the ServerPagesGenerator will be your most used
+         generators.  The FileGenerator reads an XML file from an input source,
+         and converts it into a SAX stream.</p>
+      <p>When you use this Generator, you must have a JAXP 1.1 compliant parser
+         installed in your WEB-INF/libs directory.  You may also use the Xerces
+         parser bypassing the JAXP requirement.  The FileGenerator is Cacheable,
+         so the results will only be re-read when the file changes.</p>
+    </s3>
+    <s3 title="FragmentExtractorGenerator">
+      <p>This generator is used in conjunction with the
+         FragmentExtractorTransformer (more on that in the transformers
+         section).  The FragmentExtractorTransformer splits an XML document into
+         smaller parts so you can treat each smaller part as a unique document.
+         To see this in action, check out the Cocoon supplied 
+         <link href="overview.html#samples">samples</link>
+         and click on the SVG Welcome page.</p>
+      <p>This Generator caches the results from the FragmentExtractorTransformer
+         for quick retrieval later.  It is Cacheable, so the fragments are
+         generated once and the cached version is read from that point
+         forward.</p>    
+    </s3>
+    <s3 title="HTMLGenerator">
+      <p>This generator is used to read in an HTML file that may not be properly
+         formatted to comply with XML standards.  The result is properly
+         formatted XHTML.</p>
+      <p>This generator requires the Tidy.jar file installed in the
+         WEB-INF/libs directory.  The HTMLGenerator is Cacheable, so the results
+         can be cached for application speedup.</p>      
+    </s3>
+    <s3 title="ImageDirectoryGenerator">
+      <p>This generator is an extension of the DirectoryGenerator, so it has the
+         same requirements.  It extends the markup to include two new attributes
+         for the &quot;file&quot; element: &quot;height&quot; and
+         &quot;width&quot;.  The ImageDirectoryGenerator reads every GIF and
+         JPEG file to get the dimensions.</p>
+      <p>This generator is not Cacheable (just like the DirectoryGenerator).</p>
+    </s3>
+    <s3 title="JspGenerator">
+      <p>This generator executes a JSP file and parses the result.  The JSP must
+         generate valid XML, and be a file in the context.</p>
+      <p>This generator requires a JAXP 1.1 compliant parser or Xerces if your
+         environment will not allow you to install one.  It is also not
+         cacheable so the results are generated each time.</p>
+    </s3>
+    <s3 title="PhpGenerator">
+      <p>This generator functions just like the JspGenerator, but with PHP
+         templates.  The PHP must generate valid XML, and be a file in the
+         context.</p>
+      <p>This generator requires a JAXP 1.1 compliant parser and the
+         phpservlet.jar file that comes from http://php.net.  Install the files
+         in the WEB-INF/libs directory.  The PhpGenerator is not Cacheable.</p>
+    </s3>
+    <s3 title="RequestGenerator">
+      <p>This generator converts the Request object into an XML representation.
+         It is best used for debugging purposes.  The resulting XML follows:</p>
+<source>
+  <![CDATA[
+<request xmlns="http://xml.apache.org/cocoon/requestgenerator/2.0"
+         target="index.html" source="context://docs/index.xml">
+
+  <requestHeaders>
+    <header name="HOST_NAME">johny-bravo.infoplanning.com</header>
+    <!-- repeat for each header -->
+  </requestHeaders>
+
+  <requestParameters>
+    <parameter name="form-param">
+      <value>1</value>
+      <!-- repeat for each value in "form-param" -->
+    </parameter>
+    <!-- repeat for each parameter -->
+  </requestParameters>
+
+  <configurationParameters>
+    <parameter
+       name="configurations">context://WEB-INF/cocoon.xconf</parameter>
+    <!-- repeat for each parameter -->
+  </configurationParameters>
+</request>
+  ]]>
+</source>
+      <p>The RequestGenerator does not have any special requirements for
+         libraries, and it is not Cacheable.</p>
+    </s3>
+    <s3 title="ScriptGenerator">
+      <p>The ScriptGenerator uses the Bean Scripting Framework (BSF) and an
+         associated interpreter to generate valid XML.  If you add language
+         support, you will have to embed the following configuration
+         information:</p>
+<source>
+  <![CDATA[
+<add-languages>
+  <!-- repeat the following for each language: -->
+  <language name="kawa-scheme"
+            src="org.gnu.kawa.bsf.engines.KawaEngine">
+    <extension>scm</extension>
+    <!-- repeat for each file extension -->
+  </language>
+</add-languages>
+  ]]>
+</source>
+      <p>The ScriptGenerator requires that you have the bsf.jar in your
+         WEB-INF/libs directory along with any jars for the script interpreters
+         you use.  The ScriptGenerator is not Cacheable.</p>
+    </s3>
+    <s3 title="ServerPagesGenerator">
+      <p>The ServerPagesGenerator is the XML Server Pages (XSP) engine.  It
+         automatically compiles a new Generator at runtime based on an input
+         XML file.</p>
+      <p>This generator requires that you have a JAXP 1.1 compliant parser and
+         XSLT engine installed in your WEB-INF/libs directory.  It also requires
+         you to have the JDK's tools.jar file in your classpath.  If you
+         reference any packages, they must also be in your classpath.  The
+         created generator is not Cacheable.</p>
+    </s3>
+    <s3 title="StatusGenerator">
+      <p>The StatusGenerator is another debug tool.  It provides status
+         information for the Cocoon engine.  The resultant XML is in the
+         following format:</p>
+<source>
+  <![CDATA[
+<statusinfo xmlns="http://apache.org/cocoon/status/2.0"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            host="johnny-bravo.infoplanning.com"
+            date="7/16/2001 1:16:42 pm">
+  <group name="vm">
+    <group name="memmory">
+      <value name="total"><line>5213255</line></value>
+      <value name="free"><line>12321211</line></value>
+    </group>
+    <group name="jre">
+      <value name="version"><line>1.3.1</line></value>
+      <value name="java-vendor"
+             xlink:type="simple"
+             xlink:href="http://java.sun.com/jdk/1.3/">
+        <line>Sun Microsystems Inc.</line>
+      </value>
+    </group>
+    <group name="operating-system">
+      <value name="name"><line>Windows 2000</line></value>
+      <value name="architecture"><line>x86</line></value>
+      <value name="version"><line>5.0</line></value>
+    </group>
+  </group>
+  <value name="classpath">
+    <line>C:\tomcat\lib\tomcat.jar</line>
+    <line>C:\jdk1.3.1\lib\tools.jar</line>
+  </value>
+</statusinfo>
+  ]]>
+</source>
+      <p>The results are not cacheable, and do not require any special
+         libraries.</p>
+    </s3>
+    <s3 title="StreamGenerator">
+      <p>The StreamGenerator is used to convert the Request&apos;s InputStream
+         into a SAX XML stream.  Alternately, it will accept the magic form
+         parameter &quot;form-name&quot; and read the input stream that the
+         parameter points to.</p>
+      <p>This generator requires the JAXP 1.1 compliant parser (or Xerces).  It
+         is not cacheable.</p>
+    </s3>
+    <s3 title="VelocityGenerator">
+      <p>The VelocityGenerator is used to convert the output from the Velocity
+         template engine to a valid XML stream.</p>
+      <p>This generator requires Jakarta Velocity and a JAXP 1.1 compliant
+         parser installed in WEB-INF/libs.  It is not Cacheable.</p>
+    </s3>
+  </s2>
+  <s2 title="Transformers">
+    <p>Transformers read a SAX stream, manipulate the XML stream, and send the
+       results to the next Component in the chain.  All built in generators are
+       in the package &quot;org.apache.cocoon.generation&quot;.</p>
+    <s3 title="CIncludeTransformer">
+      <p>The CIncludeTransformer looks for instances of the
+         &quot;ci:include&quot; element, and will embed another XML resource in
+         your document.  That resource can be in the sitemap so you can include
+         the results of processed XSP pages.  An example follows:</p>
+<source>
+  <![CDATA[
+<document xmlns:ci="http://apache.org/cocoon/include/1.0">
+  <ci:include src="cocoon://my-resource.xml"
+              element="body"
+              ns="http://mycompany.com/my-resource/1.0"
+              prefix="res"/>
+</document>
+  ]]>
+</source>
+      <p>The Transformer will read the results from the sitemap, and embed it
+         into this document with a new root element &quot;body&quot; using a new
+         namespace (xmlns:res=&quot;http://mycompany.com/my-resource/1.0&quot;).
+         The results are not cached.</p>
+    </s3>
+    <s3 title="FilterTransformer">
+      <p>The FilterTransformer will look for instances of an element you specify
+         using parameters, and will not forward any SAX events for that element
+         or any child elements.  You can pass parameters to it to control how it
+         behaves (note parameter names are case sensitive):</p>
+      <ul>
+        <li>element-name - The name of the element to filter</li>
+        <li>count - the number of times the element will be filtered</li>
+        <li>blocknr - the element number that filtering begins</li>
+      </ul>
+    </s3>
+    <s3 title="FragmentExtractorTransformer">
+      <p>This is transformation half of the FragmentExtractor.  This transformer
+         sieves an incoming stream of xml with embedded SVG images and replaces
+         the images with a xlink locator pointing to the image.  Ultimately this
+         could be much more general, but currently it is mainly an SVG
+         extraction.</p>
+    </s3>
+    <s3 title="I18nTransformer">
+      <p>This is Cocoon&apos;s port of Infozone Group&apos;s I18nProcessor.  The
+         word i18n is a shorthand for the longer word
+         &quot;internationalization&quot; (starts with &apos;i&apos;, ends with
+         &apos;n&apos;, and has 18 letters in the middle).  The
+         internationalization transformer allows you to look up references by
+         key in an XML dictionary.  This allows you to support your same
+         business processes in many different countries.  You have to pass
+         parameters to it so that it knows how to process i18n requests:</p>
+      <ul>
+        <li>default_lang - The default language if the requested language does
+              not exist (two character country code)</li>
+        <li>avalailable_lang_X - Language available by the dictionary (two
+              character country code).  Replace the &apos;X&apos; in the
+              attribute with a number (1, 2, 3).</li>
+        <li>src - The location of the dictionary file.</li>
+      </ul>
+      <p>The I18nTransformer reads the request parameter &quot;lang&quot; to
+         determine which language to display to the user.  To translate text
+         either embed the text inside the &quot;i18n:text&quot; element, or the
+         attribute name inside the &quot;i18n:attr&quot; attribute.</p>
+<source>
+  <![CDATA[
+<document xmlns:i18n="http://apache.org/cocoon/i18n/2.0">
+  <body>
+    <s1 title="Test Title" i18n:attr="title">
+      <p>
+       <i18n:text>This is replaceable text.</i18n:text>
+      </p>
+    </s1>
+  </body>
+</document>
+  ]]>
+</source>         
+    </s3>
+    <s3 title="LDAPTransformer">
+      <p>The LDAPTransformer is a class that can be plugged into a pipeline to
+         transform the SAX events which passes through this transformer into
+         queries an responses to/from a LDAP interface.</p>
+    </s3>
+  </s2>
+ </s1>
+ <s1 title="The Sitemap">
+  <p>This section is meant primarily as a reference for the Sitemap Manager.
+     The person in this role needs to have a better understanding of the sitemap
+     than any other role.  The sitemap is a relatively new concept, and as such
+     is subject to refinement.  There have been a couple of proposals to replace
+     it with something else, but nothing has been started yet.</p>
+  <p>The Sitemap is composed of three major parts: component declaration,
+     resource declaration, and pipeline declaration.  You will only use a few
+     different types of components in the sitemap: Generators, Transformers,
+     Serializers, Readers, Matchers, Selectors, and Actions.  Generators create
+     XML and pass the results in a SAX stream.  Transformers read a SAX stream
+     and manipulate the results on the way through.  Serializers read a SAX
+     stream, and convert it into the servlet&apos;s output stream.  Readers read
+     an input stream and copy the results to the servlet&apos;s output stream.  
+     Matchers and Selectors are used to choose how to process an incoming
+     request.  Lastly, Actions are used to perform logic only functions (no
+     display logic).</p>
+  <p>Below is the root element of all sitemaps:</p>
+<source>
+  <![CDATA[
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+</map:sitemap>
+  ]]>
+</source>
+    <s2 title="Choosing your Components">
+      <p>As previously discussed, you may choose a number of components to use
+         in your own system.  This section identifies the different components
+         you can use, and what they do.  Before we begin, I must state that
+         every component is declared in the &quot;map:components&quot; element
+         of the Sitemap:</p>
+<source>
+  <![CDATA[
+<map:components>
+</map:components>
+  ]]>
+</source>
+      <s3 title="Generators">
+        <p>All generators are declared within the &quot;map:generators&quot;
+           element that is a child of the &quot;map:components&quot;
+           element:</p>
+<source>
+  <![CDATA[
+<map:generators>
+  <map:generator name="file"
+                 src="org.apache.cocoon.generation.FileGenerator"/>
+</map:generators>
+  ]]>
+</source>           
+        <p>Most Generators do not have configuration information, so the
+           &quot;map:generator&quot; element is left empty.  If there were
+           configuration information to pass to the generator, it would be
+           placed inside the element.  As you can see in the sitemap snippet
+           above, you declare a generator with the &quot;map:generator&quot;
+           element, a &quot;name&quot; attribute, and a &quot;src&quot;
+           attribute.  The &quot;name&quot; attribute is how you will refer to
+           this specific type of generator from this point forward.  The
+           &quot;src&quot; attribute is the fully qualified class name of the
+           Generator class.  In fact this construct is the same for all
+           component types - the only thing that changes is the elements that
+           declare the type of Component we are dealing with.</p>
+      </s3>
+    </s2>         
+ </s1>
+</body>
+</document>

@@ -1,0 +1,56 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/09/28 17:13:18 rws $
+#include <Server.tmpl>
+
+SRCS1 =	sunAmInit.c \
+	sunCfb.c \
+	sunCursor.c \
+	sunFbs.c \
+	sunAmIo.c \
+	sunAmKbd.c \
+	sunMfb.c \
+	sunAmMouse.c\
+	sunGX.c \
+	sunKeyMap.c \
+	sunAmScreen.c \
+	sunAmProbe.c
+
+SRCS =	$(SRCS1)
+
+OFILES = sunInitColor.o sunInitMono.o sunInExMono.o
+
+OBJS = 	sunCfb.o \
+	sunCursor.o \
+	sunFbs.o \
+	sunAmIo.o \
+	sunAmKbd.o \
+	sunMfb.o \
+	sunAmMouse.o \
+	sunGX.o \
+	sunKeyMap.o \
+	sunAmScreen.o \
+	sunAmProbe.o
+
+   INCLUDES = -I. -I../sun -I../.. -I../../mi -I../../mfb -I../../cfb \
+	      -I../../include -I$(XINCLUDESRC) -I$(FONTINCSRC)
+   LINTLIBS = ../../dix/llib-ldix.ln ../../os/llib-los.ln \
+	      ../mfb/llib-lmfb.ln ../mi/llib-lmi.ln ../cfb/llib-lcfb.ln
+
+NormalLibraryObjectRule()
+
+all:: $(OFILES)
+
+lintlib:
+
+NormalLibraryTarget(sun,$(OBJS))
+NormalLintTarget($(SRCS1))
+
+sunInExMono.o: $(ICONFIGFILES)
+ObjectFromSpecialSource(sunInExMono,../../mi/miinitext,-UPEXEXT)
+ObjectFromSpecialSource(sunInitMono,sunAmInit,-DSUNMAXDEPTH=1)
+ObjectFromSpecialSource(sunInitColor,sunAmInit,-DSUNMAXDEPTH=8)
+
+ObjectFromSpecialSource(sunGX,../sun/sunGX,/**/)
+ObjectFromSpecialSource(sunKeyMap,../sun/sunKeyMap,/**/)
+ObjectFromSpecialSource(sunMfb,../sun/sunMfb,/**/)
+
+DependTarget()

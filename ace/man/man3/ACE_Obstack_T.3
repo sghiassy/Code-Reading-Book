@@ -1,0 +1,161 @@
+.TH ACE_Obstack_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Obstack_T \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Obstack_T.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Obstack_T\fR (size_t size = (4096 * sizeof (CHAR)) - sizeof (\fBACE_Obchunk\fR), \fBACE_Allocator\fR *allocator_strategy = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_Obstack_T\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrequest\fR (size_t len)"
+.br
+.RI "\fIRequest Obstack to prepare a block at least \fIlen\fR long for building a new string. Return -1 if fail, 0 if success.\fR"
+.ti -1c
+.RI "CHAR* \fBgrow\fR (CHAR c)"
+.br
+.RI "\fIInserting a new CHAR \fIc\fR into the current building block without freezing (null terminating) the block. This function will create new chunk by checking the boundary of current Obchunk. Return the location \fIc\fR gets inserted to, or 0 if error.\fR"
+.ti -1c
+.RI "void \fBgrow_fast\fR (CHAR c)"
+.br
+.RI "\fIInserting a new CHAR \fIc\fR into the current building block without freezing (null terminating) the block and without checking for out-of-bound error.\fR"
+.ti -1c
+.RI "CHAR* \fBfreeze\fR (void)"
+.br
+.RI "\fIFreeze the current building block by null terminating it. Return the starting address of the current building block, 0 if error occurs.\fR"
+.ti -1c
+.RI "CHAR* \fBcopy\fR (const CHAR *data, size_t len)"
+.br
+.RI "\fICopy the data into the current Obchunk and freeze the current block. Return the starting address of the current building block, 0 if error occurs. \fIlen\fR specify the string length, not the actually data size.\fR"
+.ti -1c
+.RI "size_t \fBlength\fR (void) const"
+.br
+.RI "\fIReturn the maximum \fIlength\fR or \fIsize\fR of a string that can be put into this Obstack. \fIsize\fR = \fIlength\fR * sizeof (CHAR).\fR"
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBrelease\fR (void)"
+.br
+.RI "\fI"Release" the entire stack of Obchunks, putting it back on the free list.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Obchunk\fR* \fBnew_chunk\fR (void)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_strategy_\fR"
+.br
+.RI "\fIPointer to the allocator used by this Obstack.\fR"
+.ti -1c
+.RI "size_t \fBsize_\fR"
+.br
+.RI "\fICurrent size of the Obstack;.\fR"
+.ti -1c
+.RI "class \fBACE_Obchunk\fR* \fBhead_\fR"
+.br
+.RI "\fIHead of the Obchunk chain.\fR"
+.ti -1c
+.RI "class \fBACE_Obchunk\fR* \fBcurr_\fR"
+.br
+.RI "\fIPointer to the current Obchunk.\fR"
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classCHAR> ACE_Obstack_T<CHAR>::ACE_Obstack_T<CHAR> (size_t size = (4096 * sizeof (CHAR)) - sizeof (\fBACE_Obchunk\fR), \fBACE_Allocator\fR * allocator_strategy = 0)
+.PP
+.SS template<classCHAR> ACE_Obstack_T<CHAR>::~ACE_Obstack_T<CHAR> (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classCHAR> CHAR * ACE_Obstack_T<CHAR>::copy (const CHAR * data, size_t len)
+.PP
+Copy the data into the current Obchunk and freeze the current block. Return the starting address of the current building block, 0 if error occurs. \fIlen\fR specify the string length, not the actually data size.
+.PP
+.SS template<classCHAR> void ACE_Obstack_T<CHAR>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classCHAR> CHAR * ACE_Obstack_T<CHAR>::freeze (void)
+.PP
+Freeze the current building block by null terminating it. Return the starting address of the current building block, 0 if error occurs.
+.PP
+.SS template<classCHAR> CHAR * ACE_Obstack_T<CHAR>::grow (CHAR c)
+.PP
+Inserting a new CHAR \fIc\fR into the current building block without freezing (null terminating) the block. This function will create new chunk by checking the boundary of current Obchunk. Return the location \fIc\fR gets inserted to, or 0 if error.
+.PP
+.SS template<classCHAR> void ACE_Obstack_T<CHAR>::grow_fast (CHAR c)
+.PP
+Inserting a new CHAR \fIc\fR into the current building block without freezing (null terminating) the block and without checking for out-of-bound error.
+.PP
+.SS template<classCHAR> size_t ACE_Obstack_T<CHAR>::length (void) const
+.PP
+Return the maximum \fIlength\fR or \fIsize\fR of a string that can be put into this Obstack. \fIsize\fR = \fIlength\fR * sizeof (CHAR).
+.PP
+.SS template<classCHAR> class \fBACE_Obchunk\fR* ACE_Obstack_T<CHAR>::new_chunk (void)\fC [protected]\fR
+.PP
+.SS template<classCHAR> void ACE_Obstack_T<CHAR>::release (void)
+.PP
+"Release" the entire stack of Obchunks, putting it back on the free list.
+.PP
+.SS template<classCHAR> int ACE_Obstack_T<CHAR>::request (size_t len)
+.PP
+Request Obstack to prepare a block at least \fIlen\fR long for building a new string. Return -1 if fail, 0 if success.
+.PP
+.SS template<classCHAR> size_t ACE_Obstack_T<CHAR>::size (void) const
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classCHAR> ACE_Obstack_T<CHAR>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classCHAR> \fBACE_Allocator\fR * ACE_Obstack_T<CHAR>::allocator_strategy_\fC [protected]\fR
+.PP
+Pointer to the allocator used by this Obstack.
+.PP
+.SS template<classCHAR> class \fBACE_Obchunk\fR * ACE_Obstack_T<CHAR>::curr_\fC [protected]\fR
+.PP
+Pointer to the current Obchunk.
+.PP
+.SS template<classCHAR> class \fBACE_Obchunk\fR * ACE_Obstack_T<CHAR>::head_\fC [protected]\fR
+.PP
+Head of the Obchunk chain.
+.PP
+.SS template<classCHAR> size_t ACE_Obstack_T<CHAR>::size_\fC [protected]\fR
+.PP
+Current size of the Obstack;.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

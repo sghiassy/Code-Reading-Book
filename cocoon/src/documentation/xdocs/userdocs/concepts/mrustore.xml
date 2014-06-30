@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+  <header>
+    <title>MRUMemoryStore and Swapping under Apache Cocoon</title>
+    <version></version>
+    <type>Technical document</type>
+    <authors><person name="Gerhard Froehlich" email="g-froehlich@gmx.de"/>
+    </authors>
+    <abstract>This document explains how the MRUMemoryStore and Swapping under 
+    Cocoon executes.</abstract>
+  </header>
+  <body>
+  <s1 title="Goal">
+    <p>This document explains how the MRUMemoryStore and Swapping under 
+    Cocoon executes.</p>
+  </s1>
+  <s1 title="Overview">
+    <p>The MRUMemoryStore was developed to provide a standard algorithm to
+       store data in memory. For web-based applications the MRU (Most Recently Used) algorithm
+       is very suitable, because the object most frequently accessed is always on "top".
+    </p>
+    <p>If configured, the objects are also swapped to the filesystem if the
+    MRUMemoryStore reached his configured max. object limit.
+    </p>
+  </s1>
+  <s1 title="Implementation">
+    <s2 title="MRUMemoryStore">
+    <p> 
+    The heart of the MRUMemoryStore ist combination of a LinkedList and a HashMap:
+    </p>
+    <p>
+    The LinkedList provides the queue mechanism, and the entries in the LinkedList 
+    contain the key to the data in the HashMap. When caching a new entry in to the list,
+    the entry is inserted to the front of the list.
+    If the list is already full, the oldest data entry is removed from the Cache.
+    When requesting a entry, the store returns the object by key and inserts the requested key 
+    on the top of the Cache.
+       
+    This implementation keeps the most recent used objects in the store and provides the best
+    use of the machines memory.
+    </p>
+    </s2>
+    <s2 title="Swapping">
+    <p>
+    When the MRUMemoryStore is full or the JVM is at the heap size limit the 
+    objects in the MRUMemoryStore are swapped to the Filesystem. The default 
+    directory is "cache-dir" in the work-directory.
+    </p>
+    <p>
+    NOTE: The keys under Cocoon are Strings at the moment. Therefor the
+    filenames of the swapped objects can be very long. Especially Windows OS
+    flavours have problems with long filenames. This problem is well known and
+    we are working on that.    
+    </p>
+    </s2>
+  </s1>
+  <s1 title="Configuration of the MRUMemoryStore">
+  <source>
+  <![CDATA[
+  <store class="org.apache.cocoon.components.store.MRUMemoryStore" logger="core.store">
+     <parameter name="maxobjects" value="100"/>
+     <parameter name="filesystem" value="true"/>
+  </store>
+  ]]>
+  </source> 
+  <p>Explanation of the paramters:</p>
+    <ol> 
+      <li><code>&lt;parameter name="maxobjects" value="100"/&gt;</code>:
+      Indicates how many objects will be hold in MRUMemoryStore. When the number 
+      of maxobjects has been reached, the last object in the MRUMemoryStore will be 
+      thrown out.</li>
+      <li><code>&lt;parameter name="filesystem" value="true"/&gt;</code>:
+      If this switch is set on true, objects are swapped out to the filesystem,
+      if the MRUMemoryStore has reached his maximum object limit, or the JVM 
+      memory consumption is over the heap size limit. See StoreJanitor user 
+      docs for more information.</li>
+	</ol>
+  </s1>
+  </body>
+</document>

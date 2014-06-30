@@ -1,0 +1,140 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_ParseScreenSaverCL</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_ParseScreenSaverCL</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_ParseScreenSaverCL</h4>
+<dd>DEMOGL_ParseScreenSaverCL parses the command line parameters specified when the application started. This command line is 
+	passed to the WinMain function of the application as <i>lpCmdLine</i>. You pass this variable to <b>DEMOGL_ParseScreenSaverCL</b>.
+	The command line parsing is needed for screensaver applications only. Windows systems specify on the command line how a screensaver
+	application was started: in preview mode, in configuration mode, in normal mode or in password mode. 
+	<p>
+	<pre>
+<b><a HREF="ref_structures_SScreenSaverCLParams.htm" target="main">SScreenSaverCLParams</a></b>
+* DEMOGL_ParseScreenSaverCL(
+	<b>const LPSTR</b> <i>lpCmdLine</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>lpCmdLine</i>
+	<dd>LPSTR pointer to the command line of the application. This parameter is received by the WinMain function of your application 
+		as <i>lpCmdLine</i> and you should pass that <i>lpCmdLine</i> to <b>DEMOGL_ParseScreenSaverCL</b>.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>Pointer to a <a HREF="ref_structures_SScreenSaverCLParams.htm" target="main">SScreenSaverCLParams</a> structure that
+	contains the interpretation results of the command line parameters.
+<p>
+<dt><b>Remarks.</b>
+<dd>To effectively use DemoGL for screensaver applications, DemoGL has to know how Windows wants it to run. When you start
+	the DemoGL part of your application by calling <a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>, 
+	you have to specify a RunType, and in the screensaver case, a RUNTYPE_SAVER_* variant. You can determine which screen saver
+	RunType variant you should pass to DemoGL by parsing the command line passed to the WinMain function. DemoGL will do this
+	for you when you call <b>DEMOGL_ParseScreenSaverCL</b>. It will return a pointer to a 
+	<a HREF="ref_structures_SScreenSaverCLParams.htm" target="main">SScreenSaverCLParams</a> structure which contains the 
+	<i>iSaverExecType</i> parameter. You can easily determine which screen saver RunType variant you should pass to
+	<a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a> by using the following table:
+	<p>
+	<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="50%"><b>iSaverExecType</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="50%"><b>RunType variant to use</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="50%" VALIGN="TOP">DGL_SSAVERET_UNKNOWN</td>
+			<td WIDTH="50%" VALIGN="TOP">RUNTYPE_UNKNOWN.</td>
+		</tr>
+		<tr>
+			<td WIDTH="50%" VALIGN="TOP">DGL_SSAVERET_CONFIG</td>
+			<td WIDTH="50%" VALIGN="TOP">RUNTYPE_SAVER_CONFIG</td>
+		</tr>
+		<tr>
+			<td WIDTH="50%" VALIGN="TOP">DGL_SSAVERET_NORMAL</td>
+			<td WIDTH="50%" VALIGN="TOP">RUNTYPE_SAVER_NORMAL</td>
+		</tr>
+		<tr>
+			<td WIDTH="50%" VALIGN="TOP">DGL_SSAVERET_PREVIEW</td>
+			<td WIDTH="50%" VALIGN="TOP">RUNTYPE_SAVER_PREVIEW</td>
+		</tr>
+		<tr>
+			<td WIDTH="50%" VALIGN="TOP">DGL_SSAVERET_PASSWORD</td>
+			<td WIDTH="50%" VALIGN="TOP">RUNTYPE_SAVER_PASSWORD</td>
+		</tr>
+	</table>
+	<p>
+	Please note that this is only needed for screensavers. Normal applications don't need to parse the command line.
+	<b>DEMOGL_ParseScreenSaverCL</b> won't report useful information if you do in normal applications.
+<p>
+<dt><b>Example.</b>
+<dd><pre>
+// Declare a pointer to the screensaver command line parameter structure
+SScreenSaverCLParams	*pSSCLParams;
+	
+// Parse commandline for screensaver exectype
+pSSCLParams=DEMOGL_ParseScreenSaverCL(lpCmdLine);
+
+iRunType=RUNTYPE_NORMAL;
+
+// start as a screensaver
+switch(pSSCLParams-&gt;iSaverExecType)
+{
+	case DGL_SSAVERET_CONFIG:
+	{
+		/////////////////////////
+		// Insert your own configwindow initialisation and start up code HERE
+		// If you do you shouldn't enter DEMOGL_AppRun() below but include it
+		// in your dialog with a button.
+		/////////////////////////
+		iRunType=RUNTYPE_SAVER_CONFIG;
+	}; break;
+	case DGL_SSAVERET_NORMAL:
+	{
+		iRunType=RUNTYPE_SAVER_NORMAL;
+	}; break;
+	case DGL_SSAVERET_PREVIEW:
+	{
+		iRunType=RUNTYPE_SAVER_PREVIEW;
+	}; break;
+	default:
+	{
+		// should not run, unknown or unsupported screensaver type.
+		iRunType=RUNTYPE_UNKNOWN;	// will return immediately
+	}; break;
+}
+// Start the application. We won't return until the demo ends (by userinteraction or by script) or 
+// when a fatal error occurs.
+DEMOGL_AppRun(hInstance, &amp;sdStartupDatValues, &quot;My title&quot;, false,0,0,iRunType);
+
+// End it. Call this routine to signal DemoGL it's all over and it should release
+// claimed resources.
+DEMOGL_AppEnd();
+</pre>
+<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>, 
+	<a HREF="ref_structures_SScreenSaverCLParams.htm" target="main">SScreenSaverCLParams</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

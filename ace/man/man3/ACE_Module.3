@@ -1,0 +1,248 @@
+.TH ACE_Module 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Module \- An abstraction for managing a bi-directional flow of messages. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Module.h>\fR
+.PP
+Inherits \fBACE_Module_Base\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Module\fR (void)"
+.br
+.RI "\fICreate an empty Module.\fR"
+.ti -1c
+.RI "\fB~ACE_Module\fR (void)"
+.br
+.RI "\fIShutdown the Module.\fR"
+.ti -1c
+.RI "\fBACE_Module\fR (const \fBACE_TCHAR\fR *module_name, \fBACE_Task\fR<ACE_SYNCH_USE> *writer = 0, \fBACE_Task\fR<ACE_SYNCH_USE> *reader = 0, void *args = 0, int flags = M_DELETE)"
+.br
+.RI "\fICreate an initialized module with <module_name> as its identity and <reader> and <writer> as its tasks.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_TCHAR\fR *module_name, \fBACE_Task\fR<ACE_SYNCH_USE> *writer = 0, \fBACE_Task\fR<ACE_SYNCH_USE> *reader = 0, void *a = 0, int flags = M_DELETE)"
+.br
+.ti -1c
+.RI "int \fBclose\fR (int flags = M_DELETE_NONE)"
+.br
+.ti -1c
+.RI "\fBACE_Task\fR<ACE_SYNCH_USE>* \fBwriter\fR (void)"
+.br
+.RI "\fIGet the writer task.\fR"
+.ti -1c
+.RI "void \fBwriter\fR (\fBACE_Task\fR<ACE_SYNCH_USE> *q, int flags = M_DELETE_WRITER)"
+.br
+.ti -1c
+.RI "\fBACE_Task\fR<ACE_SYNCH_USE>* \fBreader\fR (void)"
+.br
+.RI "\fIGet the reader task.\fR"
+.ti -1c
+.RI "void \fBreader\fR (\fBACE_Task\fR<ACE_SYNCH_USE> *q, int flags = M_DELETE_READER)"
+.br
+.ti -1c
+.RI "\fBACE_Task\fR<ACE_SYNCH_USE>* \fBsibling\fR (\fBACE_Task\fR<ACE_SYNCH_USE> *orig)"
+.br
+.RI "\fISet and get pointer to sibling  in an .\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBname\fR (void) const"
+.br
+.RI "\fIGet the module name. Set the module name.\fR"
+.ti -1c
+.RI "void \fBname\fR (const \fBACE_TCHAR\fR *)"
+.br
+.ti -1c
+.RI "void* \fBarg\fR (void) const"
+.br
+.RI "\fIGet the argument passed to the tasks.\fR"
+.ti -1c
+.RI "void \fBarg\fR (void *)"
+.br
+.RI "\fISet the argument passed to the tasks.\fR"
+.ti -1c
+.RI "void \fBlink\fR (ACE_Module<ACE_SYNCH_USE> *m)"
+.br
+.RI "\fILink to other modules in the ustream stack.\fR"
+.ti -1c
+.RI "ACE_Module<ACE_SYNCH_USE>* \fBnext\fR (void)"
+.br
+.RI "\fIGet the next pointer to the module above in the stream.\fR"
+.ti -1c
+.RI "void \fBnext\fR (ACE_Module<ACE_SYNCH_USE> *m)"
+.br
+.RI "\fISet the next pointer to the module above in the stream.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBclose_i\fR (int which, int flags)"
+.br
+.RI "\fIImplements the close operation for either the reader or the writer task (depending on <which>).\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Task\fR<ACE_SYNCH_USE>* \fBq_pair_\fR [2]"
+.br
+.RI "\fIPair of Tasks that form the "read-side" and "write-side" of the ACE_Module partitioning.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBname_\fR [MAXNAMLEN + 1]"
+.br
+.RI "\fIName of the ACE_Module.\fR"
+.ti -1c
+.RI "ACE_Module<ACE_SYNCH_USE>* \fBnext_\fR"
+.br
+.RI "\fINext ACE_Module in the stack.\fR"
+.ti -1c
+.RI "void* \fBarg_\fR"
+.br
+.RI "\fIArgument passed through to the reader and writer task when they are opened.\fR"
+.ti -1c
+.RI "int \fBflags_\fR"
+.br
+.RI "\fIHolds flags which are used to determine if the reader and writer task have to be deleted on exit.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Shutup_GPlusPlus\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_SYNCH_DECL>  template class ACE_Module
+An abstraction for managing a bi-directional flow of messages.
+.PP
+.PP
+ This is based on the Module concept in System V Streams, which contains a pair of Tasks, one for handling upstream processing, one for handling downstream processing. In general, you shouldn't subclass from this class, but instead subclass from the . 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Module<>::ACE_Module<> (void)
+.PP
+Create an empty Module.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Module<>::~ACE_Module<> (void)
+.PP
+Shutdown the Module.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Module<>::ACE_Module<> (const \fBACE_TCHAR\fR * module_name, \fBACE_Task\fR< ACE_SYNCH_USE >* writer = 0, \fBACE_Task\fR< ACE_SYNCH_USE >* reader = 0, void * args = 0, int flags = M_DELETE)
+.PP
+Create an initialized module with <module_name> as its identity and <reader> and <writer> as its tasks.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> void ACE_Module<>::arg (void *)
+.PP
+Set the argument passed to the tasks.
+.PP
+.SS template<ACE_SYNCH_DECL> void * ACE_Module<>::arg (void) const
+.PP
+Get the argument passed to the tasks.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Module<>::close (int flags = M_DELETE_NONE)
+.PP
+Close down the Module and its Tasks. The flags argument can be used to override the default behaviour, which depends on previous <flags> values in calls to c'tor, <open>, <reader>, and <writer>. A previous value M_DELETE[_XXX] can not be overridden. Should not be called from within . 
+.SS template<ACE_SYNCH_DECL> int ACE_Module<>::close_i (int which, int flags)\fC [private]\fR
+.PP
+Implements the close operation for either the reader or the writer task (depending on <which>).
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Module<>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Module<>::link (ACE_Module< ACE_SYNCH_USE >* m)
+.PP
+Link to other modules in the ustream stack.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Module<>::name (const \fBACE_TCHAR\fR *)
+.PP
+.SS template<ACE_SYNCH_DECL> const \fBACE_TCHAR\fR * ACE_Module<>::name (void) const
+.PP
+Get the module name. Set the module name.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Module<>::next (ACE_Module< ACE_SYNCH_USE >* m)
+.PP
+Set the next pointer to the module above in the stream.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Module< ACE_SYNCH_USE >* ACE_Module<>::next (void)
+.PP
+Get the next pointer to the module above in the stream.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Module<>::open (const \fBACE_TCHAR\fR * module_name, \fBACE_Task\fR< ACE_SYNCH_USE >* writer = 0, \fBACE_Task\fR< ACE_SYNCH_USE >* reader = 0, void * a = 0, int flags = M_DELETE)
+.PP
+Create an initialized module with <module_name> as its identity and <reader> and <writer> as its tasks. Previously register reader or writers or closed down and deleted according to the value of flags_. Should not be called from within . 
+.SS template<ACE_SYNCH_DECL> void ACE_Module<>::reader (\fBACE_Task\fR< ACE_SYNCH_USE >* q, int flags = M_DELETE_READER)
+.PP
+Set the reader task. <flags> can be used to indicate that the module should delete the reader during a call to close or to the destructor. If a previous reader exists, it is closed. It may also be deleted, depending on the old flags_ value. Should not be called from within . 
+.SS template<ACE_SYNCH_DECL> \fBACE_Task\fR< ACE_SYNCH_USE >* ACE_Module<>::reader (void)
+.PP
+Get the reader task.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Task\fR< ACE_SYNCH_USE >* ACE_Module<>::sibling (\fBACE_Task\fR< ACE_SYNCH_USE >* orig)
+.PP
+Set and get pointer to sibling  in an .
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Module<>::writer (\fBACE_Task\fR< ACE_SYNCH_USE >* q, int flags = M_DELETE_WRITER)
+.PP
+Set the writer task. <flags> can be used to indicate that the module should delete the writer during a call to close or to the destructor. If a previous writer exists, it is closed. It may also be deleted, depending on the old flags_ value. Should not be called from within . 
+.SS template<ACE_SYNCH_DECL> \fBACE_Task\fR< ACE_SYNCH_USE >* ACE_Module<>::writer (void)
+.PP
+Get the writer task.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> class ACE_Shutup_GPlusPlus\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Module<>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<ACE_SYNCH_DECL> void * ACE_Module<>::arg_\fC [private]\fR
+.PP
+Argument passed through to the reader and writer task when they are opened.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Module<>::flags_\fC [private]\fR
+.PP
+Holds flags which are used to determine if the reader and writer task have to be deleted on exit.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_TCHAR\fR ACE_Module<>::name_[MAXNAMLEN+1]\fC [private]\fR
+.PP
+Name of the ACE_Module.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Module< ACE_SYNCH_USE >* ACE_Module<>::next_\fC [private]\fR
+.PP
+Next ACE_Module in the stack.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Task\fR< ACE_SYNCH_USE >* ACE_Module<>::q_pair_[2]\fC [private]\fR
+.PP
+Pair of Tasks that form the "read-side" and "write-side" of the ACE_Module partitioning.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

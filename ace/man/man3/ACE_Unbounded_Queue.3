@@ -1,0 +1,236 @@
+.TH ACE_Unbounded_Queue 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Unbounded_Queue \- A Queue of "infinite" length. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Unbounded_Queue.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Unbounded_Queue_Iterator\fR<T> \fBITERATOR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Unbounded_Queue\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIconstruction. Use user specified allocation strategy if specified.\fR"
+.ti -1c
+.RI "\fBACE_Unbounded_Queue\fR (const ACE_Unbounded_Queue<T> &)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Unbounded_Queue<T> &)"
+.br
+.RI "\fIAssignment operator.\fR"
+.ti -1c
+.RI "\fB~ACE_Unbounded_Queue\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBis_empty\fR (void) const"
+.br
+.RI "\fIReturns 1 if the container is empty, otherwise returns 0.\fR"
+.ti -1c
+.RI "int \fBis_full\fR (void) const"
+.br
+.RI "\fIReturns 1 if the container is full, otherwise returns 0.\fR"
+.ti -1c
+.RI "int \fBenqueue_tail\fR (const T &new_item)"
+.br
+.RI "\fIAdds <new_item> to the tail of the queue. Returns 0 on success, -1 on failure.\fR"
+.ti -1c
+.RI "int \fBenqueue_head\fR (const T &new_item)"
+.br
+.RI "\fIAdds <new_item> to the head of the queue. Returns 0 on success, -1 on failure.\fR"
+.ti -1c
+.RI "int \fBdequeue_head\fR (T &item)"
+.br
+.RI "\fIRemoves and returns the first <item> on the queue. Returns 0 on success, -1 if the queue was empty.\fR"
+.ti -1c
+.RI "void \fBreset\fR (void)"
+.br
+.RI "\fIReset the  to be empty and release all its dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBget\fR (T *&item, size_t slot = 0) const"
+.br
+.RI "\fIGet the <slot>th element in the set. Returns -1 if the element isn't in the range {0..<size> - 1}, else 0.\fR"
+.ti -1c
+.RI "int \fBset\fR (const T &item, size_t slot)"
+.br
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIThe number of items in the queue.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "\fBACE_Unbounded_Queue_Iterator\fR<T> \fBbegin\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Unbounded_Queue_Iterator\fR<T> \fBend\fR (void)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBdelete_nodes\fR (void)"
+.br
+.RI "\fIDelete all the nodes in the queue.\fR"
+.ti -1c
+.RI "void \fBcopy_nodes\fR (const ACE_Unbounded_Queue<T> &)"
+.br
+.RI "\fICopy nodes into this queue.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Node\fR<T>* \fBhead_\fR"
+.br
+.RI "\fIPointer to the dummy node in the circular linked Queue.\fR"
+.ti -1c
+.RI "size_t \fBcur_size_\fR"
+.br
+.RI "\fICurrent size of the queue.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIAllocation Strategy of the queue.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Unbounded_Queue_Iterator< T >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Unbounded_Queue
+A Queue of "infinite" length.
+.PP
+.PP
+ This implementation of an unbounded queue uses a circular linked list with a dummy node. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classT> typedef \fBACE_Unbounded_Queue_Iterator\fR<T> ACE_Unbounded_Queue<T>::ITERATOR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Unbounded_Queue<T>::ACE_Unbounded_Queue<T> (\fBACE_Allocator\fR * alloc = 0)
+.PP
+construction. Use user specified allocation strategy if specified.
+.PP
+.SS template<classT> ACE_Unbounded_Queue<T>::ACE_Unbounded_Queue<T> (const ACE_Unbounded_Queue< T >&)
+.PP
+Copy constructor.
+.PP
+.SS template<classT> ACE_Unbounded_Queue<T>::~ACE_Unbounded_Queue<T> (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> \fBACE_Unbounded_Queue_Iterator\fR<T> ACE_Unbounded_Queue<T>::begin (void)
+.PP
+.SS template<classT> void ACE_Unbounded_Queue<T>::copy_nodes (const ACE_Unbounded_Queue< T >&)\fC [protected]\fR
+.PP
+Copy nodes into this queue.
+.PP
+.SS template<classT> void ACE_Unbounded_Queue<T>::delete_nodes (void)\fC [protected]\fR
+.PP
+Delete all the nodes in the queue.
+.PP
+.SS template<classT> int ACE_Unbounded_Queue<T>::dequeue_head (T & item)
+.PP
+Removes and returns the first <item> on the queue. Returns 0 on success, -1 if the queue was empty.
+.PP
+.SS template<classT> void ACE_Unbounded_Queue<T>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classT> \fBACE_Unbounded_Queue_Iterator\fR<T> ACE_Unbounded_Queue<T>::end (void)
+.PP
+.SS template<classT> int ACE_Unbounded_Queue<T>::enqueue_head (const T & new_item)
+.PP
+Adds <new_item> to the head of the queue. Returns 0 on success, -1 on failure.
+.PP
+.SS template<classT> int ACE_Unbounded_Queue<T>::enqueue_tail (const T & new_item)
+.PP
+Adds <new_item> to the tail of the queue. Returns 0 on success, -1 on failure.
+.PP
+.SS template<classT> int ACE_Unbounded_Queue<T>::get (T *& item, size_t slot = 0) const
+.PP
+Get the <slot>th element in the set. Returns -1 if the element isn't in the range {0..<size> - 1}, else 0.
+.PP
+.SS template<classT> int ACE_Unbounded_Queue<T>::is_empty (void) const
+.PP
+Returns 1 if the container is empty, otherwise returns 0.
+.PP
+.SS template<classT> int ACE_Unbounded_Queue<T>::is_full (void) const
+.PP
+Returns 1 if the container is full, otherwise returns 0.
+.PP
+.SS template<classT> void ACE_Unbounded_Queue<T>::operator= (const ACE_Unbounded_Queue< T >&)
+.PP
+Assignment operator.
+.PP
+.SS template<classT> void ACE_Unbounded_Queue<T>::reset (void)
+.PP
+Reset the  to be empty and release all its dynamically allocated resources.
+.PP
+.SS template<classT> int ACE_Unbounded_Queue<T>::set (const T & item, size_t slot)
+.PP
+Set the <slot>th element in the set. Will pad out the set with empty nodes if <slot> is beyond the range {0..<size> - 1}. Returns -1 on failure, 0 if <slot> isn't initially in range, and 0 otherwise. 
+.SS template<classT> size_t ACE_Unbounded_Queue<T>::size (void) const
+.PP
+The number of items in the queue.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> class \fBACE_Unbounded_Queue_Iterator\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Unbounded_Queue<T>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classT> \fBACE_Allocator\fR * ACE_Unbounded_Queue<T>::allocator_\fC [protected]\fR
+.PP
+Allocation Strategy of the queue.
+.PP
+.SS template<classT> size_t ACE_Unbounded_Queue<T>::cur_size_\fC [protected]\fR
+.PP
+Current size of the queue.
+.PP
+.SS template<classT> \fBACE_Node\fR< T >* ACE_Unbounded_Queue<T>::head_\fC [protected]\fR
+.PP
+Pointer to the dummy node in the circular linked Queue.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

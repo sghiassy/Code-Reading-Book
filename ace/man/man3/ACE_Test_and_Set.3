@@ -1,0 +1,86 @@
+.TH ACE_Test_and_Set 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Test_and_Set \- Implements the classic ``test and set'' operation. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Test_and_Set.h>\fR
+.PP
+Inherits \fBACE_Event_Handler\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Test_and_Set\fR (TYPE initial_value = 0)"
+.br
+.ti -1c
+.RI "TYPE \fBis_set\fR (void) const"
+.br
+.RI "\fIReturns true if we are set, else false.\fR"
+.ti -1c
+.RI "TYPE \fBset\fR (TYPE)"
+.br
+.RI "\fISets the <is_set_> status, returning the original value of <is_set_>.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_signal\fR (int signum, \fBsiginfo_t\fR * = 0, \fBucontext_t\fR * = 0)"
+.br
+.RI "\fICalled when object is signaled by OS (either via UNIX signals or when a Win32 object becomes signaled).\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "TYPE \fBis_set_\fR"
+.br
+.RI "\fIKeeps track of our state.\fR"
+.ti -1c
+.RI "ACE_LOCK \fBlock_\fR"
+.br
+.RI "\fIProtect the state from race conditions.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class ACE_LOCK, class TYPE>  template class ACE_Test_and_Set
+Implements the classic ``test and set'' operation.
+.PP
+.PP
+ This class keeps track of the status of <is_set_>, which can be set based on various events (such as receipt of a signal). This class is derived from  so that it can be "signaled" by a Reactor when a signal occurs. We assume that <TYPE> is a data type that can be assigned the value 0 or 1. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK, classTYPE> ACE_Test_and_Set<ACE_LOCK, TYPE>::ACE_Test_and_Set<ACE_LOCK, TYPE> (TYPE initial_value = 0)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK, classTYPE> int ACE_Test_and_Set<ACE_LOCK, TYPE>::handle_signal (int signum, \fBsiginfo_t\fR * = 0, \fBucontext_t\fR * = 0)\fC [virtual]\fR
+.PP
+Called when object is signaled by OS (either via UNIX signals or when a Win32 object becomes signaled).
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classACE_LOCK, classTYPE> TYPE ACE_Test_and_Set<ACE_LOCK, TYPE>::is_set (void) const
+.PP
+Returns true if we are set, else false.
+.PP
+.SS template<classACE_LOCK, classTYPE> TYPE ACE_Test_and_Set<ACE_LOCK, TYPE>::set (TYPE)
+.PP
+Sets the <is_set_> status, returning the original value of <is_set_>.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK, classTYPE> TYPE ACE_Test_and_Set<ACE_LOCK, TYPE>::is_set_\fC [private]\fR
+.PP
+Keeps track of our state.
+.PP
+.SS template<classACE_LOCK, classTYPE> ACE_LOCK ACE_Test_and_Set<ACE_LOCK, TYPE>::lock_\fC [private]\fR
+.PP
+Protect the state from race conditions.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

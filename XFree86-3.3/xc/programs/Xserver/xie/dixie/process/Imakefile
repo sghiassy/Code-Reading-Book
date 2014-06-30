@@ -1,0 +1,35 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/09/28 16:55:42 rws $
+XCOMM $XFree86: xc/programs/Xserver/XIE/dixie/process/Imakefile,v 3.2 1996/12/23 06:26:48 dawes Exp $
+XCOMM build device independent processing element objects
+#include <Server.tmpl>
+
+SRCS1 = pgeom.c ppoint.c
+OBJS1 = pgeom.o ppoint.o
+
+#if BuildDIS
+DEFINES = -DXIE_DIS
+#else
+SRCS2 = parith.c pbandc.c pbande.c pbands.c pblend.c pcfrgb.c pcfromi.c \
+        pcnst.c pcomp.c pconv.c pctoi.c pctrgb.c pdither.c phist.c \
+        plogic.c pmath.c ppaste.c puncnst.c
+
+OBJS2 = parith.o pbandc.o pbande.o pbands.o pblend.o pcfrgb.o pcfromi.o \
+        pcnst.o pcomp.o pconv.o pctoi.o pctrgb.o pdither.o phist.o \
+        plogic.o pmath.o ppaste.o puncnst.o
+#endif
+
+       SRCS = $(SRCS1) $(SRCS2)
+
+       OBJS = $(OBJS1) $(OBJS2)
+
+   INCLUDES = -I../../include -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(EXTINCSRC)
+   LINTLIBS = ../export/llib-lexp.ln ../import/llib-limp.ln \
+              ../process/llib-lproc.ln ../request/llib-lreq.ln
+
+#define DoSharedLib	XieDynamicModule
+#include <ServerLib.tmpl>
+SubdirLibraryRule($(OBJS))
+LintLibraryTarget(proc,$(SRCS))
+NormalLintTarget($(SRCS))
+
+DependTarget()

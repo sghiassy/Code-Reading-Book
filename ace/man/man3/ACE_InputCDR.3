@@ -1,0 +1,650 @@
+.TH ACE_InputCDR 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_InputCDR \- A CDR stream for reading, i.e. for demarshalling. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <CDR_Stream.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_InputCDR\fR (const char *buf, size_t bufsiz, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.ti -1c
+.RI "\fBACE_InputCDR\fR (size_t bufsiz, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.RI "\fICreate an empty input stream. The caller is responsible for putting the right data and providing the right alignment.\fR"
+.ti -1c
+.RI "\fBACE_InputCDR\fR (const \fBACE_Message_Block\fR *data, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.RI "\fICreate an input stream from an \fBACE_Message_Block\fR.\fR"
+.ti -1c
+.RI "\fBACE_InputCDR\fR (\fBACE_Data_Block\fR *data, \fBACE_Message_Block::Message_Flags\fR flag = 0, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.RI "\fICreate an input stream from an \fBACE_Data_Block\fR. The <flag> indicates whether the <data> can be deleted by the CDR stream or not.\fR"
+.ti -1c
+.RI "\fBACE_InputCDR\fR (\fBACE_Data_Block\fR *data, \fBACE_Message_Block::Message_Flags\fR flag, size_t read_pointer_position, size_t write_pointer_position, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)"
+.br
+.RI "\fICreate an input stream from an \fBACE_Data_Block\fR. It also sets the read and write pointers at the desired positions. This would be helpful if the applications desires to create a new CDR stream from a semi-processed datablock.\fR"
+.ti -1c
+.RI "\fBACE_InputCDR\fR (const ACE_InputCDR& rhs)"
+.br
+.ti -1c
+.RI "ACE_InputCDR& \fBoperator=\fR (const ACE_InputCDR& rhs)"
+.br
+.ti -1c
+.RI "\fBACE_InputCDR\fR (const ACE_InputCDR& rhs, size_t size, \fBACE_CDR::Long\fR offset)"
+.br
+.RI "\fIWhen interpreting indirected TypeCodes it is useful to make a "copy" of the stream starting in the new position.\fR"
+.ti -1c
+.RI "\fBACE_InputCDR\fR (const ACE_InputCDR& rhs, size_t size)"
+.br
+.RI "\fIThis creates an encapsulated stream, the first byte must be (per the spec) the byte order of the encapsulation.\fR"
+.ti -1c
+.RI "\fBACE_InputCDR\fR (const \fBACE_OutputCDR\fR& rhs, \fBACE_Allocator\fR* buffer_allocator = 0, \fBACE_Allocator\fR* data_block_allocator = 0, \fBACE_Allocator\fR* message_block_allocator = 0)"
+.br
+.RI "\fICreate an input CDR from an output CDR.\fR"
+.ti -1c
+.RI "\fBACE_InputCDR\fR (\fBTransfer_Contents\fR rhs)"
+.br
+.RI "\fITransfer the contents from <rhs> to a new CDR.\fR"
+.ti -1c
+.RI "\fB~ACE_InputCDR\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_wstring\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_string\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_bytes\fR (size_t n)"
+.br
+.RI "\fISkip <n> bytes in the CDR stream. Return 0 on failure and 1 on success.\fR"
+.ti -1c
+.RI "int \fBgood_bit\fR (void) const"
+.br
+.RI "\fIreturns zero if a problem has been detected.\fR"
+.ti -1c
+.RI "const \fBACE_Message_Block\fR* \fBstart\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBgrow\fR (size_t newsize)"
+.br
+.ti -1c
+.RI "void \fBreset_byte_order\fR (int byte_order)"
+.br
+.ti -1c
+.RI "void \fBreset\fR (const \fBACE_Message_Block\fR *data, int byte_order)"
+.br
+.RI "\fIRe-initialize the CDR stream, copying the contents of the chain of message_blocks starting from <data>.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBsteal_contents\fR (void)"
+.br
+.RI "\fISteal the contents from the current CDR.\fR"
+.ti -1c
+.RI "void \fBsteal_from\fR (ACE_InputCDR &cdr)"
+.br
+.RI "\fISteal the contents of <cdr> and make a shallow copy into this stream.\fR"
+.ti -1c
+.RI "void \fBexchange_data_blocks\fR (ACE_InputCDR &cdr)"
+.br
+.RI "\fIExchange data blocks with the caller of this method. The read and write pointers are also exchanged. Note: We now do only with the start_ message block.\fR"
+.ti -1c
+.RI "\fBACE_Data_Block\fR* \fBclone_from\fR (ACE_InputCDR &cdr)"
+.br
+.RI "\fICopy the data portion from the <cdr> to this cdr and return the data content (ie. the \fBACE_Data_Block\fR) from this CDR to the caller. The caller is responsible for managing the memory of the returned \fBACE_Data_Block\fR.\fR"
+.ti -1c
+.RI "void \fBreset_contents\fR (void)"
+.br
+.RI "\fIRe-initialize the CDR stream, forgetting about the old contents of the stream and allocating a new buffer (from the allocators).\fR"
+.ti -1c
+.RI "char* \fBrd_ptr\fR (void)"
+.br
+.RI "\fIReturns the current position for the rd_ptr....\fR"
+.ti -1c
+.RI "char* \fBwr_ptr\fR (void)"
+.br
+.RI "\fIReturns the current position for the wr_ptr....\fR"
+.ti -1c
+.RI "size_t \fBlength\fR (void) const"
+.br
+.RI "\fIReturn how many bytes are left in the stream.\fR"
+.ti -1c
+.RI "int \fBalign_read_ptr\fR (size_t alignment)"
+.br
+.ti -1c
+.RI "int \fBdo_byte_swap\fR (void) const"
+.br
+.RI "\fIIf non-zero then this stream is writing in non-native byte order, this is only meaningful if ACE_ENABLE_SWAP_ON_WRITE is defined.\fR"
+.ti -1c
+.RI "int \fBbyte_order\fR (void) const"
+.br
+.RI "\fIIf <do_byte_swap> returns 0, this returns ACE_CDR_BYTE_ORDER else it returns !ACE_CDR_BYTE_ORDER.\fR"
+.ti -1c
+.RI "\fBACE_Char_Codeset_Translator\fR* \fBchar_translator\fR (void) const"
+.br
+.RI "\fIAccess the codeset translators. They can be nil!\fR"
+.ti -1c
+.RI "\fBACE_WChar_Codeset_Translator\fR* \fBwchar_translator\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBadjust\fR (size_t size, char *&buf)"
+.br
+.ti -1c
+.RI "int \fBadjust\fR (size_t size, size_t align, char *&buf)"
+.br
+.RI "\fIAs above, but now the size and alignment requirements may be different.\fR"
+.in -1c
+.PP
+.RI "\fBRead basic IDL types\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_boolean\fR (\fBACE_CDR::Boolean\fR& x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_char\fR (\fBACE_CDR::Char\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_wchar\fR (\fBACE_CDR::WChar\fR& x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_octet\fR (\fBACE_CDR::Octet\fR& x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_short\fR (\fBACE_CDR::Short\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_ushort\fR (\fBACE_CDR::UShort\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_long\fR (\fBACE_CDR::Long\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_ulong\fR (\fBACE_CDR::ULong\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_longlong\fR (\fBACE_CDR::LongLong\fR& x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_ulonglong\fR (\fBACE_CDR::ULongLong\fR& x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_float\fR (\fBACE_CDR::Float\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_double\fR (\fBACE_CDR::Double\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_longdouble\fR (\fBACE_CDR::LongDouble\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_string\fR (\fBACE_CDR::Char\fR *&x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_string\fR (\fBACE_CString\fR &x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_wstring\fR (\fBACE_CDR::WChar\fR*& x)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBRead basic IDL types arrays\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_boolean_array\fR (\fBACE_CDR::Boolean\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_char_array\fR (\fBACE_CDR::Char\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_wchar_array\fR (\fBACE_CDR::WChar\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_octet_array\fR (\fBACE_CDR::Octet\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_short_array\fR (\fBACE_CDR::Short\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_ushort_array\fR (\fBACE_CDR::UShort\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_long_array\fR (\fBACE_CDR::Long\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_ulong_array\fR (\fBACE_CDR::ULong\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_longlong_array\fR (\fBACE_CDR::LongLong\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_ulonglong_array\fR (\fBACE_CDR::ULongLong\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_float_array\fR (\fBACE_CDR::Float\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_double_array\fR (\fBACE_CDR::Double\fR *x, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_longdouble_array\fR (\fBACE_CDR::LongDouble\fR* x, \fBACE_CDR::ULong\fR length)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBSkip elements\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_boolean\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_char\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_wchar\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_octet\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_short\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_ushort\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_long\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_ulong\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_longlong\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_ulonglong\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_float\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_double\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBskip_longdouble\fR (void)"
+.br
+.in -1c
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block\fR \fBstart_\fR"
+.br
+.RI "\fIThe start of the chain of message blocks, even though in the current version the chain always has length 1.\fR"
+.ti -1c
+.RI "int \fBdo_byte_swap_\fR"
+.br
+.RI "\fIThe CDR stream byte order does not match the one on the machine, swapping is needed while reading.\fR"
+.ti -1c
+.RI "int \fBgood_bit_\fR"
+.br
+.RI "\fIset to 0 when an error occurs.\fR"
+.ti -1c
+.RI "\fBACE_Char_Codeset_Translator\fR* \fBchar_translator_\fR"
+.br
+.RI "\fIIf not nil, invoke for translation of character and string data.\fR"
+.ti -1c
+.RI "\fBACE_WChar_Codeset_Translator\fR* \fBwchar_translator_\fR"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_1\fR (\fBACE_CDR::Octet\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_2\fR (\fBACE_CDR::UShort\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_4\fR (\fBACE_CDR::ULong\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_8\fR (\fBACE_CDR::ULongLong\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_16\fR (\fBACE_CDR::LongDouble\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_array\fR (void* x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "void \fBrd_ptr\fR (size_t offset)"
+.br
+.RI "\fIMove the rd_ptr ahead by <offset> bytes.\fR"
+.ti -1c
+.RI "char* \fBend\fR (void)"
+.br
+.RI "\fIPoints to the continuation field of the current message block.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Octet\fR \fBmajor_version_\fR"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Octet\fR \fBminor_version_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Char_Codeset_Translator\fR"
+.br
+.ti -1c
+.RI "class \fBACE_WChar_Codeset_Translator\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A CDR stream for reading, i.e. for demarshalling.
+.PP
+.PP
+ This class is based on the the CORBA spec for Java (98-02-29), java class omg.org.CORBA.portable.InputStream. It diverts in a few ways: + Operations to retrieve basic types take parameters by reference. + Operations taking arrays don't have offsets, because in C++ it is easier to describe an array starting from x+offset. + Operations return an error status, because exceptions are not widely available in C++ (yet). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_InputCDR::ACE_InputCDR (const char * buf, size_t bufsiz, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Create an input stream from an arbitrary buffer. The buffer must be properly aligned because this contructor will *not* work if the buffer is aligned unproperly. See \fBACE_ptr_align_binary\fR() for instructions on how to align a pointer properly and use \fBACE_CDR::MAX_ALIGNMENT\fR for the correct alignment. 
+.SS ACE_InputCDR::ACE_InputCDR (size_t bufsiz, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Create an empty input stream. The caller is responsible for putting the right data and providing the right alignment.
+.PP
+.SS ACE_InputCDR::ACE_InputCDR (const \fBACE_Message_Block\fR * data, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Create an input stream from an \fBACE_Message_Block\fR.
+.PP
+.SS ACE_InputCDR::ACE_InputCDR (\fBACE_Data_Block\fR * data, \fBACE_Message_Block::Message_Flags\fR flag = 0, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Create an input stream from an \fBACE_Data_Block\fR. The <flag> indicates whether the <data> can be deleted by the CDR stream or not.
+.PP
+.SS ACE_InputCDR::ACE_InputCDR (\fBACE_Data_Block\fR * data, \fBACE_Message_Block::Message_Flags\fR flag, size_t read_pointer_position, size_t write_pointer_position, int byte_order = ACE_CDR_BYTE_ORDER, \fBACE_CDR::Octet\fR major_version = ACE_CDR_GIOP_MAJOR_VERSION, \fBACE_CDR::Octet\fR minor_version = ACE_CDR_GIOP_MINOR_VERSION)
+.PP
+Create an input stream from an \fBACE_Data_Block\fR. It also sets the read and write pointers at the desired positions. This would be helpful if the applications desires to create a new CDR stream from a semi-processed datablock.
+.PP
+.SS ACE_InputCDR::ACE_InputCDR (const ACE_InputCDR & rhs)
+.PP
+These make a copy of the current stream state, but do not copy the internal buffer, so the same stream can be read multiple times efficiently. 
+.SS ACE_InputCDR::ACE_InputCDR (const ACE_InputCDR & rhs, size_t size, \fBACE_CDR::Long\fR offset)
+.PP
+When interpreting indirected TypeCodes it is useful to make a "copy" of the stream starting in the new position.
+.PP
+.SS ACE_InputCDR::ACE_InputCDR (const ACE_InputCDR & rhs, size_t size)
+.PP
+This creates an encapsulated stream, the first byte must be (per the spec) the byte order of the encapsulation.
+.PP
+.SS ACE_InputCDR::ACE_InputCDR (const \fBACE_OutputCDR\fR & rhs, \fBACE_Allocator\fR * buffer_allocator = 0, \fBACE_Allocator\fR * data_block_allocator = 0, \fBACE_Allocator\fR * message_block_allocator = 0)
+.PP
+Create an input CDR from an output CDR.
+.PP
+.SS ACE_InputCDR::ACE_InputCDR (\fBTransfer_Contents\fR rhs)
+.PP
+Transfer the contents from <rhs> to a new CDR.
+.PP
+.SS ACE_InputCDR::~ACE_InputCDR (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_InputCDR::adjust (size_t size, size_t align, char *& buf)
+.PP
+As above, but now the size and alignment requirements may be different.
+.PP
+.SS int ACE_InputCDR::adjust (size_t size, char *& buf)
+.PP
+Returns (in <buf>) the next position in the buffer aligned to <size>, it advances the Message_Block rd_ptr past the data (i.e. <buf> + <size>). Sets the good_bit to 0 and returns a -1 on failure. 
+.SS int ACE_InputCDR::align_read_ptr (size_t alignment)
+.PP
+Utility function to allow the user more flexibility. Skips up to the nearest -byte boundary. Argument MUST be a power of 2. Returns 0 on success and -1 on failure. 
+.SS int ACE_InputCDR::byte_order (void) const
+.PP
+If <do_byte_swap> returns 0, this returns ACE_CDR_BYTE_ORDER else it returns !ACE_CDR_BYTE_ORDER.
+.PP
+.SS \fBACE_Char_Codeset_Translator\fR * ACE_InputCDR::char_translator (void) const
+.PP
+Access the codeset translators. They can be nil!
+.PP
+.SS \fBACE_Data_Block\fR * ACE_InputCDR::clone_from (ACE_InputCDR & cdr)
+.PP
+Copy the data portion from the <cdr> to this cdr and return the data content (ie. the \fBACE_Data_Block\fR) from this CDR to the caller. The caller is responsible for managing the memory of the returned \fBACE_Data_Block\fR.
+.PP
+.SS int ACE_InputCDR::do_byte_swap (void) const
+.PP
+If non-zero then this stream is writing in non-native byte order, this is only meaningful if ACE_ENABLE_SWAP_ON_WRITE is defined.
+.PP
+.SS char * ACE_InputCDR::end (void)\fC [private]\fR
+.PP
+Points to the continuation field of the current message block.
+.PP
+.SS void ACE_InputCDR::exchange_data_blocks (ACE_InputCDR & cdr)
+.PP
+Exchange data blocks with the caller of this method. The read and write pointers are also exchanged. Note: We now do only with the start_ message block.
+.PP
+.SS int ACE_InputCDR::good_bit (void) const
+.PP
+returns zero if a problem has been detected.
+.PP
+.SS int ACE_InputCDR::grow (size_t newsize)
+.PP
+Grow the internal buffer, reset <rd_ptr> to the first byte in the new buffer that is properly aligned, and set <wr_ptr> to <rd_ptr> + newsize 
+.SS size_t ACE_InputCDR::length (void) const
+.PP
+Return how many bytes are left in the stream.
+.PP
+.SS ACE_InputCDR& ACE_InputCDR::operator= (const ACE_InputCDR & rhs)
+.PP
+.SS void ACE_InputCDR::rd_ptr (size_t offset)\fC [private]\fR
+.PP
+Move the rd_ptr ahead by <offset> bytes.
+.PP
+.SS char * ACE_InputCDR::rd_ptr (void)
+.PP
+Returns the current position for the rd_ptr....
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_1 (\fBACE_CDR::Octet\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_16 (\fBACE_CDR::LongDouble\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_2 (\fBACE_CDR::UShort\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_4 (\fBACE_CDR::ULong\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_8 (\fBACE_CDR::ULongLong\fR * x)\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_array (void * x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)\fC [private]\fR
+.PP
+Read an array of <length> elements, each of <size> bytes and the start aligned at a multiple of . The elements are assumed to be packed with the right alignment restrictions. It is mostly designed for buffers of the basic types.
+.PP
+This operation uses <memcpy>; as explained above it is expected that using assignment is faster that <memcpy> for one element, but for several elements <memcpy> should be more efficient, it could be interesting to find the break even point and optimize for that case, but that would be too platform dependent. 
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_boolean (\fBACE_CDR::Boolean\fR & x)
+.PP
+Return 0 on failure and 1 on success. 
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_boolean_array (\fBACE_CDR::Boolean\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+The buffer <x> must be large enough to contain <length> elements. Return 0 on failure and 1 on success. 
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_char (\fBACE_CDR::Char\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_char_array (\fBACE_CDR::Char\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_double (\fBACE_CDR::Double\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_double_array (\fBACE_CDR::Double\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_float (\fBACE_CDR::Float\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_float_array (\fBACE_CDR::Float\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_long (\fBACE_CDR::Long\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_long_array (\fBACE_CDR::Long\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_longdouble (\fBACE_CDR::LongDouble\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_longdouble_array (\fBACE_CDR::LongDouble\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_longlong (\fBACE_CDR::LongLong\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_longlong_array (\fBACE_CDR::LongLong\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_octet (\fBACE_CDR::Octet\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_octet_array (\fBACE_CDR::Octet\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_short (\fBACE_CDR::Short\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_short_array (\fBACE_CDR::Short\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_string (\fBACE_CString\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_string (\fBACE_CDR::Char\fR *& x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_ulong (\fBACE_CDR::ULong\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_ulong_array (\fBACE_CDR::ULong\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_ulonglong (\fBACE_CDR::ULongLong\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_ulonglong_array (\fBACE_CDR::ULongLong\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_ushort (\fBACE_CDR::UShort\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_ushort_array (\fBACE_CDR::UShort\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_wchar (\fBACE_CDR::WChar\fR & x)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_wchar_array (\fBACE_CDR::WChar\fR * x, \fBACE_CDR::ULong\fR length)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::read_wstring (\fBACE_CDR::WChar\fR *& x)
+.PP
+.SS void ACE_InputCDR::reset (const \fBACE_Message_Block\fR * data, int byte_order)
+.PP
+Re-initialize the CDR stream, copying the contents of the chain of message_blocks starting from <data>.
+.PP
+.SS void ACE_InputCDR::reset_byte_order (int byte_order)
+.PP
+After reading and partially parsing the contents the user can detect a change in the byte order, this method will let him change it. 
+.SS void ACE_InputCDR::reset_contents (void)
+.PP
+Re-initialize the CDR stream, forgetting about the old contents of the stream and allocating a new buffer (from the allocators).
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_boolean (void)
+.PP
+Return 0 on failure and 1 on success. 
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_bytes (size_t n)
+.PP
+Skip <n> bytes in the CDR stream. Return 0 on failure and 1 on success.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_char (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_double (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_float (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_long (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_longdouble (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_longlong (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_octet (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_short (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_string (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_ulong (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_ulonglong (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_ushort (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_wchar (void)
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_InputCDR::skip_wstring (void)
+.PP
+The next field must be a string, this method skips it. It is useful in parsing a TypeCode. Return 0 on failure and 1 on success. 
+.SS const \fBACE_Message_Block\fR * ACE_InputCDR::start (void) const
+.PP
+Return the start of the message block chain for this CDR stream. NOTE: In the current implementation the chain has length 1, but we are planning to change that. 
+.SS \fBACE_Message_Block\fR * ACE_InputCDR::steal_contents (void)
+.PP
+Steal the contents from the current CDR.
+.PP
+.SS void ACE_InputCDR::steal_from (ACE_InputCDR & cdr)
+.PP
+Steal the contents of <cdr> and make a shallow copy into this stream.
+.PP
+.SS \fBACE_WChar_Codeset_Translator\fR* ACE_InputCDR::wchar_translator (void) const
+.PP
+.SS char * ACE_InputCDR::wr_ptr (void)
+.PP
+Returns the current position for the wr_ptr....
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Char_Codeset_Translator\fC [friend]\fR
+.PP
+The translator need privileged access to efficiently demarshal arrays and the such.
+.PP
+.SS class ACE_WChar_Codeset_Translator\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Char_Codeset_Translator\fR * ACE_InputCDR::char_translator_\fC [protected]\fR
+.PP
+If not nil, invoke for translation of character and string data.
+.PP
+.SS int ACE_InputCDR::do_byte_swap_\fC [protected]\fR
+.PP
+The CDR stream byte order does not match the one on the machine, swapping is needed while reading.
+.PP
+.SS int ACE_InputCDR::good_bit_\fC [protected]\fR
+.PP
+set to 0 when an error occurs.
+.PP
+.SS \fBACE_CDR::Octet\fR ACE_InputCDR::major_version_\fC [private]\fR
+.PP
+.SS \fBACE_CDR::Octet\fR ACE_InputCDR::minor_version_\fC [private]\fR
+.PP
+.SS \fBACE_Message_Block\fR ACE_InputCDR::start_\fC [protected]\fR
+.PP
+The start of the chain of message blocks, even though in the current version the chain always has length 1.
+.PP
+.SS \fBACE_WChar_Codeset_Translator\fR * ACE_InputCDR::wchar_translator_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

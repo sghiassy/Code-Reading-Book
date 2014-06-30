@@ -1,0 +1,352 @@
+.TH ACE_Time_Value 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Time_Value \- Operations on "timeval" structures, which express time in <secs> and <usecs>. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Time_Value\fR (void)"
+.br
+.RI "\fIDefault Constructor.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR (long sec, long usec = 0)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR (const struct timeval &t)"
+.br
+.RI "\fIConstruct the  from a <timeval>.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR (const \fBtimespec_t\fR &t)"
+.br
+.RI "\fIInitializes the  object from a <timespec_t>.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR (const ACE_Time_Value &tv)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR (const FILETIME &ft)"
+.br
+.RI "\fIInitializes the ACE_Time_Value object from a Win32 FILETIME.\fR"
+.ti -1c
+.RI "void \fBset\fR (long sec, long usec)"
+.br
+.RI "\fIConstruct a <Time_Value> from two <long>s.\fR"
+.ti -1c
+.RI "void \fBset\fR (double d)"
+.br
+.RI "\fIConstruct a <Time_Value> from a <double>, which is assumed to be in second format, with any remainder treated as microseconds.\fR"
+.ti -1c
+.RI "void \fBset\fR (const timeval &t)"
+.br
+.RI "\fIConstruct a <Time_Value> from a <timeval>.\fR"
+.ti -1c
+.RI "void \fBset\fR (const \fBtimespec_t\fR &t)"
+.br
+.RI "\fIInitializes the <Time_Value> object from a <timespec_t>.\fR"
+.ti -1c
+.RI "void \fBset\fR (const FILETIME &ft)"
+.br
+.RI "\fIInitializes the <Time_Value> object from a <timespec_t>.\fR"
+.ti -1c
+.RI "long \fBmsec\fR (void) const"
+.br
+.RI "\fIConverts from <Time_Value> format into milli-seconds format.\fR"
+.ti -1c
+.RI "void \fBmsec\fR (long)"
+.br
+.RI "\fIConverts from milli-seconds format into <Time_Value> format.\fR"
+.ti -1c
+.RI "\fBoperator timespec_t\fR () const"
+.br
+.RI "\fIReturns the value of the object as a <timespec_t>.\fR"
+.ti -1c
+.RI "\fBoperator timeval\fR () const"
+.br
+.RI "\fIReturns the value of the object as a <timeval>.\fR"
+.ti -1c
+.RI "\fBoperator const timeval *\fR () const"
+.br
+.RI "\fIReturns a pointer to the object as a <timeval>.\fR"
+.ti -1c
+.RI "\fBoperator FILETIME\fR () const"
+.br
+.RI "\fIReturns the value of the object as a Win32 FILETIME.\fR"
+.ti -1c
+.RI "long \fBsec\fR (void) const"
+.br
+.RI "\fIGet seconds.\fR"
+.ti -1c
+.RI "void \fBsec\fR (long sec)"
+.br
+.RI "\fISet seconds.\fR"
+.ti -1c
+.RI "long \fBusec\fR (void) const"
+.br
+.RI "\fIGet microseconds.\fR"
+.ti -1c
+.RI "void \fBusec\fR (long usec)"
+.br
+.RI "\fISet microseconds.\fR"
+.ti -1c
+.RI "void \fBoperator+=\fR (const ACE_Time_Value &tv)"
+.br
+.RI "\fIAdd <tv> to this.\fR"
+.ti -1c
+.RI "void \fBoperator-=\fR (const ACE_Time_Value &tv)"
+.br
+.RI "\fISubtract <tv> to this.\fR"
+.ti -1c
+.RI "ACE_Time_Value& \fBoperator *=\fR (double d)"
+.br
+.RI "\fIMultiply the time value by the <d> factor, which must be >= 0.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Static Public Attributes
+
+.in +1c
+.ti -1c
+.RI "const ACE_Time_Value \fBzero\fR"
+.br
+.RI "\fIConstant "0".\fR"
+.ti -1c
+.RI "const ACE_Time_Value \fBmax_time\fR"
+.br
+.ti -1c
+.RI "const DWORDLONG \fBFILETIME_to_timval_skew\fR"
+.br
+.RI "\fIConst time difference between FILETIME and POSIX time.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBnormalize\fR (void)"
+.br
+.RI "\fIPut the timevalue into a canonical form.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "timeval \fBtv_\fR"
+.br
+.RI "\fIStore the values as a <timeval>.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "ACE_OS_Export ACE_Time_Value \fBoperator+\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fIAdds two ACE_Time_Value objects together, returns the sum.\fR"
+.ti -1c
+.RI "ACE_OS_Export ACE_Time_Value \fBoperator-\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fISubtracts two ACE_Time_Value objects, returns the difference.\fR"
+.ti -1c
+.RI "ACE_OS_Export int \fBoperator<\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fITrue if tv1 < tv2.\fR"
+.ti -1c
+.RI "ACE_OS_Export int \fBoperator>\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fITrue if tv1 > tv2.\fR"
+.ti -1c
+.RI "ACE_OS_Export int \fBoperator<=\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fITrue if tv1 <= tv2.\fR"
+.ti -1c
+.RI "ACE_OS_Export int \fBoperator>=\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fITrue if tv1 >= tv2.\fR"
+.ti -1c
+.RI "ACE_OS_Export int \fBoperator==\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fITrue if tv1 == tv2.\fR"
+.ti -1c
+.RI "ACE_OS_Export int \fBoperator!=\fR (const ACE_Time_Value &tv1, const ACE_Time_Value &tv2)"
+.br
+.RI "\fITrue if tv1 != tv2.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Operations on "timeval" structures, which express time in <secs> and <usecs>.
+.PP
+.PP
+ This class centralizes all the time related processing in \fBACE\fR. These timers are typically used in conjunction with OS mechanisms like <select>, <poll>, or <cond_timedwait>.  makes the use of these mechanisms portable across OS platforms, 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Time_Value::ACE_Time_Value (void)
+.PP
+Default Constructor.
+.PP
+.SS ACE_Time_Value::ACE_Time_Value (long sec, long usec = 0)
+.PP
+Constructor.
+.PP
+.SS ACE_Time_Value::ACE_Time_Value (const struct timeval & t)
+.PP
+Construct the  from a <timeval>.
+.PP
+.SS ACE_Time_Value::ACE_Time_Value (const \fBtimespec_t\fR & t)
+.PP
+Initializes the  object from a <timespec_t>.
+.PP
+.SS ACE_Time_Value::ACE_Time_Value (const ACE_Time_Value & tv)
+.PP
+Copy constructor.
+.PP
+.SS ACE_Time_Value::ACE_Time_Value (const FILETIME & ft)
+.PP
+Initializes the ACE_Time_Value object from a Win32 FILETIME.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Time_Value::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS void ACE_Time_Value::msec (long)
+.PP
+Converts from milli-seconds format into <Time_Value> format.
+.PP
+.SS long ACE_Time_Value::msec (void) const
+.PP
+Converts from <Time_Value> format into milli-seconds format.
+.PP
+.SS void ACE_Time_Value::normalize (void)\fC [private]\fR
+.PP
+Put the timevalue into a canonical form.
+.PP
+.SS ACE_Time_Value & ACE_Time_Value::operator *= (double d)
+.PP
+Multiply the time value by the <d> factor, which must be >= 0.
+.PP
+.SS ACE_Time_Value::operator FILETIME () const
+.PP
+Returns the value of the object as a Win32 FILETIME.
+.PP
+.SS ACE_Time_Value::operator const timeval * () const
+.PP
+Returns a pointer to the object as a <timeval>.
+.PP
+.SS ACE_Time_Value::operator \fBtimespec_t\fR () const
+.PP
+Returns the value of the object as a <timespec_t>.
+.PP
+.SS ACE_Time_Value::operator timeval () const
+.PP
+Returns the value of the object as a <timeval>.
+.PP
+.SS void ACE_Time_Value::operator+= (const ACE_Time_Value & tv)
+.PP
+Add <tv> to this.
+.PP
+.SS void ACE_Time_Value::operator-= (const ACE_Time_Value & tv)
+.PP
+Subtract <tv> to this.
+.PP
+.SS void ACE_Time_Value::sec (long sec)
+.PP
+Set seconds.
+.PP
+.SS long ACE_Time_Value::sec (void) const
+.PP
+Get seconds.
+.PP
+.SS void ACE_Time_Value::set (const FILETIME & ft)
+.PP
+Initializes the <Time_Value> object from a <timespec_t>.
+.PP
+.SS void ACE_Time_Value::set (const \fBtimespec_t\fR & t)
+.PP
+Initializes the <Time_Value> object from a <timespec_t>.
+.PP
+.SS void ACE_Time_Value::set (const timeval & t)
+.PP
+Construct a <Time_Value> from a <timeval>.
+.PP
+.SS void ACE_Time_Value::set (double d)
+.PP
+Construct a <Time_Value> from a <double>, which is assumed to be in second format, with any remainder treated as microseconds.
+.PP
+.SS void ACE_Time_Value::set (long sec, long usec)
+.PP
+Construct a <Time_Value> from two <long>s.
+.PP
+.SS void ACE_Time_Value::usec (long usec)
+.PP
+Set microseconds.
+.PP
+.SS long ACE_Time_Value::usec (void) const
+.PP
+Get microseconds.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS ACE_OS_Export int operator!= (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+True if tv1 != tv2.
+.PP
+.SS ACE_OS_Export ACE_Time_Value operator+ (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+Adds two ACE_Time_Value objects together, returns the sum.
+.PP
+.SS ACE_OS_Export ACE_Time_Value operator- (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+Subtracts two ACE_Time_Value objects, returns the difference.
+.PP
+.SS ACE_OS_Export int operator< (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+True if tv1 < tv2.
+.PP
+.SS ACE_OS_Export int operator<= (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+True if tv1 <= tv2.
+.PP
+.SS ACE_OS_Export int operator== (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+True if tv1 == tv2.
+.PP
+.SS ACE_OS_Export int operator> (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+True if tv1 > tv2.
+.PP
+.SS ACE_OS_Export int operator>= (const ACE_Time_Value & tv1, const ACE_Time_Value & tv2)\fC [friend]\fR
+.PP
+True if tv1 >= tv2.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS const DWORDLONG ACE_Time_Value::FILETIME_to_timval_skew\fC [static]\fR
+.PP
+Const time difference between FILETIME and POSIX time.
+.PP
+.SS const ACE_Time_Value ACE_Time_Value::max_time\fC [static]\fR
+.PP
+Constant for maximum time representable. Note that this time is not intended for use with <select> or other calls that may have *their own* implementation-specific maximum time representations. Its primary use is in time computations such as those used by the dynamic subpriority strategies in the  class. 
+.SS timeval ACE_Time_Value::tv_\fC [private]\fR
+.PP
+Store the values as a <timeval>.
+.PP
+.SS const ACE_Time_Value ACE_Time_Value::zero\fC [static]\fR
+.PP
+Constant "0".
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

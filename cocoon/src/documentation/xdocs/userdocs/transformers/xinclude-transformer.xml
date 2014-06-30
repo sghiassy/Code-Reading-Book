@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>XInclude Transformer</title>
+  <subtitle>in @doctitle@</subtitle>
+  <version>0.9</version>
+  <type>Technical document</type>
+  <authors>
+  <person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+  </authors>
+  <abstract>This document describes the XInclude transformer.</abstract>
+ </header>
+ <body>
+  <s1 title="XInclude Transformer">
+   <p>
+    This transformer works according to the XInclude specification.
+   </p>
+   <p>
+    For more information refer to the
+    <link href="http://www.w3.org/TR/xinclude">XInclude specification</link>.
+   </p>
+   <ul>
+    <li>Name : xinclude</li>
+    <li>Class: org.apache.cocoon.transformation.XIncludeTransformer</li>
+    <li>Cacheable: no.</li>
+   </ul>
+   <p>
+    You can include either simple text, or xml content. 
+    Including xml content -- which is the default --
+    gives you the option to define an xpointer in the href attribute. Some
+    quick xinclude examples should reveal the possibilities of xinclude. 
+   </p>
+   <ul>
+    <li>
+     Include an xml content as-is: 
+     <code><![CDATA[<xi:include href="include.xml"/>]]></code>
+    </li>
+    <li>
+     Include an xml content but pick the strong element only:
+     <code><![CDATA[<xi:include href="include.xml#xpointer(/p/strong)"/>]]></code>
+    </li>
+    <li>
+     Include text content:
+     <code><![CDATA[<xi:include parse="text" href="include.txt"/>]]></code>
+    </li>
+   </ul>
+
+   <p>
+    A simple example using xinclude might help to use this transfomer
+    effectivly:
+   </p>
+   <p>
+    Add the XIncludetransfomer to the components in your sitemap.xmap
+   </p>
+<source><![CDATA[
+...
+<map:components>
+...
+  <map:transformers default="xslt">
+  ...
+    <map:transformer name="xinclude"
+      src="org.apache.cocoon.transformation.XIncludeTransformer"/>
+  ...
+]]></source>
+
+   <p>
+    Next define in your pipeline to use the XIncludeTransformer
+   </p>
+<source><![CDATA[
+<map:match pattern="xinc/simple-xinc">
+  <map:generate src="xinc/simple-xinc.xml"/>
+  <map:transform type="xinclude"/>
+  <map:transform src="stylesheets/page/simple-page2html.xsl"/>
+  <map:serialize/>
+</map:match>
+]]></source>
+
+   <p>
+    In this example pipeline it assumed that simple-xinc.xml contains
+    the include element. As well as defining the include element,
+    it defines the namespache URI "http://www.w3.org/2001/XInclude".
+    This helps the XIncludeTransformer to find the include element to 
+    get replaced by the included content.
+    The simple-xinc.xml may look like this:
+   </p>
+<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<page 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Hello</title>
+  <content>
+    <para>This is my first Cocoon page!</para>
+    <xi:include href="include.xml"/>
+  </content>
+</page>
+]]></source>
+
+   <p>
+    Next you should define the include.xml file which is included.
+    A simple include.xml might look like this:
+   </p>
+<source><![CDATA[
+<?xml version="1.0"?>
+<p>
+  I am <strong>included</strong> by XIncludeTransformer.
+  I come from "include.xml".
+</p>
+]]></source>
+
+   <p>
+    Now finally we have everything put together the xml content after the 
+    XIncludeTransformer processing will look like this:
+   </p>
+<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<page 
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Hello</title>
+  <content>
+    <para>This is my first Cocoon page!</para>
+      <p>
+       I am <strong>included</strong> by XIncludeTransformer.
+       I come from "include.xml".
+      </p>
+  </content>
+</page>
+]]></source>
+  </s1>
+ </body>
+</document>

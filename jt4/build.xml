@@ -1,0 +1,199 @@
+<project name="Tomcat 4.0" default="deploy" basedir=".">
+
+  <!-- ===================== Initialize Property Values =================== -->
+
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
+  <property file="build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <!-- Build Defaults -->
+  <property name="catalina.build"   value="${basedir}/catalina/build"/>
+  <property name="jasper.build"     value="${basedir}/jasper/build"/>
+  <property name="javaservice.home" value="../javaservice"/>
+  <property name="nsis.home"        value="c:\program files\nsis"/>
+  <property name="servlet.home"     value="../jakarta-servletapi-4/dist"/>
+  <property name="tomcat.build"     value="${basedir}/build"/>
+  <property name="tomcat.dist"      value="${basedir}/dist"/>
+  <property name="webapps.build"    value="${basedir}/webapps/build"/>
+  <property name="webapps.dist"     value="${basedir}/webapps/dist"/>
+
+
+
+  <!-- ===================== DEPLOY: Create Directories =================== -->
+  <target name="deploy-prepare">
+    <mkdir dir="${tomcat.build}"/>
+  </target>
+
+
+  <!-- ====================== DEPLOY: Copy Static Files =================== -->
+  <target name="deploy-static" depends="deploy-prepare"/>
+
+
+  <!-- ====================== DEPLOY: Deploy Components =================== -->
+  <target name="deploy" depends="deploy-static"
+   description="Build and deploy all components">
+    <echo>Target: Catalina - Deploy ...</echo>
+    <ant dir="./catalina" target="deploy"/>
+    <echo>Target: Jasper - Deploy ...</echo>
+    <ant dir="./jasper"   target="deploy"/>
+    <echo>Target: Webapps - Deploy ...</echo>
+    <ant dir="./webapps"  target="deploy"/>
+  </target>
+
+
+  <!-- ====================== COMBO: Clean All Directories ================ -->
+  <target name="clean"
+   description="Clean all components">
+    <delete dir="${tomcat.build}"/>
+    <echo>Target: Catalina - Clean ...</echo>
+    <ant dir="./catalina" target="clean"/>
+    <echo>Target: Jasper - Clean ...</echo>
+    <ant dir="./jasper"   target="clean"/>
+    <echo>Target: Webapps - Clean ...</echo>
+    <ant dir="./webapps"  target="clean"/>
+    <delete dir="${tomcat.dist}"/>
+  </target>
+
+
+  <!-- ======================= COMBO: Build All Components ================ -->
+  <target name="all"
+   description="Clean, build, and deploy all components">
+    <echo>Target: Catalina - All ...</echo>
+    <ant dir="./catalina" target="all"/>
+    <echo>Target: Jasper - All ...</echo>
+    <ant dir="./jasper"   target="all"/>
+    <echo>Target: Webapps - All ...</echo>
+    <ant dir="./webapps"  target="all"/>
+  </target>
+
+
+  <!-- ======================= COMBO: Test All Components ================= -->
+  <target name="test"
+   description="Unit tests on all components">
+    <echo>Target: Catalina - Test ...</echo>
+    <ant dir="./catalina" target="test"/>
+    <echo>Target: Jasper - Test ...</echo>
+    <ant dir="./jasper"   target="test"/>
+    <echo>Target: Webapps - Test ...</echo>
+    <ant dir="./webapps"  target="test"/>
+  </target>
+
+
+  <!-- ====================== DIST: Create Directories ==================== -->
+  <target name="dist-prepare">
+    <mkdir dir="${tomcat.dist}"/>
+    <mkdir dir="${tomcat.dist}/bin"/>
+    <mkdir dir="${tomcat.dist}/classes"/>
+    <mkdir dir="${tomcat.dist}/common"/>
+    <mkdir dir="${tomcat.dist}/common/classes"/>
+    <mkdir dir="${tomcat.dist}/common/lib"/>
+    <mkdir dir="${tomcat.dist}/conf"/>
+    <mkdir dir="${tomcat.dist}/jasper"/>
+    <mkdir dir="${tomcat.dist}/lib"/>
+    <mkdir dir="${tomcat.dist}/logs"/>
+    <mkdir dir="${tomcat.dist}/server"/>
+    <mkdir dir="${tomcat.dist}/server/classes"/>
+    <mkdir dir="${tomcat.dist}/server/lib"/>
+    <mkdir dir="${tomcat.dist}/webapps"/>
+    <mkdir dir="${tomcat.dist}/work"/>
+  </target>
+
+
+  <!-- ====================== DIST: Copy Static Files ===================== -->
+  <target name="dist-static" depends="dist-prepare">
+
+    <copy todir="${tomcat.dist}">
+      <fileset dir=".">
+        <include name="LICENSE"/>
+        <include name="INSTALLING.txt"/>
+        <include name="BUILDING.txt"/>
+        <include name="README.txt"/>
+        <include name="RELEASE*"/>
+        <include name="RUNNING.txt"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${tomcat.dist}/bin">
+      <fileset dir="${tomcat.build}/bin" />
+    </copy>
+    <copy todir="${tomcat.dist}/conf">
+      <fileset dir="${tomcat.build}/conf" />
+    </copy>
+    <copy todir="${tomcat.dist}/jasper">
+      <fileset dir="${tomcat.build}/jasper" />
+    </copy>
+    <copy todir="${tomcat.dist}/common/lib">
+      <fileset dir="${tomcat.build}/common/lib" />
+    </copy>
+    <copy todir="${tomcat.dist}/lib">
+      <fileset dir="${tomcat.build}/lib" />
+    </copy>
+    <copy todir="${tomcat.dist}/server/lib">
+      <fileset dir="${tomcat.build}/server/lib" />
+    </copy>
+    <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${tomcat.dist}/bin"   includes="*.bat" eol="crlf"/>
+    <chmod      dir="${tomcat.dist}/bin"   includes="*.sh" perm="+x"/>
+
+  </target>
+
+
+  <!-- ====================== DIST: Create Javadoc ======================== -->
+  <target name="dist-javadoc">
+    <ant dir="./catalina" target="javadoc"/>
+    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/catalina/docs/api"/>
+    <copy todir="${tomcat.build}/webapps/tomcat-docs/catalina/docs/api">
+      <fileset dir="${catalina.build}/javadoc" />
+    </copy>
+    <ant dir="./jasper" target="javadoc"/>
+    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/jasper/docs/api"/>
+    <copy todir="${tomcat.build}/webapps/tomcat-docs/jasper/docs/api">
+      <fileset dir="${jasper.build}/javadoc" />
+    </copy>
+    <mkdir  dir="${tomcat.build}/webapps/tomcat-docs/servletapi"/>
+    <copy todir="${tomcat.build}/webapps/tomcat-docs/servletapi">
+      <fileset dir="${servlet.home}/docs/api" />
+    </copy>
+  </target>
+
+
+  <!-- ====================== DIST: Create Sources ======================== -->
+  <target name="dist-source">
+    <mkdir  dir="${tomcat.dist}/src"/>
+    <copy todir="${tomcat.dist}/src">
+      <fileset dir=".">
+        <exclude name="build/**"/>
+        <exclude name="dist/**"/>
+      </fileset>
+    </copy>
+  </target>
+
+
+  <!-- ====================== DIST: Create Archives ======================= -->
+  <target name="dist" depends="deploy,dist-static,dist-javadoc"
+   description="Create binary distribution">
+    <copy todir="${tomcat.dist}/webapps">
+      <fileset dir="${tomcat.build}/webapps" />
+    </copy>
+  </target>
+
+
+  <!-- ================= DIST: Create Windows Installer =================== -->
+  <target name="installer" depends="dist, dist-source"
+   description="Create Windows installer">
+    <echo message="Builds a Windows installer based on Nullsoft Installer"/>
+    <echo message="NSIS must be installed in the default directory"/>
+    <copy todir="${tomcat.dist}">
+      <fileset dir="resources" />
+    </copy>
+    <copy file="${javaservice.home}/bin/JavaService.exe" 
+     tofile="${tomcat.dist}/bin/tomcat.exe" />
+    <copy file="tomcat.nsi" tofile="${tomcat.dist}/tomcat.nsi" />
+    <exec dir="${tomcat.dist}" executable="${nsis.home}\makensis.exe">
+      <arg value="tomcat.nsi" />
+    </exec>
+  </target>
+
+
+</project>

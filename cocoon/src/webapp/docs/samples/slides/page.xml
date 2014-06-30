@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+
+<!-- Author: Stefano Mazzocchi "stefano@apache.org" -->
+<!-- Version: $Id: page.xml,v 1.1 2002/01/03 12:31:41 giacomo Exp $ -->
+
+<xsp:page 
+  language="java" 
+  xmlns:xsp="http://www.apache.org/1999/XSP/Core"
+>
+ 
+ <xsp:logic>
+  static private int counter = 0; 
+  
+  private synchronized int count() { 
+   return counter++; 
+  }
+  
+  private String normalize(String string) {
+   if (string == null) return "";
+   else return string;
+  }
+ </xsp:logic>
+
+ <page>
+  <title>First XSP Page</title>
+  <author>
+   <name>Stefano Mazzocchi</name>
+   <address>stefano@apache.org</address>
+  </author>
+      
+  <p>Hi, I'm your first XSP page ever.</p>
+  
+  <p>I've been requested <xsp:expr>count()</xsp:expr> times.</p>
+  
+  <p>The content you are seeing in this page is provided to you
+  by an XML content producer that was compiled into Java bytecode
+  and executed at request time. This allows greater flexibility and
+  ease of use for page programmers without any performance degradation
+  since all XML parsing and such is precompiled and it's avoided at
+  request time.</p>
+  
+  <p>Let's show some useful information with expression evaluation...</p>
+  
+  <list title="Request Data">
+   <element name="Request method"><xsp:expr>normalize(request.getMethod())</xsp:expr></element>
+   <element name="Request URI"><xsp:expr>normalize(request.getRequestURI())</xsp:expr></element>
+   <element name="Request protocol"><xsp:expr>normalize(request.getProtocol())</xsp:expr></element>
+   <element name="Servlet path"><xsp:expr>normalize(request.getServletPath())</xsp:expr></element>
+   <element name="Path info"><xsp:expr>normalize(request.getPathInfo())</xsp:expr></element>
+   <element name="Path translated"><xsp:expr>normalize(request.getPathTranslated())</xsp:expr></element>
+   <element name="Query string"><xsp:expr>normalize(request.getQueryString())</xsp:expr></element>
+   <element name="Content length"><xsp:expr>request.getContentLength()</xsp:expr></element>
+   <element name="Content type"><xsp:expr>normalize(request.getContentType())</xsp:expr></element>
+   <element name="Server name"><xsp:expr>normalize(request.getServerName())</xsp:expr></element>
+   <element name="Server port"><xsp:expr>request.getServerPort()</xsp:expr></element>
+   <element name="Remote user"><xsp:expr>normalize(request.getRemoteUser())</xsp:expr></element>
+   <element name="Remote address"><xsp:expr>normalize(request.getRemoteAddr())</xsp:expr></element>
+   <element name="Remote host"><xsp:expr>normalize(request.getRemoteHost())</xsp:expr></element>
+   <element name="Authorization scheme"><xsp:expr>normalize(request.getAuthType())</xsp:expr></element>
+  </list>
+  
+  <p>Ok. Now that you know how logic can be transformed into content, let's
+  add some juice and mix logic with content generation
+  in a way that allows you to forget about what method is used to generate and
+  handle the content as XML and concentrate on having your work done. 
+  Note, how XSP don't allow you to explicitly write something on the response
+  from the logic realm: this is one of the major
+  differences between XSP and other server pages technologies and allows
+  further processing of the produced content, as required, for example, by
+  XSL-transformations.</p>
+  
+  <xsp:logic><![CDATA[
+   Enumeration e = request.getHeaderNames(); 
+   if ((e != null) && (e.hasMoreElements())) { ]]>
+    <p>Here are the request headers...</p>
+    <list title="Request Headers">
+     <xsp:logic><![CDATA[
+      while (e.hasMoreElements()) {  
+       String k = (String) e.nextElement(); ]]>
+       <element>
+        <xsp:attribute name="name">
+         <xsp:expr>k</xsp:expr>
+        </xsp:attribute>
+        <xsp:expr>request.getHeader(k)</xsp:expr>
+       </element>
+      }
+     </xsp:logic>
+    </list>
+   }
+  </xsp:logic>
+  
+  <xsp:logic><![CDATA[
+   e = request.getParameterNames(); 
+   if ((e != null) && (e.hasMoreElements())) { ]]>
+    <p>and here the servlet parameters that were passed along
+    with the request...</p>
+         
+    <list title="Servlet Parameters">
+     <xsp:logic><![CDATA[
+      while (e.hasMoreElements()) { 
+       String k = (String) e.nextElement();
+       String val = request.getParameter(k); 
+       String vals[] = request.getParameterValues(k); ]]>
+       <element>
+        <xsp:attribute name="name">
+         <xsp:expr>k</xsp:expr>
+        </xsp:attribute>
+        <xsp:logic><![CDATA[
+          for(int i = 0; i < vals.length; i++) { ]]>
+           <item>
+            <xsp:expr>vals[i]</xsp:expr>
+           </item>
+          }
+        </xsp:logic>
+       </element>
+      }
+     </xsp:logic>
+    </list>
+   } 
+  </xsp:logic>
+  
+  <p>All right, the first XSP page is over, but you can see the 
+  <link href="../view-source.xml?filename=page.xml">dynamically syntax highlighted</link>
+  source of this page provided to you by another XSP page.</p>
+  
+  <p>Enjoy XSP!</p>
+ </page>
+</xsp:page>

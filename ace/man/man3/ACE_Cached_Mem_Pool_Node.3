@@ -1,0 +1,65 @@
+.TH ACE_Cached_Mem_Pool_Node 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Cached_Mem_Pool_Node \-  keeps unused memory within a free list. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Malloc_T.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "T* \fBaddr\fR (void)"
+.br
+.RI "\fIreturn the address of free memory.\fR"
+.ti -1c
+.RI "ACE_Cached_Mem_Pool_Node<T>* \fBget_next\fR (void)"
+.br
+.RI "\fIget the next ACE_Cached_Mem_Pool_Node in a list.\fR"
+.ti -1c
+.RI "void \fBset_next\fR (ACE_Cached_Mem_Pool_Node<T> *ptr)"
+.br
+.RI "\fIset the next ACE_Cached_Mem_Pool_Node.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Cached_Mem_Pool_Node<T>* \fBnext_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Cached_Mem_Pool_Node
+ keeps unused memory within a free list.
+.PP
+.PP
+ The length of a piece of unused memory must be greater than sizeof (void*). This makes sense because we'll waste even more memory if we keep them in a separate data structure. This class should really be placed within the next class . But this can't be done due to C++ compiler portability problems. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> T * ACE_Cached_Mem_Pool_Node<T>::addr (void)
+.PP
+return the address of free memory.
+.PP
+.SS template<classT> ACE_Cached_Mem_Pool_Node< T >* ACE_Cached_Mem_Pool_Node<T>::get_next (void)
+.PP
+get the next ACE_Cached_Mem_Pool_Node in a list.
+.PP
+.SS template<classT> void ACE_Cached_Mem_Pool_Node<T>::set_next (ACE_Cached_Mem_Pool_Node< T >* ptr)
+.PP
+set the next ACE_Cached_Mem_Pool_Node.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Cached_Mem_Pool_Node< T >* ACE_Cached_Mem_Pool_Node<T>::next_\fC [private]\fR
+.PP
+Since memory is not used when placed in a free list, we can use it to maintain the structure of free list. I was using union to hide the fact of overlapping memory usage. However, that cause problem on MSVC. So, I now turn back to hack this with casting. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

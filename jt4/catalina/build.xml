@@ -1,0 +1,492 @@
+<project name="Catalina" default="deploy" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <!-- Build Defaults -->
+  <property name="build.compiler"    value="classic"/>
+  <property name="catalina.build"    value="build"/>
+  <property name="catalina.deploy"   value="../build"/>
+  <property name="catalina.dist"     value="dist"/>
+  <property name="copy.crimson.jar"  value="../lib/crimson.jar"/>
+  <property name="copy.jaxp.jar"     value="../lib/jaxp.jar"/>
+  <property name="test.failonerror"  value="true"/>
+  <property name="test.runner"       value="junit.textui.TestRunner"/>
+  <property name="test.webapp"       value="../webapps/build/examples"/>
+  <property name="test.webapp.war"   value="${java.io.tmpdir}/webapp.war"/>
+
+  <!-- Construct Catalina classpath -->
+  <path id="catalina.classpath">
+    <pathelement location="${activation.jar}"/>
+    <pathelement location="${copy.crimson.jar}"/>
+    <pathelement location="${copy.jaxp.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${jdbc20ext.jar}"/>
+    <pathelement location="${jmxri.jar}"/>
+    <pathelement location="${jndi.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jta.jar}"/>
+    <pathelement location="${ldap.jar}"/>
+    <pathelement location="${mail.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${tyrex.jar}"/>
+    <pathelement location="${catalina.build}/classes"/>
+  </path>
+
+  <!-- Construct unit tests classpath -->
+  <path id="test.classpath">
+    <pathelement location="${junit.jar}"/>
+    <pathelement location="${activation.jar}"/>
+    <pathelement location="${copy.crimson.jar}"/>
+    <pathelement location="${copy.jaxp.jar}"/>
+    <pathelement location="${jcert.jar}"/>
+    <pathelement location="${jdbc20ext.jar}"/>
+    <pathelement location="${jmxri.jar}"/>
+    <pathelement location="${jndi.jar}"/>
+    <pathelement location="${jnet.jar}"/>
+    <pathelement location="${jsse.jar}"/>
+    <pathelement location="${jta.jar}"/>
+    <pathelement location="${ldap.jar}"/>
+    <pathelement location="${mail.jar}"/>
+    <pathelement location="${regexp.jar}"/>
+    <pathelement location="${servlet.jar}"/>
+    <pathelement location="${tyrex.jar}"/>
+    <pathelement location="${catalina.build}/classes"/>
+    <pathelement location="${catalina.build}/tests"/>
+  </path>
+
+
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare">
+
+    <available classname="junit.framework.TestCase" property="junit.present" />
+
+    <mkdir dir="${catalina.build}"/>
+    <mkdir dir="${catalina.build}/bin"/>
+    <mkdir dir="${catalina.build}/classes"/>
+    <mkdir dir="${catalina.build}/common"/>
+    <mkdir dir="${catalina.build}/common/classes"/>
+    <mkdir dir="${catalina.build}/common/lib"/>
+    <mkdir dir="${catalina.build}/conf"/>
+    <mkdir dir="${catalina.build}/lib"/>
+    <mkdir dir="${catalina.build}/server"/>
+    <mkdir dir="${catalina.build}/server/classes"/>
+    <mkdir dir="${catalina.build}/server/lib"/>
+
+  </target>
+
+
+  <!-- =================== BUILD: Copy Static Files ======================= -->
+  <target name="build-static" depends="build-prepare">
+
+    <!-- Executable Commands -->
+    <copy todir="${catalina.build}/bin">
+      <fileset dir="src/bin" />
+    </copy>
+    <fixcrlf srcdir="${catalina.build}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${catalina.build}/bin" includes="*.bat" eol="crlf"/>
+    <chmod perm="+x" file="${catalina.build}/bin/catalina.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/startup.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/shutdown.sh"/>
+
+    <!-- Common Extensions -->
+    <copy todir="${catalina.build}/common/lib" file="${activation.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${copy.crimson.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${copy.jaxp.jar}"/>
+<!-- Cannot redistribute JSSE
+    <copy todir="${catalina.build}/common/lib" file="${jcert.jar}"/>
+-->
+    <copy todir="${catalina.build}/common/lib" file="${jdbc20ext.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${jndi.jar}"/>
+<!-- Cannot redistribute JSSE
+    <copy todir="${catalina.build}/common/lib" file="${jnet.jar}"/>
+-->
+<!-- Cannot redistribute JSSE
+    <copy todir="${catalina.build}/common/lib" file="${jsse.jar}"/>
+-->
+    <copy todir="${catalina.build}/common/lib" file="${jta.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${ldap.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${mail.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${servlet.jar}"/>
+    <copy todir="${catalina.build}/common/lib" file="${tyrex.jar}"/>
+
+    <!-- Configuration Files -->
+    <copy todir="${catalina.build}/conf">
+      <fileset dir="src/conf">
+        <exclude name="catalina.conf.xml" />
+      </fileset>
+    </copy>
+
+    <!-- Catalina Server Libraries -->
+    <copy todir="${catalina.build}/server/lib" file="${regexp.jar}"/>
+<!-- Not needed for stand alone use
+    <copy todir="${catalina.build}/server/lib" file="${jmxri.jar}"/>
+-->
+
+  </target>
+
+
+  <!-- ================= BUILD: Compile Server Components ================= -->
+  <target name="build-main" depends="build-static">
+
+    <available property="jdk.1.3.present"
+     classname="java.lang.reflect.Proxy" />
+
+    <!-- Compile Service API -->
+    <javac srcdir="../service/java" destdir="${catalina.build}/classes"
+           debug="${compile.debug}" deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}"
+           excludes="**/CVS/**" />
+
+    <!-- Compile internal server components -->
+    <javac srcdir="src/share" destdir="${catalina.build}/classes"
+           debug="${compile.debug}" deprecation="${compile.deprecation}"
+           optimize="${compile.optimize}"
+           excludes="**/CVS/**">
+      <classpath refid="catalina.classpath" />
+      <exclude name="**/util/ProcessHelper.java" unless="jdk.1.3.present"/>
+      <exclude name="**/servlets/CGIServlet.java" unless="jdk.1.3.present"/>
+    </javac>
+
+    <!-- Copy static resource files -->
+    <copy todir="${catalina.build}/classes">
+      <fileset dir="src/share">
+        <include name="**/*.properties"/>
+      </fileset>
+    </copy>
+
+  </target>
+
+
+  <!-- ================ BUILD: Create Catalina Javadocs =================== -->
+  <target name="javadoc" depends="build-main">
+    <delete dir="${catalina.build}/javadoc"/>
+    <mkdir dir="${catalina.build}/javadoc"/>
+    <javadoc packagenames="org.apache.catalina.*,org.apache.naming.*"
+      classpathref="catalina.classpath"
+      sourcepath="src/share"
+      destdir="${catalina.build}/javadoc"
+      author="true"
+      version="true"
+      windowtitle="Catalina Internal API Documentation"
+      doctitle="Catalina API"
+      bottom="Copyright &#169; 2000-2001 Apache Software Foundation.  All Rights Reserved."
+    />
+  </target>
+
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <delete dir="${catalina.build}"/>
+  </target>
+
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,build-main"
+   description="Clean, build, and deploy Catalina component"/>
+
+
+  <!-- ================ TEST: Compile Unit Tests ========================== -->
+  <target name="build-tests" depends="build-main" if="junit.present">
+    <mkdir      dir="${catalina.build}/tests"/>
+    <!-- Compile unit test classes -->
+    <javac srcdir="src/test" destdir="${catalina.build}/tests"
+           deprecation="off" debug="on" optimize="off"
+           excludes="**/CVS/**">
+      <classpath refid="test.classpath"/>
+    </javac>
+  </target>
+
+
+  <!-- ==================== TEST: Execute Unit Tests ====================== -->
+  <target name="test" if="junit.present"
+   description="Run all unit test cases"
+   depends="build-tests,test-dir-context,test-util">
+  </target>
+
+  <target name="test-dir-context" if="junit.present">
+
+    <echo message="Running FileDirContext tests"/>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <sysproperty key="doc.base" value="${test.webapp}"/>
+      <arg value="org.apache.naming.resources.FileDirContextTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+
+    <echo message="Running WARDirContext tests"/>
+    <jar jarfile="${test.webapp.war}">
+      <fileset dir="${test.webapp}"/>
+    </jar>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <sysproperty key="doc.base" value="${test.webapp.war}"/>
+      <arg value="org.apache.naming.resources.WARDirContextTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+    <delete file="${test.webapp.war}"/>
+
+  </target>
+
+  <target name="test-util" if="junit.present">
+
+    <echo message="Running CookieTools tests"/>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <arg value="org.apache.catalina.util.CookieToolsTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+
+    <echo message="Running URL tests"/>
+    <java classname="${test.runner}" fork="yes"
+        failonerror="${test.failonerror}">
+      <arg value="org.apache.catalina.util.URLTestCase"/>
+      <classpath refid="test.classpath"/>
+    </java>
+
+  </target>
+
+
+  <!-- ====================== DEPLOY: Create Directories ================== -->
+  <target name="deploy-prepare">
+    <mkdir dir="${catalina.deploy}"/>
+    <mkdir dir="${catalina.deploy}/bin"/>
+    <mkdir dir="${catalina.deploy}/conf"/>
+    <mkdir dir="${catalina.deploy}/lib"/>
+    <mkdir dir="${catalina.deploy}/logs"/>
+    <mkdir dir="${catalina.deploy}/common"/>
+    <mkdir dir="${catalina.deploy}/common/lib"/>
+    <mkdir dir="${catalina.deploy}/server"/>
+    <mkdir dir="${catalina.deploy}/server/lib"/>
+    <mkdir dir="${catalina.deploy}/work"/>
+  </target>
+
+
+  <!-- ====================== DEPLOY: Copy Static Files =================== -->
+  <target name="deploy-static" depends="build-main,deploy-prepare">
+
+    <!-- Executable Commands -->
+    <copy todir="${catalina.deploy}/bin">
+      <fileset dir="${catalina.build}/bin" />
+    </copy>
+    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${catalina.deploy}/bin" includes="*.bat" eol="crlf"/>
+    <chmod perm="+x" file="${catalina.deploy}/bin/catalina.sh"/>
+    <chmod perm="+x" file="${catalina.build}/bin/digest.sh"/>
+    <chmod perm="+x" file="${catalina.deploy}/bin/startup.sh"/>
+    <chmod perm="+x" file="${catalina.deploy}/bin/shutdown.sh"/>
+
+    <!-- Common Extensions -->
+    <copy todir="${catalina.deploy}/common/lib">
+      <fileset dir="${catalina.build}/common/lib" />
+    </copy>
+
+    <!-- Configuration Files -->
+    <copy todir="${catalina.deploy}/conf">
+      <fileset dir="${catalina.build}/conf" />
+    </copy>
+
+    <!-- Shared Extensions -->
+    <copy todir="${catalina.deploy}/lib">
+      <fileset dir="${catalina.build}/lib" />
+    </copy>
+
+    <!-- Server Components -->
+    <copy todir="${catalina.deploy}/server/lib">
+      <fileset dir="${catalina.build}/server/lib" />
+    </copy>
+
+  </target>
+
+
+  <!-- ====================== DEPLOY: Create Catalina JARs ================ -->
+  <target name="deploy" depends="deploy-static,build-main"
+   description="Build and deploy Catalina component">
+
+    <!-- Catalina Bootstrap JAR File -->
+    <jar jarfile="${catalina.deploy}/bin/bootstrap.jar" 
+         manifest="etc/bootstrap.MF">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/service/Service.class" />
+        <include name="org/apache/service/ServiceController.class" />
+        <include name="org/apache/catalina/startup/Bootstrap.class" />
+        <include name="org/apache/catalina/startup/BootstrapService.class" />
+        <include name="org/apache/catalina/loader/StandardClassLoader*.class" />
+        <include name="org/apache/catalina/loader/Extension.class" />
+        <include name="org/apache/catalina/loader/Reloader.class" />
+        <include name="org/apache/catalina/startup/SecurityManagerDebug.class" />
+        <include name="org/apache/naming/JndiPermission.class" />
+      </fileset>
+    </jar>
+
+    <!-- Catalina Main JAR File -->
+    <jar jarfile="${catalina.deploy}/server/lib/catalina.jar">
+      <fileset dir="${catalina.build}/classes">
+        <exclude name="org/apache/naming/**" />
+        <exclude name="**/connector/warp/**" />
+        <exclude name="org/apache/catalina/startup/Bootstrap.class" />
+        <exclude name="org/apache/catalina/startup/BootstrapService.class" />
+        <exclude name="org/apache/catalina/loader/StandardClassLoader*.class" />
+        <exclude name="org/apache/catalina/loader/Extension.class" />
+        <exclude name="org/apache/catalina/loader/Reloader.class" />
+        <exclude name="org/apache/catalina/startup/SecurityManagerDebug.class" />
+        <exclude name="org/apache/catalina/servlets/**" />
+        <exclude name="org/apache/catalina/util/ssi/**" />
+      </fileset>
+    </jar>
+
+    <!-- Naming - Common JAR File -->
+    <jar jarfile="${catalina.deploy}/common/lib/naming-common.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/naming/*" />
+        <include name="org/apache/naming/factory/Constants.class" />
+        <include name="org/apache/naming/java/*" />
+        <exclude name="org/apache/naming/JndiPermission.class" />
+      </fileset>
+    </jar>
+
+    <!-- Naming - Factory JAR File -->
+    <jar jarfile="${catalina.deploy}/lib/naming-factory.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/naming/factory/**" />
+        <exclude name="org/apache/naming/factory/Constants.class" />
+      </fileset>
+    </jar>
+
+    <!-- Naming - Resources JAR File -->
+    <jar jarfile="${catalina.deploy}/common/lib/naming-resources.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/naming/resources/*" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - Common Files -->
+    <jar  jarfile="${catalina.deploy}/server/lib/servlets-common.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Constants.class" />
+        <include name="org/apache/catalina/servlets/*.properties" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - CGI Servlet -->
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-cgi.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/CGI*" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - Default File-Serving Servlet -->
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-default.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Default*" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - Invoker Servlet -->
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-invoker.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Invoker*" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - Manager Servlet -->
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-manager.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/*Manager*" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - Snoop Servlet -->
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-snoop.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Snoop*" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - SSI Servlet -->
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-ssi.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Ssi*" />
+        <include name="org/apache/catalina/util/ssi/**" />
+      </fileset>
+    </jar>
+
+    <!-- Servlets - Webdav Servlet -->
+    <jar jarfile="${catalina.deploy}/server/lib/servlets-webdav.jar">
+      <fileset dir="${catalina.build}/classes">
+        <include name="org/apache/catalina/servlets/Webdav*" />
+      </fileset>
+    </jar>
+
+    <!-- WARP Connector JAR File -->
+    <jar  jarfile="${catalina.deploy}/server/lib/warp.jar"
+          basedir="${catalina.build}/classes" 
+          includes="**/connector/warp/**" />
+
+  </target>
+
+
+  <!-- ================ DIST: Create Distribution ========================= -->
+  <target name="dist" depends="build-main"
+   description="Create binary distribution">
+
+    <!-- Executable Commands -->
+    <mkdir dir="${catalina.dist}/bin"/>
+    <copy todir="${catalina.dist}/bin">
+      <fileset dir="${catalina.build}/bin" />
+    </copy>
+    <fixcrlf srcdir="${catalina.dist}/bin" includes="*.sh" eol="lf"/>
+    <fixcrlf srcdir="${catalina.dist}/bin" includes="*.bat" eol="crlf"/>
+    <chmod perm="+x" file="${catalina.dist}/bin/catalina.sh"/>
+    <chmod perm="+x" file="${catalina.dist}/bin/digest.sh"/>
+    <chmod perm="+x" file="${catalina.dist}/bin/startup.sh"/>
+    <chmod perm="+x" file="${catalina.dist}/bin/shutdown.sh"/>
+
+    <!-- Common Extensions -->    
+    <mkdir dir="${catalina.dist}/common/lib"/>
+    <copy todir="${catalina.dist}/common/lib">
+      <fileset dir="${catalina.build}/common/lib" />
+    </copy>
+
+    <!-- Configuration Files -->
+    <mkdir dir="${catalina.dist}/conf"/>
+    <copy todir="${catalina.dist}/conf">
+      <fileset dir="${catalina.build}/conf" />
+    </copy>
+
+    <!-- Shared Extensions -->
+    <mkdir dir="${catalina.dist}/lib"/>
+    <copy todir="${catalina.dist}/lib">
+      <fileset dir="${catalina.build}/lib" />
+    </copy>
+
+    <!-- Server Components -->
+    <mkdir dir="${catalina.dist}/server/lib"/>
+    <copy todir="${catalina.dist}/server/lib">
+      <fileset dir="${catalina.build}/server/lib" />
+    </copy>
+
+  </target>
+
+
+  <!-- ======================== DIST: Clean Directory ===================== -->
+  <target name="dist-clean">
+    <delete dir="${catalina.dist}"/>
+  </target>
+
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean, dist-clean"
+   description="Clean build and dist directories"/>
+
+
+</project>

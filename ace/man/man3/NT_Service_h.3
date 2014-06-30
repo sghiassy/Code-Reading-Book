@@ -1,0 +1,129 @@
+.TH NT_Service_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+NT_Service_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/config-all.h"\fR
+.br
+\fC#include "ace/Service_Object.h"\fR
+.br
+\fC#include "ace/Synch.h"\fR
+.br
+\fC#include "ace/Task.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_NT_Service\fR"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBACE_NT_SERVICE_START_TIMEOUT\fR  5000"
+.br
+.ti -1c
+.RI "#define \fBACE_NT_SERVICE_DEFINE\fR(SVCNAME, SVCCLASS, SVCDESC)                   "
+.br
+.ti -1c
+.RI "#define \fBACE_NT_SERVICE_REFERENCE\fR(SVCNAME)                                  "
+.br
+.ti -1c
+.RI "#define \fBACE_NT_SERVICE_ENTRY\fR(SVCDESC, SVCNAME)                             "
+.br
+.ti -1c
+.RI "#define \fBACE_NT_SERVICE_RUN\fR(SVCNAME, SVCINSTANCE, RET)                      "
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBNT_Service.h\fR,v 4.19 2001/07/10 17:17:13 schmidt Exp
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Steve Huston <shuston@riverace.com>
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define ACE_NT_SERVICE_DEFINE(SVCNAME, SVCCLASS, SVCDESC)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_NT_Service * _ace_nt_svc_obj_##SVCNAME = 0;                           \
+  VOID WINAPI ace_nt_svc_handler_##SVCNAME (DWORD fdwControl) {             \
+    _ace_nt_svc_obj_##SVCNAME->handle_control(fdwControl);                  \
+  }                                                                         \
+  VOID WINAPI ace_nt_svc_main_##SVCNAME (DWORD dwArgc,                      \
+                                         ACE_TCHAR **lpszArgv) {            \
+    int delete_svc_obj = 0;                                                 \
+    if (_ace_nt_svc_obj_##SVCNAME == 0) {                                   \
+      ACE_NEW (_ace_nt_svc_obj_##SVCNAME, SVCCLASS);                        \
+      if (_ace_nt_svc_obj_##SVCNAME == 0)                                   \
+        return;                                                             \
+      delete_svc_obj = 1;                                                   \
+    }                                                                       \
+    _ace_nt_svc_obj_##SVCNAME->init(dwArgc, lpszArgv);                      \
+    _ace_nt_svc_obj_##SVCNAME->svc_handle(                                  \
+                  ACE_TEXT_RegisterServiceCtrlHandler(SVCDESC,              \
+                                          &ace_nt_svc_handler_##SVCNAME));  \
+    _ace_nt_svc_obj_##SVCNAME->open();                                      \
+    _ace_nt_svc_obj_##SVCNAME->wait();                                      \
+    _ace_nt_svc_obj_##SVCNAME->fini();                                      \
+    if (delete_svc_obj) {                                                   \
+      delete _ace_nt_svc_obj_##SVCNAME;                                     \
+      _ace_nt_svc_obj_##SVCNAME = 0;                                        \
+    }                                                                       \
+    return;                                                                 \
+  }
+.fi
+.SS #define ACE_NT_SERVICE_ENTRY(SVCDESC, SVCNAME)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+                      { SVCDESC, &ace_nt_svc_main_##SVCNAME }
+.fi
+.SS #define ACE_NT_SERVICE_REFERENCE(SVCNAME)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+extern ACE_NT_Service * _ace_nt_svc_obj_##SVCNAME;                         \
+extern VOID WINAPI ace_nt_svc_main_##SVCNAME (DWORD dwArgc,                \
+                                              ACE_TCHAR **lpszArgv);
+.fi
+.SS #define ACE_NT_SERVICE_RUN(SVCNAME, SVCINSTANCE, RET)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_TEXT_SERVICE_TABLE_ENTRY _ace_nt_svc_table[2] =                      \
+  {                                                                        \
+    ACE_NT_SERVICE_ENTRY(ACE_TEXT (#SVCNAME), SVCNAME),                    \
+    { 0, 0 }                                                               \
+  };                                                                       \
+  _ace_nt_svc_obj_##SVCNAME = SVCINSTANCE;                                 \
+  ACE_OS::last_error (0);                                                  \
+  int RET = ACE_TEXT_StartServiceCtrlDispatcher(_ace_nt_svc_table);
+.fi
+.SS #define ACE_NT_SERVICE_START_TIMEOUT  5000
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

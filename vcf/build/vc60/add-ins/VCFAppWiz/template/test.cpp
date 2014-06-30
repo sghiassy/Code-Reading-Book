@@ -1,0 +1,8 @@
+//test.cpp
+
+class foo
+{
+
+};
+
+

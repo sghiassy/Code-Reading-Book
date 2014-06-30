@@ -1,0 +1,158 @@
+.TH ACE_Get_Opt 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Get_Opt \- Iterator for parsing command-line arguments. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Get_Opt.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Get_Opt\fR (int argc, \fBACE_TCHAR\fR **argv, const \fBACE_TCHAR\fR *optstring, int skip_argv0 = 1, int report_errors = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_Get_Opt\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBoperator()\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBoptarg\fR"
+.br
+.ti -1c
+.RI "int \fBoptind\fR"
+.br
+.ti -1c
+.RI "int \fBopterr\fR"
+.br
+.RI "\fICallers store zero here to inhibit the error message for unrecognized options.\fR"
+.ti -1c
+.RI "int \fBargc_\fR"
+.br
+.RI "\fIHolds the  count.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR** \fBargv_\fR"
+.br
+.RI "\fIHolds the  pointer.\fR"
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Get_Opt\fR (const ACE_Get_Opt &)"
+.br
+.ti -1c
+.RI "ACE_Get_Opt& \fBoperator=\fR (const ACE_Get_Opt &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBnextchar_\fR"
+.br
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBoptstring_\fR"
+.br
+.RI "\fIHolds the option string.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Iterator for parsing command-line arguments.
+.PP
+.PP
+ This is a C++ wrapper for getopt(3c). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Get_Opt::ACE_Get_Opt (int argc, \fBACE_TCHAR\fR ** argv, const \fBACE_TCHAR\fR * optstring, int skip_argv0 = 1, int report_errors = 0)
+.PP
+Initialize the internal data when the first call is made. Start processing options with -element 0 + <skip_argv0>; the sequence of previously skipped non-option -elements is empty.
+.PP
+<optstring> is a string containing the legitimate option characters. A colon in <optstring> means that the previous character is an option that wants an argument. The argument is taken from the rest of the current -element, or from the following -element, and returned in <optarg>.
+.PP
+If an option character is seen that is not listed in <optstring>, return '?' after printing an error message. If you set <report_errors> to zero, the error message is suppressed but we still return '?'.
+.PP
+If a char in <optstring> is followed by a colon, that means it wants an arg, so the following text in the same -element, or the text of the following -element, is returned in <optarg>. 
+.SS ACE_Get_Opt::~ACE_Get_Opt (void)
+.PP
+Default dtor.
+.PP
+.SS ACE_Get_Opt::ACE_Get_Opt (const ACE_Get_Opt &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Get_Opt::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_Get_Opt::operator() (void)
+.PP
+Scan elements of  (whose length is ) for option characters given in <optstring>.
+.PP
+If an element of  starts with '-', and is not exactly "-" or "--", then it is an option element. The characters of this element (aside from the initial '-') are option characters. If <operator()> is called repeatedly, it returns successively each of the option characters from each of the option elements.
+.PP
+If <operator()> finds another option character, it returns that character, updating <optind> and <nextchar> so that the next call to <operator()> can resume the scan with the following option character or -element.
+.PP
+If there are no more option characters, <operator()> returns <EOF>. Then <optind> is the index in  of the first -element that is not an option. (The -elements have been permuted so that those that are not options now come last.) 
+.SS ACE_Get_Opt& ACE_Get_Opt::operator= (const ACE_Get_Opt &)\fC [private]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Get_Opt::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS int ACE_Get_Opt::argc_
+.PP
+Holds the  count.
+.PP
+.SS \fBACE_TCHAR\fR ** ACE_Get_Opt::argv_
+.PP
+Holds the  pointer.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Get_Opt::nextchar_\fC [private]\fR
+.PP
+The next char to be scanned in the option-element in which the last option character we returned was found. This allows us to pick up the scan where we left off.
+.PP
+If this is zero, or a null string, it means resume the scan by advancing to the next -element. 
+.SS \fBACE_TCHAR\fR * ACE_Get_Opt::optarg
+.PP
+For communication from <operator()> to the caller. When <operator()> finds an option that takes an argument, the argument value is returned here. 
+.SS int ACE_Get_Opt::opterr
+.PP
+Callers store zero here to inhibit the error message for unrecognized options.
+.PP
+.SS int ACE_Get_Opt::optind
+.PP
+Index in  of the next element to be scanned. This is used for communication to and from the caller and for communication between successive calls to <operator()>. On entry to <operator()>, zero means this is the first call; initialize.
+.PP
+When <get_opt> returns <EOF>, this is the index of the first of the non-option elements that the caller should itself scan.
+.PP
+Otherwise, <optind> communicates from one call to the next how much of  has been scanned so far. 
+.SS const \fBACE_TCHAR\fR * ACE_Get_Opt::optstring_\fC [private]\fR
+.PP
+Holds the option string.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

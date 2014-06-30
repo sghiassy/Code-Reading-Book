@@ -1,0 +1,153 @@
+2002-01-25  Ovidiu Predescu  <ovidiu@cup.hp.com>
+
+	* scheme/utils.scm: Auxiliary functions.
+
+	* scheme/functions.scm: Support for functions with named
+	arguments.
+
+	* build.xml: Compile in utils.scm and functions.scm.
+
+	* scheme/sitemap.scm: Added support for defining and referencing
+	resources, and invoking Scheme functions directly.
+
+	* emacs/sisc-servlet.bat.in: Applied patch from Allan Erskine
+	<a.erskine@cs.ucl.ac.uk>.
+
+	* webapp/cocoon.xconf: Added missing slashes in front of
+	filenames, for Tomcat 4.0.1 to be happy.
+
+2002-01-18  Ovidiu Predescu  <ovidiu@cup.hp.com>
+
+	* scheme/sitemap.scm: Do some optimizations when generating the
+	Scheme code for the sitemap. Eliminate as many `let' forms as
+	possible, to speed up the compilation process.
+
+	* scheme/sitemap.scm: Fixed small problem in sitemap-parse!
+
+	* webapp/user.roles: Define the role for the scheme-interpreter
+	element.
+
+	* webapp/cocoon.xconf: Moved the responsibility of dealing with
+	the Scheme intrisics to the scheme-interpreter component.
+
+	* src/org/apache/cocoon/scheme/sitemap/SchemeSitemap.java: Moved
+	the old content to SchemeSitemapFunctions. This file is now an
+	extension of the AbstractSitemap, which is responsible with
+	reading the components that are to be used in a sitemap. It's
+	responsible with starting the processing of the
+	Environment. Another responsibility is triggering the parsing of
+	the XML sitemap, and translating it into Scheme. The actual work
+	is done by the SchemeSitemapFunctions#parse and the Schme code in
+	scheme/sitemap.scm.
+
+	* scheme/sitemap.scm: Define sitemap-parse! to parse the XML
+	representation of the sitemap into Scheme.
+
+	* prj.el: Define the since-tag-template.
+
+	* build.xml: No longer include in the Scheme heap file test.scm.
+
+	* webapp/sitemap.xmap: Added.
+
+	* src/org/apache/cocoon/scheme/sitemap/XMLtoSXML.java: SAX
+	ContentHandler for translating XML to SXML (Scheme XML
+	representation).
+
+	* src/org/apache/cocoon/scheme/sitemap/SchemeSitemapHandler.java:
+	Created. This handler replaces the default sitemap handler, which
+	allows us to hookup a Scheme-based sitemap.
+
+	* src/org/apache/cocoon/scheme/sitemap/SchemeSitemapFunctions.java:
+	Renamed from SchemeSitemap. Added the parse function.
+
+	* src/org/apache/cocoon/scheme/sitemap/SchemeInterpreterImpl.java:
+	Created.
+
+	* src/org/apache/cocoon/scheme/sitemap/SchemeInterpreter.java:
+	Created.
+
+2002-01-17  Ovidiu Predescu  <ovidiu@cup.hp.com>
+
+	* scheme/sxml.scm: Added. Compiled collection of SXML functions.
+
+	* scheme/test.scm: Use an SXML representation of the sitemap.
+
+	* scheme/sitemap.scm: Get serious: process the SXML representation
+	of the sitemap and generate an equivalent sitemap function
+	definition.
+
+	* prj.el: Updated for the new directory structure.
+
+	* build.xml: Updated to work with the new directory structure.
+
+2002-01-10  Ovidiu Predescu  <ovidiu@cup.hp.com>
+
+	* emacs/README: Include instructions on how to setup the servlet
+	container.
+
+2002-01-09  Ovidiu Predescu  <ovidiu@cup.hp.com>
+
+	* webapp/docs/index.xml: Created.
+
+	* Generate only the stream pipeline; when doing so, also create
+	and set the events pipeline as well.
+
+	* src/org/apache/cocoon/scheme/sitemap/SitemapComponents.java:
+	Generate only the stream pipeline; when doing so, also create and
+	set the events pipeline as well.
+
+	* src/org/apache/cocoon/scheme/sitemap/SchemeSitemap.java: Added
+	support for sitemap:transform and sitemap:serialize.
+
+	* scheme/test.scm: Added entry for documentation.
+
+	* build.xml: Copy the dtd and stylesheets directories from the
+	master Cocoon.
+
+2001-12-16  Ovidiu Predescu  <ovidiu@cup.hp.com>
+
+	* webapp/WEB-INF/web.xml: Pass only one heap argument.
+
+	* src/org/apache/cocoon/scheme/servlet/REPLServlet.java: Use the
+	new interpreters pool. Modified the API to handle the internal
+	SISC changes.
+
+	* src/org/apache/cocoon/scheme/servlet/REPLGenericServlet.java:
+	Use a pool of interpreters to handle multi-threading. This is
+	based on the new SISC model of one interpreter per thread.
+
+	* src/org/apache/cocoon/scheme/servlet/REPLEvalServlet.java: Use
+	the new management of interpreters.
+
+	* scheme/test.scm: Take into consideration the first argument
+	passed to a matcher function, which is the full URL that matched.
+
+	* scheme/sitemap.scm: Updated to use the new Jakarta ORO Scheme
+	binding, which is 6 times faster than the pure Scheme version (no
+	wonder, since SISC is still an interpreter).
+
+	* lib/sisc.jar, lib/sisc.heap: Updated. This version contains a
+	new regexp binding to Jakarta ORO which is more than 6 times
+	faster than the pure Scheme pregex version.
+
+	* lib/jakarta-oro-2.0.4.jar: Added.
+
+	* Do not include pregexp as it is not used anymore. We get more
+	than 6 times performance improvement with the new SISC regexp
+	binding to Jakarta ORO, so we use the new binding instead.
+
+	* Do not include pregexp as it is not used anymore. We get more
+	than 6 times performance improvement with the new SISC regexp
+	binding to Jakarta ORO, so we use the new binding instead.
+
+	* build.xml: Do not include pregexp as it is not used anymore. We
+	get more than 6 times performance improvement with the new SISC
+	regexp binding to Jakarta ORO, so we use the new binding instead.
+
+2001-12-14  Ovidiu Predescu  <ovidiu@cup.hp.com>
+
+	* scheme/test.scm: Simple working example of a sitemap.
+
+	* scheme/sitemap.scm: Use lambda functions in all the places
+	instead of implicitly assuming them.
+

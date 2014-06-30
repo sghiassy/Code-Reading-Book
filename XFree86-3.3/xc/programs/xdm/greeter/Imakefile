@@ -1,0 +1,70 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/09/28 17:17:38 rws $
+#define DoNormalLib NO
+#define DoSharedLib YES
+#define DoDebugLib NO
+#define DoProfileLib NO
+#define LibName XdmGreet
+#define LibHeaders NO
+SOXDMGREETREV = 1.0
+#define SoRev SOXDMGREETREV
+
+#if HasXdmAuth
+XDMAUTH_DEFINES = -DHASXDMAUTH
+#endif
+
+#if HasSecureRPC
+RPC_DEFINES = -DSECURE_RPC
+RPCLIB = -lrpcsvc
+#endif
+
+#if HasKrb5
+KRB5_DEFINES = Krb5Defines
+KRB5_INCLUDE = Krb5Includes
+#endif
+
+#ifdef SharedXmuReqs			/* do we support required libs? */
+REQUIREDLIBS = SharedXmuReqs
+#endif
+
+#ifdef OSF1Architecture
+SHLIBLDFLAGS = \
+	-expect_unresolved PingServer \
+	-expect_unresolved SessionPingFailed \
+	-expect_unresolved Debug \
+	-expect_unresolved RegisterCloseOnFork \
+	-expect_unresolved SecureDisplay \
+	-expect_unresolved UnsecureDisplay \
+	-expect_unresolved ClearCloseOnFork \
+	-expect_unresolved SetupDisplay \
+	-expect_unresolved LogError \
+	-expect_unresolved SessionExit \
+	-expect_unresolved DeleteXloginResources \
+	-expect_unresolved source \
+	-expect_unresolved defaultEnv \
+	-expect_unresolved setEnv \
+	-expect_unresolved parseArgs \
+	-expect_unresolved printEnv \
+	-expect_unresolved systemEnv \
+	-expect_unresolved LogOutOfMem \
+	SharedLibraryLoadFlags
+#endif
+
+#if SystemV4 || HasShadowPasswd
+PWD_DEFINES = -DUSESHADOW
+#endif
+
+#if SystemV4
+  GREETER_DEFINES = -DGREET_LIB
+#endif
+
+INCLUDES = -I.. $(KRB5_INCLUDE)
+ DEFINES = $(GREETER_DEFINES) $(XDMAUTH_DEFINES) $(RPC_DEFINES) $(KRB5_DEFINES) $(PWD_DEFINES)
+
+SHLIBDIR = $(XDMDIR)
+
+SRCS = greet.c verify.c Login.c
+OBJS = greet.o verify.o Login.o
+
+#include <Library.tmpl>
+
+DependTarget()

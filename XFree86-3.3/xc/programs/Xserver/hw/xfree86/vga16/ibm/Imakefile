@@ -1,0 +1,59 @@
+XCOMM $XConsortium: Imakefile /main/8 1996/09/28 17:25:44 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/ibm/Imakefile,v 3.7 1996/12/23 06:52:33 dawes Exp $
+#include <Server.tmpl>
+
+SRCS =	ppcArea.c ppcBitmap.c ppcBStore.c \
+	ppcClip.c ppcCpArea.c ppcCReduce.c \
+	ppcCurs.c ppcDepth.c ppcFillRct.c ppcWinFS.c \
+	ppcPixFS.c ppcGC.c ppcGetSp.c \
+	ppcImg.c ppcPixmap.c ppcPntWin.c \
+	ppcPolyPnt.c ppcPolyRec.c ppcPushPxl.c ppcQuery.c ppcRot.c \
+	ppcRslvC.c ppcSetSp.c ppcWindow.c emulOpStip.c \
+	emulRepAre.c emulTile.c \
+	vgaGC.c vgaBitBlt.c vgaImages.c \
+	vgaStipple.c vgaSolid.c offscreen.c \
+	mfbimggblt.c wm3.c \
+	mfbline.c mfbseg.c mfbhrzvert.c mfbbres.c mfbbresd.c \
+	ppcIO.c mfbfillarc.c mfbzerarc.c
+
+OBJS =	ppcArea.o ppcBitmap.o ppcBStore.o \
+	ppcClip.o ppcCpArea.o ppcCReduce.o \
+	ppcCurs.o ppcDepth.o ppcFillRct.o ppcWinFS.o \
+	ppcPixFS.o ppcGC.o ppcGetSp.o \
+	ppcImg.o ppcPixmap.o ppcPntWin.o \
+	ppcPolyPnt.o ppcPolyRec.o ppcPushPxl.o ppcQuery.o ppcRot.o \
+	ppcRslvC.o ppcSetSp.o ppcWindow.o emulOpStip.o \
+	emulRepAre.o emulTile.o \
+	vgaGC.o vgaBitBlt.o vgaImages.o \
+	vgaStipple.o vgaSolid.o offscreen.o \
+	mfbimggblt.o wm3.o \
+	mfbline.o mfbseg.o mfbhrzvert.o mfbbres.o mfbbresd.o \
+	ppcIO.o mfbfillarc.o mfbzerarc.o
+
+XCOMM This one is for an unbanked server.
+XCOMM *** DON'T forget to update the needmem calculation in vga.c! ***
+XCOMM DEFINES = -DUSE_PORTABLE_FAST_LINES -DXF86VGA16 -DUNBANKED_VGA16
+XCOMM This one is for the banked server:
+DEFINES = -DUSE_PORTABLE_FAST_LINES -DXF86VGA16
+
+INCLUDES = -I. -I$(SERVERSRC)/mi -I$(XF86SRC)/vga2/mfb.banked \
+		-I$(XF86SRC)/vga256/vga \
+		-I$(SERVERSRC)/mfb -I$(SERVERSRC)/include \
+		-I$(SERVERSRC)/cfb -I$(FONTINCSRC) -I$(XINCLUDESRC) \
+		-I$(XF86COMSRC)
+
+NormalLibraryObjectRule()
+SubdirLibraryRule($(OBJS))
+
+ObjectFromSpecialSource(mfbseg,mfbline,-DPOLYSEGMENT)
+
+#ifndef OS2Architecture
+DependTarget()
+#else
+depend::
+#endif

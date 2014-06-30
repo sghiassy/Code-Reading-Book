@@ -1,0 +1,2364 @@
+.TH ACE_OS 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_OS \- This class defines an OS independent programming API that shields developers from nonportable aspects of writing efficient system programs on Win32, POSIX and other versions of UNIX, and various real-time operating systems. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS.h>\fR
+.PP
+Inherits \fBACE_OS_Dirent\fR, \fBACE_OS_String\fR, \fBACE_OS_Memory\fR, and \fBACE_OS_TLI\fR.
+.PP
+.SS Wide-character strings
+
+.in +1c
+.ti -1c
+.RI "typedef ACE_UINT16 \fBWChar\fR"
+.br
+.ti -1c
+.RI "u_int \fBwslen\fR (const \fBWChar\fR *)"
+.br
+.ti -1c
+.RI "\fBWChar\fR* \fBwscpy\fR (\fBWChar\fR *, const \fBWChar\fR *)"
+.br
+.ti -1c
+.RI "int \fBwscmp\fR (const \fBWChar\fR *, const \fBWChar\fR *)"
+.br
+.ti -1c
+.RI "int \fBwsncmp\fR (const \fBWChar\fR *, const \fBWChar\fR *, size_t len)"
+.br
+.in -1c
+.SS A set of wrappers for threads
+
+.in +1c
+.ti -1c
+.RI "int \fBthr_continue\fR (\fBACE_hthread_t\fR target_thread)"
+.br
+.ti -1c
+.RI "int \fBthr_create\fR (ACE_THR_FUNC func, void *args, long flags, \fBACE_thread_t\fR *thr_id, \fBACE_hthread_t\fR *t_handle = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, void *stack = 0, size_t stacksize = 0, \fBACE_Base_Thread_Adapter\fR *thread_adapter = 0)"
+.br
+.ti -1c
+.RI "int \fBthr_getprio\fR (\fBACE_hthread_t\fR thr_id, int &prio)"
+.br
+.ti -1c
+.RI "int \fBthr_join\fR (\fBACE_hthread_t\fR waiter_id, void **status)"
+.br
+.ti -1c
+.RI "int \fBthr_join\fR (\fBACE_thread_t\fR waiter_id, \fBACE_thread_t\fR *thr_id, void **status)"
+.br
+.ti -1c
+.RI "int \fBthr_kill\fR (\fBACE_thread_t\fR thr_id, int signum)"
+.br
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBthr_self\fR (void)"
+.br
+.ti -1c
+.RI "void \fBthr_self\fR (\fBACE_hthread_t\fR &)"
+.br
+.ti -1c
+.RI "int \fBthr_setprio\fR (\fBACE_hthread_t\fR thr_id, int prio)"
+.br
+.ti -1c
+.RI "int \fBthr_setprio\fR (const \fBACE_Sched_Priority\fR prio)"
+.br
+.ti -1c
+.RI "int \fBthr_suspend\fR (\fBACE_hthread_t\fR target_thread)"
+.br
+.ti -1c
+.RI "int \fBthr_cancel\fR (\fBACE_thread_t\fR t_id)"
+.br
+.ti -1c
+.RI "int \fBthr_cmp\fR (\fBACE_hthread_t\fR t1, \fBACE_hthread_t\fR t2)"
+.br
+.ti -1c
+.RI "int \fBthr_equal\fR (\fBACE_thread_t\fR t1, \fBACE_thread_t\fR t2)"
+.br
+.ti -1c
+.RI "void \fBthr_exit\fR (void *status = 0)"
+.br
+.ti -1c
+.RI "int \fBthr_getconcurrency\fR (void)"
+.br
+.ti -1c
+.RI "int \fBlwp_getparams\fR (\fBACE_Sched_Params\fR &)"
+.br
+.ti -1c
+.RI "int \fBthr_getspecific\fR (\fBACE_thread_key_t\fR key, void **data)"
+.br
+.ti -1c
+.RI "int \fBthr_keyfree\fR (\fBACE_thread_key_t\fR key)"
+.br
+.ti -1c
+.RI "int \fBthr_key_detach\fR (void *inst)"
+.br
+.ti -1c
+.RI "int \fBthr_keycreate\fR (\fBACE_thread_key_t\fR *key, \fBACE_THR_DEST\fR, void *inst = 0)"
+.br
+.ti -1c
+.RI "int \fBthr_key_used\fR (\fBACE_thread_key_t\fR key)"
+.br
+.ti -1c
+.RI "size_t \fBthr_min_stack\fR (void)"
+.br
+.ti -1c
+.RI "int \fBthr_setconcurrency\fR (int hint)"
+.br
+.ti -1c
+.RI "int \fBlwp_setparams\fR (const \fBACE_Sched_Params\fR &)"
+.br
+.ti -1c
+.RI "int \fBthr_setspecific\fR (\fBACE_thread_key_t\fR key, void *data)"
+.br
+.ti -1c
+.RI "int \fBthr_sigsetmask\fR (int how, const sigset_t *nsm, sigset_t *osm)"
+.br
+.ti -1c
+.RI "int \fBthr_setcancelstate\fR (int new_state, int *old_state)"
+.br
+.ti -1c
+.RI "int \fBthr_setcanceltype\fR (int new_type, int *old_type)"
+.br
+.ti -1c
+.RI "int \fBsigwait\fR (sigset_t *set, int *sig = 0)"
+.br
+.ti -1c
+.RI "int \fBsigtimedwait\fR (const sigset_t *set, \fBsiginfo_t\fR *info, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "void \fBthr_testcancel\fR (void)"
+.br
+.ti -1c
+.RI "void \fBthr_yield\fR (void)"
+.br
+.ti -1c
+.RI "void \fBunique_name\fR (const void *object, \fBACE_TCHAR\fR *name, size_t length)"
+.br
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBNULL_thread\fR"
+.br
+.RI "\fIThis is necessary to deal with POSIX pthreads and their use of structures for thread ids.\fR"
+.ti -1c
+.RI "\fBACE_hthread_t\fR \fBNULL_hthread\fR"
+.br
+.RI "\fIThis is necessary to deal with POSIX pthreads and their use of structures for thread handles.\fR"
+.ti -1c
+.RI "\fBACE_thread_key_t\fR \fBNULL_key\fR"
+.br
+.RI "\fIThis is necessary to deal with POSIX pthreads and their use of structures for TSS keys.\fR"
+.in -1c
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBACE_HRTimer_Op\fR { \fBACE_HRTIMER_START\fR = 0x0, \fBACE_HRTIMER_INCR\fR = 0x1, \fBACE_HRTIMER_STOP\fR = 0x2, \fBACE_HRTIMER_GETTIME\fR = 0xFFFF }"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBdefault_win32_security_attributes\fR (LPSECURITY_ATTRIBUTES)"
+.br
+.ti -1c
+.RI "const OSVERSIONINFO& \fBget_win32_versioninfo\fR (void)"
+.br
+.RI "\fIReturn the win32 OSVERSIONINFO structure.\fR"
+.ti -1c
+.RI "HINSTANCE \fBget_win32_resource_module\fR (void)"
+.br
+.RI "\fIReturn the handle of the module containing \fBACE\fR's resources. By default, for a DLL build of \fBACE\fR this is a handle to the \fBACE\fR DLL itself, and for a static build it is a handle to the executable.\fR"
+.ti -1c
+.RI "void \fBset_win32_resource_module\fR (HINSTANCE)"
+.br
+.RI "\fIAllow an application to modify which module contains \fBACE\fR's resources. This is mainly useful for a static build of \fBACE\fR where the required resources reside somewhere other than the executable.\fR"
+.ti -1c
+.RI "int \fBatoi\fR (const char *s)"
+.br
+.ti -1c
+.RI "int \fBatoi\fR (const wchar_t *s)"
+.br
+.ti -1c
+.RI "double \fBfloor\fR (double x)"
+.br
+.RI "\fIThis method computes the largest integral value not greater than x.\fR"
+.ti -1c
+.RI "double \fBceil\fR (double x)"
+.br
+.RI "\fIThis method computes the smallest integral value not less than x.\fR"
+.ti -1c
+.RI "char* \fBgetenv\fR (const char *symbol)"
+.br
+.ti -1c
+.RI "wchar_t* \fBgetenv\fR (const wchar_t *symbol)"
+.br
+.ti -1c
+.RI "int \fBputenv\fR (const \fBACE_TCHAR\fR *string)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBstrenvdup\fR (const \fBACE_TCHAR\fR *str)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBgetenvstrings\fR (void)"
+.br
+.ti -1c
+.RI "int \fBgetopt\fR (int argc, char *const *argv, const char *optstring)"
+.br
+.ti -1c
+.RI "int \fBargv_to_string\fR (\fBACE_TCHAR\fR **argv, \fBACE_TCHAR\fR *&buf, int substitute_env_args = 1)"
+.br
+.ti -1c
+.RI "int \fBstring_to_argv\fR (\fBACE_TCHAR\fR *buf, size_t &argc, \fBACE_TCHAR\fR **&argv, int substitute_env_args = 1)"
+.br
+.ti -1c
+.RI "long \fBsysconf\fR (int)"
+.br
+.ti -1c
+.RI "int \fBlast_error\fR (void)"
+.br
+.ti -1c
+.RI "void \fBlast_error\fR (int)"
+.br
+.ti -1c
+.RI "int \fBset_errno_to_last_error\fR (void)"
+.br
+.ti -1c
+.RI "int \fBset_errno_to_wsa_last_error\fR (void)"
+.br
+.ti -1c
+.RI "int \fBfclose\fR (FILE *fp)"
+.br
+.ti -1c
+.RI "int \fBfcntl\fR (ACE_HANDLE handle, int cmd, long arg = 0)"
+.br
+.ti -1c
+.RI "int \fBfdetach\fR (const char *file)"
+.br
+.ti -1c
+.RI "int \fBfsync\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "FILE* \fBfopen\fR (const \fBACE_TCHAR\fR *filename, const \fBACE_TCHAR\fR *mode)"
+.br
+.ti -1c
+.RI "FILE* \fBfdopen\fR (ACE_HANDLE handle, const \fBACE_TCHAR\fR *mode)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBfgets\fR (\fBACE_TCHAR\fR *buf, int size, FILE *fp)"
+.br
+.ti -1c
+.RI "int \fBstat\fR (const \fBACE_TCHAR\fR *file, \fBACE_stat\fR *)"
+.br
+.ti -1c
+.RI "int \fBtruncate\fR (const \fBACE_TCHAR\fR *filename, off_t length)"
+.br
+.ti -1c
+.RI "int \fBfprintf\fR (FILE *fp, const char *format, ...)"
+.br
+.ti -1c
+.RI "int \fBsprintf\fR (char *buf, const char *format, ...)"
+.br
+.ti -1c
+.RI "int \fBvsprintf\fR (char *buffer, const char *format, va_list argptr)"
+.br
+.ti -1c
+.RI "int \fBprintf\fR (const char *format, ...)"
+.br
+.ti -1c
+.RI "int \fBsprintf\fR (wchar_t *buf, const wchar_t *format, ...)"
+.br
+.ti -1c
+.RI "int \fBfprintf\fR (FILE *fp, const wchar_t *format, ...)"
+.br
+.ti -1c
+.RI "int \fBvsprintf\fR (wchar_t *buffer, const wchar_t *format, va_list argptr)"
+.br
+.ti -1c
+.RI "void \fBperror\fR (const \fBACE_TCHAR\fR *s)"
+.br
+.ti -1c
+.RI "char* \fBgets\fR (char *str, int n = 0)"
+.br
+.ti -1c
+.RI "int \fBputs\fR (const \fBACE_TCHAR\fR *s)"
+.br
+.ti -1c
+.RI "int \fBfputs\fR (const \fBACE_TCHAR\fR *s, FILE *stream)"
+.br
+.ti -1c
+.RI "int \fBfflush\fR (FILE *fp)"
+.br
+.ti -1c
+.RI "size_t \fBfread\fR (void *ptr, size_t size, size_t nelems, FILE *fp)"
+.br
+.ti -1c
+.RI "int \fBfseek\fR (FILE *fp, long offset, int ptrname)"
+.br
+.ti -1c
+.RI "int \fBfstat\fR (ACE_HANDLE, \fBACE_stat\fR *)"
+.br
+.ti -1c
+.RI "int \fBlstat\fR (const char *, \fBACE_stat\fR *)"
+.br
+.ti -1c
+.RI "int \fBftruncate\fR (ACE_HANDLE, off_t)"
+.br
+.ti -1c
+.RI "size_t \fBfwrite\fR (const void *ptr, size_t size, size_t nitems, FILE *fp)"
+.br
+.ti -1c
+.RI "void \fBrewind\fR (FILE *fp)"
+.br
+.ti -1c
+.RI "int \fBgetpagesize\fR (void)"
+.br
+.ti -1c
+.RI "int \fBallocation_granularity\fR (void)"
+.br
+.ti -1c
+.RI "\fBgid_t\fR \fBgetgid\fR (void)"
+.br
+.ti -1c
+.RI "int \fBsetgid\fR (\fBgid_t\fR)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBgetpid\fR (void)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBgetpgid\fR (\fBpid_t\fR pid)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBgetppid\fR (void)"
+.br
+.ti -1c
+.RI "\fBuid_t\fR \fBgetuid\fR (void)"
+.br
+.ti -1c
+.RI "int \fBsetuid\fR (\fBuid_t\fR)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBsetsid\fR (void)"
+.br
+.ti -1c
+.RI "int \fBsetpgid\fR (\fBpid_t\fR pid, \fBpid_t\fR pgid)"
+.br
+.ti -1c
+.RI "int \fBsetreuid\fR (\fBuid_t\fR ruid, \fBuid_t\fR euid)"
+.br
+.ti -1c
+.RI "int \fBsetregid\fR (\fBgid_t\fR rgid, \fBgid_t\fR egid)"
+.br
+.ti -1c
+.RI "int \fBsystem\fR (const \fBACE_TCHAR\fR *s)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBwaitpid\fR (\fBpid_t\fR pid, \fBACE_exitcode\fR *status = 0, int wait_options = 0, ACE_HANDLE handle = 0)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBwait\fR (\fBpid_t\fR pid, \fBACE_exitcode\fR *status, int wait_options = 0, ACE_HANDLE handle = 0)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBwait\fR (int * = 0)"
+.br
+.RI "\fICalls OS <wait> function, so it's only portable to UNIX/POSIX platforms.\fR"
+.ti -1c
+.RI "void \fBmutex_lock_cleanup\fR (void *mutex)"
+.br
+.RI "\fIHandle asynchronous thread cancellation cleanup.\fR"
+.ti -1c
+.RI "void \fBcleanup_tss\fR (const u_int main_thread)"
+.br
+.ti -1c
+.RI "int \fBscheduling_class\fR (const char *class_name, \fBACE_id_t\fR &)"
+.br
+.RI "\fIFind the schedling class ID that corresponds to the class name.\fR"
+.ti -1c
+.RI "int \fBset_scheduling_params\fR (const \fBACE_Sched_Params\fR &, \fBACE_id_t\fR id = ACE_SELF)"
+.br
+.RI "\fIFriendly interface to <priocntl>(2).\fR"
+.ti -1c
+.RI "int \fBpriority_control\fR (\fBACE_idtype_t\fR, \fBACE_id_t\fR, int, void *)"
+.br
+.RI "\fILow-level interface to <priocntl>(2).\fR"
+.in -1c
+.PP
+.RI "\fBA set of wrappers for condition variables.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBcondattr_init\fR (ACE_condattr_t &attributes, int type = ACE_DEFAULT_SYNCH_TYPE)"
+.br
+.ti -1c
+.RI "int \fBcondattr_destroy\fR (ACE_condattr_t &attributes)"
+.br
+.ti -1c
+.RI "int \fBcond_broadcast\fR (ACE_cond_t *cv)"
+.br
+.ti -1c
+.RI "int \fBcond_destroy\fR (ACE_cond_t *cv)"
+.br
+.ti -1c
+.RI "int \fBcond_init\fR (ACE_cond_t *cv, short type = ACE_DEFAULT_SYNCH_TYPE, const char *name = 0, void *arg = 0)"
+.br
+.ti -1c
+.RI "int \fBcond_init\fR (ACE_cond_t *cv, ACE_condattr_t &attributes, const char *name = 0, void *arg = 0)"
+.br
+.ti -1c
+.RI "int \fBcond_init\fR (ACE_cond_t *cv, short type, const wchar_t *name, void *arg = 0)"
+.br
+.ti -1c
+.RI "int \fBcond_init\fR (ACE_cond_t *cv, ACE_condattr_t &attributes, const wchar_t *name, void *arg = 0)"
+.br
+.ti -1c
+.RI "int \fBcond_signal\fR (ACE_cond_t *cv)"
+.br
+.ti -1c
+.RI "int \fBcond_timedwait\fR (ACE_cond_t *cv, ACE_mutex_t *m, \fBACE_Time_Value\fR *)"
+.br
+.ti -1c
+.RI "int \fBcond_wait\fR (ACE_cond_t *cv, ACE_mutex_t *m)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBWrappers to obtain the current user id\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "char* \fBcuserid\fR (char *user, size_t maxlen = ACE_MAX_USERID)"
+.br
+.ti -1c
+.RI "wchar_t* \fBcuserid\fR (wchar_t *user, size_t maxlen = ACE_MAX_USERID)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBWrappers to obtain configuration info\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBuname\fR (\fBACE_utsname\fR *name)"
+.br
+.ti -1c
+.RI "long \fBsysinfo\fR (int cmd, char *buf, long count)"
+.br
+.ti -1c
+.RI "int \fBhostname\fR (char *name, size_t maxnamelen)"
+.br
+.ti -1c
+.RI "int \fBhostname\fR (wchar_t *name, size_t maxnamelen)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for explicit dynamic linking.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBdlclose\fR (\fBACE_SHLIB_HANDLE\fR handle)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBdlerror\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_SHLIB_HANDLE\fR \fBdlopen\fR (const \fBACE_TCHAR\fR *filename, int mode = ACE_DEFAULT_SHLIB_MODE)"
+.br
+.ti -1c
+.RI "void* \fBdlsym\fR (\fBACE_SHLIB_HANDLE\fR handle, const \fBACE_TCHAR\fR *symbol)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBWrappers for searching and sorting.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "void* \fBbsearch\fR (const void *key, const void *base, size_t nel, size_t size, \fBACE_COMPARE_FUNC\fR)"
+.br
+.ti -1c
+.RI "void \fBqsort\fR (void *base, size_t nel, size_t width, \fBACE_COMPARE_FUNC\fR)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for file locks.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBflock_init\fR (\fBACE_OS::ace_flock_t\fR *lock, int flags = 0, const \fBACE_TCHAR\fR *name = 0, \fBmode_t\fR perms = 0)"
+.br
+.ti -1c
+.RI "int \fBflock_destroy\fR (\fBACE_OS::ace_flock_t\fR *lock, int unlink_file = 1)"
+.br
+.ti -1c
+.RI "void \fBadjust_flock_params\fR (\fBACE_OS::ace_flock_t\fR *lock, short whence, off_t &start, off_t &len)"
+.br
+.ti -1c
+.RI "int \fBflock_rdlock\fR (\fBACE_OS::ace_flock_t\fR *lock, short whence = 0, off_t start = 0, off_t len = 0)"
+.br
+.ti -1c
+.RI "int \fBflock_tryrdlock\fR (\fBACE_OS::ace_flock_t\fR *lock, short whence = 0, off_t start = 0, off_t len = 0)"
+.br
+.ti -1c
+.RI "int \fBflock_trywrlock\fR (\fBACE_OS::ace_flock_t\fR *lock, short whence = 0, off_t start = 0, off_t len = 0)"
+.br
+.ti -1c
+.RI "int \fBflock_unlock\fR (\fBACE_OS::ace_flock_t\fR *lock, short whence = 0, off_t start = 0, off_t len = 0)"
+.br
+.ti -1c
+.RI "int \fBflock_wrlock\fR (\fBACE_OS::ace_flock_t\fR *lock, short whence = 0, off_t start = 0, off_t len = 0)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for low-level process operations.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBatexit\fR (ACE_EXIT_HOOK func)"
+.br
+.ti -1c
+.RI "int \fBexecl\fR (const char *path, const char *arg0, ...)"
+.br
+.ti -1c
+.RI "int \fBexecle\fR (const char *path, const char *arg0, ...)"
+.br
+.ti -1c
+.RI "int \fBexeclp\fR (const char *file, const char *arg0, ...)"
+.br
+.ti -1c
+.RI "int \fBexecv\fR (const char *path, char *const argv[])"
+.br
+.ti -1c
+.RI "int \fBexecvp\fR (const char *file, char *const argv[])"
+.br
+.ti -1c
+.RI "int \fBexecve\fR (const char *path, char *const argv[], char *const envp[])"
+.br
+.ti -1c
+.RI "void \fB_exit\fR (int status = 0)"
+.br
+.ti -1c
+.RI "void \fBexit\fR (int status = 0)"
+.br
+.ti -1c
+.RI "void \fBabort\fR (void)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBfork\fR (void)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBfork\fR (const \fBACE_TCHAR\fR *program_name)"
+.br
+.RI "\fIForks and exec's a process in a manner that works on Solaris and NT. argv[0] must be the full path name to the executable.\fR"
+.ti -1c
+.RI "\fBpid_t\fR \fBfork_exec\fR (\fBACE_TCHAR\fR *argv[])"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for timers and resource stats.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "u_int \fBalarm\fR (u_int secs)"
+.br
+.ti -1c
+.RI "u_int \fBualarm\fR (u_int usecs, u_int interval = 0)"
+.br
+.ti -1c
+.RI "u_int \fBualarm\fR (const \fBACE_Time_Value\fR &tv, const \fBACE_Time_Value\fR &tv_interval = \fBACE_Time_Value::zero\fR)"
+.br
+.ti -1c
+.RI "\fBACE_hrtime_t\fR \fBgethrtime\fR (const \fBACE_HRTimer_Op\fR = ACE_HRTIMER_GETTIME)"
+.br
+.ti -1c
+.RI "int \fBclock_gettime\fR (\fBclockid_t\fR, struct \fBtimespec\fR *)"
+.br
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBgettimeofday\fR (void)"
+.br
+.ti -1c
+.RI "int \fBgetrusage\fR (int who, struct \fBrusage\fR *\fBrusage\fR)"
+.br
+.ti -1c
+.RI "int \fBgetrlimit\fR (int resource, struct rlimit *rl)"
+.br
+.ti -1c
+.RI "int \fBsetrlimit\fR (int resource, \fBACE_SETRLIMIT_TYPE\fR *rl)"
+.br
+.ti -1c
+.RI "int \fBsleep\fR (u_int seconds)"
+.br
+.ti -1c
+.RI "int \fBsleep\fR (const \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBnanosleep\fR (const struct \fBtimespec\fR *requested, struct \fBtimespec\fR *remaining = 0)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for operations on time.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "time_t \fBmktime\fR (struct tm *timeptr)"
+.br
+.ti -1c
+.RI "void \fBtzset\fR (void)"
+.br
+.ti -1c
+.RI "long \fBtimezone\fR (void)"
+.br
+.ti -1c
+.RI "double \fBdifftime\fR (time_t t1, time_t t0)"
+.br
+.ti -1c
+.RI "time_t \fBtime\fR (time_t *tloc = 0)"
+.br
+.ti -1c
+.RI "struct tm* \fBlocaltime\fR (const time_t *clock)"
+.br
+.ti -1c
+.RI "struct tm* \fBlocaltime_r\fR (const time_t *clock, struct tm *res)"
+.br
+.ti -1c
+.RI "struct tm* \fBgmtime\fR (const time_t *clock)"
+.br
+.ti -1c
+.RI "struct tm* \fBgmtime_r\fR (const time_t *clock, struct tm *res)"
+.br
+.ti -1c
+.RI "char* \fBasctime\fR (const struct tm *tm)"
+.br
+.ti -1c
+.RI "char* \fBasctime_r\fR (const struct tm *tm, char *buf, int buflen)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBctime\fR (const time_t *t)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBctime_r\fR (const time_t *clock, \fBACE_TCHAR\fR *buf, int buflen)"
+.br
+.ti -1c
+.RI "size_t \fBstrftime\fR (char *s, size_t maxsize, const char *format, const struct tm *timeptr)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for System V message queues.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBmsgctl\fR (int msqid, int cmd, struct \fBmsqid_ds\fR *)"
+.br
+.ti -1c
+.RI "int \fBmsgget\fR (key_t key, int msgflg)"
+.br
+.ti -1c
+.RI "int \fBmsgrcv\fR (int int_id, void *buf, size_t len, long type, int flags)"
+.br
+.ti -1c
+.RI "int \fBmsgsnd\fR (int int_id, const void *buf, size_t len, int flags)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for memory mapped files.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBmadvise\fR (\fBcaddr_t\fR addr, size_t len, int advice)"
+.br
+.ti -1c
+.RI "void* \fBmmap\fR (void *addr, size_t len, int prot, int flags, ACE_HANDLE handle, off_t off = 0, ACE_HANDLE *file_mapping = 0, LPSECURITY_ATTRIBUTES sa = 0, const \fBACE_TCHAR\fR *file_mapping_name = 0)"
+.br
+.ti -1c
+.RI "int \fBmprotect\fR (void *addr, size_t len, int prot)"
+.br
+.ti -1c
+.RI "int \fBmsync\fR (void *addr, size_t len, int sync)"
+.br
+.ti -1c
+.RI "int \fBmunmap\fR (void *addr, size_t len)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for recursive mutex locks.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBrecursive_mutex_init\fR (\fBACE_recursive_thread_mutex_t\fR *m, const \fBACE_TCHAR\fR *name = 0, ACE_mutexattr_t *arg = 0, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBrecursive_mutex_destroy\fR (\fBACE_recursive_thread_mutex_t\fR *m)"
+.br
+.ti -1c
+.RI "int \fBrecursive_mutex_lock\fR (\fBACE_recursive_thread_mutex_t\fR *m)"
+.br
+.ti -1c
+.RI "int \fBrecursive_mutex_trylock\fR (\fBACE_recursive_thread_mutex_t\fR *m)"
+.br
+.ti -1c
+.RI "int \fBrecursive_mutex_unlock\fR (\fBACE_recursive_thread_mutex_t\fR *m)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for mutex locks.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBmutex_init\fR (ACE_mutex_t *m, int type = ACE_DEFAULT_SYNCH_TYPE, const char *name = 0, ACE_mutexattr_t *arg = 0, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBmutex_init\fR (ACE_mutex_t *m, int type, const wchar_t *name, ACE_mutexattr_t *arg = 0, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBmutex_destroy\fR (ACE_mutex_t *m)"
+.br
+.ti -1c
+.RI "int \fBmutex_lock\fR (ACE_mutex_t *m)"
+.br
+.RI "\fIWin32 note: Abandoned mutexes are not treated differently. 0 is returned since the calling thread does get the ownership.\fR"
+.ti -1c
+.RI "int \fBmutex_lock\fR (ACE_mutex_t *m, int &abandoned)"
+.br
+.RI "\fIThis method is only implemented for Win32. For abandoned mutexes,  is set to 1 and 0 is returned.\fR"
+.ti -1c
+.RI "int \fBmutex_lock\fR (ACE_mutex_t *m, const \fBACE_Time_Value\fR &timeout)"
+.br
+.ti -1c
+.RI "int \fBmutex_lock\fR (ACE_mutex_t *m, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "int \fBmutex_trylock\fR (ACE_mutex_t *m)"
+.br
+.RI "\fIWin32 note: Abandoned mutexes are not treated differently. 0 is returned since the calling thread does get the ownership.\fR"
+.ti -1c
+.RI "int \fBmutex_trylock\fR (ACE_mutex_t *m, int &abandoned)"
+.br
+.RI "\fIThis method is only implemented for Win32. For abandoned mutexes,  is set to 1 and 0 is returned.\fR"
+.ti -1c
+.RI "int \fBmutex_unlock\fR (ACE_mutex_t *m)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for mutex locks that only work within a single process.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBthread_mutex_init\fR (ACE_thread_mutex_t *m, int type = ACE_DEFAULT_SYNCH_TYPE, const char *name = 0, ACE_mutexattr_t *arg = 0)"
+.br
+.ti -1c
+.RI "int \fBthread_mutex_init\fR (ACE_thread_mutex_t *m, int type, const wchar_t *name, ACE_mutexattr_t *arg = 0)"
+.br
+.ti -1c
+.RI "int \fBthread_mutex_destroy\fR (ACE_thread_mutex_t *m)"
+.br
+.ti -1c
+.RI "int \fBthread_mutex_lock\fR (ACE_thread_mutex_t *m)"
+.br
+.ti -1c
+.RI "int \fBthread_mutex_lock\fR (ACE_thread_mutex_t *m, const \fBACE_Time_Value\fR &timeout)"
+.br
+.ti -1c
+.RI "int \fBthread_mutex_lock\fR (ACE_thread_mutex_t *m, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "int \fBthread_mutex_trylock\fR (ACE_thread_mutex_t *m)"
+.br
+.ti -1c
+.RI "int \fBthread_mutex_unlock\fR (ACE_thread_mutex_t *m)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for low-level file operations.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBaccess\fR (const char *path, int amode)"
+.br
+.ti -1c
+.RI "int \fBaccess\fR (const wchar_t *path, int amode)"
+.br
+.ti -1c
+.RI "int \fBclose\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBcreat\fR (const \fBACE_TCHAR\fR *filename, \fBmode_t\fR mode)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBdup\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "int \fBdup2\fR (ACE_HANDLE oldfd, ACE_HANDLE newfd)"
+.br
+.ti -1c
+.RI "int \fBfattach\fR (int handle, const char *path)"
+.br
+.ti -1c
+.RI "long \fBfilesize\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "long \fBfilesize\fR (const \fBACE_TCHAR\fR *handle)"
+.br
+.ti -1c
+.RI "int \fBgetmsg\fR (ACE_HANDLE handle, struct \fBstrbuf\fR *ctl, struct \fBstrbuf\fR *data, int *flags)"
+.br
+.ti -1c
+.RI "int \fBgetpmsg\fR (ACE_HANDLE handle, struct \fBstrbuf\fR *ctl, struct \fBstrbuf\fR *data, int *band, int *flags)"
+.br
+.ti -1c
+.RI "int \fBioctl\fR (ACE_HANDLE handle, int cmd, void * = 0)"
+.br
+.RI "\fIUNIX-style <ioctl>.\fR"
+.ti -1c
+.RI "int \fBioctl\fR (ACE_HANDLE socket, u_long io_control_code, void *in_buffer_p, u_long in_buffer, void *out_buffer_p, u_long out_buffer, u_long *bytes_returned, \fBACE_OVERLAPPED\fR *overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func)"
+.br
+.RI "\fIQoS-enabled <ioctl>.\fR"
+.ti -1c
+.RI "int \fBioctl\fR (ACE_HANDLE socket, u_long io_control_code, \fBACE_QoS\fR &ace_qos, u_long *bytes_returned, void *buffer_p = 0, u_long buffer = 0, \fBACE_OVERLAPPED\fR *overlapped = 0, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func = 0)"
+.br
+.RI "\fIQoS-enabled <ioctl> when the I/O control code is either SIO_SET_QOS or SIO_GET_QOS.\fR"
+.ti -1c
+.RI "int \fBisastream\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "int \fBisatty\fR (int handle)"
+.br
+.ti -1c
+.RI "int \fBisatty\fR (ACE_HANDLE handle)"
+.br
+.ti -1c
+.RI "off_t \fBlseek\fR (ACE_HANDLE handle, off_t offset, int whence)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBopen\fR (const char *filename, int mode, int perms = ACE_DEFAULT_OPEN_PERMS, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBopen\fR (const wchar_t *filename, int mode, int perms = ACE_DEFAULT_OPEN_PERMS, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBputmsg\fR (ACE_HANDLE handle, const struct \fBstrbuf\fR *ctl, const struct \fBstrbuf\fR *data, int flags)"
+.br
+.ti -1c
+.RI "int \fBputpmsg\fR (ACE_HANDLE handle, const struct \fBstrbuf\fR *ctl, const struct \fBstrbuf\fR *data, int band, int flags)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBread\fR (ACE_HANDLE handle, void *buf, size_t len)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBread\fR (ACE_HANDLE handle, void *buf, size_t len, \fBACE_OVERLAPPED\fR *)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBread_n\fR (ACE_HANDLE handle, void *buf, size_t len, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "int \fBreadlink\fR (const char *path, char *buf, size_t bufsiz)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBpread\fR (ACE_HANDLE handle, void *buf, size_t nbyte, off_t offset)"
+.br
+.ti -1c
+.RI "int \fBrecvmsg\fR (ACE_HANDLE handle, struct \fBmsghdr\fR *msg, int flags)"
+.br
+.ti -1c
+.RI "int \fBsendmsg\fR (ACE_HANDLE handle, const struct \fBmsghdr\fR *msg, int flags)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBwrite\fR (ACE_HANDLE handle, const void *buf, size_t nbyte)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBwrite\fR (ACE_HANDLE handle, const void *buf, size_t nbyte, \fBACE_OVERLAPPED\fR *)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBwrite_n\fR (ACE_HANDLE handle, const void *buf, size_t len, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBpwrite\fR (ACE_HANDLE handle, const void *buf, size_t nbyte, off_t offset)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBreadv\fR (ACE_HANDLE handle, \fBiovec\fR *iov, int iovlen)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBwritev\fR (ACE_HANDLE handle, const \fBiovec\fR *iov, int iovcnt)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv\fR (ACE_HANDLE handle, \fBiovec\fR *iov, int iovlen)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsendv\fR (ACE_HANDLE handle, const \fBiovec\fR *iov, int iovcnt)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for event demultiplexing and IPC.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBselect\fR (int width, fd_set *rfds, fd_set *wfds = 0, fd_set *efds = 0, const \fBACE_Time_Value\fR *tv = 0)"
+.br
+.ti -1c
+.RI "int \fBselect\fR (int width, fd_set *rfds, fd_set *wfds, fd_set *efds, const \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBpoll\fR (struct pollfd *pollfds, u_long len, const \fBACE_Time_Value\fR *tv = 0)"
+.br
+.ti -1c
+.RI "int \fBpoll\fR (struct pollfd *pollfds, u_long len, const \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBpipe\fR (ACE_HANDLE handles[])"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBshm_open\fR (const \fBACE_TCHAR\fR *filename, int mode, int perms = 0, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBshm_unlink\fR (const \fBACE_TCHAR\fR *path)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for directory operations.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBmode_t\fR \fBumask\fR (\fBmode_t\fR cmask)"
+.br
+.ti -1c
+.RI "int \fBchdir\fR (const char *path)"
+.br
+.ti -1c
+.RI "int \fBchdir\fR (const wchar_t *path)"
+.br
+.ti -1c
+.RI "int \fBmkdir\fR (const \fBACE_TCHAR\fR *path, \fBmode_t\fR mode = ACE_DEFAULT_DIR_PERMS)"
+.br
+.ti -1c
+.RI "int \fBmkfifo\fR (const \fBACE_TCHAR\fR *file, \fBmode_t\fR mode = ACE_DEFAULT_FILE_PERMS)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBmktemp\fR (\fBACE_TCHAR\fR *t)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBmkstemp\fR (\fBACE_TCHAR\fR *t)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBgetcwd\fR (\fBACE_TCHAR\fR *, size_t)"
+.br
+.ti -1c
+.RI "int \fBrename\fR (const \fBACE_TCHAR\fR *old_name, const \fBACE_TCHAR\fR *new_name, int flags = -1)"
+.br
+.ti -1c
+.RI "int \fBunlink\fR (const \fBACE_TCHAR\fR *path)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBtempnam\fR (const \fBACE_TCHAR\fR *dir = 0, const \fBACE_TCHAR\fR *pfx = 0)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for random number operations.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBrand\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrand_r\fR (\fBACE_RANDR_TYPE\fR &seed)"
+.br
+.ti -1c
+.RI "void \fBsrand\fR (u_int seed)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for readers/writer locks.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBrwlock_init\fR (ACE_rwlock_t *rw, int type = ACE_DEFAULT_SYNCH_TYPE, const \fBACE_TCHAR\fR *name = 0, void *arg = 0)"
+.br
+.ti -1c
+.RI "int \fBrwlock_destroy\fR (ACE_rwlock_t *rw)"
+.br
+.ti -1c
+.RI "int \fBrw_rdlock\fR (ACE_rwlock_t *rw)"
+.br
+.ti -1c
+.RI "int \fBrw_wrlock\fR (ACE_rwlock_t *rw)"
+.br
+.ti -1c
+.RI "int \fBrw_tryrdlock\fR (ACE_rwlock_t *rw)"
+.br
+.ti -1c
+.RI "int \fBrw_trywrlock\fR (ACE_rwlock_t *rw)"
+.br
+.ti -1c
+.RI "int \fBrw_trywrlock_upgrade\fR (ACE_rwlock_t *rw)"
+.br
+.ti -1c
+.RI "int \fBrw_unlock\fR (ACE_rwlock_t *rw)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for auto-reset and manual events.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBevent_init\fR (ACE_event_t *event, int manual_reset = 0, int initial_state = 0, int type = ACE_DEFAULT_SYNCH_TYPE, const char *name = 0, void *arg = 0, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBevent_init\fR (ACE_event_t *event, int manual_reset, int initial_state, int type, const wchar_t *name, void *arg = 0, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBevent_destroy\fR (ACE_event_t *event)"
+.br
+.ti -1c
+.RI "int \fBevent_wait\fR (ACE_event_t *event)"
+.br
+.ti -1c
+.RI "int \fBevent_timedwait\fR (ACE_event_t *event, \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "int \fBevent_signal\fR (ACE_event_t *event)"
+.br
+.ti -1c
+.RI "int \fBevent_pulse\fR (ACE_event_t *event)"
+.br
+.ti -1c
+.RI "int \fBevent_reset\fR (ACE_event_t *event)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for semaphores.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBsema_destroy\fR (ACE_sema_t *s)"
+.br
+.ti -1c
+.RI "int \fBsema_init\fR (ACE_sema_t *s, u_int count, int type = ACE_DEFAULT_SYNCH_TYPE, const char *name = 0, void *arg = 0, int max = 0x7fffffff, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBsema_init\fR (ACE_sema_t *s, u_int count, int type, const wchar_t *name, void *arg = 0, int max = 0x7fffffff, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.ti -1c
+.RI "int \fBsema_post\fR (ACE_sema_t *s)"
+.br
+.ti -1c
+.RI "int \fBsema_post\fR (ACE_sema_t *s, size_t release_count)"
+.br
+.ti -1c
+.RI "int \fBsema_trywait\fR (ACE_sema_t *s)"
+.br
+.ti -1c
+.RI "int \fBsema_wait\fR (ACE_sema_t *s)"
+.br
+.ti -1c
+.RI "int \fBsema_wait\fR (ACE_sema_t *s, \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBsema_wait\fR (ACE_sema_t *s, \fBACE_Time_Value\fR *tv)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for System V semaphores.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBsemctl\fR (int int_id, int semnum, int cmd, \fBsemun\fR)"
+.br
+.ti -1c
+.RI "int \fBsemget\fR (key_t key, int nsems, int flags)"
+.br
+.ti -1c
+.RI "int \fBsemop\fR (int int_id, struct sembuf *sops, size_t nsops)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBThread scheduler interface.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "int \fBsched_params\fR (const \fBACE_Sched_Params\fR &, \fBACE_id_t\fR id = ACE_SELF)"
+.br
+.RI "\fISet scheduling parameters. An id of ACE_SELF indicates, e.g., set the parameters on the calling thread.\fR"
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for Signals.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "void* \fBshmat\fR (int int_id, void *\fBshmaddr\fR, int shmflg)"
+.br
+.ti -1c
+.RI "int \fBshmctl\fR (int int_id, int cmd, struct shmid_ds *buf)"
+.br
+.ti -1c
+.RI "int \fBshmdt\fR (void *\fBshmaddr\fR)"
+.br
+.ti -1c
+.RI "int \fBshmget\fR (key_t key, int size, int flags)"
+.br
+.ti -1c
+.RI "int \fBkill\fR (\fBpid_t\fR pid, int signum)"
+.br
+.ti -1c
+.RI "int \fBsigaction\fR (int signum, const struct sigaction *nsa, struct sigaction *osa)"
+.br
+.ti -1c
+.RI "int \fBsigaddset\fR (sigset_t *s, int signum)"
+.br
+.ti -1c
+.RI "int \fBsigdelset\fR (sigset_t *s, int signum)"
+.br
+.ti -1c
+.RI "int \fBsigemptyset\fR (sigset_t *s)"
+.br
+.ti -1c
+.RI "int \fBsigfillset\fR (sigset_t *s)"
+.br
+.ti -1c
+.RI "int \fBsigismember\fR (sigset_t *s, int signum)"
+.br
+.ti -1c
+.RI "ACE_SignalHandler \fBsignal\fR (int signum, ACE_SignalHandler)"
+.br
+.ti -1c
+.RI "int \fBsigsuspend\fR (const sigset_t *set)"
+.br
+.ti -1c
+.RI "int \fBsigprocmask\fR (int how, const sigset_t *nsp, sigset_t *osp)"
+.br
+.ti -1c
+.RI "int \fBpthread_sigmask\fR (int how, const sigset_t *nsp, sigset_t *osp)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for sockets.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "ACE_HANDLE \fBaccept\fR (ACE_HANDLE handle, struct sockaddr *addr, int *addrlen)"
+.br
+.RI "\fIBSD-style  (no QoS).\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBaccept\fR (ACE_HANDLE handle, struct sockaddr *addr, int *addrlen, const \fBACE_Accept_QoS_Params\fR &qos_params)"
+.br
+.ti -1c
+.RI "int \fBconnect\fR (ACE_HANDLE handle, struct sockaddr *addr, int addrlen)"
+.br
+.RI "\fIBSD-style <connect> (no QoS).\fR"
+.ti -1c
+.RI "int \fBconnect\fR (ACE_HANDLE handle, const sockaddr *addr, int addrlen, const \fBACE_QoS_Params\fR &qos_params)"
+.br
+.ti -1c
+.RI "int \fBbind\fR (ACE_HANDLE s, struct sockaddr *name, int namelen)"
+.br
+.ti -1c
+.RI "int \fBclosesocket\fR (ACE_HANDLE s)"
+.br
+.ti -1c
+.RI "struct hostent* \fBgethostbyaddr\fR (const char *addr, int length, int type)"
+.br
+.ti -1c
+.RI "struct hostent* \fBgethostbyname\fR (const char *name)"
+.br
+.ti -1c
+.RI "struct hostent* \fBgethostbyname2\fR (const char *name, int type)"
+.br
+.ti -1c
+.RI "struct hostent* \fBgethostbyaddr_r\fR (const char *addr, int length, int type, struct hostent *result, \fBACE_HOSTENT_DATA\fR buffer, int *h_errnop)"
+.br
+.ti -1c
+.RI "struct hostent* \fBgethostbyname_r\fR (const char *name, struct hostent *result, \fBACE_HOSTENT_DATA\fR buffer, int *h_errnop)"
+.br
+.ti -1c
+.RI "int \fBgetpeername\fR (ACE_HANDLE handle, struct sockaddr *addr, int *addrlen)"
+.br
+.ti -1c
+.RI "struct protoent* \fBgetprotobyname\fR (const char *name)"
+.br
+.ti -1c
+.RI "struct protoent* \fBgetprotobyname_r\fR (const char *name, struct protoent *result, \fBACE_PROTOENT_DATA\fR buffer)"
+.br
+.ti -1c
+.RI "struct protoent* \fBgetprotobynumber\fR (int proto)"
+.br
+.ti -1c
+.RI "struct protoent* \fBgetprotobynumber_r\fR (int proto, struct protoent *result, \fBACE_PROTOENT_DATA\fR buffer)"
+.br
+.ti -1c
+.RI "struct servent* \fBgetservbyname\fR (const char *svc, const char *proto)"
+.br
+.ti -1c
+.RI "struct servent* \fBgetservbyname_r\fR (const char *svc, const char *proto, struct servent *result, \fBACE_SERVENT_DATA\fR buf)"
+.br
+.ti -1c
+.RI "int \fBgetsockname\fR (ACE_HANDLE handle, struct sockaddr *addr, int *addrlen)"
+.br
+.ti -1c
+.RI "int \fBgetsockopt\fR (ACE_HANDLE handle, int level, int optname, char *optval, int *optlen)"
+.br
+.ti -1c
+.RI "long \fBinet_addr\fR (const char *name)"
+.br
+.ti -1c
+.RI "char* \fBinet_ntoa\fR (const struct in_addr addr)"
+.br
+.ti -1c
+.RI "int \fBinet_aton\fR (const char *strptr, struct in_addr *addr)"
+.br
+.ti -1c
+.RI "const char* \fBinet_ntop\fR (int family, const void *addrptr, char *strptr, size_t len)"
+.br
+.ti -1c
+.RI "int \fBinet_pton\fR (int family, const char *strptr, void *addrptr)"
+.br
+.ti -1c
+.RI "int \fBenum_protocols\fR (int *protocols, \fBACE_Protocol_Info\fR *protocol_buffer, u_long *buffer_length)"
+.br
+.RI "\fIRetrieve information about available transport protocols installed on the local machine.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBjoin_leaf\fR (ACE_HANDLE socket, const sockaddr *name, int namelen, const \fBACE_QoS_Params\fR &qos_params)"
+.br
+.RI "\fIJoins a leaf node into a QoS-enabled multi-point session.\fR"
+.ti -1c
+.RI "int \fBlisten\fR (ACE_HANDLE handle, int backlog)"
+.br
+.ti -1c
+.RI "int \fBrecv\fR (ACE_HANDLE handle, char *buf, int len, int flags = 0)"
+.br
+.ti -1c
+.RI "int \fBrecvfrom\fR (ACE_HANDLE handle, char *buf, int len, int flags, struct sockaddr *addr, int *addrlen)"
+.br
+.ti -1c
+.RI "int \fBrecvfrom\fR (ACE_HANDLE handle, \fBiovec\fR *buffers, int buffer_count, size_t &number_of_bytes_recvd, int &flags, struct sockaddr *addr, int *addrlen, \fBACE_OVERLAPPED\fR *overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func)"
+.br
+.ti -1c
+.RI "int \fBsend\fR (ACE_HANDLE handle, const char *buf, int len, int flags = 0)"
+.br
+.ti -1c
+.RI "int \fBsendto\fR (ACE_HANDLE handle, const char *buf, int len, int flags, const struct sockaddr *addr, int addrlen)"
+.br
+.ti -1c
+.RI "int \fBsendto\fR (ACE_HANDLE handle, const \fBiovec\fR *buffers, int buffer_count, size_t &number_of_bytes_sent, int flags, const struct sockaddr *addr, int addrlen, \fBACE_OVERLAPPED\fR *overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func)"
+.br
+.ti -1c
+.RI "int \fBsetsockopt\fR (ACE_HANDLE handle, int level, int optname, const char *optval, int optlen)"
+.br
+.RI "\fIManipulate the options associated with a socket.\fR"
+.ti -1c
+.RI "int \fBshutdown\fR (ACE_HANDLE handle, int how)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBsocket\fR (int protocol_family, int type, int proto)"
+.br
+.RI "\fICreate a BSD-style socket (no QoS).\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBsocket\fR (int protocol_family, int type, int proto, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags)"
+.br
+.RI "\fICreate a QoS-enabled socket. If the OS platform doesn't support QoS-enabled <socket> then the BSD-style <socket> is called.\fR"
+.ti -1c
+.RI "int \fBsocketpair\fR (int domain, int type, int protocol, ACE_HANDLE sv[2])"
+.br
+.ti -1c
+.RI "int \fBsocket_init\fR (int version_high = 1, int version_low = 1)"
+.br
+.RI "\fIInitialize WinSock before first use (e.g., when a DLL is first loaded or the first use of a \fBsocket\fR() call.\fR"
+.ti -1c
+.RI "int \fBsocket_fini\fR (void)"
+.br
+.RI "\fIFinalize WinSock after last use (e.g., when a DLL is unloaded).\fR"
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for password routines.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "void \fBsetpwent\fR (void)"
+.br
+.ti -1c
+.RI "void \fBendpwent\fR (void)"
+.br
+.ti -1c
+.RI "struct passwd* \fBgetpwent\fR (void)"
+.br
+.ti -1c
+.RI "struct passwd* \fBgetpwnam\fR (const char *user)"
+.br
+.ti -1c
+.RI "struct passwd* \fBgetpwnam_r\fR (const char *name, struct passwd *pwent, char *buffer, int buflen)"
+.br
+.in -1c
+.in -1c
+.PP
+.RI "\fBA set of wrappers for regular expressions.\fR"
+.br
+
+.in +1c
+.in +1c
+.ti -1c
+.RI "char* \fBcompile\fR (const char *instring, char *expbuf, char *endbuf)"
+.br
+.ti -1c
+.RI "int \fBstep\fR (const char *str, char *expbuf)"
+.br
+.in -1c
+.in -1c
+.SS Static Public Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBsocket_initialized_\fR"
+.br
+.RI "\fIKeeps track of whether we've already initialized WinSock...\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_CLASS_IS_NAMESPACE\fR (ACE_OS)"
+.br
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_EXIT_HOOK \fBset_exit_hook\fR (ACE_EXIT_HOOK hook)"
+.br
+.RI "\fIFor use by \fBACE_Object_Manager\fR only, to register its exit hook..\fR"
+.ti -1c
+.RI "void \fBfopen_mode_to_open_mode_converter\fR (\fBACE_TCHAR\fR x, int &hmode)"
+.br
+.RI "\fITranslate fopen's mode char to open's mode. This helper function is here to avoid maintaining several pieces of identical code.\fR"
+.ti -1c
+.RI "int \fBcond_timedwait_i\fR (ACE_cond_t *cv, ACE_mutex_t *m, \fBACE_Time_Value\fR *)"
+.br
+.ti -1c
+.RI "u_int \fBalarm_i\fR (u_int secs)"
+.br
+.ti -1c
+.RI "u_int \fBualarm_i\fR (u_int usecs, u_int interval = 0)"
+.br
+.ti -1c
+.RI "u_int \fBualarm_i\fR (const \fBACE_Time_Value\fR &tv, const \fBACE_Time_Value\fR &tv_interval = \fBACE_Time_Value::zero\fR)"
+.br
+.ti -1c
+.RI "int \fBsleep_i\fR (u_int seconds)"
+.br
+.ti -1c
+.RI "int \fBsleep_i\fR (const \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBnanosleep_i\fR (const struct \fBtimespec\fR *requested, struct \fBtimespec\fR *remaining = 0)"
+.br
+.ti -1c
+.RI "int \fBselect_i\fR (int width, fd_set *rfds, fd_set *wfds, fd_set *efds, const \fBACE_Time_Value\fR *tv = 0)"
+.br
+.ti -1c
+.RI "int \fBselect_i\fR (int width, fd_set *rfds, fd_set *wfds, fd_set *efds, const \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBpoll_i\fR (struct pollfd *pollfds, u_long len, const \fBACE_Time_Value\fR *tv = 0)"
+.br
+.ti -1c
+.RI "int \fBpoll_i\fR (struct pollfd *pollfds, u_long len, const \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBsema_wait_i\fR (ACE_sema_t *s)"
+.br
+.ti -1c
+.RI "int \fBsema_wait_i\fR (ACE_sema_t *s, \fBACE_Time_Value\fR &tv)"
+.br
+.ti -1c
+.RI "int \fBsigtimedwait_i\fR (const sigset_t *set, \fBsiginfo_t\fR *info, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBgettimeofday_i\fR (void)"
+.br
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_EXIT_HOOK \fBexit_hook_\fR"
+.br
+.RI "\fIFunction that is called by , if non-null.\fR"
+.ti -1c
+.RI "OSVERSIONINFO \fBwin32_versioninfo_\fR"
+.br
+.ti -1c
+.RI "HINSTANCE \fBwin32_resource_module_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Timeout_Manager\fR"
+.br
+.ti -1c
+.RI "class \fBACE_OS_Object_Manager\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class defines an OS independent programming API that shields developers from nonportable aspects of writing efficient system programs on Win32, POSIX and other versions of UNIX, and various real-time operating systems.
+.PP
+.PP
+ This class encapsulates the differences between various OS platforms. When porting \fBACE\fR to a new platform, this class is the place to focus on. Once this file is ported to a new platform, pretty much everything else comes for "free." See <www.cs.wustl.edu/~schmidt/ACE_wrappers/etc/ACE-porting.html> for instructions on porting \fBACE\fR. Please see the README file in this directory for complete information on the meaning of the various macros. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef ACE_UINT16 ACE_OS::WChar
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_OS::ACE_HRTimer_Op
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_HRTIMER_START\fR \fR
+.TP
+\fB\fIACE_HRTIMER_INCR\fR \fR
+.TP
+\fB\fIACE_HRTIMER_STOP\fR \fR
+.TP
+\fB\fIACE_HRTIMER_GETTIME\fR \fR
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS ACE_OS::ACE_CLASS_IS_NAMESPACE (ACE_OS)\fC [private]\fR
+.PP
+.SS void ACE_OS::_exit (int status = 0)\fC [static]\fR
+.PP
+.SS void ACE_OS::abort (void)\fC [static]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::accept (ACE_HANDLE handle, struct sockaddr * addr, int * addrlen, const \fBACE_Accept_QoS_Params\fR & qos_params)\fC [static]\fR
+.PP
+QoS-enabled , which passes <qos_params> to . If the OS platform doesn't support QoS-enabled  then the <qos_params> are ignored and the BSD-style  is called. 
+.SS ACE_HANDLE ACE_OS::accept (ACE_HANDLE handle, struct sockaddr * addr, int * addrlen)\fC [static]\fR
+.PP
+BSD-style  (no QoS).
+.PP
+.SS int ACE_OS::access (const wchar_t * path, int amode)\fC [static]\fR
+.PP
+.SS int ACE_OS::access (const char * path, int amode)\fC [static]\fR
+.PP
+.SS void ACE_OS::adjust_flock_params (\fBACE_OS::ace_flock_t\fR * lock, short whence, off_t & start, off_t & len)\fC [static]\fR
+.PP
+.SS u_int ACE_OS::alarm (u_int secs)\fC [static]\fR
+.PP
+.SS u_int ACE_OS::alarm_i (u_int secs)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::allocation_granularity (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::argv_to_string (\fBACE_TCHAR\fR ** argv, \fBACE_TCHAR\fR *& buf, int substitute_env_args = 1)\fC [static]\fR
+.PP
+.SS char * ACE_OS::asctime (const struct tm * tm)\fC [static]\fR
+.PP
+.SS char * ACE_OS::asctime_r (const struct tm * tm, char * buf, int buflen)\fC [static]\fR
+.PP
+.SS int ACE_OS::atexit (ACE_EXIT_HOOK func)\fC [static]\fR
+.PP
+.SS int ACE_OS::atoi (const wchar_t * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::atoi (const char * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::bind (ACE_HANDLE s, struct sockaddr * name, int namelen)\fC [static]\fR
+.PP
+.SS void * ACE_OS::bsearch (const void * key, const void * base, size_t nel, size_t size, \fBACE_COMPARE_FUNC\fR)\fC [static]\fR
+.PP
+.SS double ACE_OS::ceil (double x)\fC [static]\fR
+.PP
+This method computes the smallest integral value not less than x.
+.PP
+.SS int ACE_OS::chdir (const wchar_t * path)\fC [static]\fR
+.PP
+.SS int ACE_OS::chdir (const char * path)\fC [static]\fR
+.PP
+.SS void ACE_OS::cleanup_tss (const u_int main_thread)\fC [static]\fR
+.PP
+Call TSS destructors for the current thread. If the current thread is the main thread, then the argument must be 1. For private use of \fBACE_Object_Manager\fR and \fBACE_Thread_Adapter\fR only. 
+.SS int ACE_OS::clock_gettime (\fBclockid_t\fR, struct \fBtimespec\fR *)\fC [static]\fR
+.PP
+.SS int ACE_OS::close (ACE_HANDLE handle)\fC [static]\fR
+.PP
+.SS int ACE_OS::closesocket (ACE_HANDLE s)\fC [static]\fR
+.PP
+.SS char * ACE_OS::compile (const char * instring, char * expbuf, char * endbuf)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_broadcast (ACE_cond_t * cv)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_destroy (ACE_cond_t * cv)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_init (ACE_cond_t * cv, ACE_condattr_t & attributes, const wchar_t * name, void * arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_init (ACE_cond_t * cv, short type, const wchar_t * name, void * arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_init (ACE_cond_t * cv, ACE_condattr_t & attributes, const char * name = 0, void * arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_init (ACE_cond_t * cv, short type = ACE_DEFAULT_SYNCH_TYPE, const char * name = 0, void * arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_signal (ACE_cond_t * cv)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_timedwait (ACE_cond_t * cv, ACE_mutex_t * m, \fBACE_Time_Value\fR *)\fC [static]\fR
+.PP
+.SS int ACE_OS::cond_timedwait_i (ACE_cond_t * cv, ACE_mutex_t * m, \fBACE_Time_Value\fR *)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::cond_wait (ACE_cond_t * cv, ACE_mutex_t * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::condattr_destroy (ACE_condattr_t & attributes)\fC [static]\fR
+.PP
+.SS int ACE_OS::condattr_init (ACE_condattr_t & attributes, int type = ACE_DEFAULT_SYNCH_TYPE)\fC [static]\fR
+.PP
+.SS int ACE_OS::connect (ACE_HANDLE handle, const sockaddr * addr, int addrlen, const \fBACE_QoS_Params\fR & qos_params)\fC [static]\fR
+.PP
+QoS-enabled <connect>, which passes <qos_params> to <connect>. If the OS platform doesn't support QoS-enabled <connect> then the <qos_params> are ignored and the BSD-style <connect> is called. 
+.SS int ACE_OS::connect (ACE_HANDLE handle, struct sockaddr * addr, int addrlen)\fC [static]\fR
+.PP
+BSD-style <connect> (no QoS).
+.PP
+.SS ACE_HANDLE ACE_OS::creat (const \fBACE_TCHAR\fR * filename, \fBmode_t\fR mode)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR * ACE_OS::ctime (const time_t * t)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR * ACE_OS::ctime_r (const time_t * clock, \fBACE_TCHAR\fR * buf, int buflen)\fC [static]\fR
+.PP
+.SS wchar_t * ACE_OS::cuserid (wchar_t * user, size_t maxlen = ACE_MAX_USERID)\fC [static]\fR
+.PP
+.SS char * ACE_OS::cuserid (char * user, size_t maxlen = ACE_MAX_USERID)\fC [static]\fR
+.PP
+.SS LPSECURITY_ATTRIBUTES ACE_OS::default_win32_security_attributes (LPSECURITY_ATTRIBUTES)\fC [static]\fR
+.PP
+.SS double ACE_OS::difftime (time_t t1, time_t t0)\fC [static]\fR
+.PP
+.SS int ACE_OS::dlclose (\fBACE_SHLIB_HANDLE\fR handle)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR * ACE_OS::dlerror (void)\fC [static]\fR
+.PP
+.SS \fBACE_SHLIB_HANDLE\fR ACE_OS::dlopen (const \fBACE_TCHAR\fR * filename, int mode = ACE_DEFAULT_SHLIB_MODE)\fC [static]\fR
+.PP
+.SS void * ACE_OS::dlsym (\fBACE_SHLIB_HANDLE\fR handle, const \fBACE_TCHAR\fR * symbol)\fC [static]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::dup (ACE_HANDLE handle)\fC [static]\fR
+.PP
+.SS int ACE_OS::dup2 (ACE_HANDLE oldfd, ACE_HANDLE newfd)\fC [static]\fR
+.PP
+.SS void ACE_OS::endpwent (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::enum_protocols (int * protocols, \fBACE_Protocol_Info\fR * protocol_buffer, u_long * buffer_length)\fC [static]\fR
+.PP
+Retrieve information about available transport protocols installed on the local machine.
+.PP
+.SS int ACE_OS::event_destroy (ACE_event_t * event)\fC [static]\fR
+.PP
+.SS int ACE_OS::event_init (ACE_event_t * event, int manual_reset, int initial_state, int type, const wchar_t * name, void * arg = 0, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::event_init (ACE_event_t * event, int manual_reset = 0, int initial_state = 0, int type = ACE_DEFAULT_SYNCH_TYPE, const char * name = 0, void * arg = 0, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::event_pulse (ACE_event_t * event)\fC [static]\fR
+.PP
+.SS int ACE_OS::event_reset (ACE_event_t * event)\fC [static]\fR
+.PP
+.SS int ACE_OS::event_signal (ACE_event_t * event)\fC [static]\fR
+.PP
+.SS int ACE_OS::event_timedwait (ACE_event_t * event, \fBACE_Time_Value\fR * timeout)\fC [static]\fR
+.PP
+.SS int ACE_OS::event_wait (ACE_event_t * event)\fC [static]\fR
+.PP
+.SS int ACE_OS::execl (const char * path, const char * arg0, ...)\fC [static]\fR
+.PP
+.SS int ACE_OS::execle (const char * path, const char * arg0, ...)\fC [static]\fR
+.PP
+.SS int ACE_OS::execlp (const char * file, const char * arg0, ...)\fC [static]\fR
+.PP
+.SS int ACE_OS::execv (const char * path, char *const argv[])\fC [static]\fR
+.PP
+.SS int ACE_OS::execve (const char * path, char *const argv[], char *const envp[])\fC [static]\fR
+.PP
+.SS int ACE_OS::execvp (const char * file, char *const argv[])\fC [static]\fR
+.PP
+.SS void ACE_OS::exit (int status = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::fattach (int handle, const char * path)\fC [static]\fR
+.PP
+.SS int ACE_OS::fclose (FILE * fp)\fC [static]\fR
+.PP
+.SS int ACE_OS::fcntl (ACE_HANDLE handle, int cmd, long arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::fdetach (const char * file)\fC [static]\fR
+.PP
+.SS FILE* ACE_OS::fdopen (ACE_HANDLE handle, const \fBACE_TCHAR\fR * mode)\fC [static]\fR
+.PP
+.SS int ACE_OS::fflush (FILE * fp)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR* ACE_OS::fgets (\fBACE_TCHAR\fR * buf, int size, FILE * fp)\fC [static]\fR
+.PP
+.SS long ACE_OS::filesize (const \fBACE_TCHAR\fR * handle)\fC [static]\fR
+.PP
+.SS long ACE_OS::filesize (ACE_HANDLE handle)\fC [static]\fR
+.PP
+.SS int ACE_OS::flock_destroy (\fBACE_OS::ace_flock_t\fR * lock, int unlink_file = 1)\fC [static]\fR
+.PP
+.SS int ACE_OS::flock_init (\fBACE_OS::ace_flock_t\fR * lock, int flags = 0, const \fBACE_TCHAR\fR * name = 0, \fBmode_t\fR perms = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::flock_rdlock (\fBACE_OS::ace_flock_t\fR * lock, short whence = 0, off_t start = 0, off_t len = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::flock_tryrdlock (\fBACE_OS::ace_flock_t\fR * lock, short whence = 0, off_t start = 0, off_t len = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::flock_trywrlock (\fBACE_OS::ace_flock_t\fR * lock, short whence = 0, off_t start = 0, off_t len = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::flock_unlock (\fBACE_OS::ace_flock_t\fR * lock, short whence = 0, off_t start = 0, off_t len = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::flock_wrlock (\fBACE_OS::ace_flock_t\fR * lock, short whence = 0, off_t start = 0, off_t len = 0)\fC [static]\fR
+.PP
+.SS double ACE_OS::floor (double x)\fC [static]\fR
+.PP
+This method computes the largest integral value not greater than x.
+.PP
+.SS FILE* ACE_OS::fopen (const \fBACE_TCHAR\fR * filename, const \fBACE_TCHAR\fR * mode)\fC [static]\fR
+.PP
+.SS void ACE_OS::fopen_mode_to_open_mode_converter (\fBACE_TCHAR\fR x, int & hmode)\fC [static, private]\fR
+.PP
+Translate fopen's mode char to open's mode. This helper function is here to avoid maintaining several pieces of identical code.
+.PP
+.SS \fBpid_t\fR ACE_OS::fork (const \fBACE_TCHAR\fR * program_name)\fC [static]\fR
+.PP
+Forks and exec's a process in a manner that works on Solaris and NT. argv[0] must be the full path name to the executable.
+.PP
+.SS \fBpid_t\fR ACE_OS::fork (void)\fC [static]\fR
+.PP
+.SS \fBpid_t\fR ACE_OS::fork_exec (\fBACE_TCHAR\fR * argv[])\fC [static]\fR
+.PP
+.SS int ACE_OS::fprintf (FILE * fp, const wchar_t * format, ...)\fC [static]\fR
+.PP
+.SS int ACE_OS::fprintf (FILE * fp, const char * format, ...)\fC [static]\fR
+.PP
+.SS int ACE_OS::fputs (const \fBACE_TCHAR\fR * s, FILE * stream)\fC [static]\fR
+.PP
+.SS size_t ACE_OS::fread (void * ptr, size_t size, size_t nelems, FILE * fp)\fC [static]\fR
+.PP
+.SS int ACE_OS::fseek (FILE * fp, long offset, int ptrname)\fC [static]\fR
+.PP
+.SS int ACE_OS::fstat (ACE_HANDLE, \fBACE_stat\fR *)\fC [static]\fR
+.PP
+.SS int ACE_OS::fsync (ACE_HANDLE handle)\fC [static]\fR
+.PP
+.SS int ACE_OS::ftruncate (ACE_HANDLE, off_t)\fC [static]\fR
+.PP
+.SS size_t ACE_OS::fwrite (const void * ptr, size_t size, size_t nitems, FILE * fp)\fC [static]\fR
+.PP
+.SS HINSTANCE ACE_OS::get_win32_resource_module (void)\fC [static]\fR
+.PP
+Return the handle of the module containing \fBACE\fR's resources. By default, for a DLL build of \fBACE\fR this is a handle to the \fBACE\fR DLL itself, and for a static build it is a handle to the executable.
+.PP
+.SS const OSVERSIONINFO & ACE_OS::get_win32_versioninfo (void)\fC [static]\fR
+.PP
+Return the win32 OSVERSIONINFO structure.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_OS::getcwd (\fBACE_TCHAR\fR *, size_t)\fC [static]\fR
+.PP
+.SS wchar_t* ACE_OS::getenv (const wchar_t * symbol)\fC [static]\fR
+.PP
+.SS char* ACE_OS::getenv (const char * symbol)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR* ACE_OS::getenvstrings (void)\fC [static]\fR
+.PP
+.SS \fBgid_t\fR ACE_OS::getgid (void)\fC [static]\fR
+.PP
+.SS struct hostent * ACE_OS::gethostbyaddr (const char * addr, int length, int type)\fC [static]\fR
+.PP
+.SS struct hostent * ACE_OS::gethostbyaddr_r (const char * addr, int length, int type, struct hostent * result, \fBACE_HOSTENT_DATA\fR buffer, int * h_errnop)\fC [static]\fR
+.PP
+.SS struct hostent * ACE_OS::gethostbyname (const char * name)\fC [static]\fR
+.PP
+.SS struct hostent * ACE_OS::gethostbyname2 (const char * name, int type)\fC [static]\fR
+.PP
+.SS struct hostent * ACE_OS::gethostbyname_r (const char * name, struct hostent * result, \fBACE_HOSTENT_DATA\fR buffer, int * h_errnop)\fC [static]\fR
+.PP
+.SS \fBACE_hrtime_t\fR ACE_OS::gethrtime (const ACE_HRTimer_Op = ACE_HRTIMER_GETTIME)\fC [static]\fR
+.PP
+.SS int ACE_OS::getmsg (ACE_HANDLE handle, struct \fBstrbuf\fR * ctl, struct \fBstrbuf\fR * data, int * flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::getopt (int argc, char *const * argv, const char * optstring)\fC [static]\fR
+.PP
+.SS int ACE_OS::getpagesize (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::getpeername (ACE_HANDLE handle, struct sockaddr * addr, int * addrlen)\fC [static]\fR
+.PP
+.SS \fBpid_t\fR ACE_OS::getpgid (\fBpid_t\fR pid)\fC [static]\fR
+.PP
+.SS \fBpid_t\fR ACE_OS::getpid (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::getpmsg (ACE_HANDLE handle, struct \fBstrbuf\fR * ctl, struct \fBstrbuf\fR * data, int * band, int * flags)\fC [static]\fR
+.PP
+.SS \fBpid_t\fR ACE_OS::getppid (void)\fC [static]\fR
+.PP
+.SS struct protoent * ACE_OS::getprotobyname (const char * name)\fC [static]\fR
+.PP
+.SS struct protoent * ACE_OS::getprotobyname_r (const char * name, struct protoent * result, \fBACE_PROTOENT_DATA\fR buffer)\fC [static]\fR
+.PP
+.SS struct protoent * ACE_OS::getprotobynumber (int proto)\fC [static]\fR
+.PP
+.SS struct protoent * ACE_OS::getprotobynumber_r (int proto, struct protoent * result, \fBACE_PROTOENT_DATA\fR buffer)\fC [static]\fR
+.PP
+.SS struct passwd * ACE_OS::getpwent (void)\fC [static]\fR
+.PP
+.SS struct passwd * ACE_OS::getpwnam (const char * user)\fC [static]\fR
+.PP
+.SS struct passwd * ACE_OS::getpwnam_r (const char * name, struct passwd * pwent, char * buffer, int buflen)\fC [static]\fR
+.PP
+.SS int ACE_OS::getrlimit (int resource, struct rlimit * rl)\fC [static]\fR
+.PP
+.SS int ACE_OS::getrusage (int who, struct \fBrusage\fR * rusage)\fC [static]\fR
+.PP
+.SS char* ACE_OS::gets (char * str, int n = 0)\fC [static]\fR
+.PP
+.SS struct servent * ACE_OS::getservbyname (const char * svc, const char * proto)\fC [static]\fR
+.PP
+.SS struct servent * ACE_OS::getservbyname_r (const char * svc, const char * proto, struct servent * result, \fBACE_SERVENT_DATA\fR buf)\fC [static]\fR
+.PP
+.SS int ACE_OS::getsockname (ACE_HANDLE handle, struct sockaddr * addr, int * addrlen)\fC [static]\fR
+.PP
+.SS int ACE_OS::getsockopt (ACE_HANDLE handle, int level, int optname, char * optval, int * optlen)\fC [static]\fR
+.PP
+.SS \fBACE_Time_Value\fR ACE_OS::gettimeofday (void)\fC [static]\fR
+.PP
+.SS \fBACE_Time_Value\fR ACE_OS::gettimeofday_i (void)\fC [static, private]\fR
+.PP
+.SS \fBuid_t\fR ACE_OS::getuid (void)\fC [static]\fR
+.PP
+.SS struct tm * ACE_OS::gmtime (const time_t * clock)\fC [static]\fR
+.PP
+.SS struct tm * ACE_OS::gmtime_r (const time_t * clock, struct tm * res)\fC [static]\fR
+.PP
+.SS int ACE_OS::hostname (wchar_t * name, size_t maxnamelen)\fC [static]\fR
+.PP
+.SS int ACE_OS::hostname (char * name, size_t maxnamelen)\fC [static]\fR
+.PP
+.SS long ACE_OS::inet_addr (const char * name)\fC [static]\fR
+.PP
+.SS int ACE_OS::inet_aton (const char * strptr, struct in_addr * addr)\fC [static]\fR
+.PP
+.SS char * ACE_OS::inet_ntoa (const struct in_addr addr)\fC [static]\fR
+.PP
+.SS const char * ACE_OS::inet_ntop (int family, const void * addrptr, char * strptr, size_t len)\fC [static]\fR
+.PP
+.SS int ACE_OS::inet_pton (int family, const char * strptr, void * addrptr)\fC [static]\fR
+.PP
+.SS int ACE_OS::ioctl (ACE_HANDLE socket, u_long io_control_code, \fBACE_QoS\fR & ace_qos, u_long * bytes_returned, void * buffer_p = 0, u_long buffer = 0, \fBACE_OVERLAPPED\fR * overlapped = 0, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func = 0)\fC [static]\fR
+.PP
+QoS-enabled <ioctl> when the I/O control code is either SIO_SET_QOS or SIO_GET_QOS.
+.PP
+.SS int ACE_OS::ioctl (ACE_HANDLE socket, u_long io_control_code, void * in_buffer_p, u_long in_buffer, void * out_buffer_p, u_long out_buffer, u_long * bytes_returned, \fBACE_OVERLAPPED\fR * overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func)\fC [static]\fR
+.PP
+QoS-enabled <ioctl>.
+.PP
+.SS int ACE_OS::ioctl (ACE_HANDLE handle, int cmd, void * = 0)\fC [static]\fR
+.PP
+UNIX-style <ioctl>.
+.PP
+.SS int ACE_OS::isastream (ACE_HANDLE handle)\fC [static]\fR
+.PP
+.SS int ACE_OS::isatty (ACE_HANDLE handle)\fC [static]\fR
+.PP
+.SS int ACE_OS::isatty (int handle)\fC [static]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::join_leaf (ACE_HANDLE socket, const sockaddr * name, int namelen, const \fBACE_QoS_Params\fR & qos_params)\fC [static]\fR
+.PP
+Joins a leaf node into a QoS-enabled multi-point session.
+.PP
+.SS int ACE_OS::kill (\fBpid_t\fR pid, int signum)\fC [static]\fR
+.PP
+.SS void ACE_OS::last_error (int)\fC [static]\fR
+.PP
+.SS int ACE_OS::last_error (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::listen (ACE_HANDLE handle, int backlog)\fC [static]\fR
+.PP
+.SS struct tm * ACE_OS::localtime (const time_t * clock)\fC [static]\fR
+.PP
+.SS struct tm * ACE_OS::localtime_r (const time_t * clock, struct tm * res)\fC [static]\fR
+.PP
+.SS off_t ACE_OS::lseek (ACE_HANDLE handle, off_t offset, int whence)\fC [static]\fR
+.PP
+.SS int ACE_OS::lstat (const char *, \fBACE_stat\fR *)\fC [static]\fR
+.PP
+.SS int ACE_OS::lwp_getparams (\fBACE_Sched_Params\fR &)\fC [static]\fR
+.PP
+.SS int ACE_OS::lwp_setparams (const \fBACE_Sched_Params\fR &)\fC [static]\fR
+.PP
+.SS int ACE_OS::madvise (\fBcaddr_t\fR addr, size_t len, int advice)\fC [static]\fR
+.PP
+.SS int ACE_OS::mkdir (const \fBACE_TCHAR\fR * path, \fBmode_t\fR mode = ACE_DEFAULT_DIR_PERMS)\fC [static]\fR
+.PP
+.SS int ACE_OS::mkfifo (const \fBACE_TCHAR\fR * file, \fBmode_t\fR mode = ACE_DEFAULT_FILE_PERMS)\fC [static]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::mkstemp (\fBACE_TCHAR\fR * t)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR * ACE_OS::mktemp (\fBACE_TCHAR\fR * t)\fC [static]\fR
+.PP
+.SS time_t ACE_OS::mktime (struct tm * timeptr)\fC [static]\fR
+.PP
+.SS void * ACE_OS::mmap (void * addr, size_t len, int prot, int flags, ACE_HANDLE handle, off_t off = 0, ACE_HANDLE * file_mapping = 0, LPSECURITY_ATTRIBUTES sa = 0, const \fBACE_TCHAR\fR * file_mapping_name = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::mprotect (void * addr, size_t len, int prot)\fC [static]\fR
+.PP
+.SS int ACE_OS::msgctl (int msqid, int cmd, struct \fBmsqid_ds\fR *)\fC [static]\fR
+.PP
+.SS int ACE_OS::msgget (key_t key, int msgflg)\fC [static]\fR
+.PP
+.SS int ACE_OS::msgrcv (int int_id, void * buf, size_t len, long type, int flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::msgsnd (int int_id, const void * buf, size_t len, int flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::msync (void * addr, size_t len, int sync)\fC [static]\fR
+.PP
+.SS int ACE_OS::munmap (void * addr, size_t len)\fC [static]\fR
+.PP
+.SS int ACE_OS::mutex_destroy (ACE_mutex_t * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::mutex_init (ACE_mutex_t * m, int type, const wchar_t * name, ACE_mutexattr_t * arg = 0, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::mutex_init (ACE_mutex_t * m, int type = ACE_DEFAULT_SYNCH_TYPE, const char * name = 0, ACE_mutexattr_t * arg = 0, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::mutex_lock (ACE_mutex_t * m, const \fBACE_Time_Value\fR * timeout)\fC [static]\fR
+.PP
+If <timeout> == 0, calls . Otherwise, this method attempts to acquire a lock, but gives up if the lock has not been acquired by the given time, in which case it returns -1 with an <ETIME> errno on platforms that actually support timed mutexes. The timeout should be an absolute time. Note that the mutex should not be a recursive one, i.e., it should only be a standard mutex or an error checking mutex. 
+.SS int ACE_OS::mutex_lock (ACE_mutex_t * m, const \fBACE_Time_Value\fR & timeout)\fC [static]\fR
+.PP
+This method attempts to acquire a lock, but gives up if the lock has not been acquired by the given time. If the lock is not acquired within the given amount of time, then this method returns -1 with an <ETIME> errno on platforms that actually support timed mutexes. The timeout should be an absolute time. Note that the mutex should not be a recursive one, i.e., it should only be a standard mutex or an error checking mutex. 
+.SS int ACE_OS::mutex_lock (ACE_mutex_t * m, int & abandoned)\fC [static]\fR
+.PP
+This method is only implemented for Win32. For abandoned mutexes,  is set to 1 and 0 is returned.
+.PP
+.SS int ACE_OS::mutex_lock (ACE_mutex_t * m)\fC [static]\fR
+.PP
+Win32 note: Abandoned mutexes are not treated differently. 0 is returned since the calling thread does get the ownership.
+.PP
+.SS void ACE_OS::mutex_lock_cleanup (void * mutex)\fC [static]\fR
+.PP
+Handle asynchronous thread cancellation cleanup.
+.PP
+.SS int ACE_OS::mutex_trylock (ACE_mutex_t * m, int & abandoned)\fC [static]\fR
+.PP
+This method is only implemented for Win32. For abandoned mutexes,  is set to 1 and 0 is returned.
+.PP
+.SS int ACE_OS::mutex_trylock (ACE_mutex_t * m)\fC [static]\fR
+.PP
+Win32 note: Abandoned mutexes are not treated differently. 0 is returned since the calling thread does get the ownership.
+.PP
+.SS int ACE_OS::mutex_unlock (ACE_mutex_t * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::nanosleep (const struct \fBtimespec\fR * requested, struct \fBtimespec\fR * remaining = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::nanosleep_i (const struct \fBtimespec\fR * requested, struct \fBtimespec\fR * remaining = 0)\fC [static, private]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::open (const wchar_t * filename, int mode, int perms = ACE_DEFAULT_OPEN_PERMS, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::open (const char * filename, int mode, int perms = ACE_DEFAULT_OPEN_PERMS, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS void ACE_OS::perror (const \fBACE_TCHAR\fR * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::pipe (ACE_HANDLE handles[])\fC [static]\fR
+.PP
+.SS int ACE_OS::poll (struct pollfd * pollfds, u_long len, const \fBACE_Time_Value\fR & tv)\fC [static]\fR
+.PP
+.SS int ACE_OS::poll (struct pollfd * pollfds, u_long len, const \fBACE_Time_Value\fR * tv = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::poll_i (struct pollfd * pollfds, u_long len, const \fBACE_Time_Value\fR & tv)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::poll_i (struct pollfd * pollfds, u_long len, const \fBACE_Time_Value\fR * tv = 0)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::pread (ACE_HANDLE handle, void * buf, size_t nbyte, off_t offset)\fC [static]\fR
+.PP
+.SS int ACE_OS::printf (const char * format, ...)\fC [static]\fR
+.PP
+.SS int ACE_OS::priority_control (\fBACE_idtype_t\fR, \fBACE_id_t\fR, int, void *)\fC [static]\fR
+.PP
+Low-level interface to <priocntl>(2).
+.PP
+Can't call the following priocntl, because that's a macro on Solaris. 
+.SS int ACE_OS::pthread_sigmask (int how, const sigset_t * nsp, sigset_t * osp)\fC [static]\fR
+.PP
+.SS int ACE_OS::putenv (const \fBACE_TCHAR\fR * string)\fC [static]\fR
+.PP
+.SS int ACE_OS::putmsg (ACE_HANDLE handle, const struct \fBstrbuf\fR * ctl, const struct \fBstrbuf\fR * data, int flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::putpmsg (ACE_HANDLE handle, const struct \fBstrbuf\fR * ctl, const struct \fBstrbuf\fR * data, int band, int flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::puts (const \fBACE_TCHAR\fR * s)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::pwrite (ACE_HANDLE handle, const void * buf, size_t nbyte, off_t offset)\fC [static]\fR
+.PP
+.SS void ACE_OS::qsort (void * base, size_t nel, size_t width, \fBACE_COMPARE_FUNC\fR)\fC [static]\fR
+.PP
+.SS int ACE_OS::rand (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::rand_r (\fBACE_RANDR_TYPE\fR & seed)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::read (ACE_HANDLE handle, void * buf, size_t len, \fBACE_OVERLAPPED\fR *)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::read (ACE_HANDLE handle, void * buf, size_t len)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::read_n (ACE_HANDLE handle, void * buf, size_t len, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+Receive <len> bytes into <buf> from <handle> (uses the  call, which uses the <read> system call on UNIX and the <ReadFile> call on Win32). If errors occur, -1 is returned. If EOF occurs, 0 is returned. Whatever data has been transmitted will be returned to the caller through <bytes_transferred>. 
+.SS int ACE_OS::readlink (const char * path, char * buf, size_t bufsiz)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::readv (ACE_HANDLE handle, \fBiovec\fR * iov, int iovlen)\fC [static]\fR
+.PP
+.SS int ACE_OS::recursive_mutex_destroy (\fBACE_recursive_thread_mutex_t\fR * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::recursive_mutex_init (\fBACE_recursive_thread_mutex_t\fR * m, const \fBACE_TCHAR\fR * name = 0, ACE_mutexattr_t * arg = 0, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::recursive_mutex_lock (\fBACE_recursive_thread_mutex_t\fR * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::recursive_mutex_trylock (\fBACE_recursive_thread_mutex_t\fR * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::recursive_mutex_unlock (\fBACE_recursive_thread_mutex_t\fR * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::recv (ACE_HANDLE handle, char * buf, int len, int flags = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::recvfrom (ACE_HANDLE handle, \fBiovec\fR * buffers, int buffer_count, size_t & number_of_bytes_recvd, int & flags, struct sockaddr * addr, int * addrlen, \fBACE_OVERLAPPED\fR * overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func)\fC [static]\fR
+.PP
+.SS int ACE_OS::recvfrom (ACE_HANDLE handle, char * buf, int len, int flags, struct sockaddr * addr, int * addrlen)\fC [static]\fR
+.PP
+.SS int ACE_OS::recvmsg (ACE_HANDLE handle, struct \fBmsghdr\fR * msg, int flags)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::recvv (ACE_HANDLE handle, \fBiovec\fR * iov, int iovlen)\fC [static]\fR
+.PP
+.SS int ACE_OS::rename (const \fBACE_TCHAR\fR * old_name, const \fBACE_TCHAR\fR * new_name, int flags = -1)\fC [static]\fR
+.PP
+.SS void ACE_OS::rewind (FILE * fp)\fC [static]\fR
+.PP
+.SS int ACE_OS::rw_rdlock (ACE_rwlock_t * rw)\fC [static]\fR
+.PP
+.SS int ACE_OS::rw_tryrdlock (ACE_rwlock_t * rw)\fC [static]\fR
+.PP
+.SS int ACE_OS::rw_trywrlock (ACE_rwlock_t * rw)\fC [static]\fR
+.PP
+.SS int ACE_OS::rw_trywrlock_upgrade (ACE_rwlock_t * rw)\fC [static]\fR
+.PP
+.SS int ACE_OS::rw_unlock (ACE_rwlock_t * rw)\fC [static]\fR
+.PP
+.SS int ACE_OS::rw_wrlock (ACE_rwlock_t * rw)\fC [static]\fR
+.PP
+.SS int ACE_OS::rwlock_destroy (ACE_rwlock_t * rw)\fC [static]\fR
+.PP
+.SS int ACE_OS::rwlock_init (ACE_rwlock_t * rw, int type = ACE_DEFAULT_SYNCH_TYPE, const \fBACE_TCHAR\fR * name = 0, void * arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::sched_params (const \fBACE_Sched_Params\fR &, \fBACE_id_t\fR id = ACE_SELF)\fC [static]\fR
+.PP
+Set scheduling parameters. An id of ACE_SELF indicates, e.g., set the parameters on the calling thread.
+.PP
+.SS int ACE_OS::scheduling_class (const char * class_name, \fBACE_id_t\fR &)\fC [static]\fR
+.PP
+Find the schedling class ID that corresponds to the class name.
+.PP
+.SS int ACE_OS::select (int width, fd_set * rfds, fd_set * wfds, fd_set * efds, const \fBACE_Time_Value\fR & tv)\fC [static]\fR
+.PP
+.SS int ACE_OS::select (int width, fd_set * rfds, fd_set * wfds = 0, fd_set * efds = 0, const \fBACE_Time_Value\fR * tv = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::select_i (int width, fd_set * rfds, fd_set * wfds, fd_set * efds, const \fBACE_Time_Value\fR & tv)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::select_i (int width, fd_set * rfds, fd_set * wfds, fd_set * efds, const \fBACE_Time_Value\fR * tv = 0)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::sema_destroy (ACE_sema_t * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_init (ACE_sema_t * s, u_int count, int type, const wchar_t * name, void * arg = 0, int max = 0x7fffffff, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_init (ACE_sema_t * s, u_int count, int type = ACE_DEFAULT_SYNCH_TYPE, const char * name = 0, void * arg = 0, int max = 0x7fffffff, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_post (ACE_sema_t * s, size_t release_count)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_post (ACE_sema_t * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_trywait (ACE_sema_t * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_wait (ACE_sema_t * s, \fBACE_Time_Value\fR * tv)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_wait (ACE_sema_t * s, \fBACE_Time_Value\fR & tv)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_wait (ACE_sema_t * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::sema_wait_i (ACE_sema_t * s, \fBACE_Time_Value\fR & tv)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::sema_wait_i (ACE_sema_t * s)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::semctl (int int_id, int semnum, int cmd, \fBsemun\fR)\fC [static]\fR
+.PP
+.SS int ACE_OS::semget (key_t key, int nsems, int flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::semop (int int_id, struct sembuf * sops, size_t nsops)\fC [static]\fR
+.PP
+.SS int ACE_OS::send (ACE_HANDLE handle, const char * buf, int len, int flags = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::sendmsg (ACE_HANDLE handle, const struct \fBmsghdr\fR * msg, int flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::sendto (ACE_HANDLE handle, const \fBiovec\fR * buffers, int buffer_count, size_t & number_of_bytes_sent, int flags, const struct sockaddr * addr, int addrlen, \fBACE_OVERLAPPED\fR * overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func)\fC [static]\fR
+.PP
+.SS int ACE_OS::sendto (ACE_HANDLE handle, const char * buf, int len, int flags, const struct sockaddr * addr, int addrlen)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::sendv (ACE_HANDLE handle, const \fBiovec\fR * iov, int iovcnt)\fC [static]\fR
+.PP
+.SS int ACE_OS::set_errno_to_last_error (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::set_errno_to_wsa_last_error (void)\fC [static]\fR
+.PP
+.SS ACE_EXIT_HOOK ACE_OS::set_exit_hook (ACE_EXIT_HOOK hook)\fC [static, private]\fR
+.PP
+For use by \fBACE_Object_Manager\fR only, to register its exit hook..
+.PP
+.SS int ACE_OS::set_scheduling_params (const \fBACE_Sched_Params\fR &, \fBACE_id_t\fR id = ACE_SELF)\fC [static]\fR
+.PP
+Friendly interface to <priocntl>(2).
+.PP
+.SS void ACE_OS::set_win32_resource_module (HINSTANCE)\fC [static]\fR
+.PP
+Allow an application to modify which module contains \fBACE\fR's resources. This is mainly useful for a static build of \fBACE\fR where the required resources reside somewhere other than the executable.
+.PP
+.SS int ACE_OS::setgid (\fBgid_t\fR)\fC [static]\fR
+.PP
+.SS int ACE_OS::setpgid (\fBpid_t\fR pid, \fBpid_t\fR pgid)\fC [static]\fR
+.PP
+.SS void ACE_OS::setpwent (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::setregid (\fBgid_t\fR rgid, \fBgid_t\fR egid)\fC [static]\fR
+.PP
+.SS int ACE_OS::setreuid (\fBuid_t\fR ruid, \fBuid_t\fR euid)\fC [static]\fR
+.PP
+.SS int ACE_OS::setrlimit (int resource, \fBACE_SETRLIMIT_TYPE\fR * rl)\fC [static]\fR
+.PP
+.SS \fBpid_t\fR ACE_OS::setsid (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::setsockopt (ACE_HANDLE handle, int level, int optname, const char * optval, int optlen)\fC [static]\fR
+.PP
+Manipulate the options associated with a socket.
+.PP
+.SS int ACE_OS::setuid (\fBuid_t\fR)\fC [static]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::shm_open (const \fBACE_TCHAR\fR * filename, int mode, int perms = 0, LPSECURITY_ATTRIBUTES sa = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::shm_unlink (const \fBACE_TCHAR\fR * path)\fC [static]\fR
+.PP
+.SS void * ACE_OS::shmat (int int_id, void * shmaddr, int shmflg)\fC [static]\fR
+.PP
+.SS int ACE_OS::shmctl (int int_id, int cmd, struct shmid_ds * buf)\fC [static]\fR
+.PP
+.SS int ACE_OS::shmdt (void * shmaddr)\fC [static]\fR
+.PP
+.SS int ACE_OS::shmget (key_t key, int size, int flags)\fC [static]\fR
+.PP
+.SS int ACE_OS::shutdown (ACE_HANDLE handle, int how)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigaction (int signum, const struct sigaction * nsa, struct sigaction * osa)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigaddset (sigset_t * s, int signum)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigdelset (sigset_t * s, int signum)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigemptyset (sigset_t * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigfillset (sigset_t * s)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigismember (sigset_t * s, int signum)\fC [static]\fR
+.PP
+.SS ACE_SignalHandler ACE_OS::signal (int signum, ACE_SignalHandler)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigprocmask (int how, const sigset_t * nsp, sigset_t * osp)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigsuspend (const sigset_t * set)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigtimedwait (const sigset_t * set, \fBsiginfo_t\fR * info, const \fBACE_Time_Value\fR * timeout)\fC [static]\fR
+.PP
+.SS int ACE_OS::sigtimedwait_i (const sigset_t * set, \fBsiginfo_t\fR * info, const \fBACE_Time_Value\fR * timeout)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::sigwait (sigset_t * set, int * sig = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::sleep (const \fBACE_Time_Value\fR & tv)\fC [static]\fR
+.PP
+.SS int ACE_OS::sleep (u_int seconds)\fC [static]\fR
+.PP
+.SS int ACE_OS::sleep_i (const \fBACE_Time_Value\fR & tv)\fC [static, private]\fR
+.PP
+.SS int ACE_OS::sleep_i (u_int seconds)\fC [static, private]\fR
+.PP
+.SS ACE_HANDLE ACE_OS::socket (int protocol_family, int type, int proto, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g, u_long flags)\fC [static]\fR
+.PP
+Create a QoS-enabled socket. If the OS platform doesn't support QoS-enabled <socket> then the BSD-style <socket> is called.
+.PP
+.SS ACE_HANDLE ACE_OS::socket (int protocol_family, int type, int proto)\fC [static]\fR
+.PP
+Create a BSD-style socket (no QoS).
+.PP
+.SS int ACE_OS::socket_fini (void)\fC [static]\fR
+.PP
+Finalize WinSock after last use (e.g., when a DLL is unloaded).
+.PP
+.SS int ACE_OS::socket_init (int version_high = 1, int version_low = 1)\fC [static]\fR
+.PP
+Initialize WinSock before first use (e.g., when a DLL is first loaded or the first use of a \fBsocket\fR() call.
+.PP
+.SS int ACE_OS::socketpair (int domain, int type, int protocol, ACE_HANDLE sv[2])\fC [static]\fR
+.PP
+.SS int ACE_OS::sprintf (wchar_t * buf, const wchar_t * format, ...)\fC [static]\fR
+.PP
+.SS int ACE_OS::sprintf (char * buf, const char * format, ...)\fC [static]\fR
+.PP
+.SS void ACE_OS::srand (u_int seed)\fC [static]\fR
+.PP
+.SS int ACE_OS::stat (const \fBACE_TCHAR\fR * file, \fBACE_stat\fR *)\fC [static]\fR
+.PP
+.SS int ACE_OS::step (const char * str, char * expbuf)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR* ACE_OS::strenvdup (const \fBACE_TCHAR\fR * str)\fC [static]\fR
+.PP
+.SS size_t ACE_OS::strftime (char * s, size_t maxsize, const char * format, const struct tm * timeptr)\fC [static]\fR
+.PP
+.SS int ACE_OS::string_to_argv (\fBACE_TCHAR\fR * buf, size_t & argc, \fBACE_TCHAR\fR **& argv, int substitute_env_args = 1)\fC [static]\fR
+.PP
+.SS long ACE_OS::sysconf (int)\fC [static]\fR
+.PP
+.SS long ACE_OS::sysinfo (int cmd, char * buf, long count)\fC [static]\fR
+.PP
+.SS int ACE_OS::system (const \fBACE_TCHAR\fR * s)\fC [static]\fR
+.PP
+.SS \fBACE_TCHAR\fR * ACE_OS::tempnam (const \fBACE_TCHAR\fR * dir = 0, const \fBACE_TCHAR\fR * pfx = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_cancel (\fBACE_thread_t\fR t_id)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_cmp (\fBACE_hthread_t\fR t1, \fBACE_hthread_t\fR t2)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_continue (\fBACE_hthread_t\fR target_thread)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_create (ACE_THR_FUNC func, void * args, long flags, \fBACE_thread_t\fR * thr_id, \fBACE_hthread_t\fR * t_handle = 0, long priority = ACE_DEFAULT_THREAD_PRIORITY, void * stack = 0, size_t stacksize = 0, \fBACE_Base_Thread_Adapter\fR * thread_adapter = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_equal (\fBACE_thread_t\fR t1, \fBACE_thread_t\fR t2)\fC [static]\fR
+.PP
+.SS void ACE_OS::thr_exit (void * status = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_getconcurrency (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_getprio (\fBACE_hthread_t\fR thr_id, int & prio)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_getspecific (\fBACE_thread_key_t\fR key, void ** data)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_join (\fBACE_thread_t\fR waiter_id, \fBACE_thread_t\fR * thr_id, void ** status)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_join (\fBACE_hthread_t\fR waiter_id, void ** status)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_key_detach (void * inst)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_key_used (\fBACE_thread_key_t\fR key)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_keycreate (\fBACE_thread_key_t\fR * key, \fBACE_THR_DEST\fR, void * inst = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_keyfree (\fBACE_thread_key_t\fR key)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_kill (\fBACE_thread_t\fR thr_id, int signum)\fC [static]\fR
+.PP
+.SS size_t ACE_OS::thr_min_stack (void)\fC [static]\fR
+.PP
+.SS void ACE_OS::thr_self (\fBACE_hthread_t\fR &)\fC [static]\fR
+.PP
+.SS \fBACE_thread_t\fR ACE_OS::thr_self (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_setcancelstate (int new_state, int * old_state)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_setcanceltype (int new_type, int * old_type)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_setconcurrency (int hint)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_setprio (const \fBACE_Sched_Priority\fR prio)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_setprio (\fBACE_hthread_t\fR thr_id, int prio)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_setspecific (\fBACE_thread_key_t\fR key, void * data)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_sigsetmask (int how, const sigset_t * nsm, sigset_t * osm)\fC [static]\fR
+.PP
+.SS int ACE_OS::thr_suspend (\fBACE_hthread_t\fR target_thread)\fC [static]\fR
+.PP
+.SS void ACE_OS::thr_testcancel (void)\fC [static]\fR
+.PP
+.SS void ACE_OS::thr_yield (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_destroy (ACE_thread_mutex_t * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_init (ACE_thread_mutex_t * m, int type, const wchar_t * name, ACE_mutexattr_t * arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_init (ACE_thread_mutex_t * m, int type = ACE_DEFAULT_SYNCH_TYPE, const char * name = 0, ACE_mutexattr_t * arg = 0)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_lock (ACE_thread_mutex_t * m, const \fBACE_Time_Value\fR * timeout)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_lock (ACE_thread_mutex_t * m, const \fBACE_Time_Value\fR & timeout)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_lock (ACE_thread_mutex_t * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_trylock (ACE_thread_mutex_t * m)\fC [static]\fR
+.PP
+.SS int ACE_OS::thread_mutex_unlock (ACE_thread_mutex_t * m)\fC [static]\fR
+.PP
+.SS time_t ACE_OS::time (time_t * tloc = 0)\fC [static]\fR
+.PP
+.SS long ACE_OS::timezone (void)\fC [static]\fR
+.PP
+.SS int ACE_OS::truncate (const \fBACE_TCHAR\fR * filename, off_t length)\fC [static]\fR
+.PP
+.SS void ACE_OS::tzset (void)\fC [static]\fR
+.PP
+.SS u_int ACE_OS::ualarm (const \fBACE_Time_Value\fR & tv, const \fBACE_Time_Value\fR & tv_interval = \fBACE_Time_Value::zero\fR)\fC [static]\fR
+.PP
+.SS u_int ACE_OS::ualarm (u_int usecs, u_int interval = 0)\fC [static]\fR
+.PP
+.SS u_int ACE_OS::ualarm_i (const \fBACE_Time_Value\fR & tv, const \fBACE_Time_Value\fR & tv_interval = \fBACE_Time_Value::zero\fR)\fC [static, private]\fR
+.PP
+.SS u_int ACE_OS::ualarm_i (u_int usecs, u_int interval = 0)\fC [static, private]\fR
+.PP
+.SS \fBmode_t\fR ACE_OS::umask (\fBmode_t\fR cmask)\fC [static]\fR
+.PP
+.SS int ACE_OS::uname (\fBACE_utsname\fR * name)\fC [static]\fR
+.PP
+.SS void ACE_OS::unique_name (const void * object, \fBACE_TCHAR\fR * name, size_t length)\fC [static]\fR
+.PP
+This method uses process id and object pointer to come up with a machine wide unique name. The process ID will provide uniqueness between processes on the same machine. The "this" pointer of the <object> will provide uniqueness between other "live" objects in the same process. The uniqueness of this name is therefore only valid for the life of <object>. 
+.SS int ACE_OS::unlink (const \fBACE_TCHAR\fR * path)\fC [static]\fR
+.PP
+.SS int ACE_OS::vsprintf (wchar_t * buffer, const wchar_t * format, va_list argptr)\fC [static]\fR
+.PP
+.SS int ACE_OS::vsprintf (char * buffer, const char * format, va_list argptr)\fC [static]\fR
+.PP
+.SS \fBpid_t\fR ACE_OS::wait (int * = 0)\fC [static]\fR
+.PP
+Calls OS <wait> function, so it's only portable to UNIX/POSIX platforms.
+.PP
+.SS \fBpid_t\fR ACE_OS::wait (\fBpid_t\fR pid, \fBACE_exitcode\fR * status, int wait_options = 0, ACE_HANDLE handle = 0)\fC [static]\fR
+.PP
+Calls <WaitForSingleObject> on Win32 and  otherwise. Returns the passed in <pid_t> on success and -1 on failure. On Win32, <pid> is ignored if the <handle> is not equal to 0. Passing the process <handle> is prefer on Win32 because using <pid> to wait on the project doesn't always work correctly if the waited process has already terminated. 
+.SS \fBpid_t\fR ACE_OS::waitpid (\fBpid_t\fR pid, \fBACE_exitcode\fR * status = 0, int wait_options = 0, ACE_HANDLE handle = 0)\fC [static]\fR
+.PP
+Calls <waitpid> on UNIX/POSIX platforms and <await> on Chorus. Does not work on Vxworks, or pSoS. On Win32, <pid> is ignored if the <handle> is not equal to 0. Passing the process <handle> is prefer on Win32 because using <pid> to wait on the project doesn't always work correctly if the waited process has already terminated. 
+.SS \fBssize_t\fR ACE_OS::write (ACE_HANDLE handle, const void * buf, size_t nbyte, \fBACE_OVERLAPPED\fR *)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::write (ACE_HANDLE handle, const void * buf, size_t nbyte)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE_OS::write_n (ACE_HANDLE handle, const void * buf, size_t len, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+Send <len> bytes from <buf> to <handle> (uses the  calls, which is uses the <write> system call on UNIX and the <WriteFile> call on Win32). If errors occur, -1 is returned. If EOF occurs, 0 is returned. Whatever data has been transmitted will be returned to the caller through <bytes_transferred>. 
+.SS \fBssize_t\fR ACE_OS::writev (ACE_HANDLE handle, const \fBiovec\fR * iov, int iovcnt)\fC [static]\fR
+.PP
+.SS int ACE_OS::wscmp (const \fBWChar\fR *, const \fBWChar\fR *)\fC [static]\fR
+.PP
+.SS \fBWChar\fR * ACE_OS::wscpy (\fBWChar\fR *, const \fBWChar\fR *)\fC [static]\fR
+.PP
+.SS u_int ACE_OS::wslen (const \fBWChar\fR *)\fC [static]\fR
+.PP
+.SS int ACE_OS::wsncmp (const \fBWChar\fR *, const \fBWChar\fR *, size_t len)\fC [static]\fR
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_OS_Object_Manager\fC [friend]\fR
+.PP
+Allow the \fBACE_OS_Object_Manager\fR to call set_exit_hook.
+.PP
+.SS class ACE_Timeout_Manager\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_hthread_t\fR ACE_OS::NULL_hthread\fC [static]\fR
+.PP
+This is necessary to deal with POSIX pthreads and their use of structures for thread handles.
+.PP
+.SS \fBACE_thread_key_t\fR ACE_OS::NULL_key\fC [static]\fR
+.PP
+This is necessary to deal with POSIX pthreads and their use of structures for TSS keys.
+.PP
+.SS \fBACE_thread_t\fR ACE_OS::NULL_thread\fC [static]\fR
+.PP
+This is necessary to deal with POSIX pthreads and their use of structures for thread ids.
+.PP
+.SS ACE_EXIT_HOOK ACE_OS::exit_hook_\fC [static, private]\fR
+.PP
+Function that is called by , if non-null.
+.PP
+.SS int ACE_OS::socket_initialized_\fC [static]\fR
+.PP
+Keeps track of whether we've already initialized WinSock...
+.PP
+.SS HINSTANCE ACE_OS::win32_resource_module_\fC [static, private]\fR
+.PP
+.SS OSVERSIONINFO ACE_OS::win32_versioninfo_\fC [static, private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

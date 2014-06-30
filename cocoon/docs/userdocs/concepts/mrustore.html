@@ -1,0 +1,321 @@
+<html xmlns:NetUtils="org.apache.cocoon.util.NetUtils">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>MRUMemoryStore and Swapping under Apache Cocoon</title>
+<script type="text/javascript" src="resources/script.js" language="JavaScript"></script>
+</head>
+<body bgcolor="#ffffff" marginheight="4" marginwidth="4" leftmargin="4" topmargin="4" alink="#cc0000" vlink="#0086b2" link="#039acc" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" rowspan="3" height="60" width="135"><img border="0" vspace="0" hspace="0" src="images/logo.gif" height="60" width="135"></td><td background="images/line.gif" colspan="2" align="left" valign="top" height="5" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/line.gif" height="5" width="1"></td><td align="left" valign="top" rowspan="3" height="60" width="29"><img border="0" vspace="0" hspace="0" src="images/right.gif" height="60" width="29"></td>
+</tr>
+<tr>
+<td bgcolor="#0086b2" colspan="2" align="right" valign="top" height="35" width="100%"><img align="right" alt="MRUMemoryStore and Swapping under Apache Cocoon" border="0" vspace="0" hspace="0" src="graphics/mrustore-header.jpg_label=MRUMemoryStore%20and%20Swapping%20under%20Apache%20Cocoon.jpg"></td>
+</tr>
+<tr>
+<td background="images/bottom.gif" bgcolor="#0086b2" align="left" valign="top" height="20" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/bottom.gif" height="20" width="3"></td><td background="images/bottom.gif" width="288" valign="top" height="20" bgcolor="#0086b2" align="right">
+<table width="288" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('xml');" onMouseOut="rolloverOff('xml');" target="new" href="http://xml.apache.org/"><img onLoad="rolloverLoad('xml', 'images/button-xml-hi.gif', 'images/button-xml-lo.gif');" border="0" vspace="0" hspace="0" name="xml" src="images/button-xml-lo.gif" height="20" width="96" alt="http://xml.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('asf');" onMouseOut="rolloverOff('asf');" target="new" href="http://www.apache.org/"><img onLoad="rolloverLoad('asf', 'images/button-asf-hi.gif', 'images/button-asf-lo.gif');" border="0" vspace="0" hspace="0" name="asf" src="images/button-asf-lo.gif" height="20" width="96" alt="http://www.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('w3c');" onMouseOut="rolloverOff('w3c');" target="new" href="http://www.w3.org/"><img onLoad="rolloverLoad('w3c', 'images/button-w3c-hi.gif', 'images/button-w3c-lo.gif');" border="0" vspace="0" hspace="0" name="w3c" src="images/button-w3c-lo.gif" height="20" width="96" alt="http://www.w3.org/"></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr width="100%">
+<td valign="top" width="120">
+<table width="120" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td valign="top" align="left"><img width="120" vspace="0" src="images/join.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Main')" onMouseOut="rolloverOff('Main')" href="../../index.html"><img onLoad="rolloverLoad('Main', 'graphics/Main-label_over.jpg', 'graphics/Main-label.jpg');" vspace="0" hspace="0" name="Main" width="120" height="12" border="0" src="graphics/Main-label.jpg" alt="Main"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('User Documentation')" onMouseOut="rolloverOff('User Documentation')" href="../index.html"><img onLoad="rolloverLoad('User Documentation', 'graphics/User%20Documentation-label_over.jpg', 'graphics/User%20Documentation-label.jpg');" vspace="0" hspace="0" name="User Documentation" width="120" height="12" border="0" src="graphics/User%20Documentation-label.jpg" alt="User Documentation"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><img alt="Concepts" width="120" vspace="0" src="graphics/Concepts-separator.jpg" hspace="0" height="20" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Overview')" onMouseOut="rolloverOff('Overview')" href="index.html"><img onLoad="rolloverLoad('Overview', 'graphics/Overview-label_over.jpg', 'graphics/Overview-label.jpg');" vspace="0" hspace="0" name="Overview" width="120" height="12" border="0" src="graphics/Overview-label.jpg" alt="Overview"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Sitemap')" onMouseOut="rolloverOff('Sitemap')" href="sitemap.html"><img onLoad="rolloverLoad('Sitemap', 'graphics/Sitemap-label_over.jpg', 'graphics/Sitemap-label.jpg');" vspace="0" hspace="0" name="Sitemap" width="120" height="12" border="0" src="graphics/Sitemap-label.jpg" alt="Sitemap"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Views')" onMouseOut="rolloverOff('Views')" href="views.html"><img onLoad="rolloverLoad('Views', 'graphics/Views-label_over.jpg', 'graphics/Views-label.jpg');" vspace="0" hspace="0" name="Views" width="120" height="12" border="0" src="graphics/Views-label.jpg" alt="Views"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Caching')" onMouseOut="rolloverOff('Caching')" href="caching.html"><img onLoad="rolloverLoad('Caching', 'graphics/Caching-label_over.jpg', 'graphics/Caching-label.jpg');" vspace="0" hspace="0" name="Caching" width="120" height="12" border="0" src="graphics/Caching-label.jpg" alt="Caching"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Actions')" onMouseOut="rolloverOff('Actions')" href="actions.html"><img onLoad="rolloverLoad('Actions', 'graphics/Actions-label_over.jpg', 'graphics/Actions-label.jpg');" vspace="0" hspace="0" name="Actions" width="120" height="12" border="0" src="graphics/Actions-label.jpg" alt="Actions"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Matchers and Selectors')" onMouseOut="rolloverOff('Matchers and Selectors')" href="matchers_selectors.html"><img onLoad="rolloverLoad('Matchers and Selectors', 'graphics/Matchers%20and%20Selectors-label_over.jpg', 'graphics/Matchers%20and%20Selectors-label.jpg');" vspace="0" hspace="0" name="Matchers and Selectors" width="120" height="12" border="0" src="graphics/Matchers%20and%20Selectors-label.jpg" alt="Matchers and Selectors"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Entity Catalogs')" onMouseOut="rolloverOff('Entity Catalogs')" href="catalog.html"><img onLoad="rolloverLoad('Entity Catalogs', 'graphics/Entity%20Catalogs-label_over.jpg', 'graphics/Entity%20Catalogs-label.jpg');" vspace="0" hspace="0" name="Entity Catalogs" width="120" height="12" border="0" src="graphics/Entity%20Catalogs-label.jpg" alt="Entity Catalogs"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('MRUMemoryStore')" onMouseOut="rolloverOff('MRUMemoryStore')" href="mrustore.html"><img onLoad="rolloverLoad('MRUMemoryStore', 'graphics/MRUMemoryStore-label_over.jpg', 'graphics/MRUMemoryStore-label.jpg');" vspace="0" hspace="0" name="MRUMemoryStore" width="120" height="12" border="0" src="graphics/MRUMemoryStore-label.jpg" alt="MRUMemoryStore"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('StoreJanitor')" onMouseOut="rolloverOff('StoreJanitor')" href="storejanitor.html"><img onLoad="rolloverLoad('StoreJanitor', 'graphics/StoreJanitor-label_over.jpg', 'graphics/StoreJanitor-label.jpg');" vspace="0" hspace="0" name="StoreJanitor" width="120" height="12" border="0" src="graphics/StoreJanitor-label.jpg" alt="StoreJanitor"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XMLSearching')" onMouseOut="rolloverOff('XMLSearching')" href="xmlsearching.html"><img onLoad="rolloverLoad('XMLSearching', 'graphics/XMLSearching-label_over.jpg', 'graphics/XMLSearching-label.jpg');" vspace="0" hspace="0" name="XMLSearching" width="120" height="12" border="0" src="graphics/XMLSearching-label.jpg" alt="XMLSearching"></a></td>
+</tr>
+<tr>
+<td align="left" valign="top"><img width="120" vspace="0" src="images/close.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+</table>
+</td><td>
+<table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td height="10" width="100%"></td>
+</tr>
+<tr>
+<td>
+  
+  
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Goal</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">This document explains how the MRUMemoryStore and Swapping under 
+    Cocoon executes.</p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Overview</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">The MRUMemoryStore was developed to provide a standard algorithm to
+       store data in memory. For web-based applications the MRU (Most Recently Used) algorithm
+       is very suitable, because the object most frequently accessed is always on "top".
+    </p>
+    
+<p align="justify">If configured, the objects are also swapped to the filesystem if the
+    MRUMemoryStore reached his configured max. object limit.
+    </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Implementation</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>MRUMemoryStore</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify"> 
+    The heart of the MRUMemoryStore ist combination of a LinkedList and a HashMap:
+    </p>
+    
+<p align="justify">
+    The LinkedList provides the queue mechanism, and the entries in the LinkedList 
+    contain the key to the data in the HashMap. When caching a new entry in to the list,
+    the entry is inserted to the front of the list.
+    If the list is already full, the oldest data entry is removed from the Cache.
+    When requesting a entry, the store returns the object by key and inserts the requested key 
+    on the top of the Cache.
+       
+    This implementation keeps the most recent used objects in the store and provides the best
+    use of the machines memory.
+    </p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+    
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Swapping</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+    
+<p align="justify">
+    When the MRUMemoryStore is full or the JVM is at the heap size limit the 
+    objects in the MRUMemoryStore are swapped to the Filesystem. The default 
+    directory is "cache-dir" in the work-directory.
+    </p>
+    
+<p align="justify">
+    NOTE: The keys under Cocoon are Strings at the moment. Therefor the
+    filenames of the swapped objects can be very long. Especially Windows OS
+    flavours have problems with long filenames. This problem is well known and
+    we are working on that.    
+    </p>
+    
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Configuration of the MRUMemoryStore</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+  
+  &lt;store class="org.apache.cocoon.components.store.MRUMemoryStore" logger="core.store"&gt;
+     &lt;parameter name="maxobjects" value="100"/&gt;
+     &lt;parameter name="filesystem" value="true"/&gt;
+  &lt;/store&gt;
+  
+  </pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div> 
+  
+<p align="justify">Explanation of the paramters:</p>
+    
+<blockquote>
+<ol> 
+      
+<li>
+<code><font face="courier, monospaced">&lt;parameter name="maxobjects" value="100"/&gt;</font></code>:
+      Indicates how many objects will be hold in MRUMemoryStore. When the number 
+      of maxobjects has been reached, the last object in the MRUMemoryStore will be 
+      thrown out.</li>
+      
+<li>
+<code><font face="courier, monospaced">&lt;parameter name="filesystem" value="true"/&gt;</font></code>:
+      If this switch is set on true, objects are swapped out to the filesystem,
+      if the MRUMemoryStore has reached his maximum object limit, or the JVM 
+      memory consumption is over the heap size limit. See StoreJanitor user 
+      docs for more information.</li>
+	
+</ol>
+</blockquote>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+  
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td bgcolor="#0086b2"><img width="1" src="images/dot.gif" height="1"></td>
+</tr>
+<tr>
+<td align="center"><font size="-1" face="arial,helvetica,sanserif" color="#0086b2"><i>Copyright &copy; 1999-2002 The Apache Software Foundation. All Rights Reserved.</i></font></td>
+</tr>
+</table>
+</body>
+</html>

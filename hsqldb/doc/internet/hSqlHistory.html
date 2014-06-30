@@ -1,0 +1,340 @@
+<HTML>
+<HEAD><TITLE>Hypersonic SQL</TITLE></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+
+<H2>History</H2>
+<P>
+<LI><a href="../../CHANGELOG.txt">CHANGELOG for this version</a>
+<LI><A HREF="#FIXEDBUGS">Recently fixed bugs</A> 
+<LI><A HREF="#NEWS10">News 10 (2000-03-28)</A>
+<LI><A HREF="#NEWS9">News 9 (2000-01-21)</A>
+<LI><A HREF="#NEWS8">News 8 (1999-12-12)</A>
+<LI><A HREF="#NEWS7">News 7 (1999-10-17)</A>
+<LI><A HREF="#NEWS6">News 6 (1999-12-12)</A>
+<LI><A HREF="#NEWS5">News 5 (1999-10-17)</A>
+<LI><A HREF="#NEWS4">News 4 (1999-04-09)</A>
+<LI><A HREF="#NEWS3">News 3 (1999-02-12)</A>
+<LI><A HREF="#NEWS2">News 2 (1998-11-13)</A>
+<LI><A HREF="#NEWS1">News 1 (1998-07-98)</A>
+<P>
+<HR>
+<P>
+<a NAME="FIXEDBUGS"></a>
+<H3>Recently fixed bugs and changes</H3>
+2000-09-04<BR>
+1.43: 
+<UL>
+<LI>Fixed Bug #106448 (WHERE.. IN (SELECT...))
+<LI>Added new Metadata table: SYSTEM_USERS
+<LI>Changed package structure: all classes in the root (unnamed) package
+    where moved to the new package org.hsql.util
+<LI>Case insensitive LIKE did not work. Fixed. Works only if used
+    with "column like 'test'"; not the other way round
+<LI>Fixed Bug #107577 (links to source files in docs)
+<LI>Fixed Bug #107155 (setMaxRows with ordered, grouped or union select)
+<LI>Fixed Bug #104967 (Foreign key problem when using 'primary key(col,...)' constraint)
+<LI>Added syntax for unique constraint (,[CONSTAINT name] UNIQUE (col,...)) 
+(to solve #104967)
+<LI>Fixed Bug #106935 ArrayIndexOutOfBoundsException on update with foreign keys
+<LI>Added SQL command: DISCONNECT
+<LI>Changed the way how the script is written to file: connections are enumerated now
+<LI>SHUTDOWN disconnects all currently connected users
+<LI>Bug in Constraint.replaceTable fixed (Exception in all cases)
+<LI>Fixed: SELECT * FROM Address WHERE Id IN (-1); now formulas are
+allow in IN (...) 
+<LI>Fixed bugs in jdbdDatabaseMetaData: filters for table name and
+column name are case insensitive now (converted to uppercase)
+</UL>
+<P>
+2000-06-03<BR>
+1.42: Fixed errors in server version (port number); missing keywords; 
+parsing nested queries; support for LONGTEXT (in Transfer); parsing floating
+point numbers; PreparedStatement.setObject; foreign keys; misspelled command
+(REFERENCIAL -> REFERENTIAL); Transaction error when using UPDATE
+<P>
+2000-03-27<BR>
+1.41: Fixed an error in the ASCII to Unicode conversion. Unicode 
+characters bigger than 0xff where not converted correctly (Standalone 
+& Client/Server).
+<P>
+2000-02-22<BR>
+1.3: [JDK 1.3 RC 1] After creating a database, the second connect 
+attempt returned a NullPointerException. Workaround implemented.<BR>
+<P>
+2000-01-25<BR>
+1.3: The hidden primary key column of cached tables that have no
+primary key was not saved. Fixed.<BR>
+<P>
+<HR>
+<P>
+<H3>News Mails</H3>
+<P>
+
+
+
+
+<a NAME="NEWS9"></a>
+<STRONG>News 9 (2000-01-21)</STRONG>
+<P>
+New and improved Tools<BR>
+There are two new tools: Database Manager and 
+Transfer Tool. Database Manager is a much improved 
+version of the Query Tool, and Transfer Tool is a 
+application that can transfer data from one JDBC 
+source to another. Both tools are not bound to 
+Hypersonic SQL, they can be used with any database 
+that has the JDBC interface. The other tools
+(WebServer, Servlet,...) has also been improved.
+<P>
+Improved File System<BR>
+The cache algorithm for saving records to file was
+re-implemented. The new algorithm is much faster and
+requires less disk access. The maximum size of the
+.script file can be set now, if the limit is reached
+the database is automatically closed and re-opened 
+(this shrinks the .script file). The .index file
+is no longer required. Closing the database is about
+double as fast. Read-only databases and connectios 
+are now possible. 
+<P>
+Changed the Package and Class names<BR>
+The package name is now 'org.hsql'. The classes where 
+also renamed. The driver class is now 'org.hsql.jdbcDriver'.
+This renaming was necessary to conform the package naming 
+conventions.
+<P>
+Improved SQL Syntax and JDBC interface<BR>
+New features are: MaxRows, BETWEEN .. AND .., auto-number 
+(IDENTITY) column, SELECT .. INTO, MINUS, INTERSECT. 
+Compatibility was improved: != (<>), UPPER (UCASE), LOWER (LCASE), SUBSTRING(String,start[,length]), DOUBLE [PRECISION], 
+ROLLBACK [WORK], COMMIT [WORK]. It is now possible to switch 
+off the case sensitivity for Strings. A PUBLIC user was added.
+<P>
+Bug Fixes<BR>
+There where some bugs in the parser (complex queries failed
+in some cases). Errors in the write/read functions where
+fixed. Unnecessary reserved names where removed. The permissions 
+function (GRANT, REVOKE) conform now the standard SQL. 
+The syntax for outer join is corrected: LEFT [OUTER] JOIN 
+instead of OUTER JOIN.
+<P>
+Documentation <BR>
+The JDBC interface is now documented. The documentation was
+improved in almost all parts. A 'How To' documentation for 
+JBuilder is included.
+<P>
+How to Upgrade from the old to the new version<BR>
+A detailed description is included in the 'How To / FAQ' page
+on the internet.
+<P>
+<HR>
+<P>
+<a NAME="NEWS8"></a>
+<STRONG>News 8 (1999-12-12)</STRONG>
+<P>
+Extended SQL Syntax<BR>
+A new parser and a new query engine makes Hypersonic SQL
+now almost SQL 92 Entry Level compatible. New features 
+include OUTER JOIN, INNER JOIN, EXISTS, correlated 
+subqueries. Constraints are now allowed in CREATE TABLE
+statements. Only a few features are still missing, like 
+HAVING, ANY, ALL, BETWEEN.
+<P>
+Functions and Formulas<BR>
+Formulas are now type safe. New functions have been
+implemented: CONVERT, LCASE, UCASE, LENGTH, LEFT, 
+RIGHT, MID, SUBSTRING, CURDATE, CURTIME, NOW, IFNULL, 
+CASEWHEN, BITOR, BITAND, MOD.
+<P>
+Improved speed<BR>
+Tests shows that the new query engine is faster than
+the old one.
+<P>
+Documentation <BR>
+The SQL Syntax is now better documented.
+<P>
+<HR>
+<P>
+<a NAME="NEWS7"></a>
+<STRONG>News 7 (1999-10-17)</STRONG>
+<P>
+No database size limitation any more<BR>
+The indexes are now also cached so that the size of 
+a database is no longer restricted to the available 
+memory. In the persistence part where made big 
+modifications, for example the '*.script' file is now
+human-readable. Recovery is improved. Opening databases 
+with cached tables is now much faster. Unfortunately, 
+the database file format is not compatible to the 
+older version.
+<P>
+Data type 'Object'<BR>
+It is possible to save Java Objects in the database
+using the data type 'Object'.
+<P>
+New SQL commands <BR>
+Some new SQL syntax has be added. It is now possible 
+to use values in SELECT: SELECT 1 FROM ADDRESS.
+There are also some non-standard SQL commands like<BR>
+- SHUTDOWN [IMMEDIATELY] to close the database<BR>
+- SCRIPT 'filename' will create full database script file<BR>
+- CREATE USER ... ADMIN to create another administrator
+<P>
+Improved the JDBC interface <BR>
+Except for CallableStatement and some DatabaseMetaData
+functions, there are now all JDBC 1.2 functions 
+implemented. ResultSet does now automatically convert 
+data types if possible. All get/set*Stream functions 
+are implemented.
+<P>
+Bugfixes and Self Testing <BR>
+Lots of bugfixes where made, for example in 
+ResultSet, in PreparedStatement, but also in the
+main database engine. SelfTest and Debug was extended, 
+there is now additionally profiling and performance 
+data created. Remember that CodeSwither and Debug can 
+be used for other applications as well.
+<P>
+Plans<BR>
+For the near future, high priority has extending the 
+SQL syntax (EXISTS, correlated queries, formulas), 
+documentation and the client / server version.
+<P>
+<HR>
+<P>
+<a NAME="NEWS6"></a>
+<STRONG>News 6 (1999-09-10)</STRONG>
+<P>
+Added support for SQL commands <BR>
+- GROUP BY <BR>
+- SELECT DISTINCT <BR>
+- UNION ALL <BR>
+- AVG() <BR>
+- WHERE ... IN (SELECT...) <BR>
+<P>
+Formulas <BR>
+It is now possible to use formulas where a value 
+is expected. Examples: <BR>
+- UPDATE ... SET Column=[formula] <BR>
+- INSERT INTO ... VALUES ([formula],...) <BR>
+- ... WHERE Column=[formula] <BR>
+Formulas can be SELECT statments, string operations, integer operations or any combination. 
+<P>
+Simplification of versions and modes <BR>
+It is no longer necessary to use the CodeSwitcher 
+to produce different versions and modes. 
+CREATE CACHED TABLE... is now used to create a table 
+where the data records are stored in the database file. 
+<P>
+Bugfixes and Self Testing <BR>
+Now a self-testing class is improved so that 
+a huge part of the code is included in the 
+tests. Lines of code that are not tested 
+by the self testing program are listed out. 
+The self-testing program will be improved 
+so that almost all lines of code are covered. 
+<P>
+Copyright <BR>
+Updated the copyright so it can be used 
+also in commercial products. 
+<P>
+<HR>
+<P>
+<a NAME="NEWS5"></a>
+<STRONG>News 5 (1999-08-06)</STRONG>
+<P>
+A lot of new functionality has been added to the database:
+<P>
+Transactions (COMMIT, ROLLBACK)
+<P>
+Access rights (passwords, users, rights)
+<P>
+Improved SQL syntax<BR>
+- UNION SELECT, SELECT FROM (SELECT...)<BR>
+- LIKE ESCAPE, IN ()<BR>
+- INSERT INTO ... SELECT<BR>
+- NOT NULL<BR>
+- Implemented Java SQL escape processing {}
+<P>
+Improved JDBC interface
+<P>
+Fixed various bugs
+<P>
+Added copyright (or better 'copyleft') remark
+<P>
+<HR>
+<P>
+<a NAME="NEWS4"></a>
+<STRONG>News 4 (1999-04-09)</STRONG>
+<P>
+Improved JDBC Interface <BR>
+The interface is extended in almost all parts. The compatibility to other databases is greatly improved. The
+DatabaseMetaData class is extended.
+<P>
+Improved SQL syntax <BR>
+It is now possible to use complex conditions with AND, OR, NOT, () in the WHERE clause of a SELECT statement. All comparisation types are now allowed in the join condition. It is now possible to specify the columns in the INSERT statement.
+<P>
+NULL support <BR>
+It is now possible to use NULL. NULL is the smallest possible value for all data types. It is not fully compatible with standard SQL (NULL is really a complex thing), but it is a first step. IS NULL works also.
+<P>
+All JDBC Data Types <BR>
+Now all JDBC data types are implemented. Missing is only the possibility to use streams. 
+<P>
+Performance Improvements <BR>
+The cache algorithm for the full disk version was improved and uses now double hashing. Additionally, the overall performance
+could be improved in some points.
+<P>
+Servlet available <BR>
+The source code for a servlet is included. That means it is now possible to run a Hypersonic SQL database on a general web
+server as a servlet. This is not fully tested, but should work with all web servers that support servlets.
+<P>
+Trace messages <BR>
+Almost all JDBC functions now write trace messages. This is very important for debugging. There are also trace messages
+for some database operations like the query plan.
+<P>
+<HR>
+<P>
+<a NAME="NEWS3"></a>
+<STRONG>News 3 (1999-02-12)</STRONG>
+<P>
+Persistent Mode available <BR>
+Hypersonic SQL has now two operating modes: Non-persistent (memory-only) and Persistent (with logging to disk). That
+means you can store the data on disk.
+<P>
+Performance Tests <BR>
+Tests shows that Hypersonic SQL is much faster than Microsoft Access 97 and InterBase Server. 
+<P>
+More Data Types <BR>
+Now all important data types are implemented. 
+<P>
+Improved SQL syntax <BR>
+It is now possible to specify Columns in a SELECT statement. Tables and Columns can be aliased in a SELECT statement. 'LIKE' can be used in the WHERE clause.
+<P>
+Improved JDBC Interface <BR>
+Now all JDBC classes are implemented and the compatibility to other JDBC drivers is enhanced. 
+<P>
+<HR>
+<P>
+<a NAME="NEWS2"></a>
+<STRONG>News 2 (1998-11-13)</STRONG>
+<P>
+The programming interface is now a subset of JDBC<BR>
+With this step, the compatibility to other databases is greatly 
+improved: JDBC is the standard database interface in Java. 
+You can compare it to the ODBC standard in the 'Windows' world. 
+That means if your program works with Hypersonic SQL and you 
+want to use another SQL database, you will have to change in 
+most cases only the driver (two lines of code). 
+<P>
+<HR>
+<P>
+<a NAME="NEWS1"></a>
+<STRONG>News 1 (1998-07-98)</STRONG>
+<P>
+- A first Client / Server version is available in the download <BR>
+- The documentation is extended <BR>
+- Sourcecode is now included <BR>
+- The homepage is updated <BR>
+<P>
+</FONT></BODY></HTML>

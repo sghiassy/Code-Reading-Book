@@ -1,0 +1,141 @@
+.TH ACE_Bound_Ptr_Counter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Bound_Ptr_Counter \- An ACE_Bound_Ptr_Counter object encapsulates an object reference count. Do not use this class directly, use \fBACE_Strong_Bound_Ptr\fR or \fBACE_Weak_Bound_Ptr\fR instead. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Bound_Ptr.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Bound_Ptr_Counter\fR (int init_obj_ref_count = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_Bound_Ptr_Counter\fR (void)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Bound_Ptr_Counter<ACE_LOCK>* \fBcreate_strong\fR (void)"
+.br
+.RI "\fICreate a ACE_Bound_Ptr_Counter and initialize the reference count to indicate ownership by a strong pointer.\fR"
+.ti -1c
+.RI "int \fBattach_strong\fR (ACE_Bound_Ptr_Counter<ACE_LOCK> *counter)"
+.br
+.RI "\fIIncrease both the object and counter reference counts and return the new object reference count. A return value of -1 indicates that the object has already been destroyed.\fR"
+.ti -1c
+.RI "int \fBdetach_strong\fR (ACE_Bound_Ptr_Counter<ACE_LOCK> *counter)"
+.br
+.RI "\fIDecreases both the object and counter reference counts and deletes whichever has no more references. Returns the new object reference count.\fR"
+.ti -1c
+.RI "ACE_Bound_Ptr_Counter<ACE_LOCK>* \fBcreate_weak\fR (void)"
+.br
+.RI "\fICreate a ACE_Bound_Ptr_Counter and initialize the reference count to indicate no ownership.\fR"
+.ti -1c
+.RI "void \fBattach_weak\fR (ACE_Bound_Ptr_Counter<ACE_LOCK> *counter)"
+.br
+.RI "\fIIncrease the counter reference count and return argument.\fR"
+.ti -1c
+.RI "void \fBdetach_weak\fR (ACE_Bound_Ptr_Counter<ACE_LOCK> *counter)"
+.br
+.RI "\fIDecreases the counter reference count and deletes the counter if it has no more references.\fR"
+.ti -1c
+.RI "int \fBobject_was_deleted\fR (ACE_Bound_Ptr_Counter<ACE_LOCK> *counter)"
+.br
+.RI "\fIDetermine whether the object has been deleted.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBobj_ref_count_\fR"
+.br
+.RI "\fIReference count of underlying object. Is set to -1 once the object has been destroyed to indicate to all weak pointers that it is no longer valid.\fR"
+.ti -1c
+.RI "int \fBself_ref_count_\fR"
+.br
+.RI "\fIReference count of this counter.\fR"
+.ti -1c
+.RI "ACE_LOCK \fBlock_\fR"
+.br
+.RI "\fIMutex variable to synchronize access to the reference counts.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class ACE_LOCK>  template class ACE_Bound_Ptr_Counter
+An ACE_Bound_Ptr_Counter object encapsulates an object reference count. Do not use this class directly, use \fBACE_Strong_Bound_Ptr\fR or \fBACE_Weak_Bound_Ptr\fR instead.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK> ACE_Bound_Ptr_Counter<ACE_LOCK>::ACE_Bound_Ptr_Counter<ACE_LOCK> (int init_obj_ref_count = 0)
+.PP
+.SS template<classACE_LOCK> ACE_Bound_Ptr_Counter<ACE_LOCK>::~ACE_Bound_Ptr_Counter<ACE_LOCK> (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK> int ACE_Bound_Ptr_Counter<ACE_LOCK>::attach_strong (ACE_Bound_Ptr_Counter< ACE_LOCK >* counter)\fC [static]\fR
+.PP
+Increase both the object and counter reference counts and return the new object reference count. A return value of -1 indicates that the object has already been destroyed.
+.PP
+.SS template<classACE_LOCK> void ACE_Bound_Ptr_Counter<ACE_LOCK>::attach_weak (ACE_Bound_Ptr_Counter< ACE_LOCK >* counter)\fC [static]\fR
+.PP
+Increase the counter reference count and return argument.
+.PP
+.SS template<classACE_LOCK> ACE_Bound_Ptr_Counter< ACE_LOCK >* ACE_Bound_Ptr_Counter<ACE_LOCK>::create_strong (void)\fC [static]\fR
+.PP
+Create a ACE_Bound_Ptr_Counter and initialize the reference count to indicate ownership by a strong pointer.
+.PP
+.SS template<classACE_LOCK> ACE_Bound_Ptr_Counter< ACE_LOCK >* ACE_Bound_Ptr_Counter<ACE_LOCK>::create_weak (void)\fC [static]\fR
+.PP
+Create a ACE_Bound_Ptr_Counter and initialize the reference count to indicate no ownership.
+.PP
+.SS template<classACE_LOCK> int ACE_Bound_Ptr_Counter<ACE_LOCK>::detach_strong (ACE_Bound_Ptr_Counter< ACE_LOCK >* counter)\fC [static]\fR
+.PP
+Decreases both the object and counter reference counts and deletes whichever has no more references. Returns the new object reference count.
+.PP
+.SS template<classACE_LOCK> void ACE_Bound_Ptr_Counter<ACE_LOCK>::detach_weak (ACE_Bound_Ptr_Counter< ACE_LOCK >* counter)\fC [static]\fR
+.PP
+Decreases the counter reference count and deletes the counter if it has no more references.
+.PP
+.SS template<classACE_LOCK> int ACE_Bound_Ptr_Counter<ACE_LOCK>::object_was_deleted (ACE_Bound_Ptr_Counter< ACE_LOCK >* counter)\fC [static]\fR
+.PP
+Determine whether the object has been deleted.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK> ACE_Bound_Ptr_Counter<ACE_LOCK>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classACE_LOCK> ACE_LOCK ACE_Bound_Ptr_Counter<ACE_LOCK>::lock_\fC [private]\fR
+.PP
+Mutex variable to synchronize access to the reference counts.
+.PP
+.SS template<classACE_LOCK> int ACE_Bound_Ptr_Counter<ACE_LOCK>::obj_ref_count_\fC [private]\fR
+.PP
+Reference count of underlying object. Is set to -1 once the object has been destroyed to indicate to all weak pointers that it is no longer valid.
+.PP
+.SS template<classACE_LOCK> int ACE_Bound_Ptr_Counter<ACE_LOCK>::self_ref_count_\fC [private]\fR
+.PP
+Reference count of this counter.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,77 @@
+/*************************************************
+* OFB Mode Source File                           *
+* (C) 1999-2001 The OpenCL Project               *
+*************************************************/
+
+#include <opencl/ofb.h>
+
+namespace OpenCL {
+
+/*************************************************
+* OFB Constructor                                *
+*************************************************/
+template<typename B>
+OFB<B>::OFB(const BlockCipherKey& key, const BlockCipherModeIV& iv) :
+   CipherMode<B>(name(), key, iv)
+   {
+   cipher.encrypt(state);
+   }
+
+/*************************************************
+* OFB Encryption/Decryption                      *
+*************************************************/
+template<typename B>
+void OFB<B>::write(const byte input[], u32bit length)
+   {
+   while(length)
+      {
+      u32bit copied = std::min(BLOCKSIZE - position, length);
+      xor_buf(buffer, input, state + position, copied);
+      send(buffer, copied);
+      input += copied;
+      length -= copied;
+      position += copied;
+      if(position == BLOCKSIZE)
+         {
+         cipher.encrypt(state);
+         position = 0;
+         }
+      }
+   }
+
+/*************************************************
+* Counter Constructor                            *
+*************************************************/
+template<typename B>
+Counter<B>::Counter(const BlockCipherKey& key, const BlockCipherModeIV& iv) :
+   CipherMode<B>(name(), key, iv)
+   {
+   cipher.encrypt(state, buffer);
+   }
+
+/*************************************************
+* Counter Encryption/Decryption                  *
+*************************************************/
+template<typename B>
+void Counter<B>::write(const byte input[], u32bit length)
+   {
+   while(length)
+      {
+      u32bit copied = std::min(BLOCKSIZE - position, length);
+      xor_buf(buffer + position, input, copied);
+      send(buffer + position, copied);
+      input += copied;
+      length -= copied;
+      position += copied;
+      if(position == BLOCKSIZE)
+         {
+         for(s32bit j = BLOCKSIZE - 1; j >= 0; j--)
+            if(++state[j])
+               break;
+         cipher.encrypt(state, buffer);
+         position = 0;
+         }
+      }
+   }
+
+}

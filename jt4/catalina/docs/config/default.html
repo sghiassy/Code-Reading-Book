@@ -1,0 +1,149 @@
+<html>
+<head>
+<title>The 'DefaultContext' Component</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>The <u>DefaultContext</u> Component</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Common Attributes">[Common Attributes]</a>
+<a href="#Utility Components">[Utility Components]</a>
+<a href="#Special Features">[Special Features]</a>
+</br>
+</div>
+
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>A <strong>DefaultContext</strong> component represents a subset
+of the <a href="context.html">Context</a> configuration elements.
+A <code>DefaultContext</code> can be nested within an
+<a href="engine.html">Engine</a> or <a href="host.html">Host</a>.</p>
+
+<p>The elements you configure for a <code>DefaultContext</code> within
+both the <code>Engine</code> and <code>Host</code> elements are
+added to the configuration of any automatically created web application
+context or configured context.</p>
+
+<p>If you wish to configure a <code>Context</code> which does not use
+the <code>DefaultContext</code> configuration set the <code>Context</code>
+attribute <code>override="true"</code>.
+<br>
+
+<a name="Common Attributes"></a>
+<h2>Common Attributes</h2>
+
+<p>All implementations of the <strong>Context</strong> component support the
+following attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>cookies</code></td>
+    <td>
+      Set to <code>true</code> if you want cookies to be used for session
+      identifier communication (if supported by the client).  Set to
+      <code>false</code> if you want to skip even trying session id cookies,
+      and rely only on URL rewriting.  If not specified, the default value is
+      <code>true</code>.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>crossContext</code></td>
+    <td>
+      Set to <code>true</code> of you want calls from within this application
+      to <code>ServletContext.getContext()</code> to successfully return the
+      <code>ServletContext</code> for other web applications running in this
+      host.  Set to <code>false</code> in security conscious environments, so
+      that <code>getContext()</code> calls will return <code>null</code>.  The
+      default value is <code>false</code>.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>reloadable</code></td>
+    <td>
+      Set this attribute to <code>true</code> if you wish to have Catalina
+      check the classes in <code>WEB-INF/classes</code> and
+      <code>WEB-INF/lib</code> for modification, and automatically reload
+      this application if a change is detected.  This feature is very useful
+      during development; however, it requires significant runtime overhead
+      so it is not recommended for production deployment scenarios.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>wrapperClass</code></td>
+    <td>
+      Java class name of the <code>org.apache.catalina.Wrapper</code>
+      implementation class that will be used for servlets managed by this
+      Context.  If not specified, the standard value
+      (<code>org.apache.catalina.core.StandardWrapper</code>) will be used.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>useNaming</code></td>
+    <td>      
+      Set this attribute to <code>true</code> if you wish to have Catalina
+      enable JNDI.  Default is <code>true</code>.
+    </td>     
+  </tr>
+
+</table>
+
+<br>
+
+<a name="Utility Components"></a>
+<h2>Utility Components</h2>
+
+<p>You can attach one or more of the following utility components by nesting
+a corresponding declaration inside your <strong>Host</strong> element.
+</p>
+
+<ul>
+  <li><a href="loader.html">Loader</a> - Configure a class loader associated
+      with this <strong>Context</strong>.
+  <li><a href="manager.html">Manager</a> - Configure a session manager
+      for the sessions associated with this <strong>Context</strong>.</li>
+  <li><a href="resources.html">Resources</a> - Configure access to the static
+      resources associated with this <strong>Context</strong></li>
+</ul>
+
+<br>
+
+<a name="Special Features"></a>
+<h2>Special Features</h2>
+
+<h3>Lifecycle Listeners</h3>
+
+<p>If you have implemented a Java object that needs to know when this
+<strong>Context</strong> is started or stopped, you can declare it by nesting a
+<code>&lt;Listener&gt;</code> element inside the <code>&lt;Context&gt;</code>
+element.  The class you specify in the <code>className</code> attribute
+of this Listener must implement the
+<code>org.apache.catalina.LifecycleListener</code> interface, and it will be
+notified about the occurrence of the corresponding lifecycle events.</p>
+
+<p>Configuration for such a listener might look like this:</p>
+<pre>
+
+    &lt;Context path="/myapp" ...&gt;
+      ...
+      &lt;Listener className="com.mycompany.MyAppListener"/&gt;
+      ...
+    &lt;/Context&gt;
+
+</pre>
+
+</body>
+</html>

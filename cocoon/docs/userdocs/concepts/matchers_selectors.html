@@ -1,0 +1,776 @@
+<html xmlns:NetUtils="org.apache.cocoon.util.NetUtils">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Using and Implementing Matchers and Selectors</title>
+<script type="text/javascript" src="resources/script.js" language="JavaScript"></script>
+</head>
+<body bgcolor="#ffffff" marginheight="4" marginwidth="4" leftmargin="4" topmargin="4" alink="#cc0000" vlink="#0086b2" link="#039acc" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" rowspan="3" height="60" width="135"><img border="0" vspace="0" hspace="0" src="images/logo.gif" height="60" width="135"></td><td background="images/line.gif" colspan="2" align="left" valign="top" height="5" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/line.gif" height="5" width="1"></td><td align="left" valign="top" rowspan="3" height="60" width="29"><img border="0" vspace="0" hspace="0" src="images/right.gif" height="60" width="29"></td>
+</tr>
+<tr>
+<td bgcolor="#0086b2" colspan="2" align="right" valign="top" height="35" width="100%"><img align="right" alt="Using and Implementing Matchers and Selectors" border="0" vspace="0" hspace="0" src="graphics/matchers_selectors-header.jpg_label=Using%20and%20Implementing%20Matchers%20and%20Selectors.jpg"></td>
+</tr>
+<tr>
+<td background="images/bottom.gif" bgcolor="#0086b2" align="left" valign="top" height="20" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/bottom.gif" height="20" width="3"></td><td background="images/bottom.gif" width="288" valign="top" height="20" bgcolor="#0086b2" align="right">
+<table width="288" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('xml');" onMouseOut="rolloverOff('xml');" target="new" href="http://xml.apache.org/"><img onLoad="rolloverLoad('xml', 'images/button-xml-hi.gif', 'images/button-xml-lo.gif');" border="0" vspace="0" hspace="0" name="xml" src="images/button-xml-lo.gif" height="20" width="96" alt="http://xml.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('asf');" onMouseOut="rolloverOff('asf');" target="new" href="http://www.apache.org/"><img onLoad="rolloverLoad('asf', 'images/button-asf-hi.gif', 'images/button-asf-lo.gif');" border="0" vspace="0" hspace="0" name="asf" src="images/button-asf-lo.gif" height="20" width="96" alt="http://www.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('w3c');" onMouseOut="rolloverOff('w3c');" target="new" href="http://www.w3.org/"><img onLoad="rolloverLoad('w3c', 'images/button-w3c-hi.gif', 'images/button-w3c-lo.gif');" border="0" vspace="0" hspace="0" name="w3c" src="images/button-w3c-lo.gif" height="20" width="96" alt="http://www.w3.org/"></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr width="100%">
+<td valign="top" width="120">
+<table width="120" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td valign="top" align="left"><img width="120" vspace="0" src="images/join.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Main')" onMouseOut="rolloverOff('Main')" href="../../index.html"><img onLoad="rolloverLoad('Main', 'graphics/Main-label_over.jpg', 'graphics/Main-label.jpg');" vspace="0" hspace="0" name="Main" width="120" height="12" border="0" src="graphics/Main-label.jpg" alt="Main"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('User Documentation')" onMouseOut="rolloverOff('User Documentation')" href="../index.html"><img onLoad="rolloverLoad('User Documentation', 'graphics/User%20Documentation-label_over.jpg', 'graphics/User%20Documentation-label.jpg');" vspace="0" hspace="0" name="User Documentation" width="120" height="12" border="0" src="graphics/User%20Documentation-label.jpg" alt="User Documentation"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><img alt="Concepts" width="120" vspace="0" src="graphics/Concepts-separator.jpg" hspace="0" height="20" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Overview')" onMouseOut="rolloverOff('Overview')" href="index.html"><img onLoad="rolloverLoad('Overview', 'graphics/Overview-label_over.jpg', 'graphics/Overview-label.jpg');" vspace="0" hspace="0" name="Overview" width="120" height="12" border="0" src="graphics/Overview-label.jpg" alt="Overview"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Sitemap')" onMouseOut="rolloverOff('Sitemap')" href="sitemap.html"><img onLoad="rolloverLoad('Sitemap', 'graphics/Sitemap-label_over.jpg', 'graphics/Sitemap-label.jpg');" vspace="0" hspace="0" name="Sitemap" width="120" height="12" border="0" src="graphics/Sitemap-label.jpg" alt="Sitemap"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Views')" onMouseOut="rolloverOff('Views')" href="views.html"><img onLoad="rolloverLoad('Views', 'graphics/Views-label_over.jpg', 'graphics/Views-label.jpg');" vspace="0" hspace="0" name="Views" width="120" height="12" border="0" src="graphics/Views-label.jpg" alt="Views"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Caching')" onMouseOut="rolloverOff('Caching')" href="caching.html"><img onLoad="rolloverLoad('Caching', 'graphics/Caching-label_over.jpg', 'graphics/Caching-label.jpg');" vspace="0" hspace="0" name="Caching" width="120" height="12" border="0" src="graphics/Caching-label.jpg" alt="Caching"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Actions')" onMouseOut="rolloverOff('Actions')" href="actions.html"><img onLoad="rolloverLoad('Actions', 'graphics/Actions-label_over.jpg', 'graphics/Actions-label.jpg');" vspace="0" hspace="0" name="Actions" width="120" height="12" border="0" src="graphics/Actions-label.jpg" alt="Actions"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Matchers and Selectors')" onMouseOut="rolloverOff('Matchers and Selectors')" href="matchers_selectors.html"><img onLoad="rolloverLoad('Matchers and Selectors', 'graphics/Matchers%20and%20Selectors-label_over.jpg', 'graphics/Matchers%20and%20Selectors-label.jpg');" vspace="0" hspace="0" name="Matchers and Selectors" width="120" height="12" border="0" src="graphics/Matchers%20and%20Selectors-label.jpg" alt="Matchers and Selectors"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Entity Catalogs')" onMouseOut="rolloverOff('Entity Catalogs')" href="catalog.html"><img onLoad="rolloverLoad('Entity Catalogs', 'graphics/Entity%20Catalogs-label_over.jpg', 'graphics/Entity%20Catalogs-label.jpg');" vspace="0" hspace="0" name="Entity Catalogs" width="120" height="12" border="0" src="graphics/Entity%20Catalogs-label.jpg" alt="Entity Catalogs"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('MRUMemoryStore')" onMouseOut="rolloverOff('MRUMemoryStore')" href="mrustore.html"><img onLoad="rolloverLoad('MRUMemoryStore', 'graphics/MRUMemoryStore-label_over.jpg', 'graphics/MRUMemoryStore-label.jpg');" vspace="0" hspace="0" name="MRUMemoryStore" width="120" height="12" border="0" src="graphics/MRUMemoryStore-label.jpg" alt="MRUMemoryStore"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('StoreJanitor')" onMouseOut="rolloverOff('StoreJanitor')" href="storejanitor.html"><img onLoad="rolloverLoad('StoreJanitor', 'graphics/StoreJanitor-label_over.jpg', 'graphics/StoreJanitor-label.jpg');" vspace="0" hspace="0" name="StoreJanitor" width="120" height="12" border="0" src="graphics/StoreJanitor-label.jpg" alt="StoreJanitor"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XMLSearching')" onMouseOut="rolloverOff('XMLSearching')" href="xmlsearching.html"><img onLoad="rolloverLoad('XMLSearching', 'graphics/XMLSearching-label_over.jpg', 'graphics/XMLSearching-label.jpg');" vspace="0" hspace="0" name="XMLSearching" width="120" height="12" border="0" src="graphics/XMLSearching-label.jpg" alt="XMLSearching"></a></td>
+</tr>
+<tr>
+<td align="left" valign="top"><img width="120" vspace="0" src="images/close.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+</table>
+</td><td>
+<table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td height="10" width="100%"></td>
+</tr>
+<tr>
+<td> 
+   
+  
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Introduction</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+  Matchers and selectors are sitemap components. They are used to
+  determine the flow, the other components involved and their ordering
+  of the request processing. One particular matcher you're probably
+  familiar with, is the WildcardURIMatcher. That is the one that
+  determines the (sub-)pipeline in the welcome example. But there are
+  many more matchers supplied with Apache Cocoon, one matches the requested
+  URI on regular expressions, others match the client's hostname,
+  existence of parameters and so on.
+  </p>
+  
+<p align="justify">
+  There is also a number of selectors supplied with Cocoon. Selectors
+  test a generally simple boolean expression and allow to select on
+  roughly the same things as matchers would. There is a selector on
+  the client's hostname, on the client's browser etc.
+  </p>
+  
+<p align="justify">
+  To make things even more complicated, actions have very similar
+  properties. You can nest other sitemap elements in an action and
+  those are included in the processing only if the action completes
+  successfully.
+  </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>So what are the differences?</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<p align="justify">
+The basic structure of a selector is that of a case, switch or
+if-elseif-...-elseif-else statement in programming languages while
+matchers and actions compare more to a if statement. In addition
+selectors don't communicate the basis for their decision to the
+embedded elements, just select the next part(s) of the
+pipeline. Matchers and actions, however, add a new map to the
+environment that can be used for the further processing in the
+sub pipeline. 
+</p>
+
+<p align="justify">
+You've already come across this feature on the example sitemap: The
+value matched by the WildcardURIMatcher is used to determine the
+filename <code><font face="courier, monospaced">docs/samples/xsp/{1}.xsp</font></code>. Here <code><font face="courier, monospaced">{1}</font></code>
+represents the value that is stored in the environmental map with the
+key <code><font face="courier, monospaced">1</font></code>. The name of the key is arbitrary and set by the
+matcher. If you had supplied a more complex pattern, there would be
+others. For example <code><font face="courier, monospaced">&lt;map:match pattern="*/*/*/*/report.html"&gt;</font></code>
+would result in keys <code><font face="courier, monospaced">1</font></code>, <code><font face="courier, monospaced">2</font></code>, <code><font face="courier, monospaced">3</font></code>,
+and <code><font face="courier, monospaced">4</font></code> being defined, corresponding to the <code><font face="courier, monospaced">*</font></code>s
+in the pattern.
+</p>
+
+<p align="justify">
+BTW you cannot access those maps from your XSP. Use parameters to the
+generator to explicitly send them. On your XSP you can access them
+through an object called <code><font face="courier, monospaced">parameters</font></code>. Example
+</p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+   &lt;map:match pattern="*/*/*/*/report.html"&gt;
+      &lt;map:generate type="serverpages" src="docs/getPostcodeData.xsp"&gt;
+         &lt;parameter name="postcode" value="{1}{2} {3}{4}"/&gt;
+      &lt;/map:generate&gt;
+      &lt;map:transform src="stylesheets/html/report.xsl"/&gt;
+      &lt;map:serialize/&gt;
+   &lt;/map:match&gt;
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+
+<p align="justify">On your XSP do</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+   &lt;xsp:expr&gt;parameters.getParameter("postcode")&lt;/xsp:expr&gt;
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+<p align="justify">
+Generally, one could say that selectors are better suited if the
+decisions has few easily distinguishable cases, the map feature is not
+needed and the decision occurs later in the pipeline. Their
+implementation should be lightweight and so is their integration in
+the compiled sitemap.
+</p>
+
+<p align="justify">
+Matchers are often the very first element in a pipeline. They direct
+the processing based on more complex decision process. They are
+general purpose but more costly than selectors.
+</p>
+
+<p align="justify">
+Actions should be used to <i>"do"</i> something, not to chose
+between different sub pipelines. That should be done only, if an error
+occurred and you cannot continue the regular pipeline. Of course this
+is a fuzzy criterion and using an action to chose between exactly two
+sub pipelines is a very common task i.e. for authentication. Also,
+often actions have no nested elements and the further processing is
+not affected by the result of the action.  </p>
+
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Using Matchers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<p align="justify">
+Like every other sitemap component, matchers need to be declared in
+the sitemap:
+</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+&lt;map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0"&gt;
+  &lt;map:components&gt;
+   ...
+
+  &lt;map:matchers default="wildcard"&gt;
+     &lt;map:matcher name="wildcard"
+                  src="org.apache.cocoon.matching.WildcardURIMatcherFactory"/&gt;
+     ...
+     &lt;map:matcher name="next-page"
+        src="org.apache.cocoon.matching.WildcardParameterValueMatcherFactory"&gt;
+        &lt;map:parameter name="parameter-name" value="next-state"/&gt;
+     &lt;/map:matcher&gt;
+  &lt;/map:matchers&gt;
+
+  ...
+  &lt;/map:components&gt;
+
+  &lt;map:resources/&gt;
+  &lt;map:pipelines/&gt;
+&lt;/map:sitemap&gt;
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+<p align="justify">Matchers are given a short name (e.g, "wildcard") and of course the
+name of the JAVA class that implements the matcher or a matcher
+factory. In addition, parameters can be defined as well.
+</p>
+
+<p align="justify">
+One matcher may be defined as default matcher, so whenever a matcher
+appears in the sitemap without explicit type specification it will be
+assumed that it is of the default type.
+</p>
+
+<p align="justify">
+In a pipeline use the matcher like this
+</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+&lt;map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0"&gt;
+  &lt;map:components/&gt;
+  &lt;map:resources/&gt;
+  &lt;map:pipelines&gt;
+     &lt;map:pipeline&gt;
+
+   	&lt;map:match pattern="*"&gt;
+   	   &lt;map:generate type="serverpages" src="test/{1}.xsp"/&gt;
+   	   &lt;map:transform src="stylesheets/dynamic-page2html.xsl"/&gt;
+   	   &lt;map:serialize/&gt;
+   	&lt;/map:match&gt;
+
+     &lt;/map:pipeline&gt;
+  &lt;/map:pipelines&gt;
+&lt;/map:sitemap&gt;
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+<p align="justify">
+Matchers can be nested:
+</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+         &lt;map:match type="sessionstate" pattern="edit*"&gt;
+            &lt;!-- here you could insert parameters for the above matcher --&gt;
+	    &lt;map:parameter name="attribute-name" value="__sessionstate"/&gt;
+	    &lt;map:match type="next-page" pattern="ok*"&gt;
+	           &lt;!-- do something here, eg. database updates --&gt;
+                   &lt;map:call resource="simple-page1"/&gt;
+	    &lt;/map:match&gt;
+	    &lt;map:match type="next-page" pattern="delete*"&gt;
+	           &lt;!-- do something different here, eg. database deletions --&gt;
+                   &lt;map:call resource="simple-page1"/&gt;
+	    &lt;/map:match&gt;
+	  &lt;/map:match&gt;
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Using Selectors</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<p align="justify">
+As said above, selectors are very similar to matchers. Again, you need
+to declare selectors in the sitemap.xmap
+</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+&lt;map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0"&gt;
+  &lt;map:components&gt;
+   ...
+  &lt;map:selectors default="browser"&gt;
+   &lt;map:selector name="browser"
+                 src="org.apache.cocoon.selection.BrowserSelectorFactory"&gt;
+    &lt;browser name="explorer" useragent="MSIE"/&gt;
+    &lt;browser name="lynx" useragent="Lynx"/&gt;
+    &lt;browser name="netscape" useragent="Mozilla"/&gt;
+   &lt;/map:selector&gt;
+   &lt;map:selector name="coded"
+                 src="org.apache.cocoon.selection.CodedSelectorFactory"/&gt;
+   &lt;map:selector name="parameter"
+                 src="org.apache.cocoon.selection.ParameterSelectorFactory"/&gt;
+  &lt;/map:selectors&gt;
+
+  ...
+  &lt;/map:components&gt;
+
+  &lt;map:resources/&gt;
+  &lt;map:pipelines/&gt;
+&lt;/map:sitemap&gt;
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+<p align="justify">
+Their use is a bit different to matchers, though:
+</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+&lt;map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0"&gt;
+  &lt;map:components/&gt;
+  &lt;map:resources/&gt;
+  &lt;map:pipelines&gt;
+     &lt;map:pipeline&gt;
+
+   	&lt;map:match pattern="*"&gt;
+   	   &lt;map:generate type="serverpages" src="test/{1}.xsp"/&gt;
+
+	   &lt;map:select type="browser"&gt;
+	      &lt;!-- you could insert parameters here as well --&gt;
+	      &lt;map:when test="explorer"&gt;
+   	         &lt;map:transform src="stylesheets/w3c-2-msie.xsl"/&gt;
+	      &lt;/map:when&gt;
+	      &lt;map:when test="lynx"&gt;
+   	         &lt;map:transform src="stylesheets/dynamic-page2html-text.xsl"/&gt;
+		 &lt;map:serialize/&gt;
+	      &lt;/map:when&gt;
+	      &lt;map:when test="netscape"&gt;
+   	         &lt;map:transform src="stylesheets/ns4.xsl"/&gt;
+	      &lt;/map:when&gt;
+	      &lt;map:otherwise&gt;
+   	         &lt;map:transform src="stylesheets/w3c.xsl"/&gt;
+	      &lt;/map:otherwise&gt;
+	   &lt;/map:select&gt;
+
+   	   &lt;map:transform src="stylesheets/dynamic-page2html.xsl"/&gt;
+   	   &lt;map:serialize/&gt;
+   	&lt;/map:match&gt;
+
+     &lt;/map:pipeline&gt;
+  &lt;/map:pipelines&gt;
+&lt;/map:sitemap&gt;
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+<p align="justify">
+Obviously, this could have been done with matchers as well. Decide on
+yourself, what appears clearer to you in a specific situation.
+</p>
+
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Write Your Own Matchers and Selectors</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Matchers</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<p align="justify">
+Since the basic structure and the assumptions are very similar, we
+look first at matchers and matcher factories and point out the
+differences to selectors at the end.
+</p>
+
+<p align="justify">
+Matchers need to implement the org.apache.cocoon.matching.Matcher
+interface. See javadocs for more details, see also example matchers
+included in the distribution.
+</p>
+
+<p align="justify">
+If you would like to do global configuration for your matcher, it has
+to implement the
+<code><font face="courier, monospaced">org.apache.avalon.framework.configuration.Configurable</font></code>
+interface.
+</p>
+
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="-1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>MatcherFactories</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="90%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<p align="justify">
+Matcher factories generate two distinct parts of source code: a
+processed pattern stored in a global variable in the sitemap and a
+method used to do the actual matching. Since the global variable can
+be of an arbitrary type and it is an argument for the matcher method,
+it is, too, configurable.
+</p>
+
+<p align="justify">
+For each uniquely named matcher the function
+<code><font face="courier, monospaced">generateParameterSource</font></code> and
+<code><font face="courier, monospaced">generateMethodSource</font></code> are called exactly once, while
+<code><font face="courier, monospaced">generateClassSource</font></code> is called for every use of the
+generated matcher in sitemap pipelines.
+</p>
+
+<p align="justify">
+Note that you may use the same matcher factory (or the same matcher or
+whatever) and declare it with different names. Although they will be
+instances of the very same class they would be different instances and
+thus another matcher method would be generated, e.g. using different
+configuration parameters.
+</p>
+
+<p align="justify">
+The generated matcher method looks like
+</p>
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+
+  private Map wildcardMatch (int [] pattern, Map objectModel,
+                             Parameters parameters) {
+
+    // this has been generated by generateMethodSource -&gt;			     
+    HashMap map = new HashMap();
+    String uri = XSPRequestHelper.getSitemapURI(objectModel);
+    if (uri.startsWith("/"))
+      uri = uri.substring(1);
+    if (org.apache.cocoon.matching.helpers.WildcardURIMatcher.match (
+          map, uri, pattern)) {
+      return map;
+    } else {
+      return null;
+    }
+    // &lt;- this has been generated by generateMethodSource
+  }
+
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+<p align="justify">
+The method takes three arguments: the first is the aforementioned by
+<code><font face="courier, monospaced">generateClassSource</font></code> processed pattern, the current environment
+(<code><font face="courier, monospaced">objectModel</font></code>), and the parameters given for the corresponding match
+element. In the example above for nested matchers, this would be the
+<code><font face="courier, monospaced">&lt;map:parameter name="attribute-name" value="__sessionstate"/&gt;</font></code>. The 
+<code><font face="courier, monospaced">int []</font></code> part of the method signature was generated by
+<code><font face="courier, monospaced">generateParameterSource</font></code>.
+</p>
+
+<p align="justify">
+To configure the generated matcher, global configuration parameters
+can be used to create different sources. To read global configuration
+parameters, dom2 is used, you cannot use the usual avalon classes for
+this.
+</p>
+
+<p align="justify">
+Local configuration parameters are avalon parameters and thus can be
+easily read and used with the generated matcher method.
+</p>
+
+<p align="justify">
+If the matcher returns not null, the match was successful and the
+nested sub pipeline is executed. Components in sub pipeline can access
+the matching result through the returned map.
+</p>
+
+<p align="justify">
+The easiest way to write your own matcher would be to base it upon
+org.apache.cocoon.matching.WildcardURIMatcherFactory and override the
+generateMethodSource method with your own.
+</p>
+
+<p align="justify">
+Personally, I like factories more because they are easily written and
+global configuration options can be incorporated in the generated
+source thus the generated source is less complex than a similar
+versatile matcher would be.
+</p>
+
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Selectors</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+<p align="justify">
+Selectors and selector factories differ from their matcher counter
+parts only in the fact that selectors return boolean values rather
+than maps. Thus when a selector returns <code><font face="courier, monospaced">true</font></code> the nested
+elements will be included in the processing, otherwise they are not
+included. Since no map is returned, no additional information may be
+passed to those elements.
+</p>
+
+<p align="justify">
+For selectors, the last argument reads <code><font face="courier, monospaced">param</font></code> instead of
+<code><font face="courier, monospaced">parameters</font></code>.  </p>
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td bgcolor="#0086b2"><img width="1" src="images/dot.gif" height="1"></td>
+</tr>
+<tr>
+<td align="center"><font size="-1" face="arial,helvetica,sanserif" color="#0086b2"><i>Copyright &copy; 1999-2002 The Apache Software Foundation. All Rights Reserved.</i></font></td>
+</tr>
+</table>
+</body>
+</html>

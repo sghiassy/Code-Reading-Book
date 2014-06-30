@@ -1,0 +1,47 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/09/28 17:30:08 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/pvga1/Imakefile,v 3.10 1996/12/23 06:58:02 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = pvg_driver.c pvg_bank.s pvgablt.c pvgasolid.c pvgaBitBlt.c \
+       pvgapntwin.c
+
+OBJS = pvg_driver.o pvg_bank.o pvgablt.o pvgasolid.o pvgaBitBlt.o \
+       pvgapntwin.o
+
+DEFINES = -DPSZ=8
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/cfb -I$(SERVERSRC)/mfb \
+           -I$(SERVERSRC)/mi -I../../vga -I$(SERVERSRC)/include \
+	   -I$(XINCLUDESRC) -I$(FONTINCSRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(pvga1_drv,$(OBJS))
+
+ObjectFromSpecialAsmSource(pvg_bank,bank,NullParameter)
+
+InstallLinkKitNonExecFile(paradise.h,$(LINKKITDIR)/drivers/vga256/pvga1)
+InstallLinkKitNonExecFile(pvg_driver.c,$(LINKKITDIR)/drivers/vga256/pvga1)
+InstallLinkKitNonExecFile(bank.s,$(LINKKITDIR)/drivers/vga256/pvga1)
+InstallLinkKitNonExecFile(pvgablt.c,$(LINKKITDIR)/drivers/vga256/pvga1)
+InstallLinkKitNonExecFile(pvgasolid.c,$(LINKKITDIR)/drivers/vga256/pvga1)
+InstallLinkKitNonExecFile(pvgaBitBlt.c,$(LINKKITDIR)/drivers/vga256/pvga1)
+InstallLinkKitNonExecFile(pvgapntwin.c,$(LINKKITDIR)/drivers/vga256/pvga1)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/pvga1)
+
+DependTarget()
+

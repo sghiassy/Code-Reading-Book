@@ -1,0 +1,51 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/xaa/Imakefile.BPP,v 3.2 1996/12/24 02:27:18 dawes Exp $
+
+XCOMM This is the Imakefile for the depth-specific subdirectories
+XCOMM (xaavga256, xaa16, xaa24, xaa32). It is included from the Imakefiles
+XCOMM in these directories. BPPDEFINES, PixelSize and BPPOBJECTNAME should
+XCOMM be correctly defined for a specific depth.
+
+#include <Server.tmpl>
+
+INCLUDES = -I.. -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+           -I$(XF86SRC)/vga256/enhanced -I$(XF86SRC)/vga256/vga \
+           -I$(SERVERSRC)/cfb -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(FONTINCSRC)
+
+DEFINES = BPPDEFINES
+
+#ifdef VGA256
+SRCS    = xf86scrin.c xf86gc.c xf86gcmisc.c xf86im.c xf86plane.c
+OBJS    = xf86scrin.o xf86gc.o xf86gcmisc.o xf86im.o xf86plane.o
+#else
+#if PixelSize == 8
+SRCS    = xf86scrin.c xf86gc.c xf86gcmisc.c xf86im.c
+OBJS    = xf86scrin.o xf86gc.o xf86gcmisc.o xf86im.o
+#else
+SRCS    = xf86scrin.c xf86gc.c xf86gcmisc.c xf86im.c cfbcpplane.c
+OBJS    = xf86scrin.o xf86gc.o xf86gcmisc.o xf86im.o cfbcpplane.o
+#endif
+#endif
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(BPPOBJECTNAME, $(OBJS))
+
+LinkSourceFile(xf86scrin.c, LinkDirectory)
+LinkSourceFile(xf86gc.c, LinkDirectory)
+LinkSourceFile(xf86gcmisc.c, LinkDirectory)
+LinkSourceFile(xf86im.c, LinkDirectory)
+#if PixelSize != 8
+LinkSourceFile(cfbcpplane.c, LinkDirectory)
+#endif
+#ifdef VGA256
+LinkSourceFile(xf86plane.c, LinkDirectory)
+#endif
+
+#ifndef DontInstallPC98Version
+InstallLinkKitNonExecFile(BPPOBJECTNAME.o,$(LINKKITDIR)/lib)
+#endif
+
+DependTarget()

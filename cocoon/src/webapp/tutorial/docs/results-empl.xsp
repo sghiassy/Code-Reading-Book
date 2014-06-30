@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<xsp:page xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+	  xmlns:esql="http://apache.org/cocoon/SQL/v2">
+  <document>
+    <header>
+      <title>Search Results</title>
+    </header>
+    <body>
+      <s1 title="Employee Search Results">
+        <p>
+	  You can edit an employee by clicking on the "edit"
+	  button, and you can delete an employee by clicking on
+	  the "delete" button.
+	</p>
+	  <esql:connection>
+	    <esql:pool>personnel</esql:pool>
+	    <esql:execute-query>
+	      <esql:query>
+	        SELECT id, name FROM employee
+		WHERE name LIKE <esql:parameter>%<xsp-request:get-parameter name="name"/>%</esql:parameter>
+		ORDER BY name
+	      </esql:query>
+	      <esql:results>
+		<esql:row-results>
+		  <s2>
+		    <xsp:attribute name="title"><esql:get-string column="name"/></xsp:attribute>
+		    <form handler="edit-empl.html">
+		      <xsp:attribute name="name"><esql:get-string column="id"/></xsp:attribute>
+		      <p>
+		        <parameter name="id">
+		          <xsp:attribute name="value"><esql:get-string column="id"/></xsp:attribute>
+		        </parameter>
+		        <submit name="Edit Employee"/><submit name="Delete Employee"/>
+		      </p>
+		    </form>
+		  </s2>
+		</esql:row-results>
+	      </esql:results>
+	        <esql:no-results>
+		  <p>
+		    We could find any employees that matched your search
+		    criteria of "<xsp-request:get-parameter name="name"/>".
+		    <link href="search-empl.html">Go back and try again?</link>
+		  </p>
+		</esql:no-results>
+	    </esql:execute-query>
+	  </esql:connection>
+      </s1>
+    </body>
+  </document>
+</xsp:page>

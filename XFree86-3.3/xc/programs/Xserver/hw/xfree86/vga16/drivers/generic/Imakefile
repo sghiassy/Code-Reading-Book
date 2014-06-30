@@ -1,0 +1,35 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:25:14 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/drivers/generic/Imakefile,v 3.7 1996/12/23 06:52:15 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = gen_driver.c
+
+OBJS = gen_driver.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I../../../vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+DEFINES = -DXF86VGA16
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+
+NormalRelocatableTarget(gen_drv, $(OBJS))
+
+LinkSourceFile(gen_driver.c,$(VGA2DRIVERSRC)/generic)
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga16/generic)
+
+DependTarget()
+

@@ -1,0 +1,121 @@
+.TH ACE_Lock 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Lock \- This is the abstract base class that contains the uniform locking API that is supported by all the \fBACE\fR synchronization mechanisms. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch.h>\fR
+.PP
+Inherited by \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Lock\fR (void)"
+.br
+.RI "\fICE needs a default ctor here.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Lock\fR (void)"
+.br
+.RI "\fINoop virtual destructor.\fR"
+.ti -1c
+.RI "virtual int \fBremove\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBacquire\fR (void) = 0"
+.br
+.RI "\fIBlock the thread until the lock is acquired. Returns -1 on failure.\fR"
+.ti -1c
+.RI "virtual int \fBtryacquire\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBrelease\fR (void) = 0"
+.br
+.RI "\fIRelease the lock. Returns -1 on failure.\fR"
+.ti -1c
+.RI "virtual int \fBacquire_read\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBacquire_write\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBtryacquire_read\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBtryacquire_write\fR (void) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBtryacquire_write_upgrade\fR (void) = 0"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This is the abstract base class that contains the uniform locking API that is supported by all the \fBACE\fR synchronization mechanisms.
+.PP
+.PP
+ This class is typically used in conjunction with the  in order to provide a polymorphic interface to the \fBACE\fR synchronization mechanisms (e.g., , , , etc). Note that the reason that all of \fBACE\fR doesn't use polymorphic locks is that (1) they add ~20% extra overhead for virtual function calls and (2) objects with virtual functions can't be placed into shared memory. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Lock::ACE_Lock (void)
+.PP
+CE needs a default ctor here.
+.PP
+.SS ACE_Lock::~ACE_Lock (void)\fC [virtual]\fR
+.PP
+Noop virtual destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Lock::acquire (void)\fC [pure virtual]\fR
+.PP
+Block the thread until the lock is acquired. Returns -1 on failure.
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::acquire_read (void)\fC [pure virtual]\fR
+.PP
+Block until the thread acquires a read lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. 
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::acquire_write (void)\fC [pure virtual]\fR
+.PP
+Block until the thread acquires a write lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. 
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::release (void)\fC [pure virtual]\fR
+.PP
+Release the lock. Returns -1 on failure.
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::remove (void)\fC [pure virtual]\fR
+.PP
+Explicitly destroy the lock. Note that only one thread should call this method since it doesn't protect against race conditions. 
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::tryacquire (void)\fC [pure virtual]\fR
+.PP
+Conditionally acquire the lock (i.e., won't block). Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::tryacquire_read (void)\fC [pure virtual]\fR
+.PP
+Conditionally acquire a read lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::tryacquire_write (void)\fC [pure virtual]\fR
+.PP
+Conditionally acquire a write lock. If the locking mechanism doesn't support read locks then this just calls . Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+.SS int ACE_Lock::tryacquire_write_upgrade (void)\fC [pure virtual]\fR
+.PP
+Conditionally try to upgrade a lock held for read to a write lock. If the locking mechanism doesn't support read locks then this just calls . Returns 0 on success, -1 on failure. 
+.PP
+Reimplemented in \fBACE_Adaptive_Lock\fR, \fBACE_Lock_Adapter\fR, and \fBACE_Reverse_Lock\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

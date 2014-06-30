@@ -1,0 +1,155 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Creating a simple application</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Creating a simple application</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Creating a simple application.</h4>
+When the effectclasses are created (see <a HREF="using_creatingeffect.htm">Creating an effectclass</a>) it's time
+to create the main application so the effects can be executed. A typical win32 application using DemoGL needs a
+WinMain() function that will start DemoGL and does the necessary initialisation and an application script so 
+DemoGL will create layers and place effectobjects on those layers so the effects get executed.
+<p>
+Below is a typical WinMain() function that starts the example application with just one effect, the CSplash
+effect made in <a HREF="using_creatingeffect.htm">Creating an effectclass</a>. It illustrates some necessary
+calls and code for every DemoGL powered application, however not all possible functionality is included, to
+keep the example simple. The code below is stored in the file mydemo.cpp, but any name will do.
+<pre>
+// mydemo.cpp file, which illustrates the basic code needed for 
+// a DemoGL application
+////////////////////////////////////////////////////////////////
+
+// Exclude rarely-used stuff from Windows headers
+#define WIN32_LEAN_AND_MEAN	
+
+#include &lt;windows.h&gt;
+
+// include DemoGL headerfile
+#include &quot;DemoGL_DLL.h&quot;
+
+// Include all effect headers
+#include &quot;CSplash.h&quot;
+
+////////////////////////////////////////
+//         C O D E                    //
+////////////////////////////////////////
+
+// Purpose: main routine that is called when the 
+// application is started. 
+int APIENTRY 
+WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
+	LPSTR lpCmdLine, int nCmdShow)
+{
+	// declare pointers to all effects
+	CSplash			*pSplash;
+
+	// necessary objects
+	SStartupDat		sdStartupDatValues;
+
+	// create objects of all effects
+	pSplash = new CSplash();
+
+	// set variables that will affect execution. We will
+	// load from a directory. For illustration purposes
+	// we set all variables to a certain value
+	DEMOGL_SetVariable(DGL_VF_VSYNC,true);
+	DEMOGL_SetVariable(DGL_VF_FILESRC,DGL_FSRC_LOADFROMDIR);
+	DEMOGL_SetVariable(DGL_VF_SRCDIR,&quot;demodat&quot;);
+	DEMOGL_SetVariable(DGL_VF_DATAFILENAME,NULL);
+	DEMOGL_SetVariable(DGL_VF_SCRIPTFILENAME,&quot;demoflow&quot;);
+	DEMOGL_SetVariable(DGL_VF_SHOWFPS,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERSHOWFPS,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERSHOWCONSOLE,false);
+	DEMOGL_SetVariable(DGL_VF_SHOWDEBUGINFO,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERSHOWDEBUGINFO,false);
+	DEMOGL_SetVariable(DGL_VF_NEVERRESCALETEXTURES,false);
+	DEMOGL_SetVariable(DGL_VF_QUICKBOOT,false);
+
+	// Set the startup variables. Do that via a structure 
+	// that we'll pass to DEMOGL_AppRun() function
+	sdStartupDatValues.m_bDQ32bit=true;
+	sdStartupDatValues.m_bFullScreen=true;
+	sdStartupDatValues.m_bRescaleTextures=true;
+	sdStartupDatValues.m_bSaveInRegistry=true;
+	sdStartupDatValues.m_bTQ32bit=true;
+	sdStartupDatValues.m_iResolution=DGL_RES_800x600;
+	strncpy(sdStartupDatValues.m_sDemoName,&quot;My Demo&quot;,DGL_SD_STRINGLENGTH);
+	strncpy(sdStartupDatValues.m_sReleasedBy,&quot;Me, myself and I&quot;,
+		DGL_SD_STRINGLENGTH);
+	sdStartupDatValues.m_bSound=true;
+	sdStartupDatValues.m_bSS_3DSound=true;
+	sdStartupDatValues.m_bSS_LowQuality=false;
+	sdStartupDatValues.m_bSS_16bit=true;
+	sdStartupDatValues.m_bSS_A3D=false;
+	sdStartupDatValues.m_bSS_EAX=true;
+	sdStartupDatValues.m_bSS_Stereo=true;
+	sdStartupDatValues.m_iSS_OverallVolume=90;
+	sdStartupDatValues.m_iSS_SoundDevice=0;	
+
+	// register all effectobjects with DemoGL
+	DEMOGL_EffectRegister(pSplash, &quot;SPLASH&quot;);
+
+	// Enable loading progress bar. This example bar is located at 
+	// the bottom of the screen.
+	DEMOGL_LoadingPBEnable(DGL_CNTRL_PGB_LINEAR, 1.0f, 0.02f, 0.0f, 0.00f);
+	DEMOGL_LoadingPBSetAppearance(true, false, GL_SRC_COLOR, 
+		GL_ONE_MINUS_SRC_COLOR, 1.0f, 0.5f,0.5f,0.5f, 1.0f,1.0f,1.0f);
+
+	// Start The Demo! We won't return until the demo ends (by 
+	// userinteraction or by script) or when a fatal error occurs.
+	DEMOGL_AppRun(hInstance, &amp;sdStartupDatValues, &quot;DemoGL Example&quot;, false,
+		0,0, RUNTYPE_NORMAL);
+
+	// End it. Call this routine to signal demogl it's all over and it 
+	// should release claimed resources.
+	DEMOGL_AppEnd();
+
+	// delete all Effectobjects
+	delete pSplash;
+
+	// end.
+	return 0;
+}
+</pre>
+<p>
+The WinMain above is setting every DemoGL variable, but most defaults would do fine.
+When the code in WinMain is executed, it will result in a blank, black screen. This is
+correct, since we haven't defined any application script yet, so no TLE's are known by DemoGL.
+WinMain sets the variable DGL_VF_SCRIPTFILENAME to 'demoflow', since that is the name of
+the file with the application script contents. Because there is just one effect registered,
+we should prepare that effect and start it. Below is the application script contents, which
+will prepare the effectobject SPLASH before application execution and will start the effect
+object SPLASH at time=0, the application start timespot.
+<p>
+<pre>
+# application script file 'demoflow' contents
+
+# Prepare effect SPLASH
+-1;SPLASH;PREPARE;
+
+# Start effect SPLASH on layer 0
+0;SPLASH;START;0;
+
+# End application after 30 seconds
+30000;_SYSTEM;END;
+</pre>
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

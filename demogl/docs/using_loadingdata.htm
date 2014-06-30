@@ -1,0 +1,49 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Loading data into your effectclasses</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Loading data into your effectclasses</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Loading data into your effectclasses.</h4>
+In the topic <a HREF="using_creatingeffect.htm">Create an effectclass</a>, the class implemented, CSplash,
+already loaded one file: logo.jpg. This was done in the Init() method of the effectclass, the right
+place to put all the fileloading calls. The Init() methods are called before execution starts and don't need
+any TLE's to get called, unlike the Prepare() method calls, so whenever possible, place calls to file loading
+functions in the Init() method of your effectclasses.
+<p>
+Besides loading a texture using <a HREF="ref_functions_DEMOGL_TextureLoad.htm">DEMOGL_TextureLoad</a> or loading
+a soundfile using a _SOUNDSYSTEM related TLE in the application script, you can load any file you like using
+<a HREF="ref_functions_DEMOGL_FileLoad.htm">DEMOGL_FileLoad</a>. DEMOGL_FileLoad returns a pointer to the
+block of memory containing the filedata. The pointer is a pointer to an unsigned char or byte, so if the data
+in the file is of another type, first cast the pointer to that type. 
+<p>
+To get the length of the file, use another function: <a HREF="ref_functions_DEMOGL_FileGetLength.htm">DEMOGL_FileGetLength</a>. 
+This function will return the length in bytes of the file specified. 
+<p>
+When you're done with the data you loaded from a file, it's wise to free up the memory the file occupies. Because DemoGL allocated
+the memory, only DemoGL can free the memory. Do this by calling <a HREF="ref_functions_DEMOGL_FileFree.htm">DEMOGL_FileFree</a>.
+Pass the pointer you received when calling DEMOGL_FileLoad to DEMOGL_FileFree and the memory is freed. When you loaded
+a texture using DEMOGL_TextureLoad, you should use the function <a HREF="ref_functions_DEMOGL_TextureDelete.htm">DEMOGL_TextureDelete</a>
+to free up the data of the texture plus remove it from the texture store inside DemoGL. To free sound elements loaded with TLE's or
+with API calls, use <a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm">DEMOGL_SoundSystemFreeElement</a>. So every <i>loading</i>
+functionality has its own <i>freeing</i> functionality.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 02-jun-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

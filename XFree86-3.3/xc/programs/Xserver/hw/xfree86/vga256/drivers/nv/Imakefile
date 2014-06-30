@@ -1,0 +1,36 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/10/27 13:00:56 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/nv/Imakefile,v 3.2 1996/12/27 07:05:41 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = nv_driver.c
+
+OBJS = nv_driver.o
+
+DEFINES = -DPSZ=8
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+           -I$(SERVERSRC)/cfb -I../../vga \
+           -I$(FONTINCSRC) -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(nv_drv,$(OBJS))
+
+InstallLinkKitNonExecFile(nv_driver.c,$(LINKKITDIR)/drivers/vga256/nv)
+InstallLinkKitNonExecFile(nvreg.h,$(LINKKITDIR)/drivers/vga256/nv)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/nv)
+
+DependTarget()

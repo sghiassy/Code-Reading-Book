@@ -1,0 +1,431 @@
+<?xml version="1.0"?>
+
+<slides>
+  <title>Adding XML Capabilities with Cocoon</title>
+
+  <authors>
+   <person>
+    <name>Stefano Mazzocchi</name>
+    <email>stefano@apache.org</email>
+   </person>
+  </authors>
+
+  <event>
+   <name>ApacheCon 2000</name>
+   <date>March 9, 2000</date>
+   <time>7:30PM - 9:00PM</time>
+   <location>Caribe Royale Resort Suites &amp; Villas. Orlando, Florida, U.S.A.</location>
+  </event>
+
+  <overview>
+   This session will show how to install, set up, and work with the Cocoon XML
+   publishing framework. The session will not cover XML technical details but
+   will show detailed examples on Cocoon power and details on future development.
+  </overview>
+
+  <section>
+   <title>Introduction</title>
+   <subtitle>let's see if this is any good for me</subtitle>
+
+   <slide>
+    <title>Who am I?</title>
+    <ul>
+     <li>My name is <strong>Stefano Mazzocchi</strong></li>
+     <li>Pronounced: <em>Stephan-O Madzock-key</em></li>
+     <li>I'm italian</li>
+     <li>I'm a student</li>
+     <li>I'm Cocoon's author and main architect</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Ok, but what is Cocoon?</title>
+    <ul>
+     <li>A publishing framework</li>
+     <li>A document generator</li>
+     <li>A small revolution</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Publishing framework?</title>
+    <ul>
+     <li>something that helps you publishing your stuff on the web</li>
+     <li>something that should impose strict yet flexible practices</li>
+     <li>something that should allow you to reduce your costs</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Costs? What costs?</title>
+    <ul>
+     <li>management costs</li>
+     <li>friction between human resources</li>
+     <li>costs of adapting to new needs</li>
+     <li>scalability costs</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>The Cocoon Idea</title>
+    <quote>
+     The Cocoon project aims to change the way web information is created, 
+     rendered and served.
+    </quote>
+    <quote>
+     This new paradigm is based on fact that document content, style and
+     logic are often created by different individuals or working groups.
+    </quote>
+    <quote>
+     Cocoon aims to a complete separation of the three layers, allowing the 
+     three layers to be independently designed, created and managed, reducing 
+     management overhead, increasing work reuse and reducing time to market.
+    </quote>
+   </slide>
+
+   <slide>
+    <title>The XML Model</title>
+    <p>Cocoon is an XML publishing framework.</p>
+    <p>Key technolgies are:</p>
+    <ul>
+     <li>XML</li>
+     <li>XML Namespaces</li>
+     <li>XSLT</li>
+     <li>XPath</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Supported Publishing Formats</title>
+    <ul>
+     <li>HTML+CSS</li>
+     <li>XSL(FO)</li>
+     <li>SVG</li>
+     <li>WML</li>
+     <li>VoxML</li>
+     <li>VRML</li>
+     <li>... you name it!</li>
+    </ul>
+   </slide>
+   
+   <slide>
+    <title>What do you mean?</title>
+    <p>I mean that Cocoon is able to <em>publish</em> your data in any of
+    the above formats depending on user parameters or user devices.</p>
+    <p>All coming from a single file.</p>
+    <p>And easily extensible to any other format thru the use of a highly
+    modular architecture.</p>
+   </slide>
+    
+   <slide>
+    <title>Hard to believe?</title>
+    <p><fork uri="../welcome">Let's take the tour.</fork></p>
+   </slide>
+  </section>
+
+  <section>
+   <title>Installation</title>
+   <subtitle>How to show your boss it was worth spending all that money for ApacheCon!</subtitle>
+
+   <slide>
+    <title>Cocoon Requirement</title>
+    <p>To install Cocoon you need:</p>
+    <ul>
+     <li>a Java 1.1 compatible virtual machine</li>
+     <li>a web server equipped with a Java Servlet API 2.x compliant servet engine</li>
+    </ul>
+   </slide>
+   
+   <slide>
+    <title>Why Java?</title>
+    <ul>
+     <li>Portability</li>
+     <li>Strong OO features (interfaces)</li>
+     <li>Availability of XML components</li>
+     <li>Dynamic Linking capabilities</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Why a servlet?</title>
+    <ul>
+     <li>again, portability</li>
+     <li>ease of use</li>
+     <li>natural choice with Java for the web</li>
+    </ul>
+   </slide>
+   
+   <slide>
+    <title>Why not Servlet 2.2 or Java 1.2?</title>
+    <p>guess what? portability!</p>
+    <ul>
+     <li>no 2.2 replacement for JServ available (yet! Tomcat is coming!)</li>
+     <li>no JDK 1.2 port on every platform (even if Linux support is finally out!)</li>
+    </ul>
+   </slide>
+   
+   <slide>
+    <title>How do I install it on my servlet engine?</title>
+    <p>I probably don't know!</p>
+    <p>I develop on Apache stuff and know almost nothing about other servlet engines.</p>
+    <p>Even if Cocoon has been reported to work on all known ones, both commercial and free.</p>
+    <p>Anyway, you find detailed instructions for both <em>JServ</em> and <em>Tomcat</em> in
+      the handout and more up-to-date information on the web site.</p>
+   </slide>
+  </section>
+
+  <section>
+   <title>Cocoon Internals</title>
+   <subtitle>getting a better picture</subtitle>
+
+   <slide>
+    <title>Cocoon General Vision</title>
+    <figure src="slides/schema.jpg"/>
+   </slide>
+   
+   <slide>
+    <title>The Content Generation Model</title>
+    <ul>
+     <li>producers: generate XML content</li>
+     <li>processors: process XML content</li>
+     <li>formatters: format XML into a stream representation</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Producer (generator)</title>
+    <ul>
+     <li>adapts the outside world to XML</li>
+     <li>produces <em>structured</em> information (now DOM, later SAX)</li>
+     <li>a parser is a producer</li>
+     <li>not all producers are parsers</li>
+     <li>producers are the XML equivalent of Servlets</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Processor (filter)</title>
+    <ul>
+     <li>process the structured content that comes in</li>
+     <li>creates structured content</li>
+     <li>examples: XSLT processor, SQL processor, LDAP processor</li>
+     <li>there is not such </li>
+     <li>Cocoon proocessors are the XML equivalent of Servlet Chaining</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Formatter (serializer)</title>
+    <ul>
+     <li>creates the final stream</li>
+     <li>examples: FOP (fo-&gt;PDF), SVG serializer</li>
+    </ul>
+   </slide>
+  </section>
+
+  <section>
+   <title>Dynamic Content</title>
+   <subtitle>let's do useful stuff</subtitle>
+
+   <slide>
+    <title>Logic-Content Integration</title>
+    <p>Possible alternatives are (for java):</p>
+    <ul>
+     <li>JSP</li>
+     <li>WebMacro</li>
+     <li>GSP</li>
+    </ul>     
+   </slide>
+
+   <slide>
+    <title>Logic-Content Integration</title>
+    <p>Needs:</p>
+    <ul>
+     <li>logic and content reside on different files</li>
+     <li>reuse of logic on different documents</li>
+     <li>performance</li>
+     <li>programming language abstraction</li>
+     <li>output abstraction</li>
+    </ul>     
+   </slide>
+
+   <slide>
+    <title>The problems of JSP</title>
+    <ul>
+     <li>logic has direct access to output</li>
+     <li>output is always streamed</li>
+     <li>not really designed for language abstraction</li>
+    </ul>     
+   </slide>
+
+   <slide>
+    <title>Our solution: XSP</title>
+    <ul>
+     <li>logic has <strong>not</strong> direct access to output</li>
+     <li>output is <strong>never</strong> streamed</li>
+     <li>designed for language abstraction</li>
+    </ul>     
+   </slide>
+
+   <slide>
+    <title>What does it look like?</title>
+    <source><![CDATA[
+<xsp:page>
+ <page>
+  <p>Current time is <xsp:expr>new Date()</xsp:expr></p>
+ </page>
+</xsp:page>
+    ]]></source>     
+   </slide>
+
+   <slide>
+    <title>How does it work?</title>
+    <ul>
+     <li>the XSP page is transformed into source code</li>
+     <li>the source code is compiled</li>
+     <li>the binary is executed at runtime</li>
+     <li>basically like any other server pages technology</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Ok, so what's the point?</title>
+    <ul>
+     <li>you don't have access to the output stream!</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>But still, this is mixing content and logic!</title>
+    <p>Ok, look at this:</p>
+    
+    <source><![CDATA[
+<xsp:page>
+ <page>
+  <p>Current time is <util:date/></p>
+ </page>
+</xsp:page>
+    ]]></source>
+    
+    <p>then you let Cocoon transform this with</p>
+
+    <source><![CDATA[
+<xsl:template match="util:date">
+ <xsp:expr>new Data()</xsp:expr>
+</xsl:template>
+    ]]></source>
+   </slide>
+
+   <slide>
+    <title>Possible different scenarios</title>
+    <ul>
+     <li><link uri="../view-source?filename=/docs/samples/slides/page.xml">integrated xsp tags</link></li>
+     <li><link uri="../view-source?filename=/docs/samples/slides/clean-page.xml">custom tags transformed by your stylesheets</link></li>
+     <li><link uri="../view-source?filename=/docs/samples/slides/lib-page.xml">use of cocoon taglibs</link></li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Other dynamic possibilities</title>
+    <ul>
+     <li><link uri="../view-source?filename=/docs/samples/slides/database-page.xml">SQLProcessor</link></li>
+     <li><link uri="../view-source?filename=/docs/samples/slides/ldap.xml">LDAPProcessor</link></li>
+     <li>... add yours</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Moving this into taglibs: why?</title>
+    <ul>
+     <li>performance</li>
+     <li>integration</li>
+     <li>portability</li>
+     <li>standardization</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Still not powerful enough?</title>
+    <p>Write your own:</p>
+    <ul>
+     <li>producer: to create from-java dynamic content</li>
+     <li>processor: to process some XML in some complex ways</li>
+     <li>formatter: to format an XML file to some binary formats</li>
+    </ul>
+   </slide>
+  </section>
+
+  <section>
+   <title>Future Development: Cocoon2</title>
+   <subtitle>improving the bleeding edge</subtitle>
+
+   <slide>
+    <title>Main Differences</title>
+    <ul>
+     <li>event driven architecture</li>
+     <li>improved overall structure</li>
+     <li>complete separation of contexts</li>
+     <li>better batch support</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Main Benefits</title>
+    <ul>
+     <li>lower per-request memory consumption</li>
+     <li>globally faster</li>
+     <li>increased perceived performance</li>
+     <li>enhanced modularity</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Main Drawbacks</title>
+    <ul>
+     <li>steeper learning curve (due to the sitemap)</li>
+     <li>module back incompatibility</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>The Cocoon pyramid of contracts</title>
+    <figure src="slides/pyramid-model.gif"/>
+   </slide>
+  </section>
+
+  <section>
+   <title>Final Info</title>
+   <subtitle>where to find out more</subtitle>
+   
+   <slide>
+    <title>Where do I get more info?</title>
+    <ul>
+     <li>Cocoon: <fork uri="http://xml.apache.org/cocoon"><strong>http://xml.apache.org/cocoon</strong></fork></li>
+     <li>XML and related info: <fork uri="http://www.xmlinfo.com"><strong>http://www.xmlinfo.com</strong></fork></li>
+     <li>XML and related specs: <fork uri="http://www.w3c.org"><strong>http://www.w3c.org</strong></fork></li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>The Cocoon Project</title>
+    <p>Active Developers (in alphabetical order):</p>
+    <ul>
+     <li>Donald Ball</li>
+     <li>Pierpaolo Fumagalli</li>
+     <li>Stefano Mazzocchi</li>
+     <li>Giacomo Pati</li>
+     <li>Ricardo Rocha</li>
+    </ul>
+   </slide>
+
+   <slide>
+    <title>Thank you!</title>
+    <p>Ok, I'm preparing the asbesto suite for the Q/A! :-)</p>
+   </slide>
+  </section>
+
+  <legal>
+   Copyright (c) 2000 Apache Software Foundation.
+  </legal>
+
+</slides>

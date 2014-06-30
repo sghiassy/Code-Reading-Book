@@ -1,0 +1,792 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document>
+
+    &project;
+
+    <properties>
+        <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+        <title>Realm Configuration HOW-TO</title>
+    </properties>
+
+<body>
+
+
+<section name="Quick Start">
+
+<p>This document describes how to configure Tomcat to support <em>container
+managed security</em>, by connecting to an existing "database" of usernames,
+passwords, and user roles.  You only need to care about this if you are using
+a web application that includes one or more
+<code>&lt;security-constraint&gt;</code> elements, and a
+<code>&lt;login-config&gt;</code> element defining how users are required
+to authenticate themselves.  If you are not utilizing these features, you can
+safely skip this document.</p>
+
+<p>For fundamental background information about container managed security,
+see the <a href="http://java.sun.com/products/servlet/download.html">Servlet
+Specification (Version 2.3)</a>, Section 12.  For a more introductory level
+document for web application developers as well as administrators, see
+(<strong>FIXME</strong> - link to backgrounder on container managed security
+to be provided).</p>
+
+<p>For information about utilizing the <em>Single Sign On</em> feature of
+Tomcat 4 (allowing a user to authenticate themselves once across the entire
+set of web applications associated with a virtual host), see
+<a href="config/host.html#Single Sign On">here</a>.</p>
+
+</section>
+
+
+<section name="Overview">
+
+
+<subsection name="What is a Realm?">
+
+<p>A <strong>Realm</strong> is a "database" of usernames and passwords that
+identify valid users of a web application (or set of web applications), plus
+an enumeration of the list of <em>roles</em> associated with each valid user.
+You can think of roles as similar to <em>groups</em> in Unix-like operating
+systems, because access to specific web application resources is granted to
+all users possessing a particular role (rather than enumerating the list of
+associated usernames).  A particular user can have any number of roles
+associated with their username.</p>
+
+<p>Although the Servlet Specification describes a portable mechanism for
+applications to <em>declare</em> their security requirements (in the
+<code>web.xml</code> deployment descriptor), there is no portable API
+defining the interface between a servlet container and the associated user
+and role information.  In many cases, however, it is desireable to "connect"
+a servlet container to some existing authentication database or mechanism
+that already exists in the production environment.  Therefore, Tomcat 4
+defines a Java interface (<code>org.apache.catalina.Realm</code>) that
+can be implemented by "plug in" components to establish this connection.
+Three standard plug-ins are provided, supporting connection to three different
+sources of authentication information:</p>
+<ul>
+<li><a href="#JDBCRealm">JDBCRealm</a> - Accesses authentication information
+    stored in a relational database, accessed via a JDBC driver.</li>
+<li><a href="#JNDIRealm">JNDIRealm</a> - Accesses authentication information
+    stored in an LDAP based directory server, accessed via a JNDI provider.
+    </li>
+<li><a href="#MemoryRealm">MemoryRealm</a> - Accesses authentication
+    information stored in an in-memory object collection, which is initialized
+    from an XML document (<code>conf/tomcat-users.xml</code>).</li>
+</ul>
+
+<p>It is also possible to write your own <code>Realm</code> implementation,
+and integrate it with Tomcat 4.  However, doing this is beyond the scope of
+this document.  See (<strong>FIXME</strong> - reference to developer stuff)
+for more information.</p>
+
+</subsection>
+
+
+<subsection name="Configuring a Realm">
+
+<p>Before getting into the details of the standard Realm implementations, it is
+important to understand, in general terms, how a Realm is configured.  In
+general, you will be adding an XML element to your <code>conf/server.xml</code>
+configuration file, that looks something like this:</p>
+
+<source>
+&lt;Realm className="... class name for this implementation"
+       ... other attributes for this implementation .../&gt;
+</source>
+
+<p>The <code>&lt;Realm&gt;</code> element can be nested inside one of three
+different elements, which has a direct impact on the "scope" of that Realm
+(i.e. which web applications will share the same authentication information):
+</p>
+<ul>
+<li><em>Inside an &lt;Engine&gt; element</em> - This Realm will be shared
+    across ALL web applications on ALL virtual hosts, UNLESS it is overridden
+    by a Realm element nested inside a subordinate <code>&lt;Host&gt;</code>
+    or <code>&lt;Context&gt;</code> element.</li>
+<li><em>Inside a &lt;Host&gt; element</em> - This Realm will be shared across
+    ALL web applications for THIS virtual host, UNLESS it is overridden
+    by a Realm element nested inside a subordinate <code>&lt;Context&gt;</code>
+    element.</li>
+<li><em>Inside a &lt;Context&gt; element</em> - This Realm will be used ONLY
+    for THIS web application.</li>
+</ul>
+
+
+</subsection>
+
+
+</section>
+
+
+<section name="Standard Realm Implementations">
+
+
+<subsection name="JDBCRealm">
+
+<h3>Introduction</h3>
+
+<p><strong>JDBCRealm</strong> is an implementation of the Tomcat 4
+<code>Realm</code> interface that looks up users in a relational database
+accessed via a JDBC driver.  There is substantial configuration flexibility
+that lets you adapt to existing table and column names, as long as your
+database structure conforms to the following requirements:</p>
+<ul>
+<li>There must be a table, referenced below as the <em>users</em> table,
+    that contains one row for every valid user that this <code>Realm</code>
+    should recognize.</li>
+<li>The <em>users</em> table must contain at least two columns (it may
+    contain more if your existing applications required it):
+    <ul>
+    <li>Username to be recognized by Tomcat when the user logs in.</li>
+    <li>Password to be recognized by Tomcat when the user logs in.
+        This value may in cleartext or digested - see below for more
+        information.</li>
+    </ul></li>
+<li>There must be a table, referenced below as the <em>user roles</em> table,
+    that contains one row for every valid role that is assigned to a
+    particular user.  It is legal for a user to have zero, one, or more than
+    one valid role.</li>
+<li>The <em>user roles</em> table must contain at least two columns (it may
+    contain more if your existing applications required it):
+    <ul>
+    <li>Username to be recognized by Tomcat (same value as is specified
+        in the <em>users</em> table).</li>
+    <li>Role name of a valid role associated with this user.</li>
+    </ul></li>
+</ul>
+
+<h3>Quick Start</h3>
+
+<p>To set up Tomcat to use JDBCRealm, you will need to follow these steps:</p>
+<ol>
+<li>If you have not yet done so, create tables and columns in your database
+    that conform to the requirements described above.</li>
+<li>Configure a database username and password for use by Tomcat, that has
+    at least read only access to the tables described above.  (Tomcat will
+    never attempt to write to these tables.)</li>
+<li>Place a copy of the JDBC driver you will be using inside the
+    <code>$CATALINA_HOME/server/lib</code> directory (if you do not need it
+    visible to web applications) or <code>$CATALINA_HOME/common/lib</code>
+    (if it will be used both by Tomcat 4 <em>and</em> by your apps).
+    Note that <strong>only</strong> JAR files are recognized!</li>
+<li>Set up a <code>&lt;Realm&gt;</code> element, as described below, in your
+    <code>$CATALINA_HOME/conf/server.xml</code> file.</li>
+<li>Restart Tomcat 4 if it is already running.</li>
+</ol>
+
+<h3>Realm Element Attributes</h3>
+
+<p>To configure JDBCRealm, you will create a <code>&lt;Realm&gt;</code>
+element and nest it in your <code>$CATALINA_HOME/conf/server.xml</code> file,
+as described <a href="#Configuring a Realm">above</a>.  The following
+attributes are supported by this implementation:</p>
+
+<attributes>
+
+  <attribute name="className" required="true">
+    <p>The fully qualified Java class name of this Realm implementation.
+    You <strong>MUST</strong> specify the value
+    "<code>org.apache.catalina.realm.JDBCRealm</code>" here.</p>
+  </attribute>
+
+  <attribute name="connectionName" required="true">
+    <p>The database username used to establish a JDBC connection.</p>
+  </attribute>
+
+  <attribute name="connectionPassword" required="true">
+    <p>The database password used to establish a JDBC connection.</p>
+  </attribute>
+
+  <attribute name="connectionURL" required="true">
+    <p>The database URL used to establish a JDBC connection.</p>
+  </attribute>
+
+  <attribute name="debug" required="false">
+    <p>The level of debugging detail logged by this Realm
+    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
+    generate more detailed output.  If not specified, the default
+    debugging detail level is zero (0).</p>
+  </attribute>
+
+  <attribute name="digest" required="false">
+    <p>The digest algorithm used to store passwords in non-plaintext formats.
+    Valid values are those accepted for the algorithm name by the
+    <code>java.security.MessageDigest</code> class.  See
+    <a href="#Digested Passwords">Digested Passwords</a> for more
+    information.  If not specified, passwords are stored in clear text.</p>
+  </attribute>
+
+  <attribute name="driverName" required="true">
+    <p>The fully qualified Java class name of the JDBC driver to be used.
+    Consult the documentation for your JDBC driver for the appropriate
+    value.</p>
+  </attribute>
+
+  <attribute name="roleNameCol" required="true">
+    <p>The name of the column, in the <em>user roles</em> table, that
+    contains the name of a role assigned to this user.</p>
+  </attribute>
+
+  <attribute name="userCredCol" required="true">
+    <p>The name of the column, in the <em>users</em> table, that contains
+    the password for this user (either in clear text, or digested if the
+    <code>digest</code> attribute is set).</p>
+  </attribute>
+
+  <attribute name="userNameCol" required="true">
+    <p>The name of the column, in the <em>users</em> and <em>user roles</em>
+    tables, that contains the username of this user.</p>
+  </attribute>
+
+  <attribute name="userRoleTable" required="true">
+    <p>The name of the table that contains one row for each <em>role</em>
+    assigned to a particular <em>username</em>.  This table must include at
+    least the columns named by the <code>userNameCol</code> and
+    <code>roleNameCol</code> attributes.</p>
+  </attribute>
+
+  <attribute name="userTable" required="true">
+    <p>The name of the table that contains one row for each <em>username</em>
+    to be recognized by Tomcat.  This table must include at least the columns
+    named by the <code>userNameCol</code> and <code>userCredCol</code>
+    attributes.</p>
+  </attribute>
+
+</attributes>
+
+<h3>Example</h3>
+
+<p>An example SQL script to create the needed tables might look something
+like this (adapt the syntax as required for your particular database):</p>
+<source>
+create table users (
+  user_name         varchar(15) not null primary key,
+  user_pass         varchar(15) not null
+);
+
+create table user_roles (
+  user_name         varchar(15) not null,
+  role_name         varchar(15) not null,
+  primary key (user_name, role_name)
+);
+</source>
+
+<p>Example <code>Realm</code> elements are included (commented out) in the
+default <code>$CATALINA_HOME/conf/server.xml</code> file.  Here's an example
+for using a MySQL database called "authority", configured with the tables
+described above, and accessed with username "dbuser" and password "dbpass":</p>
+<source>
+&lt;Realm className="org.apache.catalina.realm.JDBCRealm" debug="99"
+      driverName="org.gjt.mm.mysql.Driver"
+   connectionURL="jdbc:mysql://localhost/authority?user=dbuser;password=dbpass"
+       userTable="users" userNameCol="user_name" userCredCol="user_pass"
+   userRoleTable="user_roles" roleNameCol="role_name"/&gt;
+</source>
+
+<h3>Additional Notes</h3>
+
+<p>JDBCRealm operates according to the following rules:</p>
+<ul>
+<li>When a user attempts to access a protected resource for the first time,
+    Tomcat 4 will call the <code>authenticate()</code> method of this
+    <code>Realm</code>.  Thus, any changes you have made to the database
+    directly (new users, changed passwords or roles, etc.) will be immediately
+    reflected.</li>
+<li>Once a user has been authenticated, the user (and his or her associated
+    roles) are cached within Tomcat for the duration of the user's login.
+    (For FORM-based authentication, that means until the session times out or
+    is invalidated; for BASIC authentication, that means until the user
+    closes their browser).  Any changes to the database information for an
+    already authenticated user will <strong>not</strong> be reflected until
+    the next time that user logs on again.</li>
+<li>Administering the information in the <em>users</em> and <em>user roles</em>
+    table is the responsibility of your own applications.  Tomcat does not
+    provide any built-in capabilities to maintain users and roles.</li>
+<li>Debugging and exception messages logged by this <code>Realm</code> will
+    be recorded by the <code>Logger</code> that is associated with our
+    surrounding <code>Context</code>, <code>Host</code>, or
+    <code>Engine</code>.  By default, the corresponding Logger will create a
+    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
+</ul>
+
+</subsection>
+
+
+<subsection name="JNDIRealm">
+
+<h3>Introduction</h3>
+
+<p><strong>JNDIRealm</strong> is an implementation of the Tomcat 4
+<code>Realm</code> interface that looks up users in a directory server
+accessed by a JNDI provider (typically, the standard LDAP provider that
+is available with the JNDI API classes).  There is substantial configuration
+flexibility that lets you adapt to the existing schema inside your directory
+server, as long as it conforms to the following requirements:</p>
+<ul>
+<li>Each user that can be authenticated is represented by an individual
+    element in the top level <code>DirContext</code> that is accessed
+    via the <code>connectionURL</code> attribute.</li>
+<li>The <em>user</em> element must have the following characteristics:
+    <ul>
+    <li>The distinguished name (<code>dn</code>) attribute of this element
+        contains the username that is presented for authentication.</li>
+    <li>There must be an attribute (identified by the <code>userPassword</code>
+        attribute of our <code>Realm</code> element) that contains the user's
+        password, either in clear text or digested (see below for more info).
+        </li>
+    </ul></li>
+<li>Each group of users that has been assigned a particular role is
+    represented by an individual element in the top level
+    <code>DirContext</code> that is accessed via the
+    <code>connectionURL</code> attribute.</li>
+<li>The <em>user group</em> element must have the following characteristics:
+    <ul>
+    <li>The set of all possible groups of interest can be selected by an LDAP
+        search pattern configured by the <code>roleSearch</code> attribute
+        of our <code>Realm</code> element.</li>
+    <li>The <code>roleSearch</code> pattern optionally includes pattern
+        replacements "{0}" for the distinguished name, and/or "{1} for the
+        username, of the authenticated user for which roles will be
+        retrieved.</li>
+    <li>The <code>roleBase</code> attribute can be set to the element that
+        is the base of the search for matching roles.  If not specified,
+        the entire directory context will be searched.</li>
+    <li>The <code>roleSubtree</code> attribute can be set to <code>true</code>
+        if you wish to search the entire subtree of the directory context.
+        The default value of <code>false</code> requests a search of only the
+        current level.</li>
+    <li>The element includes an attribute (whose name is configured by the
+        <code>roleName</code> attribute of our <code>Realm</code> element)
+        containing the name of the role represented by this element.</li>
+    </ul></li>
+<li>There must be an administrator username and password that Tomcat can
+    use to establish a connection to the directory server, with at least
+    read-only access to the information described above.  A future
+    version of Tomcat will support an option to use the user's username and
+    password to attempt this connection.</li>
+</ul>
+
+<h3>Quick Start</h3>
+
+<p>To set up Tomcat to use JNDIRealm, you will need to follow these steps:</p>
+<ol>
+<li>Make sure your directory server is configured with a schema that matches
+    the requirements listed above.</li>
+<li>Configure a username and password for use by Tomcat, that has
+    at least read only access to the information described above.  (Tomcat will
+    never attempt to modify this information.)</li>
+<li>Place a copy of the JNDI driver you will be using (typically
+    <code>ldap.jar</code> available with JNDI) inside the
+    <code>$CATALINA_HOME/server/lib</code> directory (if you do not need it
+    visible to web applications) or <code>$CATALINA_HOME/common/lib</code>
+    (if it will be used both by Tomcat 4 <em>and</em> by your apps).</li>
+<li>Set up a <code>&lt;Realm&gt;</code> element, as described below, in your
+    <code>$CATALINA_HOME/conf/server.xml</code> file.</li>
+<li>Restart Tomcat 4 if it is already running.</li>
+</ol>
+
+<h3>Realm Element Attributes</h3>
+
+<p>To configure JNDIRealm, you will create a <code>&lt;Realm&gt;</code>
+element and nest it in your <code>$CATALINA_HOME/conf/server.xml</code> file,
+as described <a href="#Configuring a Realm">above</a>.  The following
+attributes are supported by this implementation:</p>
+
+<attributes>
+
+  <attribute name="className" required="true">
+    <p>The fully qualified Java class name of this Realm implementation.
+    You <strong>MUST</strong> specify the value
+    "<code>org.apache.catalina.realm.JDBCRealm</code>" here.</p>
+  </attribute>
+
+  <attribute name="connectionName" required="true">
+    <p>The directory server username used to establish a JNDI connection.</p>
+  </attribute>
+
+  <attribute name="connectionPassword" required="true">
+    <p>The directory server password used to establish a JNDI connection.</p>
+  </attribute>
+
+  <attribute name="connectionURL" required="true">
+    <p>The directory server URL used to establish a JNDI connection.</p>
+  </attribute>
+
+  <attribute name="contextFactory" required="false">
+    <p>The fully qualified Java class name of the JNDI context factory to be
+    used for this connection.  By default, the standard JNDI LDAP provider
+    is used (<code>com.sun.jndi.ldap.LdapCtxFactory</code>).</p>
+  </attribute>
+
+  <attribute name="debug" required="false">
+    <p>The level of debugging detail logged by this Realm
+    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
+    generate more detailed output.  If not specified, the default
+    debugging detail level is zero (0).</p>
+  </attribute>
+
+  <attribute name="digest" required="false">
+    <p>The digest algorithm used to store passwords in non-plaintext formats.
+    Valid values are those accepted for the algorithm name by the
+    <code>java.security.MessageDigest</code> class.  See
+    <a href="#Digested Passwords">Digested Passwords</a> for more
+    information.  If not specified, passwords are stored in clear text.</p>
+  </attribute>
+
+  <attribute name="roleBase" required="false">
+    <p>The base element for role searches.  If not specified, the top level
+    element in the directory context will be used.</p>
+  </attribute>
+
+  <attribute name="roleName" required="true">
+    <p>The name of the directory server attribute containing the role name.</p>
+  </attribute>
+
+  <attribute name="roleSearch" required="true">
+    <p>An LDAP search pattern for selecting roles in this Realm, following the
+    syntax supported by the <code>java.text.MessageFormat</code> class.  Use
+    <code>{0}</code> to substitute in the distinguished name of the user you
+    want roles for, and/or <code>{1}</code> to substitute in the username of
+    the user you want roles for.</p>
+  </attribute>
+
+  <attribute name="roleSubtree" required="false">
+    <p>Set to <code>true</code> if you want role searches to search subtrees
+    of the element selected by <code>roleBase</code>.  The default value of
+    <code>false</code> causes only the top level element to be searched.</p>
+  </attribute>
+
+  <attribute name="userPassword" required="true">
+    <p>The name of the directory server attribute (in the user element) that
+    contains the cleartext or digested user password (depending on the setting
+    of the <code>digest</code> attribute).</p>
+  </attribute>
+
+  <attribute name="userPattern" required="true">
+    <p>An LDAP search pattern for selecting users in this Realm, following the
+    syntax supported by the <code>java.text.MessageFormat</code> class.  Use
+    <code>{0}</code> to substitute in the distinguished name of the user you
+    want to select.</p>
+  </attribute>
+
+</attributes>
+
+<h3>Example</h3>
+
+<p>Creation of the appropriate schema in your directory server is beyond the
+scope of this document, because it is unique to each directory server
+implementation.  In the examples below, we will assume that you are using a
+distribution of the OpenLDAP directory server (version 2.0.11 or later), which
+can be downloaded from
+<a href="http://www.openldap.org">http://www.openldap.org</a>.  Assume that
+your <code>slapd.conf</code> file contains the following settings
+(among others):</p>
+<source>
+database ldbm
+suffix dc="mycompany",dc="com"
+rootdn "cn=Manager,dc=mycompany,dc=com"
+rootpw secret
+</source>
+
+<p>These settings help us identify values for the values to be specified for
+<code>connectionName</code>, and <code>connectionPassword</code>, and we
+will assume for <code>connectionURL</code> that the directory server runs on
+the same machine as Tomcat.  See
+<a href="http://java.sun.com/products/jndi/docs.html">http://java.sun.com/products/jndi/docs.html</a>
+for more information about configuring and using the JNDI LDAP provider.</p>
+
+<p>Next, assume that this directory server has been populated with elements
+as shown below (in LDIF format), which define the same users and roles
+as the default <code>$CATALINA_HOME/conf/tomcat-users.xml</code> does for
+MemoryRealm:</p>
+<source>
+# Define a user named 'tomcat'
+dn: cn=tomcat,dc=mycompany,dc=com
+cn: tomcat
+userPassword: tomcat
+sn: Tomcat User
+objectClass: person
+
+# Define a user named 'role1'
+dn: cn=role1,dc=mycompany,dc=com
+cn: role1
+userPassword: tomcat
+sn: Role1 User
+objectClass: person
+
+# Define a user named 'both'
+dn: cn=both,dc=mycompany,dc=com
+cn: both
+userPassword: tomcat
+sn: Both User
+objectClass: person
+
+# Define an entry to base role searches on
+dn: dc=roles,dc=mycompany,dc=com
+cn: roles
+objectClass: person
+sn: Roles Entry
+
+# Define all members of the 'tomcat' role
+dn: cn=tomcat,dc=roles,dc=mycompany,dc=com
+cn: tomcat
+objectClass: groupOfUniqueNames
+uniqueMember: cn=tomcat,dc=mycompany,dc=com
+uniqueMember: cn=both,dc=mycompany,dc=com
+
+# Define all members of the 'role1' role
+dn: cn=role1,dc=roles,dc=mycompany,dc=com
+cn: role1
+objectClass: groupOfUniqueNames
+uniqueMember: cn=role1,dc=mycompany,dc=com
+uniqueMember: cn=both,dc=mycompany,dc=com
+</source>
+
+<p>An example <code>Realm</code> element for the OpenLDAP directory server
+configured as described above might look like this:</p>
+<source>
+&lt;Realm   className="org.apache.catalina.realm.JNDIRealm" debug="99"
+    connectionName="cn=Manager,dc=mycompany,dc=com"
+connectionPassword="secret"
+     connectionURL="ldap://localhost:389"
+          roleBase="dc=roles,dc=mcclan,dc=net"
+          roleName="cn"
+        roleSearch="(uniqueMember={0})"
+       roleSubtree="false"
+      userPassword="userPassword"
+       userPattern="cn={0},dc=mycompany,dc=com"
+/&gt;
+</source>
+
+<h3>Additional Notes</h3>
+
+<p>JNDIRealm operates according to the following rules:</p>
+<ul>
+<li>When a user attempts to access a protected resource for the first time,
+    Tomcat 4 will call the <code>authenticate()</code> method of this
+    <code>Realm</code>.  Thus, any changes you have made to the database
+    directly (new users, changed passwords or roles, etc.) will be immediately
+    reflected.</li>
+<li>Once a user has been authenticated, the user (and his or her associated
+    roles) are cached within Tomcat for the duration of the user's login.
+    (For FORM-based authentication, that means until the session times out or
+    is invalidated; for BASIC authentication, that means until the user
+    closes their browser).  Any changes to the database information for an
+    already authenticated user will <strong>not</strong> be reflected until
+    the next time that user logs on again.</li>
+<li>Administering the information in the directory server
+    is the responsibility of your own applications.  Tomcat does not
+    provide any built-in capabilities to maintain users and roles.</li>
+<li>Debugging and exception messages logged by this <code>Realm</code> will
+    be recorded by the <code>Logger</code> that is associated with our
+    surrounding <code>Context</code>, <code>Host</code>, or
+    <code>Engine</code>.  By default, the corresponding Logger will create a
+    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
+</ul>
+
+</subsection>
+
+
+<subsection name="MemoryRealm">
+
+<h3>Introduction</h3>
+
+<p><strong>MemoryRealm</strong> is a simple demonstration implementation of the
+Tomcat 4 <code>Realm</code> interface.  It is not designed for production use.
+At startup time, MemoryRealm loads information about all users, and their
+corresponding roles, from an XML document (by default, this document is loaded from <code>$CATALINA_HOME/conf/tomcat-users.xml</code>).  Changes to the data
+in this file are not recognized until Tomcat is restarted.</p>
+
+<h3>Realm Element Attributes</h3>
+
+<p>To configure MemoryRealm, you will create a <code>&lt;Realm&gt;</code>
+element and nest it in your <code>$CATALINA_HOME/conf/server.xml</code> file,
+as described <a href="#Configuring a Realm">above</a>.  The following
+attributes are supported by this implementation:</p>
+
+<attributes>
+
+  <attribute name="className" required="true">
+    <p>The fully qualified Java class name of this Realm implementation.
+    You <strong>MUST</strong> specify the value
+    "<code>org.apache.catalina.realm.MemoryRealm</code>" here.</p>
+  </attribute>
+
+  <attribute name="debug" required="false">
+    <p>The level of debugging detail logged by this Realm
+    to the associated <a href="config/logger.html">Logger</a>.  Higher numbers
+    generate more detailed output.  If not specified, the default
+    debugging detail level is zero (0).</p>
+  </attribute>
+
+  <attribute name="digest" required="false">
+    <p>The digest algorithm used to store passwords in non-plaintext formats.
+    Valid values are those accepted for the algorithm name by the
+    <code>java.security.MessageDigest</code> class.  See
+    <a href="#Digested Passwords">Digested Passwords</a> for more
+    information.  If not specified, passwords are stored in clear text.</p>
+  </attribute>
+
+  <attribute name="pathname" required="false">
+    <p>Absolute or relative (to $CATALINA_HOME) pathname of the XML document
+    containing our valid usernames, passwords, and roles.  See below for more
+    information on the format of this file.  If not specified, the value
+    <code>conf/tomcat-users.xml</code> is used.</p>
+  </attribute>
+
+</attributes>
+
+<h3>User File Format</h3>
+
+<p>The users file (by default, <code>conf/tomcat-users.xml</code> must be an
+XML document, with a root element <code>&lt;tomcat-users&gt;</code>.  Nested
+inside the root element will be a <code>&lt;user&gt;</code> element for each
+valid user, consisting of the following attributes:</p>
+<ul>
+<li><strong>name</strong> - Username this user must log on with.</li>
+<li><strong>password</strong> - Password this user must log on with (in
+    clear text if the <code>digest</code> attribute was not set on the
+    <code>&lt;Realm&gt;</code> element, or digested appropriately as
+    described <a href="#Digested Passwords">here</a> otherwise).</li>
+<li><strong>roles</strong> - Comma-delimited list of the role names
+    associated with this user.</li>
+</ul>
+
+<h3>Example</h3>
+
+<p>The default installation of Tomcat 4 is configured with a MemoryRealm
+nested inside the <code>&lt;Engine&gt;</code> element, so that it applies
+to all virtual hosts and web applications.  The default contents of the
+<code>conf/tomcat-users.xml</code> file is:</p>
+<source>
+&lt;tomcat-users&gt;
+  &lt;user name="tomcat" password="tomcat" roles="tomcat" /&gt;
+  &lt;user name="role1"  password="tomcat" roles="role1"  /&gt;
+  &lt;user name="both"   password="tomcat" roles="tomcat,role1" /&gt;
+&lt;/tomcat-users&gt;
+</source>
+
+<h3>Additional Notes</h3>
+
+<p>MemoryRealm operates according to the following rules:</p>
+<ul>
+<li>When Tomcat first starts up, it loads all defined users and their
+    associated information from the users file.  Changes to the data in
+    this file will <strong>not</strong> be recognized until Tomcat is
+    restarted.</li>
+<li>When a user attempts to access a protected resource for the first time,
+    Tomcat 4 will call the <code>authenticate()</code> method of this
+    <code>Realm</code>.</li>
+<li>Once a user has been authenticated, the user (and his or her associated
+    roles) are cached within Tomcat for the duration of the user's login.
+    (For FORM-based authentication, that means until the session times out or
+    is invalidated; for BASIC authentication, that means until the user
+    closes their browser).</li>
+<li>Administering the information in the users file is the responsibility
+    of your application.  Tomcat does not
+    provide any built-in capabilities to maintain users and roles.</li>
+<li>Debugging and exception messages logged by this <code>Realm</code> will
+    be recorded by the <code>Logger</code> that is associated with our
+    surrounding <code>Context</code>, <code>Host</code>, or
+    <code>Engine</code>.  By default, the corresponding Logger will create a
+    log file in the <code>$CATALINA_HOME/logs</code> directory.</li>
+</ul>
+
+
+</subsection>
+
+
+</section>
+
+
+<section name="Common Features">
+
+
+<subsection name="Digested Passwords">
+
+<p>For each of the standard <code>Realm</code> implementations, the user's
+password (by default) is stored in clear text.  In many environments, this is
+undesireable because casual observers of the authentication data can collect
+enough information to log on successfully, and impersonate other users.
+To avoid this problem, the standard implementations support the concept of
+<em>digesting</em> user passwords.  This causes the stored version of the
+passwords to be encoded (in a form that is not easily reversible), but that
+the <code>Realm</code> implementation can still utilize for authentication.</p>
+
+<p>Digested passwords are selected by specifying the <code>digest</code>
+attribute on your <code>&lt;Realm&gt;</code> element.  The value for this
+attribute must be one of the digest algorithms supported by the
+<code>java.security.MessageDigest</code> class (SHA, MD2, or MD5).  When you
+select this option, the contents of the password that is stored in the
+<code>Realm</code> must be the cleartext version of the password, as digested
+by the specified algorithm.</p>
+
+<p>When the <code>authenticate()</code> method of the Realm is called, the
+(cleartext) password specified by the user is itself digested by the same
+algorithm, and the result is compared with the value returned by the
+<code>Realm</code>.  An equal match implies that the cleartext version of the
+original password is the same as the one presented by the user, so that this
+user should be authorized.</p>
+
+<p>To calculate the digested value of a cleartext password, two convenience
+techniques are supported:</p>
+<ul>
+<li>If you are writing an application that needs to calculate digested
+    passowrds dynamically, call the static <code>Digest()</code> method of the
+    <code>org.apache.catalina.realm.RealmBase</code> class, passing the
+    cleartext password and the digest algorithm name as arguments.  This
+    method will return the digested password.</li>
+<li>If you want to execute a command line utility to calculate the digested
+    password, simply execute
+<source>
+java org.apache.catalina.realm.RealmBase \
+    -a {algorithm} {cleartext-password}
+</source>
+    and the digested version of this cleartext password will be returned to
+    standard output.</li>
+</ul>
+
+<p>To use either of the above techniques, the
+<code>$CATALINA_HOME/server/lib/catalina.jar</code> file will need to be
+on your class path to make the <code>RealmBase</code> class available.</p>
+
+</subsection>
+
+
+<subsection name="Example Application">
+
+<p>The example application shipped with Tomcat 4 includes an area that is
+protected by a security constraint, utilizing form-based login.  To access it,
+point your browser at
+<a href="http://localhost:8080/examples/jsp/security/protected/">http://localhost:8080/examples/jsp/security/protected/</a>
+and log on with one of the usernames and passwords described for the default
+<a href="#MemoryRealm">MemoryRealm</a>.</p>
+
+</subsection>
+
+
+<subsection name="Manager Application">
+
+<p>If you wish to use the <a href="manager-howto.html">Manager Application</a>
+to deploy and undeploy applications in a running Tomcat 4 installation, you
+MUST add the "manager" role to at least one username in your selected Realm
+implementation.  This is because the manager web application itself uses a
+security constraint that requires role "manager" to access ANY request URI
+within that application.</p>
+
+<p>For security reasons, no username in the default Realm (i.e. using
+<code>conf/tomcat-users.xml</code> is assigned the "manager" role.  Therfore,
+no one will be able to utilize the features of this application until the
+Tomcat administrator specifically assigns this role to one or more users.</p>
+
+</subsection>
+
+
+</section>
+
+
+</body>
+
+</document>

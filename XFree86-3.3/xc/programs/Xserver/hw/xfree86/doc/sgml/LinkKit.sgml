@@ -1,0 +1,162 @@
+<!DOCTYPE linuxdoc PUBLIC "-//XFree86//DTD linuxdoc//EN">
+
+<article>
+
+<title>Readme for the XFree86 3.3 LinkKit
+<author>The XFree86 Project, Inc.
+<date>16 May 1997
+
+<sect>Readme for the XFree86 3.3 LinkKit <p>
+<enum>
+<item>For systems which don't use gcc-2, you may need to install libgcc.a if
+   the binary distribution you are using was built with gcc-2.
+
+<item>Make sure that you have the XFree86 3.3 libraries
+   installed under <tt>/usr/X11R6</tt> if you will be linking Xnest with
+   the LinkKit.  The LinkKit is now self-contained for the other servers.
+
+<item>Edit the <tt/xf86site.def/ file to define which servers you want
+   to build, and the drivers and extensions you want included.
+
+    <itemize>
+    <item>Set <tt>HasGcc</tt> and <tt>HasGcc2</tt> to match the compiler
+      you are using if the defaults aren't correct.
+    <item>If the LinkKit was built with gcc-2.x and you are using some other
+      compiler, you must install libgcc.a and set <tt>NeedLibGcc</tt> to
+      <tt>YES</tt>.
+    <item>To build the 256 colour server:
+	set <tt>XF86SVGAServer</tt> to <tt>YES</tt>.
+    <item>To build the 16 colour server:
+	set <tt>XF86VGA16Server</tt> to <tt>YES</tt>.
+    <item>To build the monochrome server:
+	set <tt>XF86MonoServer</tt> to <tt>YES</tt>.
+    <item>To build the S3 server:
+	set <tt>XF86S3Server</tt> to <tt>YES</tt>.
+    <item>To build the Mach8 server:
+	set <tt>XF86Mach8Server</tt> to <tt>YES</tt>.
+    <item>To build the Mach32 server:
+	set <tt>XF86Mach32Server</tt> to <tt>YES</tt>.
+    <item>To build the Mach64 server:
+	set <tt>XF86Mach64Server</tt> to <tt>YES</tt>.
+    <item>To build the P9000 server:
+	set <tt>XF86P9000Server</tt> to <tt>YES</tt>.
+    <item>To build the AGX server:
+	set <tt>XF86AGXServer</tt> to <tt>YES</tt>.
+    <item>To build the ET4000/W32 server:
+	set <tt>XF86W32Server</tt> to <tt>YES</tt>.
+    <item>To build the IBM 8514/A server:
+	set <tt>XF86I8514Server</tt> to <tt>YES</tt>.
+    <item>To build the I128 server:
+	set <tt>XF86I128Server</tt> to <tt>YES</tt>.
+    <item>To build the TGA server:
+	set <tt>XF86TGAServer</tt> to <tt>YES</tt>.
+    <item>To build the GA-98NB/WAP server:
+	set <tt>XF98GANBServer</tt> to <tt>YES</tt>.
+    <item>To build the NEC480 server:
+	set <tt>XF98NEC480Server</tt> to <tt>YES</tt>.
+    <item>To build the NEC-CIRRUS/EPSON NKV/NKV2 server:
+	set <tt>XF98NKVNECServer</tt> to <tt>YES</tt>.
+    <item>To build the WAB-S server:
+	set <tt>XF98WABSServer</tt> to <tt>YES</tt>.
+    <item>To build the WAB-EP server:
+	set <tt>XF98WABEPServer</tt> to <tt>YES</tt>.
+    <item>To build the WSN-A2F server:
+	set <tt>XF98WSNAServer</tt> to <tt>YES</tt>.
+    <item>To build the Trident Cyber9320/9680 server:
+	set <tt>XF98TGUIServer</tt> to <tt>YES</tt>.
+    <item>To build the EGC server:
+	set <tt>XF98EGCServer</tt> to <tt>YES</tt>.
+    <item>To build the NEC S3 server:
+	set <tt>XF98NECS3Server</tt> to <tt>YES</tt>.
+    <item>To build the S3 PW/PCSKB server:
+	set <tt>XF98PWSKBServer</tt> to <tt>YES</tt>.
+    <item>To build the S3 PW/LB server:
+	set <tt>XF98PWLBServer</tt> to <tt>YES</tt>.
+    <item>To build the S3 GA-968 server:
+	set <tt>XF98GA968Server</tt> to <tt>YES</tt>.
+
+    <item>To build the Xnest server:
+	set <tt>XnestServer</tt> to <tt>YES</tt>.
+
+    <item>If you are building more than one Xserver, uncomment the
+        <tt>ServerToInstall</tt> line and set it to the name of the
+        Xserver you want to be the default server (i.e., the one that
+        the ``X'' sym-link points to).
+
+    <item>Set <tt>XF86SvgaDrivers</tt> to the list of drivers you want to
+	include in the SVGA server.
+    <item>Set <tt>XF86Vga16Drivers</tt> to the list of drivers you want to
+	include in the 16 colour server.
+    <item>Set <tt>XF86Vga2Drivers</tt> to the list of drivers you want to
+	include in the monochrome vga server.
+    <item>Set<tt> XF86MonoDrivers</tt> to the list of non-vga mono drivers
+	you want to include in the mono or VGA16 servers (when building
+	dual-headed servers).
+    <item>Note: the ordering of drivers determines the order in which the
+        probing is done.  The `<tt>generic</tt>' driver should be the last one
+        included in the Mono and VGA16 and SVGA servers because its probe
+        always succeeds.
+    <item>To use dynamically loadable modules(e.g. PEX, XIE):
+	set <tt>ExtensionsDynamicModules</tt> to <tt>YES</tt>.
+    <item>To include the PEX extension:
+	set <tt>BuildPexExt</tt> to <tt>YES</tt>.
+    <item>To include the X Image Extension:
+	set <tt>BuildXIE</tt> to <tt>YES</tt>.
+    <item>To include the GLX Extension:
+	set <tt>BuildGlxExt</tt> to <tt>YES</tt>.
+    <item>To exclude the Double Buffer Extension:
+	set <tt>BuildDBE</tt> to <tt>NO</tt>.
+    <item>To exclude the Record Extension:
+	set <tt>BuildRECORD</tt> to <tt>NO</tt>.
+    <item>To exclude the Screen Saver extension:
+	set <tt>BuildScreenSaverExt</tt> to <tt>NO</tt>.
+    <item>Although it is possible to disable other extensions through this
+	mechanism, doing so is not recommended because savings in server size
+	are not appreciable, or the resulting server might even be crippled in
+	some way.
+
+    </itemize>
+
+<item>If you are including a driver that it not part of the standard
+   distribution, make a directory in <tt>drivers/vga256</tt>
+   (<tt>drivers/vga2</tt> if it is for the VGA2 part of the Mono server,
+    <tt>drivers/vga16</tt> if it is for the 16
+   colour server, or <tt>drivers/mono</tt> non-VGA part of the Mono and VGA16
+   servers) and copy either the source or .o file and a suitable Imakefile
+   into that directory.  The name of the directory should be the same as the
+   name of the driver (refer to the documentation in the <tt>VGADriverDoc</tt>
+   directory for more details).
+
+<item>To build the Makefile, run
+<verb>
+  ./mkmf
+</verb>
+<item>Run `<tt>make</tt>' to link the server(s) as configured.
+
+<item>Run `<tt>make install</tt>' to install the new server(s).
+
+<item>Run `<tt>make clean</tt>' to remove the files that were created by this
+   procedure.
+
+<item>If you edit the <tt/xf86site.def/ file and change the selection
+   of servers
+   being built or the drivers included in them, repeat the above procedure.
+   If changing the selection of Xserver extensions being included it is
+   sufficient to run `<tt>make Makefile</tt>' instead of `<tt>./mkmf</tt>'.
+
+<item>It is possible to see which drivers are included in the Xserver by
+   running it with the `<tt>-showconfig</tt>' flag.  To check which extensions
+   are included, start the Xserver and run `<tt>xdpyinfo</tt>'.
+</enum>
+
+<verb>
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/LinkKit.sgml,v 3.14.2.1 1997/05/17 12:03:29 dawes Exp $
+
+
+
+
+
+$XConsortium: LinkKit.sgml /main/8 1996/10/27 11:05:58 kaleb $
+</verb>
+
+</article>

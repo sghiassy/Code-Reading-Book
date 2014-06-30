@@ -1,0 +1,35 @@
+XCOMM $XConsortium: Imakefile /main/6 1995/12/07 21:15:29 gildea $
+XCOMM $XFree86: xc/programs/Xserver/XIE/dixie/Imakefile,v 3.5.4.1 1997/05/03 09:44:45 dawes Exp $
+XCOMM build dixie archive
+#include <Server.tmpl>
+
+SUBDIRS = request import process export
+OBJS = request/?*.o import/?*.o process/?*.o export/?*.o 
+DONES = request/DONE import/DONE process/DONE export/DONE 
+
+#if !XieDynamicModule
+#define	IHaveSubdirs
+
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS) $(OBJS) $(DONES))
+#endif
+#endif
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)
+#endif
+
+NormalDepLibraryTarget(dixie,$(SUBDIRS) $(DONES),$(OBJS))
+
+#if !XieDynamicModule
+ForceSubdirs($(SUBDIRS))
+
+DependSubdirs($(SUBDIRS))
+
+MakeLintLibSubdirs($(SUBDIRS))
+LintSubdirs($(SUBDIRS))
+#endif
+
+InstallLinkKitLibrary(dixie,$(LINKKITDIR)/lib)
+

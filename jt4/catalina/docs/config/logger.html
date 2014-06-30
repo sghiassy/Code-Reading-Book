@@ -1,0 +1,160 @@
+<html>
+<head>
+<title>The 'Logger' Component</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>The <u>Logger</u> Component</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Common Attributes">[Common Attributes]</a>
+<a href="#Standard Implementation Attributes">[Standard Implementation Attributes]</a>
+<br>
+</div>
+
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>A <strong>Logger</strong> component represents a mechanism by which event,
+error, and debugging information from a Catalina component, or group of such
+components, can be directed to a common destination.  Each Logger is
+associated with a <strong>Container</strong>, by being nested inside the
+corresponding <code>&lt;Engine&gt;</code>, <code>&lt;Host&gt;</code>, or
+<code>&lt;Context&gt;</code> element for that Container.</p>
+
+<p>If you attach a <strong>Logger</strong> to an outer Container (such as an
+<strong>Engine</strong>, that logger will be used for all nested Containers
+(<strong>Host</strong> and <strong>Context</strong> components), unless you
+specifically nest a different logger inside the nested Container.</p>
+
+<br>
+
+
+<a name="Common Attributes"></a>
+<h2>Common Attributes</h2>
+
+<p>All implementations of the <strong>Logger</strong> component support the
+following attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>className</code></td>
+    <td>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.catalina.Logger</code> interface.
+        Because there is no single standard implementation, this attribute
+        is required.  See <a href="#Standard Implementation Attributes">
+        Standard Implementation Attributes</a> for the names of the
+        supported classes.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>verbosity</code></td>
+    <td>The verbosity level for this logger.  Messages with a higher
+        verbosity than the specified level will be silently ignored.
+        Available levels are 0 (fatal messages only), 1 (errors),
+        2 (warnings), 3 (information), and 4 (debug).  If not specified,
+        the default value is 1 (error).  Note that messages logged with
+        no verbosity parameter are logged unconditionally.
+  </tr>
+
+</table>
+
+<br>
+
+
+<a name="Standard Implementation Attributes"></a>
+<h2>Standard Implementation Attributes</h2>
+
+<p>Unlike most other Catalina components, there is not a single standard
+implementation of the <strong>Logger</strong> component available.  Instead,
+a variety of standard implementations are available for your use.  To select
+one, use the specified value for the <code>className</code> attribute, and
+configure the remaining attributes as described below.</p>
+
+
+<a name="FileLogger"></a>
+<h3>File Logger (<code>org.apache.catalina.logger.FileLogger</code>)</h3>
+
+<p>The <strong>File Logger</strong> records all logged messages (other than
+those ignored based on verbosity level) to disk file(s) in a specified
+directory.  The actual filenames of the log files are created from a
+configured prefix, the current date in YYYY-MM-DD format, and a configured
+suffix.  At midnight each night, the next logged message causes a switch to
+a new log file (based on the new date), without having to shut down Catalina
+in order to switch logs.</p>
+
+<p>The File Logger supports the following additional attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>directory</code></td>
+    <td>Relative or absolute pathname of the directory into which log
+        files will be created.  If a relative path is specified, it is
+        interpreted as relative to $CATALINA_HOME.  If no directory is
+        specified, the default value is "logs" (relative to the
+        Catalina home directory).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>prefix</code></td>
+    <td>The prefix added to the front of each log file name.  If not
+        specified, the default value is "catalina.".  To specify no
+        prefix, use a zero-length string.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>suffix</code></td>
+    <td>The suffix added to the end of each log file name.  If not
+        specified, the default value is ".log".  To specify no suffix,
+        use a zero-length string.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>timestamp</code></td>
+    <td>Should log messages be date/time stamped?  Set this value to
+        <code>true</code> or <code>false</code>.  If not specified,
+        log messages will not be date/time stamped.
+    </td>
+  </tr>
+
+</table>
+
+
+<h3>Standard Error Logger (<code>org.apache.catalina.logger.SystemErrLogger</code>)</h3>
+
+<p>The <strong>Standard Error Logger</strong> records all logged messages
+(other than those ignored based on verbosity level) to whatever stream the
+standard error output of Catalina is pointed at.  The default Catalina startup
+script points this at file <code>logs/catalina.out</code> relative to
+$CATALINA_HOME.  This Logger accepts no additional attributes.</p>
+
+
+<h3>Standard Output Logger (<code>org.apache.catalina.logger.SystemOutLogger</code>)</h3>
+
+<p>The <strong>Standard Output Logger</strong> records all logged messages
+(other than those ignored based on verbosity level) to whatever stream the
+standard output of Catalina is pointed at.  The default Catalina startup
+script points this at file <code>logs/catalina.out</code> relative to
+$CATALINA_HOME.  This Logger accepts no additional attributes.</p>
+
+
+</body>
+</html>

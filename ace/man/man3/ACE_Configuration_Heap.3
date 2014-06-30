@@ -1,0 +1,253 @@
+.TH ACE_Configuration_Heap 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Configuration_Heap \- The concrete implementation of a allocator based configuration database. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Configuration.h>\fR
+.PP
+Inherits \fBACE_Configuration\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Configuration_Heap\fR (void)"
+.br
+.RI "\fIDefault ctor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Configuration_Heap\fR (void)"
+.br
+.RI "\fIdestructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_TCHAR\fR* file_name, void* base_address = ACE_DEFAULT_BASE_ADDR, int default_map_size = ACE_DEFAULT_CONFIG_SECTION_SIZE)"
+.br
+.RI "\fIopens a configuration based on a file name.\fR"
+.ti -1c
+.RI "int \fBopen\fR (int default_map_size = ACE_DEFAULT_CONFIG_SECTION_SIZE)"
+.br
+.RI "\fIopens a heap based configuration.\fR"
+.ti -1c
+.RI "virtual int \fBopen_section\fR (const \fBACE_Configuration_Section_Key\fR& base, const \fBACE_TCHAR\fR* sub_section, int create, \fBACE_Configuration_Section_Key\fR& result)"
+.br
+.ti -1c
+.RI "virtual int \fBremove_section\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* sub_section, int recursive)"
+.br
+.RI "\fIRemoves the <sub_section> from <key>. If recursive is non zero, any subkeys below <sub_section> are remove as well.\fR"
+.ti -1c
+.RI "virtual int \fBenumerate_values\fR (const \fBACE_Configuration_Section_Key\fR& key, int Index, ACE_TString& name, \fBVALUETYPE\fR& type)"
+.br
+.ti -1c
+.RI "virtual int \fBenumerate_sections\fR (const \fBACE_Configuration_Section_Key\fR& key, int Index, ACE_TString& name)"
+.br
+.ti -1c
+.RI "virtual int \fBset_string_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, const ACE_TString& value)"
+.br
+.RI "\fIsets the value in <key> with <name> to a string of <value>.\fR"
+.ti -1c
+.RI "virtual int \fBset_integer_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, u_int value)"
+.br
+.RI "\fIsets the value in <key> with <name> to an integer of <value>.\fR"
+.ti -1c
+.RI "virtual int \fBset_binary_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, const void* data, u_int length)"
+.br
+.RI "\fIsets the value in <key> with <name> to binary data of <data> with <length>.\fR"
+.ti -1c
+.RI "virtual int \fBget_string_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, ACE_TString& value)"
+.br
+.RI "\fIgets the string value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not a string).\fR"
+.ti -1c
+.RI "virtual int \fBget_integer_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, u_int& value)"
+.br
+.RI "\fIgets the integer value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not an integer).\fR"
+.ti -1c
+.RI "virtual int \fBget_binary_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, void* &data, u_int &length)"
+.br
+.ti -1c
+.RI "virtual int \fBfind_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, \fBVALUETYPE\fR& type)"
+.br
+.ti -1c
+.RI "virtual int \fBremove_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name)"
+.br
+.RI "\fIRemoves the the value <name> from <key>. returns non zero on error.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBadd_section\fR (const \fBACE_Configuration_Section_Key\fR& base, const \fBACE_TCHAR\fR* sub_section, \fBACE_Configuration_Section_Key\fR& result)"
+.br
+.RI "\fIadds a new section.\fR"
+.ti -1c
+.RI "int \fBcreate_index\fR (void)"
+.br
+.RI "\fIHelper for the <open> method.\fR"
+.ti -1c
+.RI "int \fBcreate_index_helper\fR (void *buffer)"
+.br
+.RI "\fIHelper for <create_index> method: places hash table into an allocated space.\fR"
+.ti -1c
+.RI "int \fBvalue_open_helper\fR (size_t hash_table_size, void *buffer)"
+.br
+.ti -1c
+.RI "int \fBsection_open_helper\fR (size_t hash_table_size, void *buffer)"
+.br
+.ti -1c
+.RI "int \fBload_key\fR (const \fBACE_Configuration_Section_Key\fR& key, ACE_TString& name)"
+.br
+.ti -1c
+.RI "int \fBnew_section\fR (const ACE_TString& section, \fBACE_Configuration_Section_Key\fR& result)"
+.br
+.ti -1c
+.RI "\fBACE_Configuration_Heap\fR (const ACE_Configuration_Heap& rhs)"
+.br
+.ti -1c
+.RI "ACE_Configuration_Heap& \fBoperator=\fR (const ACE_Configuration_Heap& rhs)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.ti -1c
+.RI "\fBSECTION_MAP\fR* \fBindex_\fR"
+.br
+.ti -1c
+.RI "int \fBdefault_map_size_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+The concrete implementation of a allocator based configuration database.
+.PP
+.PP
+ This class uses \fBACE\fR's Allocators to manage a memory representation of a configuraiton database. A persistent heap may be used to store configurations persistently
+.PP
+Note: Before using this class you must call one of the open methods.
+.PP
+.TP
+\fB\fBTodo: \fR\fR
+.in +1c
+ Need to investigate what happens if memory mapped file gets mapped to a location different than it was created with.  
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Configuration_Heap::ACE_Configuration_Heap (void)
+.PP
+Default ctor.
+.PP
+.SS ACE_Configuration_Heap::~ACE_Configuration_Heap (void)\fC [virtual]\fR
+.PP
+destructor.
+.PP
+.SS ACE_Configuration_Heap::ACE_Configuration_Heap (const ACE_Configuration_Heap & rhs)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Configuration_Heap::add_section (const \fBACE_Configuration_Section_Key\fR & base, const \fBACE_TCHAR\fR * sub_section, \fBACE_Configuration_Section_Key\fR & result)\fC [private]\fR
+.PP
+adds a new section.
+.PP
+.SS int ACE_Configuration_Heap::create_index (void)\fC [private]\fR
+.PP
+Helper for the <open> method.
+.PP
+.SS int ACE_Configuration_Heap::create_index_helper (void * buffer)\fC [private]\fR
+.PP
+Helper for <create_index> method: places hash table into an allocated space.
+.PP
+.SS virtual int ACE_Configuration_Heap::enumerate_sections (const \fBACE_Configuration_Section_Key\fR & key, int Index, ACE_TString & name)\fC [virtual]\fR
+.PP
+method to enumerate through the <name> subsections in <key>. To begin iteration, <index> must zero. to continue iteration, invoke enumerate_sections again while incrementing index. Each iteration will return the <name> of the sub section. This method returns 0 on success, <0 on error and 1 when there are no more subsections to iterate through. Note - you may not delete or add values while enumerating. If you need to do this, you start the enumeration over again. 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Heap::enumerate_values (const \fBACE_Configuration_Section_Key\fR & key, int Index, ACE_TString & name, \fBVALUETYPE\fR & type)\fC [virtual]\fR
+.PP
+method to enumerate through the <name> and <type> of values in a <key>. To begin iteration, <index> must be zero. to continue iteration, invoke enumerate_values again while incrementing index. Each iteration will return the <name> of the value and its <type>. This method returns 0 on success, <0 on error and 1 when there are no more values to iterate through. Note - you may not delete or add values while enumerating. If you need to do this, you start the enumeration over again. 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Heap::find_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, \fBVALUETYPE\fR & type)\fC [virtual]\fR
+.PP
+checks to see if an entry of <name> is in <key> and places the data type in <type>. Returns 0 on success (entry is found), -1 on error 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Heap::get_binary_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, void *& data, u_int & length)\fC [virtual]\fR
+.PP
+gets the binary value of <name> from <key> and places a copy in <data> and sets <length> to the length of the data. caller is responsible for deleting <data>. Returns non zero on error (if value is not binary). 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Heap::get_integer_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, u_int & value)\fC [virtual]\fR
+.PP
+gets the integer value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not an integer).
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Heap::get_string_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, ACE_TString & value)\fC [virtual]\fR
+.PP
+gets the string value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not a string).
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS int ACE_Configuration_Heap::load_key (const \fBACE_Configuration_Section_Key\fR & key, ACE_TString & name)\fC [private]\fR
+.PP
+.SS int ACE_Configuration_Heap::new_section (const ACE_TString & section, \fBACE_Configuration_Section_Key\fR & result)\fC [private]\fR
+.PP
+.SS int ACE_Configuration_Heap::open (int default_map_size = ACE_DEFAULT_CONFIG_SECTION_SIZE)
+.PP
+opens a heap based configuration.
+.PP
+.SS int ACE_Configuration_Heap::open (const \fBACE_TCHAR\fR * file_name, void * base_address = ACE_DEFAULT_BASE_ADDR, int default_map_size = ACE_DEFAULT_CONFIG_SECTION_SIZE)
+.PP
+opens a configuration based on a file name.
+.PP
+.SS virtual int ACE_Configuration_Heap::open_section (const \fBACE_Configuration_Section_Key\fR & base, const \fBACE_TCHAR\fR * sub_section, int create, \fBACE_Configuration_Section_Key\fR & result)\fC [virtual]\fR
+.PP
+Finds a <sub_section> in <base> and places the resulting key in <result>. If create is non zero, the sub_section will be created if it doesn't exist 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS ACE_Configuration_Heap& ACE_Configuration_Heap::operator= (const ACE_Configuration_Heap & rhs)\fC [private]\fR
+.PP
+.SS virtual int ACE_Configuration_Heap::remove_section (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * sub_section, int recursive)\fC [virtual]\fR
+.PP
+Removes the <sub_section> from <key>. If recursive is non zero, any subkeys below <sub_section> are remove as well.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS int ACE_Configuration_Heap::remove_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name)\fC [virtual]\fR
+.PP
+Removes the the value <name> from <key>. returns non zero on error.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS int ACE_Configuration_Heap::section_open_helper (size_t hash_table_size, void * buffer)\fC [private]\fR
+.PP
+.SS virtual int ACE_Configuration_Heap::set_binary_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, const void * data, u_int length)\fC [virtual]\fR
+.PP
+sets the value in <key> with <name> to binary data of <data> with <length>.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Heap::set_integer_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, u_int value)\fC [virtual]\fR
+.PP
+sets the value in <key> with <name> to an integer of <value>.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Heap::set_string_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, const ACE_TString & value)\fC [virtual]\fR
+.PP
+sets the value in <key> with <name> to a string of <value>.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS int ACE_Configuration_Heap::value_open_helper (size_t hash_table_size, void * buffer)\fC [private]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Allocator\fR * ACE_Configuration_Heap::allocator_\fC [private]\fR
+.PP
+.SS int ACE_Configuration_Heap::default_map_size_\fC [private]\fR
+.PP
+.SS \fBSECTION_MAP\fR * ACE_Configuration_Heap::index_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

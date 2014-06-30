@@ -1,0 +1,136 @@
+.\" $XConsortium: XF68_FBDev.man /main/2 1996/12/09 17:32:57 kaleb $
+.\" $XFree86: xc/programs/Xserver/hw/xfree68/XF68_FBDev.man,v 3.4.2.1 1997/05/16 11:35:05 hohndel Exp $
+.TH XF68_FBDev 1 "Version 3.2A"  "XFree86"
+.SH NAME
+XF68_FBDev - X Window System server for the Linux/m68k Frame Buffer Device
+.SH SYNOPSIS
+.B XF68_FBDev
+[:displaynumber] [ option ] ...
+.SH DESCRIPTION
+.I XF68_FBDev
+is a generic server for a Linux/m68k Frame Buffer Device. It contains
+all available drivers (mfb, ipl2p2, ipl2p4, ipl2p8, ilbm, afb and cfb).
+.PP
+The servers use the \fB/dev/fb*\fP special device nodes for connection to the
+hardware. The \fB/dev/fb*\fP node to use can be set via an environment
+variable or if this is absent, \fB/dev/fb0current\fP is used.
+.SH CONFIGURATIONS
+.PP
+The servers currently support the following pixel formats:
+.RS .5i
+.TP 4
+mfb:
+Monochrome,
+.TP 4
+ipl2p{2|4|8}:
+Interleaved planes with 2 bytes interleave and 2, 4 or 8 planes (Atari),
+.TP 4
+ilbm:
+Interleaved bitplanes (Amiga),
+.TP 4
+afb:
+Normal bitplanes (Amiga),
+.TP 4
+cfb:
+Packed Pixels with 8 Bits per Pixel.
+.SH OPTIONS
+In addition to the normal server options described in the \fIXserver(1)\fP
+manual page, \fIXF68_FBDev\fP accept some more command line switches, as
+described in the 
+.I XFree86(1) 
+manpage.
+.SH SETUP
+.I XFree86
+uses a configuration file called \fBXF86Config\fP for its initial setup.
+See the
+.I XF86Config(4/5)
+manpage for general details. Here only the
+.I XF68_FBDev
+specific parts are explained.
+.PP
+Normally the X server will use videomodes as defined in the \fBModes\fP
+section, unless you specify the special videomode `\fBdefault\fP'. In that case
+the X server will use the video mode that is associated with the used
+framebuffer device node, and mode switching will be disabled.
+.PP
+The environment variable \fBFRAMEBUFFER\fP holds the filename for the
+framebuffer to use. If it isn't set, /dev/fb0current is used as default.
+/dev/ should contain at least the following file:
+(major and minor number in parentheses)
+.TP 4
+fb0current (29,0): The current resolution
+.SH FILES
+.TP 30
+<XRoot>/bin/XF68_FBDev
+The X server for a generic Linux/m68k Frame Buffer Device
+.TP 30
+/etc/XF86Config
+Server configuration file
+.TP 30
+<XRoot>/lib/X11/XF86Config
+Server configuration file (secondary location)
+.TP 30
+/dev/fb*
+The files which represents framebuffers and their resolutions
+.TP 30
+<XRoot>/lib/X11/doc/README.fbdev
+Extra documentation about the Frame Buffer Device
+.LP
+Note: <XRoot> refers to the root of the X11 install tree.
+.SH "SEE ALSO"
+X(1), Xserver(1), XFree86(1), XF86Config(4/5), xf86config(1), xdm(1), xinit(1),
+fbset(8)
+.LP
+Note: <linux> refers to the location of the Linux source tree.
+.SH AUTHORS
+.PP
+In addition to the authors of \fIXFree86\fP the following people contributed
+major work to this server:
+.PP
+.nf
+Martin Schaller
+.fi
+.RS 8
+Developed the concept of the Linux/m68k Frame Buffer Device and wrote the
+support for Atari (Please no mail > 16000 bytes to this address).
+.RE
+.PP
+.nf
+Geert Uytterhoeven, \fIGeert.Uytterhoeven@cs.kuleuven.ac.be\fP
+.fi
+.RS 8
+Wrote the support for Amiga and created the generic server.
+.RE
+.PP
+.nf
+Martin Schaller
+Geert Uytterhoeven, \fIGeert.Uytterhoeven@cs.kuleuven.ac.be\fP
+Andreas Schwab,     \fIschwab@issan.informatik.uni-dortmund.de\fP
+Guenther Kelleter,  \fIguenther@Pool.Informatik.RWTH-Aachen.de\fP
+.fi
+.RS 8
+Development and improvement of the frame buffer device specific code.
+.RE
+.PP
+.nf
+Gary Henderson      \fIgary@daniver.demon.co.uk\fP
+.fi
+.RS 8
+Wrote Xdaniver, on which afb is based and from which ilbm is derived.
+.RE
+.PP
+See also the
+.I XFree86(1)
+manual page.
+.SH BUGS
+.PP
+The support for visuals other than monochrome and pseudo color is incomplete.
+.sp
+The drivers for interleaved and normal planes are slow.
+.sp
+The ilbm code has problems with chunky-to-planar conversions.
+.SH CONTACT INFO
+\fIXFree86\fP source is available from the FTP server \fIftp.XFree86.org\fP.
+Send email to \fIXFree86@XFree86.org\fP for details.
+.PP
+Xdaniver is Copyright (c) 1995 by Daniver Limited.

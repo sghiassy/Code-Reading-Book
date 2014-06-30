@@ -1,0 +1,111 @@
+.TH ACE_Thread_Exit 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Thread_Exit \- Keep exit information for a Thread in thread specific storage. so that the thread-specific exit hooks will get called no matter how the thread exits (e.g., via , C++ or Win32 exception, "falling off the end" of the thread entry point function, etc.). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Thread_Exit.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Exit\fR (void)"
+.br
+.RI "\fICapture the Thread that will be cleaned up automatically.\fR"
+.ti -1c
+.RI "void \fBthr_mgr\fR (\fBACE_Thread_Manager\fR *tm)"
+.br
+.RI "\fISet the .\fR"
+.ti -1c
+.RI "\fB~ACE_Thread_Exit\fR (void)"
+.br
+.RI "\fIDestructor calls the thread-specific exit hooks when a thread exits.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Thread_Exit* \fBinstance\fR (void)"
+.br
+.RI "\fISingleton access point.\fR"
+.ti -1c
+.RI "void \fBcleanup\fR (void *instance, void *)"
+.br
+.RI "\fICleanup method, used by the  to destroy the singleton.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Control\fR \fBthread_control_\fR"
+.br
+.RI "\fIAutomatically add/remove the thread from the .\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "u_int \fBis_constructed_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_OS_Object_Manager\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Keep exit information for a Thread in thread specific storage. so that the thread-specific exit hooks will get called no matter how the thread exits (e.g., via , C++ or Win32 exception, "falling off the end" of the thread entry point function, etc.).
+.PP
+.PP
+ This clever little helper class is stored in thread-specific storage using the  wrapper. When a thread exits the  function deletes this object, thereby closing it down gracefully. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Thread_Exit::ACE_Thread_Exit (void)
+.PP
+Capture the Thread that will be cleaned up automatically.
+.PP
+.SS ACE_Thread_Exit::~ACE_Thread_Exit (void)
+.PP
+Destructor calls the thread-specific exit hooks when a thread exits.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Thread_Exit::cleanup (void * instance, void *)\fC [static]\fR
+.PP
+Cleanup method, used by the  to destroy the singleton.
+.PP
+.SS ACE_Thread_Exit * ACE_Thread_Exit::instance (void)\fC [static]\fR
+.PP
+Singleton access point.
+.PP
+.SS void ACE_Thread_Exit::thr_mgr (\fBACE_Thread_Manager\fR * tm)
+.PP
+Set the .
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_OS_Object_Manager\fC [friend]\fR
+.PP
+Allow OS_Object_Manager to reset the status of <is_constructed_>.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS u_int ACE_Thread_Exit::is_constructed_\fC [static, private]\fR
+.PP
+Used to detect whether we should create a new instance (or not) within the instance method -- we don't trust the instance_ ptr because the destructor may have run (if \fBACE::fini\fR() was called). See bug #526. We don't follow the singleton pattern due to dependency issues. 
+.SS \fBACE_Thread_Control\fR ACE_Thread_Exit::thread_control_\fC [private]\fR
+.PP
+Automatically add/remove the thread from the .
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

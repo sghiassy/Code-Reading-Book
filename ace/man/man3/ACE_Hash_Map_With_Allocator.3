@@ -1,0 +1,88 @@
+.TH ACE_Hash_Map_With_Allocator 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Hash_Map_With_Allocator \- This class is a thin wrapper around \fBACE_Hash_Map_Manager\fR, which comes handy when \fBACE_Hash_Map_Manager\fR is to be used with a non-nil \fBACE_Allocator\fR. This wrapper insures that the appropriate allocator is in place for every operation that accesses or updates the hash map. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Hash_Map_With_Allocator_T.h>\fR
+.PP
+Inherits \fBACE_Hash_Map_Manager< EXT_ID,INT_ID,ACE_Null_Mutex >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Hash_Map_With_Allocator\fR (\fBACE_Allocator\fR *alloc)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_Hash_Map_With_Allocator\fR (size_t size, \fBACE_Allocator\fR *alloc)"
+.br
+.RI "\fIConstructor that specifies hash table size.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const EXT_ID &, const INT_ID &, \fBACE_Allocator\fR *alloc)"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const EXT_ID &, INT_ID &, \fBACE_Allocator\fR *alloc)"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const EXT_ID &, \fBACE_Allocator\fR *alloc)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &, const INT_ID &, EXT_ID &, INT_ID &, \fBACE_Allocator\fR *alloc)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const EXT_ID &, INT_ID &, \fBACE_Allocator\fR *alloc)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const EXT_ID &, \fBACE_Allocator\fR *alloc)"
+.br
+.RI "\fIReturns 0 if the <ext_id> is in the mapping, otherwise -1.\fR"
+.ti -1c
+.RI "int \fBclose\fR (\fBACE_Allocator\fR *alloc)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class EXT_ID, class INT_ID>  template class ACE_Hash_Map_With_Allocator
+This class is a thin wrapper around \fBACE_Hash_Map_Manager\fR, which comes handy when \fBACE_Hash_Map_Manager\fR is to be used with a non-nil \fBACE_Allocator\fR. This wrapper insures that the appropriate allocator is in place for every operation that accesses or updates the hash map.
+.PP
+.PP
+ If we use \fBACE_Hash_Map_Manager\fR with a shared memory allocator (or memory-mapped file allocator, for example), the allocator pointer used by \fBACE_Hash_Map_Manager\fR gets stored with it, in shared memory (or memory-mapped file). Naturally, this will cause horrible problems, since only the first process to set that pointer will be guaranteed the address of the allocator is meaningful! That is why we need this wrapper, which insures that appropriate allocator pointer is in place for each call. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID> ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID> (\fBACE_Allocator\fR * alloc)
+.PP
+Constructor.
+.PP
+.SS template<classEXT_ID, classINT_ID> ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID> (size_t size, \fBACE_Allocator\fR * alloc)
+.PP
+Constructor that specifies hash table size.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID> int ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::bind (const EXT_ID &, const INT_ID &, \fBACE_Allocator\fR * alloc)
+.PP
+.SS template<classEXT_ID, classINT_ID> int ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::close (\fBACE_Allocator\fR * alloc)
+.PP
+.SS template<classEXT_ID, classINT_ID> int ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::find (const EXT_ID &, \fBACE_Allocator\fR * alloc)
+.PP
+Returns 0 if the <ext_id> is in the mapping, otherwise -1.
+.PP
+.SS template<classEXT_ID, classINT_ID> int ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::find (const EXT_ID &, INT_ID &, \fBACE_Allocator\fR * alloc)
+.PP
+.SS template<classEXT_ID, classINT_ID> int ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::rebind (const EXT_ID &, const INT_ID &, EXT_ID &, INT_ID &, \fBACE_Allocator\fR * alloc)
+.PP
+.SS template<classEXT_ID, classINT_ID> int ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::unbind (const EXT_ID &, \fBACE_Allocator\fR * alloc)
+.PP
+.SS template<classEXT_ID, classINT_ID> int ACE_Hash_Map_With_Allocator<EXT_ID, INT_ID>::unbind (const EXT_ID &, INT_ID &, \fBACE_Allocator\fR * alloc)
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,69 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/VGADriverDoc/Imakefile.stub,v 3.4.2.1 1997/05/27 06:22:15 dawes Exp $
+XCOMM
+XCOMM This is an Imakefile for the stub driver.  
+XCOMM 
+XCOMM $XConsortium: Imakefile.stub /main/4 1996/02/21 17:13:36 kaleb $
+#include <Server.tmpl>
+
+SRCS = stub_driver.c stub_bank.s
+
+OBJS = stub_driver.o stub_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+XCOMM
+XCOMM This define is for use under vga256/drivers; comment it out for vga2 or
+XCOMM vga16
+XCOMM
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I../../cfb.banked -I../../vga -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+XCOMM
+XCOMM Use these lines instead for use under vga2/drivers or vga16/drivers
+XCOMM
+XCOMM INCLUDES = -I. -I$(XF86COMSRC) -I(XF86HWSRC) \
+XCOMM            -I$(XF86OSSRC) -I../../../vga256/vga \
+XCOMM            -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+XCOMM
+XCOMM Uncomment this line for use with vga2
+XCOMM
+XCOMM DEFINES = -DMONOVGA
+
+XCOMM
+XCOMM Uncomment this line for use with vga16
+XCOMM
+XCOMM DEFINES = -DXF86VGA16
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(stub_drv, $(OBJS))
+
+XCOMM
+XCOMM These lines are for a driver under vga256/drivers
+XCOMM
+InstallLinkKitNonExecFile(stub_driver.c,$(LINKKITDIR)/drivers/vga256/stub)
+InstallLinkKitNonExecFile(stub_bank.s,$(LINKKITDIR)/drivers/vga256/stub)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/stub)
+
+XCOMM
+XCOMM These lines would be used in place of the above three lines for the
+XCOMM same driver being built under vga2/drivers.  If the driver is ONLY
+XCOMM going to be under vga2/drivers, use the above 3 lines, but replace
+XCOMM vga256 with vga2.  Same applies to vga16.
+XCOMM
+XCOMM LinkSourceFile(stub_driver.c,$(VGADRIVERSRC)/stub)
+XCOMM LinkSourceFile(stub_bank.s,$(VGADRIVERSRC)/stub)
+XCOMM
+XCOMM For vga2
+XCOMM
+XCOMM InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga2/stub)
+XCOMM
+XCOMM For vga16
+XCOMM
+XCOMM InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga16/stub)
+
+DependTarget()

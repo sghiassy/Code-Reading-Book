@@ -1,0 +1,206 @@
+.TH ACE_UPIPE_Stream 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_UPIPE_Stream \- Defines the method that transfer data on a UPIPE. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <UPIPE_Stream.h>\fR
+.PP
+Inherits \fBACE_SPIPE\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_UPIPE_Stream\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_UPIPE_Stream\fR (void)"
+.br
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIShut down the UPIPE and release resources.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIReturn the underlying I/O handle.\fR"
+.ti -1c
+.RI "int \fBsend\fR (\fBACE_Message_Block\fR *mb_p, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fISend a message through the message queue. Returns -1 on error, else 0.\fR"
+.ti -1c
+.RI "int \fBrecv\fR (\fBACE_Message_Block\fR *&mb_p, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIRecv a message from the message queue. Returns -1 on error, else 0.\fR"
+.ti -1c
+.RI "int \fBsend\fR (const char *buffer, size_t n, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fISend a buffer of <n> bytes through the message queue. Returns -1 on error, else number of bytes sent.\fR"
+.ti -1c
+.RI "int \fBrecv\fR (char *buffer, size_t n, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIRecv a buffer of upto <n> bytes from the message queue. Returns -1 on error, else number of bytes read.\fR"
+.ti -1c
+.RI "int \fBsend_n\fR (const char *buffer, size_t n, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fISend a buffer of exactly <n> bytes to the message queue. Returns -1 on error, else number of bytes written (which should == n).\fR"
+.ti -1c
+.RI "int \fBrecv_n\fR (char *buffer, size_t n, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIRecv a buffer of exactly <n> bytes from the message queue. Returns -1 on error, else the number of bytes read.\fR"
+.ti -1c
+.RI "int \fBcontrol\fR (int cmd, void *val) const"
+.br
+.RI "\fIPerform control operations on the UPIPE_Stream.\fR"
+.ti -1c
+.RI "int \fBget_remote_addr\fR (\fBACE_UPIPE_Addr\fR &remote_sap) const"
+.br
+.RI "\fIReturn the remote address we are connected to.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBmb_last_\fR"
+.br
+.RI "\fITo hold the last \fBACE_Message_Block\fR read out of the stream. Thus allowing subsequent reads from one \fBACE_Message_Block\fR.\fR"
+.ti -1c
+.RI "size_t \fBremaining_\fR"
+.br
+.RI "\fIHolds the number of bytes that are still available in mb_last_.\fR"
+.ti -1c
+.RI "\fBACE_UPIPE_Addr\fR \fBremote_addr_\fR"
+.br
+.RI "\fIAddress of who we are connected to.\fR"
+.ti -1c
+.RI "\fBMT_Stream\fR \fBstream_\fR"
+.br
+.RI "\fIStream component used by the <UPIPE_Acceptor> and <UPIPE_Connector> to link together two UPIPE_Streams.\fR"
+.ti -1c
+.RI "int \fBreference_count_\fR"
+.br
+.RI "\fIKeep track of whether the sender and receiver have both shut down.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_UPIPE_Acceptor\fR"
+.br
+.ti -1c
+.RI "class \fBACE_UPIPE_Connector\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the method that transfer data on a UPIPE.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_UPIPE_Stream::ACE_UPIPE_Stream (void)
+.PP
+.SS virtual ACE_UPIPE_Stream::~ACE_UPIPE_Stream (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_UPIPE_Stream::close (void)
+.PP
+Shut down the UPIPE and release resources.
+.PP
+Reimplemented from \fBACE_SPIPE\fR.
+.SS int ACE_UPIPE_Stream::control (int cmd, void * val) const
+.PP
+Perform control operations on the UPIPE_Stream.
+.PP
+Reimplemented from \fBACE_IPC_SAP\fR.
+.SS void ACE_UPIPE_Stream::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SPIPE\fR.
+.SS ACE_HANDLE ACE_UPIPE_Stream::get_handle (void) const
+.PP
+Return the underlying I/O handle.
+.PP
+Reimplemented from \fBACE_IPC_SAP\fR.
+.SS int ACE_UPIPE_Stream::get_remote_addr (\fBACE_UPIPE_Addr\fR & remote_sap) const
+.PP
+Return the remote address we are connected to.
+.PP
+.SS int ACE_UPIPE_Stream::recv (char * buffer, size_t n, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Recv a buffer of upto <n> bytes from the message queue. Returns -1 on error, else number of bytes read.
+.PP
+.SS int ACE_UPIPE_Stream::recv (\fBACE_Message_Block\fR *& mb_p, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Recv a message from the message queue. Returns -1 on error, else 0.
+.PP
+.SS int ACE_UPIPE_Stream::recv_n (char * buffer, size_t n, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Recv a buffer of exactly <n> bytes from the message queue. Returns -1 on error, else the number of bytes read.
+.PP
+.SS int ACE_UPIPE_Stream::send (const char * buffer, size_t n, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Send a buffer of <n> bytes through the message queue. Returns -1 on error, else number of bytes sent.
+.PP
+.SS int ACE_UPIPE_Stream::send (\fBACE_Message_Block\fR * mb_p, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Send a message through the message queue. Returns -1 on error, else 0.
+.PP
+.SS int ACE_UPIPE_Stream::send_n (const char * buffer, size_t n, \fBACE_Time_Value\fR * timeout = 0)
+.PP
+Send a buffer of exactly <n> bytes to the message queue. Returns -1 on error, else number of bytes written (which should == n).
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_UPIPE_Acceptor\fC [friend]\fR
+.PP
+.SS class ACE_UPIPE_Connector\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_UPIPE_Stream::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SPIPE\fR.
+.SS \fBACE_Message_Block\fR * ACE_UPIPE_Stream::mb_last_\fC [private]\fR
+.PP
+To hold the last \fBACE_Message_Block\fR read out of the stream. Thus allowing subsequent reads from one \fBACE_Message_Block\fR.
+.PP
+.SS int ACE_UPIPE_Stream::reference_count_\fC [private]\fR
+.PP
+Keep track of whether the sender and receiver have both shut down.
+.PP
+.SS size_t ACE_UPIPE_Stream::remaining_\fC [private]\fR
+.PP
+Holds the number of bytes that are still available in mb_last_.
+.PP
+.SS \fBACE_UPIPE_Addr\fR ACE_UPIPE_Stream::remote_addr_\fC [private]\fR
+.PP
+Address of who we are connected to.
+.PP
+.SS \fBMT_Stream\fR ACE_UPIPE_Stream::stream_\fC [private]\fR
+.PP
+Stream component used by the <UPIPE_Acceptor> and <UPIPE_Connector> to link together two UPIPE_Streams.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

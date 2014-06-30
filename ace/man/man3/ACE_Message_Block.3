@@ -1,0 +1,738 @@
+.TH ACE_Message_Block 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Message_Block \- Stores messages for use throughout \fBACE\fR (particularly ). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Message_Block.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef int \fBACE_Message_Type\fR"
+.br
+.ti -1c
+.RI "typedef u_long \fBMessage_Flags\fR"
+.br
+.ti -1c
+.RI "enum { \fBMB_DATA\fR = 0x01, \fBMB_PROTO\fR = 0x02, \fBMB_BREAK\fR = 0x03, \fBMB_PASSFP\fR = 0x04, \fBMB_EVENT\fR = 0x05, \fBMB_SIG\fR = 0x06, \fBMB_IOCTL\fR = 0x07, \fBMB_SETOPTS\fR = 0x08, \fBMB_IOCACK\fR = 0x81, \fBMB_IOCNAK\fR = 0x82, \fBMB_PCPROTO\fR = 0x83, \fBMB_PCSIG\fR = 0x84, \fBMB_READ\fR = 0x85, \fBMB_FLUSH\fR = 0x86, \fBMB_STOP\fR = 0x87, \fBMB_START\fR = 0x88, \fBMB_HANGUP\fR = 0x89, \fBMB_ERROR\fR = 0x8a, \fBMB_PCEVENT\fR = 0x8b, \fBMB_NORMAL\fR = 0x00, \fBMB_PRIORITY\fR = 0x80, \fBMB_USER\fR = 0x200 }"
+.br
+.ti -1c
+.RI "enum { \fBDONT_DELETE\fR = 01, \fBUSER_FLAGS\fR = 0x1000 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block\fR (\fBACE_Allocator\fR *message_block_allocator = 0)"
+.br
+.RI "\fICreate an empty message.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR (\fBACE_Data_Block\fR *, \fBMessage_Flags\fR flags = 0, \fBACE_Allocator\fR *message_block_allocator = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Block\fR (const char *data, size_t size = 0, u_long priority = ACE_DEFAULT_MESSAGE_BLOCK_PRIORITY)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Block\fR (size_t size, \fBACE_Message_Type\fR type = MB_DATA, ACE_Message_Block *cont = 0, const char *data = 0, \fBACE_Allocator\fR *allocator_strategy = 0, \fBACE_Lock\fR *locking_strategy = 0, u_long priority = ACE_DEFAULT_MESSAGE_BLOCK_PRIORITY, const \fBACE_Time_Value\fR &execution_time = \fBACE_Time_Value::zero\fR, const \fBACE_Time_Value\fR &deadline_time = \fBACE_Time_Value::max_time\fR, \fBACE_Allocator\fR *data_block_allocator = 0, \fBACE_Allocator\fR *message_block_allocator = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Block\fR (const ACE_Message_Block &mb, size_t align)"
+.br
+.ti -1c
+.RI "int \fBinit\fR (const char *data, size_t size = 0)"
+.br
+.ti -1c
+.RI "int \fBinit\fR (size_t size, \fBACE_Message_Type\fR type = MB_DATA, ACE_Message_Block *cont = 0, const char *data = 0, \fBACE_Allocator\fR *allocator_strategy = 0, \fBACE_Lock\fR *locking_strategy = 0, u_long priority = ACE_DEFAULT_MESSAGE_BLOCK_PRIORITY, const \fBACE_Time_Value\fR &execution_time = \fBACE_Time_Value::zero\fR, const \fBACE_Time_Value\fR &deadline_time = \fBACE_Time_Value::max_time\fR, \fBACE_Allocator\fR *data_block_allocator = 0, \fBACE_Allocator\fR *message_block_allocator = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Message_Block\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Type\fR \fBmsg_type\fR (void) const"
+.br
+.RI "\fIGet type of the message.\fR"
+.ti -1c
+.RI "void \fBmsg_type\fR (\fBACE_Message_Type\fR type)"
+.br
+.RI "\fISet type of the message.\fR"
+.ti -1c
+.RI "int \fBis_data_msg\fR (void) const"
+.br
+.RI "\fIFind out what type of message this is.\fR"
+.ti -1c
+.RI "\fBACE_Message_Type\fR \fBmsg_class\fR (void) const"
+.br
+.RI "\fIFind out what class of message this is (there are two classes, <normal> messages and <high-priority> messages).\fR"
+.ti -1c
+.RI "\fBMessage_Flags\fR \fBset_flags\fR (\fBMessage_Flags\fR more_flags)"
+.br
+.RI "\fIBitwise-or the <more_flags> into the existing message flags and return the new value.\fR"
+.ti -1c
+.RI "\fBMessage_Flags\fR \fBclr_flags\fR (\fBMessage_Flags\fR less_flags)"
+.br
+.RI "\fIClear the message flag bits specified in <less_flags> and return the new value.\fR"
+.ti -1c
+.RI "\fBMessage_Flags\fR \fBflags\fR (void) const"
+.br
+.RI "\fIGet the current message flags.\fR"
+.ti -1c
+.RI "\fBMessage_Flags\fR \fBset_self_flags\fR (\fBACE_Message_Block::Message_Flags\fR more_flags)"
+.br
+.RI "\fIBitwise-or the <more_flags> into the existing message flags and return the new value.\fR"
+.ti -1c
+.RI "\fBMessage_Flags\fR \fBclr_self_flags\fR (\fBACE_Message_Block::Message_Flags\fR less_flags)"
+.br
+.RI "\fIClear the message flag bits specified in <less_flags> and return the new value.\fR"
+.ti -1c
+.RI "\fBMessage_Flags\fR \fBself_flags\fR (void) const"
+.br
+.RI "\fIGet the current message flags.\fR"
+.ti -1c
+.RI "u_long \fBmsg_priority\fR (void) const"
+.br
+.RI "\fIGet priority of the message.\fR"
+.ti -1c
+.RI "void \fBmsg_priority\fR (u_long priority)"
+.br
+.RI "\fISet priority of the message.\fR"
+.ti -1c
+.RI "const \fBACE_Time_Value\fR& \fBmsg_execution_time\fR (void) const"
+.br
+.RI "\fIGet execution time associated with the message.\fR"
+.ti -1c
+.RI "void \fBmsg_execution_time\fR (const \fBACE_Time_Value\fR &et)"
+.br
+.RI "\fISet execution time associated with the message.\fR"
+.ti -1c
+.RI "const \fBACE_Time_Value\fR& \fBmsg_deadline_time\fR (void) const"
+.br
+.RI "\fIGet absolute time of deadline associated with the message.\fR"
+.ti -1c
+.RI "void \fBmsg_deadline_time\fR (const \fBACE_Time_Value\fR &dt)"
+.br
+.RI "\fISet absolute time of deadline associated with the message.\fR"
+.ti -1c
+.RI "virtual ACE_Message_Block* \fBclone\fR (\fBMessage_Flags\fR mask = 0) const"
+.br
+.RI "\fIReturn an exact "deep copy" of the message, i.e., create fresh new copies of all the Data_Blocks and continuations.\fR"
+.ti -1c
+.RI "ACE_Message_Block* \fBduplicate\fR (void) const"
+.br
+.RI "\fIReturn a "shallow" copy that increments our reference count by 1.\fR"
+.ti -1c
+.RI "ACE_Message_Block* \fBrelease\fR (void)"
+.br
+.ti -1c
+.RI "int \fBcopy\fR (const char *buf, size_t n)"
+.br
+.ti -1c
+.RI "int \fBcopy\fR (const char *buf)"
+.br
+.ti -1c
+.RI "void \fBcrunch\fR (void)"
+.br
+.RI "\fINormalizes data in the top-level <Message_Block> to align with the base, i.e., it "shifts" the data pointed to by <rd_ptr> down to the <base> and then readjusts <rt_ptr> to point to <base> and <wr_ptr> to point to <base> + the length of the moved data.\fR"
+.ti -1c
+.RI "void \fBreset\fR (void)"
+.br
+.RI "\fIResets the Message Block data to contain nothing, i.e., sets the read and write pointers to align with the base.\fR"
+.ti -1c
+.RI "char* \fBbase\fR (void) const"
+.br
+.RI "\fIGet message data.\fR"
+.ti -1c
+.RI "void \fBbase\fR (char *data, size_t size, \fBMessage_Flags\fR = DONT_DELETE)"
+.br
+.RI "\fISet message data (doesn't reallocate).\fR"
+.ti -1c
+.RI "char* \fBend\fR (void) const"
+.br
+.RI "\fIReturn a pointer to 1 past the end of the allocated data in a message.\fR"
+.ti -1c
+.RI "char* \fBmark\fR (void) const"
+.br
+.ti -1c
+.RI "char* \fBrd_ptr\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBrd_ptr\fR (char *ptr)"
+.br
+.ti -1c
+.RI "void \fBrd_ptr\fR (size_t n)"
+.br
+.ti -1c
+.RI "char* \fBwr_ptr\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBwr_ptr\fR (char *ptr)"
+.br
+.ti -1c
+.RI "void \fBwr_ptr\fR (size_t n)"
+.br
+.ti -1c
+.RI "\fBACE_Data_Block\fR* \fBdata_block\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBdata_block\fR (\fBACE_Data_Block\fR *)"
+.br
+.ti -1c
+.RI "\fBACE_Data_Block\fR* \fBreplace_data_block\fR (\fBACE_Data_Block\fR*)"
+.br
+.RI "\fISet a new data block pointer. A pointer to the original  is returned, and not released (as it is with <data_block>).\fR"
+.ti -1c
+.RI "ACE_Message_Block* \fBcont\fR (void) const"
+.br
+.RI "\fIGet the continuation field. Set the continuation field.\fR"
+.ti -1c
+.RI "void \fBcont\fR (ACE_Message_Block *)"
+.br
+.ti -1c
+.RI "ACE_Message_Block* \fBnext\fR (void) const"
+.br
+.RI "\fIGet link to next message. Set link to next message.\fR"
+.ti -1c
+.RI "void \fBnext\fR (ACE_Message_Block *)"
+.br
+.ti -1c
+.RI "ACE_Message_Block* \fBprev\fR (void) const"
+.br
+.RI "\fIGet link to prev message. Set link to prev message.\fR"
+.ti -1c
+.RI "void \fBprev\fR (ACE_Message_Block *)"
+.br
+.ti -1c
+.RI "\fBACE_Lock\fR* \fBlocking_strategy\fR (void)"
+.br
+.RI "\fIGet the locking strategy. Set a new locking strategy and return the hold one.\fR"
+.ti -1c
+.RI "\fBACE_Lock\fR* \fBlocking_strategy\fR (\fBACE_Lock\fR *)"
+.br
+.ti -1c
+.RI "int \fBreference_count\fR (void) const"
+.br
+.RI "\fIGet the current reference count.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.PP
+.RI "\fBMessage length and size operations\fR"
+.br
+Message length is (wr_ptr - rd_ptr).
+.PP
+Message size is capacity of the message, including data outside the [rd_ptr,wr_ptr] range.
+.PP
+.in +1c
+.in +1c
+.ti -1c
+.RI "size_t \fBlength\fR (void) const"
+.br
+.RI "\fIGet the length of the message.\fR"
+.ti -1c
+.RI "void \fBlength\fR (size_t n)"
+.br
+.RI "\fISet the length of the message.\fR"
+.ti -1c
+.RI "size_t \fBtotal_length\fR (void) const"
+.br
+.RI "\fIGet the length of the <Message_Block>s, including chained <Message_Block>s.\fR"
+.ti -1c
+.RI "size_t \fBtotal_size\fR (void) const"
+.br
+.RI "\fIGet the total number of bytes in all <Message_Block>s, including chained <Message_Block>s.\fR"
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIGet the number of bytes in the top-level <Message_Block> (i.e., does not consider the bytes in chained <Message_Block>s).\fR"
+.ti -1c
+.RI "int \fBsize\fR (size_t length)"
+.br
+.ti -1c
+.RI "size_t \fBtotal_capacity\fR (void) const"
+.br
+.RI "\fIGet the number of allocated bytes in all <Message_Block>, including chained <Message_Block>s.\fR"
+.ti -1c
+.RI "size_t \fBcapacity\fR (void) const"
+.br
+.RI "\fIGet the number of allocated bytes in the top-level <Message_Block>.\fR"
+.ti -1c
+.RI "size_t \fBspace\fR (void) const"
+.br
+.RI "\fIGet the number of bytes available after the <wr_ptr_> in the top-level <Message_Block>.\fR"
+.in -1c
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Message_Block* \fBduplicate\fR (const ACE_Message_Block *mb)"
+.br
+.ti -1c
+.RI "ACE_Message_Block* \fBrelease\fR (ACE_Message_Block *mb)"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block\fR (size_t size, \fBACE_Message_Type\fR type, ACE_Message_Block *cont, const char *data, \fBACE_Allocator\fR *allocator_strategy, \fBACE_Lock\fR *locking_strategy, \fBMessage_Flags\fR flags, u_long priority, const \fBACE_Time_Value\fR &execution_time, const \fBACE_Time_Value\fR &deadline_time, \fBACE_Data_Block\fR *db, \fBACE_Allocator\fR *data_block_allocator, \fBACE_Allocator\fR *message_block_allocator)"
+.br
+.RI "\fIPerform the actual initialization.\fR"
+.ti -1c
+.RI "int \fBrelease_i\fR (\fBACE_Lock\fR *lock)"
+.br
+.RI "\fIInternal release implementation Returns 1 if the data block has to be destroyed.\fR"
+.ti -1c
+.RI "int \fBinit_i\fR (size_t size, \fBACE_Message_Type\fR type, ACE_Message_Block *cont, const char *data, \fBACE_Allocator\fR *allocator_strategy, \fBACE_Lock\fR *locking_strategy, \fBMessage_Flags\fR flags, u_long priority, const \fBACE_Time_Value\fR &execution_time, const \fBACE_Time_Value\fR &deadline_time, \fBACE_Data_Block\fR *db, \fBACE_Allocator\fR *data_block_allocator, \fBACE_Allocator\fR *message_block_allocator)"
+.br
+.RI "\fIPerform the actual initialization.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBrd_ptr_\fR"
+.br
+.RI "\fIPointer to beginning of next read.\fR"
+.ti -1c
+.RI "size_t \fBwr_ptr_\fR"
+.br
+.RI "\fIPointer to beginning of next write.\fR"
+.ti -1c
+.RI "u_long \fBpriority_\fR"
+.br
+.RI "\fIPriority of message.\fR"
+.ti -1c
+.RI "ACE_Message_Block* \fBcont_\fR"
+.br
+.RI "\fIPointer to next message block in the chain.\fR"
+.ti -1c
+.RI "ACE_Message_Block* \fBnext_\fR"
+.br
+.RI "\fIPointer to next message in the list.\fR"
+.ti -1c
+.RI "ACE_Message_Block* \fBprev_\fR"
+.br
+.RI "\fIPointer to previous message in the list.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block::Message_Flags\fR \fBflags_\fR"
+.br
+.RI "\fIMisc flags (e.g., DONT_DELETE and USER_FLAGS).\fR"
+.ti -1c
+.RI "\fBACE_Data_Block\fR* \fBdata_block_\fR"
+.br
+.RI "\fIPointer to the reference counted data structure that contains the actual memory buffer.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBmessage_block_allocator_\fR"
+.br
+.RI "\fIThe allocator used to destroy ourselves when release is called and create new message blocks on duplicate.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Message_Block& \fBoperator=\fR (const ACE_Message_Block &)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Block\fR (const ACE_Message_Block &)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Data_Block\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Stores messages for use throughout \fBACE\fR (particularly ).
+.PP
+.PP
+ An  is modeled after the message data structures used in System V STREAMS. Its purpose is to enable efficient manipulation of arbitrarily-large messages without incurring much memory copying overhead. Here are the main characteristics of an : 1. Contains a pointer to a reference-counted , which in turn points to the actual data buffer. This allows very flexible and efficient sharing of data by multiple s. 2. One or more  can be linked to form a ``fragment chain.'' 3.  can be linked together by <prev_> and <next_> pointers to form a queue of messages (e.g., this is how  works). 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef int ACE_Message_Block::ACE_Message_Type
+.PP
+.SS typedef u_long ACE_Message_Block::Message_Flags
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIMB_DATA\fR \fRregular datacol messages (regular and priority).
+.TP
+\fB\fIMB_PROTO\fR \fRprotocol control.
+.TP
+\fB\fIMB_BREAK\fR \fRline breakes (regular and priority).
+.TP
+\fB\fIMB_PASSFP\fR \fRpass file pointer.
+.TP
+\fB\fIMB_EVENT\fR \fRpost an event to an event queue.
+.TP
+\fB\fIMB_SIG\fR \fRgenerate process signal.
+.TP
+\fB\fIMB_IOCTL\fR \fRioctl; set/get params.
+.TP
+\fB\fIMB_SETOPTS\fR \fRset various stream head options.
+.TP
+\fB\fIMB_IOCACK\fR \fRacknowledge ioctles (high priority; go to head of queue).
+.TP
+\fB\fIMB_IOCNAK\fR \fRnegative ioctl acknowledge.
+.TP
+\fB\fIMB_PCPROTO\fR \fRpriority proto message.
+.TP
+\fB\fIMB_PCSIG\fR \fRgenerate process signal.
+.TP
+\fB\fIMB_READ\fR \fRgenerate read notification.
+.TP
+\fB\fIMB_FLUSH\fR \fRflush your queues.
+.TP
+\fB\fIMB_STOP\fR \fRstop transmission immediately.
+.TP
+\fB\fIMB_START\fR \fRrestart transmission after stop.
+.TP
+\fB\fIMB_HANGUP\fR \fRline disconnect.
+.TP
+\fB\fIMB_ERROR\fR \fRfatal error used to set u.u_error.
+.TP
+\fB\fIMB_PCEVENT\fR \fRpost an event to an event queue.
+.TP
+\fB\fIMB_NORMAL\fR \fRNormal priority messagessks.
+.TP
+\fB\fIMB_PRIORITY\fR \fRHigh priority control messages.
+.TP
+\fB\fIMB_USER\fR \fRUser-defined control messages.
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIDONT_DELETE\fR \fRDon't delete the data on exit since we don't own it.
+.TP
+\fB\fIUSER_FLAGS\fR \fRuser defined flags start here.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Message_Block::ACE_Message_Block (\fBACE_Allocator\fR * message_block_allocator = 0)
+.PP
+Create an empty message.
+.PP
+.SS ACE_Message_Block::ACE_Message_Block (\fBACE_Data_Block\fR *, \fBMessage_Flags\fR flags = 0, \fBACE_Allocator\fR * message_block_allocator = 0)
+.PP
+Create an  that owns the  without copying it. If the <flags> is set to DONT_DELETE we don't delete the \fBACE_Data_Block\fR. It is left to the client's responsibility to take care of the memory allocated for the data_block 
+.SS ACE_Message_Block::ACE_Message_Block (const char * data, size_t size = 0, u_long priority = ACE_DEFAULT_MESSAGE_BLOCK_PRIORITY)
+.PP
+Create a Message Block that assumes ownership of <data> without copying it (i.e., we don't delete it since we don't malloc it!). Note that the <size> of the <Message_Block> will be <size>, but the <length> will be 0 until <wr_ptr> is set. 
+.SS ACE_Message_Block::ACE_Message_Block (size_t size, \fBACE_Message_Type\fR type = MB_DATA, ACE_Message_Block * cont = 0, const char * data = 0, \fBACE_Allocator\fR * allocator_strategy = 0, \fBACE_Lock\fR * locking_strategy = 0, u_long priority = ACE_DEFAULT_MESSAGE_BLOCK_PRIORITY, const \fBACE_Time_Value\fR & execution_time = \fBACE_Time_Value::zero\fR, const \fBACE_Time_Value\fR & deadline_time = \fBACE_Time_Value::max_time\fR, \fBACE_Allocator\fR * data_block_allocator = 0, \fBACE_Allocator\fR * message_block_allocator = 0)
+.PP
+Create an initialized message of type <type> containing <size> bytes. The <cont> argument initializes the continuation field in the <Message_Block>. If <data> == 0 then we create and own the <data>, using  to get the data if it's non-0. If <data> != 0 we assume that we have ownership of the <data> till this object seizes to exist (and don't delete it during destruction). If <locking_strategy> is non-0 then this is used to protect regions of code that access shared state (e.g., reference counting) from race conditions. Note that the <size> of the <Message_Block> will be <size>, but the <length> will be 0 until <wr_ptr> is set. The <data_block_allocator> is use to allocate the data blocks while the  is used to allocate the buffers contained by those. The <message_block_allocator> is used to allocate new <Message_Block> objects when a duplicate method is called. If a <message_block_allocator> is given, this <Message_Block> and future <Message_Block> objects created by duplicate will be free'ed into this allocator when they are released. Note: if you use this allocator, the <Message_Block> you created should have been created using this allocator because it will be released to the same allocator. 
+.SS ACE_Message_Block::ACE_Message_Block (const ACE_Message_Block & mb, size_t align)
+.PP
+A copy constructor. This constructor is a bit different. If the incoming Message Block has a data block from the stack this constructor does a deep copy ie. allocates a new data block on the heap and does a copy of the data from the incoming message block. As a final note, the alignment information is used to align the data block if it is created afresh. If the incoming <mb> has a data block has a data block allocated from the heap, then this constructor just duplicates (ie. a shallow copy) the data block of the incoming <mb>. 
+.SS ACE_Message_Block::~ACE_Message_Block (void)\fC [virtual]\fR
+.PP
+Delete all the resources held in the message.
+.PP
+Note that <release> is designed to release the continuation chain; the destructor is not. See <release> for details. 
+.SS ACE_Message_Block::ACE_Message_Block (size_t size, \fBACE_Message_Type\fR type, ACE_Message_Block * cont, const char * data, \fBACE_Allocator\fR * allocator_strategy, \fBACE_Lock\fR * locking_strategy, \fBMessage_Flags\fR flags, u_long priority, const \fBACE_Time_Value\fR & execution_time, const \fBACE_Time_Value\fR & deadline_time, \fBACE_Data_Block\fR * db, \fBACE_Allocator\fR * data_block_allocator, \fBACE_Allocator\fR * message_block_allocator)\fC [protected]\fR
+.PP
+Perform the actual initialization.
+.PP
+.SS ACE_Message_Block::ACE_Message_Block (const ACE_Message_Block &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Message_Block::base (char * data, size_t size, \fBMessage_Flags\fR = DONT_DELETE)
+.PP
+Set message data (doesn't reallocate).
+.PP
+.SS char * ACE_Message_Block::base (void) const
+.PP
+Get message data.
+.PP
+.SS size_t ACE_Message_Block::capacity (void) const
+.PP
+Get the number of allocated bytes in the top-level <Message_Block>.
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::clone (\fBMessage_Flags\fR mask = 0) const\fC [virtual]\fR
+.PP
+Return an exact "deep copy" of the message, i.e., create fresh new copies of all the Data_Blocks and continuations.
+.PP
+.SS \fBMessage_Flags\fR ACE_Message_Block::clr_flags (\fBMessage_Flags\fR less_flags)
+.PP
+Clear the message flag bits specified in <less_flags> and return the new value.
+.PP
+.SS \fBMessage_Flags\fR ACE_Message_Block::clr_self_flags (\fBACE_Message_Block::Message_Flags\fR less_flags)
+.PP
+Clear the message flag bits specified in <less_flags> and return the new value.
+.PP
+.SS void ACE_Message_Block::cont (ACE_Message_Block *)
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::cont (void) const
+.PP
+Get the continuation field. Set the continuation field.
+.PP
+.SS int ACE_Message_Block::copy (const char * buf)
+.PP
+Copies <buf> into the Message_Block starting at the <wr_ptr> offset. This call assumes that <buf> is NUL-terminated. Return 0 and increment <wr_ptr> by  if the method succeeds. Returns -1 if the size of the message is too small, i.e., for this to work correct, <end> must be >= <wr_ptr>. 
+.SS int ACE_Message_Block::copy (const char * buf, size_t n)
+.PP
+Copies <n> bytes from <buf> into the Message_Block starting at the <wr_ptr> offset. Return 0 and increment <wr_ptr> by <n> if the method succeeds. Returns -1 if the size of the message is too small, i.e., for this to work correct, <end> must be >= <wr_ptr>. 
+.SS void ACE_Message_Block::crunch (void)
+.PP
+Normalizes data in the top-level <Message_Block> to align with the base, i.e., it "shifts" the data pointed to by <rd_ptr> down to the <base> and then readjusts <rt_ptr> to point to <base> and <wr_ptr> to point to <base> + the length of the moved data.
+.PP
+.SS void ACE_Message_Block::data_block (\fBACE_Data_Block\fR *)
+.PP
+Set a new data block pointer. The original  is released as a result of this call. If you need to keep the original block, call <replace_data_block> instead. Upon return, this  holds a pointer to the new , taking over the reference you held on it prior to the call. 
+.SS \fBACE_Data_Block\fR * ACE_Message_Block::data_block (void) const
+.PP
+Get a pointer to the data block. Note that the  still references the block; this call does not change the reference count. 
+.SS void ACE_Message_Block::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::duplicate (const ACE_Message_Block * mb)\fC [static]\fR
+.PP
+Return a "shallow" copy that increments our reference count by 1. This is similar to CORBA's <_duplicate> method, which is useful if you want to eliminate lots of checks for NULL <mb> pointers before calling <_duplicate> on them. 
+.SS ACE_Message_Block * ACE_Message_Block::duplicate (void) const
+.PP
+Return a "shallow" copy that increments our reference count by 1.
+.PP
+.SS char * ACE_Message_Block::end (void) const
+.PP
+Return a pointer to 1 past the end of the allocated data in a message.
+.PP
+.SS \fBMessage_Flags\fR ACE_Message_Block::flags (void) const
+.PP
+Get the current message flags.
+.PP
+.SS int ACE_Message_Block::init (size_t size, \fBACE_Message_Type\fR type = MB_DATA, ACE_Message_Block * cont = 0, const char * data = 0, \fBACE_Allocator\fR * allocator_strategy = 0, \fBACE_Lock\fR * locking_strategy = 0, u_long priority = ACE_DEFAULT_MESSAGE_BLOCK_PRIORITY, const \fBACE_Time_Value\fR & execution_time = \fBACE_Time_Value::zero\fR, const \fBACE_Time_Value\fR & deadline_time = \fBACE_Time_Value::max_time\fR, \fBACE_Allocator\fR * data_block_allocator = 0, \fBACE_Allocator\fR * message_block_allocator = 0)
+.PP
+Create an initialized message of type <type> containing <size> bytes. The <cont> argument initializes the continuation field in the <Message_Block>. If <data> == 0 then we create and own the <data>, using  to get the data if it's non-0. If <data> != 0 we assume that we have ownership of the <data> till this object seizes to exist (and don't delete it during destruction). If <locking_strategy> is non-0 then this is used to protect regions of code that access shared state (e.g., reference counting) from race conditions. Note that the <size> of the <Message_Block> will be <size>, but the <length> will be 0 until <wr_ptr> is set. The <data_block_allocator> is use to allocate the data blocks while the  is used to allocate the buffers contained by those. 
+.SS int ACE_Message_Block::init (const char * data, size_t size = 0)
+.PP
+Create a Message Block that assumes it has ownership of <data>, but in reality it doesnt (i.e., cannot delete it since it didn't malloc it!). Note that the <size> of the <Message_Block> will be <size>, but the <length> will be 0 until <wr_ptr> is set. 
+.SS int ACE_Message_Block::init_i (size_t size, \fBACE_Message_Type\fR type, ACE_Message_Block * cont, const char * data, \fBACE_Allocator\fR * allocator_strategy, \fBACE_Lock\fR * locking_strategy, \fBMessage_Flags\fR flags, u_long priority, const \fBACE_Time_Value\fR & execution_time, const \fBACE_Time_Value\fR & deadline_time, \fBACE_Data_Block\fR * db, \fBACE_Allocator\fR * data_block_allocator, \fBACE_Allocator\fR * message_block_allocator)\fC [protected]\fR
+.PP
+Perform the actual initialization.
+.PP
+.SS int ACE_Message_Block::is_data_msg (void) const
+.PP
+Find out what type of message this is.
+.PP
+.SS void ACE_Message_Block::length (size_t n)
+.PP
+Set the length of the message.
+.PP
+.SS size_t ACE_Message_Block::length (void) const
+.PP
+Get the length of the message.
+.PP
+.SS \fBACE_Lock\fR* ACE_Message_Block::locking_strategy (\fBACE_Lock\fR *)
+.PP
+.SS \fBACE_Lock\fR * ACE_Message_Block::locking_strategy (void)
+.PP
+Get the locking strategy. Set a new locking strategy and return the hold one.
+.PP
+.SS char * ACE_Message_Block::mark (void) const
+.PP
+Return a pointer to 1 past the end of the allotted data in a message. Allotted data may be less than allocated data if a value smaller than \fBcapacity\fR() to is passed to \fBsize\fR(). 
+.SS \fBACE_Message_Type\fR ACE_Message_Block::msg_class (void) const
+.PP
+Find out what class of message this is (there are two classes, <normal> messages and <high-priority> messages).
+.PP
+.SS void ACE_Message_Block::msg_deadline_time (const \fBACE_Time_Value\fR & dt)
+.PP
+Set absolute time of deadline associated with the message.
+.PP
+.SS const \fBACE_Time_Value\fR & ACE_Message_Block::msg_deadline_time (void) const
+.PP
+Get absolute time of deadline associated with the message.
+.PP
+.SS void ACE_Message_Block::msg_execution_time (const \fBACE_Time_Value\fR & et)
+.PP
+Set execution time associated with the message.
+.PP
+.SS const \fBACE_Time_Value\fR & ACE_Message_Block::msg_execution_time (void) const
+.PP
+Get execution time associated with the message.
+.PP
+.SS void ACE_Message_Block::msg_priority (u_long priority)
+.PP
+Set priority of the message.
+.PP
+.SS u_long ACE_Message_Block::msg_priority (void) const
+.PP
+Get priority of the message.
+.PP
+.SS void ACE_Message_Block::msg_type (\fBACE_Message_Type\fR type)
+.PP
+Set type of the message.
+.PP
+.SS \fBACE_Message_Type\fR ACE_Message_Block::msg_type (void) const
+.PP
+Get type of the message.
+.PP
+.SS void ACE_Message_Block::next (ACE_Message_Block *)
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::next (void) const
+.PP
+Get link to next message. Set link to next message.
+.PP
+.SS ACE_Message_Block& ACE_Message_Block::operator= (const ACE_Message_Block &)\fC [private]\fR
+.PP
+.SS void ACE_Message_Block::prev (ACE_Message_Block *)
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::prev (void) const
+.PP
+Get link to prev message. Set link to prev message.
+.PP
+.SS void ACE_Message_Block::rd_ptr (size_t n)
+.PP
+.SS void ACE_Message_Block::rd_ptr (char * ptr)
+.PP
+.SS char * ACE_Message_Block::rd_ptr (void) const
+.PP
+Get the read pointer. Set the read pointer to <ptr>. Set the read pointer ahead <n> bytes. 
+.SS int ACE_Message_Block::reference_count (void) const
+.PP
+Get the current reference count.
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::release (ACE_Message_Block * mb)\fC [static]\fR
+.PP
+This behaves like the non-static method <release>, except that it checks if <mb> is 0. This is similar to <CORBA::release>, which is useful if you want to eliminate lots of checks for NULL pointers before calling <release> on them. Returns <mb>. 
+.SS ACE_Message_Block * ACE_Message_Block::release (void)
+.PP
+Decrease the shared \fBACE_Data_Block\fR's reference count by 1. If the \fBACE_Data_Block\fR's reference count goes to 0, it is deleted. In all cases, this ACE_Message_Block is deleted - it must have come from the heap, or there will be trouble.
+.PP
+<release> is designed to release the continuation chain; the destructor is not. If we make the destructor release the continuation chain by calling <release> or delete on the message blocks in the continuation chain, the following code will not work since the message block in the continuation chain is not off the heap:
+.PP
+ACE_Message_Block mb1 (1024); ACE_Message_Block mb2 (1024);
+.PP
+mb1.cont (&mb2);
+.PP
+And hence, call <release> on a dynamically allocated message block. This will release all the message blocks in the continuation chain. If you call delete or let the message block fall off the stack, cleanup of the message blocks in the continuation chain becomes the responsibility of the user. 
+.SS int ACE_Message_Block::release_i (\fBACE_Lock\fR * lock)\fC [protected]\fR
+.PP
+Internal release implementation Returns 1 if the data block has to be destroyed.
+.PP
+.SS \fBACE_Data_Block\fR * ACE_Message_Block::replace_data_block (\fBACE_Data_Block\fR *)
+.PP
+Set a new data block pointer. A pointer to the original  is returned, and not released (as it is with <data_block>).
+.PP
+.SS void ACE_Message_Block::reset (void)
+.PP
+Resets the Message Block data to contain nothing, i.e., sets the read and write pointers to align with the base.
+.PP
+.SS \fBMessage_Flags\fR ACE_Message_Block::self_flags (void) const
+.PP
+Get the current message flags.
+.PP
+.SS \fBMessage_Flags\fR ACE_Message_Block::set_flags (\fBMessage_Flags\fR more_flags)
+.PP
+Bitwise-or the <more_flags> into the existing message flags and return the new value.
+.PP
+.SS \fBMessage_Flags\fR ACE_Message_Block::set_self_flags (\fBACE_Message_Block::Message_Flags\fR more_flags)
+.PP
+Bitwise-or the <more_flags> into the existing message flags and return the new value.
+.PP
+.SS int ACE_Message_Block::size (size_t length)
+.PP
+Set the number of bytes in the top-level <Message_Block>, reallocating space if necessary. However, the <rd_ptr_> and <wr_ptr_> remain at the original offsets into the buffer, even if it is reallocated. Returns 0 if successful, else -1. 
+.SS size_t ACE_Message_Block::size (void) const
+.PP
+Get the number of bytes in the top-level <Message_Block> (i.e., does not consider the bytes in chained <Message_Block>s).
+.PP
+.SS size_t ACE_Message_Block::space (void) const
+.PP
+Get the number of bytes available after the <wr_ptr_> in the top-level <Message_Block>.
+.PP
+.SS size_t ACE_Message_Block::total_capacity (void) const
+.PP
+Get the number of allocated bytes in all <Message_Block>, including chained <Message_Block>s.
+.PP
+.SS size_t ACE_Message_Block::total_length (void) const
+.PP
+Get the length of the <Message_Block>s, including chained <Message_Block>s.
+.PP
+.SS size_t ACE_Message_Block::total_size (void) const
+.PP
+Get the total number of bytes in all <Message_Block>s, including chained <Message_Block>s.
+.PP
+.SS void ACE_Message_Block::wr_ptr (size_t n)
+.PP
+.SS void ACE_Message_Block::wr_ptr (char * ptr)
+.PP
+.SS char * ACE_Message_Block::wr_ptr (void) const
+.PP
+Get the write pointer. Set the write pointer to <ptr>. Set the write pointer ahead <n> bytes. This is used to compute the <length> of a message. 
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Data_Block\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Message_Block::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::cont_\fC [protected]\fR
+.PP
+Pointer to next message block in the chain.
+.PP
+.SS \fBACE_Data_Block\fR * ACE_Message_Block::data_block_\fC [protected]\fR
+.PP
+Pointer to the reference counted data structure that contains the actual memory buffer.
+.PP
+.SS \fBACE_Message_Block::Message_Flags\fR ACE_Message_Block::flags_\fC [protected]\fR
+.PP
+Misc flags (e.g., DONT_DELETE and USER_FLAGS).
+.PP
+.SS \fBACE_Allocator\fR * ACE_Message_Block::message_block_allocator_\fC [protected]\fR
+.PP
+The allocator used to destroy ourselves when release is called and create new message blocks on duplicate.
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::next_\fC [protected]\fR
+.PP
+Pointer to next message in the list.
+.PP
+.SS ACE_Message_Block * ACE_Message_Block::prev_\fC [protected]\fR
+.PP
+Pointer to previous message in the list.
+.PP
+.SS u_long ACE_Message_Block::priority_\fC [protected]\fR
+.PP
+Priority of message.
+.PP
+.SS size_t ACE_Message_Block::rd_ptr_\fC [protected]\fR
+.PP
+Pointer to beginning of next read.
+.PP
+.SS size_t ACE_Message_Block::wr_ptr_\fC [protected]\fR
+.PP
+Pointer to beginning of next write.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

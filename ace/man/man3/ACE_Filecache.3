@@ -1,0 +1,169 @@
+.TH ACE_Filecache 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Filecache \- A hash table holding the information about entry point into the Cached Virtual Filesystem. On insertion, the reference count is incremented. On destruction, reference count is decremented. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Filecache.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBACE_DEFAULT_VIRTUAL_FILESYSTEM_TABLE_SIZE\fR = 512, \fBACE_DEFAULT_VIRTUAL_FILESYSTEM_CACHE_SIZE\fR = 20 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fB~ACE_Filecache\fR (void)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const \fBACE_TCHAR\fR *filename)"
+.br
+.RI "\fIReturns 0 if the file associated with ``filename'' is in the cache, or -1 if not.\fR"
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBfetch\fR (const \fBACE_TCHAR\fR *filename, int mapit = 1)"
+.br
+.RI "\fIReturn the file associated with ``filename'' if it is in the cache, or create if not.\fR"
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBremove\fR (const \fBACE_TCHAR\fR *filename)"
+.br
+.RI "\fIRemove the file associated with ``filename'' from the cache.\fR"
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBcreate\fR (const \fBACE_TCHAR\fR *filename, int size)"
+.br
+.RI "\fICreate a new Filecache_Object, returns it.\fR"
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBfinish\fR (\fBACE_Filecache_Object\fR *&new_file)"
+.br
+.RI "\fIRelease an acquired Filecache_Object, returns it again or NULL if it was deleted.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Filecache* \fBinstance\fR (void)"
+.br
+.RI "\fISingleton pattern.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBinsert_i\fR (const \fBACE_TCHAR\fR *filename, ACE_SYNCH_RW_MUTEX &filelock, int mapit)"
+.br
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBremove_i\fR (const \fBACE_TCHAR\fR *filename)"
+.br
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBupdate_i\fR (const \fBACE_TCHAR\fR *filename, ACE_SYNCH_RW_MUTEX &filelock, int mapit)"
+.br
+.ti -1c
+.RI "\fBACE_Filecache\fR (void)"
+.br
+.RI "\fIPrevent it from being called.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBsize_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Filecache_Hash\fR \fBhash_\fR"
+.br
+.RI "\fIThe hash table.\fR"
+.ti -1c
+.RI "ACE_SYNCH_RW_MUTEX \fBhash_lock_\fR [ACE_DEFAULT_VIRTUAL_FILESYSTEM_TABLE_SIZE]"
+.br
+.ti -1c
+.RI "ACE_SYNCH_RW_MUTEX \fBfile_lock_\fR [ACE_DEFAULT_VIRTUAL_FILESYSTEM_TABLE_SIZE]"
+.br
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Filecache* \fBcvf_\fR"
+.br
+.RI "\fIThe reference to the instance.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A hash table holding the information about entry point into the Cached Virtual Filesystem. On insertion, the reference count is incremented. On destruction, reference count is decremented.
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_DEFAULT_VIRTUAL_FILESYSTEM_TABLE_SIZE\fR \fRFor this stupid implementation, use an array. Someday, use a balanced search tree, or real hash table.
+.TP
+\fB\fIACE_DEFAULT_VIRTUAL_FILESYSTEM_CACHE_SIZE\fR \fRThis determines the highwater mark in megabytes for the cache. This will be ignored for now.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Filecache::~ACE_Filecache (void)
+.PP
+.SS ACE_Filecache::ACE_Filecache (void)\fC [protected]\fR
+.PP
+Prevent it from being called.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS \fBACE_Filecache_Object\fR * ACE_Filecache::create (const \fBACE_TCHAR\fR * filename, int size)
+.PP
+Create a new Filecache_Object, returns it.
+.PP
+.SS \fBACE_Filecache_Object\fR * ACE_Filecache::fetch (const \fBACE_TCHAR\fR * filename, int mapit = 1)
+.PP
+Return the file associated with ``filename'' if it is in the cache, or create if not.
+.PP
+.SS int ACE_Filecache::find (const \fBACE_TCHAR\fR * filename)
+.PP
+Returns 0 if the file associated with ``filename'' is in the cache, or -1 if not.
+.PP
+.SS \fBACE_Filecache_Object\fR * ACE_Filecache::finish (\fBACE_Filecache_Object\fR *& new_file)
+.PP
+Release an acquired Filecache_Object, returns it again or NULL if it was deleted.
+.PP
+.SS \fBACE_Filecache_Object\fR* ACE_Filecache::insert_i (const \fBACE_TCHAR\fR * filename, ACE_SYNCH_RW_MUTEX & filelock, int mapit)\fC [protected]\fR
+.PP
+.SS ACE_Filecache * ACE_Filecache::instance (void)\fC [static]\fR
+.PP
+Singleton pattern.
+.PP
+.SS \fBACE_Filecache_Object\fR * ACE_Filecache::remove (const \fBACE_TCHAR\fR * filename)
+.PP
+Remove the file associated with ``filename'' from the cache.
+.PP
+.SS \fBACE_Filecache_Object\fR* ACE_Filecache::remove_i (const \fBACE_TCHAR\fR * filename)\fC [protected]\fR
+.PP
+.SS \fBACE_Filecache_Object\fR* ACE_Filecache::update_i (const \fBACE_TCHAR\fR * filename, ACE_SYNCH_RW_MUTEX & filelock, int mapit)\fC [protected]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Filecache * ACE_Filecache::cvf_\fC [static, private]\fR
+.PP
+The reference to the instance.
+.PP
+.SS ACE_SYNCH_RW_MUTEX ACE_Filecache::file_lock_[ACE_DEFAULT_VIRTUAL_FILESYSTEM_TABLE_SIZE]\fC [private]\fR
+.PP
+.SS \fBACE_Filecache_Hash\fR ACE_Filecache::hash_\fC [private]\fR
+.PP
+The hash table.
+.PP
+.SS ACE_SYNCH_RW_MUTEX ACE_Filecache::hash_lock_[ACE_DEFAULT_VIRTUAL_FILESYSTEM_TABLE_SIZE]\fC [private]\fR
+.PP
+.SS int ACE_Filecache::size_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

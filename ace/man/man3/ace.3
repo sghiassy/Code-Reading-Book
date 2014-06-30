@@ -1,0 +1,796 @@
+.TH ACE 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE \- Contains value added ACE methods that extend the behavior of the UNIX and Win32 OS calls. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <ACE.h>\fR
+.PP
+Inherits \fBACE_Flag_Manip\fR, \fBACE_Handle_Ops\fR, \fBACE_Lib_Find\fR, \fBACE_Init_ACE\fR, and \fBACE_Sock_Connect\fR.
+.PP
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "u_int \fBmajor_version\fR (void)"
+.br
+.RI "\fIe.g., the "5" in ACE 5.1.12.\fR"
+.ti -1c
+.RI "u_int \fBminor_version\fR (void)"
+.br
+.RI "\fIe.g., the "1" in ACE 5.1.12.\fR"
+.ti -1c
+.RI "u_int \fBbeta_version\fR (void)"
+.br
+.RI "\fIe.g., the "12" in ACE 5.1.12. Returns 0 for "stable" (non-beta) releases.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBcompiler_name\fR (void)"
+.br
+.RI "\fIE.g., the "SunPro C++" in SunPro C++ 4.32.0.\fR"
+.ti -1c
+.RI "u_int \fBcompiler_major_version\fR (void)"
+.br
+.RI "\fIE.g., the "4" in SunPro C++ 4.32.0.\fR"
+.ti -1c
+.RI "u_int \fBcompiler_minor_version\fR (void)"
+.br
+.RI "\fIE.g., the "32" in SunPro C++ 4.32.0.\fR"
+.ti -1c
+.RI "u_int \fBcompiler_beta_version\fR (void)"
+.br
+.RI "\fIE.g., the "0" in SunPro C++ 4.32.0.\fR"
+.ti -1c
+.RI "int \fBout_of_handles\fR (int error)"
+.br
+.RI "\fICheck if error indicates the process being out of handles (file descriptors).\fR"
+.ti -1c
+.RI "int \fBhandle_timed_accept\fR (ACE_HANDLE listener, \fBACE_Time_Value\fR *timeout, int restart)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBhandle_timed_complete\fR (ACE_HANDLE listener, const \fBACE_Time_Value\fR *timeout, int is_tli = 0)"
+.br
+.ti -1c
+.RI "int \fBset_handle_limit\fR (int new_limit = -1)"
+.br
+.ti -1c
+.RI "int \fBmax_handles\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBstrenvdup\fR (const \fBACE_TCHAR\fR *str)"
+.br
+.ti -1c
+.RI "const char* \fBstrend\fR (const char *s)"
+.br
+.RI "\fIReturns a pointer to the "end" of the string, i.e., the character past the '\\0'.\fR"
+.ti -1c
+.RI "char* \fBstrnew\fR (const char *s)"
+.br
+.RI "\fIThis method is just like <strdup>, except that it uses <operator new> rather than <malloc>.\fR"
+.ti -1c
+.RI "char* \fBstrndup\fR (const char *str, size_t n)"
+.br
+.RI "\fICreate a fresh new copy of <str>, up to <n> chars long. Uses  to allocate the new string.\fR"
+.ti -1c
+.RI "char* \fBstrnnew\fR (const char *str, size_t n)"
+.br
+.RI "\fICreate a fresh new copy of <str>, up to <n> chars long. Uses  to allocate the new string.\fR"
+.ti -1c
+.RI "const wchar_t* \fBstrend\fR (const wchar_t *s)"
+.br
+.ti -1c
+.RI "wchar_t* \fBstrnew\fR (const wchar_t *s)"
+.br
+.ti -1c
+.RI "wchar_t* \fBstrndup\fR (const wchar_t *str, size_t n)"
+.br
+.ti -1c
+.RI "wchar_t* \fBstrnnew\fR (const wchar_t *str, size_t n)"
+.br
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBexecname\fR (const \fBACE_TCHAR\fR *pathname)"
+.br
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBbasename\fR (const \fBACE_TCHAR\fR *pathname, \fBACE_TCHAR\fR delim = ACE_DIRECTORY_SEPARATOR_CHAR)"
+.br
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBdirname\fR (const \fBACE_TCHAR\fR *pathname, \fBACE_TCHAR\fR delim = ACE_DIRECTORY_SEPARATOR_CHAR)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBtimestamp\fR (\fBACE_TCHAR\fR date_and_time[], int time_len, int return_pointer_to_first_digit = 0)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBfork\fR (const \fBACE_TCHAR\fR *program_name = ACE_LIB_TEXT ("<unknown>"), int avoid_zombies = 0)"
+.br
+.ti -1c
+.RI "int \fBdaemonize\fR (const \fBACE_TCHAR\fR pathname[] = ACE_LIB_TEXT ("/"), int close_all_handles = ACE_DEFAULT_CLOSE_ALL_HANDLES, const \fBACE_TCHAR\fR program_name[] = ACE_LIB_TEXT ("<unknown>"))"
+.br
+.ti -1c
+.RI "size_t \fBround_to_pagesize\fR (off_t length)"
+.br
+.RI "\fIRounds the request to a multiple of the page size.\fR"
+.ti -1c
+.RI "size_t \fBround_to_allocation_granularity\fR (off_t len)"
+.br
+.RI "\fIRounds the request to a multiple of the allocation granularity.\fR"
+.ti -1c
+.RI "int \fBformat_hexdump\fR (const char *buffer, int size, \fBACE_TCHAR\fR *obuf, int obuf_sz)"
+.br
+.RI "\fIFormat buffer into printable format. This is useful for debugging.\fR"
+.ti -1c
+.RI "u_long \fBhash_pjw\fR (const char *str)"
+.br
+.RI "\fIComputes the hash value of <str> using the "Hash PJW" routine.\fR"
+.ti -1c
+.RI "u_long \fBhash_pjw\fR (const char *str, size_t len)"
+.br
+.RI "\fIComputes the hash value of <str> using the "Hash PJW" routine.\fR"
+.ti -1c
+.RI "u_long \fBhash_pjw\fR (const wchar_t *str)"
+.br
+.RI "\fIComputes the hash value of <str> using the "Hash PJW" routine.\fR"
+.ti -1c
+.RI "u_long \fBhash_pjw\fR (const wchar_t *str, size_t len)"
+.br
+.RI "\fIComputes the hash value of <str> using the "Hash PJW" routine.\fR"
+.ti -1c
+.RI "u_long \fBcrc32\fR (const char *str)"
+.br
+.RI "\fIComputes the ISO 8802-3 standard 32 bits CRC for the string (not for a file).\fR"
+.ti -1c
+.RI "u_long \fBcrc32\fR (const char *buf, ACE_UINT32 len)"
+.br
+.RI "\fIComputes the ISO 8802-3 standard 32 bits CRC for the given buffer (the length is included in the CRC).\fR"
+.ti -1c
+.RI "u_long \fBgcd\fR (u_long x, u_long y)"
+.br
+.RI "\fIEuclid's greatest common divisor algorithm.\fR"
+.ti -1c
+.RI "u_long \fBminimum_frame_size\fR (u_long period1, u_long period2)"
+.br
+.RI "\fICalculates the minimum enclosing frame size for the given values.\fR"
+.ti -1c
+.RI "u_long \fBis_prime\fR (const u_long n, const u_long min_factor, const u_long max_factor)"
+.br
+.ti -1c
+.RI "int \fBmap_errno\fR (int error)"
+.br
+.RI "\fIMap troublesome win32 errno values to values that standard C strerr function understands. Thank you Microsoft.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBsock_error\fR (int error)"
+.br
+.RI "\fIReturns a string containing the error message corresponding to a WinSock error. This works around an omission in the Win32 API...\fR"
+.ti -1c
+.RI "int \fBprocess_active\fR (\fBpid_t\fR pid)"
+.br
+.ti -1c
+.RI "int \fBterminate_process\fR (\fBpid_t\fR pid)"
+.br
+.ti -1c
+.RI "void \fBunique_name\fR (const void *object, \fBACE_TCHAR\fR *name, size_t length)"
+.br
+.ti -1c
+.RI "u_long \fBlog2\fR (u_long num)"
+.br
+.RI "\fIComputes the base 2 logarithm of <num>.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBnibble2hex\fR (u_int n)"
+.br
+.RI "\fIHex conversion utility.\fR"
+.ti -1c
+.RI "u_char \fBhex2byte\fR (\fBACE_TCHAR\fR c)"
+.br
+.RI "\fIConvert a hex character to its byte representation.\fR"
+.ti -1c
+.RI "char \fBdebug\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdebug\fR (char d)"
+.br
+.ti -1c
+.RI "int \fBselect\fR (int width, \fBACE_Handle_Set\fR *readfds, \fBACE_Handle_Set\fR *writefds = 0, \fBACE_Handle_Set\fR *exceptfds = 0, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIWrapper facade for <select> that uses s.\fR"
+.ti -1c
+.RI "int \fBselect\fR (int width, \fBACE_Handle_Set\fR &readfds, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIWrapper facade for the most common use of <select> that uses s.\fR"
+.ti -1c
+.RI "int \fBhandle_read_ready\fR (ACE_HANDLE handle, const \fBACE_Time_Value\fR *timeout)"
+.br
+.RI "\fITimed wait for handle to get read ready.\fR"
+.ti -1c
+.RI "int \fBhandle_write_ready\fR (ACE_HANDLE handle, const \fBACE_Time_Value\fR *timeout)"
+.br
+.RI "\fITimed wait for handle to get write ready.\fR"
+.ti -1c
+.RI "int \fBhandle_exception_ready\fR (ACE_HANDLE handle, const \fBACE_Time_Value\fR *timeout)"
+.br
+.RI "\fITimed wait for handle to get exception ready.\fR"
+.ti -1c
+.RI "int \fBhandle_ready\fR (ACE_HANDLE handle, const \fBACE_Time_Value\fR *timeout, int read_ready, int write_ready, int exception_ready)"
+.br
+.RI "\fITimed wait for handle to get read, write, or exception ready.\fR"
+.ti -1c
+.RI "int \fBenter_recv_timedwait\fR (ACE_HANDLE handle, const \fBACE_Time_Value\fR *timeout, int &val)"
+.br
+.RI "\fIWait for <timeout> before proceeding to a <recv> operation. <val> keeps track of whether we're in non-blocking mode or not.\fR"
+.ti -1c
+.RI "int \fBenter_send_timedwait\fR (ACE_HANDLE handle, const \fBACE_Time_Value\fR* timeout, int &val)"
+.br
+.RI "\fIWait for <timeout> before proceeding to a <send> operation. <val> keeps track of whether we're in non-blocking mode or not.\fR"
+.ti -1c
+.RI "void \fBrecord_and_set_non_blocking_mode\fR (ACE_HANDLE handle, int &val)"
+.br
+.RI "\fIThis makes sure that <handle> is set into non-blocking mode. <val> keeps track of whether were in non-blocking mode or not.\fR"
+.ti -1c
+.RI "void \fBrestore_non_blocking_mode\fR (ACE_HANDLE handle, int val)"
+.br
+.RI "\fICleanup after a timed operation, restore the appropriate non-blocking status of <handle>.\fR"
+.in -1c
+.PP
+.RI "\fBI/O operations\fR"
+.br
+Notes on common parameters:
+.PP
+<handle> is the connected endpoint that will be used for I/O.
+.PP
+<buf> is the buffer to write from or receive into.
+.PP
+<len> is the number of bytes to transfer.
+.PP
+The <timeout> parameter in the following methods indicates how long to blocking trying to transfer data. If <timeout> == 0, then the call behaves as a normal send/recv call, i.e., for blocking sockets, the call will block until action is possible; for non-blocking sockets, EWOULDBLOCK will be returned if no action is immediately possible.
+.PP
+If <timeout> != 0, the call will wait until the relative time specified in *<timeout> elapses.
+.PP
+The "_n()" I/O methods keep looping until all the data has been transferred. These methods also work for sockets in non-blocking mode i.e., they keep looping on EWOULDBLOCK. <timeout> is used to make sure we keep making progress, i.e., the same timeout value is used for every I/O operation in the loop and the timeout is not counted down.
+.PP
+The return values for the "*_n()" methods match the return values from the non "_n()" methods and are specified as follows:
+.PP
+.TP
+On complete transfer, the number of bytes transferred is returned.
+.TP
+On timeout, -1 is returned, errno == ETIME.
+.TP
+On error, -1 is returned, errno is set to appropriate error.
+.TP
+On EOF, 0 is returned, errno is irrelevant.On partial transfers, i.e., if any data is transferred before timeout/error/EOF, <bytes_transferred> will contain the number of bytes transferred.
+.PP
+Methods with <\fBiovec\fR> parameter are I/O vector variants of the I/O operations.
+.PP
+Methods with the extra <flags> argument will always result in <send> getting called. Methods without the extra <flags> argument will result in <send> getting called on Win32 platforms, and <write> getting called on non-Win32 platforms.
+.PP
+.in +1c
+.in +1c
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (ACE_HANDLE handle, void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_rcv\fR (ACE_HANDLE handle, void *buf, size_t len, int *flags, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (ACE_HANDLE handle, void *buf, size_t len, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvmsg\fR (ACE_HANDLE handle, struct \fBmsghdr\fR *msg, int flags, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvfrom\fR (ACE_HANDLE handle, char *buf, int len, int flags, struct sockaddr *addr, int *addrlen, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n\fR (ACE_HANDLE handle, void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_rcv_n\fR (ACE_HANDLE handle, void *buf, size_t len, int *flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n\fR (ACE_HANDLE handle, void *buf, size_t len, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (ACE_HANDLE handle, size_t n, ...)"
+.br
+.RI "\fIVarargs variant.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv\fR (ACE_HANDLE handle, \fBiovec\fR *iov, int iovcnt, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv_n\fR (ACE_HANDLE handle, \fBiovec\fR *iov, int iovcnt, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n\fR (ACE_HANDLE handle, \fBACE_Message_Block\fR *message_block, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_snd\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (ACE_HANDLE handle, const void *buf, size_t len, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsendmsg\fR (ACE_HANDLE handle, const struct \fBmsghdr\fR *msg, int flags, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsendto\fR (ACE_HANDLE handle, const char *buf, int len, int flags, const struct sockaddr *addr, int addrlen, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_snd_n\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (ACE_HANDLE handle, const void *buf, size_t len, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (ACE_HANDLE handle, size_t n, ...)"
+.br
+.RI "\fIVarargs variant.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsendv\fR (ACE_HANDLE handle, const \fBiovec\fR *iov, int iovcnt, const \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsendv_n\fR (ACE_HANDLE handle, const \fBiovec\fR *iov, int iovcnt, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (ACE_HANDLE handle, const \fBACE_Message_Block\fR *message_block, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0)"
+.br
+.RI "\fISend all the <message_block>s chained through their <next> and <cont> pointers. This call uses the underlying OS gather-write operation to reduce the domain-crossing penalty.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBread_n\fR (ACE_HANDLE handle, void *buf, size_t len, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBwrite_n\fR (ACE_HANDLE handle, const void *buf, size_t len, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBwrite_n\fR (ACE_HANDLE handle, const \fBACE_Message_Block\fR *message_block, size_t *bytes_transferred = 0)"
+.br
+.RI "\fIWrite all the <message_block>s chained through their <next> and <cont> pointers. This call uses the underlying OS gather-write operation to reduce the domain-crossing penalty.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBreadv_n\fR (ACE_HANDLE handle, \fBiovec\fR *iov, int iovcnt, size_t *bytes_transferred = 0)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBwritev_n\fR (ACE_HANDLE handle, const \fBiovec\fR *iov, int iovcnt, size_t *bytes_transferred = 0)"
+.br
+.in -1c
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_CLASS_IS_NAMESPACE\fR (ACE)"
+.br
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_i\fR (ACE_HANDLE handle, void *buf, size_t len)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n_i\fR (ACE_HANDLE handle, void *buf, size_t len, int flags, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n_i\fR (ACE_HANDLE handle, void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_rcv_n_i\fR (ACE_HANDLE handle, void *buf, size_t len, int *flags, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_rcv_n_i\fR (ACE_HANDLE handle, void *buf, size_t len, int *flags, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n_i\fR (ACE_HANDLE handle, void *buf, size_t len, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n_i\fR (ACE_HANDLE handle, void *buf, size_t len, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv_n_i\fR (ACE_HANDLE handle, \fBiovec\fR *iov, int iovcnt, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv_n_i\fR (ACE_HANDLE handle, \fBiovec\fR *iov, int iovcnt, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_i\fR (ACE_HANDLE handle, const void *buf, size_t len)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n_i\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n_i\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_snd_n_i\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBt_snd_n_i\fR (ACE_HANDLE handle, const void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n_i\fR (ACE_HANDLE handle, const void *buf, size_t len, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n_i\fR (ACE_HANDLE handle, const void *buf, size_t len, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsendv_n_i\fR (ACE_HANDLE handle, const \fBiovec\fR *iov, int iovcnt, size_t *bytes_transferred)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsendv_n_i\fR (ACE_HANDLE handle, const \fBiovec\fR *iov, int iovcnt, const \fBACE_Time_Value\fR *timeout, size_t *bytes_transferred)"
+.br
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBpagesize_\fR"
+.br
+.RI "\fISize of a VM page.\fR"
+.ti -1c
+.RI "size_t \fBallocation_granularity_\fR"
+.br
+.RI "\fISize of allocation granularity.\fR"
+.ti -1c
+.RI "u_long \fBcrc_table_\fR []"
+.br
+.RI "\fICRC table.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR \fBhex_chars_\fR []"
+.br
+.RI "\fIHex characters.\fR"
+.ti -1c
+.RI "char \fBdebug_\fR"
+.br
+.RI "\fIAre we debugging ACE?\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Contains value added ACE methods that extend the behavior of the UNIX and Win32 OS calls.
+.PP
+.PP
+ This class consolidates all these ACE static methods in a single place in order to manage the namespace better. These methods are put here rather than in \fBACE_OS\fR in order to separate concerns. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS ACE::ACE_CLASS_IS_NAMESPACE (ACE)\fC [private]\fR
+.PP
+.SS const \fBACE_TCHAR\fR * ACE::basename (const \fBACE_TCHAR\fR * pathname, \fBACE_TCHAR\fR delim = ACE_DIRECTORY_SEPARATOR_CHAR)\fC [static]\fR
+.PP
+Returns the "basename" of a <pathname> separated by <delim>. For instance, the basename of "/tmp/foo.cpp" is "foo.cpp" when <delim> is '/'. 
+.SS u_int ACE::beta_version (void)\fC [static]\fR
+.PP
+e.g., the "12" in ACE 5.1.12. Returns 0 for "stable" (non-beta) releases.
+.PP
+.SS u_int ACE::compiler_beta_version (void)\fC [static]\fR
+.PP
+E.g., the "0" in SunPro C++ 4.32.0.
+.PP
+.SS u_int ACE::compiler_major_version (void)\fC [static]\fR
+.PP
+E.g., the "4" in SunPro C++ 4.32.0.
+.PP
+.SS u_int ACE::compiler_minor_version (void)\fC [static]\fR
+.PP
+E.g., the "32" in SunPro C++ 4.32.0.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE::compiler_name (void)\fC [static]\fR
+.PP
+E.g., the "SunPro C++" in SunPro C++ 4.32.0.
+.PP
+.SS u_long ACE::crc32 (const char * buf, ACE_UINT32 len)\fC [static]\fR
+.PP
+Computes the ISO 8802-3 standard 32 bits CRC for the given buffer (the length is included in the CRC).
+.PP
+.SS u_long ACE::crc32 (const char * str)\fC [static]\fR
+.PP
+Computes the ISO 8802-3 standard 32 bits CRC for the string (not for a file).
+.PP
+.SS int ACE::daemonize (const \fBACE_TCHAR\fR pathname[] = ACE_LIB_TEXT ("/"), int close_all_handles = ACE_DEFAULT_CLOSE_ALL_HANDLES, const \fBACE_TCHAR\fR program_name[] = ACE_LIB_TEXT ("<unknown>"))\fC [static]\fR
+.PP
+Become a daemon process using the algorithm in Richard Stevens "Advanced Programming in the UNIX Environment." If <close_all_handles> is non-zero then all open file handles are closed. 
+.SS void ACE::debug (char d)\fC [static]\fR
+.PP
+.SS char ACE::debug (void)\fC [static]\fR
+.PP
+.SS const \fBACE_TCHAR\fR * ACE::dirname (const \fBACE_TCHAR\fR * pathname, \fBACE_TCHAR\fR delim = ACE_DIRECTORY_SEPARATOR_CHAR)\fC [static]\fR
+.PP
+Returns the "dirname" of a <pathname>. For instance, the dirname of "/tmp/foo.cpp" is "/tmp" when <delim> is '/'. If <pathname> has no <delim> ".\\0" is returned. This method does not modify <pathname> and is not reentrant. 
+.SS int ACE::enter_recv_timedwait (ACE_HANDLE handle, const \fBACE_Time_Value\fR * timeout, int & val)\fC [static]\fR
+.PP
+Wait for <timeout> before proceeding to a <recv> operation. <val> keeps track of whether we're in non-blocking mode or not.
+.PP
+.SS int ACE::enter_send_timedwait (ACE_HANDLE handle, const \fBACE_Time_Value\fR * timeout, int & val)\fC [static]\fR
+.PP
+Wait for <timeout> before proceeding to a <send> operation. <val> keeps track of whether we're in non-blocking mode or not.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE::execname (const \fBACE_TCHAR\fR * pathname)\fC [static]\fR
+.PP
+On Win32 returns <pathname> if it already ends in ".exe," otherwise returns a dynamically allocated buffer containing "<pathname>.exe". Always returns <pathname> on UNIX. 
+.SS \fBpid_t\fR ACE::fork (const \fBACE_TCHAR\fR * program_name = ACE_LIB_TEXT ("<unknown>"), int avoid_zombies = 0)\fC [static]\fR
+.PP
+if  == 0 call  directly, else create an orphan process that's inherited by the init process; init cleans up when the orphan process terminates so we don't create zombies. 
+.SS int ACE::format_hexdump (const char * buffer, int size, \fBACE_TCHAR\fR * obuf, int obuf_sz)\fC [static]\fR
+.PP
+Format buffer into printable format. This is useful for debugging.
+.PP
+.SS u_long ACE::gcd (u_long x, u_long y)\fC [static]\fR
+.PP
+Euclid's greatest common divisor algorithm.
+.PP
+.SS int ACE::handle_exception_ready (ACE_HANDLE handle, const \fBACE_Time_Value\fR * timeout)\fC [static]\fR
+.PP
+Timed wait for handle to get exception ready.
+.PP
+.SS int ACE::handle_read_ready (ACE_HANDLE handle, const \fBACE_Time_Value\fR * timeout)\fC [static]\fR
+.PP
+Timed wait for handle to get read ready.
+.PP
+.SS int ACE::handle_ready (ACE_HANDLE handle, const \fBACE_Time_Value\fR * timeout, int read_ready, int write_ready, int exception_ready)\fC [static]\fR
+.PP
+Timed wait for handle to get read, write, or exception ready.
+.PP
+.SS int ACE::handle_timed_accept (ACE_HANDLE listener, \fBACE_Time_Value\fR * timeout, int restart)\fC [static]\fR
+.PP
+Wait up to <timeout> amount of time to passively establish a connection. This method doesn't perform the , it just does the timed wait... 
+.SS ACE_HANDLE ACE::handle_timed_complete (ACE_HANDLE listener, const \fBACE_Time_Value\fR * timeout, int is_tli = 0)\fC [static]\fR
+.PP
+Wait up to <timeout> amount of time to complete an actively established non-blocking connection. If <is_tli> is non-0 then we are being called by a TLI wrapper (which behaves slightly differently from a socket wrapper). 
+.SS int ACE::handle_write_ready (ACE_HANDLE handle, const \fBACE_Time_Value\fR * timeout)\fC [static]\fR
+.PP
+Timed wait for handle to get write ready.
+.PP
+.SS u_long ACE::hash_pjw (const wchar_t * str, size_t len)\fC [static]\fR
+.PP
+Computes the hash value of <str> using the "Hash PJW" routine.
+.PP
+.SS u_long ACE::hash_pjw (const wchar_t * str)\fC [static]\fR
+.PP
+Computes the hash value of <str> using the "Hash PJW" routine.
+.PP
+.SS u_long ACE::hash_pjw (const char * str, size_t len)\fC [static]\fR
+.PP
+Computes the hash value of <str> using the "Hash PJW" routine.
+.PP
+.SS u_long ACE::hash_pjw (const char * str)\fC [static]\fR
+.PP
+Computes the hash value of <str> using the "Hash PJW" routine.
+.PP
+.SS u_char ACE::hex2byte (\fBACE_TCHAR\fR c)\fC [static]\fR
+.PP
+Convert a hex character to its byte representation.
+.PP
+.SS u_long ACE::is_prime (const u_long n, const u_long min_factor, const u_long max_factor)\fC [static]\fR
+.PP
+Function that can burn up noticeable CPU time: brute-force determination of whether number "n" is prime. Returns 0 if it is prime, or the smallest factor if it is not prime. min_factor and max_factor can be used to partition the work among threads. For just one thread, typical values are 2 and n/2. 
+.SS u_long ACE::log2 (u_long num)\fC [static]\fR
+.PP
+Computes the base 2 logarithm of <num>.
+.PP
+.SS u_int ACE::major_version (void)\fC [static]\fR
+.PP
+e.g., the "5" in ACE 5.1.12.
+.PP
+.SS int ACE::map_errno (int error)\fC [static]\fR
+.PP
+Map troublesome win32 errno values to values that standard C strerr function understands. Thank you Microsoft.
+.PP
+.SS int ACE::max_handles (void)\fC [static]\fR
+.PP
+Returns the maximum number of open handles currently permitted in this process. This maximum may be extended using . 
+.SS u_long ACE::minimum_frame_size (u_long period1, u_long period2)\fC [static]\fR
+.PP
+Calculates the minimum enclosing frame size for the given values.
+.PP
+.SS u_int ACE::minor_version (void)\fC [static]\fR
+.PP
+e.g., the "1" in ACE 5.1.12.
+.PP
+.SS \fBACE_TCHAR\fR ACE::nibble2hex (u_int n)\fC [static]\fR
+.PP
+Hex conversion utility.
+.PP
+.SS int ACE::out_of_handles (int error)\fC [static]\fR
+.PP
+Check if error indicates the process being out of handles (file descriptors).
+.PP
+.SS int ACE::process_active (\fBpid_t\fR pid)\fC [static]\fR
+.PP
+Checks if process with <pid> is still alive. Returns 1 if it is still alive, 0 if it isn't alive, and -1 if something weird happened. 
+.SS \fBssize_t\fR ACE::read_n (ACE_HANDLE handle, void * buf, size_t len, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::readv_n (ACE_HANDLE handle, \fBiovec\fR * iov, int iovcnt, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS void ACE::record_and_set_non_blocking_mode (ACE_HANDLE handle, int & val)\fC [static]\fR
+.PP
+This makes sure that <handle> is set into non-blocking mode. <val> keeps track of whether were in non-blocking mode or not.
+.PP
+.SS \fBssize_t\fR ACE::recv (ACE_HANDLE handle, size_t n, ...)\fC [static]\fR
+.PP
+Varargs variant.
+.PP
+.SS \fBssize_t\fR ACE::recv (ACE_HANDLE handle, void * buf, size_t len, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv (ACE_HANDLE handle, void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_i (ACE_HANDLE handle, void * buf, size_t len)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_n (ACE_HANDLE handle, \fBACE_Message_Block\fR * message_block, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_n (ACE_HANDLE handle, void * buf, size_t len, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_n (ACE_HANDLE handle, void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_n_i (ACE_HANDLE handle, void * buf, size_t len, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_n_i (ACE_HANDLE handle, void * buf, size_t len, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_n_i (ACE_HANDLE handle, void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::recv_n_i (ACE_HANDLE handle, void * buf, size_t len, int flags, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::recvfrom (ACE_HANDLE handle, char * buf, int len, int flags, struct sockaddr * addr, int * addrlen, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recvmsg (ACE_HANDLE handle, struct \fBmsghdr\fR * msg, int flags, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recvv (ACE_HANDLE handle, \fBiovec\fR * iov, int iovcnt, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recvv_n (ACE_HANDLE handle, \fBiovec\fR * iov, int iovcnt, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::recvv_n_i (ACE_HANDLE handle, \fBiovec\fR * iov, int iovcnt, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::recvv_n_i (ACE_HANDLE handle, \fBiovec\fR * iov, int iovcnt, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS void ACE::restore_non_blocking_mode (ACE_HANDLE handle, int val)\fC [static]\fR
+.PP
+Cleanup after a timed operation, restore the appropriate non-blocking status of <handle>.
+.PP
+.SS size_t ACE::round_to_allocation_granularity (off_t len)\fC [static]\fR
+.PP
+Rounds the request to a multiple of the allocation granularity.
+.PP
+.SS size_t ACE::round_to_pagesize (off_t length)\fC [static]\fR
+.PP
+Rounds the request to a multiple of the page size.
+.PP
+.SS int ACE::select (int width, \fBACE_Handle_Set\fR & readfds, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+Wrapper facade for the most common use of <select> that uses s.
+.PP
+.SS int ACE::select (int width, \fBACE_Handle_Set\fR * readfds, \fBACE_Handle_Set\fR * writefds = 0, \fBACE_Handle_Set\fR * exceptfds = 0, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+Wrapper facade for <select> that uses s.
+.PP
+.SS \fBssize_t\fR ACE::send (ACE_HANDLE handle, size_t n, ...)\fC [static]\fR
+.PP
+Varargs variant.
+.PP
+.SS \fBssize_t\fR ACE::send (ACE_HANDLE handle, const void * buf, size_t len, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::send (ACE_HANDLE handle, const void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::send_i (ACE_HANDLE handle, const void * buf, size_t len)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::send_n (ACE_HANDLE handle, const \fBACE_Message_Block\fR * message_block, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+Send all the <message_block>s chained through their <next> and <cont> pointers. This call uses the underlying OS gather-write operation to reduce the domain-crossing penalty.
+.PP
+.SS \fBssize_t\fR ACE::send_n (ACE_HANDLE handle, const void * buf, size_t len, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::send_n (ACE_HANDLE handle, const void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::send_n_i (ACE_HANDLE handle, const void * buf, size_t len, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::send_n_i (ACE_HANDLE handle, const void * buf, size_t len, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::send_n_i (ACE_HANDLE handle, const void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::send_n_i (ACE_HANDLE handle, const void * buf, size_t len, int flags, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::sendmsg (ACE_HANDLE handle, const struct \fBmsghdr\fR * msg, int flags, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::sendto (ACE_HANDLE handle, const char * buf, int len, int flags, const struct sockaddr * addr, int addrlen, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::sendv (ACE_HANDLE handle, const \fBiovec\fR * iov, int iovcnt, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::sendv_n (ACE_HANDLE handle, const \fBiovec\fR * iov, int iovcnt, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::sendv_n_i (ACE_HANDLE handle, const \fBiovec\fR * iov, int iovcnt, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::sendv_n_i (ACE_HANDLE handle, const \fBiovec\fR * iov, int iovcnt, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS int ACE::set_handle_limit (int new_limit = -1)\fC [static]\fR
+.PP
+Reset the limit on the number of open handles. If <new_limit> == -1 set the limit to the maximum allowable. Otherwise, set it to be the value of <new_limit>. 
+.SS const \fBACE_TCHAR\fR * ACE::sock_error (int error)\fC [static]\fR
+.PP
+Returns a string containing the error message corresponding to a WinSock error. This works around an omission in the Win32 API...
+.PP
+.SS const wchar_t* ACE::strend (const wchar_t * s)\fC [static]\fR
+.PP
+.SS const char * ACE::strend (const char * s)\fC [static]\fR
+.PP
+Returns a pointer to the "end" of the string, i.e., the character past the '\\0'.
+.PP
+.SS \fBACE_TCHAR\fR * ACE::strenvdup (const \fBACE_TCHAR\fR * str)\fC [static]\fR
+.PP
+Return a dynamically allocated duplicate of <str>, substituting the environment variable if <str[0] == '$'>. Note that the pointer is allocated with  and must be freed by . 
+.SS wchar_t* ACE::strndup (const wchar_t * str, size_t n)\fC [static]\fR
+.PP
+.SS char * ACE::strndup (const char * str, size_t n)\fC [static]\fR
+.PP
+Create a fresh new copy of <str>, up to <n> chars long. Uses  to allocate the new string.
+.PP
+.SS wchar_t* ACE::strnew (const wchar_t * s)\fC [static]\fR
+.PP
+.SS char * ACE::strnew (const char * s)\fC [static]\fR
+.PP
+This method is just like <strdup>, except that it uses <operator new> rather than <malloc>.
+.PP
+.SS wchar_t* ACE::strnnew (const wchar_t * str, size_t n)\fC [static]\fR
+.PP
+.SS char * ACE::strnnew (const char * str, size_t n)\fC [static]\fR
+.PP
+Create a fresh new copy of <str>, up to <n> chars long. Uses  to allocate the new string.
+.PP
+.SS \fBssize_t\fR ACE::t_rcv (ACE_HANDLE handle, void * buf, size_t len, int * flags, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::t_rcv_n (ACE_HANDLE handle, void * buf, size_t len, int * flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::t_rcv_n_i (ACE_HANDLE handle, void * buf, size_t len, int * flags, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::t_rcv_n_i (ACE_HANDLE handle, void * buf, size_t len, int * flags, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::t_snd (ACE_HANDLE handle, const void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::t_snd_n (ACE_HANDLE handle, const void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::t_snd_n_i (ACE_HANDLE handle, const void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS \fBssize_t\fR ACE::t_snd_n_i (ACE_HANDLE handle, const void * buf, size_t len, int flags, size_t * bytes_transferred)\fC [static, private]\fR
+.PP
+.SS int ACE::terminate_process (\fBpid_t\fR pid)\fC [static]\fR
+.PP
+Terminate the process abruptly with id <pid>. On Win32 platforms this uses <TerminateProcess> and on POSIX platforms is uses <kill> with the -9 (SIGKILL) signal, which cannot be caught or ignored. Note that this call is potentially dangerous to use since the process being terminated may not have a chance to cleanup before it shuts down. 
+.SS \fBACE_TCHAR\fR * ACE::timestamp (\fBACE_TCHAR\fR date_and_time[], int time_len, int return_pointer_to_first_digit = 0)\fC [static]\fR
+.PP
+Returns the current timestamp in the form "hour:minute:second:microsecond." The month, day, and year are also stored in the beginning of the date_and_time array. Returns 0 if unsuccessful, else returns pointer to beginning of the "time" portion of <day_and_time>. If <return_pointer_to_first_digit> is 0 then return a pointer to the space before the time, else return a pointer to the beginning of the time portion. 
+.SS void ACE::unique_name (const void * object, \fBACE_TCHAR\fR * name, size_t length)\fC [static]\fR
+.PP
+This method uses process id and object pointer to come up with a machine wide unique name. The process ID will provide uniqueness between processes on the same machine. The "this" pointer of the <object> will provide uniqueness between other "live" objects in the same process. The uniqueness of this name is therefore only valid for the life of <object>. 
+.SS \fBssize_t\fR ACE::write_n (ACE_HANDLE handle, const \fBACE_Message_Block\fR * message_block, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+Write all the <message_block>s chained through their <next> and <cont> pointers. This call uses the underlying OS gather-write operation to reduce the domain-crossing penalty.
+.PP
+.SS \fBssize_t\fR ACE::write_n (ACE_HANDLE handle, const void * buf, size_t len, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SS \fBssize_t\fR ACE::writev_n (ACE_HANDLE handle, const \fBiovec\fR * iov, int iovcnt, size_t * bytes_transferred = 0)\fC [static]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS size_t ACE::allocation_granularity_\fC [static, private]\fR
+.PP
+Size of allocation granularity.
+.PP
+.SS u_long ACE::crc_table_[]\fC [static, private]\fR
+.PP
+CRC table.
+.PP
+.SS char ACE::debug_\fC [static, private]\fR
+.PP
+Are we debugging ACE?
+.PP
+.SS const \fBACE_TCHAR\fR ACE::hex_chars_[]\fC [static, private]\fR
+.PP
+Hex characters.
+.PP
+.SS size_t ACE::pagesize_\fC [static, private]\fR
+.PP
+Size of a VM page.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

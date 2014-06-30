@@ -1,0 +1,205 @@
+/* $XConsortium: egc_asm.s /main/4 1996/05/13 16:38:54 kaleb $ */
+
+
+
+
+/* $XFree86: xc/programs/Xserver/hw/xfree98/vga16/ibm/egc_asm.s,v 3.4 1996/12/23 07:08:12 dawes Exp $ */
+
+#include "assyntax.h"
+
+ 	FILE("egc_asm.s")
+
+	AS_BEGIN
+	SEG_TEXT
+
+	GLOBL	GLNAME(getbits_x)
+GLNAME(getbits_x):
+	PUSH_L(ESI)
+	PUSH_L(EBX)
+	PUSH_L(ECX)
+	PUSH_L(EDX)
+	MOV_L(REGOFF(20,ESP),EAX)		/*  x */
+	MOV_L(REGOFF(24,ESP),EBX)		/*  patternwidth */
+	MOV_L(REGOFF(28,ESP),ESI)		/*  lineptr */
+	PUSH_L(ESI)
+	MOV_L(EAX,EDX)
+	MOV_L(EAX,ECX)
+	SHR_L(CONST(3),ECX)
+	ADD_L(ECX,ESI)
+	MOV_B(AL,CL)
+	MOV_B(REGIND(ESI),AH)
+	INC_L(ESI)
+	MOV_B(REGIND(ESI),AL)
+	POP_L(ESI)
+	AND_B(CONST(07),CL)
+	SHL_W(CL,AX)
+	ADD_W(CONST(8),DX)
+	SUB_W(BX,DX)
+	JS(getbits_0)
+	JZ(getbits_0)
+	MOV_B(DL,CL)
+	SHR_B(CL,AH)
+	MOV_B(REGIND(ESI),AL)
+	SHL_W(CL,AX)
+getbits_0:
+	CMP_W(CONST(8),BX)
+	JL(getbits_xx)
+	MOV_L(REGOFF(32,ESP),ECX)
+	SHR_B(CL,AH)
+	MOV_B(AH,AL)
+	POP_L(EDX)
+	POP_L(ECX)
+	POP_L(EBX)
+	POP_L(ESI)
+	RET
+getbits_xx:
+	MOV_B(CONST(8),CL)
+	SUB_B(BL,CL)
+	MOV_B(CONST(0xff),AL)
+	SHL_B(CL,AL)
+	AND_B(AL,AH)
+	CMP_B(CONST(1),BL)
+	JE(bit1)
+	CMP_B(CONST(2),BL)
+	JE(bit2)
+	CMP_B(CONST(4),BL)
+	JE(bit4)
+	JMP(bit3_x)
+bit1:
+	MOV_B(AH,AL)
+	SHR_B(CONST(1),AL)
+	OR_B(AL,AH)
+bit2:
+	MOV_B(AH,AL)
+	SHR_B(CONST(2),AL)
+	OR_B(AL,AH)
+bit4:
+	MOV_B(AH,AL)
+	SHR_B(CONST(4),AL)
+	OR_B(AL,AH)
+	JMP(getbits_1)
+bit3_x:
+	CMP_B(CONST(3),BL)
+	JE(bit3)
+	CMP_B(CONST(6),BL)
+	JE(bit6)
+	JMP(bit5)
+bit3:
+	MOV_B(AH,AL)
+	SHR_B(CONST(3),AL)
+	OR_B(AL,AH)
+bit6:
+	MOV_B(AH,AL)
+	SHR_B(CONST(6),AL)
+	OR_B(AL,AH)
+	JMP(getbits_1)
+bit5:
+	CMP_B(CONST(5),BL)
+	JNE(bit7)
+	MOV_B(AH,AL)
+	SHR_B(CONST(5),AL)
+	OR_B(AL,AH)
+	JMP(getbits_1)
+bit7:
+	MOV_B(AH,AL)
+	SHR_B(CONST(7),AL)
+	OR_B(AL,AH)
+getbits_1:
+	MOV_L(REGOFF(32,ESP),ECX)
+	SHR_B(CL,AH)
+	MOV_B(AH,AL)
+	POP_L(EDX)
+	POP_L(ECX)
+	POP_L(EBX)
+	POP_L(ESI)
+	RET
+
+	GLOBL GLNAME(wcopyr)
+GLNAME(wcopyr):
+	PUSH_L(ESI)
+	PUSH_L(EDI)
+	MOV_L(REGOFF(12,ESP),ESI)
+	MOV_L(REGOFF(16,ESP),EDI)
+	MOV_L(REGOFF(20,ESP),ECX)
+	MOV_L(GLNAME(vgaBase),EAX)
+	CMP_L(EAX,EDI)
+	JGE(wcopyr_0)
+	ADD_L(CONST(2),EDI)
+	MOV_W(REGIND(ESI),AX)
+	MOV_W(AX,REGIND(EDI))
+	ADD_L(CONST(2),ESI)
+	DEC_L(ECX)
+wcopyr_0:
+	CLD
+	REP
+	MOVS_W
+	POP_L(EDI)
+	POP_L(ESI)
+	RET
+
+	GLOBL	GLNAME(wcopyl)
+GLNAME(wcopyl):
+	PUSH_L(ESI)
+	PUSH_L(EDI)
+	MOV_L(REGOFF(12,ESP),ESI)
+	MOV_L(REGOFF(20,ESP),ECX)
+	MOV_L(GLNAME(vgaBase),EDI)
+	MOV_L(ECX,EDX)
+	DEC_L(EDX)
+	SHL_L(CONST(1),EDX)
+	SUB_L(EDX,ESI)
+	XOR_W(AX,AX)
+	CMP_L(EDI,ESI)
+	JGE(wcopyl_0)
+	MOV_B(CONST(1),AL)
+	DEC_L(ECX)
+wcopyl_0:
+	MOV_L(REGOFF(12,ESP),ESI)
+	MOV_L(REGOFF(16,ESP),EDI)
+	STD
+	REP
+	MOVS_W
+	TEST_B(AL,AL)
+	JZ(wcopyl_ret)
+	ADD_L(CONST(2),ESI)
+	MOVS_W
+wcopyl_ret:
+	POP_L(EDI)
+	POP_L(ESI)
+	RET
+
+	GLOBL	GLNAME(read8Z)
+GLNAME(read8Z):
+	PUSH_L(ESI)
+	PUSH_L(EDI)
+	PUSH_L(ECX)
+	PUSH_L(EBX)
+	MOV_L(REGOFF(20,ESP),ESI)
+	MOV_W(CONST(0x04a2),DX)
+	MOV_W(CONST(0x43ff),AX)
+	OUT_W
+	MOV_B(CONST(0x42),AH)
+	MOV_B(REGIND(ESI),BL)
+	SHL_L(CONST(8),EBX)
+	OUT_W
+	MOV_B(CONST(0x41),AH)
+	MOV_B(REGIND(ESI),BL)
+	SHL_L(CONST(8),EBX)
+	OUT_W
+	MOV_B(CONST(0x40),AH)
+	MOV_B(REGIND(ESI),BL)
+	SHL_L(CONST(8),EBX)
+	OUT_W
+	XOR_L(EAX,EAX)
+	MOV_B(REGIND(ESI),BL)
+	MOV_L(CONST(32),ECX)
+read8Z_1:
+	RCR_L(CONST(1),EBX)
+	RCL_L(CONST(4),EAX)
+	LOOP(read8Z_1)
+
+	POP_L(EBX)
+	POP_L(ECX)
+	POP_L(EDI)
+	POP_L(ESI)
+	RET

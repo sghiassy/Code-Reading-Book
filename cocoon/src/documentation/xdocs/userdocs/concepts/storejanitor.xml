@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+  <header>
+    <title>StoreJanitor in Apache Cocoon</title>
+    <version>0.1</version>
+    <type>Technical document</type>
+    <authors><person name="Gerhard Froehlich" email="g-froehlich@gmx.de"/>
+    </authors>
+    <abstract>This document describes the usage of the StoreJanitor under Cocoon.</abstract>
+  </header>
+  <body>
+  <s1 title="Goal"><p>This document describes the usage of the StoreJanitor under Apache Cocoon.</p></s1>
+  <s1 title="Overview">
+  <p>In the current design of Apache Cocoon there can be different stores for the different pipelines.
+  For example you can choose a weaker store for the event pipelines (weaker=caches 
+  not many objects) and a "big" store for the stream pipelines. If you know which ones are more 
+  "cacheable", you can fine-tune your stores. This decision was made, because of the two pipeline objects. 
+  You can combine a non-caching-stream-pipeline with a caching-event-pipeline etc.</p>
+  </s1>
+  <s1 title="Implementation">
+  <p>The implementation is quit simple! Every implementation of a Store can register in the 
+  StoreJanitor. He checks in a configurable interval if memory is running low. If low, 
+  then the StoreJanitor first runs the GC. If Memory is still low, he greps via Round Robin 
+  a victim (Store) and frees xx% of all emlements in this Store. After that the StoreJanitor 
+  sleeps and waits for the next iteration.</p>
+  </s1>
+  <s1 title="Configuration">
+  <source>
+  <![CDATA[
+  <store-janitor class="org.apache.cocoon.components.store.StoreJanitorImpl" logger="root.store">
+     <parameter name="freememory" value="1000000"/>
+     <parameter name="heapsize" value="60000000"/>
+     <parameter name="cleanupthreadinterval" value="10"/>
+     <parameter name="threadpriority" value="5"/>
+     <parameter name="percent_to_free" value="10"/>
+  </store-janitor>
+  ]]>
+  </source> 
+  <p>The right configuration is very important, because wrong settings can cause a high system load.</p>
+  <s2 title="Example configuration">
+    <ul><li>Tomcat settings in tomcat.sh or tomcat.bat:</li></ul>
+    <source>
+    <![CDATA[
+    %_RUNJAVA% %TOMCAT_OPTS% -Dtomcat.home="%TOMCAT_HOME%" -Xms100000000 -Xmx200000000 org.apache.tomcat.startup.Tomcat %2 %3 %4 %5 %6 %7 %8 %9
+    ]]>
+    </source> 
+    <ul><li>StoreJanitor settings:</li></ul>
+    <p>The freememory and heapsize paramter always depends on the Xms and Xmx 
+    parameter.</p>
+    <source>
+    <![CDATA[
+    <store-janitor class="org.apache.cocoon.components.store.StoreJanitorImpl" logger="root.store">
+      <parameter name="freememory" value="50000000"/>
+      <parameter name="heapsize" value="150000000"/>
+      <parameter name="cleanupthreadinterval" value="10"/>
+      <parameter name="threadpriority" value="5"/>
+      <parameter name="percent_to_free" value="10"/>
+    </store-janitor>
+    ]]>
+    </source>
+    <p>The <code>heapsize</code> _must_ be higher then the -Xms parameter and <code>freememory</code> _between_ those both. If you set
+    the <code>heapsize</code> lower then the -Xms parameter and <code>freememory</code> very thin, then the cleanupthread
+    will work all the time and cause a high system load. If you set the <code>heapsize</code> to close to the 
+    Xmx paramter and <code>freememory</code> to broad can cause a OutOfMemoryException. Somewhere in the middle 
+    is always the best.</p>
+    <p> The <code>cleanupthreadinterval</code> defines the interval of the background thread which
+    checks memory in seconds. Also this paramter should configured wisely. A to short interval can 
+    cause also a high system load. The <code>threadpriority</code> defines the priority of the 
+    background thread. 1 is lowest level and 10 the highest.</p>
+  </s2>
+  </s1>
+  </body>
+</document>

@@ -1,0 +1,102 @@
+XCOMM $XConsortium: Imakefile /main/10 1996/02/08 01:54:18 gildea $
+
+/* does not include manual pages under util (not X programs)
+   or any of the library function manual pages under doc/man */
+
+MANUALS = \
+  $(TOP)/doc/man/general/X.man \
+  $(TOP)/doc/man/general/Standards.man \
+  $(TOP)/doc/man/general/Consortium.man \
+  $(TOP)/doc/man/general/security.man \
+  $(TOP)/programs/appres/appres.man \
+  $(TOP)/programs/bdftopcf/bdftopcf.man \
+  $(TOP)/programs/bitmap/bitmap.man \
+  $(TOP)/programs/Xserver/hw/sun/constype.man \
+  $(TOP)/programs/editres/editres.man \
+  $(TOP)/programs/fsinfo/fsinfo.man \
+  $(TOP)/programs/fslsfonts/fslsfonts.man \
+  $(TOP)/programs/fstobdf/fstobdf.man \
+  $(TOP)/programs/iceauth/iceauth.man \
+  $(TOP)/config/imake/imake.man \
+  $(TOP)/programs/Xserver/hw/sun/kbd_mode.man \
+  $(TOP)/programs/Xserver/hw/xfree86/etc/kbd_mode.man \
+  $(TOP)/config/util/lndir.man \
+  $(TOP)/config/makedepend/mkdepend.man \
+  $(TOP)/config/util/makeg.man \
+  $(TOP)/config/util/makestrs.man \
+  $(TOP)/config/util/mkdirhier.man \
+  $(TOP)/programs/mkfontdir/mkfontdir.man \
+  $(TOP)/programs/oclock/oclock.man \
+  $(TOP)/programs/Xserver/hw/xfree86/reconfig/reconfig.man \
+  $(TOP)/programs/xterm/resize.man \
+  $(TOP)/programs/rstart/rstart.man \
+  $(TOP)/programs/rstart/rstartd.man \
+  $(TOP)/programs/xdm/sessreg.man \
+  $(TOP)/programs/rgb/showrgb.man \
+  $(TOP)/programs/smproxy/smproxy.man \
+  $(TOP)/programs/xinit/startx.man \
+  $(TOP)/programs/Xserver/hw/xfree86/SuperProbe/SuperProbe.man \
+  $(TOP)/programs/twm/twm.man \
+  $(TOP)/programs/x11perf/x11perf.man \
+  $(TOP)/programs/x11perf/x11pcomp.man \
+  $(TOP)/programs/xauth/xauth.man \
+  $(TOP)/programs/xclipboard/xclipboard.man \
+  $(TOP)/programs/xclock/xclock.man \
+  $(TOP)/programs/xcmsdb/xcmsdb.man \
+  $(TOP)/programs/xconsole/xconsole.man \
+  $(TOP)/programs/xclipboard/xcutsel.man \
+  $(TOP)/programs/Xserver/hw/dec/ws/Xdec.man \
+  $(TOP)/programs/xdm/xdm.man \
+  $(TOP)/programs/xdpyinfo/xdpyinfo.man \
+  $(TOP)/programs/Xserver/hw/xfree86/XF86Conf.man \
+  $(TOP)/programs/Xserver/hw/xfree86/XF86_Acc.man \
+  $(TOP)/programs/Xserver/hw/xfree86/XF86_Mono.man \
+  $(TOP)/programs/Xserver/hw/xfree86/XF86_SVGA.man \
+  $(TOP)/programs/Xserver/hw/xfree86/XF86_VGA16.man \
+  $(TOP)/programs/Xserver/hw/xfree86/xf86config/xf86conf.man \
+  $(TOP)/programs/xfd/xfd.man \
+  $(TOP)/programs/Xserver/hw/xfree86/XFree86.man \
+  $(TOP)/programs/xfs/xfs.man \
+  $(TOP)/programs/xhost/xhost.man \
+  $(TOP)/programs/Xserver/hw/hp/Xhp.man \
+  $(TOP)/programs/xieperf/xieperf.man \
+  $(TOP)/programs/xinit/xinit.man \
+  $(TOP)/programs/xkbcomp/xkbcomp.man \
+  $(TOP)/programs/xkbevd/xkbevd.man \
+  $(TOP)/programs/xkbprint/xkbprint.man \
+  $(TOP)/programs/xkill/xkill.man \
+  $(TOP)/programs/xlogo/xlogo.man \
+  $(TOP)/programs/xlsatoms/xlsatoms.man \
+  $(TOP)/programs/xlsclients/xlscli.man \
+  $(TOP)/programs/xlsfonts/xlsfonts.man \
+  $(TOP)/programs/xmag/xmag.man \
+  $(TOP)/programs/xmh/xmh.man \
+  $(TOP)/config/util/xmkmf.man \
+  $(TOP)/programs/xmodmap/xmodmap.man \
+  $(TOP)/programs/Xserver/hw/xnest/Xnest.man \
+  $(TOP)/programs/scripts/xon.man \
+  $(TOP)/programs/xprop/xprop.man \
+  $(TOP)/programs/xrdb/xrdb.man \
+  $(TOP)/programs/xrefresh/xrefresh.man \
+  $(TOP)/programs/Xserver/Xserver.man \
+  $(TOP)/programs/xset/xset.man \
+  $(TOP)/programs/xsetroot/xsetroot.man \
+  $(TOP)/programs/xsm/xsm.man \
+  $(TOP)/programs/xstdcmap/xstdcmap.man \
+  $(TOP)/programs/Xserver/hw/sun/Xsun.man \
+  $(TOP)/programs/xterm/xterm.man \
+  $(TOP)/programs/Xserver/hw/vfb/Xvfb.man \
+  $(TOP)/programs/xwd/xwd.man \
+  $(TOP)/programs/xwininfo/xwininfo.man \
+  $(TOP)/programs/xwud/xwud.man
+
+AllTarget(man.PS)
+
+XCOMM Sun's -man macros use the D and C registers
+MANUALFLAGS = -rD1 -rC1
+
+man.PS: $(MANUALS)
+	$(TROFF) $(MANMACROS) $(MANUALFLAGS) $(MANUALS) > $@
+
+clean::
+	$(RM) man.PS

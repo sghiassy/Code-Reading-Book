@@ -1,0 +1,266 @@
+.TH ACE_Timer_Node_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Timer_Node_T \- Maintains the state associated with a Timer entry. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Timer_Queue_T.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_Node_Dispatch_Info_T\fR<TYPE> \fBDISPATCH_INFO\fR"
+.br
+.RI "\fIUseful typedef ..\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Node_T\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_Timer_Node_T\fR (void)"
+.br
+.RI "\fIDtor.\fR"
+.ti -1c
+.RI "void \fBset\fR (const TYPE &type, const void *a, const \fBACE_Time_Value\fR &t, const \fBACE_Time_Value\fR &i, ACE_Timer_Node_T<TYPE> *n, long timer_id)"
+.br
+.RI "\fIsingly linked list.\fR"
+.ti -1c
+.RI "void \fBset\fR (const TYPE &type, const void *a, const \fBACE_Time_Value\fR &t, const \fBACE_Time_Value\fR &i, ACE_Timer_Node_T<TYPE> *p, ACE_Timer_Node_T<TYPE> *n, long timer_id)"
+.br
+.RI "\fIdoubly linked list version.\fR"
+.ti -1c
+.RI "TYPE& \fBget_type\fR (void)"
+.br
+.RI "\fIGet the type.\fR"
+.ti -1c
+.RI "void \fBset_type\fR (TYPE &type)"
+.br
+.RI "\fISet the type.\fR"
+.ti -1c
+.RI "const void* \fBget_act\fR (void)"
+.br
+.RI "\fIGet the asynchronous completion token.\fR"
+.ti -1c
+.RI "void \fBset_act\fR (void *act)"
+.br
+.RI "\fIset the asynchronous completion token.\fR"
+.ti -1c
+.RI "const \fBACE_Time_Value\fR& \fBget_timer_value\fR (void) const"
+.br
+.RI "\fIget the timer value.\fR"
+.ti -1c
+.RI "void \fBset_timer_value\fR (const \fBACE_Time_Value\fR &timer_value)"
+.br
+.RI "\fIset the timer value.\fR"
+.ti -1c
+.RI "const \fBACE_Time_Value\fR& \fBget_interval\fR (void) const"
+.br
+.RI "\fIget the timer interval.\fR"
+.ti -1c
+.RI "void \fBset_interval\fR (const \fBACE_Time_Value\fR &interval)"
+.br
+.RI "\fISet the timer interval.\fR"
+.ti -1c
+.RI "ACE_Timer_Node_T<TYPE>* \fBget_prev\fR (void)"
+.br
+.RI "\fIget the previous pointer.\fR"
+.ti -1c
+.RI "void \fBset_prev\fR (ACE_Timer_Node_T<TYPE> *prev)"
+.br
+.RI "\fIset the previous pointer.\fR"
+.ti -1c
+.RI "ACE_Timer_Node_T<TYPE>* \fBget_next\fR (void)"
+.br
+.RI "\fIget the next pointer.\fR"
+.ti -1c
+.RI "void \fBset_next\fR (ACE_Timer_Node_T<TYPE> *next)"
+.br
+.RI "\fIset the next pointer.\fR"
+.ti -1c
+.RI "long \fBget_timer_id\fR (void) const"
+.br
+.RI "\fIget the timer_id.\fR"
+.ti -1c
+.RI "void \fBset_timer_id\fR (long timer_id)"
+.br
+.RI "\fIset the timer_id.\fR"
+.ti -1c
+.RI "void \fBget_dispatch_info\fR (\fBACE_Timer_Node_Dispatch_Info_T\fR <TYPE> &info)"
+.br
+.RI "\fIGet the dispatch info. The dispatch information is got through <info>. This form helps us in preventing allocation and deleting data along the criticl path. TODO: We may want to have a copying version too, so that our interface will be complete..\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an TYPE.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "TYPE \fBtype_\fR"
+.br
+.RI "\fIType of object stored in the Queue.\fR"
+.ti -1c
+.RI "const void* \fBact_\fR"
+.br
+.RI "\fIAsynchronous completion token associated with the timer.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBtimer_value_\fR"
+.br
+.RI "\fITime until the timer expires.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBinterval_\fR"
+.br
+.RI "\fIIf this is a periodic timer this holds the time until the next timeout.\fR"
+.ti -1c
+.RI "ACE_Timer_Node_T<TYPE>* \fBprev_\fR"
+.br
+.RI "\fIPointer to previous timer.\fR"
+.ti -1c
+.RI "ACE_Timer_Node_T<TYPE>* \fBnext_\fR"
+.br
+.RI "\fIPointer to next timer.\fR"
+.ti -1c
+.RI "long \fBtimer_id_\fR"
+.br
+.RI "\fIId of this timer (used to cancel timers before they expire).\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE>  template class ACE_Timer_Node_T
+Maintains the state associated with a Timer entry.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classTYPE> typedef \fBACE_Timer_Node_Dispatch_Info_T\fR<TYPE> ACE_Timer_Node_T<TYPE>::DISPATCH_INFO
+.PP
+Useful typedef ..
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE> ACE_Timer_Node_T<TYPE>::ACE_Timer_Node_T<TYPE> (void)
+.PP
+Default constructor.
+.PP
+.SS template<classTYPE> ACE_Timer_Node_T<TYPE>::~ACE_Timer_Node_T<TYPE> (void)
+.PP
+Dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::dump (void) const
+.PP
+Dump the state of an TYPE.
+.PP
+.SS template<classTYPE> const void * ACE_Timer_Node_T<TYPE>::get_act (void)
+.PP
+Get the asynchronous completion token.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::get_dispatch_info (\fBACE_Timer_Node_Dispatch_Info_T\fR< TYPE >& info)
+.PP
+Get the dispatch info. The dispatch information is got through <info>. This form helps us in preventing allocation and deleting data along the criticl path. TODO: We may want to have a copying version too, so that our interface will be complete..
+.PP
+@ 
+.SS template<classTYPE> const \fBACE_Time_Value\fR & ACE_Timer_Node_T<TYPE>::get_interval (void) const
+.PP
+get the timer interval.
+.PP
+.SS template<classTYPE> ACE_Timer_Node_T< TYPE >* ACE_Timer_Node_T<TYPE>::get_next (void)
+.PP
+get the next pointer.
+.PP
+.SS template<classTYPE> ACE_Timer_Node_T< TYPE >* ACE_Timer_Node_T<TYPE>::get_prev (void)
+.PP
+get the previous pointer.
+.PP
+.SS template<classTYPE> long ACE_Timer_Node_T<TYPE>::get_timer_id (void) const
+.PP
+get the timer_id.
+.PP
+.SS template<classTYPE> const \fBACE_Time_Value\fR & ACE_Timer_Node_T<TYPE>::get_timer_value (void) const
+.PP
+get the timer value.
+.PP
+.SS template<classTYPE> TYPE & ACE_Timer_Node_T<TYPE>::get_type (void)
+.PP
+Get the type.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set (const TYPE & type, const void * a, const \fBACE_Time_Value\fR & t, const \fBACE_Time_Value\fR & i, ACE_Timer_Node_T< TYPE >* p, ACE_Timer_Node_T< TYPE >* n, long timer_id)
+.PP
+doubly linked list version.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set (const TYPE & type, const void * a, const \fBACE_Time_Value\fR & t, const \fBACE_Time_Value\fR & i, ACE_Timer_Node_T< TYPE >* n, long timer_id)
+.PP
+singly linked list.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set_act (void * act)
+.PP
+set the asynchronous completion token.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set_interval (const \fBACE_Time_Value\fR & interval)
+.PP
+Set the timer interval.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set_next (ACE_Timer_Node_T< TYPE >* next)
+.PP
+set the next pointer.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set_prev (ACE_Timer_Node_T< TYPE >* prev)
+.PP
+set the previous pointer.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set_timer_id (long timer_id)
+.PP
+set the timer_id.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set_timer_value (const \fBACE_Time_Value\fR & timer_value)
+.PP
+set the timer value.
+.PP
+.SS template<classTYPE> void ACE_Timer_Node_T<TYPE>::set_type (TYPE & type)
+.PP
+Set the type.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTYPE> const void * ACE_Timer_Node_T<TYPE>::act_\fC [private]\fR
+.PP
+Asynchronous completion token associated with the timer.
+.PP
+.SS template<classTYPE> \fBACE_Time_Value\fR ACE_Timer_Node_T<TYPE>::interval_\fC [private]\fR
+.PP
+If this is a periodic timer this holds the time until the next timeout.
+.PP
+.SS template<classTYPE> ACE_Timer_Node_T< TYPE >* ACE_Timer_Node_T<TYPE>::next_\fC [private]\fR
+.PP
+Pointer to next timer.
+.PP
+.SS template<classTYPE> ACE_Timer_Node_T< TYPE >* ACE_Timer_Node_T<TYPE>::prev_\fC [private]\fR
+.PP
+Pointer to previous timer.
+.PP
+.SS template<classTYPE> long ACE_Timer_Node_T<TYPE>::timer_id_\fC [private]\fR
+.PP
+Id of this timer (used to cancel timers before they expire).
+.PP
+.SS template<classTYPE> \fBACE_Time_Value\fR ACE_Timer_Node_T<TYPE>::timer_value_\fC [private]\fR
+.PP
+Time until the timer expires.
+.PP
+.SS template<classTYPE> TYPE ACE_Timer_Node_T<TYPE>::type_\fC [private]\fR
+.PP
+Type of object stored in the Queue.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

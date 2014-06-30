@@ -1,0 +1,50 @@
+XCOMM $XConsortium: Imakefile /main/30 1996/03/09 09:37:57 kaleb $
+XCOMM $XFree86: contrib/programs/xload/Imakefile,v 3.4.2.1 1997/05/17 09:12:47 dawes Exp $
+        DEPLIBS = XawClientDepLibs
+LOCAL_LIBRARIES = XawClientLibs
+#ifdef i386MachArchitecture
+  SYS_LIBRARIES = -lsys
+#endif
+#ifdef SVR4Architecture
+#ifdef SGIArchitecture
+  SYS_LIBRARIES = -lmld
+#else
+#ifdef SonyArchitecture
+  SYS_LIBRARIES = -lmld
+#else
+  SYS_LIBRARIES = -lelf
+#endif
+#endif
+#endif
+#if defined(SunArchitecture) && defined(i386Architecture) && defined(SystemV4)
+  SYS_LIBRARIES = -lkvm -lelf
+#endif
+#ifdef SGIArchitecture
+  SYS_LIBRARIES = -lmld
+#endif
+#ifdef OsfArchitecture
+  SYS_LIBRARIES = -lld
+#endif
+#ifdef i386BsdArchitecture
+  SYS_LIBRARIES = -lutil -lkvm
+#endif
+           SRCS = xload.c get_load.c
+           OBJS = xload.o get_load.o
+ OSMAJORVERSION = OSMajorVersion
+ OSMINORVERSION = OSMinorVersion
+      DEFINES = -DOSMAJORVERSION=$(OSMAJORVERSION) -DOSMINORVERSION=$(OSMINORVERSION) 
+
+AllTarget(xload)
+NormalProgramTarget(xload,$(OBJS),$(DEPLIBS),$(LOCAL_LIBRARIES),NullParameter)
+
+#if defined(OSF1Architecture) || defined(NetBSDArchitecture) || (defined(FreeBSDArchitecture) && OSMajorVersion > 1) || defined(OpenBSDArchitecture)
+InstallProgram(xload,$(BINDIR))
+#else
+InstallProgramWithFlags(xload,$(BINDIR),$(INSTKMEMFLAGS))
+#endif
+
+InstallAppDefaults(XLoad)
+
+InstallManPage(xload,$(MANDIR))
+
+DependTarget()

@@ -1,0 +1,33 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:30:36 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/video7/Imakefile,v 3.6 1996/12/23 06:58:53 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = v7_driver.c v7_bank.s
+OBJS = v7_driver.o v7_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I../../vga -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(video7_drv, $(OBJS))
+
+InstallLinkKitNonExecFile(v7_driver.c,$(LINKKITDIR)/drivers/vga256/video7)
+InstallLinkKitNonExecFile(v7_bank.s,$(LINKKITDIR)/drivers/vga256/video7)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/video7)
+
+DependTarget()

@@ -1,0 +1,87 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_ExtensionCheckIfAvailable(2)</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_ExtensionCheckIfAvailable</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_ExtensionCheckIfAvailable</h4>
+<dd>DEMOGL_ExtensionCheckIfAvailable comes in two versions: one for checking directly with the DemoGL extension database internally, which
+	is faster, and a string version that checks directly with the extension string reported by the OpenGL driver.
+	<p>
+	<hr align="left" width="40%" <B>Variant 1:</b>
+	<p>
+	<pre>
+<b>bool</b>
+DEMOGL_ExtensionCheckIfAvailable(
+	<b>const int</b> <i>iExtension</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iExtension</i>
+	<dd>Constant defined in DemoGL_Extensions.h. Use the defined constant to check if the corresponding OpenGL extension is available and
+		recognized.
+	</dl>
+	<p>
+	<hr align="left" width="40%" <B>Variant 2:</b>
+	<p>
+	<pre>
+<b>bool</b>
+DEMOGL_ExtensionCheckIfAvailable(
+	<b>const char</b> *<i>pszExtensionName</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>pszExtensionName</i>
+	<dd>Pointer to a zero-terminated string which represents the exact name of the OpenGL extension as it would be reported by the OpenGL driver. 
+	</dl>
+	<p>
+	<hr align="left" width="40%" <P><br>
+<dt><b>Return values.</b>
+<dd>If the OpenGL extension is available, it returns <i>true</i>.<br>
+	If the OpenGL extension is not available or an error occured, it returns <i>false</i>.
+	<p>
+<dt><b>Remarks.</b>
+<dd>The <i>iExtension</i> variant of <b>DEMOGL_ExtensionCheckIfAvailable</b> checks the internal database of known extensions. Because 
+	OpenGL extensions are added with every new videochip set released, it can happen <b>DEMOGL_ExtensionCheckIfAvailable</b> will report
+	<i>false</i> while the driver reports the extension. However DemoGL recognizes most extensions of all populair videocards up till the
+	ATI Radeon and the Geforce2 GTS. This database will be extended on a regular basis. When you want to check for a new, rarely used
+	extension, use the <i>pszExtensionName</i> variant. When you want to check for a common well supported extension, use the <i>iExtension</i>
+	variant. The <i>pszExtensionName</i> variant is slightly slower due to the string compare code.
+	<p>
+	<b>NOTE:</b>. <b>DEMOGL_ExtensionCheckIfAvailable</b> will only work after DemoGL has opened the main window plus when the holder of that
+	window, the main thread, executes <b>DEMOGL_ExtensionCheckIfAvailable</b>. Therefor it's not recommended to place 
+	<b>DEMOGL_ExtensionCheckIfAvailable</b>(const char *pszExtensionName)
+	calls in Init() methods of a <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> derived effect class, nor call this function before
+	you call <a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>. When you have to check for extensions in the Init()
+	method, use the integer variant of <b>DEMOGL_ExtensionCheckIfAvailable</b>.
+	<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_AppRun.htm" target="main">DEMOGL_AppRun</a>,
+	<a HREF="ref_classes_CEffect.htm" target="main">CEffect</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 01-jun-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

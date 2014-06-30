@@ -1,0 +1,30 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/09/28 17:24:18 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/os2/Imakefile,v 3.7 1997/01/27 06:58:05 dawes Exp $
+#include <Server.tmpl>
+
+BIOS_MOD = os2_bios
+
+SRCS = os2_init.c os2_video.c os2_io.c $(BIOS_MOD).c mapVT_noop.c \
+       os2_ioperm.c os2_VTsw.c os2_mouse.c os2_KbdEv.c os2_stubs.c \
+       os2_select.c os2_diag.c
+
+OBJS = os2_init.o os2_video.o os2_io.o $(BIOS_MOD).o mapVT_noop.o \
+       os2_ioperm.o os2_VTsw.o os2_mouse.o os2_kbdEv.o os2_stubs.o \
+       os2_select.o os2_diag.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+ObjectFromSpecialSource(mapVT_noop,../shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(VTsw_noop,../shared/VTsw_noop,/**/)
+
+DependTarget()

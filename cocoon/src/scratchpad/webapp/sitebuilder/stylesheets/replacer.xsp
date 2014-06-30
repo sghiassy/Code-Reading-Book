@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+     This page produces a set of nitf data elements, from a database. 
+     The elements are contained within a critical:news element
+     Parameters:
+       nitfTable - Table where nitf stories are contained.
+       nitfSection - Section of stories to retrieve.
+       nitfId   - ID of the story to retrieve. Optional; if missing, all
+stories in the section are returned.
+-->
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+          >
+<xsl:stylesheet version="1.0">
+ <xsp:logic>
+  String urlEncodedToReplace = parameters.getParameter("toReplace","");
+  java.util.Enumeration searchReplacePairs = new java.util.StringTokenizer(urlEncodedToReplace, ":");
+  while (searchReplacePairs.hasMoreElements()) {
+   String searchReplacePair = (String) searchReplacePairs.nextElement();
+   int separator = searchReplacePair.indexOf("=");
+   String search = searchReplacePair.substring(0,separator);
+   String replace = searchReplacePair.substring(separator + 1);
+   <xsp:content>
+    <xsl:template><xsp:attribute name="match">text()[contains(string(.),'{<xsp:expr>search</xsp:expr>}')]</xsp:attribute><xsl:value-of>
+      <xsp:attribute name="select">substring-before(string(.),'{<xsp:expr>search</xsp:expr>}')</xsp:attribute>
+     </xsl:value-of><xsp:expr>replace</xsp:expr><xsl:value-of><xsp:attribute name="select">substring-after(string(.),'{<xsp:expr>search</xsp:expr>}')</xsp:attribute></xsl:value-of></xsl:template>
+   </xsp:content>
+  }
+  </xsp:logic>
+          
+ <xsl:template match="@*|*|text()|processing-instruction()" priority="-1">
+  <xsl:copy>
+   <xsl:apply-templates select="@*|*|text()|processing-instruction()"/>
+  </xsl:copy>
+ </xsl:template>
+</xsl:stylesheet>
+</xsp:page> 

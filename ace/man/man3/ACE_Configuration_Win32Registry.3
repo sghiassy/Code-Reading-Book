@@ -1,0 +1,195 @@
+.TH ACE_Configuration_Win32Registry 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Configuration_Win32Registry \- The win32 registry implementation of a configuration database. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Configuration.h>\fR
+.PP
+Inherits \fBACE_Configuration\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_EXPLICIT \fBACE_Configuration_Win32Registry\fR (HKEY hKey)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Configuration_Win32Registry\fR (void)"
+.br
+.RI "\fIdestructor.\fR"
+.ti -1c
+.RI "virtual int \fBopen_section\fR (const \fBACE_Configuration_Section_Key\fR& base, const \fBACE_TCHAR\fR* sub_section, int create, \fBACE_Configuration_Section_Key\fR& result)"
+.br
+.ti -1c
+.RI "virtual int \fBremove_section\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* sub_section, int recursive)"
+.br
+.RI "\fIRemoves the <sub_section> from <key>. If recursive is non zero, any subkeys below <sub_section> are remove as well.\fR"
+.ti -1c
+.RI "virtual int \fBenumerate_values\fR (const \fBACE_Configuration_Section_Key\fR& key, int Index, ACE_TString& name, \fBVALUETYPE\fR& type)"
+.br
+.ti -1c
+.RI "virtual int \fBenumerate_sections\fR (const \fBACE_Configuration_Section_Key\fR& key, int Index, ACE_TString& name)"
+.br
+.ti -1c
+.RI "virtual int \fBset_string_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, const ACE_TString& value)"
+.br
+.RI "\fIsets the value in <key> with <name> to a string of <value>.\fR"
+.ti -1c
+.RI "virtual int \fBset_integer_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, u_int value)"
+.br
+.RI "\fIsets the value in <key> with <name> to an integer of <value>.\fR"
+.ti -1c
+.RI "virtual int \fBset_binary_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, const void* data, u_int length)"
+.br
+.RI "\fIsets the value in <key> with <name> to binary data of <data> with <length>.\fR"
+.ti -1c
+.RI "virtual int \fBget_string_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, ACE_TString& value)"
+.br
+.RI "\fIgets the string value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not a string).\fR"
+.ti -1c
+.RI "virtual int \fBget_integer_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, u_int& value)"
+.br
+.RI "\fIgets the integer value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not an integer).\fR"
+.ti -1c
+.RI "virtual int \fBget_binary_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, void*& data, u_int& length)"
+.br
+.ti -1c
+.RI "virtual int \fBfind_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, \fBVALUETYPE\fR& type)"
+.br
+.ti -1c
+.RI "virtual int \fBremove_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name)"
+.br
+.RI "\fIRemoves the the value <name> from <key>. returns non zero on error.\fR"
+.ti -1c
+.RI "virtual int \fBoperator==\fR (const ACE_Configuration_Win32Registry &rhs) const"
+.br
+.ti -1c
+.RI "virtual int \fBoperator!=\fR (const ACE_Configuration_Win32Registry &rhs) const"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "HKEY \fBresolve_key\fR (HKEY hKey, const \fBACE_TCHAR\fR* path, int create = 1)"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBload_key\fR (const \fBACE_Configuration_Section_Key\fR& key, HKEY& hKey)"
+.br
+.RI "\fIGets the HKEY for a configuration section.\fR"
+.ti -1c
+.RI "\fBACE_Configuration_Win32Registry\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Configuration_Win32Registry\fR (const ACE_Configuration_Win32Registry& rhs)"
+.br
+.ti -1c
+.RI "ACE_Configuration_Win32Registry& \fBoperator=\fR (const ACE_Configuration_Win32Registry& rhs)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+The win32 registry implementation of a configuration database.
+.PP
+.PP
+ The win32 implementation basically makes calls through to the registry functions. The API is very similar so very little work must be done 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_EXPLICIT ACE_Configuration_Win32Registry::ACE_Configuration_Win32Registry (HKEY hKey)
+.PP
+constructor for registry configuration database. hKey is the base registry key to attach to. This class takes ownership of hKey, it will invoke <RegCloseKey> on it upon destruction. 
+.SS ACE_Configuration_Win32Registry::~ACE_Configuration_Win32Registry (void)\fC [virtual]\fR
+.PP
+destructor.
+.PP
+.SS ACE_Configuration_Win32Registry::ACE_Configuration_Win32Registry (void)\fC [protected]\fR
+.PP
+.SS ACE_Configuration_Win32Registry::ACE_Configuration_Win32Registry (const ACE_Configuration_Win32Registry & rhs)\fC [protected]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS virtual int ACE_Configuration_Win32Registry::enumerate_sections (const \fBACE_Configuration_Section_Key\fR & key, int Index, ACE_TString & name)\fC [virtual]\fR
+.PP
+method to enumerate through the <name> subsections in <key>. To begin iteration, <index> must zero. to continue iteration, invoke enumerate_sections again while incrementing index. Each iteration will return the <name> of the sub section. This method returns 0 on success, <0 on error and 1 when there are no more subsections to iterate through. Note - you may not delete or add values while enumerating. If you need to do this, you start the enumeration over again. 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::enumerate_values (const \fBACE_Configuration_Section_Key\fR & key, int Index, ACE_TString & name, \fBVALUETYPE\fR & type)\fC [virtual]\fR
+.PP
+method to enumerate through the <name> and <type> of values in a <key>. To begin iteration, <index> must be zero. to continue iteration, invoke enumerate_values again while incrementing index. Each iteration will return the <name> of the value and its <type>. This method returns 0 on success, <0 on error and 1 when there are no more values to iterate through. Note - you may not delete or add values while enumerating. If you need to do this, you start the enumeration over again. 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::find_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, \fBVALUETYPE\fR & type)\fC [virtual]\fR
+.PP
+checks to see if an entry of <name> is in <key> and places the data type in <type>. Returns 0 on success (entry is found), -1 on error 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::get_binary_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, void *& data, u_int & length)\fC [virtual]\fR
+.PP
+gets the binary value of <name> from <key> and places a copy in <data> and sets <length> to the length of the data. caller is responsible for deleting <data>. Returns non zero on error (if value is not binary). 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::get_integer_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, u_int & value)\fC [virtual]\fR
+.PP
+gets the integer value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not an integer).
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::get_string_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, ACE_TString & value)\fC [virtual]\fR
+.PP
+gets the string value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not a string).
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS int ACE_Configuration_Win32Registry::load_key (const \fBACE_Configuration_Section_Key\fR & key, HKEY & hKey)\fC [protected]\fR
+.PP
+Gets the HKEY for a configuration section.
+.PP
+.SS virtual int ACE_Configuration_Win32Registry::open_section (const \fBACE_Configuration_Section_Key\fR & base, const \fBACE_TCHAR\fR * sub_section, int create, \fBACE_Configuration_Section_Key\fR & result)\fC [virtual]\fR
+.PP
+Finds a <sub_section> in <base> and places the resulting key in <result>. If create is non zero, the sub_section will be created if it doesn't exist 
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::operator!= (const ACE_Configuration_Win32Registry & rhs) const\fC [virtual]\fR
+.PP
+.SS ACE_Configuration_Win32Registry& ACE_Configuration_Win32Registry::operator= (const ACE_Configuration_Win32Registry & rhs)\fC [protected]\fR
+.PP
+.SS virtual int ACE_Configuration_Win32Registry::operator== (const ACE_Configuration_Win32Registry & rhs) const\fC [virtual]\fR
+.PP
+.SS virtual int ACE_Configuration_Win32Registry::remove_section (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * sub_section, int recursive)\fC [virtual]\fR
+.PP
+Removes the <sub_section> from <key>. If recursive is non zero, any subkeys below <sub_section> are remove as well.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS int ACE_Configuration_Win32Registry::remove_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name)\fC [virtual]\fR
+.PP
+Removes the the value <name> from <key>. returns non zero on error.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS HKEY ACE_Configuration_Win32Registry::resolve_key (HKEY hKey, const \fBACE_TCHAR\fR * path, int create = 1)\fC [static]\fR
+.PP
+This method traverses <path> through <hKey>. It is useful when you want the HKEY for a specific registry key, especially when initializing this implementation. Caller is responsible for closeing this key when it is no longer used. If create is 1 (default) the keys are create if they don't already exist. Returns 0 on error 
+.SS virtual int ACE_Configuration_Win32Registry::set_binary_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, const void * data, u_int length)\fC [virtual]\fR
+.PP
+sets the value in <key> with <name> to binary data of <data> with <length>.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::set_integer_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, u_int value)\fC [virtual]\fR
+.PP
+sets the value in <key> with <name> to an integer of <value>.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+.SS virtual int ACE_Configuration_Win32Registry::set_string_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, const ACE_TString & value)\fC [virtual]\fR
+.PP
+sets the value in <key> with <name> to a string of <value>.
+.PP
+Reimplemented from \fBACE_Configuration\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

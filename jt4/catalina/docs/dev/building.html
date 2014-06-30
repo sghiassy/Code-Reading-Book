@@ -1,0 +1,208 @@
+<html>
+<head>
+<title>Building Catalina</title>
+</head>
+
+<body bgcolor="white">
+
+<a href="README.html">Home</a>
+
+<div align="center">
+<strong>WARNING: These instructions are not up-to-date.<br>
+See the README.txt file in the top-level source directory.</strong>
+</div>
+
+<h2>Install Software Prerequisites</h2>
+
+<p>In order to build Catalina, you will need to download and install the
+software components that it relies on, as follows.  In the descriptions
+below, <code>$JAKARTA_HOME</code> is assumed to be the directory into which
+you are installing the required Jakarta modules.  It is assumed that
+you are using CVS to access the Jakarta source code repositories, as
+described at
+<http://jakarta.apache.org/getinvolved/cvsindex.html>http://jakarta.apache.org/getinvolved/cvsindex.html</a></p>
+
+<h3>Java Development Kit</h3>
+
+<p>Download and install a version 1.2 (or later) Java Development Kit (JDK)
+implementation for your operating system platform.  Set a
+<code>JAVA_HOME</code> environment variable to point at the directory where
+your JDK is installed, and add <code>$JAVA_HOME/bin</code> to your
+<code>PATH</code>.  In addition, configure the <code>CLASSPATH</code>
+environment variable as described below to reflect the other packages
+that are installed, or place the relevant JAR files into your JDK
+extensions directory (<code>$JAVA_HOME/jre/lib/ext</code>).</p>
+
+<h3>Java Naming and Directory Interface (JNDI)</h3>
+
+<p>If you are running a JDK earlier than version 1.3, download and install
+the current version of the Java Naming and Directory Interface (JNDI) package
+from <a href="http://java.sun.com/products/jndi">http://java.sun.com/products/jndi</a>.  None of the JNDI providers are required (unless you need to use them
+in your own applications), but the <code>jndi.jar</code> file must be available
+on the class path or as a system extension.</p>
+
+<h3>JNDI JDBC DataSource support</h3>
+
+<p>If you want to build in support for JNDI JDBC DataSources you need to
+download the following packages and put their jar files in your classpath.
+
+<li>Tyrex <a href="http://tyrex.exolab.org/">http://tyrex.exolab.org/</a></li>
+
+<li>Java Transaction API (JTA) <a href="http://java.sun.com/products/jta">
+http://java.sun.com/products/jta</a></li>
+
+<li>Java JDBC 2.0 Optional Extensions <a href="http://java.sun.com/products/jdbc/">
+http://java.sun.com/products/jdbc/</a></li>
+</p>
+
+<h3>Java API for XML Parsing (JAXP)</h3>
+
+<p>Download and install the current version of the Java API for XML Parsing
+(JAXP) implementation from
+<a href="http://java.sun.com/xml">http://java.sun.com/xml</a>.  Set an
+environment variable <code>JAXP_HOME</code> that points at the directory
+to which you installed the distribution.</p>
+
+<h3>Java Secure Sockets Extension (JSSE)</h3>
+
+<p>Download and install the current version of the Java Secure Sockets
+Extension (JSSE) implementation from
+<a href="http://java.sun.com/products/jsse">http://java.sun.com/products/jsse</a>.
+Set an environment variable <code>JSSE_HOME</code> that points at the
+directory to which you installed the distribution.</p>
+
+<h3>Apache Ant</h3>
+
+<p>Using CVS, check out the <code>jakarta-ant</code> module from
+the Jakarta CVS repository into <code>$JAKARTA_HOME/jakarta-ant</code>.
+Then, build Ant by executing the following:</p>
+<pre>
+    ./bootstrap.sh           &lt;-- Unix
+    bootstrap                &lt;-- Windows
+</pre>
+
+<p>Set an environment variable <code>ANT_HOME</code> that points at the
+directory where you installed the Ant module, if you placed it
+in any location other than <code>$JAKARTA_HOME/jakarta-ant</code>.</p>
+
+<h3>Apache Regexp</h3>
+
+<p>Using CVS, check out the <code>jakarta-regexp</code> module from
+the Jakarta CVS repository into <code>$JAKARTA_HOME/jakarta-regexp</code>.
+Then, build the regular expression library by executing the following:</p>
+<pre>
+    cd build
+    ./build-regexp.sh        &lt;-- Unix
+    build-regexp             &lt;-- Windows
+</pre>
+
+<p>Set an environment variable <code>REGEXP_HOME</code> that points at the
+directory where you installed the Regexp module if you placed it
+in any location other than <code>$JAKARTA_HOME/jakarta-regexp</code>.</p>
+
+<h3>Servlet API Classes</h3>
+
+<p>Using CVS, check out the <code>jakarta-servletapi</code> module from
+the Jakarta CVS repository into <code>$JAKARTA_HOME/jakarta-servletapi</code>.
+Then, update to the branch containing the servlet 2.3 / JSP 1.2 classes
+(only need to do this once in a checked out directory) and build it:
+
+<pre>
+    cd $JAKARTA_HOME/jakarta-servletapi      &lt;-- Unix
+    cvs update -r SERVLET_23_JSP_12          &lt;-- Unix
+    ./build.sh dist                          &lt;-- Unix
+
+    cd $JAKARTA_HOME\jakarta-serletapi       &lt;-- Windows
+    cvs update -r SERVLET_23_JSP_12          &lt;-- Windows
+    build dist                               &lt;-- Windows
+</pre>
+
+<p>Set an environment variable <code>SERVLETAPI_HOME</code> that points at
+the directory where you installed the Servletapi module if you placed it
+in any location other than <code>$JAKARTA_HOME/jakarta-servletapi</code>.</p>
+
+<h3>Tomcat 4.0</h3>
+
+<p>Using CVS, check out the <code>jakarta-tomcat-4.0</code> module from
+the Jakarta CVS repository into <code>$JAKARTA_HOME/jakarta-tomcat-4.0</code>.
+The Catalina source code is in directory <code>catalina</code> in this
+module.</p>
+
+<h2>Building Catalina</h2>
+
+<p>To build a Tomcat that contains Catalina, Jasper, and the
+sample webapps, do the following:</p>
+<pre>
+    cd $JAKARTA_HOME/jakarta-tomcat-4.0      &lt;-- Unix
+    ./build.sh                               &lt;-- Unix
+
+    cd $JAKARTA_HOME\jakarta-tomcat-4.0      &lt;-- Windows
+    build                                    &lt;-- Windows
+</pre>
+<p>which will build into directory <code>$JAKARTA_HOME/build/tomcat-4.0</code>.
+You can create a distribution build (that matches the directory layout of the
+nightly builds) by adding a <code>dist</code> target to the build command.
+</p>
+
+<p>If you wish to build just the Catalina component, do this instead:</p>
+<pre>
+    cd $JAKARTA_HOME/jakarta-tomcat-4.0      &lt;-- Unix
+    cd catalina                              &lt;-- Unix
+    ./build.sh                               &lt;-- Unix
+
+    cd $JAKARTA_HOME\jakarta-tomcat-4.0      &lt;-- Windows
+    cd catalina                              &lt;-- Windows
+    build                                    &lt;-- Windows
+</pre>
+<p>which will build into directory <code>$JAKARTA_HOME/build/catalina</code>.
+</p>
+
+
+<h2>Running Catalina</h2>
+
+<p>If you have built a Tomcat build, you can test it as follows:</p>
+<pre>
+    cd $JAKARTA_HOME/build/tomcat-4.0         &lt;-- Unix
+    ./bin/catalina.sh start                   &lt;-- Unix
+
+    cd $JAKARTA_HOME\build\tomcat-4.0         &lt;-- Windows
+    .\bin\catalina start                      &lt;-- Windows
+</pre>
+
+<p>To access the default content and examples, access the following URL
+with your web browser:</p>
+<pre>
+    http://localhost:8080
+</pre>
+
+<p>To shut down Tomcat, execute the following commands:</p>
+<pre>
+    cd $JAKARTA_HOME/build/tomcat-4.0         &lt;-- Unix
+    ./bin/catalina.sh stop                    &lt;-- Unix
+
+    cd $JAKARTA_HOME\build\tomcat-4.0         &lt;-- Windows
+    .\bin\catalina stop                       &lt;-- Windows
+</pre>
+
+<h3>Reporting Bugs</h3>
+
+<p>The bug reporting system we are using can be reached via
+<a href="http://jakarta.apache.org/bugs">http://jakarta.apache.org/bugs</a>.
+Please use the product category "Catalina" for issues specific to Catalina.
+</p>
+
+
+<h3>Before Committing Changes</h3>
+
+<p>Before committing any changes to the <code>jakarta-tomcat-4.0</code>
+CVS module, you must ensure that a complete build of the entire workspace
+is successful, and that all of the tests run correctly.</p>
+
+
+<br>
+<div align="center"><hr width="75%"><font size="2">
+$Id: building.html,v 1.3 2001/02/23 03:15:02 glenn Exp $
+</font></div>
+
+</body>
+</html>

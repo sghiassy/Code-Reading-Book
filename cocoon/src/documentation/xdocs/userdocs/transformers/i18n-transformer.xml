@@ -1,0 +1,391 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>I18n Transformer</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Konstantin Piroumian" email="kot_p@hotbox.ru"/>
+		 </authors>
+		<abstract>
+		This document describes an approach for internationalization of XML
+		documents within Cocoon. It introduces some tags to markup text 
+		that should be translated and a format for dictionaries.
+		The first proposal was made by Infozone Group (http://www.infozone-group.org).
+		</abstract>
+	</header>
+	<body>
+		<s1 title="I18n Transformer">
+				<p>
+				Developing and maintaining multi-language sites is a common problem for web developers.
+				The usage of XML and XSL makes this task much more easier, especially with Cocoon's 
+				content, logic and presentation separation concept.
+				</p>
+				<p>
+				This approach for internationalization (further - i18n) of XML documents within Cocoon 
+				is based on a transformer - <link href="../../apidocs/org/apache/cocoon/transformation/I18nTransformer.html">
+						<code>I18nTransformer</code>
+					</link>
+				, which uses XML dictionaries for all the i18n data. The namespace of i18n is defined as follows:
+   				<code>xmlns:i18n="http://apache.org/cocoon/i18n/2.0"</code>
+				</p>
+				<p>
+				The first implementation was developed by <link href="mailto:lassi.immonen@valkeus.com">Lassi Immonen</link>. In this implementation the syntax was changed according to the <link href="http://www.infozone-group.org">Infozone Group</link>'s i18n proposal (with small changes) and some new features were implemented.
+				</p>
+				<p>
+				Enhancements for number, date and time have been contributed by <link href="mailto:Michael.Enke@wincor-nixdorf.com">Michael Enke</link>.
+				</p>
+			<ul>
+				<li>Name : i18n</li>
+				<li>Class: org.apache.cocoon.transformation.I18nTransformer</li>
+				<li>Cacheable: no.</li>
+			</ul>
+		</s1>
+			<s1 title="Features supported">
+				<p>
+					The following features are supported by the i18n transformer:
+				</p>
+				<ul>
+					<li>Text translation</li>
+					<li>Attribute translation</li>
+					<li>Param substitution</li>
+					<li>Substitution param translation</li>
+					<li>Date internationalization (New!)</li>
+					<li>Number internationalization (New!)</li>
+					<li>Locale support (New!)</li>
+					<li>A dictionary update and language addition automation stylesheet (New!)</li>
+				</ul>
+				<p>
+					A simple example of i18n:
+				</p>
+				<source><![CDATA[
+<para title="first" name="article"  i18n:attr="title name">
+  <i18n:text>This text will be translated.</i18n:text>
+</para>]]></source>
+				<p>
+					The text inside the <code><![CDATA[<i18n:text>]]></code> will be used as a key to find the 
+					translation in the dictionary. All attributes that are listed in the <code><![CDATA[<i18n:attr>]]></code> attribute also will be translated and their values will be used as dictionary keys.
+				</p>
+				<note>
+					This i18n approach was re-designed to implement i18n of dates, currencies, etc.
+					Although the possibilities supported allow for complicated formatting, you will need to use XSP to achieve more flexibility in some cases.
+				</note>
+			</s1>
+		<s1 title="Markup content for translation">
+			<s2 title="Simple text translation">
+				<p>
+    			To translate some simple text we use the <code><![CDATA[<i18n:text>]]></code> tag:
+			</p>
+				<source><![CDATA[
+<i18n:text>Text to be translated</i18n:text>]]></source>
+				<p>
+			    The text between the <code><![CDATA[<i18n:text>]]></code>-tags is used as a key to find the translation in the dictionary.  
+			</p>
+				<p>
+				The 'i18n:key' attribute can be used to specify a special key for
+			 	the dictionary. Normally, the text itself is used as the key to find
+			 	the translation in the dictionary. If we specify the 'i18n:key' attribute this
+			 	key is used to find the translation and the text itself is used as the default value, 
+				if no translation can be found.
+		    </p>
+				<source><![CDATA[
+<i18n:text i18n:key="key_text">Default value</i18n:text>]]></source>
+				<note>
+				Maybe it would be better to have a possibility to use i18n:key in any element and not only in i18n:text?
+				E.g.: 
+				<code><![CDATA[
+<ul>
+	<li i18n:key="Item1" />
+	<li i18n:key="Item2" />	
+	...
+</ul>
+				]]></code>
+				</note>
+			</s2>
+			<s2 title="Translation with param substitution">
+				<p>
+				To translate the text with param substitution the <code><![CDATA[<i18n:translate>]]></code> tag must be used.
+			 	We can specify some <code><![CDATA[<i18n:param>]]></code>-tags which contain 
+			 	parameters. The values of these parameters will be inserted into the 
+			 	translated text, replacing placeholders. Placeholders have the 
+			 	following syntax: <code>\{[0-9]+\}</code>. An example:    
+				</p>
+				<source><![CDATA[    
+<i18n:translate>
+	<i18n:text>Some {0} was inserted {1}.</i18n:text>
+	<i18n:param>text</i18n:param>
+	<i18n:param>here</i18n:param>
+</i18n:translate>]]></source>
+			<p>
+			    Now we want to translate this into German.
+			    First, the processor will look into the dictionary, we specified, for 
+			    the string:
+			</p>
+			<p>
+				<em>Some {0} was inserted {1}.</em>
+			</p>
+			<p>
+				It finds the string and translates it to German:
+     		</p>
+			<p>
+					<em>Etwas {0} wurde {1} eingesetzt.</em>
+			</p>
+			<p>
+			    Now the processor will replace the parameters. {0} will be replaced 
+			    with "text" and {1} with "here". This results in:
+    			</p>
+				<p>
+					<em>Etwas text wurde here eingesetzt.</em>
+				</p>
+				<p>
+			    As we see, it is sometimes necessary to translate the parameters 
+			    as well, since "here" is not a German word and "text" should be written 
+			    uppercase. This can simply be done by marking up the parameters with
+			    <code><![CDATA[<i18n:text>]]></code> again:
+			</p>
+				<source><![CDATA[
+<i18n:translate>
+	<i18n:text>Some {0} was inserted {1}.</i18n:text>
+	<i18n:param><i18n:text>text</i18n:text></i18n:param>
+	<i18n:param><i18n:text>here</i18n:text></i18n:param>
+</i18n:translate>]]></source>
+				<note>
+				Generally, it is not necessary for the text for param substitution to be translated. 
+				E.g., it can come from a database with predefined placeholders for i18n params and there is no need to use <code><![CDATA[<i18n:text>]]></code> for its translation. 
+				</note>
+			</s2>
+			<s2 title="Attributes">
+				<p>
+					Additionally we can translate Attributes. This is very useful for 
+					HTML-forms since labels of buttons are set via an attribute in 
+					HTML. To translate attributes of a tag, add an additional attribute 
+					named 'i18n:attr' containing a list of attributes, which should be 
+					translated, separated by spaces. An example:
+				</p>
+				<source><![CDATA[
+<INPUT type="submit" value="Submit" i18n:attr="value"/>]]></source>
+				<p>
+					The attribute, which will be translated is 'value'. 
+					Parameter replacement is not available for attributes at this time.
+				</p>
+			</s2>
+			<s2 title="Date, time and number formatting">
+				<p>To format dates according to the current locale use <code><![CDATA[<i18n:date src-pattern="dd/MM/yyyy" pattern="dd:MMM:yyyy" value="01/01/2001" />]]></code>. The <code>'src-pattern'</code> attribute will be used to parse the <code>'value'</code>, then the date will be formatted according to the current locale using the format specified by <code>'pattern'</code> attribute.
+				</p>
+				<p>To format time for a locale (e.g. de_DE) use <code><![CDATA[<i18n:time src-pattern="dd/MM/yyyy" locale="de_DE" value="01/01/2001" />]]></code>. The <code>'src-pattern'</code> and <code>'pattern'</code> attribute may also contain <code>'short'</code>, <code>'medium'</code>, <code>'long'</code> or <code>'full'</code>. The date will be formatted according to this format.
+				</p>
+				<p>To format date and time use <code><![CDATA[<i18n:date-time />]]></code>.
+				</p>
+				<p>It is also possible to specify a src-locale:  <code><![CDATA[<i18n:date src-pattern="short" src-locale="en_US" locale="de_DE"> 12/24/01 </i18n:date> ]]></code> will result in 24.12.2001
+				</p>
+				<p>
+				A given real <code>pattern</code> and <code>src-pattern</code> (not short, medium, long, full) overwrites the <code>locale</code> and <code>src-locale</code>.
+				</p>
+				<p>
+					If no pattern was specified then the date will be formatted with the <code>DateFormat.DEFAULT</code> format (both date and time). If no value for the date is specified then the current date will be used. E.g.: <code><![CDATA[<i18n:date/> ]]></code> will result in the current date, formatted with default localized pattern.
+				</p>
+				<p>To format numbers in locale sensitive manner use <code><![CDATA[<i18n:number pattern="0.##" value="2.0" />]]></code>. This will be useful for Arabic, Indian, etc. number formatting. Additionally, currencies and percent formatting can be used. E.g.: 
+ 				</p>
+					<ul>
+						<li><code><![CDATA[<i18n:number sub-type="currency" value="1703.74" />]]></code> will result in localized presentation of the <code>value</code> - $1,703.74 for US locale.</li>
+						<li><code><![CDATA[<i18n:number sub-type="int-currency" value="170374" />]]></code> will result in localized presentation of the <code>value</code> - $1,703.74 for US locale, 170374 for a currency without subunit.</li>
+						<li><code><![CDATA[<i18n:number sub-type="percent" value="1.2" />]]></code> will result in localized percent <code>value</code> - %120 for most of the locales.</li>
+					</ul>
+				<p>
+					Also, date and number formatting can be used with substitution params. Additional <code>type</code> attribute must be used with params to indicate the param type (date or number). Default type is <code>string</code>.
+				</p>
+				<source><![CDATA[
+<i18n:translate>
+  <i18n:text>
+    You have to pay {0} for {1} pounds or {2} of your profit. Valid from {3}
+  </i18n:text>
+  <i18n:param type="number" sub-type="currency"
+              pattern="$#,##0.00">102.5</i18n:param>
+  <i18n:param type="number" value="2.5">
+  <i18n:param type="number" sub-type="percent" value="0.10" />	
+  <i18n:param type="date" pattern="dd-MMM-yy" />
+</i18n:translate>]]></source>
+				<p>
+					Result will be like this: <code>You have to pay $102.5 for 2.5 pounds or 10% of your profit. Valid from 13-Jun-01</code>
+				</p>		
+			</s2>
+			<s2 title="Dictionaries">
+				<p>
+					Dictionaries contain the translations for the text to be translated.
+					They consist of a list of entries, where each entry specifies the
+					translation(s) for a key. An entry may contain the translation for
+					various languages. An example:
+				</p>
+				<source><![CDATA[
+<translations>
+  <entry>
+    <key>Some {0} was inserted {1}.</key>
+    <translation lang="en">Some {0} was {1} inserted.</translation>		
+    <translation lang="de">Etwas {0} wurde {1} eingesetzt.</translation>
+  </entry>
+</translations>]]></source>
+				<p>
+    					For each text, we want to translate, we must provide a key, where
+					the key is either text as we have written it in the document or the value
+					of the 'i18n:key' attribute. The key must be written exactly like in 
+					the document, including spaces, linefeeds, etc.
+				</p>
+				<p>
+					Then we must enter a translation for the text with the <code><![CDATA[<translation>]]></code>-tag,
+					where the 'lang'-attribute specifies the language of the translated
+					text. If the text contains placeholders, they'll be replaced at the 
+					correct places in the translation with the given parameters.
+				</p>
+			</s2>
+			<s2 title="How to migrate from the old I18nTransformer">
+				<p>
+					Dictionary structure remained the same, so old dictionaries can be used.
+					Previous <code><![CDATA[<i:tr>]]></code> tags are renamed to <code><![CDATA[<i18n:text>]]></code>. (The namespace prefix is not important, you can choose any you like).
+				</p>
+				<p>
+					The old transformer supported translation of any tag using its text value as the key:
+				</p>
+				<source><![CDATA[
+<elem i18n:tr="y">This text will be translated.</elem>]]>
+				</source>
+				<p>
+					You have to change that for the new transformer like this:
+				</p>
+				<source><![CDATA[
+<elem><i18n:text>This text will be translated.</i18n:text></elem>]]>
+				</source>
+				<p>
+					There was a possibility in the old transformer for choosing image paths depending on the language. 
+					Now you can achieve the same result by translating the 'src' attribute of img element.
+				</p>
+				<note>
+					I am not sure that image path translation in the old manner is possible without XSP, 
+					because the language code was used and not a dictionary. 
+					I'll add a feature for this kind of translation in the near future.
+				</note>
+			</s2>
+		</s1>
+		<s1 title="Sample">
+			<s2 title="Sitemap configuration">
+				<p>
+					To use I18nTransformer, it must be added to the sitemap:
+				</p>
+				<source><![CDATA[
+<map:transformers default="xslt">
+  <map:transformer name="i18n"
+                   src="org.apache.cocoon.transformation.I18nTransformer"/>
+</map:transformers>]]></source>
+				<p>
+					Then, a <code>match</code> must be declared, something like this:
+				</p>
+				<source><![CDATA[
+<map:match pattern="file">
+  <map:generate src="{1}"/>
+  <map:transform type="i18n">
+    <parameter name="available_lang_1" value="en"/>
+    <parameter name="available_lang_2" value="ru"/>
+    <parameter name="src" value="translations/dictionary.xml"/>
+  </map:transform>
+  <map:transform src="stylesheet.xsl"/>
+  <map:serialize />
+</map:match>]]></source>
+			</s2>
+			<s2 title="Simple i18n file">
+				<p>
+					To use i18n pages you will need to declare the i18n namespace in your src
+					files and wrap all i18n text by <code><![CDATA[<i18n:text>]]></code> tags. 
+					To translate attributes of an element, add an additional attribute named 'i18n:attr' containing a list of 
+					attributes, which should be translated, separated by spaces.				
+				</p>
+				<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns:i18n="http://apache.org/cocoon/i18n/2.0">
+  <elem title="main_title" i18n:attr="title">
+    <i18n:text>Text to be translated</i18n:text>
+  </elem>
+</root>]]>
+				</source>
+				<p>
+					A more interesting example of usage you can find in the samples/i18n directory.
+				</p>
+			</s2>
+			<note>
+				To make attribute translation work the newer than 1.3.0 version of Xerces is needed, where the removeAttribute()
+				bug is fixed.
+			</note>
+		</s1>
+		<s1 title="Usage Pattern for Dictionary Generator Stylesheet">
+            <p> 
+            Description is given for a real world example:
+            To correct/add Spanish translation in/to an existing dictionary:
+            </p>
+            <s2 title="Key generation">
+            <p>
+            Generate a dictionary with keys and placeholders for Spanish translations. 
+            Optionally, for one of the languages existing translations can be kept. 
+            To do it set stylesheet params (manually in stylesheet or in command-line):
+                    mode = keys (indicates, that only keys must be in result)   
+                    new-lang = es (language to be added)
+                    keep-lang = en (language to be kept in result, for convenience)
+    
+            Command line for Xalan (Of course, Xerces and Xalan must be in your classpath): 
+            </p>
+            <source><![CDATA[
+java org.apache.xalan.xslt.Process -IN simple_dict.xml -XSL merge.xsl \
+-OUT simple_dict_es.xml -PARAM mode keys -PARAM new-lang es -PARAM keep-lang en
+]]></source>
+            <p><sub>(Windows users: Do not enter '\' symbol, continue typing on the same line.)</sub></p>
+            <p>
+            This will create a file simple_dict_es.xml with entries, keys and placeholders.
+            </p>
+            </s2>
+            <s2 title="Translation">
+            <p>
+            Replace placeholders with translation according to the keys or original
+            translations, if they were kept during generation.
+            </p>
+            </s2>
+            <s2 title="Add to the original dictionary">
+            <p>
+            (Note. This step will be unnecessary when multiple dictionary
+            support will be implemented. Hope, this will be soon)
+
+            Use the same stylesheet for this purpose with this params:
+            </p>
+			<source><![CDATA[
+mode = merge
+new-lang = es
+new-dict = simple_dict_es.xml
+]]></source>
+	        
+            <p>    
+            Command line for Xalan: 
+            </p>
+			<source><![CDATA[
+java org.apache.xalan.xslt.Process -IN simple_dict.xml -XSL merge.xsl \
+-OUT simple_dict_new.xml -PARAM mode merge -PARAM new-lang es \
+-PARAM new-dict simple_dict_es.xml
+]]></source>
+            <p><sub>(Windows users: Do not enter '\' symbol, continue typing on the same line.)</sub></p>
+            </s2>
+        </s1>
+		<s1 title="Finally">
+			<s2 title="To be done">
+				<ul>
+					<li>Multiple dictionary support</li> 
+					<li>Dictionary import and include capabilities (like in XSLT)</li>
+					<li>Command line dictionary-from-source generation</li>
+					<li>Dictionary caching</li>
+				</ul>
+			</s2>
+			<s2 title="Contacts">
+				<p>
+					Feel free to contact for any comments and improvement ideas either directly <link href="mailto:kpiroumian@flagship.ru">Konstantin Piroumian</link> 
+					or through the <link href="../../mail-lists.html">Cocoon Mail List</link>.
+				</p>
+			</s2>
+		</s1>
+	</body>
+</document>

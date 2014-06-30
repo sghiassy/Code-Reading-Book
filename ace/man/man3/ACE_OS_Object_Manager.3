@@ -1,0 +1,246 @@
+.TH ACE_OS_Object_Manager 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_OS_Object_Manager \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS.h>\fR
+.PP
+Inherits \fBACE_Object_Manager_Base\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBPreallocated_Object\fR { \fBACE_OS_EMPTY_PREALLOCATED_OBJECT\fR, \fBACE_OS_PREALLOCATED_OBJECTS\fR }"
+.br
+.RI "\fIUnique identifiers for preallocated objects.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBinit\fR (void)"
+.br
+.RI "\fIExplicitly initialize.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fIExplicitly destroy.\fR"
+.ti -1c
+.RI "\fBACE_OS_Object_Manager\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fB~ACE_OS_Object_Manager\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBstarting_up\fR (void)"
+.br
+.ti -1c
+.RI "int \fBshutting_down\fR (void)"
+.br
+.RI "\fIReturns 1 after the  has been destroyed. See  for more information.\fR"
+.ti -1c
+.RI "sigset_t* \fBdefault_mask\fR (void)"
+.br
+.RI "\fIAccesses a default signal set used, for example, in  methods.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Hook\fR* \fBthread_hook\fR (void)"
+.br
+.RI "\fIReturns the current thread hook for the process.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Hook\fR* \fBthread_hook\fR (\fBACE_Thread_Hook\fR *new_thread_hook)"
+.br
+.RI "\fIReturns the existing thread hook and assign a <new_thread_hook>.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBat_exit\fR (ACE_EXIT_HOOK func)"
+.br
+.RI "\fIFor  support.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "sigset_t* \fBdefault_mask_\fR"
+.br
+.RI "\fIDefault signal set used, for example, in \fBACE_Sig_Guard\fR.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Hook\fR* \fBthread_hook_\fR"
+.br
+.RI "\fIThread hook that's used by this process.\fR"
+.ti -1c
+.RI "\fBACE_OS_Exit_Info\fR \fBexit_info_\fR"
+.br
+.RI "\fIFor at_exit support.\fR"
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_OS_Object_Manager* \fBinstance\fR (void)"
+.br
+.RI "\fIAccessor to singleton instance.\fR"
+.ti -1c
+.RI "void \fBprint_error_message\fR (u_int line_number, const \fBACE_TCHAR\fR *message)"
+.br
+.RI "\fIFor use by init () and fini (), to consolidate error reporting.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_OS_Object_Manager* \fBinstance_\fR"
+.br
+.RI "\fISingleton instance pointer.\fR"
+.ti -1c
+.RI "void* \fBpreallocated_object\fR [ACE_OS_PREALLOCATED_OBJECTS]"
+.br
+.RI "\fITable of preallocated objects.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_OS\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Object_Manager\fR"
+.br
+.ti -1c
+.RI "class \fBACE_OS_Object_Manager_Manager\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TSS_Cleanup\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TSS_Emulation\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Log_Msg\fR"
+.br
+.ti -1c
+.RI "void \fBACE_OS_Object_Manager_Internal_Exit_Hook\fR ()"
+.br
+.in -1c
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_OS_Object_Manager::Preallocated_Object
+.PP
+Unique identifiers for preallocated objects.
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_OS_EMPTY_PREALLOCATED_OBJECT\fR \fR
+.TP
+\fB\fIACE_OS_PREALLOCATED_OBJECTS\fR \fRThis enum value must be last!
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_OS_Object_Manager::ACE_OS_Object_Manager (void)
+.PP
+Constructor.
+.PP
+.SS ACE_OS_Object_Manager::~ACE_OS_Object_Manager (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_OS_Object_Manager::at_exit (ACE_EXIT_HOOK func)\fC [private]\fR
+.PP
+For  support.
+.PP
+.SS sigset_t * ACE_OS_Object_Manager::default_mask (void)\fC [static]\fR
+.PP
+Accesses a default signal set used, for example, in  methods.
+.PP
+.SS int ACE_OS_Object_Manager::fini (void)\fC [virtual]\fR
+.PP
+Explicitly destroy.
+.PP
+Reimplemented from \fBACE_Object_Manager_Base\fR.
+.SS int ACE_OS_Object_Manager::init (void)\fC [virtual]\fR
+.PP
+Explicitly initialize.
+.PP
+Reimplemented from \fBACE_Object_Manager_Base\fR.
+.SS ACE_OS_Object_Manager * ACE_OS_Object_Manager::instance (void)\fC [static, private]\fR
+.PP
+Accessor to singleton instance.
+.PP
+.SS void ACE_OS_Object_Manager::print_error_message (u_int line_number, const \fBACE_TCHAR\fR * message)\fC [static, private]\fR
+.PP
+For use by init () and fini (), to consolidate error reporting.
+.PP
+.SS int ACE_OS_Object_Manager::shutting_down (void)\fC [static]\fR
+.PP
+Returns 1 after the  has been destroyed. See  for more information.
+.PP
+.SS int ACE_OS_Object_Manager::starting_up (void)\fC [static]\fR
+.PP
+Returns 1 before the  has been constructed. See  for more information. 
+.SS \fBACE_Thread_Hook\fR * ACE_OS_Object_Manager::thread_hook (\fBACE_Thread_Hook\fR * new_thread_hook)\fC [static]\fR
+.PP
+Returns the existing thread hook and assign a <new_thread_hook>.
+.PP
+.SS \fBACE_Thread_Hook\fR * ACE_OS_Object_Manager::thread_hook (void)\fC [static]\fR
+.PP
+Returns the current thread hook for the process.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Log_Msg\fC [friend]\fR
+.PP
+.SS class ACE_OS\fC [friend]\fR
+.PP
+This class is for internal use by \fBACE_OS\fR, etc., only.
+.PP
+.SS void ACE_OS_Object_Manager_Internal_Exit_Hook (void)\fC [friend]\fR
+.PP
+.SS class ACE_OS_Object_Manager_Manager\fC [friend]\fR
+.PP
+.SS class ACE_Object_Manager\fC [friend]\fR
+.PP
+.SS class ACE_TSS_Cleanup\fC [friend]\fR
+.PP
+.SS class ACE_TSS_Emulation\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS sigset_t * ACE_OS_Object_Manager::default_mask_\fC [private]\fR
+.PP
+Default signal set used, for example, in \fBACE_Sig_Guard\fR.
+.PP
+.SS \fBACE_OS_Exit_Info\fR ACE_OS_Object_Manager::exit_info_\fC [private]\fR
+.PP
+For at_exit support.
+.PP
+.SS ACE_OS_Object_Manager * ACE_OS_Object_Manager::instance_\fC [static, private]\fR
+.PP
+Singleton instance pointer.
+.PP
+.SS void * ACE_OS_Object_Manager::preallocated_object[ACE_OS_PREALLOCATED_OBJECTS]\fC [static, private]\fR
+.PP
+Table of preallocated objects.
+.PP
+.SS \fBACE_Thread_Hook\fR * ACE_OS_Object_Manager::thread_hook_\fC [private]\fR
+.PP
+Thread hook that's used by this process.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

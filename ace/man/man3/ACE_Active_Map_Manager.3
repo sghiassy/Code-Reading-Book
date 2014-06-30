@@ -1,0 +1,322 @@
+.TH ACE_Active_Map_Manager 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Active_Map_Manager \- Define a map abstraction that associates system generated keys with user specified values. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Active_Map_Manager_T.h>\fR
+.PP
+Inherits \fBACE_Map_Manager< ACE_Active_Map_Manager_Key,T,ACE_Null_Mutex >\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Active_Map_Manager_Key\fR \fBkey_type\fR"
+.br
+.ti -1c
+.RI "typedef T \fBmapped_type\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Entry\fR<\fBACE_Active_Map_Manager_Key\fR, T> \fBENTRY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> \fBITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Reverse_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> \fBREVERSE_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBENTRY\fR \fBentry\fR"
+.br
+.ti -1c
+.RI "typedef \fBITERATOR\fR \fBiterator\fR"
+.br
+.ti -1c
+.RI "typedef \fBREVERSE_ITERATOR\fR \fBreverse_iterator\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Active_Map_Manager\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a  with the .\fR"
+.ti -1c
+.RI "\fBACE_Active_Map_Manager\fR (size_t size, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a  with <size> entries.\fR"
+.ti -1c
+.RI "\fB~ACE_Active_Map_Manager\fR (void)"
+.br
+.RI "\fIClose down a  and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBopen\fR (size_t length = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a  with size <length>.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down a  and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const T &value, \fBACE_Active_Map_Manager_Key\fR &key)"
+.br
+.RI "\fIAdd <value> to the map, and the corresponding key produced by the Active_Map_Manager is returned through <key>.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const T &value)"
+.br
+.RI "\fIAdd <value> to the map. The user does not care about the corresponding key produced by the Active_Map_Manager.\fR"
+.ti -1c
+.RI "int \fBbind\fR (\fBACE_Active_Map_Manager_Key\fR &key, T *&internal_value)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const \fBACE_Active_Map_Manager_Key\fR &key, const T &value)"
+.br
+.RI "\fIReassociate <key> with <value>. The function fails if <key> is not in the map.\fR"
+.ti -1c
+.RI "int \fBrebind\fR (const \fBACE_Active_Map_Manager_Key\fR &key, const T &value, T &old_value)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const \fBACE_Active_Map_Manager_Key\fR &key, const T &value, \fBACE_Active_Map_Manager_Key\fR &old_key, T &old_value)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const \fBACE_Active_Map_Manager_Key\fR &key, T &value) const"
+.br
+.RI "\fILocate <value> associated with <key>.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const \fBACE_Active_Map_Manager_Key\fR &key) const"
+.br
+.RI "\fIIs <key> in the map?\fR"
+.ti -1c
+.RI "int \fBfind\fR (const \fBACE_Active_Map_Manager_Key\fR &key, T *&internal_value) const"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const \fBACE_Active_Map_Manager_Key\fR &key)"
+.br
+.RI "\fIRemove <key> from the map.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const \fBACE_Active_Map_Manager_Key\fR &key, T &value)"
+.br
+.RI "\fIRemove <key> from the map, and return the <value> associated with <key>.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const \fBACE_Active_Map_Manager_Key\fR &key, T *&internal_value)"
+.br
+.ti -1c
+.RI "size_t \fBcurrent_size\fR (void) const"
+.br
+.RI "\fIReturn the current size of the map.\fR"
+.ti -1c
+.RI "size_t \fBtotal_size\fR (void) const"
+.br
+.RI "\fIReturn the total size of the map.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "\fBACE_Map_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> \fBbegin\fR (void)"
+.br
+.RI "\fIReturn forward iterator.\fR"
+.ti -1c
+.RI "\fBACE_Map_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> \fBend\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Map_Reverse_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> \fBrbegin\fR (void)"
+.br
+.RI "\fIReturn reverse iterator.\fR"
+.ti -1c
+.RI "\fBACE_Map_Reverse_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> \fBrend\fR (void)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "const \fBACE_Active_Map_Manager_Key\fR \fBnpos\fR (void)"
+.br
+.RI "\fIReturns a key that cannot be found in the map.\fR"
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Map_Manager\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> \fBACE_AMM_BASE\fR"
+.br
+.RI "\fIPrivate base class.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Active_Map_Manager<T> &)"
+.br
+.ti -1c
+.RI "\fBACE_Active_Map_Manager\fR (const ACE_Active_Map_Manager<T> &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Active_Map_Manager
+Define a map abstraction that associates system generated keys with user specified values.
+.PP
+.PP
+ Since the key is system generated, searches are very fast and take a constant amount of time. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classT> typedef \fBACE_Map_Manager\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> ACE_Active_Map_Manager<T>::ACE_AMM_BASE\fC [protected]\fR
+.PP
+Private base class.
+.PP
+.SS template<classT> typedef \fBACE_Map_Entry\fR<\fBACE_Active_Map_Manager_Key\fR, T> ACE_Active_Map_Manager<T>::ENTRY
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> typedef \fBACE_Map_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> ACE_Active_Map_Manager<T>::ITERATOR
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> typedef \fBACE_Map_Reverse_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> ACE_Active_Map_Manager<T>::REVERSE_ITERATOR
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> typedef \fBENTRY\fR ACE_Active_Map_Manager<T>::entry
+.PP
+.SS template<classT> typedef \fBITERATOR\fR ACE_Active_Map_Manager<T>::iterator
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> typedef \fBACE_Active_Map_Manager_Key\fR ACE_Active_Map_Manager<T>::key_type
+.PP
+.SS template<classT> typedef T ACE_Active_Map_Manager<T>::mapped_type
+.PP
+.SS template<classT> typedef \fBREVERSE_ITERATOR\fR ACE_Active_Map_Manager<T>::reverse_iterator
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Active_Map_Manager<T>::ACE_Active_Map_Manager<T> (\fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a  with the .
+.PP
+.SS template<classT> ACE_Active_Map_Manager<T>::ACE_Active_Map_Manager<T> (size_t size, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a  with <size> entries.
+.PP
+.SS template<classT> ACE_Active_Map_Manager<T>::~ACE_Active_Map_Manager<T> (void)
+.PP
+Close down a  and release dynamically allocated resources.
+.PP
+.SS template<classT> ACE_Active_Map_Manager<T>::ACE_Active_Map_Manager<T> (const ACE_Active_Map_Manager< T >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> \fBACE_Map_Iterator\fR< \fBACE_Active_Map_Manager_Key\fR,T,\fBACE_Null_Mutex\fR > ACE_Active_Map_Manager<T>::begin (void)
+.PP
+Return forward iterator.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> int ACE_Active_Map_Manager<T>::bind (\fBACE_Active_Map_Manager_Key\fR & key, T *& internal_value)
+.PP
+Reserves a slot in the internal structure and returns the key and a pointer to the value. User should place their <value> into <*internal_value>. This method is useful in reducing the number of copies required in some cases. Note that <internal_value> is only a temporary pointer and will change when the map resizes. Therefore, the user should use the pointer immediately and not hold on to it. 
+.SS template<classT> int ACE_Active_Map_Manager<T>::bind (const T & value)
+.PP
+Add <value> to the map. The user does not care about the corresponding key produced by the Active_Map_Manager.
+.PP
+.SS template<classT> int ACE_Active_Map_Manager<T>::bind (const T & value, \fBACE_Active_Map_Manager_Key\fR & key)
+.PP
+Add <value> to the map, and the corresponding key produced by the Active_Map_Manager is returned through <key>.
+.PP
+.SS template<classT> int ACE_Active_Map_Manager<T>::close (void)
+.PP
+Close down a  and release dynamically allocated resources.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> size_t ACE_Active_Map_Manager<T>::current_size (void) const
+.PP
+Return the current size of the map.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> void ACE_Active_Map_Manager<T>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> \fBACE_Map_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> ACE_Active_Map_Manager<T>::end (void)
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> int ACE_Active_Map_Manager<T>::find (const \fBACE_Active_Map_Manager_Key\fR & key, T *& internal_value) const
+.PP
+Locate <value> associated with <key>. The value is returned via <internal_value> and hence a copy is saved. Note that <internal_value> is only a temporary pointer and will change when the map resizes. Therefore, the user should use the pointer immediately and not hold on to it. 
+.SS template<classT> int ACE_Active_Map_Manager<T>::find (const \fBACE_Active_Map_Manager_Key\fR & key) const
+.PP
+Is <key> in the map?
+.PP
+.SS template<classT> int ACE_Active_Map_Manager<T>::find (const \fBACE_Active_Map_Manager_Key\fR & key, T & value) const
+.PP
+Locate <value> associated with <key>.
+.PP
+.SS template<classT> const \fBACE_Active_Map_Manager_Key\fR ACE_Active_Map_Manager<T>::npos (void)\fC [static]\fR
+.PP
+Returns a key that cannot be found in the map.
+.PP
+.SS template<classT> int ACE_Active_Map_Manager<T>::open (size_t length = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a  with size <length>.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> void ACE_Active_Map_Manager<T>::operator= (const ACE_Active_Map_Manager< T >&)\fC [private]\fR
+.PP
+.SS template<classT> \fBACE_Map_Reverse_Iterator\fR< \fBACE_Active_Map_Manager_Key\fR,T,\fBACE_Null_Mutex\fR > ACE_Active_Map_Manager<T>::rbegin (void)
+.PP
+Return reverse iterator.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> int ACE_Active_Map_Manager<T>::rebind (const \fBACE_Active_Map_Manager_Key\fR & key, const T & value, \fBACE_Active_Map_Manager_Key\fR & old_key, T & old_value)
+.PP
+Reassociate <key> with <value>, storing the old key and value into the "out" parameter <old_key> and <old_value>. The function fails if <key> is not in the map. 
+.SS template<classT> int ACE_Active_Map_Manager<T>::rebind (const \fBACE_Active_Map_Manager_Key\fR & key, const T & value, T & old_value)
+.PP
+Reassociate <key> with <value>, storing the old value into the "out" parameter <old_value>. The function fails if <key> is not in the map. 
+.SS template<classT> int ACE_Active_Map_Manager<T>::rebind (const \fBACE_Active_Map_Manager_Key\fR & key, const T & value)
+.PP
+Reassociate <key> with <value>. The function fails if <key> is not in the map.
+.PP
+.SS template<classT> \fBACE_Map_Reverse_Iterator\fR<\fBACE_Active_Map_Manager_Key\fR, T, \fBACE_Null_Mutex\fR> ACE_Active_Map_Manager<T>::rend (void)
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> size_t ACE_Active_Map_Manager<T>::total_size (void) const
+.PP
+Return the total size of the map.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+.SS template<classT> int ACE_Active_Map_Manager<T>::unbind (const \fBACE_Active_Map_Manager_Key\fR & key, T *& internal_value)
+.PP
+Locate <value> associated with <key>. The value is returned via <internal_value> and hence a copy is saved. Note that <internal_value> is only a temporary pointer and will change when the map resizes or when this slot is reused. Therefore, the user should use the pointer immediately and not hold on to it. 
+.SS template<classT> int ACE_Active_Map_Manager<T>::unbind (const \fBACE_Active_Map_Manager_Key\fR & key, T & value)
+.PP
+Remove <key> from the map, and return the <value> associated with <key>.
+.PP
+.SS template<classT> int ACE_Active_Map_Manager<T>::unbind (const \fBACE_Active_Map_Manager_Key\fR & key)
+.PP
+Remove <key> from the map.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Active_Map_Manager<T>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Map_Manager\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

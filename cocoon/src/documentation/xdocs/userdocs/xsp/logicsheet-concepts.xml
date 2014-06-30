@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Logicsheet Concepts</title>
+  <authors>
+   <person name="Ricardo Rocha" email="ricardo@apache.org"/>
+  </authors>
+ </header>
+
+ <body>
+   <s1 title="Index">
+     <p>
+       This document introduces logicsheet design and writing
+       principles:
+     </p>
+
+     <ul>
+       <li>
+         <link href="#logicsheet">Logicsheets</link>
+       </li>
+       <li>
+         <link href="#helper-classes">Logicsheet Helper Classes</link>
+       </li>
+       <li>
+         <link href="#logicsheet-object">Logicsheets and Objects</link>
+       </li>
+       <li>
+         <link href="#xsl-logicsheets">Logicsheets and XSLT</link>
+       </li>
+       <li>
+         <link href="#java-logicsheets">
+	   XSLT Logicsheets and XSP for Java
+	 </link>
+       </li>
+       <li>
+         <link href="#logicsheet-language">
+	   The SiLLy Logicsheet Language
+	 </link>
+       </li>
+     </ul>
+  </s1>
+
+  <anchor id="logicsheet"/>
+  <s1 title="Logicsheets">
+    <p>
+      A <em>logicsheet</em> is an XML filter used to translate user-defined,
+      dynamic markup into equivalent code embedding directives for a given
+      markup language.
+    </p>
+
+    <p>
+      Logicsheets lie at the core of XSP's promise to separate logic from
+      content and presentation: they make dynamic content generation
+      capabilities available to content authors not familiar with (and
+      not interested in) programming.
+    </p>
+
+    <p>
+      Logicsheets are <em>not</em> programming-language independent.
+      They translate dynamic tags to <em>actual code</em> enclosed in
+      code-embedding directives. Fortunately, this dependency can be
+      alleviated by judiciously using
+      <link href="#helper-classes">helper classes</link>.
+    </p>
+
+    <p>
+      Logicsheets are used to translate <em>dynamic tags</em> into markup
+      language code-embedding directives. Thus, for example, the dynamic
+      tag:
+    </p>
+
+<source><![CDATA[
+<util:time-of-day format="hh:mm:ss"/>
+]]></source>
+
+    <p>
+      would be transformed by the <em>util</em> logicsheet into an
+      equivalent XSP expression:
+    </p>
+
+<source><![CDATA[
+<xsp:expr>
+  SimpleDateFormat.getInstance().format(new Date(), "hh:mm:ss")
+</xsp:expr>
+]]></source>
+
+    <p>
+      Note that the output of logicsheet processing is <em>not</em>
+      final code, but rather <em>code-embedding markup language directives</em>
+      (<em>&lt;xsp:expr&gt;</em> in this case).
+    </p>
+
+    <p>
+      Logicsheets can be applied in sequence so that it's possible for one
+      logicsheet to produce dynamic tags further processed by another
+      logicsheet. Thus, for example:
+    </p>
+
+<source><![CDATA[
+<util:time-of-day>
+  <util:parameter name="format">
+    <request:get-parameter name="time-format" default="hh:mm:ss"/>
+  </util:parameter>
+</util:time-of-day>
+]]></source>
+
+    <p>
+      would be transformed by the <em>util</em> logicsheet into:
+    </p>
+
+<source><![CDATA[
+<xsp:expr>
+  SimpleDateFormat.getInstance().format(
+    new Date(),
+    <request:get-parameter name="time-format" default="hh:mm:ss"/>
+  )
+</xsp:expr>
+]]></source>
+
+    <p>
+      which would be transformed by the <em>request</em> logicsheet,
+      in turn, into:
+    </p>
+
+<source><![CDATA[
+<xsp:expr>
+  SimpleDateFormat.getInstance().format(
+    new Date(),
+    XSPRequestHelper.getParameter("name", "hh:mm:ss")
+  )
+</xsp:expr>
+]]></source>
+
+    <p>
+      Note in the examples above that dynamic tags can be
+      "overloaded" in the sense that they can take as parameters
+      either <em>constant attribute values</em> or
+      <em>nested parameter elements</em>:
+    </p>
+
+<source><![CDATA[
+<!-- Parameter "format" known at page authoring time -->
+<util:time-of-day format="hh:mm:ss"/>
+
+<!-- Parameter "format" known at request time -->
+<util:time-of-day>
+  <util:parameter name="format">
+    <request:get-parameter name="time-format" default="hh:mm:ss"/>
+  </util:parameter>
+</util:time-of-day>
+]]></source>
+
+    <p>
+      This means that logicsheets must be able to cope with constant
+      strings, complex expressions and nested parameter processing.
+      Also, logicsheets must be capable of reporting parameter value
+      errors and, possibly, halt code generation altogether.
+    </p>
+
+    <p>
+      In order to minimize this complexity (and its associated debugging
+      nightmares!), properly designed logicsheets typically make use of
+      <strong>helper classes</strong>.
+    </p>
+  </s1>
+
+  <anchor id="helper-classes"/>
+  <s1 title="Logicsheet Helper Classes">
+    <p>
+      A <em>helper class</em> is a Java class containing a collection
+      of <em>static</em> methods whose arguments correspond (one-to-one)
+      with their dynamic tag counterparts.
+    </p>
+
+    <p>
+      Consider the following dynamic tag use-case:
+    </p>
+
+<source><![CDATA[
+<sql:create-connection name="demo">
+<sql:jdbc-driver>
+  oracle.jdbc.driver.OracleDriver
+</sql:jdbc-driver>
+<sql:connect-url>
+  jdbc:oracle:thin:@localhost:1521:ORCL
+</sql:connect-url>
+<sql:user-name>
+  <request:get-parameter name="user"/>
+</sql:user-name>
+<sql:password>
+  <request:get-parameter name="password"/>
+</sql:password>
+</sql:create-connection>
+]]></source>
+
+    <p>
+      A brute-force logicsheet template may be implemented
+      (in XSLT, as discussed <link href="#xsl-logicsheets">below</link>)
+      as:
+    </p>
+
+<source><![CDATA[
+<xsl:template match="sql:create-connection">
+<!-- *** Argument collection skipped for the sake of brevity *** -->
+<xsp:logic> {
+  Class.forName(<xsl:copy-of select="$jdbc-driver"/>).newInstance();
+
+  Connection myConnection =
+    DriverManager.getConnection(
+      <xsl:copy-of select="$connect-url"/>,
+      <xsl:copy-of select="$user-name"/>,
+      <xsl:copy-of select="$password"/>
+    );
+
+  Session mySession = request.getSession(true);
+
+  Connection previousConnection = (Connection)
+    mySession.getAttribute(
+      "connection." + <xsl:copy-of select="$name"/>
+    );
+
+  if (previousConnection != null) {
+    previousConnection.commit();
+    previousConnection.close();
+  }
+
+  mySession.setAttribute(
+    "connection." + <xsl:copy-of select="$name"/>,
+    myConnection
+  )
+} </xsp:logic>
+</xsl:template>
+]]></source>
+
+    <p>
+      This approach has a number of drawbacks.
+    </p>
+
+    <ul>
+      <li>
+        Even when using enclosing braces around the <em>&lt;xsp:logic&gt;</em>
+        section, there's always the risk that the page author (or another
+        logicsheet!) has previously defined variables called
+        <code>myConnection</code>, <code>previousConnection</code> or
+        <code>mySession</code>. This will result in multiply-defined variable
+        compilation errors
+      </li>
+      <li>
+        Parameter values (like <code>$name</code>) cannot be safely used
+        more than once. As much as they can come from harmless string
+        constants, they can also come from complex expressions involving
+        method/function calls which can have unpredictable side-effects
+        should they be called more than once in the current context
+      </li>
+      <li>
+        If another logicsheet (or the page author) has imported a class
+        called <code>Connection</code> the generated code will produce an
+        ambiguous class definition compiler error
+      </li>
+    </ul>
+
+    <p>
+      It's here that helper classes come to the rescue. By moving all
+      the above logic to a static method <code>createConnection</code>
+      in helper class <code>SQLHelper</code>, we can now rewrite
+      (and simplify!) our logicsheet to read:
+    </p>
+
+<source><![CDATA[
+<xsl:template match="sql:create-connection">
+<!-- *** Argument collection skipped for the sake of brevity *** -->
+<xsp:logic>
+  SQLHelper.createConnection(
+    <xsl:copy-of select="$name"/>,
+    <xsl:copy-of select="$connect-url"/>,
+    <xsl:copy-of select="$user-name"/>,
+    <xsl:copy-of select="$password"/>,
+    request
+  );
+</xsp:logic>
+</xsl:template>
+]]></source>
+
+    <p>
+      This simple approach brings several benefits:
+    </p>
+
+    <ul>
+      <li>
+        Safer parameter evaluation, with no unpredictable side
+        effects
+      </li>
+      <li>
+        Programming language-independence: expressions calling
+        "native" Java code tend to have the same syntax in all
+        programming languages, thus reducing the need to maintain
+        multiple versions of the same logicsheet
+      </li>
+      <li>
+        Simpler debugging: syntax errors can now be traced to bad
+        parameter values, rather than invalid code
+      </li>
+      <li>
+        Easier logic maintenance: it takes places at the helper
+        class level, rather than at the logicsheet's
+      </li>
+      <li>
+        Reduced generated code size.
+      </li>
+    </ul>
+  </s1>
+
+  <anchor id="logicsheet-object"/>
+  <s1 title="Logicsheets and Objects">
+    <p>
+      Though not required to do so, each logicsheet typically deals with
+      a single <em>object type</em>.
+    </p>
+
+    <p>
+      What objects must be manipulated by means of logicsheets depends
+      mostly on the calling <em>host environment</em>.
+    </p>
+
+    <p>
+      Thus, for example, when Cocoon is used as a servlet, XSP pages
+      need access to the underlying servlet engine objects: request,
+      response, session, servlet config, etc.
+    </p>
+
+    <p>
+      In general, in order to enable dynamic content generation for each
+      host environment, logicsheets must be written that provide
+      markup-based access to its objects and methods:
+    </p>
+
+<source><![CDATA[
+<request:get-parameter name="part-number"/>
+
+<response:send-redirect location="error-page.xml"/>
+
+<cookie:create name="user-preferences"/>
+]]></source>
+
+    <p>
+      In general, for each object type required by a server pages
+      application a helper class should be written that:
+    </p>
+
+    <ul>
+      <li>
+        Provides access to the object's methods and services
+      </li>
+      <li>
+        Provides convenience methods to wrap values returned
+        by object methods as XML
+      </li>
+    </ul>
+
+    <p>
+      Within this discipline, <em>each object type must define a separate,
+      identifying namespace</em>.
+    </p>
+
+    <p>
+      Finally, logicsheets may require a <em>preprocessor</em> that augments
+      its input document with extra information prior to markup
+      transformation.
+    </p>
+
+    <p>
+      As an example of logicsheet preprocessing, consider an
+      <code>xbean</code> logicsheet providing services similar to the
+      JSP's intrinsic <code>&lt;jsp:useBean&gt;</code> tag:
+    </p>
+
+<source><![CDATA[
+. . .
+<xbean:use-bean id="myCart" class="com.acme.cart.CartBean" scope="session">
+<xbean:set-property property-name="type" property-value="promotion"/>
+<xbean:set-property property-name="customer" parameter-value="custid"/>
+</xbean:use-bean>
+. . .
+<p>
+Hello <xbean:get-property bean-id="myCart" property-name="customerName"/>,
+welcome back!
+You have the following discounts:
+</p>
+
+<xbean:get-property bean-id="myCart" property-name="discount"/>
+. . .
+]]></source>
+
+    <p>
+      In this case, code to be emitted by the logicsheet will vary
+      wildly depending on whether a given bean property is indexed,
+      multivalued or object-typed; different conversions and traversing
+      code may be needed for each property based on its Java and
+      bean types.
+    </p>
+
+    <p>
+      A logicsheet preprocessor could introspect the given bean at code
+      generation time to augment the input document with additional
+      information as to make it possible for an XSLT-based logicsheet
+      to emit appropriate code:
+    </p>
+
+<source><![CDATA[
+. . .
+<xbean:use-bean id="myCart" class="com.acme.cart.CartBean" scope="session">
+<xbean:set-property
+  property-name="type" property-value="promotion"
+  java-type="String"
+  is-indexed="false"
+/>
+<xbean:set-property property-name="customer" parameter-value="custid"
+  java-type="String"
+  is-indexed="false"
+/>
+</xbean:use-bean>
+. . .
+<p>
+Hello
+  <xbean:get-property bean-id="myCart" property-name="customerName"
+    java-type="String"
+    is-indexed="false"
+   />,
+welcome back!
+You have the following discounts
+</p>
+
+<xbean:get-property bean-id="myCart" property-name="discount"
+java-type="float"
+is-indexed="true"
+/>
+. . .
+]]></source>
+
+    <p>
+      Using this information, the logicsheet can decide, for a given
+      bean property, whether to generate a simple
+      <code>String.valueOf()</code> or an indexed loop displaying
+      individual property values.
+    </p>
+
+    <note>
+      Logicsheet preprocessor is still unimplemented.
+      Preprocessing may be performed as well in XSLT by using
+      <em>extension functions</em>.  Logicsheet preprocessing is meant to be
+      used in those cases where the XSLT processor being used by Cocoon
+      does not support XSLT extensions. (As of this writing, only
+      <link href="http://xml.apache.org/xalan/">Xalan</link>
+      is known to support XSLT extensions).
+    </note>
+  </s1>
+
+  <anchor id="xsl-logicsheets"/>
+  <s1 title="Logicsheets and XSLT">
+    <p>
+      XSLT-based transformation is clearly the obvious choice for
+      implementing logicsheets.
+    </p>
+
+    <p>
+      XSLT provides all the capabilities needed for dynamic markup
+      transformation as well for final code generation (described
+      in
+      <link href="xsp-internals.html#logicsheet-generator">
+        Logicsheet Code Generators
+      </link>).
+    </p>
+
+    <p>
+      In fact, logicsheet transformations require only a subset of
+      XSLT much more general capabilities:
+    </p>
+
+    <ul>
+      <li>
+        Transforming an input element into other element(s) and
+        nested text (code)
+      </li>
+      <li>
+        Collecting and validating parameters as variables
+      </li>
+      <li>
+        Substituting variables as either text or nested elements
+      </li>
+    </ul>
+
+    <p>
+      Paradoxically, though, the XSLT and XPath expressions required
+      to perform these apparently simple tasks can easily become too
+      verbose, and hard-to-read.
+    </p>
+
+    <p>
+      This real disadvantage doesn't stem from XSLT not being appropriate
+      or powerful enough to perform the required transformations, but
+      rather from its directives being too low-level for this particular task.
+    </p>
+
+    <p>
+      In a classical XML spirit, the solution to this problem is found in
+      the definition of a higher-level language specifically targeted to
+      code-generation transformations. Documents written in this language
+      are transformed into "regular" XSLT stylesheets and subsequently
+      applied to input documents for code generation.
+    </p>
+
+    <p>
+      Such language is described in detail below, under
+      <link href="#logicsheet-language">
+        The SiLLy Logicsheet Language
+      </link>.
+    </p>
+
+    <p>
+      In general, XSLT logicsheets <strong>must</strong> preserve all markup
+      not recognized by its own templates:
+    </p>
+
+<source><![CDATA[
+<xsl:template match="@*|node()" priority="-1">
+<xsl:copy><xsl:apply-templates select="@*|node()"/></xsl:copy>
+</xsl:template>
+]]></source>
+
+    <p>
+      Parameters should be passed to dynamic tags by means of <em>both</em>
+      attributes and nested elements. Also, dynamic tag parameters must be
+      accepted <em>both</em> as constant strings and as (potentially complex)
+      expressions. These two requirements are illustrated in the above
+      <em>util</em> logicsheet example:
+    </p>
+
+<source><![CDATA[
+<!-- Parameter "format" known at page authoring time -->
+<util:time-of-day format="hh:mm:ss"/>
+
+<!-- Parameter "format" known at request time -->
+<util:time-of-day>
+<util:parameter name="format">
+  <xsp:expr>
+    request.getParameter("format");
+  </xsp:expr>
+</util:parameter>
+</util:time-of-day>
+]]></source>
+
+    <p>
+      In order to support this, a number of utility templates have been
+      defined:
+    </p>
+
+<source><![CDATA[
+<!-- Utility templates -->
+<xsl:template name="get-parameter">
+<xsl:param name="name"/>
+<xsl:param name="default"/>
+<xsl:param name="required">false</xsl:param>
+
+<xsl:variable name="qname">
+  <xsl:value-of select="concat($prefix, ':param')"/>
+</xsl:variable>
+
+<xsl:choose>
+  <xsl:when test="@*[name(.) = $name]">
+    "<xsl:value-of select="@*[name(.) = $name]"/>"
+  </xsl:when>
+  <xsl:when test="(*[name(.) = $qname])[@name = $name]">
+    <xsl:call-template name="get-nested-content">
+      <xsl:with-param name="content"
+        select="(*[name(.) = $qname])[@name = $name]"/>
+    </xsl:call-template>
+  </xsl:when>
+  <xsl:otherwise>
+    <xsl:choose>
+      <xsl:when test="string-length($default) = 0">
+        <xsl:choose>
+          <xsl:when test="$required = 'true'">
+            <xsl:call-template name="error">
+              <xsl:with-param name="message">
+              [Logicsheet processor]
+                Parameter '<xsl:value-of select="$name"/>'
+              missing in dynamic tag
+              &lt;<xsl:value-of select="name(.)"/>&gt;
+              </xsl:with-param>
+            </xsl:call-template>
+          </xsl:when>
+          <xsl:otherwise>""</xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+      <xsl:otherwise><xsl:copy-of select="$default"/></xsl:otherwise>
+    </xsl:choose>
+  </xsl:otherwise>
+</xsl:choose>
+</xsl:template>
+
+<xsl:template name="get-nested-content">
+<xsl:param name="content"/>
+<xsl:choose>
+  <xsl:when test="$content/*">
+    <xsl:apply-templates select="$content/*"/>
+  </xsl:when>
+  <xsl:otherwise>"<xsl:value-of select="$content"/>"</xsl:otherwise>
+</xsl:choose>
+</xsl:template>
+
+<xsl:template name="get-nested-string">
+<xsl:param name="content"/>
+<xsl:choose>
+  <xsl:when test="$content/*">
+    ""
+    <xsl:for-each select="$content/node()">
+      <xsl:choose>
+        <xsl:when test="name(.)">
+          + <xsl:apply-templates select="."/>
+        </xsl:when>
+        <xsl:otherwise>
+          + "<xsl:value-of select="translate(.,'&#9;&#10;&#13;','   ')"/>"
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:for-each>
+  </xsl:when>
+  <xsl:otherwise>"<xsl:value-of select="$content"/>"</xsl:otherwise>
+</xsl:choose>
+</xsl:template>
+
+<xsl:template name="error">
+<xsl:param name="message"/>
+<xsl:message terminate="yes"><xsl:value-of select="$message"/></xsl:message>
+</xsl:template>
+]]></source>
+
+    <p>
+      Given these utility templates, the example
+      <code>&lt;util:time-of-day&gt;</code> template would look like:
+    </p>
+
+<anchor id="complex-example"/>
+<source><![CDATA[
+<xsl:template match="sql:create-connection">
+<xsl:variable name="name">
+  <xsl:call-template name="get-parameter">
+    <xsl:with-param name="name">name</xsl:with-param>
+    <xsl:with-param name="required">true</xsl:with-param>
+  </xsl:call-template>
+</xsl:variable>
+
+<xsl:variable name="jdbc-driver">
+  <xsl:call-template name="get-parameter">
+    <xsl:with-param name="name">jdbc-driver</xsl:with-param>
+    <xsl:with-param name="required">true</xsl:with-param>
+  </xsl:call-template>
+</xsl:variable>
+
+<xsl:variable name="connect-url">
+  <xsl:call-template name="get-parameter">
+    <xsl:with-param name="name">connect-url</xsl:with-param>
+    <xsl:with-param name="required">true</xsl:with-param>
+  </xsl:call-template>
+</xsl:variable>
+
+<xsl:variable name="user-name">
+  <xsl:call-template name="get-parameter">
+    <xsl:with-param name="name">user-name</xsl:with-param>
+    <xsl:with-param name="required">true</xsl:with-param>
+  </xsl:call-template>
+</xsl:variable>
+
+<xsl:variable name="password">
+  <xsl:call-template name="get-parameter">
+    <xsl:with-param name="name">password</xsl:with-param>
+    <xsl:with-param name="required">true</xsl:with-param>
+  </xsl:call-template>
+</xsl:variable>
+
+<xsp:logic>
+  SQLHelper.createConnection(
+    <xsl:copy-of select="$name"/>,
+    <xsl:copy-of select="$connect-url"/>,
+    <xsl:copy-of select="$user-name"/>,
+    <xsl:copy-of select="$password"/>,
+    request
+  );
+</xsp:logic>
+</xsl:template>
+]]></source>
+
+    <p>
+      This example shows clearly why we need a
+     <link href="#logicsheet-language">SiLLy</link>
+     language!
+    </p>
+  </s1>
+
+  <anchor id="java-logicsheets"/>
+  <s1 title="XSLT Logicsheets and XSP for Java">
+    <p>
+      The Java programming language defines a source program structure that
+     must be take into account for properly generating code:
+    </p>
+
+    <ul>
+      <li>Package declaration</li>
+     <li>Imports</li>
+     <li>Class declaration</li>
+     <li>Class-level declarations (methods and variables)</li>
+     <li>Application-specific method body</li>
+    </ul>
+
+    <p>
+      The <code>&lt;xsp:page&gt;</code> tag must contain one (and only
+     one) "user" root element.
+    </p>
+
+    <p>
+      All markup enclosed within the user root element will be placed
+     inside method <code>generate()</code> of the generated
+     <code>XSPGenerator</code> subclass.
+    </p>
+
+    <p>
+      The <code>&lt;xsp:structure&gt;</code>
+      and <code>&lt;xsp:include&gt;</code> tags are used to
+     import "external" classes and <strong>must</strong> be
+     top-level elements (i.e., they must placed directly under
+     the <code>&lt;xsp:page&gt;</code> root element):
+    </p>
+
+<source><![CDATA[
+<xsp:structure>
+<xsp:include>java.sql.*</xsp:include>
+<xsp:include>java.text.SimpleDateFormat</xsp:include>
+</xsp:structure>
+]]></source>
+
+    <p>
+      The <code>&lt;xsp:logic&gt;</code> tag can be used to
+     generate <em>class-level</em> variable and method declarations
+     when used as a top-level element:
+    </p>
+
+<source><![CDATA[
+<xsp:page>
+<xsp:structure>
+  <xsp:include>java.text.SimpleDateFormat</xsp:include>
+</xsp:structure>
+
+<!-- Class-level declarations -->
+<xsp:logic>
+  private static String timeOfDay(String format) {
+    if (format == null || format.length() == 0) {
+      format = "hh:mm:ss";
+    }
+
+    return SimpleDateFormat.getInstance().format(new Date(), format);
+  }
+</xsp:logic>
+. . .
+<user-root>
+ . . .
+ <p>
+   It's now
+   <xsp:expr>
+     timeOfDay(request.getParameter("timeFormat"));
+   </xsp:expr>
+ </p>
+ . . .
+</user-root>
+<xsp:page>
+]]></source>
+
+    <p>
+      Thus, when a logicsheet adds to the import or class-level declaration
+     "sections", it <strong>must</strong> preserve all the declarations
+     possibly generated by previous logicsheets:
+    </p>
+
+<source><![CDATA[
+<xsl:template match="xsp:page">
+<xsp:page>
+  <xsl:apply-templates select="@*"/>
+
+  <xsp:structure>
+    <xsp:include>java.text.*</xsp:include>
+  </xsp:structure>
+
+  <xsp:logic>
+    private static int count = 0;
+    private static synchronized int getCounter() {
+      return ++count;
+    }
+    . . .
+  </xsp:logic>
+
+  <xsl:apply-templates/>
+</xsp:page>
+</xsl:template>
+]]></source>
+  </s1>
+
+ <anchor id="logicsheet-language"/>
+ <s1 title="The SiLLy Logicsheet Language">
+   <p>
+     In order to overcome the extreme complexity of logicsheet transformations
+     expressed in XSLT, a simpler, higher-level XML transformation language
+     is being defined: <em>Simple Logicsheet Language</em>
+     (or <em>SiLLy</em>, so baptized by Stefano Mazzocchi in a humorous
+     rejection of its first proposed name).
+   </p>
+
+   <p>
+     SiLLy templates are much terser and easier to read and write than
+     the XSLT-based examples presented
+     <link href="#complex-example">above</link>:
+   </p>
+
+<source><![CDATA[
+<sll:logicsheet
+  xmlns:sll="http://xml.apache.org/sll"
+  xmlns:xsl="http://www.w3c.org/1999/XSL/Transform"
+>
+  <sll:namespace prefix="sql" uri="http://xml.apache.org/sql"/>
+  
+  <sll:prolog>
+    <xsp:structure>
+      <xsp:include>import SQLHelper;</xsp:include>
+    </xsp:structure>
+  <sll:prolog>
+  
+  <sll:element name="create-connection">
+    <sll:parameter name="name" required="true"/>
+    <sll:parameter name="jdbc-driver"
+      default="oracle.jdbc.driver.OracleDriver"/>
+    <sll:parameter name="connect-url"
+      default="jdbc:oracle:thin:@localhost:1521:ORCL"/>
+    <sll:parameter name="user-name" required="true"/>
+    <sll:parameter name="password" required="true"/>
+  
+    <sll:body>
+      <xsp:logic>
+        SQLHelper.createConnection(
+          <sll:parameter-value select="name"/>,
+          <sll:parameter-value select="jdbc-driver"/>,
+          <sll:parameter-value select="connect-url"/>,
+          <sll:parameter-value select="user-name"/>,
+          <sll:parameter-value select="password"/>,
+          request
+        );
+      </xsp:logic>
+    </sll:body>
+  </sll:element>
+</sll:logicsheet>
+]]></source>
+
+   <p>
+     SiLLy logicsheets are translated into an equivalent XSLT stylesheet
+     using XSLT itself.
+   </p>
+
+   <note>
+     It is possible (and, indeed, simple) to generate a stylesheet that
+     uses the <code>xsl</code> namespace without ambiguity: XSLT processors
+     are bound to the XSL namespace <em>URI</em>, rather than to its
+     prefix. In addition to this, XSLT defines a
+     <code>&lt;xsl:namespace-alias&gt;</code> directive that can
+     be used to map one namespace's URI to another.
+   </note>
+
+   <p>
+     SiLLy provides a limited form of parameter validation: when a dynamic
+     tag parameter is defined as <em>required</em> its absence in the
+     source XML document will trigger the abnormal termination of the
+     code generation process producing a (more or less) meaningful message
+     by means of <code>&lt;xsl:message&gt;</code>
+   </p>
+
+   <p>
+     It's also possible to specify a list valid values for a parameter.
+     Such list will be used for parameter validation when values passed
+     are constants known at transformation time.
+   </p>
+
+   <p>
+     In addition to dynamic <em>tags</em>, SiLLy can also match attributes,
+     and processing instructions.
+   </p>
+
+   <p>
+     In absence of a schema or DTD, the following examples illustrate
+     the basic SiLLy matching and transformation capabilities (use-cases
+     are shown as XML comments):
+   </p>
+
+<source><![CDATA[
+
+<!-- <util:time-of-day format="hh:mm aa"/> -->
+<sll:element name="time-of-day" uri="http://www.plenix.org/util" prefix="util">
+  <sll:parameter name="format" default="hh:mm:ss"/>
+  <sll:body>
+    <xsp:expr>
+      SimpleDateFormat.getInstance().format(
+        new Date(),
+        <sll:parameter-value name="format"/>
+      )
+    </xsp:expr>
+  </sll:body>
+</sll:element>
+
+<!-- <img flag:src="languageCode"/> -->
+<sll:attribute name="src" uri="http://www.plenix.org/translator" prefix="flag">
+  <sll:body>
+    <xsp:attribute name="src"><xsp:expr>
+      request.getParameter("<sll:attribute-value/>");
+    </xsp:expr>.gif</xsp:attribute>
+  </sll:body>
+</sll:attribute>
+
+<!-- <?log Commit point reached?> -->
+<sll:processing-instruction target="log">
+  <sll:body>
+    <xsp:logic>
+      logger.log("<sll:pi-data/>");
+    </xsp:logic>
+  </sll:body>
+</sll:attribute>
+]]></source>
+   
+   <note>
+     <code>&lt;sll:processing-instruction&gt;</code> is probably
+     overkill
+   </note>
+ </s1>
+</body>
+</document>

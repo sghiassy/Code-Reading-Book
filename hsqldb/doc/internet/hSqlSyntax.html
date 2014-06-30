@@ -1,0 +1,557 @@
+<HTML>
+<HEAD><TITLE>Hypersonic SQL</TITLE></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+
+<H2>SQL Syntax</H2>
+<P>
+Hypersonic SQL currently supports the following SQL statements and syntax:
+<P>
+<table BORDER=0 CELLSPACING=10 CELLPADDING=0 >
+<tr>
+<td VALIGN=TOP><img SRC="images\sqlSelect.gif"></td>
+<td>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+<a href="#SELECT">SELECT</a>
+<br><a href="#Expression">Expression</a>
+<br><a href="#CALL">CALL</a>
+<br><a href="#Stored">Stored Procedures / Functions</a>
+    <a href="#List">List</a>
+</FONT></td></tr>
+<tr>
+<td VALIGN=TOP><img SRC="images\sqlDML.gif"></td>
+<td>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+<a href="#INSERT">INSERT</a>
+<br><a href="#UPDATE">UPDATE</a>
+<br><a href="#DELETE">DELETE</a>
+</FONT></td></tr>
+<tr>
+<td VALIGN=TOP><img SRC="images\sqlDDL.gif"></td>
+<td>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+<a href="#CREATE TABLE">CREATE TABLE</a>
+<br><a href="#DROP TABLE">DROP TABLE</a>
+<br><a href="#Datatypes">Datatypes</a>
+<br><a href="#CREATE INDEX">CREATE INDEX</a>
+<br><a href="#DROP INDEX">DROP INDEX</a>
+<br><a href="#CREATE ALIAS">CREATE ALIAS</a>
+</FONT></td></tr>
+<tr>
+<td VALIGN=TOP><img SRC="images\sqlTransact.gif"></td>
+<td>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+<a href="#SET AUTOCOMMIT">SET AUTOCOMMIT</a>
+<br><a href="#COMMIT">COMMIT</a>
+<br><a href="#ROLLBACK">ROLLBACK</a>
+</FONT></td></tr>
+<tr>
+<td VALIGN=TOP><img SRC="images\sqlSecurity.gif"></td>
+<td>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+<a href="#CONNECT">CONNECT</a>
+<br><a href="#DISCONNECT">DISCONNECT</a>
+<br><a href="#CREATE USER">CREATE USER</a>
+<br><a href="#DROP USER">DROP USER</a>
+<br><a href="#GRANT">GRANT</a>
+<br><a href="#REVOKE">REVOKE</a>
+<br><a href="#SET PASSWORD">SET PASSWORD</a>
+<br><a href="#SET REFINT">SET REFERENTIAL_INTEGRITY</a>
+<br><a href="#SET WRITE_DELAY">SET WRITE_DELAY</a>
+</FONT></td></tr>
+<tr>
+<td VALIGN=TOP><img SRC="images\sqlOther.gif"></td>
+<td>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+<a href="#CHECKPOINT">CHECKPOINT</a>
+<br><a href="#SCRIPT">SCRIPT</a>
+<br><a href="#SET IGNORECASE">SET IGNORECASE</a>
+<br><a href="#SET LOGSIZE">SET LOGSIZE</a>
+<br><a href="#SHUTDOWN">SHUTDOWN</a>
+<br><a href="#Comments">Comments</a>
+</FONT></td></tr>
+</table>
+<P>
+<hr>
+<P>
+Alphabetical list:
+<P>
+<br><a href="#CALL">CALL</a>
+<br><a href="#CHECKPOINT">CHECKPOINT</a>
+<br><a href="#COMMIT">COMMIT</a>
+<br><a href="#CONNECT">CONNECT</a>
+<br><a href="#CREATE ALIAS">CREATE ALIAS</a>
+<br><a href="#CREATE INDEX">CREATE INDEX</a>
+<br><a href="#CREATE TABLE">CREATE TABLE</a>
+<br><a href="#CREATE USER">CREATE USER</a>
+<br><a href="#DELETE">DELETE</a>
+<br><a href="#DISCONNECT">DISCONNECT</a>
+<br><a href="#DROP INDEX">DROP INDEX</a>
+<br><a href="#DROP TABLE">DROP TABLE</a>
+<br><a href="#DROP USER">DROP USER</a>
+<br><a href="#GRANT">GRANT</a>
+<br><a href="#INSERT">INSERT</a>
+<br><a href="#REVOKE">REVOKE</a>
+<br><a href="#ROLLBACK">ROLLBACK</a>
+<br><a href="#SCRIPT">SCRIPT</a>
+<br><a href="#SELECT">SELECT</a>
+<br><a href="#SET AUTOCOMMIT">SET AUTOCOMMIT</a>
+<br><a href="#SET IGNORECASE">SET IGNORECASE</a>
+<br><a href="#SET LOGSIZE">SET LOGSIZE</a>
+<br><a href="#SET PASSWORD">SET PASSWORD</a>
+<br><a href="#SET REFINT">SET REFERENTIAL_INTEGRITY</a>
+<br><a href="#SET WRITE_DELAY">SET WRITE_DELAY</a>
+<br><a href="#SHUTDOWN">SHUTDOWN</a>
+<br><a href="#UPDATE">UPDATE</a>
+<p>
+<a href="#Expression">Expression</a>
+<br><a href="#Comments">Comments</a>
+<br><a href="#Datatypes">Datatypes</a>
+<br><a href="#Stored">Stored Procedures / Functions</a>
+    <a href="#List">List</a>
+<p>
+<br><a NAME="CALL"></a><hr>
+<br><b>CALL <a href="#Expression">Expression</a></b>
+<p>Any expression can be called like a stored procedure,
+including, but not only Java stored procedures or functions.
+This command returns a ResultSet with one column and one 
+row (the result) just like a SELECT statement with one row
+and one column.
+<p>See also: 
+<a href="#Stored">Stored Procedures / Functions</a>,
+<a href="#Expression">Expression</a>.
+<p>
+<br><a NAME="CHECKPOINT"></a><hr>
+<br><b>CHECKPOINT</b>
+<p>Closes the database files, shrinks the script file
+and opens the database.
+<p>See also: <a href="#SHUTDOWN">SHUTDOWN</a>,
+<a href="#SET LOGSIZE">SET LOGSIZE</a>.
+<p>
+<br><a NAME="COMMIT"></a><hr>
+<br><b>COMMIT</b> [WORK]
+<p>Ends a transaction and makes the changes
+permanent.
+<p>See also: <a href="#ROLLBACK">ROLLBACK</a>,
+<a href="#SET AUTOCOMMIT">SET AUTOCOMMIT</a>.
+<p><br><a NAME="CONNECT"></a><hr>
+<br><b>CONNECT</b> USER username PASSWORD password
+<p>Connects to the database as a different user.
+Use "" for an empty password.
+<p>See also: <a href="#GRANT">GRANT</a>,
+<a href="#REVOKE">REVOKE</a>
+<p>
+<br><a NAME="CREATE ALIAS"></a><hr>
+<br><b>CREATE ALIAS</b> function FOR javaFunction
+<p>Creates an alias for a Java function. The function
+must be accessible from the JVM in that the database runs.
+Example:
+<br>CREATE ALIAS ABS FOR "java.lang.Math.abs"
+<p>See also: <a href="#CALL">CALL</a>, <a href="#Stored">Stored Procedures / Functions</a>
+<p>
+<br><a NAME="CREATE INDEX"></a><hr>
+<br><b>CREATE</b> [UNIQUE] <b>INDEX</b> index ON table (column [, ...])
+<p>Creates an index on one or more columns
+in a table.
+<br>Creating an index on searched columns
+may improve performance.
+<p>See also: <a href="#CREATE TABLE">CREATE
+TABLE</a>, <a href="#DROP INDEX">DROP INDEX</a>
+<p>
+<br><a NAME="CREATE TABLE"></a><hr>
+<br><b>CREATE</b> [ MEMORY | CACHED ] <b>TABLE</b> name
+<br>( columnDefinition [, ...] [, constraintDefinition...])
+<p>Creates a tables in the memory (default) or on disk and only cached in memory.
+Identity columns are autoincrement columns. They must be integer columns and are
+automatically primary key columns. The last inserted value into an identity column
+for a connection is available using the function IDENTITY(), for example (where Id
+is the identity column):
+<br>INSERT INTO Test (Id, Name) VALUES (NULL,'Test'); CALL IDENTITY()
+<p>columnDefinition:
+<br>column <a href="#Datatypes">Datatype</a> [(anything)] [[NOT] NULL] [IDENTITY] [PRIMARY KEY]
+<p>constraintDefinition:
+<br>[ CONSTRAINT name ] 
+<br>UNIQUE ( column [,column...] ) | 
+<br>PRIMARY KEY ( column [,column...] ) | 
+<br>FOREIGN KEY ( column [,column...] ) REFERENCES refTable ( column [,column...] )
+<p>See also: <a href="#DROP TABLE">DROP
+TABLE</a>
+<p>
+<br><a NAME="CREATE USER"></a><hr>
+<br><b>CREATE USER</b> username PASSWORD password [ADMIN]
+<p>Creates a new user or new administrator in this database.
+Empty password can be made using "".
+<br>Only an administrator do this.
+<p>See also: <a href="#CONNECT">CONNECT</a>,
+<a href="#GRANT">GRANT</a>,
+<a href="#REVOKE">REVOKE</a>
+<p>
+<br><a NAME="DELETE"></a><hr>
+<br><b>DELETE</b> FROM table [ WHERE Expression ]
+<p>Removes rows in a table.
+<p>See also: <a href="#Expression">Expression</a>,
+<a href="#INSERT">INSERT</a>,
+<a href="#SELECT">SELECT</a>
+<p>
+<br><a NAME="DISCONNECT"></a><hr>
+<br><b>DISCONNECT</b>
+<p>Closes this connection. It is not required to call
+this command when using the JDBC interface: it is called
+automatically when the connection is closed. After disconnecting,
+it is not possible to execute other queries (also not CONNECT) with
+this connection.
+<p>See also: <a href="#CONNECT">CONNECT</a>
+<p>
+<br><a NAME="DROP INDEX"></a><hr>
+<br><b>DROP INDEX</b> table.index
+<p>Removes the specified index from the
+database.
+<p>See also: <a href="#CREATE INDEX">CREATE
+INDEX</a>
+<p>
+<br><a NAME="DROP TABLE"></a><hr>
+<br><b>DROP TABLE</b> table
+<p>Removes a table, the data and indexes
+from the database.
+<p>See also: <a href="#CREATE TABLE">CREATE TABLE</a>
+<p>
+<br><a NAME="DROP USER"></a><hr>
+<br><b>DROP USER</b> username
+<p>Removes a user from the database.
+<br>Only an administrator do this.
+<p>See also: <a href="#CREATE USER">CREATE USER</a>
+<p>
+<br><a NAME="GRANT"></a><hr>
+<br><b>GRANT</b> { SELECT | DELETE | INSERT | UPDATE | ALL } [,...]
+<br>ON { table | CLASS "package.class" } TO { username | PUBLIC }
+<p>Assigns privileges to a user or to all users (PUBLIC) for a table or for
+a class. To allow a user to call a function from a class, the right ALL 
+must be used. Examples:
+<br>GRANT SELECT ON Test TO GUEST
+<br>GRANT ALL ON CLASS "java.lang.String" TO PUBLIC
+<br>Only an administrator do this.
+<p>See also: <a href="#REVOKE">REVOKE</a>,
+<a href="#CREATE USER">CREATE USER</a>
+<p>
+<br><a NAME="INSERT"></a><hr>
+<br><b>INSERT</b> INTO table [ ( column [,...] ) ]
+<br>{ VALUES(<a href="#Expression">Expression</a> [,...]) | 
+<a  href="#SELECT">SelectStatement</a> }
+<p>Adds one or more new rows of data into a table.
+<p>
+<br><a NAME="REVOKE"></a><hr>
+<br><b>REVOKE</b> { SELECT | DELETE | INSERT | UPDATE | ALL } [,...]
+<br>ON { table | CLASS "package.class" } TO { username | PUBLIC }
+<p>Withdraws privileges from a user or for PUBLIC (all users) for a table
+or class.
+<br>Only an administrator may do this.
+<p>See also: <a href="#GRANT">GRANT</a>
+<p>
+<br><a NAME="ROLLBACK"></a><hr>
+<br><b>ROLLBACK</b> [WORK]
+<p>Undoes changes made since the last
+COMMIT or ROLLBACK.
+<p>See also: <a href="#COMMIT">COMMIT</a>
+<p>
+<br><a NAME="SCRIPT"></a><hr>
+<br><b>SCRIPT</b> ['file']
+<p>Creates an SQL script describing the database.
+<br>Only an administrator may do this.
+<p>
+<br><a NAME="SELECT"></a><hr>
+<br><b>SELECT</b> [DISTINCT]
+<br>{ selectExpression | table.* | * } [, ... ]
+<br>[ INTO newTable ]
+<br>FROM tableList
+<br>[ WHERE <a href="#Expression">Expression</a> ]
+<br>[ GROUP BY Expression [, ...] ]
+<br>[ ORDER BY orderExpression [, ...] ]
+<br>[ { UNION [ALL] | {MINUS|EXCEPT} | INTERSECT } selectStatement ]
+<p>Retrieves information from one or more
+tables in the database.
+<p>tableList:
+<br>table [ { INNER | LEFT [OUTER] } JOIN table ON Expression ] [, ...]
+<p>selectExpression:
+<br>{ Expression | COUNT(*) | {COUNT | MIN | MAX | SUM | AVG} (Expression) }
+<p>orderExpression:
+<br>{ columnNr | columnAlias | selectExpression } [ ASC | DESC ] 
+<p>See also: <a href="#INSERT">INSERT</a>,
+<a href="#UPDATE">UPDATE</a>,
+<a href="#DELETE">DELETE</a>
+<p>
+<br><a NAME="SET AUTOCOMMIT"></a><hr>
+<br><b>SET AUTOCOMMIT</b> { TRUE | FALSE }
+<p>Switches on or off the connection's
+auto-commit mode. If switched on, then all statements will be committed
+as individual transactions. Otherwise, the statements are grouped into
+transactions that are terminated by either <a href="#COMMIT">COMMIT</a>
+or <a href="#ROLLBACK">ROLLBACK</a>. By default, new connections are in
+auto-commit mode.
+<p>
+<br><a NAME="SET IGNORECASE"></a><hr>
+<br><b>SET IGNORECASE</b> { TRUE | FALSE }
+<p>Disables (ignorecase = true) or enables (ignorecase = false) the case
+sensitivity of text comparing. By default, new databases are case sensitive.
+The sensitivity must be switched before creating tables. Existing tables
+are data is not affected. When switched on, the data type VARCHAR is set to
+VARCHAR_IGNORECASE. This special data type can also be used without
+switching ignorecase on; so it is possible to have some rows case sensitive
+and some not, even in the same table.
+<br>Only an administrator may do this.
+<p>
+<br><a NAME="SET LOGSIZE"></a><hr>
+<br><b>SET LOGSIZE</b> size
+<p>Sets the maximum size in MB of the .script file. Default is 200 MB. The database
+will be closed and opened (just like using CHECKPOINT) if the .script file gets 
+over this limit, and so the .script file will shrink. 0 means no limit.
+<p>See also: <a href="#CHECKPOINT">CHECKPOINT</a>
+<p>
+<br><a NAME="SET PASSWORD"></a><hr>
+<br><b>SET PASSWORD</b> password
+<p>Changes the password of the currently connected user. Empty password can be set using ""
+<p>
+<br><a NAME="SET REFINT"></a><hr>
+<br><b>SET REFERENTIAL_INTEGRITY</b> { TRUE | FALSE }
+<p>This commands enables / disables the referential integrity checking (foreign keys).
+Normally it should be switched on (this is the default) but when importing data 
+(and the data is imported in the 'wrong' order) the checking can be switched off.
+<br>Only an administrator may do this.
+<p>See also: <a href="#CREATE TABLE">CREATE TABLE</a>
+<p>
+<br><a NAME="SET WRITE_DELAY"></a><hr>
+<br><b>SET WRITE_DELAY</b> { TRUE | FALSE }
+<p>When the write delay is switched on, the executed commands are written to the log file (.script) at most 1 second after they are executed. This improves the performance of applications that makes a lot of inserts/updates/deletes. When switched off (this is 
+the default) then all SQL commands are written into the log file (.script) just after 
+they are executed. 
+<br>Only an administrator may do this.
+<p>
+<hr>
+<p>SET TABLE tableName INDEX 'index1rootPos
+index2rootPos ... '.
+<p>This command is only used internally
+to store the position of index roots in the index file. It appears only
+in database script files; it should not be used directly.
+<br>
+<p>
+<br><a NAME="SHUTDOWN"></a><hr>
+<br><b>SHUTDOWN</b> [ IMMEDIATELY | COMPACT ]
+<p>Closes the current database. SHUTDOWN
+IMMEDIATELY just closes the databasefiles (like a external poweroff); this
+command is used internally to test the recovery mechanism.
+<br>
+SHUTDOWN COMPACT recreates the database files. This operations shrinks all
+files to the minimum size.
+<br>Only an administrator may do this.
+<p>
+<br><a NAME="UPDATE"></a><hr>
+<br><b>UPDATE</b> table SET column = Expression
+[, ...]
+<br>[WHERE Expression]
+<p>Modifies data of a table in the database.
+<p>See also: <a href="#SELECT">SELECT</a>,
+<a href="#INSERT">INSERT</a>,
+<a href="#DELETE">DELETE</a>
+<p>
+<br><a NAME="Datatypes"></a><hr>
+<br><b>Datatypes</b>:
+The types on the same line are equivalent. 
+<br>{ <BR>
+INTEGER | INT | "int" | "java.lang.Integer" | <BR>
+DOUBLE [PRECISION] | FLOAT | "double" | "java.lang.Double" | <BR>
+VARCHAR | "java.lang.String" | VARCHAR_IGNORECASE | <BR>
+CHAR | CHARACTER | <BR>
+LONGVARCHAR | <BR>
+DATE | "java.sql.Date" | <BR>
+TIME | "java.sql.Time" | <BR>
+TIMESTAMP | DATETIME | "java.sql.Timestamp" | <BR>
+DECIMAL | "java.math.BigDecimal" | <BR>
+NUMERIC | <BR>
+BIT | "boolean" | "java.lang.Boolean" | <BR>
+TINYINT | "short" | "java.lang.Short" | <BR>
+SMALLINT | <BR>
+BIGINT | "long" | "java.lang.Long" | <BR>
+REAL | "float" | "java.lang.Float" | <BR>
+BINARY | "byte[]" | <BR>
+VARBINARY | <BR>
+LONGVARBINARY | <BR>
+OTHER | OBJECT | "java.lang.Object" }
+<p>
+The first column contains the data types names defined by
+the standard. The data types in quotes are the Java class names -
+if this type names are used then they must be enclosed in quotes 
+because lower/uppercase matters.
+<p>
+The recommended Java mapping for the JDBC datatype FLOAT is 
+as a Java type "double". Because of the potential confusion it 
+is recommended that DOUBLE is used instead of FLOAT.
+<p>
+VARCHAR_IGNORECASE is a special case insensitive type of VARCHAR.
+This type is not portable.
+<p>
+<br><a NAME="Comments"></a><hr>
+<br><b>Comments</b>
+<p>
+<br>-- SQL style line comment
+<br>// Java style line comment
+<br>/* C style line comment */
+<p>All this types of comments are ignored by the database.
+<P>
+<br><a NAME="Stored"></a><hr>
+<br><b>Stored Procedures / Functions</b>
+<P>
+Stored procedures are Java functions that are called
+directly from the SQL language or using an alias.
+Calling Java functions (directly or using the alias) requires 
+that the Java class can be reached by the database (server).
+The syntax is:
+<p>
+"java.lang.Math.sqrt"(2.0)
+<p>
+This means the packacke must be provided, and the name
+must be written as one word, and inside " because otherwise
+it is converted to uppercase (and not found).
+<p>
+An alias can be created using the command CREATE ALIAS:
+<p>
+CREATE ALIAS SQRT FOR "java.lang.Math.sqrt"
+<p>
+When an alias is defined, then the function can be 
+called additionally using this alias:
+<p>
+SQRT(2.0)
+<p>
+<br><a NAME="List"></a><hr>
+<br><b>List of built in functions and stored procedures</b>
+<p>
+<b>Numerical</b>
+<br>ABS(d) (returns the absolute value of a double value)
+<br>ACOS(d) (returns the arc cosine of an angle)
+<br>ASIN(d) (returns the arc sine of an angle)
+<br>ATAN(d) (returns the arc tangent of an angle)
+<br>ATAN2(a,b) (returns the tangent of a/b)
+<br>CEILING(d) (returns the smallest integer that is not less than d)
+<br>COS(d) (returns the cosine of an angle)
+<br>COT(d) (returns the cotangent of an angle)
+<br>DEGREES(d) (converts radians to degrees)
+<br>EXP(d) (returns e (2.718...) raised to the power of d)
+<br>FLOOR(d) (returns the largest integer that is not greater than d)
+<br>LOG(d) (returns the natural logarithm (base e))
+<br>LOG10(d) (returns the logarithm (base 10)) 
+<br>MOD(a,b) (returns a modulo b)
+<br>PI() (returns pi (3.1415...))
+<br>POWER(a,b) (returns a raised to the power of b)
+<br>RADIANS(d) (converts degrees to radians)
+<br>RAND() (returns a random number x bigger or equal to 0.0 and smaller than 1.0)
+<br>ROUND(a,b) (rounds a to b digits after the decimal point)
+<br>SIGN(d) (returns -1 if d is smaller than 0, 0 if d==0 and 1 if d is bigger than 0)
+<br>SIN(d) (returns the sine of an angle)
+<br>SQRT(d) (returns the square root)
+<br>TAN (returns the trigonometric tangent of an angle)
+<br>TRUNCATE(a,b) (truncates a to b digits after the decimal point)
+<br>BITAND(a,b) (return a & b)
+<br>BITOR(a,b) (returns a | b)
+<br>ROUNDMAGIC(d) (solves rounding problems such as 3.11-3.1-0.01)
+<p>
+<b>String</b>
+<br>ASCII(s) (returns the ASCII code of the leftmost character of s)
+<br>CHAR(c) (returns a character that has the ASCII code c)
+<br>CONCAT(str1,str2) (returns str1 + str2 )
+<br>DIFFERENCE(s1,s2) (returns the difference between the sound of s1 and s2)
+<br>INSERT(s,start,len,s2) (returns a string where len number of characters beginning at start has been replaced by s2)
+<br>LCASE(s) (converts s to lower case)
+<br>LEFT(s,count) (returns the leftmost count of characters of s)
+<br>LENGTH(s) (returns the number of characters in s)
+<br>LOCATE(search,s,[start]) (returns the first index (1=left, 0=not found) where search is found in s, starting at start)
+<br>LTRIM(s) (removes all leading blanks in s)
+<br>REPEAT(s,count) (returns s repeated count times)
+<br>REPLACE(s,replace,s2) (replaces all occurrences of replace in s with s2) 
+<br>RIGHT(s,count) (returns the rightmost count of characters of s)
+<br>RTRIM(s) (removes all trailing blanks)
+<br>SOUNDEX(s) (returns a four character code representing the sound of s)
+<br>SPACE(count) (returns a string consisting of count spaces)
+<br>SUBSTRING(s,start[,len]) (returns the substring starting at start (1=left) with length len)
+<br>UCASE(s) (converts s to upper case)
+<br>LOWER(s) (converts s to lower case)
+<br>UPPER(s) (converts s to upper case)
+<p>
+<b>Date / Time</b>
+<br>CURDATE() (returns the current date)
+<br>CURTIME() (returns the current time)
+<br>DAYNAME(date) (returns the name of the day)
+<br>DAYOFMONTH(date) (returns the day of the month (1-31))
+<br>DAYOFWEEK(date) (returns the day of the week (1 means Sunday))
+<br>DAYOFYEAR(date) (returns the day of the year (1-366))
+<br>HOUR(time) (return the hour (0-23))
+<br>MINUTE(time) (returns the minute (0-59))
+<br>MONTH(date) (returns the month (1-12))
+<br>MONTHNAME(date) (returns the name of the month)
+<br>NOW() (returns the current date and time as a timestamp)
+<br>QUARTER(date) (returns the quarter (1-4))
+<br>SECOND(time) (returns the second (0-59))
+<br>WEEK(date) (returns the week of this year (1-53)
+<br>YEAR(date) (returns the year)
+<p>
+<b>System / Connection</b>
+<br>DATABASE() (returns the name of the database of this connection)
+<br>USER() (returns the user name of this connection)
+<br>IDENTITY() (returns the last identity values that was inserted by this connection)
+<p>
+<b>System</b>
+<br>IFNULL(exp,value) (if exp is null, value is returned else exp)
+<br>CASEWHEN(exp,v2,v2) (if exp is true, v1 is returned, else v2)
+<br>CONVERT(term,type) (converts exp to another data type)
+<br>CAST(term AS type) (converts exp to another data type)
+<p>
+See also: <a href="#CREATE ALIAS">CREATE ALIAS</a>, <a href="#CALL">CALL</a>
+<P>
+<br><a NAME="Expression"></a><hr>
+<br><b>Expression</b>:
+<br>[NOT] condition [ { OR | AND } condition ]
+<p>condition:
+<br>{ value [ || value ]
+<br>| value { = | &lt; | &lt;= | > | >= | &lt;> | != | IS [NOT] } value
+<br>| EXISTS(<a href="#SELECT">selectStatement</a>)
+<br>| value BETWEEN value AND value
+<br>| value [NOT] IN ( {value [, ...] | selectStatement } )
+<br>| value [NOT] LIKE value [ESCAPE] value }
+<p>value:
+<br>[ + | - ] { term [ { + | - | * | / } term ]
+<br>| ( condition )
+<br>| <a href="#List">function</a> ( [parameter] [,...] )
+<br>| selectStatement giving one value
+<p>term:
+<br>{ 'string' | number | floatingpoint
+<br>| [table.]column | TRUE | FALSE | NULL }
+<p>string:
+<br>Starts and ends with a single '. In
+a string started with ' use '' to create a '.
+<br>LIKE uses '%' to match any (including
+0) number of characters, and '_' to match exactly one character. To search
+for '%' itself, '\%' must be used, for '_' use '\_'; or any other escaping
+character may be set using the ESCAPE clause.
+<p>name:
+<br>A name starts with a letter and is
+followed by any number of letters or digits. Lowercase is changed to uppercase
+except for strings and quoted identifiers. Names are not case sensitive.
+Quoted identifiers can be used as names (for example for tables or columns).
+Quoted identifiers starts and ends with ". In a quoted identifier use ""
+to create a ". With quoted identifiers it is possible to create mixed case
+table and column names. Example: CREATE TABLE "Address" ("Nr" INTEGER,"Name"
+VARCHAR); SELECT * FROM "Address". Quoted identifiers are not strings.
+<p>values:
+<br>
+A 'date' value starts and ends with ', the format is yyyy-mm-dd (see java.sql.Date).
+<br>
+A 'time' value starts and ends with ', the format is hh:mm:ss (see java.sql.Time).
+<br>
+Binary data starts and ends with ', the format is hexadecimal. '0004ff' for example is 3 bytes, first 0, second 4 and last 255 (0xff).
+
+<p>Any number of commands may be combined.
+';' may be used to separate each command but is not necessary.
+<p>[ A ] means A is optional
+<br>{ B | C } means B or C must be used.
+<br>( and ) are the characters '(' and
+')'.
+<br>UPPERCASE are keywords
+
+</FONT></BODY></HTML>

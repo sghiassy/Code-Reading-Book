@@ -1,0 +1,246 @@
+.TH ACE_SV_Semaphore_Complex 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SV_Semaphore_Complex \- This is a more complex semaphore wrapper that handles race conditions for initialization correctly... 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SV_Semaphore_Complex.h>\fR
+.PP
+Inherits \fBACE_SV_Semaphore_Simple\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBACE_CREATE\fR = IPC_CREAT, \fBACE_OPEN\fR = 0 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SV_Semaphore_Complex\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_SV_Semaphore_Complex\fR (key_t key, int create = ACE_SV_Semaphore_Complex::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.ti -1c
+.RI "\fBACE_SV_Semaphore_Complex\fR (const char *name, int create = ACE_SV_Semaphore_Complex::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.ti -1c
+.RI "\fB~ACE_SV_Semaphore_Complex\fR (void)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const char *name, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.RI "\fIOpen or create an array of SV_Semaphores. We return 0 if all is OK, else -1.\fR"
+.ti -1c
+.RI "int \fBopen\fR (key_t key, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)"
+.br
+.RI "\fIOpen or create an array of SV_Semaphores. We return 0 if all is OK, else -1.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.ti -1c
+.RI "int \fBacquire\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIAcquire the semaphore.\fR"
+.ti -1c
+.RI "int \fBacquire_read\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIAcquire a semaphore for reading.\fR"
+.ti -1c
+.RI "int \fBacquire_write\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIAcquire a semaphore for writing.\fR"
+.ti -1c
+.RI "int \fBtryacquire\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fITry to acquire the semaphore.\fR"
+.ti -1c
+.RI "int \fBtryacquire_read\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fITry to acquire the semaphore for reading.\fR"
+.ti -1c
+.RI "int \fBtryacquire_write\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fITry to acquire the semaphore for writing.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIRelease the semaphore.\fR"
+.ti -1c
+.RI "int \fBop\fR (int val, u_short n = 0, int flags = 0) const"
+.br
+.RI "\fIGeneral ACE_SV_Semaphore operation. Increment or decrement by a specific amount (positive or negative; amount can`t be zero).\fR"
+.ti -1c
+.RI "int \fBop\fR (sembuf op_vec[], u_short n) const"
+.br
+.RI "\fIGeneral ACE_SV_Semaphore operation on an array of SV_Semaphores.\fR"
+.ti -1c
+.RI "int \fBcontrol\fR (int cmd, \fBsemun\fR arg, u_short n = 0) const"
+.br
+.ti -1c
+.RI "int \fBcontrol\fR (int cmd, int value = 0, u_short n = 0) const"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "const int \fBBIGCOUNT_\fR"
+.br
+.ti -1c
+.RI "sembuf \fBop_lock_\fR [2]"
+.br
+.ti -1c
+.RI "sembuf \fBop_endcreate_\fR [2]"
+.br
+.ti -1c
+.RI "sembuf \fBop_open_\fR [1]"
+.br
+.ti -1c
+.RI "sembuf \fBop_close_\fR [3]"
+.br
+.ti -1c
+.RI "sembuf \fBop_unlock_\fR [1]"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This is a more complex semaphore wrapper that handles race conditions for initialization correctly...
+.PP
+.PP
+ This code is a port to C++, inspired by: W. Richard Stevens from his book: UNIX Network Programming (Prentice Hall, ISBN 0-13-949876-1 - 1990). We provide a simpler and easier to understand interface to the System V Semaphore system calls. We create and use a 2 + n-member set for the requested . The first member, [0], is a counter used to know when all processes have finished with the . The counter is initialized to a large number, decremented on every create or open and incremented on every close. This way we can use the "adjust" feature provided by System V so that any process that exit's without calling <close> is accounted for. It doesn't help us if the last process does this (as we have no way of getting control to remove the ) but it will work if any process other than the last does an exit (intentional or unintentional). The second member, [1], of the semaphore is used as a lock variable to avoid any race conditions in the <create> and <close> functions. The members beyond [1] are actual semaphore values in the array of semaphores, which may be sized by the user in the constructor. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_CREATE\fR \fR
+.TP
+\fB\fIACE_OPEN\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex (void)
+.PP
+.SS ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex (key_t key, int create = ACE_SV_Semaphore_Complex::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+.SS ACE_SV_Semaphore_Complex::ACE_SV_Semaphore_Complex (const char * name, int create = ACE_SV_Semaphore_Complex::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+.SS ACE_SV_Semaphore_Complex::~ACE_SV_Semaphore_Complex (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SV_Semaphore_Complex::acquire (u_short n = 0, int flags = 0) const
+.PP
+Acquire the semaphore.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::acquire_read (u_short n = 0, int flags = 0) const
+.PP
+Acquire a semaphore for reading.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::acquire_write (u_short n = 0, int flags = 0) const
+.PP
+Acquire a semaphore for writing.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::close (void)
+.PP
+Close an ACE_SV_Semaphore. Unlike the <remove> method, this method is for a process to call before it exits, when it is done with the ACE_SV_Semaphore. We "decrement" the counter of processes using the ACE_SV_Semaphore, and if this was the last one, we can remove the ACE_SV_Semaphore. 
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::control (int cmd, int value = 0, u_short n = 0) const
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::control (int cmd, \fBsemun\fR arg, u_short n = 0) const
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS void ACE_SV_Semaphore_Complex::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::op (sembuf op_vec[], u_short n) const
+.PP
+General ACE_SV_Semaphore operation on an array of SV_Semaphores.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::op (int val, u_short n = 0, int flags = 0) const
+.PP
+General ACE_SV_Semaphore operation. Increment or decrement by a specific amount (positive or negative; amount can`t be zero).
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::open (key_t key, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+Open or create an array of SV_Semaphores. We return 0 if all is OK, else -1.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::open (const char * name, int flags = ACE_SV_Semaphore_Simple::ACE_CREATE, int initial_value = 1, u_short nsems = 1, int perms = ACE_DEFAULT_FILE_PERMS)
+.PP
+Open or create an array of SV_Semaphores. We return 0 if all is OK, else -1.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::release (u_short n = 0, int flags = 0) const
+.PP
+Release the semaphore.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::tryacquire (u_short n = 0, int flags = 0) const
+.PP
+Try to acquire the semaphore.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::tryacquire_read (u_short n = 0, int flags = 0) const
+.PP
+Try to acquire the semaphore for reading.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS int ACE_SV_Semaphore_Complex::tryacquire_write (u_short n = 0, int flags = 0) const
+.PP
+Try to acquire the semaphore for writing.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SV_Semaphore_Complex::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SV_Semaphore_Simple\fR.
+.SS const int ACE_SV_Semaphore_Complex::BIGCOUNT_\fC [static, private]\fR
+.PP
+.SS sembuf ACE_SV_Semaphore_Complex::op_close_[3]\fC [static, private]\fR
+.PP
+.SS sembuf ACE_SV_Semaphore_Complex::op_endcreate_[2]\fC [static, private]\fR
+.PP
+.SS sembuf ACE_SV_Semaphore_Complex::op_lock_[2]\fC [static, private]\fR
+.PP
+.SS sembuf ACE_SV_Semaphore_Complex::op_open_[1]\fC [static, private]\fR
+.PP
+.SS sembuf ACE_SV_Semaphore_Complex::op_unlock_[1]\fC [static, private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

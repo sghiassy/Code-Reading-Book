@@ -1,0 +1,172 @@
+.TH ACE_RB_Tree_Iterator_Base 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_RB_Tree_Iterator_Base \- Implements a common base class for iterators for a Red-Black Tree ADT. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <RB_Tree.h>\fR
+.PP
+Inherited by \fBACE_RB_Tree_Iterator\fR, and \fBACE_RB_Tree_Reverse_Iterator\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> &iter)"
+.br
+.RI "\fIAssignment operator: copies both the tree reference and the position in the tree.\fR"
+.ti -1c
+.RI "int \fBdone\fR (void) const"
+.br
+.RI "\fIReturns 1 when the iteration has completed, otherwise 0.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>& \fBoperator *\fR (void) const"
+.br
+.RI "\fISTL-like iterator dereference operator: returns a reference to the node underneath the iterator.\fR"
+.ti -1c
+.RI "const \fBACE_RB_Tree\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>& \fBtree\fR (void)"
+.br
+.RI "\fIReturns a const reference to the tree over which we're iterating.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> &) const"
+.br
+.RI "\fIComparison operator: returns 1 if both iterators point to the same position, otherwise 0.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> &) const"
+.br
+.RI "\fIComparison operator: returns 1 if the iterators point to different positions, otherwise 0.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_RB_Tree_Iterator_Base\fR (void)"
+.br
+.RI "\fICreate the singular iterator. No valid iterator can be equal to it, it is illegal to dereference a singular iterator, etc. etc.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Iterator_Base\fR (const \fBACE_RB_Tree\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> &tree, int set_first)"
+.br
+.ti -1c
+.RI "\fBACE_RB_Tree_Iterator_Base\fR (const ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> &iter)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_RB_Tree_Iterator_Base\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBforward_i\fR (void)"
+.br
+.RI "\fIMove forward by one element in the tree. Returns 0 when there are no more elements in the tree, otherwise 1.\fR"
+.ti -1c
+.RI "int \fBreverse_i\fR (void)"
+.br
+.RI "\fIMove back by one element in the tree. Returns 0 when there are no more elements in the tree, otherwise 1.\fR"
+.ti -1c
+.RI "void \fBdump_i\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "const \fBACE_RB_Tree\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>* \fBtree_\fR"
+.br
+.RI "\fIReference to the \fBACE_RB_Tree\fR over which we're iterating.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* \fBnode_\fR"
+.br
+.RI "\fIPointer to the node currently under the iterator.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class EXT_ID, class INT_ID, class COMPARE_KEYS, class ACE_LOCK>  template class ACE_RB_Tree_Iterator_Base
+Implements a common base class for iterators for a Red-Black Tree ADT.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> (void)\fC [protected]\fR
+.PP
+Create the singular iterator. No valid iterator can be equal to it, it is illegal to dereference a singular iterator, etc. etc.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> (const \fBACE_RB_Tree\fR< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >& tree, int set_first)\fC [protected]\fR
+.PP
+Constructor. Takes an \fBACE_RB_Tree\fR over which to iterate, and an integer indicating (if non-zero) to position the iterator at the first element in the tree (if this integer is 0, the iterator is positioned at the last element in the tree). 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> (const ACE_RB_Tree_Iterator_Base< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >& iter)\fC [protected]\fR
+.PP
+Copy constructor.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::~ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> (void)\fC [protected]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::done (void) const
+.PP
+Returns 1 when the iteration has completed, otherwise 0.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::dump_i (void) const\fC [protected]\fR
+.PP
+Dump the state of an object.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::forward_i (void)\fC [protected]\fR
+.PP
+Move forward by one element in the tree. Returns 0 when there are no more elements in the tree, otherwise 1.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >& ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::operator * (void) const
+.PP
+STL-like iterator dereference operator: returns a reference to the node underneath the iterator.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::operator!= (const ACE_RB_Tree_Iterator_Base< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >&) const
+.PP
+Comparison operator: returns 1 if the iterators point to different positions, otherwise 0.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::operator= (const ACE_RB_Tree_Iterator_Base< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >& iter)
+.PP
+Assignment operator: copies both the tree reference and the position in the tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::operator== (const ACE_RB_Tree_Iterator_Base< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >&) const
+.PP
+Comparison operator: returns 1 if both iterators point to the same position, otherwise 0.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::reverse_i (void)\fC [protected]\fR
+.PP
+Move back by one element in the tree. Returns 0 when there are no more elements in the tree, otherwise 1.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> const \fBACE_RB_Tree\fR< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >& ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::tree (void)
+.PP
+Returns a const reference to the tree over which we're iterating.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_RB_Tree_Iterator\fR, and \fBACE_RB_Tree_Reverse_Iterator\fR.
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::node_\fC [protected]\fR
+.PP
+Pointer to the node currently under the iterator.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> const \fBACE_RB_Tree\fR< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >* ACE_RB_Tree_Iterator_Base<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::tree_\fC [protected]\fR
+.PP
+Reference to the \fBACE_RB_Tree\fR over which we're iterating.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,81 @@
+.TH ACE_OS_Exit_Info 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_OS_Exit_Info \- Hold Object Manager cleanup (exit) information. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <OS.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_OS_Exit_Info\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_OS_Exit_Info\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBat_exit_i\fR (void *object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void *param)"
+.br
+.RI "\fIUse to register a cleanup hook.\fR"
+.ti -1c
+.RI "int \fBfind\fR (void *object)"
+.br
+.RI "\fILook for a registered cleanup hook object. Returns 1 if already registered, 0 if not.\fR"
+.ti -1c
+.RI "void \fBcall_hooks\fR ()"
+.br
+.RI "\fICall all registered cleanup hooks, in reverse order of registration.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_Cleanup_Info_Node* \fBregistered_objects_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Hold Object Manager cleanup (exit) information.
+.PP
+.PP
+ For internal use by the \fBACE\fR library, only. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_OS_Exit_Info::ACE_OS_Exit_Info (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_OS_Exit_Info::~ACE_OS_Exit_Info (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_OS_Exit_Info::at_exit_i (void * object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void * param)
+.PP
+Use to register a cleanup hook.
+.PP
+.SS void ACE_OS_Exit_Info::call_hooks ()
+.PP
+Call all registered cleanup hooks, in reverse order of registration.
+.PP
+.SS int ACE_OS_Exit_Info::find (void * object)
+.PP
+Look for a registered cleanup hook object. Returns 1 if already registered, 0 if not.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Cleanup_Info_Node * ACE_OS_Exit_Info::registered_objects_\fC [private]\fR
+.PP
+Keeps track of all registered objects. The last node is only used to terminate the list (it doesn't contain a valid \fBACE_Cleanup_Info\fR). 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,87 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:The script</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>The script</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>The script.</h4>
+The script, or application script, contains the specification of what will happen when during application execution. 
+When the developer creates effectobjects (instances) of the effectclasses and 
+<a href="ref_functions_DEMOGL_EffectRegister.htm">registers</a> them with DemoGL before
+the control is <a href="ref_functions_DEMOGL_AppRun.htm">passed to DemoGL</a>, nothing is done with the effectobjects to
+make them get executed. When the control is passed to DemoGL using <a href="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a>,
+the screen will stay black and no sound will be played, until a <i>Timeline Event (TLE)</i> occurs. A TLE is a definition
+of an action DemoGL should perform on a certain point in time. This point in time is defined on a timeline, which 
+starts when the application starts it's execution, which is when DemoGL is done initializing after 
+<a href="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a> is called and ready to execute the effects and play the
+sounds. The timeline starts at 0.0 milliseconds. A TLE is defined with a line in the application script, so the
+application script is in fact a collection of TLE definitions. 
+<p>
+A TLE can have a positive (which will take place after execution starts) timespot on the timeline or a negative 
+(which will take place before execution starts) timespot on the timeline. It's wise to define pre-execution
+actions with negative timespots so your application is ready to roll when execution starts. 
+<p>
+A TLE has the following common syntax:
+<pre>
+	timespot;objectname;command;[parameter1;...parameter64;]
+</pre>
+<dl>
+	<dt><i>Timespot</i>
+	<dd>This is the timespot on the timeline when the TLE should be executed. Timespot is in milliseconds and is
+		defined as long, so no fraction is accepted.
+	<dt><i>objectname</i>
+	<dd>This is the name (case sensitive) of the object on which <i>command</i> has effect. This can be one of the
+		predefined DemoGL objects: _SOUNDSYSTEM and _SYSTEM, or the name of an effectobject defined by the developer.
+	<dt><i>command</i>
+	<dd>This is the command that should be executed on <i>objectname</i>. 
+	<dt><i>parameter1 to parameter64</i>
+	<dd>Some commands have parameters, some don't. See the in depth syntax descriptions of all the commands defined
+		for each command's parameters. The '[' and ']' in the syntax definition above are markers for 'is optional'
+		and shouldn't be placed in TLE definitions.
+</dl>
+<p>
+The script can handle commentlines. A commentline has a '#' as the first character on a line in the script. 
+As with empty lines, all commentlines are skipt by the scriptparser during the load of the script. You may add
+whitespace (tabs or spaces) between the parts of a TLE and the ';' separators. DemoGL will chop off these whitespace
+characters during the parsing of the application script.
+<p>
+All TLE's are read before execution starts, during system initialisation, and ordered in a sequential order, based
+on the timespot of the TLE's. Before execution will start, DemoGL will execute all TLE's which have a timespot
+that is smaller than the starttime of the application (which is normally 0.0, but execution can start at any given
+timespot, so you can jump in the middle of the timeline of your application). When execution is started, each frame
+DemoGL will check if there are TLE's with a timespot smaller or equal to the current time on the timeline. If there
+are TLE's found, they all get executed before the frame is actually started (so no effectobjects on any layer is
+called before all TLE's that have to be executed, are done). When you define a TLE that will be time consuming, for
+example a <i>PREPARE</i> command with a given effectobject, this can stall application execution, so plan your TLE's
+wisely.
+<p>
+DemoGL supports an unlimited amount of TLE's, and an unlimited amount of TLE's per timespot. When TLE's have the 
+same timespot, they're stored in LIFO order (Last In First Out). Syntax checking is done during parsing of the
+application script, semantic TLE checking (for example: can a certain object handle the given command) is done
+during runtime. When a syntax error or semantic error is detected, the error is logged on the console and 
+the TLE is ignored. 
+<p>
+For more information about the _SOUNDSYSTEM related commands and how to load, play and set properties concerning soundfiles,
+see: <a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm">_SOUNDSYSTEM scriptsyntax</a>. For more information about the
+_SYSTEM related commands, see <a HREF="ref_scriptsyntax_SYSTEM.htm">_SYSTEM scriptsyntax</a>. For more information about
+the effectobject related commands, see <a HREF="ref_scriptsyntax_user.htm">effectobject scriptsyntax</a>. 
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

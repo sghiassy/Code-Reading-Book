@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>CInclude Transformer</title>
+  <subtitle>in @doctitle@</subtitle>
+  <version>0.9</version>
+  <type>Technical document</type>
+  <authors>
+   <person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+  </authors>
+  <abstract>This document describes the CInclude transformer.</abstract>
+ </header>
+ <body>
+  <s1 title="CInclude Transformer">
+   <p>
+    This transformer triggers for the element <code>include</code> in the
+    namespace "http://apache.org/cocoon/include/1.0".
+    The <code>src</code> attribute contains the url which points to
+    an xml resource which is included instead of the element.
+    With the attributes <code>element</code>, <code>ns</code> and
+    <code>prefix</code> it is possible to specify an element
+    which surrounds the included content.
+   </p>
+   <ul>
+    <li>Name : cinclude</li>
+    <li>Class: org.apache.cocoon.transformation.CIncludeTransformer</li>
+    <li>Cacheable: no.</li>
+   </ul>
+   <ul>
+    <li>Name : cinclude</li>
+    <li>Class: org.apache.cocoon.transformation.CachingCIncludeTransformer</li>
+    <li>Cacheable: yes.</li>
+   </ul>
+   <p>
+    There are two versions of CIncludeTransformer available:
+   </p>
+   <ul>
+    <li>A non caching version
+     <code>org.apache.cocoon.transformation.CIncludeTransformer</code>
+    </li>
+    <li>A caching version
+     <code>org.apache.cocoon.transformation.CachingCIncludeTransformer</code>
+    </li>
+   </ul>
+   <p>
+    A simple example might help to use the CIncludeTransfomer effectivly:
+   </p>
+   <p>
+    Add the CIncludeTransformer to the components in your sitemap.xmap
+   </p>
+<source><![CDATA[
+...
+<map:components>
+...
+  <map:transformers default="xslt">
+  ...
+    <map:transformer name="cinclude"
+      src="org.apache.cocoon.transformation.CIncludeTransformer"/>
+  ...
+]]></source>
+   <p>
+     Next define in your pipeline to use the CIncludeTransformer
+   </p>
+<source><![CDATA[
+<map:match pattern="cinc/simple-cinc">
+  <map:generate src="cinc/simple-cinc.xml"/>
+  <map:transform type="cinclude"/>
+  <map:transform src="stylesheets/page/simple-page2html.xsl"/>
+  <map:serialize/>
+</map:match>
+]]></source>
+
+   <p>
+    In this example pipeline it assumed that simple-cinc.xml contains
+    the include element. Beside defining the include element
+    it defines the namespache URI "http://apache.org/cocoon/include/1.0".
+    This helps the CIncludeTransformer to find the tag to get replaced by
+    the xml content referenced via the src attribute.
+    The simple-cinc.xml may look like this:
+   </p>
+<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<page 
+  xmlns:cinclude="http://apache.org/cocoon/include/1.0">
+  <title>Hello</title>
+  <content>
+    <para>This is my first Cocoon page!</para>
+    <cinclude:include src="include.xml" element="included"/>
+  </content>
+</page>
+]]></source>
+
+   <p>
+    Next you should define the include.xml file which is included.
+    A simple include.xml might look like this:
+   </p>
+<source><![CDATA[
+<?xml version="1.0"?>
+<p>
+ I am <strong>included</strong> by CIncludeTransformer.
+ I come from "include.xml".
+</p>
+]]></source>
+
+   <p>
+    Now finally we have everything put together the xml content after the
+    CIncludeTransformer processing will look like this:
+   </p>
+<source><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<page 
+  xmlns:cinclude="http://apache.org/cocoon/include/1.0">
+  <title>Hello</title>
+  <content>
+    <para>This is my first Cocoon page!</para>
+    <included>
+      <p>
+        I am <strong>included</strong> by CIncludeTransformer.
+        I come from "include.xml".
+      </p>
+    </included>
+  </content>
+</page>
+]]></source>
+  </s1>
+ </body>
+</document>

@@ -1,0 +1,37 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/10/25 15:39:42 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/accel/cache/Imakefile,v 3.5 1996/12/23 07:05:47 dawes Exp $
+
+#include <Server.tmpl>
+
+SRCS = 	xf86bcache.c xf86fcache.c xf86text.c
+
+OBJS = 	xf86bcache.o xf86fcache.o xf86text.o
+
+DEFINES = -DPSZ=8
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) -I. \
+	   -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+           -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) -I$(FONTINCSRC)
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(xf86cache,$(OBJS))
+
+LinkSourceFile(xf86bcache.c,$(XF86SRC)/accel/cache)
+LinkSourceFile(xf86bcache.h,$(XF86SRC)/accel/cache)
+LinkSourceFile(xf86fcache.c,$(XF86SRC)/accel/cache)
+LinkSourceFile(xf86fcache.h,$(XF86SRC)/accel/cache)
+LinkSourceFile(xf86text.c,$(XF86SRC)/accel/cache)
+LinkSourceFile(xf86text.h,$(XF86SRC)/accel/cache)
+
+#ifndef DontInstallPC98Version
+InstallLinkKitLibrary(xf86cache,$(XF98LINKKITDIR)/lib)
+#endif
+
+DependTarget()

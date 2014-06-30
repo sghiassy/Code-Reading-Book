@@ -1,0 +1,187 @@
+.TH ACE_SOCK_IO 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SOCK_IO \- Defines the methods for the \fBACE\fR socket wrapper I/O routines (e.g., send/recv). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SOCK_IO.h>\fR
+.PP
+Inherits \fBACE_SOCK\fR.
+.PP
+Inherited by \fBACE_SOCK_CODgram\fR, and \fBACE_SOCK_Stream\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SOCK_IO\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fB~ACE_SOCK_IO\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, int flags, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fIRecv an <n> byte buffer from the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fIRecv an <n> byte buffer from the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv\fR (\fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fIRecv an <\fBiovec\fR> of size <n> from the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (\fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISame as above. Deprecated.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv\fR (\fBiovec\fR *io_vec, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (\fBiovec\fR *io_vec, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISame as above. Deprecated.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (size_t n, ...) const"
+.br
+.RI "\fIRecv <n> varargs messages to the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, \fBACE_OVERLAPPED\fR *overlapped) const"
+.br
+.RI "\fIRecv <n> bytes via Win32 <ReadFile> using overlapped I/O.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, int flags, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISend an <n> byte buffer to the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISend an <n> byte buffer to the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsendv\fR (const \fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISend an <\fBiovec\fR> of size <n> to the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const \fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.RI "\fISame as above. Deprecated.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (size_t n, ...) const"
+.br
+.RI "\fISend <n> varargs messages to the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, \fBACE_OVERLAPPED\fR *overlapped) const"
+.br
+.RI "\fISend <n> bytes via Win32 <WriteFile> using overlapped I/O.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the methods for the \fBACE\fR socket wrapper I/O routines (e.g., send/recv).
+.PP
+.PP
+ If <timeout> == 0, then the call behaves as a normal send/recv call, i.e., for blocking sockets, the call will block until action is possible; for non-blocking sockets, EWOULDBLOCK will be returned if no action is immediately possible. If <timeout> != 0, the call will wait until the relative time specified in *<timeout> elapses. Errors are reported by -1 and 0 return values. If the operation times out, -1 is returned with <errno == ETIME>. If it succeeds the number of bytes transferred is returned. Methods with the extra <flags> argument will always result in <send> getting called. Methods without the extra <flags> argument will result in <send> getting called on Win32 platforms, and <write> getting called on non-Win32 platforms. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SOCK_IO::ACE_SOCK_IO (void)
+.PP
+Constructor.
+.PP
+.SS ACE_SOCK_IO::~ACE_SOCK_IO (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_SOCK_IO::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_CODgram\fR, \fBACE_LSOCK_Stream\fR, \fBACE_SOCK_CODgram\fR, and \fBACE_SOCK_Stream\fR.
+.SS \fBssize_t\fR ACE_SOCK_IO::recv (void * buf, size_t n, \fBACE_OVERLAPPED\fR * overlapped) const
+.PP
+Recv <n> bytes via Win32 <ReadFile> using overlapped I/O.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::recv (size_t n, ...) const
+.PP
+Recv <n> varargs messages to the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::recv (\fBiovec\fR * io_vec, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Same as above. Deprecated.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::recv (\fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Same as above. Deprecated.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::recv (void * buf, size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Recv an <n> byte buffer from the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::recv (void * buf, size_t n, int flags, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Recv an <n> byte buffer from the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::recvv (\fBiovec\fR * io_vec, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Allows a client to read from a socket without having to provide a buffer to read. This method determines how much data is in the socket, allocates a buffer of this size, reads in the data, and returns the number of bytes read. The caller is responsible for deleting the member in the <iov_base> field of <io_vec> using delete [] io_vec->iov_base. 
+.SS \fBssize_t\fR ACE_SOCK_IO::recvv (\fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Recv an <\fBiovec\fR> of size <n> from the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::send (const void * buf, size_t n, \fBACE_OVERLAPPED\fR * overlapped) const
+.PP
+Send <n> bytes via Win32 <WriteFile> using overlapped I/O.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::send (size_t n, ...) const
+.PP
+Send <n> varargs messages to the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::send (const \fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Same as above. Deprecated.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::send (const void * buf, size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Send an <n> byte buffer to the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::send (const void * buf, size_t n, int flags, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Send an <n> byte buffer to the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_IO::sendv (const \fBiovec\fR iov[], size_t n, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Send an <\fBiovec\fR> of size <n> to the connected socket.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SOCK_IO::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_CODgram\fR, \fBACE_LSOCK_Stream\fR, \fBACE_SOCK_CODgram\fR, and \fBACE_SOCK_Stream\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

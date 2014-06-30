@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>Jasper as an independent component</title>
+</head>
+<body>
+<h1>Jasper as an independent component</h1>
+<h3>Migration from tomcat-3.x to tomcat-4.0</h3>
+In tomcat3.x, jasper had the following package dependencies with the servlet container code:
+<ul>
+<li><code>tomcat.util</code>
+<li><code>tomcat.logging</code>
+<li><code>tomcat.core</code>
+</ul>
+
+These three directories were copied into jasper. Cleanup has been made in util to only keep the files needed by Jasper. The following dependencies are still remaining:
+<p>
+<pre>
+org.apache.jasper.Constants:
+
+    public static final String SERVLET_CLASSPATH = "org.apache.catalina.jsp_classpath";
+    public static final String SERVLET_CLASS_LOADER = "org.apache.catalina.classloader";
+    public static final String ATTRIB_JSP_ProtectionDomain = "tomcat.context.jsp.protection_domain";
+
+org.apache.jasper.JasperLogger
+    The logger used to be initialized by the servlet container. We now
+    need to make it work standalone.
+<p>
+</pre>
+<p>
+<h3>Jasper published API</h3>
+[From <a href="jasper-proposal.html">Proposal for Development of Jasper in Tomcat 4.0</a>]
+<p>
+It shall be feasible for servlet containers (such as Tomcat) to
+support mechanisms for improved performance of the
+generated servlets that depend on internal knowledge of the JSP
+page compiler, the servlet classes that it generates,
+and the runtime support classes, if it chooses to do
+so. Therefore, key features and integration points of the
+generated servlet classes and runtime support classes shall be
+exposed through interfaces that can remain stable
+across enhancements to the Jasper code base.

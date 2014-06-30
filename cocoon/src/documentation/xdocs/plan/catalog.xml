@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Entity Catalogs - the Entity Resolver</title>
+  <subtitle>Planning Documentation</subtitle>
+  <authors>
+   <person name="David Crossley" email="crossley@apache.org"/>
+  </authors>
+ </header>
+
+ <body>
+ <s1 title="Overview">
+
+  <p>The entity resolution capability is recently implemented at the Cocoon
+   level. However, this capability is required for all XML Apache projects.
+   So its base implementation should be moved to Avalon Excalibur.
+  </p>
+
+  <p>Everytime that an XML parser is used, it needs to have the resolver
+   attached via the <code>setEntityResolver()</code> method.
+  </p>
+
+  <p>Cocoon and other projects need to be able to configure the resolver to
+   specify additional catalogs and to set the verbosity level for the log
+   messages.
+  </p>
+
+  <p>For background see the main Cocoon documentation for
+   <link href="../userdocs/concepts/catalog.html">Entity Catalogs</link>.
+  </p>
+ </s1>
+
+ <s1 title="Current implementation with Cocoon">
+
+ <s2 title="Configuration">
+  <ul>
+   <li><code>cocoon.roles</code> defines role for Resolver</li>
+   <li><code>cocoon.xconf</code> set parameters for Resolver</li>
+   <li><code>CatalogManager.properties</code> additional config method</li>
+  </ul>
+ </s2>
+
+ <s2 title="Components">
+  <ul>
+   <li><code>src/org/apache/cocoon/components/resolver/ResolverImpl.java</code>
+    implements the Sun &quot;XML Entity and URI Resolvers&quot;
+    <ul>
+     <li>Gets a new CatalogResolver() which reads the default
+      <code>CatalogManager.properties</code> to set some properties for
+      local site config and load some local catalogs</li>
+     <li>Applies any parameters that may have been specified in cocoon.xconf
+      (e.g. verbosity)</li>
+     <li>Loads the Cocoon system catalog (which resolves all the DTDs
+      and entity sets that are used by Cocoon)</li>
+     <li>Loads any additional local catalogs that may have been specified in
+      <code>cocoon.xconf</code></li>
+     <li>Allows the application to resolve external entities via resolveEntity().</li>
+    </ul>
+   </li>
+   <li><code>setEntityResolver()</code> for any parser that is used ... JaxpParser, XercesParser, PoolJaxpParser, XSLTProcessorImpl, (are there others?)</li>
+   <li></li>
+  </ul>
+ </s2>
+
+ <s2 title="Default Entities and Catalogs">
+  <ul>
+   <li><code>webapp/resources/entities/</code> holds all of the DTDs and
+    character entity sets currently used by Cocoon. These would also form a
+    base for any userland application (they can configure their own additional
+    entities).
+   </li>
+   <li>There are historical copies of all entities at
+    <code>documentation/xdocs/dtd/</code> (this is the default location
+    declared as <code>systemId</code> in each XML document). An open issue is
+    whether to leave them there as a belt-and-braces mechanism, or to rely
+    completely on the entity resolver.</li>
+   <li>The Cocoon system catalog is an OASIS plain-text catalog declaring
+    all of the necessary entities
+    <code>webapp/resources/entities/catalog</code>
+   </li>
+  </ul>
+
+ </s2>
+ </s1>
+
+ <s1 title="Moving to Avalon">
+
+<note>TODO: describe overview of issues.</note>
+
+ </s1>
+
+ <s1 title="Other Notes">
+  <p> cocoon-dev 2001-11-09 (Identifying Components for Avalon)
+... It would be reasonable for there to be an ExcaliburResolver,
+and a CocoonResolver that both extend the same interface.
+In fact, it would be reasonable for the CocoonResolver to
+extend the ExcaliburResolver.
+  </p>
+
+  <p>The term &quot;resolver&quot; is used in many different ways by Cocoon.
+   So perhaps a better name would be CocoonEntityResolver or CocoonCatalogResolver.
+  </p>
+
+  <p>Which other Apache projects are using the DTDs that are in Cocoon CVS?
+   Some will need to move to Excalibur, Cocoon-specific ones will remain.
+  </p>
+
+ </s1>
+
+ <s1 title="Some useful discussion threads">
+
+  <ul>
+   <li>Cocoon distribution + Resolver Resolution ? (avalon-dev 2001-11-12)
+    discusses licencing issues and moving to Avalon</li>
+  </ul>
+ </s1>
+
+ </body>
+</document>

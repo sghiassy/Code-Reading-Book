@@ -1,0 +1,57 @@
+// test.odl : type library source for test.dll
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (test.tlb).
+
+[	uuid(C9E1E33B-5547-4DD9-838C-CA91B0897D10), version(1.0),
+	helpstring ("TEST Developer Studio Add-in") ]
+library Test
+{
+	importlib("stdole32.tlb");
+	importlib("devshl.dll");
+	importlib("ide\devdbg.pkg");
+	
+
+	//  Dual interface for CCommands
+	//
+	//  All commands that your add-in adds to DevStudio
+	//   must appear in this interface.  You may use the
+	//   ClassView to add methods to this interface, which
+	//   will cause stub implementations of those methods to
+	//   appear in your CCommands class.
+	
+	[	uuid(39034FA1-FA4B-4038-A0C1-36300174C14F),
+		oleautomation,
+		dual
+	]
+
+	interface ICommands : IDispatch
+	{
+		// methods
+		[id(1)]
+		HRESULT TestCommandMethod();
+	};
+
+	//  Class information for CCommands
+
+	[ uuid(4113B436-08CA-46B4-AA5E-40E98ECC6641) ]
+	coclass Commands
+	{
+		[default] interface ICommands;
+	};
+
+	[ hidden, uuid(E1B396D5-6621-4D0A-BE16-3BA06DA68C9D) ]
+	coclass ApplicationEvents
+	{
+		[default] interface IApplicationEvents;
+	}
+
+	[ hidden, uuid(B92A3135-775B-4E93-B44C-C77D3D0BE79F) ]
+	coclass DebuggerEvents
+	{
+		[default] interface IDebuggerEvents;
+	}
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

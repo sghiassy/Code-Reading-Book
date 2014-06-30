@@ -1,0 +1,310 @@
+.TH ACE_Cache_Map_Manager 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Cache_Map_Manager \- Defines a abstraction that will purge entries from a map. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Cache_Map_Manager_T.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef KEY \fBkey_type\fR"
+.br
+.ti -1c
+.RI "typedef VALUE \fBmapped_type\fR"
+.br
+.ti -1c
+.RI "typedef MAP \fBmap_type\fR"
+.br
+.ti -1c
+.RI "typedef CACHING_STRATEGY \fBcaching_strategy_type\fR"
+.br
+.ti -1c
+.RI "typedef ITERATOR_IMPL \fBITERATOR_IMPLEMENTATION\fR"
+.br
+.ti -1c
+.RI "typedef REVERSE_ITERATOR_IMPL \fBREVERSE_ITERATOR_IMPLEMENTATION\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Cache_Map_Iterator\fR<KEY, VALUE, \fBITERATOR_IMPLEMENTATION\fR, CACHING_STRATEGY, ATTRIBUTES> \fBITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Cache_Map_Reverse_Iterator\fR<KEY, VALUE, \fBREVERSE_ITERATOR_IMPLEMENTATION\fR, CACHING_STRATEGY, ATTRIBUTES> \fBREVERSE_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBITERATOR\fR \fBiterator\fR"
+.br
+.ti -1c
+.RI "typedef \fBREVERSE_ITERATOR\fR \fBreverse_iterator\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Pair\fR<VALUE, ATTRIBUTES> \fBCACHE_VALUE\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Cache_Map_Manager\fR (CACHING_STRATEGY &caching_strategy, size_t size = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a <Cache_Map_Manager> with <caching_strategy> and <size> entries.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Cache_Map_Manager\fR (void)"
+.br
+.RI "\fIClose down a <Cache_Map_Manager> and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBopen\fR (size_t length = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a cache with size <length>.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down a cache and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const KEY &key, const VALUE &value)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const KEY &key, VALUE &value)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const KEY &key)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const KEY &key, const VALUE &value)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const KEY &key, const VALUE &value, VALUE &old_value)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const KEY &key, const VALUE &value, KEY &old_key, VALUE &old_value)"
+.br
+.ti -1c
+.RI "int \fBtrybind\fR (const KEY &key, VALUE &value)"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const KEY &key)"
+.br
+.RI "\fIRemove <key> from the cache.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const KEY &key, VALUE &value)"
+.br
+.RI "\fIRemove <key> from the cache, and return the <value> associated with <key>.\fR"
+.ti -1c
+.RI "int \fBpurge\fR (void)"
+.br
+.RI "\fIRemove entries from the cache depending upon the strategy.\fR"
+.ti -1c
+.RI "size_t \fBcurrent_size\fR (void) const"
+.br
+.RI "\fIReturn the current size of the cache.\fR"
+.ti -1c
+.RI "size_t \fBtotal_size\fR (void) const"
+.br
+.RI "\fIReturn the total size of the cache.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDumps the state of the object.\fR"
+.ti -1c
+.RI "\fBITERATOR\fR \fBbegin\fR (void)"
+.br
+.RI "\fIReturn forward iterator.\fR"
+.ti -1c
+.RI "\fBITERATOR\fR \fBend\fR (void)"
+.br
+.ti -1c
+.RI "\fBREVERSE_ITERATOR\fR \fBrbegin\fR (void)"
+.br
+.RI "\fIReturn reverse iterator.\fR"
+.ti -1c
+.RI "\fBREVERSE_ITERATOR\fR \fBrend\fR (void)"
+.br
+.ti -1c
+.RI "MAP& \fBmap\fR (void)"
+.br
+.RI "\fIThe map managed by the Cache_Map_Manager.\fR"
+.ti -1c
+.RI "CACHING_STRATEGY& \fBcaching_strategy\fR (void)"
+.br
+.RI "\fIThe caching strategy used on the cache.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "MAP \fBmap_\fR"
+.br
+.RI "\fIThe underlying map which needs to be cached.\fR"
+.ti -1c
+.RI "CACHING_STRATEGY& \fBcaching_strategy_\fR"
+.br
+.RI "\fIThe strategy to be followed for caching entries in the map.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACMM < KEY, VALUE, MAP, ITERATOR_IMPL, REVERSE_ITERATOR_IMPL, CACHING_STRATEGY, ATTRIBUTES > &)"
+.br
+.ti -1c
+.RI "\fBACMM\fR (const ACMM < KEY, VALUE, MAP, ITERATOR_IMPL, REVERSE_ITERATOR_IMPL, CACHING_STRATEGY, ATTRIBUTES > &)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Cache_Map_Iterator< KEY,VALUE,ITERATOR_IMPLEMENTATION,CACHING_STRATEGY,ATTRIBUTES >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Cache_Map_Reverse_Iterator< KEY,VALUE,REVERSE_ITERATOR_IMPLEMENTATION,CACHING_STRATEGY,ATTRIBUTES >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_T1>  template class ACE_Cache_Map_Manager
+Defines a abstraction that will purge entries from a map.
+.PP
+.PP
+ The  will manage the map it contains and provide purging on demand from the map. The strategy for caching is decided by the user and provided to the Cache Manager. The Cache Manager acts as a agent and communicates between the Map and the Strategy for purging entries from the map. No locking mechanism provided since locking at this level isn't efficient. Locking has to be provided by the application. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<ACE_T1> typedef \fBACE_Pair\fR<VALUE, ATTRIBUTES> ACE_Cache_Map_Manager<>::CACHE_VALUE
+.PP
+The actual value mapped to the key in the map. The  are used by the strategy and is transparent to the user of this class. 
+.SS template<ACE_T1> typedef \fBACE_Cache_Map_Iterator\fR<KEY, VALUE, \fBITERATOR_IMPLEMENTATION\fR, CACHING_STRATEGY, ATTRIBUTES> ACE_Cache_Map_Manager<>::ITERATOR
+.PP
+.SS template<ACE_T1> typedef ITERATOR_IMPL ACE_Cache_Map_Manager<>::ITERATOR_IMPLEMENTATION
+.PP
+.SS template<ACE_T1> typedef \fBACE_Cache_Map_Reverse_Iterator\fR<KEY, VALUE, \fBREVERSE_ITERATOR_IMPLEMENTATION\fR, CACHING_STRATEGY, ATTRIBUTES> ACE_Cache_Map_Manager<>::REVERSE_ITERATOR
+.PP
+.SS template<ACE_T1> typedef REVERSE_ITERATOR_IMPL ACE_Cache_Map_Manager<>::REVERSE_ITERATOR_IMPLEMENTATION
+.PP
+.SS template<ACE_T1> typedef CACHING_STRATEGY ACE_Cache_Map_Manager<>::caching_strategy_type
+.PP
+.SS template<ACE_T1> typedef \fBITERATOR\fR ACE_Cache_Map_Manager<>::iterator
+.PP
+.SS template<ACE_T1> typedef KEY ACE_Cache_Map_Manager<>::key_type
+.PP
+.SS template<ACE_T1> typedef MAP ACE_Cache_Map_Manager<>::map_type
+.PP
+.SS template<ACE_T1> typedef VALUE ACE_Cache_Map_Manager<>::mapped_type
+.PP
+.SS template<ACE_T1> typedef \fBREVERSE_ITERATOR\fR ACE_Cache_Map_Manager<>::reverse_iterator
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_T1> ACE_Cache_Map_Manager<>::ACE_Cache_Map_Manager<> (CACHING_STRATEGY & caching_strategy, size_t size = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a <Cache_Map_Manager> with <caching_strategy> and <size> entries.
+.PP
+.SS template<ACE_T1> ACE_Cache_Map_Manager<>::~ACE_Cache_Map_Manager<> (void)\fC [virtual]\fR
+.PP
+Close down a <Cache_Map_Manager> and release dynamically allocated resources.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_T1> ACE_Cache_Map_Manager<>::ACMM (const ACMM< KEY,VALUE,MAP,ITERATOR_IMPL,REVERSE_ITERATOR_IMPL,CACHING_STRATEGY,ATTRIBUTES >&)\fC [private]\fR
+.PP
+.SS template<ACE_T1> \fBITERATOR\fR ACE_Cache_Map_Manager<>::begin (void)
+.PP
+Return forward iterator.
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::bind (const KEY & key, const VALUE & value)
+.PP
+Associate <key> with <value>. If <key> is already in the MAP then the ENTRY is not changed. Returns 0 if a new entry is bound successfully, returns 1 if an attempt is made to bind an existing entry, and returns -1 if failures occur. 
+.SS template<ACE_T1> CACHING_STRATEGY & ACE_Cache_Map_Manager<>::caching_strategy (void)
+.PP
+The caching strategy used on the cache.
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::close (void)
+.PP
+Close down a cache and release dynamically allocated resources.
+.PP
+.SS template<ACE_T1> size_t ACE_Cache_Map_Manager<>::current_size (void) const
+.PP
+Return the current size of the cache.
+.PP
+.SS template<ACE_T1> void ACE_Cache_Map_Manager<>::dump (void) const
+.PP
+Dumps the state of the object.
+.PP
+.SS template<ACE_T1> \fBITERATOR\fR ACE_Cache_Map_Manager<>::end (void)
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::find (const KEY & key)
+.PP
+Lookup entry<key,value> in the cache. If it is not found, returns -1. If the <key> is located in the MAP object, the CACHING_STRATEGY is notified of it via notify_find (int result, ATTRIBUTES &attribute). If notify_find also returns 0 (success), then this function returns 0 (success). 
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::find (const KEY & key, VALUE & value)
+.PP
+Lookup entry<key,value> in the cache. If it is not found, returns -1. If the <key> is located in the MAP object, the CACHING_STRATEGY is notified of it via notify_find (int result, ATTRIBUTES &attribute). If notify_find also returns 0 (success), then this function returns 0 (success) and sets the cached value in <value>. 
+.SS template<ACE_T1> MAP & ACE_Cache_Map_Manager<>::map (void)
+.PP
+The map managed by the Cache_Map_Manager.
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::open (size_t length = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a cache with size <length>.
+.PP
+.SS template<ACE_T1> void ACE_Cache_Map_Manager<>::operator= (const ACMM< KEY,VALUE,MAP,ITERATOR_IMPL,REVERSE_ITERATOR_IMPL,CACHING_STRATEGY,ATTRIBUTES >&)\fC [private]\fR
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::purge (void)
+.PP
+Remove entries from the cache depending upon the strategy.
+.PP
+.SS template<ACE_T1> \fBREVERSE_ITERATOR\fR ACE_Cache_Map_Manager<>::rbegin (void)
+.PP
+Return reverse iterator.
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::rebind (const KEY & key, const VALUE & value, KEY & old_key, VALUE & old_value)
+.PP
+Reassociate <key> with <value>, storing the old key and value into the "out" parameters <old_key> and <old_value>. The function fails if <key> is not in the cache for caches that do not allow user specified keys. However, for caches that allow user specified keys, if the key is not in the cache, a new <key>/<value> association is created. 
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::rebind (const KEY & key, const VALUE & value, VALUE & old_value)
+.PP
+Reassociate <key> with <value>, storing the old value into the "out" parameter <old_value>. The function fails if <key> is not in the cache for caches that do not allow user specified keys. However, for caches that allow user specified keys, if the key is not in the cache, a new <key>/<value> association is created. 
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::rebind (const KEY & key, const VALUE & value)
+.PP
+Reassociate the <key> with <value>. If the <key> already exists in the cache then returns 1, on a new bind returns 0 and returns -1 in case of any failures. 
+.SS template<ACE_T1> \fBREVERSE_ITERATOR\fR ACE_Cache_Map_Manager<>::rend (void)
+.PP
+.SS template<ACE_T1> size_t ACE_Cache_Map_Manager<>::total_size (void) const
+.PP
+Return the total size of the cache.
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::trybind (const KEY & key, VALUE & value)
+.PP
+Associate <key> with <value> if and only if <key> is not in the cache. If <key> is already in the cache, then the <value> parameter is overwritten with the existing value in the cache. Returns 0 if a new <key>/<value> association is created. Returns 1 if an attempt is made to bind an existing entry. This function fails for maps that do not allow user specified keys. 
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::unbind (const KEY & key, VALUE & value)
+.PP
+Remove <key> from the cache, and return the <value> associated with <key>.
+.PP
+.SS template<ACE_T1> int ACE_Cache_Map_Manager<>::unbind (const KEY & key)
+.PP
+Remove <key> from the cache.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_T1> class \fBACE_Cache_Map_Iterator\fR\fC [friend]\fR
+.PP
+.SS template<ACE_T1> class \fBACE_Cache_Map_Reverse_Iterator\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_T1> CACHING_STRATEGY & ACE_Cache_Map_Manager<>::caching_strategy_\fC [protected]\fR
+.PP
+The strategy to be followed for caching entries in the map.
+.PP
+.SS template<ACE_T1> MAP ACE_Cache_Map_Manager<>::map_\fC [protected]\fR
+.PP
+The underlying map which needs to be cached.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

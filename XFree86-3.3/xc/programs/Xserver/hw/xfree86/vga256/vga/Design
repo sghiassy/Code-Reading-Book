@@ -1,0 +1,389 @@
+$XFree86: xc/programs/Xserver/hw/xfree86/vga256/vga/Design,v 3.3 1996/12/28 08:19:11 dawes Exp $
+
+This new frame buffer code is designed to rely on the cfb code more than
+the previous cfb.banked code. This frame buffer eliminates the need to
+compile cfb in two places. This design is more similar to what is being
+done by the accelerated servers.
+
+Some of the function in this new frame buffer code have been updated
+to reflect some cfb changes that were implemented after cfb.banked
+diverged in the pre-R5 days. This should result in improved accuracy
+when running the X Test Suite.
+
+The cfb frame buffer code can be roughly broken into two parts. The first
+part is the "upper half" which implementes a packed pixel framebuffer. The
+second part is the "lower half" which actually performs the rendering in
+the frame buffer.
+
+The vga frame buffer simply replaces the lower half of the cfb code with a
+version of the functions that perform bank switching as needed. These function
+are replaced by overridding the entries in the Screen structure, and also
+by specifying the vga function in the GC structures.
+
+Some of the function fromthe upper half are also duplicated here because
+they call some of the lower functions directly, thus the cfb version of the
+function would not work (sigh 8-().
+
+This frame buffer code pulls in the routines from the "enhanced" directory
+and renames some of them for consistancy.
+
+Some of functions that are "bank aware" have added a check at the begining
+that checks to see if the Drawable is not a window. If not, then the regular
+cfb version of the function is called instead. The cfb routines should be
+slightly fast for pixmaps since they don;t have the banking overhead.
+
+Hopefully, this code can be examined further, adn some of the banking macros
+can  be eliminated completely. If a function will only be called (of will have
+the pixmap case handled by cfb), then it might be possible to eliminte the 
+use of the vgaRead/Writeflag, and the addition test that is made each time the
+pixel is incremented.
+
+Some of the enhanced function work by performing unbanked operations inside
+bank sized regions, and changint he banks only in the outmost loop. This is
+similar to the high-level banking design used by the Xsvga X Server. There
+may be more opportunities to do this kind optimization on some of the other
+routines.
+
+Many of the updates applied to this code involved replacing code with newer
+macros that have the same affect, but make the code easier to read. Also,
+in many areas (like the GC code), code was replaced with calls to the mi
+equivilent which is also used by the current cfb code. Overall, the total
+amount of code in this frame buffer code has been reduced from the cfb.banked
+code.
+
+This code contains the following files and functions.
+
+BitBlt.s
+	WinWin()	This function is optimized assembler and is used
+			by the blitting routines.
+BitBlt2.s
+	PixPix()
+	WinPix()
+	PixWin()	These functions are optimized assembler and are used
+			by the blitting routines.
+Box.s
+	SpeedUpBox()	This function is optimized assembler and is use for
+			solid fills.
+Line.s
+	SpeedUpBresS()	This function is optimized assembler and is used for
+			General line drawing.
+SpeedUpBlt.c
+	SpeedUpBitBlt()	This function provide a single entry point for the
+			optimized blitting function list above.
+VHLine.s
+	SpeedUpVLine()
+	SpeedUpHLine()	These functions are optimized assembler.
+
+fBitBlt.s
+	fastBitBltCopy()
+			Optimized assembler for non single bank blitting.
+			Used by routines in vgaBitBlt.c that do the banking.
+
+fFill.s
+	fastFillSolidGXand()
+	fastFillSolidGXor()
+	fastFillSolidGXxor()
+	fastFillSolidGXcopy()
+	fastFillSolidGXset()
+			Optimized assembler for fast Solid Fill.
+
+fFillSet.s
+	fastFillSolidGXset()
+			Optimized assembler for fast Solid Fill.
+
+vga.c
+	vgaPrintIdent()
+	vgaProbe()
+	vgaScreenInit()
+	vgaEnterLeaveVT()
+	vgaCloseScreen()
+	vgaAdjustFrame()
+	vgaSwitchMode()
+			These functions are the XFree86 device interface.
+
+vga8cppl.c
+	vga256CopyImagePlane()
+			This function is a wrapper to translate paramters
+			from a bitblt interface to a copyplane interface. It
+			is used by vga256GetImage() for XYPixmap format bitmaps.
+	vga256CopyPlane8to1()
+			This functions is bank aware. This function is only
+			called from vga256CopyPlane() (through cfbBitBlt())
+			and from vga256CopyImagePlane(). The destination
+			Drawable is always a Pixmap, so only the source
+			pointers need to be banked.
+vgaBank.s
+	vgaSetReadWrite()
+	vgaReadWriteNext()
+	vgaReadWritePrev()
+	vgaSetRead()
+	vgaReadNext()
+	vgaReadPrev()
+	vgaSetWrite()
+	vgaWriteNext()
+	vgaWritePrev()
+	vgaSaveBank()
+	vgaRestoreBank()
+	vgaPushRead()
+	vgaPopRead()	These functions are the banking functions called
+			from within the bank aware frame buffer routines.
+			These functions manipulate the pointer, and then call
+			the chip specific function to actually change the bank.
+	
+vgaBanks.c
+	SpeedUpComputeNext()	Utility function.
+
+vgaBitBlt.c
+	vgaBitBlt()		This function performs blits using as
+				much of the bank window as possible
+				before switching banks.
+	OneBankvgaBitBlt()	This function performs bank sized blits
+				from the source into a buffer, and then
+				performs bank sized blits back once the
+				bank has been set for the destination.
+	vgaImageRead()		This function performs bank sized reads
+				into a buffer.
+	vgaImageWrite()		This function performs bank sized writes
+				from a buffer.
+	vgaPixBitBlt()		This function performs pixmap to pixmap copies.
+
+vgaCmap.c
+	vgaListInstalledColormaps()
+	vgaStoreColors()
+	vgaInstallColormap()
+	vgaUninstallColormap()
+				Vga implementation of the colormap.
+vgaHW.c
+	vgaProtect()
+	vgaSaveScreen()
+	vgaHWRestore()
+	vgaHWSave()
+	vgaHWInit()
+	vgaGetClocks()
+				HW specific implementaion routines.
+vgabitblt.c
+	vga256DoBitblt()	Single interface for multiple blit routines.
+	vga256CopyArea()	CopyArea() that uses low level blit.
+	vga256CopyPlane1to8()	This function is bank aware.
+				This function is only called from
+				vga256CopyPlane() (through cfbBitBlt()). The
+				source Drawable is always a Pixmap, so
+				only the destination pointers need to be banked.
+	vga256CopyPlane()	This function is the same as the cfb version,
+				except that it references other frame buffer
+				functions directly. This function also
+				references the low level functions. This
+				function will check for a PIXMAP to PIXMAP
+				copy and just call the cfb routine instead.
+vgablt.c
+	speedupvga256DoBitbltCopy()
+	MROP_NAME(vga256DoBitblt)()	These functions are bank aware.
+					This function will check for a
+					PIXMAP to PIXMAP copy, and just
+					call the cfb routine.
+vgabltC.
+	vga256DoBitbltCopy()	Blit routine that is simplified for the
+				case of Copy.
+
+vgabres.s
+	fastvga256BresS()	Optimized assembler for drawing lines.
+
+vgabresd.c
+	vga256BresD()		This dashed line function is bank aware.
+
+vgabstore.c
+	vga256SaveAreas()	This function uses low level blit.
+	vga256RestoreAreas()	This function uses low level blit.
+
+vgafillarc.c
+	RROP_NAME(vga256FillEllipseSolid)()
+				This function is bank aware.
+	RROP_NAME(vga256FillArcSliceSolid)()
+				This function is bank aware.
+	ROP_NAME(vga256PolyFillArcSolid)()
+				This function makes direct calls to the
+				two above functions. Otherwise, it is
+				redundant.
+
+vgafillrct.c
+	vga256FillBoxTileOdd()	This function makes direct calls to other
+				frame buffer functions. Otherwise, it is
+				the same as the cfb function.
+	vga256FillRectTileOdd()	This function makes direct calls to other
+				frame buffer functions. Otherwise, it is
+				the same as the cfb function.
+	vga256PolyFillRect()	This function make direct reference to other
+				frame buffer functions, and it also references
+				the low level functions.
+vgafillsp.c
+	vga256UnnaturalTileFS()	This function make direct references to
+				other frame buffer functions. Otherwise, it
+				is the same as the cfb function.
+	vga256UnnaturalStippleFS()
+				This function is bank aware.
+	vga2568Stipple32FS()	This function is bank aware.
+	vga2568OpaqueStipple32FS()
+				This function is bank aware.
+
+vgafuncs.c
+	This file contains the initial definition of the CfbfuncRec structure,
+	vga256LowlevFuncs.
+
+vgagc.c
+	vga256matchCommon()	This function directly references some other
+				frame buffer data structures.
+	vga256CreateGC()	This function directly references some other
+				frame buffer data structures.
+	vga256ValidateGC()	This function directly references some other
+				frame buffer functions. Otherwise, it is
+				redundant.
+
+vgagetsp.c
+	vga256GetSpans()	This function is bank aware.
+
+vgaglblt8.c
+	vga256PolyGlyphBlt8()	This function make direct calls to other
+				frame buffer functions.
+	vga256PolyGlyphBlt8Clipped()
+				This function is bank aware.
+
+vgaimage.c
+	vga256GetImage()	This function calls other frame buffer
+				functions directly. Otherwise, it is
+				redundant.
+
+vgaline.c
+	speedupvga256SegmentSS()
+	vga256SegmentSS()
+	speedupvga256LineSS()
+	vga256LineSS()
+				This function is bank aware. It calls
+				optimized assembler routines in most cases.
+
+vgalineH.s
+	fastvga256HorzS()	Optimized assembler for drawing
+				horizontal lines.
+
+vgalineV.s
+	fastvga256VertS()	Optimized assembler for drawing
+				verticle lines.
+
+vgalined.c
+	vga256SegmentSD()
+	vga256LineSD()
+				This function is bank aware. This function
+				will check for the PIXMAP to PIXMAP case
+				and just call the cfb routine.
+
+vgaply1rct.c
+	RROP_NAME(vga256FillPoly1Rect)()
+				This function is bank aware.
+
+vgapntwin.c
+	vga256PaintWindow()	This function calls other frame buffer
+				functions and cals the low level functions.
+	vga256FillBoxSolid()	This function is bank aware, and calls
+				the enhanced routines for fast fills.
+				This function is very different from cfb.
+	vga256FillBoxTile32()	This function is bank aware.
+				This function is different from cfb.
+
+vgapntwinS.c
+	speedupvga256FillBoxSolid()
+				This function calls an optimized
+				routine for filling.
+
+vgapolypnt.c
+	vga256PolyPoint()	This function is bank aware.
+
+vgapush8.c
+	vga256PushPixels8()	This function is bank aware.
+
+vgarctstp8.c
+	speedupvga2568FillRectOpaqueStippled32()
+	vga2568FillRectOpaqueStippled32()
+				This function is bank aware.
+	speedupvga2568FillRectTransparentStippled32()
+	vga2568FillRectTransparentStippled32()
+				This function is bank aware.
+	vga2568FillRectStippledUnnatural()
+				This function is bank aware.
+vgascrinit.c
+	vga256FinishScreenInit()
+				This function is that same as the cfb
+				function, except that is passes 
+				vga256BSFuncRec to miInitializeBackingStore().
+	vga256ScreenInit()	This function overrides some of the Screen
+				structure members with local frame buffer
+				routines.
+vgasetsp.c
+	vga256SetScanline()	This function is bank aware.
+	vga256SetSpans()	This function is bank aware. This function
+				checks for the PIXMAP to PIXMAP case and just
+				calls the cfb routine.
+
+vgasolid.c
+	speedupvga256FillRectSolidCopy()
+	vga256FillRectSolidCopy()
+	RROP_NAME(vga256FillRectSolid)()
+				This function is very different from cfb.
+	RROP_NAME(vga256SolidSpans)
+				This function is bank aware.
+vgateblt8.c
+	speedupvga256TEGlyphBlt8()
+	vga256TEGlyphBlt8()
+				This function is bank aware.
+
+vgategblt.c
+	vga256TEGlyphBlt()
+				This function is bank aware.
+
+vgatile32.c
+	MROP_NAME(vga256FillRectTile32)
+				This function is bank aware.
+	MROP_NAME(vga256Tile32FS)()
+				This finction is bank aware. This function
+				checks for the PIXMPA to PIXMAP case and just
+				calls the cfb routine.
+
+vgatileodd.c
+	MROP_NAME(vga256FillBoxTileOdd)
+				This function is bank aware.
+	MROP_NAME(vga256FillSpanTileOdd)
+				This function is bank aware.
+	MROP_NAME(vga256FillBoxTile32s)
+				This function is bank aware and somewhat
+				different from the cfb code.
+	MROP_NAME(vga256FillSpanTile32s)
+				This function is bank aware and slightly
+				different from the cfb code.
+vgawindow.c
+	vga256CopyWindow()	This function calls a low level routine.
+
+vgazerarc.c
+	RROP_NAME(vga256ZeroArcSS8)
+				This function is bank aware.
+	RROP_NAME (vga256ZeroPolyArcSS8)
+				This function calls the previous
+				function directly.
+
+vga.h
+	Definition of the chip driver interface.
+
+vga256.h
+	Function prototypes for the vga256 frame buffer code. Also defines
+	the low-level interface structure.
+
+vgaAsm.h
+	Defines the base of the virtual frame buffer used to reprsent
+	banked addresses. This file is suitable for inclusion in assembly
+	files.
+
+vgaBank.h
+	Defines the banking interface used by the frame buffer code.
+
+vgaFasm.h
+	Some inline assembler to speed up some operations.
+
+
+$XConsortium: Design /main/4 1996/02/21 18:09:34 kaleb $

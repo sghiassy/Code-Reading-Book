@@ -1,0 +1,321 @@
+.TH ACE_Strategy_Acceptor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Strategy_Acceptor \- Abstract factory for creating a service handler (SVC_HANDLER), accepting into the SVC_HANDLER, and activating the SVC_HANDLER. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Acceptor.h>\fR
+.PP
+Inherits \fBACE_Acceptor< SVC_HANDLER,ACE_PEER_ACCEPTOR_2 >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Strategy_Acceptor\fR (const \fBACE_TCHAR\fR service_name[] = 0, const \fBACE_TCHAR\fR service_description[] = 0, int use_select = 1)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_Strategy_Acceptor\fR (const ACE_PEER_ACCEPTOR_ADDR &local_addr, \fBACE_Reactor\fR * = ACE_Reactor::instance (), \fBACE_Creation_Strategy\fR<SVC_HANDLER> * = 0, \fBACE_Accept_Strategy\fR<SVC_HANDLER, ACE_PEER_ACCEPTOR_2> * = 0, \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> * = 0, \fBACE_Scheduling_Strategy\fR<SVC_HANDLER> * = 0, const \fBACE_TCHAR\fR service_name[] = 0, const \fBACE_TCHAR\fR service_description[] = 0, int use_select = 1)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const ACE_PEER_ACCEPTOR_ADDR &, \fBACE_Reactor\fR * = ACE_Reactor::instance (), \fBACE_Creation_Strategy\fR<SVC_HANDLER> * = 0, \fBACE_Accept_Strategy\fR<SVC_HANDLER, ACE_PEER_ACCEPTOR_2> * = 0, \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> * = 0, \fBACE_Scheduling_Strategy\fR<SVC_HANDLER> * = 0, const \fBACE_TCHAR\fR *service_name = 0, const \fBACE_TCHAR\fR *service_description = 0, int use_select = 1)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Strategy_Acceptor\fR (void)"
+.br
+.RI "\fIClose down the Strategy_Acceptor's resources.\fR"
+.ti -1c
+.RI "virtual \fBoperator ACE_PEER_ACCEPTOR &\fR () const"
+.br
+.RI "\fIReturn the underlying PEER_ACCEPTOR object.\fR"
+.ti -1c
+.RI "virtual ACE_PEER_ACCEPTOR& \fBacceptor\fR (void) const"
+.br
+.RI "\fIReturn the underlying PEER_ACCEPTOR object.\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIReturns the listening acceptor's .\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Creation_Strategy\fR<SVC_HANDLER> \fBCREATION_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Accept_Strategy\fR<SVC_HANDLER, ACE_PEER_ACCEPTOR_2> \fBACCEPT_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> \fBCONCURRENCY_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Scheduling_Strategy\fR<SVC_HANDLER> \fBSCHEDULING_STRATEGY\fR"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBsuspend\fR (void)"
+.br
+.RI "\fIThis method delegates to the <Scheduling_Strategy>'s <suspend> method.\fR"
+.ti -1c
+.RI "virtual int \fBresume\fR (void)"
+.br
+.RI "\fIThis method delegates to the <Scheduling_Strategy>'s <resume> method.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fICalls <handle_close> when dynamically unlinked.\fR"
+.ti -1c
+.RI "virtual int \fBinfo\fR (\fBACE_TCHAR\fR **buf, size_t) const"
+.br
+.RI "\fIDefault version returns address info in <buf>.\fR"
+.ti -1c
+.RI "virtual int \fBmake_svc_handler\fR (SVC_HANDLER *&)"
+.br
+.ti -1c
+.RI "virtual int \fBaccept_svc_handler\fR (SVC_HANDLER *svc_handler)"
+.br
+.ti -1c
+.RI "virtual int \fBactivate_svc_handler\fR (SVC_HANDLER *svc_handler)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_close\fR (ACE_HANDLE = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)"
+.br
+.RI "\fIPerform termination activities when <this> is removed from the <Reactor>.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_signal\fR (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)"
+.br
+.RI "\fIHandle SIGINT.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBCREATION_STRATEGY\fR* \fBcreation_strategy_\fR"
+.br
+.RI "\fICreation strategy for an Acceptor.\fR"
+.ti -1c
+.RI "int \fBdelete_creation_strategy_\fR"
+.br
+.RI "\fI1 if  created the creation strategy and thus should delete it, else 0.\fR"
+.ti -1c
+.RI "\fBACCEPT_STRATEGY\fR* \fBaccept_strategy_\fR"
+.br
+.RI "\fIAccept strategy for an .\fR"
+.ti -1c
+.RI "int \fBdelete_accept_strategy_\fR"
+.br
+.RI "\fI1 if  created the accept strategy and thus should delete it, else 0.\fR"
+.ti -1c
+.RI "\fBCONCURRENCY_STRATEGY\fR* \fBconcurrency_strategy_\fR"
+.br
+.RI "\fIConcurrency strategy for an .\fR"
+.ti -1c
+.RI "int \fBdelete_concurrency_strategy_\fR"
+.br
+.RI "\fI1 if  created the concurrency strategy and thus should delete it, else 0.\fR"
+.ti -1c
+.RI "\fBSCHEDULING_STRATEGY\fR* \fBscheduling_strategy_\fR"
+.br
+.RI "\fIScheduling strategy for an .\fR"
+.ti -1c
+.RI "int \fBdelete_scheduling_strategy_\fR"
+.br
+.RI "\fI1 if  created the scheduling strategy and thus should delete it, else 0.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBservice_name_\fR"
+.br
+.RI "\fIName of the service.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBservice_description_\fR"
+.br
+.RI "\fIDescription of the service.\fR"
+.ti -1c
+.RI "u_short \fBservice_port_\fR"
+.br
+.RI "\fIPort number for the server.\fR"
+.ti -1c
+.RI "ACE_PEER_ACCEPTOR_ADDR \fBservice_addr_\fR"
+.br
+.RI "\fIAddress that the <Strategy_Acceptor> uses to listen for connections.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER, ACE_PEER_ACCEPTOR_1>  template class ACE_Strategy_Acceptor
+Abstract factory for creating a service handler (SVC_HANDLER), accepting into the SVC_HANDLER, and activating the SVC_HANDLER.
+.PP
+.PP
+ Implements a flexible and extensible set of strategies for passively establishing connections with clients. There are three main strategies: (1) creating a SVC_HANDLER, (2) passively accepting a new connection from a client into the SVC_HANDLER, and (3) activating the SVC_HANDLER with a particular concurrency mechanism. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> typedef \fBACE_Accept_Strategy\fR<SVC_HANDLER, ACE_PEER_ACCEPTOR_2> ACE_Strategy_Acceptor<SVC_HANDLER, >::ACCEPT_STRATEGY\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> typedef \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> ACE_Strategy_Acceptor<SVC_HANDLER, >::CONCURRENCY_STRATEGY\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> typedef \fBACE_Creation_Strategy\fR<SVC_HANDLER> ACE_Strategy_Acceptor<SVC_HANDLER, >::CREATION_STRATEGY\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> typedef \fBACE_Scheduling_Strategy\fR<SVC_HANDLER> ACE_Strategy_Acceptor<SVC_HANDLER, >::SCHEDULING_STRATEGY\fC [protected]\fR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Strategy_Acceptor<SVC_HANDLER, >::ACE_Strategy_Acceptor<SVC_HANDLER, > (const \fBACE_TCHAR\fR service_name[] = 0, const \fBACE_TCHAR\fR service_description[] = 0, int use_select = 1)
+.PP
+Default constructor.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Strategy_Acceptor<SVC_HANDLER, >::ACE_Strategy_Acceptor<SVC_HANDLER, > (const ACE_PEER_ACCEPTOR_ADDR & local_addr, \fBACE_Reactor\fR * = ACE_Reactor::instance (), \fBACE_Creation_Strategy\fR< SVC_HANDLER >* = 0, \fBACE_Accept_Strategy\fR< SVC_HANDLER,ACE_PEER_ACCEPTOR_2 >* = 0, \fBACE_Concurrency_Strategy\fR< SVC_HANDLER >* = 0, \fBACE_Scheduling_Strategy\fR< SVC_HANDLER >* = 0, const \fBACE_TCHAR\fR service_name[] = 0, const \fBACE_TCHAR\fR service_description[] = 0, int use_select = 1)
+.PP
+Initialize the appropriate strategies for creation, passive connection acceptance, and concurrency, and then register <this> with the Reactor and listen for connection requests at the designated <local_addr>. 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Strategy_Acceptor<SVC_HANDLER, >::~ACE_Strategy_Acceptor<SVC_HANDLER, > (void)\fC [virtual]\fR
+.PP
+Close down the Strategy_Acceptor's resources.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::accept_svc_handler (SVC_HANDLER * svc_handler)\fC [protected, virtual]\fR
+.PP
+Bridge method for accepting the new connection into the <SVC_HANDLER>. The default behavior delegates to the <PEER_ACCEPTOR::accept> in the . 
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_PEER_ACCEPTOR & ACE_Strategy_Acceptor<SVC_HANDLER, >::acceptor (void) const\fC [virtual]\fR
+.PP
+Return the underlying PEER_ACCEPTOR object.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::activate_svc_handler (SVC_HANDLER * svc_handler)\fC [protected, virtual]\fR
+.PP
+Bridge method for activating a <SVC_HANDLER> with the appropriate concurrency strategy. The default behavior of this method is to activate the <SVC_HANDLER> by calling its <open> method (which allows the <SVC_HANDLER> to define its own concurrency strategy). However, subclasses can override this strategy to do more sophisticated concurrency activations (such as creating the <SVC_HANDLER> as an "active object" via multi-threading or multi-processing). 
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> void ACE_Strategy_Acceptor<SVC_HANDLER, >::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::fini (void)\fC [protected, virtual]\fR
+.PP
+Calls <handle_close> when dynamically unlinked.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_HANDLE ACE_Strategy_Acceptor<SVC_HANDLER, >::get_handle (void) const\fC [virtual]\fR
+.PP
+Returns the listening acceptor's .
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::handle_close (ACE_HANDLE handle = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR close_mask = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [protected, virtual]\fR
+.PP
+Perform termination activities when <this> is removed from the <Reactor>.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::handle_signal (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)\fC [protected, virtual]\fR
+.PP
+Handle SIGINT.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::info (\fBACE_TCHAR\fR ** buf, size_t length) const\fC [protected, virtual]\fR
+.PP
+Default version returns address info in <buf>.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::make_svc_handler (SVC_HANDLER *& sh)\fC [protected, virtual]\fR
+.PP
+Bridge method for creating a <SVC_HANDLER>. The strategy for creating a <SVC_HANDLER> are configured into the Acceptor via it's <creation_strategy_>. The default is to create a new <SVC_HANDLER> if <sh> == 0, else <sh> is unchanged. However, subclasses can override this policy to perform <SVC_HANDLER> creation in any way that they like (such as creating subclass instances of <SVC_HANDLER>, using a singleton, dynamically linking the handler, etc.). Returns -1 on failure, else 0. 
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::open (const ACE_PEER_ACCEPTOR_ADDR &, \fBACE_Reactor\fR * = ACE_Reactor::instance (), \fBACE_Creation_Strategy\fR< SVC_HANDLER >* = 0, \fBACE_Accept_Strategy\fR< SVC_HANDLER,ACE_PEER_ACCEPTOR_2 >* = 0, \fBACE_Concurrency_Strategy\fR< SVC_HANDLER >* = 0, \fBACE_Scheduling_Strategy\fR< SVC_HANDLER >* = 0, const \fBACE_TCHAR\fR * service_name = 0, const \fBACE_TCHAR\fR * service_description = 0, int use_select = 1)
+.PP
+Initialize the appropriate strategies for creation, passive connection acceptance, and concurrency, and then register <this> with the Reactor and listen for connection requests at the designated <local_addr>. 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Strategy_Acceptor<SVC_HANDLER, >::operator ACE_PEER_ACCEPTOR & () const\fC [virtual]\fR
+.PP
+Return the underlying PEER_ACCEPTOR object.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::resume (void)\fC [protected, virtual]\fR
+.PP
+This method delegates to the <Scheduling_Strategy>'s <resume> method.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::suspend (void)\fC [protected, virtual]\fR
+.PP
+This method delegates to the <Scheduling_Strategy>'s <suspend> method.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Strategy_Acceptor<SVC_HANDLER, >::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Acceptor\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBACCEPT_STRATEGY\fR * ACE_Strategy_Acceptor<SVC_HANDLER, >::accept_strategy_\fC [protected]\fR
+.PP
+Accept strategy for an .
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBCONCURRENCY_STRATEGY\fR * ACE_Strategy_Acceptor<SVC_HANDLER, >::concurrency_strategy_\fC [protected]\fR
+.PP
+Concurrency strategy for an .
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBCREATION_STRATEGY\fR * ACE_Strategy_Acceptor<SVC_HANDLER, >::creation_strategy_\fC [protected]\fR
+.PP
+Creation strategy for an Acceptor.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::delete_accept_strategy_\fC [protected]\fR
+.PP
+1 if  created the accept strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::delete_concurrency_strategy_\fC [protected]\fR
+.PP
+1 if  created the concurrency strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::delete_creation_strategy_\fC [protected]\fR
+.PP
+1 if  created the creation strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Strategy_Acceptor<SVC_HANDLER, >::delete_scheduling_strategy_\fC [protected]\fR
+.PP
+1 if  created the scheduling strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBSCHEDULING_STRATEGY\fR * ACE_Strategy_Acceptor<SVC_HANDLER, >::scheduling_strategy_\fC [protected]\fR
+.PP
+Scheduling strategy for an .
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_PEER_ACCEPTOR_ADDR ACE_Strategy_Acceptor<SVC_HANDLER, >::service_addr_\fC [protected]\fR
+.PP
+Address that the <Strategy_Acceptor> uses to listen for connections.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBACE_TCHAR\fR * ACE_Strategy_Acceptor<SVC_HANDLER, >::service_description_\fC [protected]\fR
+.PP
+Description of the service.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBACE_TCHAR\fR * ACE_Strategy_Acceptor<SVC_HANDLER, >::service_name_\fC [protected]\fR
+.PP
+Name of the service.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> u_short ACE_Strategy_Acceptor<SVC_HANDLER, >::service_port_\fC [protected]\fR
+.PP
+Port number for the server.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

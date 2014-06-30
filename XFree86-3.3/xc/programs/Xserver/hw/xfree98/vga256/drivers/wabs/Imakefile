@@ -1,0 +1,129 @@
+XCOMM $XConsortium: Imakefile /main/8 1996/10/25 15:43:42 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/vga256/drivers/wabs/Imakefile,v 3.11 1996/12/23 07:08:42 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = cir_driver.c cir_fill.c cir_blt.c cir_bltC.c cir_im.c cir_bank.s \
+       cir_imblt.s cir_colexp.c cirFillSt.c cir_teblt8.c \
+       cirFillRct.c cir_blitter.c cir_textblt.s cir_cursor.c \
+       cir_blitmm.c cir_immm.c cir_tebltmm.c cir_span.s cir_alloc.c \
+       /* cir_blt16.c */ cir_solid.c /* cir_line.c cir_seg.c cir_orect.c */ \
+       /* cir_orect16.c cir_orect32.c linearline.c cir_fillLG.c cir_blitLG.c */ \
+       cirrus_acl.c cirrus_aclm.c laguna_acl.c \
+       cir_pc98.c 
+
+OBJS = cir_driver.o cir_fill.o cir_blt.o cir_bltC.o cir_im.o cir_bank.o \
+       cir_imblt.o cir_colexp.o cirFillSt.o cir_teblt8.o \
+       cirFillRct.o cir_blitter.o cir_textblt.o cir_cursor.o \
+       cir_blitmm.o cir_immm.o cir_tebltmm.o cir_span.o cir_alloc.o \
+       /* cir_blt16.o */ cir_solid.o /* cir_line.o cir_seg.o cir_orect.o */ \
+       /* cir_orect16.o cir_orect32.o linearline.o cir_fillLG.o cir_blitLG.o */ \
+       cirrus_acl.o cirrus_aclm.o laguna_acl.o \
+       cir_pc98.o
+
+DEFINES = -DPSZ=8 -DPC98 -DPC98_WAB
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+           -I$(SERVERSRC)/cfb -I$(XF86SRC)/vga256/vga -I$(XF86SRC)/xaa \
+           -I$(FONTINCSRC) -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
+	   -I../../wabs
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(cir_drv, $(OBJS))
+
+#if !XF86LinkKit
+LinkSourceFile(cirBlitMM.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cirBlitter.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cirFillRct.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cirFillSt.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_alloc.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_alloc.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_bank.s,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_blitLG.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_blitLG.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_blitter.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_blt.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_blt16.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_bltC.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_colexp.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_cursor.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_driver.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_driver.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_fill.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_fillLG.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_im.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_imblt.s,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_inline.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_line.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_orect.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_solid.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_span.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_span.s,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_teblt8.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_textblt.s,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cirrus_acl.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(laguna_acl.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(linearline.c,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(linearline.h,$(XF86SRC)/vga256/drivers/cirrus)
+LinkSourceFile(cir_pc98.c,..)
+#endif
+
+ObjectFromSpecialSource(cir_blitmm, cir_blitter, -DCIRRUS_MMIO)
+ObjectFromSpecialSource(cir_immm, cir_im, -DCIRRUS_MMIO)
+ObjectFromSpecialSource(cir_tebltmm, cir_teblt8, -DCIRRUS_MMIO)
+ObjectFromSpecialSource(cir_seg, cir_line, -DPOLYSEGMENT)
+ObjectFromSpecialSource(cir_orect16, cir_orect, -DPSZ=16)
+ObjectFromSpecialSource(cir_orect32, cir_orect, -DPSZ=32)
+ObjectFromSpecialSource(cirrus_aclm, cirrus_acl, -DMMIO)
+
+InstallLinkKitNonExecFile(cir_driver.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_driver.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_bank.s,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_fill.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_im.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_blt.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_bltC.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_imblt.s,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_textblt.s,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_span.s,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_colexp.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cirFillSt.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_solid.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_teblt8.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cirFillRct.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_cursor.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_blitter.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_blitLG.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_fillLG.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_alloc.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_blt16.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_line.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_orect.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cirBlitter.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_span.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_alloc.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cirBlitMM.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_blitLG.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_inline.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cirrus_acl.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(laguna_acl.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(Imakefile,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(linearline.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(linearline.h,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+InstallLinkKitNonExecFile(cir_pc98.c,$(XF98LINKKITDIR)/drivers98/vga256/wabs)
+
+DependTarget()

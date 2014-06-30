@@ -1,0 +1,116 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Classes:CEffect</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Classes::<b>CEffect</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>CEffect</h4>
+<dd>CEffect is the base class for all the effect classes used in your application. 
+	<p>
+	<pre>
+<b>class CEffect</b>
+{
+public:
+			<i>CEffect()</i>;
+	<b>virtual</b>		<i>~CEffect()</i>;
+	<b>virtual int</b>	<i>Init(int iWidth, int iHeight)</i>;
+	<b>virtual void</b>	<i>RenderFrame(long lElapsedTime)</i>;
+	<b>virtual void</b>	<i>ReceiveParam(char *sParam)</i>;
+	<b>virtual void</b>	<i>Prepare(void)</i>;
+	<b>virtual void</b>	<i>End(void)</i>;
+	<b>virtual void</b>	<i>MessageHandler(HWND hWnd, UINT uMsg, WPARAM  wParam, LPARAM  lParam)</i>;
+	<b>virtual void</b>	<i>ReceiveInt(char *pszName, int iParam, long lLayer)</i>;
+	<b>virtual void</b>	<i>ReceiveFloat(char *pszName, float fParam, long lLayer)</i>;
+	<b>virtual void</b>	<i>ReceiveString(char *pszName, char *pszParam, long lLayer)</i>;
+	<b>virtual void</b>	<i>RenderFrameEx(long lElapsedTime, long lLayer)</i>;
+};
+</pre>
+<dt><b>Members.</b>
+<dd><dl>
+	<dt><i>CEffect()</i>
+	<dd>Constructur for the class.
+	<dt><i>~CEffect()</i>
+	<dd>Destructor for the class.
+	<dt><i>Init(int iWidth, int iHeight)</i>
+	<dd>Method which will be called during the startup of the application, as long as the object is 
+		registered with <a HREF="ref_functions_DEMOGL_EffectRegister.htm" target="main">DEMOGL_EffectRegister</a>.
+		<i>iWidth</i> and <i>iHeight</i> are the size in pixels of the client area of the window. This can be
+		slightly smaller than the window resolution, due to size of a windowbar, in windowed mode. Always use these
+		values instead of hard-coded resolution values. Do not place OpenGL related statements in this method because
+		OpenGL is not yet available when the Init() method is called. Init() should return either <i>SYS_OK</i> when
+		everything went all right or <i>SYS_NOK</i> if not. DemoGL will react on the return statement as set with
+		the DGL_VF_INITFAILURERESPONSE variable settable with <a HREF="ref_functions_DEMOGL_SetVariable.htm" target="main">DEMOGL_SetVariable(3)</a>.
+	<dt><i>RenderFrame(long lElapsedTime)</i>
+	<dd>Method which will be called every frame when the effect is placed on a visible layer using the script command
+		[effect name];START;[layer number];. This method is not called when the console is visible. <i>lElapsedTime</i> is the
+		amount of miliseconds passed since the start of the application, i.e. the current position on the timeline.
+	<dt><i>ReceiveParam(char *sParam)</i>
+	<dd>Method which is called when a [effect name];SEND;[string]; command is executed and [effect name] is the name of the
+		effect object. This method is deprecated and should not be used. Use <i>ReceiveInt</i>, <i>ReceiveFloat</i> and
+		<i>ReceiveString</i> instead. <i>sParam</i> is pointing to the [string] value passed in the script command.
+	<dt><i>Prepare(void)</i>
+	<dd>Method which is called when a [effect name];PREPARE; command is executed and [effect name] is the name of
+		the effect object. You should do your OpenGL related initialisation of the effect in this method.
+	<dt><i>End(void)</i>
+	<dd>Method which is called when a [effect name];END; command is executed and [effect name] is the name of
+		the effect object, or when the application is terminated by the user or Windows and your application decently
+		calls <a HREF="ref_functions_DEMOGL_AppEnd.htm" target="main">DEMOGL_AppEnd</a>. You should place cleaning-up
+		code for your effect in this method. The effect is removed from DemoGL and will not be executed.
+	<dt><i>MessageHandler(HWND hWnd, UINT uMsg, WPARAM  wParam, LPARAM  lParam)</i>
+	<dd>Method which is called when a message arrives at the message pump inside DemoGL and the Message Handler is
+		<i>enabled</i> for the effect, using <a HREF="ref_functions_DEMOGL_MessageHandlerEnable.htm" target="main">DEMOGL_MessageHandlerEnable</a>.
+		The complete message as received by DemoGL is passed on to <i>MessageHandler</i>.
+	<dt><i>ReceiveInt(char *pszName, int iParam, long lLayer)</i>
+	<dd>Method which is called when a [effect name];SENDINT;[variable name];[variable value];[layer]; command is executed and [effect name]
+		is the name of the effect. <i>pszName</i> points to the value of [variable name], <i>iParam</i> contains the value of [variable value]
+		and <i>lLayer</i> contains the value of [layer]. 
+	<dt><i>ReceiveFloat(char *pszName, float fParam, long lLayer)</i>
+	<dd>Method which is called when a [effect name];SENDFLOAT;[variable name];[variable value];[layer]; command is executed and [effect name]
+		is the name of the effect. <i>pszName</i> points to the value of [variable name], <i>fParam</i> contains the value of [variable value]
+		and <i>lLayer</i> contains the value of [layer].
+	<dt><i>ReceiveString(char *pszName, char *pszParam, long lLayer)</i>
+	<dd>Method which is called when a [effect name];SENDSTRING;[variable name];[variable value];[layer]; command is executed and [effect name]
+		is the name of the effect. <i>pszName</i> points to the value of [variable name], <i>pszParam</i> points to the value of [variable value]
+		and <i>lLayer</i> contains the value of [layer].
+	<dt><i>RenderFrameEx(long lElapsedTime, long lLayer)</i>
+	<dd>Method which is exactly identical to <i>RenderFrame</i> but now also the layer number currently processed is passed. When you start an
+		effect on two layers, the effect object's <i>RenderFrame</i> or <i>RenderFrameEx</i> methods are called twice: for each layer once.
+		To distinquish for which layer this call is ment, you can use <i>RenderFrameEx</i> so you can determine the layer via <i>lLayer</i>.
+		This method is not used by default, you should tell DemoGL to use this method instead of <i>RenderFrame</i> using 
+		<a HREF="ref_functions_DEMOGL_SetVariable.htm" target="main">DEMOGL_SetVariable(3)</a> and set variable DGL_VF_USERENDERFRAMEEX.
+		Setting that variable is for <i>all</i> registered effects, so you should then use <i>RenderFrameEx</i> instead of <i>RenderFrame</i>
+		in all your effects. 
+	</dl>
+<p>
+<dt><b>Remarks.</b>
+<dd>You don't have to implement the methods you don't need. DemoGL itself contains for all methods empty equivalents that never fail, nor
+	will report errors. It's recommended that you avoid deprecated material when using DemoGL v1.3 or higher. 
+<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_EffectRegister.htm" target="main">DEMOGL_EffectRegister</a>,
+	<a HREF="ref_functions_DEMOGL_SetVariable.htm" target="main">DEMOGL_SetVariable(3)</a>,
+	<a HREF="ref_functions_DEMOGL_AppEnd.htm" target="main">DEMOGL_AppEnd</a>,
+	<a HREF="ref_functions_DEMOGL_MessageHandlerEnable.htm" target="main">DEMOGL_MessageHandlerEnable</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

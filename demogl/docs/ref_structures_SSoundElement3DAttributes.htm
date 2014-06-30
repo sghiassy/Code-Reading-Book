@@ -1,0 +1,101 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Structures:SSoundElement3DAttributes</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Structures::<b>SSoundElement3DAttributes</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>SSoundElement3DAttributes</h4>
+<dd>SSoundElement3DAttributes specifies the 3D specific properties of the behaviour of the sound played by a sound channel. 
+	<p>
+	<pre>
+<b>typedef struct</b>
+{
+	<b>DWORD</b>	<i>m_dw3DMode</i>;
+	<b>float</b>	<i>m_fMinimalDistance</i>;
+	<b>float</b>	<i>m_fMaximalDistance</i>;
+	<b>int</b>	<i>m_iInsideProjectionConeAngle</i>;
+	<b>int</b>	<i>m_iOutsideProjectionConeAngle</i>;
+	<b>int</b>	<i>m_iDeltaVolumeOutsideOuterProjectionCone</i>;
+} SSoundElement3DAttributes;
+</pre>
+<dt><b>Members.</b>
+<dd><dl>
+	<dt><i>m_dw3DMode</i>
+	<dd>Specifies the 3D mode used. Can be one of the following values:
+		<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>3D Mode</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">BASS_3DMODE_NORMAL</td>
+			<td WIDTH="70%" VALIGN="TOP">Normal 3D mode.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">BASS_3DMODE_RELATIVE</td>
+			<td WIDTH="70%" VALIGN="TOP">The 3D position is relative to the listener. If
+				the listener position is changed, the sound position isn't changed</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">BASS_3DMODE_OFF</td>
+			<td WIDTH="70%" VALIGN="TOP">Will turn off 3D processing. Play will continue in the center.</td>
+		</tr>
+		</table>
+		<p>
+		These values are defined in the include file <b>DemoGL_Bass.h</b>.
+	<dt><i>m_fMinimalDistance</i>
+	<dd>Specifies the minimal distance between the global listener and the sound channel. The channel's volume stops increasing when
+		the global listener is within <i>m_fMinimalDistance</i> units from the sound channel.
+	<dt><i>m_fMaximalDistance</i>
+	<dd>Specifies the maximum distance between the global listener and the sound channel. The channel's volume stops decreasing when
+		the global listener is within <i>m_fMaximumDistance</i> units from the sound channel.
+	<dt><i>m_iInsideProjectionConeAngle</i>
+	<dd>Specifies the angle of the inside projection cone in degrees. Legal values have to fall in the range [0,360], with 0 is no cone
+		and 360 is a sphere.
+	<dt><i>m_iOutsideProjectionConeAngle</i>
+	<dd>Specifies the angle of the outside projection cone in degrees. Legal values have to fall in the range [0,360], with 0 is no cone
+		and 360 is a sphere.
+	<dt><i>m_iDeltaVolumeOutsideOuterProjectionCone</i>
+	<dd>Specifies the delta-volume outside the outer projection cone. Legal values have to fall in the range [0,100], with 0 is silent
+		and 100 is the same as inside the cone.
+	</dl>
+<p>
+<dt><b>Remarks.</b>
+<dd>Used with <a HREF="ref_functions_DEMOGL_SoundSystemSetChannel3DAttributes.htm" target="main">DEMOGL_SoundSystemSetChannel3DPosition</a>
+	and <a HREF="ref_functions_DEMOGL_SoundSystemSetElement3DAttributes.htm" target="main">DEMOGL_SoundSystemSetElement3DAttributes</a>. 
+	<i>m_iInsideProjectionConeAngle</i> and <i>m_iOutsideProjectionConeAngle</i> angles decide how wide the sound is projected 
+	around the orientation angle of the channel. Within <i>m_iInsideProjectionConeAngle</i> the volume level is the channel volume, as set with
+	<a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a> for example.
+	Outside <i>m_iOutsideProjectionConeAngle</i>, the volume changes according to the <i>m_iDeltaVolumeOutsideOuterProjectionCone</i> value. 
+	Between the <i>m_iInsideProjectionConeAngle</i> and <i>m_iOutsideProjectionConeAngle</i> angles, the volume gradually changes between 
+	the inner and outer volume levels. If the <i>m_iInsideProjectionConeAngle</i> and <i>m_iOutsideProjectionConeAngle</i> angles are 360 degrees, 
+	then the sound is transmitted equally in all directions.
+<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a>,
+	<a HREF="ref_functions_DEMOGL_SoundSystemSetChannel3DAttributes.htm" target="main">DEMOGL_SoundSystemSetChannel3DAttributes</a>,
+	<a HREF="ref_functions_DEMOGL_SoundSystemSetElement3DAttributes.htm" target="main">DEMOGL_SoundSystemSetElement3DAttributes</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,285 @@
+.TH ACE_Filecache_Object 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Filecache_Object \- Abstraction over a real file. This is what the Virtual Filesystem contains. This class is not intended for general consumption. Please consult a physician before attempting to use this class. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Filecache.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBCreation_States\fR { \fBACE_READING\fR = 1, \fBACE_WRITING\fR = 2 }"
+.br
+.ti -1c
+.RI "enum \fBError_Conditions\fR { \fBACE_SUCCESS\fR = 0, \fBACE_ACCESS_FAILED\fR, \fBACE_OPEN_FAILED\fR, \fBACE_COPY_FAILED\fR, \fBACE_STAT_FAILED\fR, \fBACE_MEMMAP_FAILED\fR, \fBACE_WRITE_FAILED\fR }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR (const \fBACE_TCHAR\fR *filename, ACE_SYNCH_RW_MUTEX &lock, LPSECURITY_ATTRIBUTES sa = 0, int mapit = 1)"
+.br
+.RI "\fICreates a file for reading.\fR"
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR (const \fBACE_TCHAR\fR *filename, int size, ACE_SYNCH_RW_MUTEX &lock, LPSECURITY_ATTRIBUTES sa = 0)"
+.br
+.RI "\fICreates a file for writing.\fR"
+.ti -1c
+.RI "\fB~ACE_Filecache_Object\fR (void)"
+.br
+.RI "\fIOnly if reference count is zero should this be called.\fR"
+.ti -1c
+.RI "int \fBacquire\fR (void)"
+.br
+.RI "\fIIncrement the reference_count_.\fR"
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.RI "\fIDecrement the reference_count_.\fR"
+.ti -1c
+.RI "int \fBerror\fR (void) const"
+.br
+.ti -1c
+.RI "int \fBerror\fR (int error_value, const \fBACE_TCHAR\fR *s = ACE_LIB_TEXT ("ACE_Filecache_Object"))"
+.br
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBfilename\fR (void) const"
+.br
+.RI "\fIfilename_ accessor.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle\fR (void) const"
+.br
+.RI "\fIhandle_ accessor.\fR"
+.ti -1c
+.RI "void* \fBaddress\fR (void) const"
+.br
+.RI "\fIBase memory address for memory mapped file.\fR"
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIsize_ accessor.\fR"
+.ti -1c
+.RI "int \fBupdate\fR (void) const"
+.br
+.RI "\fITrue if file on disk is newer than cached file.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR (void)"
+.br
+.RI "\fIPrevent from being called.\fR"
+.ti -1c
+.RI "void \fBinit\fR (void)"
+.br
+.RI "\fICommon initialization code,.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBerror_i\fR (int error_value, const \fBACE_TCHAR\fR *s = ACE_LIB_TEXT ("ACE_Filecache_Object"))"
+.br
+.RI "\fIInternal error logging method, no locking.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBtempname_\fR"
+.br
+.RI "\fIThe temporary file name and the real file name. The real file is copied into the temporary file for safety reasons.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBfilename_\fR [MAXPATHLEN + 1]"
+.br
+.ti -1c
+.RI "\fBACE_Mem_Map\fR \fBmmap_\fR"
+.br
+.RI "\fImmap_ holds the memory mapped version of the temporary file. handle_ is the descriptor to the temporary file.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle_\fR"
+.br
+.ti -1c
+.RI "\fBACE_stat\fR \fBstat_\fR"
+.br
+.RI "\fIUsed to compare against the real file to test if an update is needed.\fR"
+.ti -1c
+.RI "size_t \fBsize_\fR"
+.br
+.ti -1c
+.RI "int \fBaction_\fR"
+.br
+.RI "\fIStatus indicators.\fR"
+.ti -1c
+.RI "int \fBerror_\fR"
+.br
+.ti -1c
+.RI "int \fBstale_\fR"
+.br
+.RI "\fIIf set to 1, means the object is flagged for removal.\fR"
+.ti -1c
+.RI "LPSECURITY_ATTRIBUTES \fBsa_\fR"
+.br
+.RI "\fISecurity attribute object.\fR"
+.ti -1c
+.RI "ACE_SYNCH_RW_MUTEX \fBjunklock_\fR"
+.br
+.RI "\fIlock_ provides a bookkeeping mechanism for users of this object. junklock_ is the default initializer.\fR"
+.ti -1c
+.RI "ACE_SYNCH_RW_MUTEX& \fBlock_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Filecache\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Abstraction over a real file. This is what the Virtual Filesystem contains. This class is not intended for general consumption. Please consult a physician before attempting to use this class.
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_Filecache_Object::Creation_States
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_READING\fR \fR
+.TP
+\fB\fIACE_WRITING\fR \fR
+.SS enum ACE_Filecache_Object::Error_Conditions
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_SUCCESS\fR \fR
+.TP
+\fB\fIACE_ACCESS_FAILED\fR \fR
+.TP
+\fB\fIACE_OPEN_FAILED\fR \fR
+.TP
+\fB\fIACE_COPY_FAILED\fR \fR
+.TP
+\fB\fIACE_STAT_FAILED\fR \fR
+.TP
+\fB\fIACE_MEMMAP_FAILED\fR \fR
+.TP
+\fB\fIACE_WRITE_FAILED\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Filecache_Object::ACE_Filecache_Object (const \fBACE_TCHAR\fR * filename, ACE_SYNCH_RW_MUTEX & lock, LPSECURITY_ATTRIBUTES sa = 0, int mapit = 1)
+.PP
+Creates a file for reading.
+.PP
+.SS ACE_Filecache_Object::ACE_Filecache_Object (const \fBACE_TCHAR\fR * filename, int size, ACE_SYNCH_RW_MUTEX & lock, LPSECURITY_ATTRIBUTES sa = 0)
+.PP
+Creates a file for writing.
+.PP
+.SS ACE_Filecache_Object::~ACE_Filecache_Object (void)
+.PP
+Only if reference count is zero should this be called.
+.PP
+.SS ACE_Filecache_Object::ACE_Filecache_Object (void)\fC [protected]\fR
+.PP
+Prevent from being called.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Filecache_Object::acquire (void)
+.PP
+Increment the reference_count_.
+.PP
+.SS void * ACE_Filecache_Object::address (void) const
+.PP
+Base memory address for memory mapped file.
+.PP
+.SS int ACE_Filecache_Object::error (int error_value, const \fBACE_TCHAR\fR * s = ACE_LIB_TEXT ("ACE_Filecache_Object"))
+.PP
+.SS int ACE_Filecache_Object::error (void) const
+.PP
+.SS int ACE_Filecache_Object::error_i (int error_value, const \fBACE_TCHAR\fR * s = ACE_LIB_TEXT ("ACE_Filecache_Object"))\fC [private]\fR
+.PP
+Internal error logging method, no locking.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Filecache_Object::filename (void) const
+.PP
+filename_ accessor.
+.PP
+.SS ACE_HANDLE ACE_Filecache_Object::handle (void) const
+.PP
+handle_ accessor.
+.PP
+.SS void ACE_Filecache_Object::init (void)\fC [protected]\fR
+.PP
+Common initialization code,.
+.PP
+.SS int ACE_Filecache_Object::release (void)
+.PP
+Decrement the reference_count_.
+.PP
+.SS size_t ACE_Filecache_Object::size (void) const
+.PP
+size_ accessor.
+.PP
+.SS int ACE_Filecache_Object::update (void) const
+.PP
+True if file on disk is newer than cached file.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Filecache\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Filecache_Object::action_\fC [private]\fR
+.PP
+Status indicators.
+.PP
+.SS int ACE_Filecache_Object::error_\fC [private]\fR
+.PP
+.SS \fBACE_TCHAR\fR ACE_Filecache_Object::filename_[MAXPATHLEN+1]\fC [private]\fR
+.PP
+.SS ACE_HANDLE ACE_Filecache_Object::handle_\fC [private]\fR
+.PP
+.SS ACE_SYNCH_RW_MUTEX ACE_Filecache_Object::junklock_\fC [private]\fR
+.PP
+lock_ provides a bookkeeping mechanism for users of this object. junklock_ is the default initializer.
+.PP
+.SS ACE_SYNCH_RW_MUTEX & ACE_Filecache_Object::lock_\fC [private]\fR
+.PP
+.SS \fBACE_Mem_Map\fR ACE_Filecache_Object::mmap_\fC [private]\fR
+.PP
+mmap_ holds the memory mapped version of the temporary file. handle_ is the descriptor to the temporary file.
+.PP
+.SS LPSECURITY_ATTRIBUTES ACE_Filecache_Object::sa_\fC [private]\fR
+.PP
+Security attribute object.
+.PP
+.SS size_t ACE_Filecache_Object::size_\fC [private]\fR
+.PP
+.SS int ACE_Filecache_Object::stale_\fC [private]\fR
+.PP
+If set to 1, means the object is flagged for removal.
+.PP
+.SS \fBACE_stat\fR ACE_Filecache_Object::stat_\fC [private]\fR
+.PP
+Used to compare against the real file to test if an update is needed.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Filecache_Object::tempname_\fC [private]\fR
+.PP
+The temporary file name and the real file name. The real file is copied into the temporary file for safety reasons.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

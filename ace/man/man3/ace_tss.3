@@ -1,0 +1,138 @@
+.TH ACE_TSS 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_TSS \- Allows objects that are "physically" in thread specific storage (i.e., private to a thread) to be accessed as though they were "logically" global to a program. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch_T.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TSS\fR (TYPE *ts_obj = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_TSS\fR (void)"
+.br
+.RI "\fIDeregister with thread-key administration.\fR"
+.ti -1c
+.RI "TYPE* \fBts_object\fR (void) const"
+.br
+.ti -1c
+.RI "TYPE* \fBts_object\fR (TYPE *)"
+.br
+.RI "\fISet the thread-specific object for the key associated with this object.\fR"
+.ti -1c
+.RI "TYPE* \fBoperator->\fR () const"
+.br
+.RI "\fIUse a "smart pointer" to get the thread-specific object associated with the <key_>.\fR"
+.ti -1c
+.RI "\fBoperator TYPE *\fR (void) const"
+.br
+.RI "\fIReturn or create and return the calling threads TYPE object.\fR"
+.ti -1c
+.RI "virtual TYPE* \fBmake_TSS_TYPE\fR (void) const"
+.br
+.RI "\fIHook for construction parameters.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "TYPE* \fBts_get\fR (void) const"
+.br
+.RI "\fIActually implements the code that retrieves the object from thread-specific storage.\fR"
+.ti -1c
+.RI "int \fBts_init\fR (void) const"
+.br
+.RI "\fIFactors out common code for initializing TSS. This must NOT be called with the lock held...\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_TSS<TYPE> &)"
+.br
+.ti -1c
+.RI "\fBACE_TSS\fR (const ACE_TSS<TYPE> &)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "TYPE* \fBtype_\fR"
+.br
+.RI "\fIThis implementation only works for non-threading systems...\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE>  template class ACE_TSS
+Allows objects that are "physically" in thread specific storage (i.e., private to a thread) to be accessed as though they were "logically" global to a program.
+.PP
+.PP
+ This class is a wrapper around the OS thread library thread-specific functions. It uses the <C++ operator->> to shield applications from the details of accessing thread-specific storage.
+.PP
+NOTE: For maximal portability, <TYPE> cannot be a built-in type, but instead should be a user-defined class (some compilers will allow a built-in type, others won't). See template class \fBACE_TSS_Type_Adapter\fR, below, for adapting built-in types to work with ACE_TSS. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE> ACE_TSS<TYPE>::ACE_TSS<TYPE> (TYPE * ts_obj = 0)
+.PP
+If caller has passed us a non-NULL ts_obj *, then we'll just use this to initialize the thread-specific value (but only for the calling thread). Thus, subsequent calls to <operator->> in this thread will return this value. This is useful since it enables us to assign objects to thread-specific data that have arbitrarily complex constructors. 
+.SS template<classTYPE> ACE_TSS<TYPE>::~ACE_TSS<TYPE> (void)\fC [virtual]\fR
+.PP
+Deregister with thread-key administration.
+.PP
+.SS template<classTYPE> ACE_TSS<TYPE>::ACE_TSS<TYPE> (const ACE_TSS< TYPE >&)\fC [protected]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE> void ACE_TSS<TYPE>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classTYPE> TYPE * ACE_TSS<TYPE>::make_TSS_TYPE (void) const\fC [virtual]\fR
+.PP
+Hook for construction parameters.
+.PP
+.SS template<classTYPE> ACE_TSS<TYPE>::operator TYPE * (void) const
+.PP
+Return or create and return the calling threads TYPE object.
+.PP
+.SS template<classTYPE> TYPE * ACE_TSS<TYPE>::operator-> (void) const
+.PP
+Use a "smart pointer" to get the thread-specific object associated with the <key_>.
+.PP
+.SS template<classTYPE> void ACE_TSS<TYPE>::operator= (const ACE_TSS< TYPE >&)\fC [protected]\fR
+.PP
+.SS template<classTYPE> TYPE * ACE_TSS<TYPE>::ts_get (void) const\fC [protected]\fR
+.PP
+Actually implements the code that retrieves the object from thread-specific storage.
+.PP
+.SS template<classTYPE> int ACE_TSS<TYPE>::ts_init (void) const\fC [protected]\fR
+.PP
+Factors out common code for initializing TSS. This must NOT be called with the lock held...
+.PP
+.SS template<classTYPE> TYPE * ACE_TSS<TYPE>::ts_object (TYPE *)
+.PP
+Set the thread-specific object for the key associated with this object.
+.PP
+.SS template<classTYPE> TYPE * ACE_TSS<TYPE>::ts_object (void) const
+.PP
+Get the thread-specific object for the key associated with this object. Returns 0 if the data has never been initialized, otherwise returns a pointer to the data. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTYPE> TYPE * ACE_TSS<TYPE>::type_\fC [protected]\fR
+.PP
+This implementation only works for non-threading systems...
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

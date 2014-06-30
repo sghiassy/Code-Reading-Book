@@ -1,0 +1,75 @@
+// using the group(switch) map, the right alt key temporarily chooses 
+// the second keyboard group (until it is released).
+partial modifier_keys 
+xkb_symbols "switch" {
+    key <RALT>	{ 	
+	symbols[Group1]= [	Mode_switch, Multi_key 	],
+	virtualMods= AltGr
+    };
+};
+
+// using the group(toggle) map, pressing the right alt key switches to
+// the next sequential group (until the next explicit group change).
+partial modifier_keys 
+xkb_symbols "toggle" {
+    virtual_modifiers AltGr;
+    key <RALT>	{	
+	symbols[Group1]= [	ISO_Next_Group	],
+	virtualMods= AltGr
+    };
+};
+
+// using the group(shift_toggle) map, pressing both shift keys together
+// locks the next sequential keyboard group.
+partial modifier_keys 
+xkb_symbols "shift_toggle" {
+    key <LFSH>	{	[	Shift_L,	ISO_Prev_Group ]	};
+    key <RTSH>	{	[	Shift_R,	ISO_Next_Group ]	};
+};
+
+// using the group(ctrl_shift_toggle) map, pressing:
+//     Control_L+Shift_L locks the previous group
+//     Control_R+Shift_R locks the next group
+// If you have two groups and group wrap is enabled, the effect is
+// indistinguishable.
+partial modifier_keys 
+xkb_symbols "ctrl_shift_toggle" {
+    key <LFSH> {
+	type="PC_BREAK",
+	symbols[Group1]= [ Shift_L,	ISO_Prev_Group ]
+    };
+    key <RTSH> {
+	type="PC_BREAK",
+	symbols[Group1]= [ Shift_R,	ISO_Next_Group ]
+    };
+    key <LCTL>	{	[	Control_L,	ISO_Prev_Group ]	};
+    key <RCTL>	{	[	Control_R,	ISO_Next_Group ]	};
+};
+
+// using the group(ctrl_alt_toggle) map, pressing:
+//     Control_L+Alt_L locks the previous group
+//     Control_R+Alt_R locks the next group
+// If you have two groups and group wrap is enabled, the effect is
+// indistinguishable.
+partial modifier_keys 
+xkb_symbols "ctrl_alt_toggle" {
+    virtual_modifiers Alt;
+    key <LALT> {
+	type="PC_BREAK",
+	symbols[Group1]= [ Alt_L,	ISO_Prev_Group ],
+	virtualMods= Alt
+    };
+    key <RALT> {
+	type="PC_BREAK",
+	symbols[Group1]= [ Alt_R,	ISO_Next_Group ],
+	virtualMods= Alt
+    };
+    key <LCTL> {
+	type="PC_SYSRQ",
+	symbols[Group1]= [ Control_L,	ISO_Prev_Group ]
+    };
+    key <RCTL> {
+	type="PC_SYSRQ",
+	symbols[Group1]= [ Control_R,	ISO_Next_Group ]
+    };
+};

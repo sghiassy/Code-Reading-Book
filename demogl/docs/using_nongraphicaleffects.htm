@@ -1,0 +1,167 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Using nongraphical effects for tricks and application management</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Using nongraphical effects for tricks and application management</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Using nongraphical effects for tricks and application management.</h4>
+Every effectclass that is placed on a visible layer is executed. Which in fact means: its RenderFrame or RenderFrameEx
+method is called every cycle. Because all layers are executed from the lowest layer number to the highest layer number, to
+get an effect object executed before every other effect objects is easy, just place it on a layer with a number lower than
+all the layers with the other effectobjects. This way it's easy to use this feature to execute certain logic that has to
+be executed every time a new cycle starts, for example clearing a buffer.
+<p>
+Clearing the framebuffer and backbuffer in a nongraphical effect is an example of how to perform a task, that has to be
+done every cycle, but shouldn't be tied to an effect that isn't running all the time. DemoGL will not clear any buffers
+because this is not needed in every situation, thus clearing some buffer in DemoGL would limit the usage of the library.
+It however does implicitly force a task on the developer to make sure the framebuffer and other buffers in OpenGL are
+cleared when needed. Below is the CControl class that will clear the frame and / or depthbuffer every time its RenderFrame
+method is called. Because it has build in logic to react on received parameters, it's easy to control it at runtime by
+setting its runtime parameters using a TLE from the script or a TLE using the function 
+<a HREF="ref_functions_DEMOGL_ExecuteCommand.htm">DEMOGL_ExecuteCommand</a>, which will execute a received TLE (without the
+timespot parameter) immediately. 
+<pre>
+// CControl.h, control effect class for buffer clearing.
+//////////////////////////////////////////////////////
+#ifndef _CCONTROL_H
+#define _CCONTROL_H
+
+#include	&quot;DemoGL_Effect.h&quot;
+
+class CControl:public CEffect
+{
+	// Public functions
+	public:
+			CControl(void);
+		virtual	~CControl(void);
+		void	RenderFrame(long lElapsedTime);
+		int	Init(int iWidth, int iHeight);
+		void	ReceiveInt(char *pszName, int iParam, long lLayer);
+
+	private:
+		GLuint	m_iBufferBits;
+};
+#endif 
+</pre>
+The class definition is very small, since we only need an Init() method, a ReceiveInt() method and
+a RenderFrame method. The class implementation itself is below:
+<pre>
+// CControl.cpp. Implementation of CControl class, see CControl.h
+////////////////////////////////////////////////////////////////////////
+#include &lt;windows.h&gt;
+#include &lt;GL/gl.h&gt;
+
+#include &quot;DemoGL_DLL.h&quot;
+#include &quot;CControl.h&quot;
+
+// Purpose: constructor
+CControl::CControl()
+{
+}
+
+// Purpose: destructor
+CControl::~CControl()
+{
+}
+
+// Purpose: Init method implementation. Called during
+// application startup.
+int
+CControl::Init(int iWidth, int iHeight)
+{
+	// default colorbuffer clear is ON and DEPTHbuffer clear
+	// is on.
+	m_iBufferBits = GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT;
+	return SYS_OK;
+}
+
+
+// Purpose: ReceiveInt method implementation. is called
+// every time a SENDINT TLE is executed. It ignores lLayer so
+// all values will have the same effect.
+void
+CControl::ReceiveInt(char *pszName, int iParam, long lLayer)
+{
+	if(!strcmp(pszName,&quot;COLORBUFFER&quot;))
+	{
+		// set colorbuffer bit to new value, stored in iParam.
+		if(iParam)
+		{
+			// set to on.
+			m_iBufferBits |= GL_COLOR_BUFFER_BIT;
+		}
+		else
+		{
+			// set to off
+			m_iBufferBits ^= GL_COLOR_BUFFER_BIT;
+		}
+		return;
+	}
+	if(!strcmp(pszName,&quot;DEPTHBUFFER&quot;))
+	{
+		// set depthbuffer bit to new value, stored in iParam
+		if(iParam)
+		{
+			// set to on.
+			m_iBufferBits |= GL_DEPTH_BUFFER_BIT;
+		}
+		else
+		{
+			// set to off
+			m_iBufferBits ^= GL_DEPTH_BUFFER_BIT;
+		}
+		return;
+	}
+}
+
+
+// Purpose: implementation of the RenderFrame method. Gets called
+// every cycle when CControl effect is placed on a visible layer.
+void
+CControl::RenderFrame(long lElapsedTime)
+{
+	glClearColor(0.0f,0.0f,0.0f,1.0f);
+	glClear(m_iBufferBits);
+}
+</pre>
+This class will react on TLE's that execute the SENDINT command with this object and use parameter names
+'COLORBUFFER' and 'DEPTHBUFFER'. To swich off depth buffer clearing at runtime, say after 10 seconds, 
+this TLE will do that: (assuming the object (instance of) CControl is registered with DemoGL using the name CONTROL
+and the CONTROL object is started on a layer, say layer 0)
+<pre>
+10000;CONTROL;SENDINT;DEPTHBUFFER;0;0;
+</pre>
+It will send a 0 to the CONTROL object and the name of that value is 'DEPTHBUFFER'. The layernumber is 0, but CControl
+will ignore that value anyway, all layernumbers will do. The TLE could also have been executed from code, from any other
+effect object.
+<pre>
+DEMOGL_ExecuteCommand(&quot;CONTROL;SENDINT;DEPTHBUFFER;0;0;&quot;);
+</pre>
+The power of this solution is in the re-usability of the CControl class. No effect class has to contain buffer clearing calls,
+so the developer doens't have to worry if the buffer gets cleared on time. Just place the CControl effectobject on a layer below
+all other effect objects and it will get cleared, no matter which effects are running on top of it.
+<p>
+Other possible 'worker' effectobjects are for example effectobjects that calculate textures and upload them to DemoGL using 
+<a HREF="ref_functions_DEMOGL_TextureCreateFromBuffer.htm">DEMOGL_TextureCreateFromBuffer</a> and predefined pszIdentName values.
+Other effectobjects just do a DEMOGL_TextureLoad() with that pszIdentName and they will receive an ID, since the texture is
+already there. The texture calculator effect can then be driven by parameters from the script. The possibilities are endless.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

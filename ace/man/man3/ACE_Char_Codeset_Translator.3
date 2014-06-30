@@ -1,0 +1,121 @@
+.TH ACE_Char_Codeset_Translator 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Char_Codeset_Translator \- Codeset translation routines common to both Output and Input CDR streams. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <CDR_Stream.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBread_char\fR (\fBACE_InputCDR\fR&, \fBACE_CDR::Char\fR&) = 0"
+.br
+.RI "\fIRead a single character from the stream, converting from the stream codeset to the native codeset.\fR"
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBread_string\fR (\fBACE_InputCDR\fR&, \fBACE_CDR::Char\fR *&) = 0"
+.br
+.RI "\fIRead a string from the stream, including the length, converting the characters from the stream codeset to the native codeset.\fR"
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBread_char_array\fR (\fBACE_InputCDR\fR&, const \fBACE_CDR::Char\fR*, \fBACE_CDR::ULong\fR) = 0"
+.br
+.RI "\fIRead an array of characters from the stream, converting the characters from the stream codeset to the native codeset.\fR"
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBwrite_char\fR (\fBACE_OutputCDR\fR&, \fBACE_CDR::Char\fR) = 0"
+.br
+.RI "\fIWrite a single character to the stream, converting from the native codeset to the stream codeset.\fR"
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBwrite_string\fR (\fBACE_OutputCDR\fR&, \fBACE_CDR::ULong\fR, const \fBACE_CDR::Char\fR*) = 0"
+.br
+.RI "\fIWrite a string to the stream, including the length, converting from the native codeset to the stream codeset.\fR"
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBwrite_char_array\fR (\fBACE_OutputCDR\fR&, const \fBACE_CDR::Char\fR*, \fBACE_CDR::ULong\fR) = 0"
+.br
+.RI "\fIWrite an array of characters to the stream, converting from the native codeset to the stream codeset.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_1\fR (\fBACE_InputCDR\fR& input, \fBACE_CDR::Octet\fR *x)"
+.br
+.RI "\fIChildren have access to low-level routines because they cannot use read_char or something similar (it would recurse).\fR"
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_1\fR (\fBACE_OutputCDR\fR& output, const \fBACE_CDR::Octet\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_array\fR (\fBACE_InputCDR\fR& input, void* x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)"
+.br
+.RI "\fIEfficiently read <length> elements of size <size> each from  into <x>; the data must be aligned to .\fR"
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_array\fR (\fBACE_OutputCDR\fR& output, const void *x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "int \fBadjust\fR (\fBACE_OutputCDR\fR& out, size_t size, size_t align, char *&buf)"
+.br
+.ti -1c
+.RI "void \fBgood_bit\fR (\fBACE_OutputCDR\fR& out, int bit)"
+.br
+.RI "\fIUsed by derived classes to set errors in the CDR stream.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Codeset translation routines common to both Output and Input CDR streams.
+.PP
+.PP
+ This class is a base class for defining codeset translation routines to handle the character set translations required by both CDR Input streams and CDR Output streams. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Char_Codeset_Translator::adjust (\fBACE_OutputCDR\fR & out, size_t size, size_t align, char *& buf)\fC [protected]\fR
+.PP
+Exposes the stream implementation of , this is useful in many cases to minimize memory allocations during marshaling. On success <buf> will contain a contiguous area in the CDR stream that can hold <size> bytes aligned to . Results 
+.SS void ACE_Char_Codeset_Translator::good_bit (\fBACE_OutputCDR\fR & out, int bit)\fC [protected]\fR
+.PP
+Used by derived classes to set errors in the CDR stream.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::read_1 (\fBACE_InputCDR\fR & input, \fBACE_CDR::Octet\fR * x)\fC [protected]\fR
+.PP
+Children have access to low-level routines because they cannot use read_char or something similar (it would recurse).
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::read_array (\fBACE_InputCDR\fR & input, void * x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)\fC [protected]\fR
+.PP
+Efficiently read <length> elements of size <size> each from  into <x>; the data must be aligned to .
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::read_char (\fBACE_InputCDR\fR &, \fBACE_CDR::Char\fR &)\fC [pure virtual]\fR
+.PP
+Read a single character from the stream, converting from the stream codeset to the native codeset.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::read_char_array (\fBACE_InputCDR\fR &, const \fBACE_CDR::Char\fR *, \fBACE_CDR::ULong\fR)\fC [pure virtual]\fR
+.PP
+Read an array of characters from the stream, converting the characters from the stream codeset to the native codeset.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::read_string (\fBACE_InputCDR\fR &, \fBACE_CDR::Char\fR *&)\fC [pure virtual]\fR
+.PP
+Read a string from the stream, including the length, converting the characters from the stream codeset to the native codeset.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::write_1 (\fBACE_OutputCDR\fR & output, const \fBACE_CDR::Octet\fR * x)\fC [protected]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::write_array (\fBACE_OutputCDR\fR & output, const void * x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)\fC [protected]\fR
+.PP
+Efficiently write <length> elements of size <size> from <x> into <output>. Before inserting the elements enough padding is added to ensure that the elements will be aligned to  in the stream. 
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::write_char (\fBACE_OutputCDR\fR &, \fBACE_CDR::Char\fR)\fC [pure virtual]\fR
+.PP
+Write a single character to the stream, converting from the native codeset to the stream codeset.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::write_char_array (\fBACE_OutputCDR\fR &, const \fBACE_CDR::Char\fR *, \fBACE_CDR::ULong\fR)\fC [pure virtual]\fR
+.PP
+Write an array of characters to the stream, converting from the native codeset to the stream codeset.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_Char_Codeset_Translator::write_string (\fBACE_OutputCDR\fR &, \fBACE_CDR::ULong\fR, const \fBACE_CDR::Char\fR *)\fC [pure virtual]\fR
+.PP
+Write a string to the stream, including the length, converting from the native codeset to the stream codeset.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

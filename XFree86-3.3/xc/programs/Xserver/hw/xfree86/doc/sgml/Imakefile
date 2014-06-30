@@ -1,0 +1,111 @@
+XCOMM $XConsortium: Imakefile /main/16 1996/10/28 05:13:04 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/Imakefile,v 3.25.2.3 1997/05/24 11:35:36 dawes Exp $
+
+#include <Server.tmpl>
+#include <lnxdoc.rules>
+
+#if (defined(BSD386Architecture) || BuildAllDocs) && 0
+LinuxDocReadmeTarget(Bsdi)
+#endif
+#if defined(FreeBSDArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(FreeBSD)
+#endif
+#if defined(NetBSDArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(NetBSD)
+#endif
+#if defined(OpenBSDArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(OpenBSD)
+#endif
+#if (defined(i386MachArchitecture) || BuildAllDocs) && 0
+LinuxDocReadmeTarget(Mach)
+#endif
+#if defined(LinuxArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(Linux)
+#endif
+#if defined(LynxOSArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(LynxOS)
+#endif
+#if (defined(MinixArchitecture) || BuildAllDocs) && 0
+LinuxDocReadmeTarget(Minix)
+#endif
+#if (defined(AmoebaArchitecture) || BuildAllDocs) && 0
+LinuxDocReadmeTarget(Amoeba)
+#endif
+#if defined(SVR3Architecture) || BuildAllDocs
+# if defined(i386ScoArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(SCO)
+# endif
+# if defined(i386IscArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(isc)
+# endif
+# if defined(OS2Architecture) || BuildAllDocs
+LinuxDocReadmeTarget(OS2)
+LinuxDocTargetLong(OS2note.sgml,OS2.Notes,OS2Notes)
+# endif
+# if 0
+LinuxDocReadmeTarget(SVR3)
+# endif
+#endif
+#if defined(SVR4Architecture) || BuildAllDocs
+# if defined(SunArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(SOLX86)
+# endif
+# if !defined(SunArchitecture) || BuildAllDocs
+LinuxDocReadmeTarget(SVR4)
+# endif
+#endif
+
+/* Hardware docs */
+LinuxDocReadmeTarget(DECtga)
+LinuxDocReadmeTarget(Mach32)
+LinuxDocReadmeTarget(Mach64)
+LinuxDocReadmeTarget(MGA)
+LinuxDocReadmeTarget(NV1)
+LinuxDocReadmeTarget(Oak)
+LinuxDocReadmeTarget(P9000)
+LinuxDocReadmeTarget(Video7)
+LinuxDocReadmeTarget(S3)
+LinuxDocReadmeTarget(S3V)
+LinuxDocReadmeTarget(SiS)
+LinuxDocReadmeTarget(W32)
+LinuxDocReadmeTarget(WstDig)
+LinuxDocReadmeTarget(ark)
+LinuxDocReadmeTarget(agx)
+LinuxDocReadmeTarget(ati)
+LinuxDocReadmeTarget(chips)
+LinuxDocReadmeTarget(cirrus)
+LinuxDocReadmeTarget(trident)
+LinuxDocReadmeTarget(tseng)
+#if BuildAllDocs
+LinuxDocReadmeTarget(fbdev)
+#endif
+
+/* Main docs */
+LinuxDocTargetLong(CPYRIGHT.sgml,COPYRIGHT,COPYRIGHT)
+LinuxDocTargetLong(RELNOTE.sgml,RELNOTES,RELNOTES)
+LinuxDocReadmeTarget(Config)
+LinuxDocTarget(BUILD)
+LinuxDocTarget(README)
+LinuxDocTargetLong(QStart.sgml,QuickStart.doc,QuickStart)
+LinuxDocTarget(DocIndex)
+
+/* Other docs */
+LinuxDocReadmeTarget(LinkKit)
+LinuxDocReadmeTarget(clkprog)
+LinuxDocTarget(xinput)
+#if 0
+LinuxDocTargetLong(VidModes.sgml,VideoModes.doc,VideoModes)
+#endif
+LinuxDocTargetLong(VGADriv.sgml,VGADriver.Doc,VGADriver)
+
+InstallLinkKitNamedNonExec(README.LinkKit,README,$(LINKKITDIR))
+InstallLinkKitNonExecFile(VGADriver.Doc,$(LINKKITDIR)/VGADriverDoc)
+
+LinkFile(OpenBSD.sgml, NetBSD.sgml)
+#if BuildAllDocs
+LinkSourceFile(fbdev.sgml,$(XF68SRC)/doc/sgml)
+#endif

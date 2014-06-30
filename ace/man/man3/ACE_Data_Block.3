@@ -1,0 +1,338 @@
+.TH ACE_Data_Block 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Data_Block \- Stores the data payload that is accessed via one or more s. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Message_Block.h>\fR
+.PP
+Inherited by \fBACE_Locked_Data_Block\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Data_Block\fR (void)"
+.br
+.RI "\fIDefault "do-nothing" constructor.\fR"
+.ti -1c
+.RI "\fBACE_Data_Block\fR (size_t size, \fBACE_Message_Block::ACE_Message_Type\fR msg_type, const char *msg_data, \fBACE_Allocator\fR *allocator_strategy, \fBACE_Lock\fR *locking_strategy, \fBACE_Message_Block::Message_Flags\fR flags, \fBACE_Allocator\fR *data_block_allocator)"
+.br
+.RI "\fIInitialize.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Data_Block\fR (void)"
+.br
+.RI "\fIDelete all the resources held in the message.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block::ACE_Message_Type\fR \fBmsg_type\fR (void) const"
+.br
+.RI "\fIGet type of the message.\fR"
+.ti -1c
+.RI "void \fBmsg_type\fR (\fBACE_Message_Block::ACE_Message_Type\fR type)"
+.br
+.RI "\fISet type of the message.\fR"
+.ti -1c
+.RI "char* \fBbase\fR (void) const"
+.br
+.RI "\fIGet message data pointer.\fR"
+.ti -1c
+.RI "void \fBbase\fR (char *data, size_t size, \fBACE_Message_Block::Message_Flags\fR mflags = ACE_Message_Block::DONT_DELETE)"
+.br
+.RI "\fISet message data pointer (doesn't reallocate).\fR"
+.ti -1c
+.RI "char* \fBend\fR (void) const"
+.br
+.RI "\fIReturn a pointer to 1 past the end of the allocated data in a message.\fR"
+.ti -1c
+.RI "char* \fBmark\fR (void) const"
+.br
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIGet the total amount of allotted space in the message. The amount of allotted space may be less than allocated space.\fR"
+.ti -1c
+.RI "int \fBsize\fR (size_t length)"
+.br
+.RI "\fISet the total amount of space in the message. Returns 0 if successful, else -1.\fR"
+.ti -1c
+.RI "size_t \fBcapacity\fR (void) const"
+.br
+.RI "\fIGet the total amount of allocated space.\fR"
+.ti -1c
+.RI "virtual ACE_Data_Block* \fBclone\fR (\fBACE_Message_Block::Message_Flags\fR mask = 0) const"
+.br
+.ti -1c
+.RI "virtual ACE_Data_Block* \fBclone_nocopy\fR (\fBACE_Message_Block::Message_Flags\fR mask = 0) const"
+.br
+.ti -1c
+.RI "ACE_Data_Block* \fBduplicate\fR (void)"
+.br
+.RI "\fIReturn a "shallow" copy that increments our reference count by 1.\fR"
+.ti -1c
+.RI "ACE_Data_Block* \fBrelease\fR (\fBACE_Lock\fR *lock = 0)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Block::Message_Flags\fR \fBset_flags\fR (\fBACE_Message_Block::Message_Flags\fR more_flags)"
+.br
+.RI "\fIBitwise-or the <more_flags> into the existing message flags and return the new value.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block::Message_Flags\fR \fBclr_flags\fR (\fBACE_Message_Block::Message_Flags\fR less_flags)"
+.br
+.RI "\fIClear the message flag bits specified in <less_flags> and return the new value.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block::Message_Flags\fR \fBflags\fR (void) const"
+.br
+.RI "\fIGet the current message flags.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_strategy\fR (void) const"
+.br
+.RI "\fIObtain the allocator strategy.\fR"
+.ti -1c
+.RI "\fBACE_Lock\fR* \fBlocking_strategy\fR (void)"
+.br
+.RI "\fIGet the locking strategy. Set a new locking strategy and return the hold one.\fR"
+.ti -1c
+.RI "\fBACE_Lock\fR* \fBlocking_strategy\fR (\fBACE_Lock\fR *)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "int \fBreference_count\fR (void) const"
+.br
+.RI "\fIGet the current reference count.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBdata_block_allocator\fR (void) const"
+.br
+.RI "\fIGet the allocator used to create this object.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Data_Block* \fBrelease_i\fR (void)"
+.br
+.RI "\fIInternal release implementation.\fR"
+.ti -1c
+.RI "ACE_Data_Block* \fBrelease_no_delete\fR (\fBACE_Lock\fR *lock)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block::ACE_Message_Type\fR \fBtype_\fR"
+.br
+.RI "\fIType of message.\fR"
+.ti -1c
+.RI "size_t \fBcur_size_\fR"
+.br
+.RI "\fICurrent size of message block.\fR"
+.ti -1c
+.RI "size_t \fBmax_size_\fR"
+.br
+.RI "\fITotal size of buffer.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block::Message_Flags\fR \fBflags_\fR"
+.br
+.RI "\fIMisc flags (e.g., DONT_DELETE and USER_FLAGS).\fR"
+.ti -1c
+.RI "char* \fBbase_\fR"
+.br
+.RI "\fIPointer To beginning of message payload.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_strategy_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Lock\fR* \fBlocking_strategy_\fR"
+.br
+.ti -1c
+.RI "int \fBreference_count_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBdata_block_allocator_\fR"
+.br
+.RI "\fIThe allocator use to destroy ourselves.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Data_Block& \fBoperator=\fR (const ACE_Data_Block &)"
+.br
+.ti -1c
+.RI "\fBACE_Data_Block\fR (const ACE_Data_Block &)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Message_Block\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Stores the data payload that is accessed via one or more s.
+.PP
+.PP
+ This data structure is reference counted to maximize sharing. It also contains the <locking_strategy_> (which protects the reference count from race conditions in concurrent programs) and the  (which determines what memory pool is used to allocate the memory). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Data_Block::ACE_Data_Block (void)
+.PP
+Default "do-nothing" constructor.
+.PP
+.SS ACE_Data_Block::ACE_Data_Block (size_t size, \fBACE_Message_Block::ACE_Message_Type\fR msg_type, const char * msg_data, \fBACE_Allocator\fR * allocator_strategy, \fBACE_Lock\fR * locking_strategy, \fBACE_Message_Block::Message_Flags\fR flags, \fBACE_Allocator\fR * data_block_allocator)
+.PP
+Initialize.
+.PP
+.SS ACE_Data_Block::~ACE_Data_Block (void)\fC [virtual]\fR
+.PP
+Delete all the resources held in the message.
+.PP
+.SS ACE_Data_Block::ACE_Data_Block (const ACE_Data_Block &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS \fBACE_Allocator\fR * ACE_Data_Block::allocator_strategy (void) const
+.PP
+Obtain the allocator strategy.
+.PP
+.SS void ACE_Data_Block::base (char * data, size_t size, \fBACE_Message_Block::Message_Flags\fR mflags = ACE_Message_Block::DONT_DELETE)
+.PP
+Set message data pointer (doesn't reallocate).
+.PP
+.SS char * ACE_Data_Block::base (void) const
+.PP
+Get message data pointer.
+.PP
+.SS size_t ACE_Data_Block::capacity (void) const
+.PP
+Get the total amount of allocated space.
+.PP
+.SS ACE_Data_Block * ACE_Data_Block::clone (\fBACE_Message_Block::Message_Flags\fR mask = 0) const\fC [virtual]\fR
+.PP
+Return an exact "deep copy" of the message, i.e., create fresh new copies of all the Data_Blocks and continuations. Notice that Data_Blocks can act as "Prototypes", i.e. derived classes can override this method and create instances of themselves. 
+.SS ACE_Data_Block * ACE_Data_Block::clone_nocopy (\fBACE_Message_Block::Message_Flags\fR mask = 0) const\fC [virtual]\fR
+.PP
+As clone above, but it does not copy the contents of the buffer, i.e., create a new Data_Block of the same dynamic type, with the same allocator, locking_strategy, and with the same amount of storage available but the buffer is unitialized. 
+.PP
+Reimplemented in \fBACE_Locked_Data_Block\fR.
+.SS \fBACE_Message_Block::Message_Flags\fR ACE_Data_Block::clr_flags (\fBACE_Message_Block::Message_Flags\fR less_flags)
+.PP
+Clear the message flag bits specified in <less_flags> and return the new value.
+.PP
+.SS \fBACE_Allocator\fR * ACE_Data_Block::data_block_allocator (void) const
+.PP
+Get the allocator used to create this object.
+.PP
+.SS void ACE_Data_Block::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS ACE_Data_Block * ACE_Data_Block::duplicate (void)
+.PP
+Return a "shallow" copy that increments our reference count by 1.
+.PP
+.SS char * ACE_Data_Block::end (void) const
+.PP
+Return a pointer to 1 past the end of the allocated data in a message.
+.PP
+.SS \fBACE_Message_Block::Message_Flags\fR ACE_Data_Block::flags (void) const
+.PP
+Get the current message flags.
+.PP
+.SS \fBACE_Lock\fR* ACE_Data_Block::locking_strategy (\fBACE_Lock\fR *)
+.PP
+.SS \fBACE_Lock\fR * ACE_Data_Block::locking_strategy (void)
+.PP
+Get the locking strategy. Set a new locking strategy and return the hold one.
+.PP
+.SS char * ACE_Data_Block::mark (void) const
+.PP
+Return a pointer to 1 past the end of the allotted data in a message. The allotted data may be less than allocated data if <\fBsize\fR()> is passed an argument less than <\fBcapacity\fR()>. 
+.SS void ACE_Data_Block::msg_type (\fBACE_Message_Block::ACE_Message_Type\fR type)
+.PP
+Set type of the message.
+.PP
+.SS \fBACE_Message_Block::ACE_Message_Type\fR ACE_Data_Block::msg_type (void) const
+.PP
+Get type of the message.
+.PP
+.SS ACE_Data_Block& ACE_Data_Block::operator= (const ACE_Data_Block &)\fC [private]\fR
+.PP
+.SS int ACE_Data_Block::reference_count (void) const
+.PP
+Get the current reference count.
+.PP
+.SS ACE_Data_Block * ACE_Data_Block::release (\fBACE_Lock\fR * lock = 0)
+.PP
+Decrease the shared reference count by 1. If the reference count is > 0 then return this; else if reference count == 0 then delete <this> and <mb> and return 0. Behavior is undefined if reference count < 0. 
+.SS ACE_Data_Block * ACE_Data_Block::release_i (void)\fC [protected]\fR
+.PP
+Internal release implementation.
+.PP
+.SS ACE_Data_Block* ACE_Data_Block::release_no_delete (\fBACE_Lock\fR * lock)\fC [protected]\fR
+.PP
+.SS \fBACE_Message_Block::Message_Flags\fR ACE_Data_Block::set_flags (\fBACE_Message_Block::Message_Flags\fR more_flags)
+.PP
+Bitwise-or the <more_flags> into the existing message flags and return the new value.
+.PP
+.SS int ACE_Data_Block::size (size_t length)
+.PP
+Set the total amount of space in the message. Returns 0 if successful, else -1.
+.PP
+.SS size_t ACE_Data_Block::size (void) const
+.PP
+Get the total amount of allotted space in the message. The amount of allotted space may be less than allocated space.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Message_Block\fC [friend]\fR
+.PP
+Decrease the reference count, but don't delete the object. Returns 0 if the object should be removed. If <lock> is equal to the locking strategy then we assume that the lock is beign held by the current thread; this is used to release all the data blocks in a chain while holding a single lock. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Allocator\fR * ACE_Data_Block::allocator_strategy_\fC [protected]\fR
+.PP
+Pointer to the allocator defined for this . Note that this pointer is shared by all owners of this . 
+.SS char * ACE_Data_Block::base_\fC [protected]\fR
+.PP
+Pointer To beginning of message payload.
+.PP
+.SS size_t ACE_Data_Block::cur_size_\fC [protected]\fR
+.PP
+Current size of message block.
+.PP
+.SS \fBACE_Allocator\fR * ACE_Data_Block::data_block_allocator_\fC [protected]\fR
+.PP
+The allocator use to destroy ourselves.
+.PP
+.SS \fBACE_Message_Block::Message_Flags\fR ACE_Data_Block::flags_\fC [protected]\fR
+.PP
+Misc flags (e.g., DONT_DELETE and USER_FLAGS).
+.PP
+.SS \fBACE_Lock\fR * ACE_Data_Block::locking_strategy_\fC [protected]\fR
+.PP
+Pointer to the locking strategy defined for this . This is used to protect regions of code that access shared  state. Note that this lock is shared by all owners of the 's data. 
+.SS size_t ACE_Data_Block::max_size_\fC [protected]\fR
+.PP
+Total size of buffer.
+.PP
+.SS int ACE_Data_Block::reference_count_\fC [protected]\fR
+.PP
+Reference count for this , which is used to avoid deep copies (i.e., <clone>). Note that this pointer value is shared by all owners of the <Data_Block>'s data, i.e., all the s. 
+.SS \fBACE_Message_Block::ACE_Message_Type\fR ACE_Data_Block::type_\fC [protected]\fR
+.PP
+Type of message.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

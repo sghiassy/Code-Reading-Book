@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>cTwIG - Cocoon Two Idiots Guide - Installing</title>
+		<authors>
+			<person name="Jeremy Aston" email="jez@pigbite.com"/>
+		</authors>
+	</header>
+
+	<body>
+		<s1 title="Installing Cocoon 2">
+			<s2 title="Introduction">
+				<p>Installing C2 is straight-forward.  I found that following the instructions in the documentation worked just fine.  The only issue here is that by following the instructions you end up with a WAR file and this is no good for development because you cannot add your own code or make changes to existing files without repackaging it all up.</p>
+				<p>To get around these problems you need to install it as an unpacked application and get your servlet engine to recognise it as such.</p>
+				<p>Please note the assumptions about platform, user knowledge and existing applications in the <link href="ctwig-why.html">Why?</link> section and also note that wherever {TOMCAT_HOME}, {COCOON_HOME} or {APACHE_HOME} appears it should be replaced with the path it is installed into on your machine (e.g. d:\java\cocoon for {COCOON_HOME}).</p>
+				<p><strong>I'm really sorry, but at the moment these examples relate to the latest distribution, Tomcat 3.2.3 and Apache 1.3.19 on Windows 2000.</strong> It is probably all the same for any operating system (remember, that is the promise of Java and XML). I would like to do TC4/Unix notes but do not have the time at the momement.  If you can help then please <link href="ctwig-contributing.html">contribute</link>.</p>
+			</s2>
+			<s2 title="Download Cocoon 2">
+				<p>The latest distribution for any operating system can be found in the <fork href="http://xml.apache.org/cocoon/dist/">Cocoon distribution folder</fork>.  This file contains the Cocoon code, samples, documentation and the Java libraries that enable the Cocoon to work such as Xerces and Xalan.  When you have downloaded it then extract it to somewhere.  This path becomes your {COCOON_HOME}.</p>
+			</s2>
+			<s2 title="Basic Configuration">
+				<p>Follow the instructions on building Cocoon as per the installation guide that comes with Cocoon.  It can also be found <fork href="http://xml.apache.org/cocoon/installing/index.html">here</fork> as well.  Obviously since you have got the ZIP distribution you do not have to do the CVS bit thus you can start at the Building Apache Cocoon 2 section.  Do each of the following steps:</p>
+				<ul>
+					<li>Set JAVA_HOME</li>
+					<li>Create the WAR using
+						<code>.\build.bat -Dinclude.webapp.libs=yes webapp</code>
+						What this does is to create the web application and packaged cocoon.war under the {COCOON_HOME}/build/cocoon folder.
+					</li>
+					<li>Optionally make the SQL examples work out of the box.  If you perform this step using
+						<code>.\build.bat -Dinclude.webapp.libs=yes -Dinstall.war={{TOMCAT_HOME}\webapps} install</code>
+						then it will basically copy the cocoon.war file across to the Tomcat webapps folder ready for immediate use.
+					</li>
+					<li>Add any additional components (I like FOP for example)</li>
+				</ul>
+				<p>Next, copy the xerces_xxx.jar to {TOMCAT_HOME}\lib, delete the Tomcat jaxp jar and rename the parser.jar as instructed.</p>
+				<p>An important point is that if you are running Tomcat as an NT service then you will need to change {TOMCAT_HOME}\conf\wrapper.properties to reflect the classpath changes.  Make sure xerces is first in line, remove (or comment out) the jaxp and rename the parser.jar reference.  This is all done with the wrapper.class_path bit.</p>
+				<p>If you did run the second build.bat command above or if you copy cocoon.war into {TOMCAT_HOME}\webapps then you can check that C2 is working.  Restart Tomcat and http://localhost:8080/cocoon should work.  Note at this point Apache is doing nothing - Tomcat is doing the http serving.  If there are any problems then check that the Tomcat classpath in wrapper.properties is correct and you have done the work in {TOMCAT_HOME}\lib as descibed above.</p>
+				<p>One other situation that came to light in C2 RC1 (and resolved in RC1a) was that the build file was including a reference to the LDAP transformer classes and since the JAR is not included then you would see an error when starting C2 along the lines of:</p>
+				<p>org.apache.cocoon.ProcessingException: Exception in Handler: org.apache.avalon.framework.component.ComponentException: Could not set up Component for hint: org\apache\cocoon\www\sitemap_xmap</p>
+				<p>This was resolved in C2 RC1a by making changing the offending include line in build.xml.  Have a look and see.  You will need to change this line if you want to use the LDAP transformer as per the instructions in the build.xml file.</p>
+				<p>One other good point about testing, especially if you are upgrading, is to delete the Cocoon working files in {TOMCAT_HOME}\work.  If left in between upgrades, you can easily get precompiled code sent instead of the new pages being compiled and served.</p>
+			</s2>
+			<s2 title="Configure C2 to run in Unpackaged Mode">
+				<p>To enable you to easily develop your own C2 applications and configure C2 it must sit as an unpackaged application rather than as a packaged WAR file.  To make this happen...</p>
+				<p>Stop Tomcat</p>
+				<p>Delete {TOMCAT_HOME}\webapps\cocoon.war.</p>
+				<p>Create {TOMCAT_HOME}\webapps\cocoon folder.  If you performed the test above using the war then this folder will already exist and you can skip the next instruction.</p>
+				<p>Copy {COCOON_HOME}\build\cocoon\webapp\* to {TOMCAT_HOME}\webapps\cocoon</p>
+				<p>Restart Tomcat and try http://localhost:8080/cocoon.  The welcome page should come up!</p>
+			</s2>
+			<s2 title="Telling Apache about Cocoon">
+				<p>Note this assumes that mod_jk has been installed and configured.</p>
+				<p>Stop Apache and Tomcat</p>
+				<p>Make sure that {APACHE_HOME}\conf\httpd.conf has the following lines (assuming you are using the ajp12 adaptor) at the end:</p>
+				<source><![CDATA[
+  include "{TOMCAT_HOME}\conf\mod_jk.conf-auto"
+  JkMount /cocoon/* ajp12
+				]]></source>
+				<p>The first line includes the an Apache config file that Tomcat automatically generates.  This has all the alias directives for each of the contexts in {TOMCAT_HOME}\conf\server.xml.  The second line tells anything requested to /cocoon to be sent to Tomcat (and then onwards to Cocoon).</p>
+				<p>Restart Tomcat THEN apache.  The reason for this way round is apache relies on the {TOMCAT_HOME}\conf\mod_jk.conf-auto which is built by Tomcat everytime it starts.</p>
+				<p>You can then try http://localhost/cocoon.  It should work!</p>
+				<p>You are now ready to look at the examples and start doing some <link href="ctwig-transformations.html">basic transformations</link></p>
+			</s2>
+			<s2 title="Other Configurations">
+				<p>I am hoping to include more details on other configurations over time.  If you can help then please <link href="ctwig-contributing.html">contribute</link>.  You can also check out other information in the <link href="ctwig-resources.html">resources</link> section.</p>
+			</s2>
+		</s1>
+	</body>
+</document>

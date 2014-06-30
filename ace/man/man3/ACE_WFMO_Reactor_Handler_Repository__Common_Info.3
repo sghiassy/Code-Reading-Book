@@ -1,0 +1,126 @@
+.TH ACE_WFMO_Reactor_Handler_Repository::Common_Info 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WFMO_Reactor_Handler_Repository::Common_Info \- This struct contains the necessary information for every <Event_Handler> entry. The reason the event is not in this structure is because we need to pass an event array into WaitForMultipleObjects and therefore keeping the events seperate makes sense. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <WFMO_Reactor.h>\fR
+.PP
+Inherited by \fBACE_WFMO_Reactor_Handler_Repository::Current_Info\fR, \fBACE_WFMO_Reactor_Handler_Repository::Suspended_Info\fR, and \fBACE_WFMO_Reactor_Handler_Repository::To_Be_Added_Info\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBCommon_Info\fR (void)"
+.br
+.RI "\fIConstructor used for initializing the structure.\fR"
+.ti -1c
+.RI "void \fBreset\fR (void)"
+.br
+.RI "\fIReset the state of the structure.\fR"
+.ti -1c
+.RI "void \fBset\fR (int io_entry, \fBACE_Event_Handler\fR *event_handler, ACE_HANDLE io_handle, long network_events, int delete_event, int delete_entry, \fBACE_Reactor_Mask\fR close_masks)"
+.br
+.RI "\fISet the structure to these new values.\fR"
+.ti -1c
+.RI "void \fBset\fR (Common_Info &common_info)"
+.br
+.RI "\fISet the structure to these new values.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBio_entry_\fR"
+.br
+.RI "\fIThis indicates whether this entry is for I/O or for a regular event.\fR"
+.ti -1c
+.RI "\fBACE_Event_Handler\fR* \fBevent_handler_\fR"
+.br
+.RI "\fIThe assosiated <Event_Handler>.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBio_handle_\fR"
+.br
+.RI "\fIThe I/O handle related to the <Event_Handler>. This entry is only valid if the <io_entry_> flag is true.\fR"
+.ti -1c
+.RI "long \fBnetwork_events_\fR"
+.br
+.ti -1c
+.RI "int \fBdelete_event_\fR"
+.br
+.ti -1c
+.RI "int \fBdelete_entry_\fR"
+.br
+.RI "\fIThis is set when the entry needed to be deleted.\fR"
+.ti -1c
+.RI "\fBACE_Reactor_Mask\fR \fBclose_masks_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This struct contains the necessary information for every <Event_Handler> entry. The reason the event is not in this structure is because we need to pass an event array into WaitForMultipleObjects and therefore keeping the events seperate makes sense.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WFMO_Reactor_Handler_Repository::Common_Info::Common_Info (void)
+.PP
+Constructor used for initializing the structure.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_WFMO_Reactor_Handler_Repository::Common_Info::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_WFMO_Reactor_Handler_Repository::To_Be_Added_Info\fR, and \fBACE_WFMO_Reactor_Handler_Repository::Suspended_Info\fR.
+.SS void ACE_WFMO_Reactor_Handler_Repository::Common_Info::reset (void)
+.PP
+Reset the state of the structure.
+.PP
+Reimplemented in \fBACE_WFMO_Reactor_Handler_Repository::Current_Info\fR, \fBACE_WFMO_Reactor_Handler_Repository::To_Be_Added_Info\fR, and \fBACE_WFMO_Reactor_Handler_Repository::Suspended_Info\fR.
+.SS void ACE_WFMO_Reactor_Handler_Repository::Common_Info::set (Common_Info & common_info)
+.PP
+Set the structure to these new values.
+.PP
+.SS void ACE_WFMO_Reactor_Handler_Repository::Common_Info::set (int io_entry, \fBACE_Event_Handler\fR * event_handler, ACE_HANDLE io_handle, long network_events, int delete_event, int delete_entry, \fBACE_Reactor_Mask\fR close_masks)
+.PP
+Set the structure to these new values.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Reactor_Mask\fR ACE_WFMO_Reactor_Handler_Repository::Common_Info::close_masks_
+.PP
+These are the masks related to <handle_close> for the <Event_Handler>. This is only valid when <delete_entry_> is set. 
+.SS int ACE_WFMO_Reactor_Handler_Repository::Common_Info::delete_entry_
+.PP
+This is set when the entry needed to be deleted.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::Common_Info::delete_event_
+.PP
+This flag indicates that <WFMO_Reactor> created the event on behalf of the user. Therefore we need to clean this up when the <Event_Handler> removes itself from <WFMO_Reactor>. This entry is only valid if the <io_entry_> flag is true. 
+.SS \fBACE_Event_Handler\fR * ACE_WFMO_Reactor_Handler_Repository::Common_Info::event_handler_
+.PP
+The assosiated <Event_Handler>.
+.PP
+.SS int ACE_WFMO_Reactor_Handler_Repository::Common_Info::io_entry_
+.PP
+This indicates whether this entry is for I/O or for a regular event.
+.PP
+.SS ACE_HANDLE ACE_WFMO_Reactor_Handler_Repository::Common_Info::io_handle_
+.PP
+The I/O handle related to the <Event_Handler>. This entry is only valid if the <io_entry_> flag is true.
+.PP
+.SS long ACE_WFMO_Reactor_Handler_Repository::Common_Info::network_events_
+.PP
+This is the set of events that the <Event_Handler> is interested in This entry is only valid if the <io_entry_> flag is true. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

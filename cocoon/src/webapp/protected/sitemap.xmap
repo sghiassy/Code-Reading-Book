@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+  <!-- ========================= Components ============================== -->
+
+  <map:components>
+
+    <map:generators default="file"/>
+
+    <map:transformers default="xslt"/>
+
+    <map:readers default="resource"/>
+
+    <map:serializers default="html"/>
+
+    <map:selectors default="browser"/>
+
+    <map:matchers default="wildcard"/>
+
+    <map:actions>
+      <map:action name="session-validator"
+        src="org.apache.cocoon.acting.SessionValidatorAction"/>
+      <map:action name="session-invalidator"
+        src="org.apache.cocoon.acting.SessionInvalidatorAction"/>
+      <map:action name="form-validator"
+        src="org.apache.cocoon.acting.FormValidatorAction"/>
+      <map:action name="db-authenticator"
+        src="org.apache.cocoon.acting.DatabaseAuthenticatorAction"/>
+    </map:actions>
+
+  </map:components>
+
+  <!-- ======================= Pipelines ================================= -->
+
+  <map:pipelines>
+    <map:pipeline>
+
+      <map:match pattern="">
+        <map:redirect-to uri="login"/>
+      </map:match>
+
+      <!-- ================= -->
+      <!-- Simple login page -->
+      <!-- ================= -->
+      <map:match pattern="login">
+        <map:generate src="docs/login.xml"/>
+        <map:transform src="stylesheets/simple-page2html.xsl"/>
+        <map:serialize/>
+      </map:match>
+
+      <!-- ========================================= -->
+      <!-- Form target which performs auth service   -->
+      <!-- ========================================= -->
+      <map:match pattern="do-login">
+        <!-- first validate whether submitted values are ok -->
+        <map:act type="form-validator">
+          <map:parameter name="descriptor" value="context://protected/descriptors/params.xml"/>
+          <map:parameter name="validate" value="username"/>
+          <!-- now try to log in -->
+          <map:act type="db-authenticator">
+            <map:parameter name="descriptor" value="context://protected/descriptors/auth.xml"/>
+            <!-- now go to protected area -->
+            <map:redirect-to uri="protected"/>
+          </map:act>
+        </map:act>
+        <!-- something was wrong, try it again -->
+        <map:redirect-to uri="login"/>
+      </map:match>
+
+      <!-- ================ -->
+      <!-- Protected area   -->
+      <!-- ================ -->
+      <map:match pattern="protected">
+        <!-- first validate whether user has logged in -->
+        <map:act type="session-validator">
+          <map:parameter name="descriptor" value="context://protected//descriptors/params.xml"/>
+          <map:parameter name="validate" value="username,department_id,theme"/>
+          <!-- generate protected content -->
+          <map:generate type="serverpages" src="docs/protected.xsp"/>
+          <map:transform src="stylesheets/{theme}-page2html.xsl"/>
+          <map:serialize/>
+        </map:act>
+        <!-- something was wrong, redirect to login page -->
+        <map:redirect-to uri="login"/>
+      </map:match>
+
+      <!-- ========================================= -->
+      <!-- Logout link which invalidates the session -->
+      <!-- ========================================= -->
+      <map:match pattern="do-logout">
+        <map:act type="session-invalidator">
+          <map:redirect-to uri="login"/>
+        </map:act>
+      </map:match>
+
+      <!-- Let parent sitemap treat it 
+      <map:handle-errors>
+        <map:transform src="context://stylesheets/system/error2html.xsl"/>
+        <map:serialize status-code="500"/>
+      </map:handle-errors>
+      -->
+ 
+    </map:pipeline>
+  </map:pipelines>
+
+</map:sitemap>
+
+<!-- end of file -->
+<!-- vim: set et ts=2 sw=2: -->

@@ -1,0 +1,104 @@
+<project name="Webapps" default="dist" basedir=".">
+
+
+  <!-- ===================== Initialize Property Values =================== -->
+
+  <!-- See "build.properties.sample" in the top level directory for all     -->
+  <!-- property values you must customize for successful building!!!        -->
+  <property file="build.properties"/>
+  <property file="../build.properties"/>
+  <property file="${user.home}/build.properties"/>
+
+  <property name="build.compiler"  value="classic"/>
+  <property name="webapps.build"   value="build"/>
+  <property name="webapps.deploy"  value="../build"/>
+  <property name="webapps.dist"    value="dist"/>
+
+
+  <!-- =================== BUILD: Create Directories ====================== -->
+  <target name="build-prepare">
+
+    <available classname="junit.framework.TestCase" property="junit.present" />
+
+    <mkdir dir="${webapps.build}"/>
+    <mkdir dir="${webapps.dist}"/>
+
+  </target>
+
+
+  <!-- =================== BUILD: Compile Subprojects ===================== -->
+  <!-- Add a new target for each webapp subproject -->
+
+  <target name="ROOT">
+    <ant dir="${basedir}/ROOT" target="dist"/>
+  </target>
+
+  <target name="examples">
+    <ant dir="${basedir}/examples" target="dist"/>
+  </target>
+
+  <target name="manager">
+    <ant dir="${basedir}/manager" target="dist"/>
+  </target>
+
+  <target name="tomcat-docs">
+    <ant dir="${basedir}/tomcat-docs" target="dist"/>
+  </target>
+
+  <target name="webdav">
+    <ant dir="${basedir}/webdav" target="dist"/>
+  </target>
+
+
+  <!-- ================= BUILD: Compile Server Components ================= -->
+  <!-- Update the depends list for each subproject -->
+  <target name="build" depends="build-prepare,ROOT,examples,manager,tomcat-docs,webdav"/>
+
+
+  <!-- ======================= BUILD: Clean Directory ===================== -->
+  <target name="build-clean">
+    <delete dir="${webapps.build}"/>
+  </target>
+
+
+  <!-- ==================== BUILD: Rebuild Everything ===================== -->
+  <target name="all" depends="build-clean,dist"/>
+
+
+  <!-- ================= DEPLOY: Deploy Webapps Projects ================== -->
+  <target name="deploy" depends="dist"
+   description="Build and deploy Webapps component">
+    <mkdir dir="${webapps.deploy}/webapps"/>
+    <copy todir="${webapps.deploy}/webapps">
+      <fileset dir="${webapps.build}" />
+    </copy>
+  </target>
+
+
+  <!-- ================= DIST: Create Distribution Files ================== -->
+  <target name="dist" depends="build"/>
+
+
+  <!-- ======================= DIST: Clean Directory ====================== -->
+  <target name="dist-clean">
+    <delete dir="${webapps.dist}"/>
+  </target>
+
+
+  <!-- ====================== Convenient Synonyms ========================= -->
+  <target name="clean" depends="build-clean,dist-clean"
+   description="Clean build and dist directories"/>
+
+
+  <!-- ===================== TEST: Compile Unit Tests ===================== -->
+  <target name="build-tests" depends="dist" if="junit.present">
+  </target>
+
+
+  <!-- ===================== TEST: Execute Unit Tests ===================== -->
+  <target name="test" if="junit.present"
+   description="Run all unit test cases">
+  </target>
+
+
+</project>

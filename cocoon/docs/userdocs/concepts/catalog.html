@@ -1,0 +1,1405 @@
+<html xmlns:NetUtils="org.apache.cocoon.util.NetUtils">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Entity resolution with catalogs</title>
+<script type="text/javascript" src="resources/script.js" language="JavaScript"></script>
+</head>
+<body bgcolor="#ffffff" marginheight="4" marginwidth="4" leftmargin="4" topmargin="4" alink="#cc0000" vlink="#0086b2" link="#039acc" text="#000000">
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" rowspan="3" height="60" width="135"><img border="0" vspace="0" hspace="0" src="images/logo.gif" height="60" width="135"></td><td background="images/line.gif" colspan="2" align="left" valign="top" height="5" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/line.gif" height="5" width="1"></td><td align="left" valign="top" rowspan="3" height="60" width="29"><img border="0" vspace="0" hspace="0" src="images/right.gif" height="60" width="29"></td>
+</tr>
+<tr>
+<td bgcolor="#0086b2" colspan="2" align="right" valign="top" height="35" width="100%"><img align="right" alt="Entity resolution with catalogs" border="0" vspace="0" hspace="0" src="graphics/catalog-header.jpg_label=Entity%20resolution%20with%20catalogs.jpg"></td>
+</tr>
+<tr>
+<td background="images/bottom.gif" bgcolor="#0086b2" align="left" valign="top" height="20" width="100%"><img align="left" border="0" vspace="0" hspace="0" src="images/bottom.gif" height="20" width="3"></td><td background="images/bottom.gif" width="288" valign="top" height="20" bgcolor="#0086b2" align="right">
+<table width="288" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('xml');" onMouseOut="rolloverOff('xml');" target="new" href="http://xml.apache.org/"><img onLoad="rolloverLoad('xml', 'images/button-xml-hi.gif', 'images/button-xml-lo.gif');" border="0" vspace="0" hspace="0" name="xml" src="images/button-xml-lo.gif" height="20" width="96" alt="http://xml.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('asf');" onMouseOut="rolloverOff('asf');" target="new" href="http://www.apache.org/"><img onLoad="rolloverLoad('asf', 'images/button-asf-hi.gif', 'images/button-asf-lo.gif');" border="0" vspace="0" hspace="0" name="asf" src="images/button-asf-lo.gif" height="20" width="96" alt="http://www.apache.org/"></a></td><td align="left" valign="top" height="20" width="96"><a onMouseOver="rolloverOn('w3c');" onMouseOut="rolloverOff('w3c');" target="new" href="http://www.w3.org/"><img onLoad="rolloverLoad('w3c', 'images/button-w3c-hi.gif', 'images/button-w3c-lo.gif');" border="0" vspace="0" hspace="0" name="w3c" src="images/button-w3c-lo.gif" height="20" width="96" alt="http://www.w3.org/"></a></td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr width="100%">
+<td valign="top" width="120">
+<table width="120" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td valign="top" align="left"><img width="120" vspace="0" src="images/join.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Main')" onMouseOut="rolloverOff('Main')" href="../../index.html"><img onLoad="rolloverLoad('Main', 'graphics/Main-label_over.jpg', 'graphics/Main-label.jpg');" vspace="0" hspace="0" name="Main" width="120" height="12" border="0" src="graphics/Main-label.jpg" alt="Main"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('User Documentation')" onMouseOut="rolloverOff('User Documentation')" href="../index.html"><img onLoad="rolloverLoad('User Documentation', 'graphics/User%20Documentation-label_over.jpg', 'graphics/User%20Documentation-label.jpg');" vspace="0" hspace="0" name="User Documentation" width="120" height="12" border="0" src="graphics/User%20Documentation-label.jpg" alt="User Documentation"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><img alt="Concepts" width="120" vspace="0" src="graphics/Concepts-separator.jpg" hspace="0" height="20" border="0"><br>
+</td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Overview')" onMouseOut="rolloverOff('Overview')" href="index.html"><img onLoad="rolloverLoad('Overview', 'graphics/Overview-label_over.jpg', 'graphics/Overview-label.jpg');" vspace="0" hspace="0" name="Overview" width="120" height="12" border="0" src="graphics/Overview-label.jpg" alt="Overview"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Sitemap')" onMouseOut="rolloverOff('Sitemap')" href="sitemap.html"><img onLoad="rolloverLoad('Sitemap', 'graphics/Sitemap-label_over.jpg', 'graphics/Sitemap-label.jpg');" vspace="0" hspace="0" name="Sitemap" width="120" height="12" border="0" src="graphics/Sitemap-label.jpg" alt="Sitemap"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Views')" onMouseOut="rolloverOff('Views')" href="views.html"><img onLoad="rolloverLoad('Views', 'graphics/Views-label_over.jpg', 'graphics/Views-label.jpg');" vspace="0" hspace="0" name="Views" width="120" height="12" border="0" src="graphics/Views-label.jpg" alt="Views"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Caching')" onMouseOut="rolloverOff('Caching')" href="caching.html"><img onLoad="rolloverLoad('Caching', 'graphics/Caching-label_over.jpg', 'graphics/Caching-label.jpg');" vspace="0" hspace="0" name="Caching" width="120" height="12" border="0" src="graphics/Caching-label.jpg" alt="Caching"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Actions')" onMouseOut="rolloverOff('Actions')" href="actions.html"><img onLoad="rolloverLoad('Actions', 'graphics/Actions-label_over.jpg', 'graphics/Actions-label.jpg');" vspace="0" hspace="0" name="Actions" width="120" height="12" border="0" src="graphics/Actions-label.jpg" alt="Actions"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Matchers and Selectors')" onMouseOut="rolloverOff('Matchers and Selectors')" href="matchers_selectors.html"><img onLoad="rolloverLoad('Matchers and Selectors', 'graphics/Matchers%20and%20Selectors-label_over.jpg', 'graphics/Matchers%20and%20Selectors-label.jpg');" vspace="0" hspace="0" name="Matchers and Selectors" width="120" height="12" border="0" src="graphics/Matchers%20and%20Selectors-label.jpg" alt="Matchers and Selectors"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('Entity Catalogs')" onMouseOut="rolloverOff('Entity Catalogs')" href="catalog.html"><img onLoad="rolloverLoad('Entity Catalogs', 'graphics/Entity%20Catalogs-label_over.jpg', 'graphics/Entity%20Catalogs-label.jpg');" vspace="0" hspace="0" name="Entity Catalogs" width="120" height="12" border="0" src="graphics/Entity%20Catalogs-label.jpg" alt="Entity Catalogs"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('MRUMemoryStore')" onMouseOut="rolloverOff('MRUMemoryStore')" href="mrustore.html"><img onLoad="rolloverLoad('MRUMemoryStore', 'graphics/MRUMemoryStore-label_over.jpg', 'graphics/MRUMemoryStore-label.jpg');" vspace="0" hspace="0" name="MRUMemoryStore" width="120" height="12" border="0" src="graphics/MRUMemoryStore-label.jpg" alt="MRUMemoryStore"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('StoreJanitor')" onMouseOut="rolloverOff('StoreJanitor')" href="storejanitor.html"><img onLoad="rolloverLoad('StoreJanitor', 'graphics/StoreJanitor-label_over.jpg', 'graphics/StoreJanitor-label.jpg');" vspace="0" hspace="0" name="StoreJanitor" width="120" height="12" border="0" src="graphics/StoreJanitor-label.jpg" alt="StoreJanitor"></a></td>
+</tr>
+<tr>
+<td valign="top" align="left"><a onMouseOver="rolloverOn('XMLSearching')" onMouseOut="rolloverOff('XMLSearching')" href="xmlsearching.html"><img onLoad="rolloverLoad('XMLSearching', 'graphics/XMLSearching-label_over.jpg', 'graphics/XMLSearching-label.jpg');" vspace="0" hspace="0" name="XMLSearching" width="120" height="12" border="0" src="graphics/XMLSearching-label.jpg" alt="XMLSearching"></a></td>
+</tr>
+<tr>
+<td align="left" valign="top"><img width="120" vspace="0" src="images/close.gif" hspace="0" height="14" border="0"><br>
+</td>
+</tr>
+</table>
+</td><td>
+<table cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td height="10" width="100%"></td>
+</tr>
+<tr>
+<td>
+ 
+
+ 
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Introduction</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   Apache Cocoon has the capability to utilise an entity resolution mechanism. 
+   External entities (e.g. Document Type Definitions (DTDs), character entity
+   sets, XML sub-documents) are resources that are declared by an XML instance
+   document - they exist as separate objects. An entity catalog assists with
+   entity management and the resolution of entities to accessible resources.
+   It also reduces the necessity for expensive and failure-prone network
+   retrieval of the required resources.
+  </p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Overview</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   "Entities" represent the physical structure of an XML instance document,
+   whereas "elements" represent the logical structure. The complete entity
+   structure of the document defines which pieces need to be incorporated, so
+   as to build the final document. Those entities are objects from some
+   accessible place, e.g. local file system, local network, remote network,
+   generated from a database. Example entities are: DTDs, XML sub-documents,
+   sets of character entities to represent symbols and other glyphs, image
+   files.
+  </p>
+
+  
+<p align="justify">
+   So how are you going to define the accessible location of all those pieces?
+   How will you ensure that those resources are reliably available? Entity
+   resolution catalogs to the rescue. These are simple standards-based
+   plain-text files to map public identifiers and system identifiers to local
+   or other resources.
+  </p>
+
+  
+<p align="justify">
+   Do you wonder why we cannot use the sitemap to resolve these resources?
+   This is because the resolution of all entities that compose the XML
+   document is under the direct control of the guts of the parser and the XML
+   structure. The parser has no choice - it must incorporate all of the defined    pieces. If it cannot retrieve them, then it is broken and reports an error.
+  </p>
+
+  
+<p align="justify">
+   With the powerful catalog support there are no such problems. This document
+   provides the following sections to explain Cocoon capability for
+   resolving entities ...
+  </p>
+
+  
+<blockquote>
+<ul>
+   
+<li>
+    
+<a href="#background">Background</a>
+    - explains the need, explains some terminology, describes the solution
+   </li>
+   
+<li>
+    
+<a href="#demo1">Demonstration #1</a>
+     - explains a remote resource and how it gets resolved
+   </li>
+   
+<li>
+    
+<a href="#cat">Catalogs overview</a>
+     - briefly explains how catalogs resolve entity declarations
+   </li>
+   
+<li>
+    
+<a href="#demo2">Demonstration #2</a>
+     - explains more detailed need and use of catalogs
+     and shows catalogs in action
+   </li>
+   
+<li>
+    
+<a href="#default">Default configuration</a>
+     - explains the default automated configuration
+   </li>
+   
+<li>
+    
+<a href="#config">Local configuration</a>
+     - explains how to extend the default configuration for your local
+     system requirements and provides an example
+   </li>
+   
+<li>
+    
+<a href="#imp">Implementation notes</a>
+     - describes how support for catalogs is added to Cocoon
+   </li>
+   
+<li>
+    
+<a href="#dev">Development notes</a>
+     - some minor issues need to be addressed
+   </li>
+   
+<li>
+    
+<a href="#notes">Other notes</a>
+     - assorted dot-points
+   </li>
+   
+<li>
+    
+<a href="#summ">Summary</a>
+   
+</li>
+   
+<li>
+    
+<a href="#info">Further information</a>
+     - links to some useful resources
+   </li>
+  
+</ul>
+</blockquote>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="background">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Background</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   The following article eloquently describes the need for all parsers and
+   XML frameworks to be capable of utilising entity resolvers.
+   "<a href="http://www.arbortext.com/Think_Tank/XML_Resources/Issue_Three/issue_three.html">If You Can Name It, You Can Claim It!</a>"
+   by Norman Walsh. Please read that document, then return here to apply
+   entity catalogs to Cocoon.
+  </p>
+
+  
+<p align="justify">
+   (Note: That article (and Java classes) evolved to become the Sun
+   <code><font face="courier, monospaced">resolver.zip</font></code> Java package that has been added to Cocoon
+   - a more recent version of the article is available with the Sun download
+   (see below). The API javadocs for <code><font face="courier, monospaced">resolver</font></code> have further information.
+   However, you do not need to know the gory details to understand catalogs
+   and configure them.)
+  </p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="demo1">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Demonstration #1</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   This snippet from an XML instance shows the Document Type Declaration.
+   Notice that it declares its ruleset, the Document Type Definition (DTD),
+   as an external entity. Notice also that the resource is network-based.
+  </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V4.1.2.5//EN"
+  "http://www.oasis-open.org/docbook/xml/simple/4.1.2.5/sdocbook.dtd"
+&lt;article&gt;
+ ... content goes here
+&lt;/article&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+  
+<p align="justify">
+   Now consider what will happen when Cocoon tries to process this XML
+   instance. Whether you have set validation=yes or not, the parser will
+   still want to resolve all of the entities that are required by the XML
+   instance (i.e. the DTD and any other entities that the DTD might declare).
+   So it will happily trundle across the network to get them. It will do this
+   every time that the document is processed. This is obviously a needless
+   overhead. Worse still, what happens if that host is down or the network is
+   congested. Additionally, if your Cocoon is an off-line server then it is
+   always broken because it cannot retrieve the network-based resources.
+  </p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="cat">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Catalogs overview</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   As the Walsh document explained, the secrets to entity resolution are the
+   public identifiers, system identifiers, and the catalog to map between them.
+   Here we provide an overview and show an example catalog which we will then
+   use with the <a href="#demo2">Demonstration #2</a> below.
+  </p>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>External entity declarations</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+    To define an external entity in an XML instance document, you must 
+    provide an external declaration consisting of at least a
+    <b>system identifier</b> and optionally a 
+    <b>public identifier</b>. The system identifier defines the
+    physical location of the external entity. The public identifier is a
+    unique symbolic name that can be used to map to a certain physical location.
+    Note that if you provide both a public and a system identifier, then the
+    public identifier is listed first and the system identifier is not 
+    preceded by the keyword <code><font face="courier, monospaced">SYSTEM</font></code>.
+    Here are four separate examples ...
+   </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;!ENTITY pic SYSTEM "images/pic.gif" NDATA gif&gt;
+&lt;!ENTITY % ISOnum PUBLIC
+  "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML" "ISOnum.pen"&gt;
+&lt;!DOCTYPE document SYSTEM "dtd/document-v10.dtd"&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1/docbookx.dtd"&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+  
+<p align="justify">
+   (In your XML instance document, or DTD, you would include those entities
+   like this ... <code><font face="courier, monospaced">%ISOnum;</font></code>)
+  </p>
+
+  
+<p align="justify">
+   None of those system identifiers looks reliable or easily managed.
+   Use a catalog to make them so.
+  </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Simple example catalog</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+    The <code><font face="courier, monospaced">catalog</font></code> maps public identifiers to their corresponding
+    physical locations. The catalog entries in an OASIS catalog are a simple
+    whitespace-delimited format.
+    (The <a href="#info">specification</a> fully defines the format.) 
+    There about a dozen different types of catalog entry - two important
+    ones are:
+   </p>
+
+   
+<blockquote>
+<ul>
+    
+<li>
+<b>PUBLIC</b> <code><font face="courier, monospaced">publicId systemId</font></code>
+     
+<br>- maps the public identifier <code><font face="courier, monospaced">publicId</font></code> to the system
+     identifier <code><font face="courier, monospaced">systemId</font></code>
+    
+</li>
+    
+<li>
+<b>SYSTEM</b> <code><font face="courier, monospaced">systemId otherSystemId</font></code>
+     
+<br>- maps the system identifier <code><font face="courier, monospaced">systemId</font></code> to the alternate
+     system identifier <code><font face="courier, monospaced">otherSystemId</font></code>
+    
+</li>
+   
+</ul>
+</blockquote>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+-- this is the default OASIS catalog for Apache Cocoon --
+
+OVERRIDE YES
+
+-- ISO public identifiers for sets of character entities --
+PUBLIC "ISO 8879-1986//ENTITIES Added Latin 1//EN//XML"
+       "ISOlat1.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+       "ISOlat1.pen"
+PUBLIC "ISO 9573-15:1993//ENTITIES Greek Letters//EN//XML"
+       "ISOgrk1.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN//XML"
+       "ISOpub.pen"
+PUBLIC "ISO 8879:1986//ENTITIES General Technical//EN//XML"
+       "ISOtech.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+       "ISOnum.pen"
+
+-- these entries are used for the catalog-demo sample application --
+OVERRIDE NO
+PUBLIC "-//Arbortext//TEXT Test Override//EN"
+       "catalog-demo/override.xml"
+OVERRIDE YES
+PUBLIC "-//Arbortext//TEXT Test Public Identifier//EN"
+       "catalog-demo/testpub.xml"
+SYSTEM "urn:x-arbortext:test-system-identifier"
+       "catalog-demo/testsys.xml"
+PUBLIC "-//Indexgeo//DTD Catalog Demo v1.0//EN"
+       "catalog-demo/catalog-demo-v10.dtd"
+-- end of entries for the catalog-demo sample application --
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+   
+<p align="justify">
+    System identifiers can use full pathnames, filenames, relative pathnames,
+    or URLs - in fact, any method that will define and deliver the actual
+    physical entity. If it is just a filename or a relative pathname, then the 
+    Catalog Resolver will look for the resource relative to the location of
+    the catalog.
+   </p>
+
+   
+<p align="justify">
+    When the parser needs to load a declared entity, then it first consults
+    the Catalog Resolver to get a possible mapping to an alternate system
+    identifier. If there is no mapping for an identifier in the catalogs
+    (or in any sub-ordinate catalogs), then Cocoon will carry on to
+    retrieve the resource using the original declared system identifier.
+   </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="demo2">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Demonstration #2</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+  
+<p align="justify">
+   See catalogs in action with the 
+   <a href="../../overview.html#samples">Cocoon Samples</a> ...
+   <a href="samples/catalog-demo">catalog-demo</a>. The demonstration
+   intends to be self-documenting. The top-level XML instance describes its
+   role, and each included external entity reports how it came into being.
+   This example builds upon the example provided by the Walsh article.
+   (Tip: To see the error message that would result from not using a catalog,
+   simply rename the default <code><font face="courier, monospaced">catalog</font></code> file before starting
+   Cocoon.)
+  </p>
+
+
+<p>
+<table border="0" cellpadding="0" cellspacing="3" width="100%">
+<tr>
+<td valign="top" width="28"><img alt="Note" border="0" hspace="0" vspace="0" height="29" width="28" src="images/note.gif"></td><td valign="top"><font color="#000000" face="arial,helvetica,sanserif" size="-1"><i>TODO: ensure that the link to samples works OK in the various documentation situations (i.e. static site, local docs build)</i></font></td>
+</tr>
+</table>
+</p>
+
+  
+<p align="justify">Here is the source for the top-level XML instance document
+   <code><font face="courier, monospaced">test.xml</font></code> ...
+  </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE catalog-demo PUBLIC "-//Indexgeo//DTD Catalog Demo v1.0//EN"
+  "http://www.indexgeo.com.au/dtd/catalog-demo-v10.dtd"
+[
+ &lt;!ENTITY testpub PUBLIC "-//Arbortext//TEXT Test Public Identifier//EN"
+   "bogus-system-identifier.xml"&gt;
+ &lt;!ENTITY testsys SYSTEM "urn:x-arbortext:test-system-identifier"&gt;
+ &lt;!ENTITY testovr PUBLIC "-//Arbortext//TEXT Test Override//EN"
+   "testovr.xml"&gt;
+ &lt;!ENTITY % ISOnum PUBLIC
+   "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+   "ISOnum.pen"&gt;
+ %ISOnum;
+ &lt;!ENTITY note "Note:"&gt;
+]&gt;
+
+&lt;catalog-demo&gt;
+ &lt;section&gt;
+  &lt;para&gt;This sample application demonstrates the use of catalogs for
+   entity resolution. &amp;note; see the Apache Cocoon documentation
+   &lt;link href="/cocoon/documents/catalog.html"&gt;Entity resolution with
+   catalogs&lt;/link&gt; for the full background and explanation, and the XML
+   source of this document (test.xml).
+  &lt;/para&gt;
+
+  &lt;para&gt;This top-level XML instance document is test.xml - it declares
+   three other XML sub-documents as external entities and then includes
+   them in the sections below. The real system identifiers will be looked
+   up in the catalog, to resolve the actual location of the resource.
+  &lt;/para&gt;
+
+  &lt;para&gt;The Document Type Definition (DTD) is declared using both a public
+   identifier and a system identifier. The system identifier for the DTD is
+   a network-based resource (which is deliberately non-existent). However,
+   the catalog overrides that remote DTD to instead use a copy from the
+   local filesystem at the location defined by the catalog entry. Note that
+   it is via the use of a public identifier that we gain this power.
+  &lt;/para&gt;
+
+  &lt;para&gt;The internal DTD subset of the top-level document instance goes on
+   to declare the three external sub-document entities using various means.
+   It also declares and includes the ISOnum set of character entities,
+   so that we can use entities like &amp;amp;frac12; (to represent &amp;frac12;).
+   Finally the internal DTD subset declares an internal general entity
+   for &amp;quot;note&amp;quot;.
+  &lt;/para&gt;
+ &lt;/section&gt;
+
+ &lt;section&gt;
+  &lt;para&gt;testpub ... this entity is declared with a PUBLIC identifier and a
+   bogus system identifier (which will be overridden by the catalog)
+  &lt;/para&gt;
+  &amp;testpub;
+ &lt;/section&gt;
+
+ &lt;section&gt;
+  &lt;para&gt;testsys ... this entity is declared with a SYSTEM identifier
+   (which will be resolved by the catalog)
+  &lt;/para&gt;
+  &amp;testsys;
+ &lt;/section&gt;
+
+ &lt;section&gt;
+  &lt;para&gt;testovr ... is declared with a PUBLIC identifier and a system
+   identifier (the catalog is set to not override this one, so the
+   declared system identifier is used)
+  &lt;/para&gt;
+  &amp;testovr;
+ &lt;/section&gt;
+
+&lt;/catalog-demo&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+  
+<p align="justify">
+   Here is the source for one of the included sub-document external entities
+   <code><font face="courier, monospaced">testpub.xml</font></code> ...
+  </p>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+&lt;para&gt;&amp;note; This paragraph is automatically included from the
+ testpub.xml external file.
+ The entity declaration deliberately used a non-existent file
+ as the system identifier. The catalog then used the declared
+ public identifer to resolve to a specific location on the local
+ filesystem.
+&lt;/para&gt;
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="default">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Default configuration</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   A default catalog and some base entities (e.g. ISO*.pen character
+   entity sets) are included in the Cocoon distribution at 
+   <code><font face="courier, monospaced">webapps/cocoon/resources/entities/</font></code>
+   - the default catalog is automatically loaded when Cocoon starts.
+  </p>
+
+  
+<p align="justify">
+   If you suspect problems, then you can raise the level of the
+   <code><font face="courier, monospaced">verbosity</font></code> property (to 2 or 3) and watch the messages going
+   to standard output when Cocoon starts and operates. You would also do
+   this to detect any misconfiguration of your own catalogs.
+  </p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="config">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Local configuration</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">You can extend the default configuration to include local catalogs
+    for site-specific requirements. This is achieved via various means.
+   </p>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Using cocoon.xconf</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">Parameters (properties) for the resolver component can be specified
+    in the <code><font face="courier, monospaced">cocoon.xconf</font></code> configuration file.
+    See the detailed internal notes - here is a precis.
+   </p>
+
+   
+<blockquote>
+<ul>
+    
+<li>
+<code><font face="courier, monospaced">catalog</font></code>
+     ... The main catalog file. Its path name is relative to the
+     Cocoon context directory.
+    </li>
+    
+<li>
+<code><font face="courier, monospaced">local-catalog</font></code>
+     ... The full filesystem pathname to a single local catalog file.
+    </li>
+    
+<li>
+<code><font face="courier, monospaced">verbosity</font></code>
+     ... The level of messages from the resolver
+     (loading catalogs, identifier resolution, etc.).
+     It value may range from 0 (no messages), to 10 detailed log messages.
+    </li>
+   
+</ul>
+</blockquote>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Using CatalogManager.properties</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">An annotated <code><font face="courier, monospaced">CatalogManager.properties</font></code> file is included
+    with the distribution - modify it to suit your needs. You can add your
+    own local catalogs using the <code><font face="courier, monospaced">catalogs</font></code> property.
+    (See the notes inside the properties file).
+   </p>
+
+   
+<p align="justify">
+    The build process will automatically copy the properties file from
+<code><font face="courier, monospaced">$COCOON_HOME/webapp/resources/entities/CatalogManager.properties</font></code>
+    to
+<code><font face="courier, monospaced">$TOMCAT_HOME/webapps/cocoon/WEB-INF/classes/CatalogManager.properties</font></code>
+    thereby making it available to the Java classpath.
+   </p>
+
+   
+<p align="justify">
+    If you see an error message going to STDOUT when Cocoon starts 
+    (<code><font face="courier, monospaced">Cannot find CatalogManager.properties</font></code>) then this means that
+    the properties file is not available to the Java classpath. Note that this
+    does not mean that entity resolution is disabled, rather that no local
+    configuration is being effected. Therefore no local catalogs will be
+    loaded and no entity resolution messages will be received (verbosity
+    level is zero by default).
+   </p>
+
+   
+<p align="justify">
+    That may truly be the intention, and not just a configuration mistake.
+    You can still use <code><font face="courier, monospaced">cocoon.xconf</font></code> to effect your local
+    configuration.
+   </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Resolver directives inside your catalog file</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+   
+<p align="justify">
+    The actual "catalog" files have a powerful set of directives. 
+    For example, the <b>CATALOG</b> directive facilitates the
+    inclusion of a sub-ordinate catalog. The list of resources below will
+    lead to <a href="#info">further information</a> about catalog usage.
+   </p>
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+  
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Example local configuration for Simplified DocBook</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" width="1" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="95%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   We use the Simplified DocBook XML DTD for some of our documentation.
+   Here are the few steps that we followed to configure Cocoon to be able
+   to process our XML instances.
+  </p>
+
+  
+<blockquote>
+<ul>
+   
+<li>
+    downloaded a recent copy of the Simplified DocBook DTD distribution
+    and unpacked it at
+    <code><font face="courier, monospaced">/usr/local/sgml/docbook/simple/</font></code>
+   
+</li>
+   
+<li>
+    created a catalog file at 
+    <code><font face="courier, monospaced">/usr/local/sgml/docbook/simple/sdocbook.cat</font></code>
+    with a single entry for the Simplified DocBook XML DTD
+   </li>
+   
+<li>
+    added the parameter (<code><font face="courier, monospaced">local-catalog</font></code>) to the
+    <code><font face="courier, monospaced">cocoon.xconf</font></code>
+    (using the full pathname to the <code><font face="courier, monospaced">sdocbook.cat</font></code> catalog).
+   </li>
+  
+</ul>
+</blockquote>
+
+
+<div align="center">
+<table border="0" cellpadding="0" cellspacing="4">
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td bgcolor="#ffffff">
+<pre>
+-- Catalog file (sdocbook.cat) for Simplified DocBook --
+-- See www.oasis-open.org/docbook/ --
+
+-- Driver file for the Simplified DocBook XML DTD --
+PUBLIC "-//OASIS//DTD Simplified DocBook XML V4.1.2.5//EN"
+       "sdocbook.dtd"
+
+-- end of catalog file for Simplified DocBook --
+</pre>
+</td><td width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+<tr>
+<td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td><td height="1" width="1" bgcolor="#0086b2"><img border="0" hspace="0" vspace="0" height="1" width="1" src="images/void.gif"></td>
+</tr>
+</table>
+</div>
+
+  
+<p align="justify">
+   We could similarly configure Cocoon for the full DocBook XML DTD and
+   related entities. In fact, the DocBook distribution already contains a
+   catalog file. We need only append the pathname to our <code><font face="courier, monospaced">catalogs</font></code>
+   property.
+  </p>
+
+  
+<p align="justify">
+   There are a few important starting points for 
+   <a href="#info">further information</a> about using and configuring
+   the DocBook DTDs.
+  </p>
+
+  
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="imp">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Implementation notes</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   The SAX <code><font face="courier, monospaced">Parser</font></code> interface provides an <code><font face="courier, monospaced">entityResolver</font></code>
+   hook to allow an application to resolve the external entities. The Sun
+   Microsystems Java code "<code><font face="courier, monospaced">com.sun.resolver</font></code>" provides a
+   <b>Catalog Resolver</b>. This is incorporated into Cocoon via
+   <code><font face="courier, monospaced">org.apache.cocoon.components.resolver</font></code> 
+  
+</p>
+
+  
+<p align="justify">
+   
+<a href="#default">Default configuration</a> is achieved via
+   <code><font face="courier, monospaced">org.apache.cocoon.components.resolver.ResolverImpl.java</font></code> 
+   which initialises the catalog resolver and loads a default system catalog.
+   The <code><font face="courier, monospaced">ResolverImpl.java</font></code> enables <a href="#config">local
+   configuration</a> by applying properties from the
+   <code><font face="courier, monospaced">CatalogManager.properties</font></code> file and then further configuration
+   from <code><font face="courier, monospaced">cocoon.xconf</font></code> parameters.
+  </p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="dev">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Development notes</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+  
+<p align="justify">
+   Assistance is required with the following outstanding development issues ...
+  </p>
+
+  
+<blockquote>
+<ul>
+   
+<li>5) ? What other default entities need to be shipped with the Cocoon
+    distribution? We already have some character entity sets (ISO*.pen).
+    Probably also need the documentation DTDs.
+   </li>
+   
+<li>7)
+   </li>
+  
+</ul>
+</blockquote>
+
+  
+<p align="justify">
+   Some core Cocoon FIXME notes can be now be addressed by catalog ...
+  </p>
+
+  
+<blockquote>
+<ul>
+   
+<li>the first FIXME note in document-1.0.dtd re how to include
+    entities without hardwiring
+   </li>
+   
+<li>there are various other hard-coded pathnames to XML resources
+   </li>
+   
+<li>this needs further investigation after basic catalog support is
+    fully settled
+   </li>
+  
+</ul>
+</blockquote>
+
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="notes">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Other notes</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+
+  
+<blockquote>
+<ul>
+   
+<li>OASIS Catalogs (TR 9401:1995 Entity Management) are plain-text files 
+    with a simple delimited format. There is also a new standard being
+    developed for XML Catalogs, using an xml-based structured plain-text file
+    (gee :-). Links to both standards are provided below. Both catalog formats
+    can be currently used with this entity resolver. However, the latter 
+    standard is not yet settled. OASIS TR9401 catalogs will suffice.
+   </li>
+   
+<li>There has been a recent flood of XML tools - unfortunately, many do not
+    implement entity resolution (other than by brute-force retrieval), so
+    those tools are crippled and cannot be used for serious XML processing.
+    Please ensure that you choose 
+    <a href="http://www.oasis-open.org/cover/">proper XML tools</a>
+    for the preparation and validation of your XML instance documents.
+   </li>
+   
+<li>The default catalog that is shipped with the Cocoon distribution is
+    deliberately basic. You will need to supplement it with your own catalog
+    devised to suit your particular needs.
+   </li>
+  
+</ul>
+</blockquote>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="summ">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Summary</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   Most XML documents that we would want to serve with Cocoon are already
+   in existence in another information system. The XML document instances have
+   a declaration of their DTD Document Type Definition as an external file.
+   This external DTD also includes entity sets such as ISOnum, ISOlat1, etc.
+   Also the DTD declaration has a Formal Public Identifier and a System
+   Identifier which points to a remote URL. These XML instance documents cannot
+   be altered to make workaround solutions like
+   <code><font face="courier, monospaced">../dtd/document-1.0.dtd</font></code>
+  
+</p>
+
+  
+<p align="justify">
+   Entity management is effected by providing a standards-based mechanism to
+   resolve public identifiers and system identifiers to local filenames or
+   other identifiers or even to other remote network resources. So references
+   to external DTDs, sets of character entities such as mathematical symbols,
+   fragments of XML documents, complete sub-documents, non-xml data chunks
+   (like images), etc. can all be centrally managed and resolved locally.
+  </p>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+<a name="info">
+<!--anchor--></a>
+ 
+<div align="right">
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td align="right" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-left.gif"></td><td background="images/bar-border-top.gif"><img border="0" hspace="0" vspace="0" height="5" width="1" src="images/void.gif"></td><td align="left" valign="bottom" height="7" width="9"><img border="0" hspace="0" vspace="0" height="7" width="9" src="images/bar-top-right.gif"></td>
+</tr>
+<tr>
+<td background="images/bar-border-left.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td><td bgcolor="#0086b2" width="100%"><font color="#ffffff" face="arial,helvetica,sanserif" size="+1"><img border="0" hspace="0" vspace="0" height="5" width="5" src="images/void.gif"><b>Further information</b></font></td><td background="images/bar-border-right.gif" width="9"><img border="0" hspace="0" vspace="0" height="1" width="9" src="images/void.gif"></td>
+</tr>
+<tr>
+<td align="right" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-left.gif"></td><td background="images/bar-border-bottom.gif"><img border="0" hspace="0" vspace="0" height="12" src="images/void.gif"></td><td align="left" valign="top" height="12" width="9"><img border="0" hspace="0" vspace="0" height="12" width="9" src="images/bar-bottom-right.gif"></td>
+</tr>
+</table>
+<table cellpadding="0" cellspacing="0" width="98%" border="0">
+<tr>
+<td><font color="#000000" face="arial,helvetica,sanserif">
+  
+<p align="justify">
+   Here are some links to documents which extol entity management:
+  </p>
+
+  
+<blockquote>
+<ul>
+   
+<li>
+<a href="http://www.oasis-open.org/committees/entity/">OASIS Entity
+    Resolution Technical Committee</a> - see especially the
+    <a href="http://www.oasis-open.org/specs/a401.html">specification for
+    OASIS Catalogs</a> (TR 9401:1995 Entity Management)
+    and the 
+    <a href="http://www.oasis-open.org/committees/entity/spec.html">specification for XML Catalogs</a>
+   
+</li>
+   
+<li>
+<a href="http://www.oasis-open.org/cover/topics.html#entities">SGML/XML Special Topics: Entity Sets and Entity Management</a>
+    at the
+    <a href="http://www.oasis-open.org/cover/">XML Cover Pages</a>
+</li>
+   
+<li>
+<a href="http://www.oasis-open.org/cover/topics.html#fpi-fsi">SGML/XML
+    Special Topics: Catalogs, Formal Public Identifiers, Formal System
+    Identifiers</a>
+    at the
+    <a href="http://www.oasis-open.org/cover/">XML Cover Pages</a>
+</li>
+   
+<li>Arbortext column by Norman Walsh
+    <a href="http://www.arbortext.com/Think_Tank/think_tank.html">Standard
+    Deviations from Norm</a>
+    
+<br> - Issue Three: 
+    <a href="http://www.arbortext.com/Think_Tank/XML_Resources/Issue_Three/issue_three.html">If You Can Name It, You Can Claim It!</a>
+</li>
+   
+<li>
+    
+<a href="http://www.sun.com/xml/developers/resolver/">XML Entity and
+     URI Resolvers Java classes</a> (from Sun Microsystems) and evolution
+     of the Arbortext article.
+   </li>
+   
+<li>XML-Deviant article 2000-11-29
+    <a href="http://www.xml.com/pub/a/2000/11/29/deviant.html">What's in
+     a Name?</a>
+</li>
+   
+<li>
+<a href="http://www.oasis-open.org/docbook/">DocBook</a>:
+     <a href="http://www.docbook.org/">The Definitive Guide</a>
+     - Section 2.3 Public Identifiers, System Identifiers, and Catalog Files
+   </li>
+   
+<li>OASIS is the <a href="http://www.oasis-open.org/docbook/">official
+    home</a> of the DocBook DTDs
+    (see also <a href="http://docbook.sourceforge.net/">DocBook Open
+    Repository</a> project at SourceForge)
+   </li>
+   
+<li>Organization for the Advancement of Structured Information Standards
+    (<a href="http://www.oasis-open.org/">OASIS</a>)</li>
+  
+</ul>
+</blockquote>
+ 
+</font></td>
+</tr>
+</table>
+</div>
+<br>
+
+ 
+
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<tr>
+<td bgcolor="#0086b2"><img width="1" src="images/dot.gif" height="1"></td>
+</tr>
+<tr>
+<td align="center"><font size="-1" face="arial,helvetica,sanserif" color="#0086b2"><i>Copyright &copy; 1999-2002 The Apache Software Foundation. All Rights Reserved.</i></font></td>
+</tr>
+</table>
+</body>
+</html>

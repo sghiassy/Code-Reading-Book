@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+This file is used for description of auth process
+you specify here all columns that should be retrieved from specified
+database table and to which request parameters they should be compared.
+Values you specify can be automatically propagated to the created session
+-->
+<auth-descriptor>
+  <connection>personnel</connection>
+  <table name="employee">
+    <!-- 
+    because dbcol user has also matching request parameter, it will be used
+    for actual authentication, department_id will not be compared with
+    anything, it will just be along with username propagated to the session
+    -->
+    <select dbcol="name" request-param="username" to-session="username"/>
+    <select dbcol="department_id" to-session="department_id" type="long"/>
+  </table>
+</auth-descriptor>
+<!-- vim: set et ts=2 sw=2: -->

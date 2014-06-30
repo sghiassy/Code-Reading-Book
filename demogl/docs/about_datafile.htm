@@ -1,0 +1,62 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:I/O support</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>I/O support</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>I/O support.</h4>
+To play soundfiles, to use textures, to show 3D modeldata, a developer needs to load files. DemoGL provides, both in
+the API and in scriptcommands, functionality to load files and to make DemoGL load the files from a certain location.
+DemoGL's file I/O system is transparent for the developer: where the files are located is set at the startup of the
+application and when the application loads a file, the exact location is not specified. This makes it possible to
+use the same functions to load a file from a <b>datafile</b> or a <b>directory</b>. A datafile is an ordinary .zip archive
+with directories in it, a directory is a normal directory on the harddisk. Because the API functionality and the TLE syntax
+don't use physical path information but rely on what DemoGL uses as the source of the files: a datafile or a directory, you
+can easily first use a directory during development and then place all files and subdirectories in one datafile and just
+tell DemoGL to use that datafile instead. No file loading API calls nor TLE's have to be changed to support the datafile
+instead of the directory. 
+<p>
+To set the source of all the files the application will load, use 
+<a HREF="ref_functions_DEMOGL_SetVariable.htm">DEMOGL_SetVariable</a> to set the variable <b>DGL_VF_FILESRC</b> to either
+DGL_FSRC_LOADFROMDATAFILE to read from a datafile or DGL_FSRC_LOADFROMDIR to read from a directory. Use the <b>DGL_VF_SRCDIR</b>
+variable to set the name (i.e. the full path if the directory is not located in the directory where the application is located)
+of the directory and <b>DGL_VF_DATAFILENAME</b> to set the name of the datafile, including the full path, if the datafile is 
+not located in the same directory as the application. Be aware of the fact that DemoGL needs to know the source of all the files
+before application execution starts (i.e. when <a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a> is called). DemoGL expects
+the systex directory and the application script in the root of the datafile, when loading from a datafile or in the directory itself
+when loading from a directory.
+<p>
+After the source for all the files is set and application execution is started, files can be loaded. DemoGL supports special
+purpose loading functions to load data automatically into internal structures (texturedata, sound elements) and a normal filedata
+loading function (binary data). For sound elements a developer can use TLE's or the API function
+<a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm">DEMOGL_SoundSystemLoadElement</a> to load a sound element into the soundsystem.
+To load a sound element by using a TLE in the script, see <a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm">_SOUNDSYSTEM syntax</a> for more
+details.
+For texture data, DemoGL provides special purpose API functions to load jpeg, bmp and tga data and to convert the contents of these
+files into RGBA8 bitmaps which are stored as textures in the texturestore inside DemoGL. Use 
+<a HREF="ref_functions_DEMOGL_TextureLoad.htm">DEMOGL_TextureLoad</a> to load a jpeg, bmp or tga stored bitmap straight into a texture object
+inside DemoGL. For loading binary data into your application (for example to decode PNG or RAW textures into RGBA8 bitmaps) DemoGL
+provides the <a HREF="ref_functions_DEMOGL_FileLoad.htm">DEMOGL_FileLoad</a> function. 
+<p>
+All loading functionality in DemoGL has logic to free the loaded data. Allthough DemoGL cleans up everything that is loaded when the
+application is closed, it's recommended to free any loaded data when that data is not used anymore. 
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

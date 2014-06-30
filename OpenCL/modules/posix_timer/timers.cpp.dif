@@ -1,0 +1,41 @@
+*** ../../src/timers.cpp	Sun Jun  3 05:39:48 2001
+--- timers.cpp	Sat Jun  9 04:47:35 2001
+***************
+*** 4,8 ****
+  *************************************************/
+  
+! #include <ctime>
+  #include <opencl/util.h>
+  
+--- 4,9 ----
+  *************************************************/
+  
+! #define _POSIX_C_SOURCE 199506
+! #include <time.h>
+  #include <opencl/util.h>
+  
+***************
+*** 14,23 ****
+  u64bit system_time()
+     {
+!    return std::time(0);
+     }
+  
+  u64bit system_clock()
+     {
+!    return std::clock();
+     }
+  
+--- 15,26 ----
+  u64bit system_time()
+     {
+!    return time(0);
+     }
+  
+  u64bit system_clock()
+     {
+!    struct timespec tv;
+!    clock_gettime(CLOCK_REALTIME, &tv);
+!    return tv.tv_nsec;
+     }
+  

@@ -1,0 +1,164 @@
+.TH ACE_Sig_Handler 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Sig_Handler \- This is the main dispatcher of signals for \fBACE\fR. It improves the existing UNIX signal handling mechanism by allowing C++ objects to handle signals in a way that avoids the use of global/static variables and functions. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Signal.h>\fR
+.PP
+Inherited by \fBACE_Sig_Handlers\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (int signum, \fBACE_Event_Handler\fR *new_sh, \fBACE_Sig_Action\fR *new_disp = 0, \fBACE_Event_Handler\fR **old_sh = 0, \fBACE_Sig_Action\fR *old_disp = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBremove_handler\fR (int signum, \fBACE_Sig_Action\fR *new_disp = 0, \fBACE_Sig_Action\fR *old_disp = 0, int sigkey = -1)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Event_Handler\fR* \fBhandler\fR (int signum)"
+.br
+.RI "\fIReturn the  associated with <signum>.\fR"
+.ti -1c
+.RI "virtual \fBACE_Event_Handler\fR* \fBhandler\fR (int signum, \fBACE_Event_Handler\fR *)"
+.br
+.RI "\fISet a new  that is associated with <signum>. Return the existing handler.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBsig_pending\fR (void)"
+.br
+.RI "\fITrue if there is a pending signal.\fR"
+.ti -1c
+.RI "void \fBsig_pending\fR (int)"
+.br
+.RI "\fIReset the value of <sig_pending_> so that no signal is pending.\fR"
+.ti -1c
+.RI "void \fBdispatch\fR (int, \fBsiginfo_t\fR *, \fBucontext_t\fR *)"
+.br
+.in -1c
+.SS Static Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Event_Handler\fR* \fBhandler_i\fR (int signum, \fBACE_Event_Handler\fR *)"
+.br
+.ti -1c
+.RI "int \fBregister_handler_i\fR (int signum, \fBACE_Event_Handler\fR *new_sh, \fBACE_Sig_Action\fR *new_disp = 0, \fBACE_Event_Handler\fR **old_sh = 0, \fBACE_Sig_Action\fR *old_disp = 0)"
+.br
+.ti -1c
+.RI "int \fBin_range\fR (int signum)"
+.br
+.RI "\fICheck whether the SIGNUM is within the legal range of signals.\fR"
+.in -1c
+.SS Static Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBsig_atomic_t\fR \fBsig_pending_\fR"
+.br
+.RI "\fIKeeps track of whether a signal is pending.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Event_Handler\fR* \fBsignal_handlers_\fR [ACE_NSIG]"
+.br
+.RI "\fIArray used to store one user-defined Event_Handler for every signal.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This is the main dispatcher of signals for \fBACE\fR. It improves the existing UNIX signal handling mechanism by allowing C++ objects to handle signals in a way that avoids the use of global/static variables and functions.
+.PP
+.PP
+ Using this class a program can register an  with the  in order to handle a designated <signum>. When a signal occurs that corresponds to this <signum>, the <handle_signal> method of the registered  is invoked automatically. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Sig_Handler::dispatch (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)\fC [static]\fR
+.PP
+Callback routine registered with sigaction(2) that dispatches the <handle_signal> method of the appropriate pre-registered \fBACE_Event_Handler\fR. 
+.PP
+Reimplemented in \fBACE_Sig_Handlers\fR.
+.SS void ACE_Sig_Handler::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Sig_Handlers\fR.
+.SS \fBACE_Event_Handler\fR * ACE_Sig_Handler::handler (int signum, \fBACE_Event_Handler\fR *)\fC [virtual]\fR
+.PP
+Set a new  that is associated with <signum>. Return the existing handler.
+.PP
+Reimplemented in \fBACE_Sig_Handlers\fR.
+.SS \fBACE_Event_Handler\fR * ACE_Sig_Handler::handler (int signum)\fC [virtual]\fR
+.PP
+Return the  associated with <signum>.
+.PP
+Reimplemented in \fBACE_Sig_Handlers\fR.
+.SS \fBACE_Event_Handler\fR * ACE_Sig_Handler::handler_i (int signum, \fBACE_Event_Handler\fR *)\fC [static, protected]\fR
+.PP
+Set a new  that is associated with <signum>. Return the existing handler. Does not acquire any locks so that it can be called from a signal handler, such as <dispatch>. 
+.SS int ACE_Sig_Handler::in_range (int signum)\fC [static, protected]\fR
+.PP
+Check whether the SIGNUM is within the legal range of signals.
+.PP
+.SS int ACE_Sig_Handler::register_handler (int signum, \fBACE_Event_Handler\fR * new_sh, \fBACE_Sig_Action\fR * new_disp = 0, \fBACE_Event_Handler\fR ** old_sh = 0, \fBACE_Sig_Action\fR * old_disp = 0)\fC [virtual]\fR
+.PP
+Add a new  and a new sigaction associated with <signum>. Passes back the existing  and its sigaction if pointers are non-zero. Returns -1 on failure and >= 0 on success. 
+.PP
+Reimplemented in \fBACE_Sig_Handlers\fR.
+.SS int ACE_Sig_Handler::register_handler_i (int signum, \fBACE_Event_Handler\fR * new_sh, \fBACE_Sig_Action\fR * new_disp = 0, \fBACE_Event_Handler\fR ** old_sh = 0, \fBACE_Sig_Action\fR * old_disp = 0)\fC [static, protected]\fR
+.PP
+This implementation method is called by <register_handler> and <dispatch>. It doesn't do any locking so that it can be called within a signal handler, such as <dispatch>. It adds a new  and a new sigaction associated with <signum>. Passes back the existing  and its sigaction if pointers are non-zero. Returns -1 on failure and >= 0 on success. 
+.SS int ACE_Sig_Handler::remove_handler (int signum, \fBACE_Sig_Action\fR * new_disp = 0, \fBACE_Sig_Action\fR * old_disp = 0, int sigkey = -1)\fC [virtual]\fR
+.PP
+Remove the  currently associated with <signum>. <sigkey> is ignored in this implementation since there is only one instance of a signal handler. Install the new disposition (if given) and return the previous disposition (if desired by the caller). Returns 0 on success and -1 if <signum> is invalid. 
+.PP
+Reimplemented in \fBACE_Sig_Handlers\fR.
+.SS void ACE_Sig_Handler::sig_pending (int)\fC [static]\fR
+.PP
+Reset the value of <sig_pending_> so that no signal is pending.
+.PP
+.SS int ACE_Sig_Handler::sig_pending (void)\fC [static]\fR
+.PP
+True if there is a pending signal.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Sig_Handler::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_Sig_Handlers\fR.
+.SS \fBsig_atomic_t\fR ACE_Sig_Handler::sig_pending_\fC [static, protected]\fR
+.PP
+Keeps track of whether a signal is pending.
+.PP
+.SS \fBACE_Event_Handler\fR * ACE_Sig_Handler::signal_handlers_[ACE_NSIG]\fC [static, private]\fR
+.PP
+Array used to store one user-defined Event_Handler for every signal.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

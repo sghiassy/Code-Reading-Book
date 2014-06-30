@@ -1,0 +1,290 @@
+.\" $XConsortium: Xdec.man /main/7 1995/12/15 14:02:33 gildea $
+.\" Copyright 1991 Digital Equipment Corporation
+.\" Copyright (c) 1993  X Consortium
+.\" 
+.\" Permission is hereby granted, free of charge, to any person obtaining
+.\" a copy of this software and associated documentation files (the
+.\" "Software"), to deal in the Software without restriction, including
+.\" without limitation the rights to use, copy, modify, merge, publish,
+.\" distribute, sublicense, and/or sell copies of the Software, and to
+.\" permit persons to whom the Software is furnished to do so, subject to
+.\" the following conditions:
+.\" 
+.\" The above copyright notice and this permission notice shall be included
+.\" in all copies or substantial portions of the Software.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+.\" OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+.\" MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+.\" IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+.\" OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+.\" ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+.\" OTHER DEALINGS IN THE SOFTWARE.
+.\" 
+.\" Except as contained in this notice, the name of the X Consortium shall
+.\" not be used in advertising or otherwise to promote the sale, use or
+.\" other dealings in this Software without prior written authorization
+.\" from the X Consortium.
+.TH XDEC 1 "Release 6.1" "X Version 11"
+.SH Name
+Xdec \- X server for Digital RISC machines
+.SH Syntax
+.B Xdec
+[
+.I options
+]
+.SH Description
+.NXR "Xdec command to start X server"
+.NXR "X server"
+.NXR "X Window System"
+.NXR "X Window System" "starting the server"
+.NXR "Starting the server in the X Window System"
+.NXM "Starting the server in the X Window System"
+.PP
+The
+.PN Xdec
+command starts the X server.  The
+.PN Xdec
+command supports the following hardware configurations:
+.nf
+
+   DECstation 2100 Monochrome or Color Workstations
+   DECstation 3100 Monochrome or Color Workstations
+   DECstation 5000/100/200 CX or MX Single or Multiscreen Workstations
+.fi
+.PP
+This server should run on reasonable one
+bit or eight bit Ultrix/RISC TURBOchannel displays of any resolution, if
+correct device driver support is present.
+The server queries the device driver interface to determine if a
+suitable display device is installed, and if so, configures the server
+appropriately.
+.LP
+The command that executes the server is specified together with its
+command line options in the
+.PN /etc/ttys
+file or using xdm(1) and, therefore, is automatically run when your system is
+started in multiuser mode.
+.\"Use the 
+.\".PN xset
+.\".B \-q
+.\"command to query the server for the options that are currently set.
+Optionally, you can create an
+.PN /etc/screens
+file containing device-dependent command line 
+options (separated by spaces) and use it to start the server.
+Command line options specified in the 
+command starting the X server override those specified in the
+.PN /etc/screens
+file.
+.PP
+Start the server in bug compatibility mode (with the \fBbc\fP
+option) to remain bug-for-bug compatible with previous releases of the server.
+.SH Options
+In addition to the normal server options described in the \fIXserver(1)\fP
+manual page, \fIXdec\fP accepts the following 
+device-dependent, vendor-specific options.
+When the server is run on multiscreen capable platforms, selected
+device-dependent options take an optional screen-specification argument.
+Omitting the screen-specification argument defines the parameter for all
+available screens.
+.IP "\fB\-btn\fP \fInum\fP" 20
+Specifies the number of buttons on the pointer device.  The default is three
+for a mouse device and four for a tablet device.
+.IP "\fB\-bp\fP[\fIscreen\fP]  \fIcolor\fP" 20
+Sets the color of black pixels for the screen.
+The \fIcolor\fP argument can be a named color from the
+.PN rgb
+database or a number sign (\fC#\fP) followed by a hexidecimal number.
+.IP "\fB\-class\fP[\fIscreen\fP]  \fIvisual class\fP" 20
+Sets the visual class for the root window of the screen.  Possible values
+are
+.PN StaticGray ,
+.PN StaticColor ,
+.PN PseudoColor ,
+.PN GrayScale ,
+and
+.PN TrueColor .
+.\" .PN DirectColor .
+.IP "\fB\-dpi\fP[\fIscreen\fP]  \fInum\fP" 20
+Sets the dots per inch for the x and y coordinates.
+.IP "\fB\-dpix\fP[\fIscreen\fP]  \fInum\fP" 20
+Sets the dots per inch for the x coordinates.
+.IP "\fB\-dpiy\fP[\fIscreen\fP]  \fInum\fP" 20
+Sets the dots per inch for the y coordinates.
+.LP
+By default on multiscreen systems, the server presumes the
+left hand most screen is screen zero, screen one to its right, screen
+two yet further to its right, and so on.
+The cursor will track from the
+right hand edge of screen zero to the left hand edge of screen one,
+from the right hand edge of screen one to the left hand edge of screen two.
+This arrangement can be modified in various ways, to support 
+other physical arrangements of monitors.
+.IP "\fB\-edge_bottom\fP\fIscr1\fP \fIscr2\fP" 20
+Attaches the bottom edge of the screen specified by \fIscr1\fP to the
+screen specified by \fIscr2\fP.
+.IP "\fB\-edge_left\fP\fIscr1\fP \fIscr2\fP" 20
+Attaches the left edge of the screen specified by \fIscr1\fP to the
+screen specified by \fIscr2\fP.
+.IP "\fB\-edge_right\fP\fIscr1\fP \fIscr2\fP" 20
+Attaches the right edge of the screen specified by \fIscr1\fP to the
+screen specified by \fIscr2\fP.
+.IP "\fB\-edge_top\fP\fIscr1\fP \fIscr2\fP" 20
+Attaches the top edge of the screen specified by \fIscr1\fP to the
+screen specified by \fIscr2\fP.
+.IP "\fB\-wp\fP[\fIscreen\fP]  \fIcolor\fP" 20
+Sets the color of white pixels for the screen.  The syntax for \fIcolor\fP
+is the same as for the argument to the \fB\-bp\fP option.
+.IP "\fB\-tb\fP \fIn\fP" 20
+Opens
+.PN /dev/tty0\fIn\fP
+\fRfor graphics tablet communications.
+.IP "\fB\-pcm\fP \fIn\fP" 20
+\fROpens
+.PN /dev/tty0\fIn\fP
+\fRfor Protocol Control Module (PCM) communications.
+The two free serial ports on the DECstation correspond to
+.PN /dev/tty00
+and 
+.PN /dev/tty01 .
+Dial boxes and button boxes must be connected through these two ports.
+.SH Restrictions
+If options not listed in this reference page are 
+used, the server may fail. Using invalid options for the X server 
+in the 
+.PN /etc/ttys
+file may cause the workstation to behave as if the 
+X server is hung.
+.PP
+Multiscreen configurations can contain either two- or three-color frame
+buffer display devices or monochrome frame buffer display devices.
+.PP
+Color and monochrome frame buffer display devices
+can be installed in the same workstation, however applications
+built before X11 release 5 may become confused due to poor initial design
+of resource files.
+.PP
+To connect two screens, two command line options must be
+issued.  Attaching two screens using only one 
+.PN -edge_ 
+argument produces a one-way mouse-travel path.
+You can create a wrap-around mouse path by attaching 
+noncontiguous screen edges.
+The 
+.PN -edge_ 
+arguments are disabled on single screen systems.
+.PP
+Nonsensical screen connections are not allowed; the top edge of a
+particular screen must be connected with the bottom edge of
+another screen, and the right edge of a particular screen
+must be connected with the left edge of another screen.
+Left and right edges cannot be connected to top or bottom
+edges.
+.SH Examples
+The following example specifies that screen 
+.PN 0
+has a resolution of
+100x100 dots
+per inch and screen 
+.PN 1 
+has a resolution of 75x70 dots per inch:
+.EX
+Xdec -dpi0 100 -dpix1 75 -dpiy1 70
+.EE
+.PP
+If no screen is specified, the value specified is used
+for all screens.  If the screen resolution is not specified using
+command line options, a default value
+based on pixel dimensions and screen size is calculated for
+each screen.
+.PP
+The following example specifies that black pixels on screen
+.PN 1
+have the hexadecimal value 3a009e005c0 prefixed with a
+number sign (\fC#\fP) and white pixels on screen
+.PN 1
+are color "wheat" from the X rgb color database.
+.EX
+Xdec -bp1 #3a009e005c0 -wp1 wheat
+.EE
+For monochrome display devices, values of 0 and 1
+are the only valid pixel colors.
+.PP
+To specify the default visual class
+of a root window on a particular screen, append the screen
+number (\fC0\fP, \fC1\fP, or \fC2\fP) to the
+.PN \-class
+command line option.  Possible visual classes are:
+StaticGray, StaticColor, PseudoColor, GrayScale, and TrueColor.
+The following example specifies that the screen
+.PN 0
+root window is a TrueColor visual, and the screen
+.PN 1
+root window is a PseudoColor visual.
+.EX
+Xdec -class0 TrueColor -class1 PseudoColor
+.EE
+.PP
+The following example attaches screen
+.PN 1
+above screen
+.PN 0
+and screen
+.PN 2
+to the right of screen
+.PN 0
+(an L-shaped configuration):
+.EX
+Xdec -edge_top0 1 -edge_bottom1 0 -edge_right0 2 -edge_left2 0
+.EE
+.PP
+The following example is identical to the default state (a
+horizontal line) with the addition of a wraparound from
+screen
+.PN 0
+to screen
+.PN 2 :
+.EX
+Xdec -edge_left0 2 -edge_right0 1 -edge_left1 0 -edge_right1 2 \e
+-edge_left2 1 -edge_right2 0
+.EE
+.SH Files
+.PN \&~/.Xdefaults
+.br
+.PN /etc/ttys
+.br
+.PN /etc/screens 
+.SH See Also
+X(1X), xdm(1), Xserver(1)
+.\"XServer(1X)
+.\"bitmap(1X), 
+.\"keycomp(1X), 
+.\"dxcalc(1X),
+.\"dxcalendar(1X),
+.\"dxcardfiler(1X)
+.\"dxclock(1X), 
+.\"dxmail(1X),
+.\"dxnotepad(1X), 
+.\"dxterm(1X), 
+.\"dxwm(1X), 
+.\"uwm(1X), 
+.\"xedit(1X),
+.\"xfd(1X), 
+.\"xhost(1X), 
+.\"xload(1X), 
+.\"xmh(1X),
+.\"xset(1X),
+.\"xsetroot(1X),
+.\"xwininfo(1X)
+.br
+\fIX Window System: The Complete Reference to Xlib, X Protocol, 
+ICCCM, XLFD,\fP by Robert W. Scheifler and James Gettys, 
+Second Edition, Digital Press, 1990
+.br
+"X Window System Toolkit: The Complete Programmer's Guide
+and Specification, by Paul J. Asente and Ralph R. Swick,
+Digital Press, 1990
+.br
+\fIOSF/MOTIF Programmer's Guide and OSF/MOTIF Reference
+Guide,\fP Open Software Foundation, Prentice-Hall, 1990

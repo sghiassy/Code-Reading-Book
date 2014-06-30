@@ -1,0 +1,45 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/mga/Imakefile,v 3.7.2.1 1997/05/09 09:09:06 hohndel Exp $
+XCOMM
+XCOMM This is an Imakefile for the MGA driver.  
+XCOMM
+
+#include <Server.tmpl>
+
+SRCS = mga_driver.c mga_hwcurs.c mga_dac3026.c mga_dac1064.c \
+       mga_storm8.c mga_storm16.c mga_storm24.c mga_storm32.c
+OBJS = mga_driver.o mga_hwcurs.o mga_dac3026.o mga_dac1064.o \
+       mga_storm8.o mga_storm16.o mga_storm24.o mga_storm32.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+           -I$(SERVERSRC)/cfb -I../../vga -I../../../xaa \
+           -I$(FONTINCSRC) -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+NormalRelocatableTarget(mga_drv, $(OBJS))
+
+ObjectFromSpecialSource(mga_storm8, mga_storm, -DPSZ=8)
+ObjectFromSpecialSource(mga_storm16, mga_storm, -DPSZ=16)
+ObjectFromSpecialSource(mga_storm24, mga_storm, -DPSZ=24)
+ObjectFromSpecialSource(mga_storm32, mga_storm, -DPSZ=32)
+  
+InstallLinkKitNonExecFile(mga.h,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_bios.h,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_reg.h,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_driver.c,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_hwcurs.c,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_storm.c,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_map.h,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_dac3026.c,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(mga_dac1064.c,$(LINKKITDIR)/drivers/vga256/mga)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/mga)
+
+DependTarget()

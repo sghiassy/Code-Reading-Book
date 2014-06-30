@@ -1,0 +1,305 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document>
+
+  &project;
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <title>The Realm Component</title>
+  </properties>
+
+<body>
+
+
+<section name="Introduction">
+
+  <p>A <strong>Realm</strong> element represents a "database" of usernames,
+  passwords, and <em>roles</em> (similar to Unix <em>groups</em>) assigned
+  to those users.  Different implementations of Realm allow Catalina to be
+  integrated into environments where such authentication information is already
+  being created and maintained, and then utilize that information to implement
+  <em>Container Managed Security</em> as described in the Servlet
+  Specification.</p>
+
+  <p>You may nest a Realm inside any Catalina container
+  <a href="engine.html">Engine</a>, <a href="host.html">Host</a>, or
+  <a href="context.html">Context</a>).  In addition, Realms associated with
+  an Engine or a Host are automatically inherited by lower-level
+  containers, unless explicitly overridden.</p>
+
+  <p>For more in-depth information about container managed security in web
+  applications, see <strong>FIXME - link to "Container Managed Security Guide"
+  in the application developer's section</strong>.  For more in-depth
+  information about configuing and using the standard Realm component
+  implementations, see <strong>FIXME - link to "Realm Configuration HOW-TO"
+  in the administrator's section</strong>.</p>
+
+    <blockquote><em>
+    <p>The description below uses the variable name $CATALINA_HOME
+    to refer to the directory into which you have installed Tomcat 4,
+    and is the base directory against which most relative paths are
+    resolved.  However, if you have configured Tomcat 4 for multiple
+    instances by setting a CATALINA_BASE directory, you should use
+    $CATALINA_BASE instead of $CATALINA_HOME for each of these
+    references.</p>
+    </em></blockquote>
+
+</section>
+
+
+<section name="Attributes">
+
+  <subsection name="Common Attributes">
+
+    <p>All implementations of <strong>Realm</strong>
+    support the following attributes:</p>
+
+    <attributes>
+
+      <attribute name="className" required="true">
+        <p>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.catalina.Realm</code> interface.</p>
+      </attribute>
+
+    </attributes>
+
+  </subsection>
+
+
+  <subsection name="Standard Implementation">
+
+    <p>Unlike most Catalina components, there are several standard
+    <strong>Realm</strong> implementations available.  As a result,
+    the <code>className</code> attribute MUST be used to select the
+    implementation you wish to use.</p>
+
+    <h3>JDBC Database Realm (org.apache.catalina.realm.JDBCRealm)</h3>
+
+    <p>The <strong>JDBC Database Realm</strong> connects Catalina to
+    a relational database, accessed through an appropriate JDBC driver,
+    to perform lookups of usernames, passwords, and their associated
+    roles.  Because the lookup is done each time that it is required,
+    changes to the database will be immediately reflected in the
+    information used to authenticate new logins.</p>
+
+    <p>A rich set of additional attributes lets you configure the required
+    connection to the underlying database, as well as the table and
+    column names used to retrieve the required information:</p>
+
+    <attributes>
+
+      <attribute name="connectionName" required="true">
+        <p>The database username to use when establishing the JDBC
+        connection.</p>
+      </attribute>
+
+      <attribute name="connectionPassword" required="true">
+        <p>The database password to use when establishing the JDBC
+        connection.</p>
+      </attribute>
+
+      <attribute name="connectionURL" required="true">
+        <p>The connection URL to be passed to the JDBC driver when
+        establishing a database connection.</p>
+      </attribute>
+
+      <attribute name="digest" required="false">
+        <p>The name of the <code>MessageDigest</code> algorithm used
+        to encode user passwords stored in the database.  If not specified,
+        user passwords are assumed to be stored in clear-text.</p>
+      </attribute>
+
+      <attribute name="driverName" required="true">
+        <p>Fully qualified Java class name of the JDBC driver to be
+        used to connect to the authentication database.</p>
+      </attribute>
+
+      <attribute name="roleNameCol" required="true">
+        <p>Name of the column, in the "user roles" table, which contains
+        a role name assigned to the corresponding user.</p>
+      </attribute>
+
+      <attribute name="userCredCol" required="true">
+        <p>Name of the column, in the "users" table, which contains
+        the user's credentials (i.e. password(.  If a value for the
+        <code>digest</code> attribute is specified, this component
+        will assume that the passwords have been encoded with the
+        specified algorithm.  Otherwise, they will be assumed to be
+        in clear text.</p>
+      </attribute>
+
+      <attribute name="userNameCol" required="true">
+        <p>Name of the column, in the "users" and "user roles" table,
+        that contains the user's username.</p>
+      </attribute>
+
+      <attribute name="userRoleTable" required="true">
+        <p>Name of the "user roles" table, which must contain columns
+        named by the <code>userNameCol</code> and <code>roleNameCol</code>
+        attributes.</p>
+      </attribute>
+
+      <attribute name="userTable" required="true">
+        <p>Name of the "users" table, which must contain columns named
+        by the <code>userNameCol</code> and <code>userCredCol</code>
+        attributes.</p>
+      </attribute>
+
+    </attributes>
+
+    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
+    information on setting up container managed security using the
+    JDBC Database Realm component.</p>
+
+
+    <h3>JNDI Directory Realm (org.apache.catalina.realm.JNDIRealm)</h3>
+
+
+    <p>The <strong>JNDI Directory Realm</strong> connects Catalina to
+    an LDAP Directory, accessed through an appropriate JNDI driver,
+    to perform lookups of usernames, passwords, and their associated
+    roles.  Because the lookup is done each time that it is required,
+    changes to the directory will be immediately reflected in the
+    information used to authenticate new logins.</p>
+
+    <p>A rich set of additional attributes lets you configure the required
+    connection to the underlying directory, as well as the element and
+    attribute names used to retrieve the required information:</p>
+
+    <attributes>
+
+      <attribute name="connectionName" required="true">
+        <p>The directory username to use when establishing the JNDI
+        connection.</p>
+      </attribute>
+
+      <attribute name="connectionPassword" required="true">
+        <p>The directory password to use when establishing the JNDI
+        connection.</p>
+      </attribute>
+
+      <attribute name="connectionURL" required="true">
+        <p>The connection URL to be passed to the JNDI driver when
+        establishing a connection to the directory.</p>
+      </attribute>
+
+      <attribute name="contextFactory" required="false">
+        <p>Fully qualified Java class name of the factory class used
+        to acquire our JNDI <code>InitialContext</code>.  By default,
+        assumes that the standard JNDI LDAP provider will be utilized.</p>
+      </attribute>
+
+      <attribute name="roleBase" required="true">
+        <p>The base directory element for performing role searches.</p>
+      </attribute>
+
+      <attribute name="roleName" required="true">
+        <p>The name of the directory attribute to retrieve when selecting
+        the assigned roles for a user.</p>
+      </attribute>
+
+      <attribute name="roleSearch" required="true">
+        <p>The LDAP search expression to use when selecting roles for a
+        particular user, with <code>{0}</code> marking where the actual
+        username should be inserted.</p>
+      </attribute>
+
+      <attribute name="roleSubtree" required="true">
+        <p>Set to <code>true</code> to search subtrees of the elements
+        selected by the <code>roleSearch</code> search expression.  Set
+        to <code>false</code> to not search subtrees.</p>
+      </attribute>
+
+      <attribute name="userPassword" required="true">
+        <p>Name of the LDAP element containing the user's password.</p>
+      </attribute>
+
+      <attribute name="userPattern" required="true">
+        <p>The LDAP search expression to use when retrieving the attributes
+        of a particular user, with <code>{0}</code> marking where the
+        actual username should be inserted.</p>
+      </attribute>
+
+    </attributes>
+
+    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
+    information on setting up container managed security using the
+    JNDI Directory Realm component.</p>
+
+
+    <h3>Memory Based Realm (org.apache.catalina.realm.MemoryRealm)</h3>
+
+    <p>The <strong>Memory Based Realm</strong> is a simple Realm implementation
+    that reads user information from an XML format, and represents it as a
+    collection of Java objects in memory.  This implementation is intended
+    solely to get up and running with container managed security - it is NOT
+    intended for production use.  As such, there are no mechanisms for
+    updating the in-memory collection of users when the content of the
+    underlying data file is changed.</p>
+
+    <p>The Memory Based Realm implementation supports the following
+    additional attributes:</p>
+
+    <attributes>
+
+      <attribute name="pathname" required="false">
+        <p>Absolute or relative (to $CATALINA_HOME) pathname to the XML file
+        containing our user information.  See below for details on the
+        XML element format required.  If no pathname is specified, the
+        default value is <code>conf/tomcat-users.xml</code>.</p>
+      </attribute>
+
+    </attributes>
+
+    <p>The XML document referenced by the <code>pathname</code> attribute must
+    conform to the following requirements:</p>
+    <ul>
+    <li>The root (outer) element must be <code>&lt;tomcat-users&gt;</code>.
+        </li>
+    <li>Each authorized user must be represented by a single XML element
+        <code>&lt;user&gt;</code>, nested inside the root element.</li>
+    <li>Each <code>&lt;user&gt;</code> element must have the following
+        attributes:
+        <ul>
+        <li><strong>name</strong> - Username of this user (must be unique
+            within this file).</li>
+        <li><strong>password</strong> - Password of this user (in
+            clear text).</li>
+        <li><strong>roles</strong> - Comma-delimited list of the role names
+            assigned to this user.</li>
+        </ul></li>
+    </ul>
+
+    <p>See <strong>FIXME - Nested pointer into HOW-TO</strong> for more
+    information on setting up container managed security using the
+    Memory Based Realm component.</p>
+
+
+  </subsection>
+
+
+</section>
+
+
+<section name="Nested Components">
+
+  <p>No components may be nested inside a <strong>Realm</strong> element.</p>
+
+</section>
+
+
+<section name="Special Features">
+
+  <p>See <a href="host.html">Single Sign On</a> for information about
+  configuring Single Sign On support for a virtual host.</p>
+
+</section>
+
+
+</body>
+
+
+</document>

@@ -1,0 +1,281 @@
+.TH ACE_High_Res_Timer 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_High_Res_Timer \- A high resolution timer class wrapper that encapsulates OS-specific high-resolution timers, such as those found on Solaris, AIX, Win32/Pentium, and VxWorks. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <High_Res_Timer.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_High_Res_Timer\fR (void)"
+.br
+.RI "\fIInitialize the timer.\fR"
+.ti -1c
+.RI "\fB~ACE_High_Res_Timer\fR (void)"
+.br
+.RI "\fIdtor.\fR"
+.ti -1c
+.RI "void \fBreset\fR (void)"
+.br
+.RI "\fIReinitialize the timer.\fR"
+.ti -1c
+.RI "void \fBstart\fR (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)"
+.br
+.RI "\fIStart timing.\fR"
+.ti -1c
+.RI "void \fBstop\fR (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)"
+.br
+.RI "\fIStop timing.\fR"
+.ti -1c
+.RI "void \fBelapsed_time\fR (\fBACE_Time_Value\fR &tv) const"
+.br
+.RI "\fISet <tv> to the number of microseconds elapsed.\fR"
+.ti -1c
+.RI "void \fBelapsed_time\fR (\fBACE_hrtime_t\fR &nanoseconds) const"
+.br
+.RI "\fISet <nanoseconds> to the number of nanoseconds elapsed.\fR"
+.ti -1c
+.RI "void \fBelapsed_microseconds\fR (\fBACE_hrtime_t\fR &usecs) const"
+.br
+.RI "\fISets <usecs> to the elapsed (stop - start) time in microseconds.\fR"
+.ti -1c
+.RI "void \fBstart_incr\fR (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)"
+.br
+.RI "\fIStart incremental timing.\fR"
+.ti -1c
+.RI "void \fBstop_incr\fR (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)"
+.br
+.RI "\fIStop incremental timing.\fR"
+.ti -1c
+.RI "void \fBelapsed_time_incr\fR (\fBACE_Time_Value\fR &tv) const"
+.br
+.RI "\fISet <tv> to the number of microseconds elapsed between all calls to start_incr and stop_incr.\fR"
+.ti -1c
+.RI "void \fBelapsed_time_incr\fR (\fBACE_hrtime_t\fR &nanoseconds) const"
+.br
+.RI "\fISet <nsec> to the number of nanoseconds elapsed between all calls to start_incr and stop_incr.\fR"
+.ti -1c
+.RI "void \fBprint_total\fR (const \fBACE_TCHAR\fR *message, const int iterations = 1, ACE_HANDLE handle = ACE_STDOUT) const"
+.br
+.RI "\fIPrint total time. NOTE: only use <print_total> if incremental timings had been used!\fR"
+.ti -1c
+.RI "void \fBprint_ave\fR (const \fBACE_TCHAR\fR *message, const int iterations = 1, ACE_HANDLE handle = ACE_STDOUT) const"
+.br
+.RI "\fIPrint average time.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBglobal_scale_factor\fR (ACE_UINT32 gsf)"
+.br
+.ti -1c
+.RI "ACE_UINT32 \fBglobal_scale_factor\fR (void)"
+.br
+.RI "\fIReturns the global_scale_factor.\fR"
+.ti -1c
+.RI "int \fBget_env_global_scale_factor\fR (const \fBACE_TCHAR\fR *env = ACE_LIB_TEXT ("ACE_SCALE_FACTOR"))"
+.br
+.ti -1c
+.RI "ACE_UINT32 \fBcalibrate\fR (const ACE_UINT32 usec = 500000, const u_int iterations = 10)"
+.br
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBgettimeofday_hr\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBgettimeofday\fR (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)"
+.br
+.ti -1c
+.RI "void \fBhrtime_to_tv\fR (\fBACE_Time_Value\fR &tv, const \fBACE_hrtime_t\fR hrt)"
+.br
+.RI "\fIConverts an <hrt> to <tv> using global_scale_factor_.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_hrtime_t\fR \fBstart_\fR"
+.br
+.RI "\fIStarting time.\fR"
+.ti -1c
+.RI "\fBACE_hrtime_t\fR \fBend_\fR"
+.br
+.RI "\fIEnding time.\fR"
+.ti -1c
+.RI "\fBACE_hrtime_t\fR \fBtotal_\fR"
+.br
+.RI "\fITotal elapsed time.\fR"
+.ti -1c
+.RI "\fBACE_hrtime_t\fR \fBstart_incr_\fR"
+.br
+.RI "\fIStart time of incremental timing.\fR"
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_hrtime_t\fR \fBgettime\fR (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)"
+.br
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_UINT32 \fBglobal_scale_factor_\fR"
+.br
+.RI "\fIConverts ticks to microseconds. That is, ticks / global_scale_factor_ == microseconds.\fR"
+.ti -1c
+.RI "int \fBglobal_scale_factor_status_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A high resolution timer class wrapper that encapsulates OS-specific high-resolution timers, such as those found on Solaris, AIX, Win32/Pentium, and VxWorks.
+.PP
+.PP
+ Most of the member functions don't return values. The only reason that one would fail is if high-resolution time isn't supported on the platform. To avoid impacting performance and complicating the interface, in that case,  is used instead. The global scale factor is required for platforms that have high-resolution timers that return units other than microseconds, such as clock ticks. It is represented as a static u_long, can only be accessed through static methods, and is used by all instances of High Res Timer. The member functions that return or print times use the global scale factor. They divide the "time" that they get from  by global_scale_factor_ to obtain the time in microseconds. Its units are therefore 1/microsecond. On Windows the global_scale_factor_ units are 1/millisecond. There's a macro  which gives the units/second. Because it's possible that the units/second changes in the future, it's recommended to use it instead of a "hard coded" solution. Dependend on the platform and used class members, there's a maximum elapsed period before overflow (which is not checked). Look at the documentation with some members functions. On some (most?) implementations it's not recommended to measure "long" timeperiods, because the error's can accumulate fast. This is probably not a problem profiling code, but could be on if the high resolution timer class is used to initiate actions after a "long" timeout. On Solaris, a scale factor of 1000 should be used because its high-resolution timer returns nanoseconds. However, on Intel platforms, we use RDTSC which returns the number of clock ticks since system boot. For a 200MHz cpu, each clock tick is 1/200 of a microsecond; the global_scale_factor_ should therefore be 200 or 200000 if it's in unit/millisecond. On Windows QueryPerformanceCounter() is used, which can be a  different implementation depending on the used windows HAL (Hardware Abstraction Layer). On some it uses the PC "timer chip" while it uses RDTSC on others.  NOTE: the elapsed time calculations in the print methods use ACE_hrtime_t values. Those methods do _not_ check for overflow! NOTE: Gabe <begeddov@proaxis.com> raises this issue regarding : on multi-processors, the processor that you query for your <timer.stop> value might not be the one you queried for <timer.start>. Its not clear how much divergence there would be, if any. This issue is not mentioned in the Solaris 2.5.1 gethrtime man page. A RDTSC NOTE: RDTSC is the Intel Pentium read-time stamp counter and is actualy a 64 bit clock cycle counter, which is increased  with every cycle. It has a low overhead and can be read within 16 (pentium) or 32 (pentium II,III,...) cycles, but it doesn't serialize the processor, which could give wrong timings when profiling very short code fragments.  Problematic is that some power sensitive devices (laptops for example, but probably also embeded devices), do change the cycle rate while running.  Some pentiums can run on (at least) two clock frequency's. Another problem arises with multiprocessor computers, there are reports that the different RDTSC's are not always kept in sync. A windows "timer chip" NOTE: (8254-compatible real-time clock) When QueryPerformanceCounter() uses the 8254 it has a  frequency off about 1.193 Mhz (or sometimes 3.579 Mhz?) and reading it requires some time (several thousand cycles). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_High_Res_Timer::ACE_High_Res_Timer (void)
+.PP
+Initialize the timer.
+.PP
+.SS ACE_High_Res_Timer::~ACE_High_Res_Timer (void)
+.PP
+dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS ACE_UINT32 ACE_High_Res_Timer::calibrate (const ACE_UINT32 usec = 500000, const u_int iterations = 10)\fC [static]\fR
+.PP
+Set (and return, for info) the global scale factor by sleeping for <usec> and counting the number of intervening clock cycles. Average over <iterations> of <usec> each. On some platforms, such as Pentiums, this is called automatically during the first ACE_High_Res_Timer construction with the default parameter values. An application can override that by calling calibrate with any desired parameter values _prior_ to constructing the first ACE_High_Res_Timer instance. Beware for platforms that can change the cycle rate on the fly. 
+.SS void ACE_High_Res_Timer::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS void ACE_High_Res_Timer::elapsed_microseconds (\fBACE_hrtime_t\fR & usecs) const
+.PP
+Sets <usecs> to the elapsed (stop - start) time in microseconds.
+.PP
+Will overflow on windows when measuring more than appox. 2^^54 ticks. Is still more than 48 days with a 4 Ghz counter. 
+.SS void ACE_High_Res_Timer::elapsed_time (\fBACE_hrtime_t\fR & nanoseconds) const
+.PP
+Set <nanoseconds> to the number of nanoseconds elapsed.
+.PP
+Will overflow when measuring more than 194 day's. 
+.SS void ACE_High_Res_Timer::elapsed_time (\fBACE_Time_Value\fR & tv) const
+.PP
+Set <tv> to the number of microseconds elapsed.
+.PP
+Could overflow within hours on windows with emulated 64 bit int's and a fast counter. VC++ and Borland normaly use __int64 and so normaly don't have this problem. 
+.SS void ACE_High_Res_Timer::elapsed_time_incr (\fBACE_hrtime_t\fR & nanoseconds) const
+.PP
+Set <nsec> to the number of nanoseconds elapsed between all calls to start_incr and stop_incr.
+.PP
+.SS void ACE_High_Res_Timer::elapsed_time_incr (\fBACE_Time_Value\fR & tv) const
+.PP
+Set <tv> to the number of microseconds elapsed between all calls to start_incr and stop_incr.
+.PP
+.SS int ACE_High_Res_Timer::get_env_global_scale_factor (const \fBACE_TCHAR\fR * env = ACE_LIB_TEXT ("ACE_SCALE_FACTOR"))\fC [static]\fR
+.PP
+Sets the global_scale_factor to the value in the <env> environment variable. Returns 0 on success, -1 on failure. Note if <env> points to string "0" (value zero), this call will fail. This is basically a no-op on CE because there is no concept of environment variable on CE. 
+.SS \fBACE_hrtime_t\fR ACE_High_Res_Timer::gettime (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)\fC [static, private]\fR
+.PP
+For internal use: gets the high-resolution time using . Except on platforms that require that the <global_scale_factor_> be set, such as ACE_WIN32, uses the low-resolution clock if the <global_scale_factor_> has not been set. 
+.SS \fBACE_Time_Value\fR ACE_High_Res_Timer::gettimeofday (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)\fC [static]\fR
+.PP
+THIS FUNCTION IS DEPRECATED. PLEASE USE  INSTEAD! Calls  passing . This function can be used to parameterize objects such as . If <global_scale_factor_> is not set, and we're on a platform that requires <global_scale_factor_> (e.g., Win32), \fBACE_OS::gettimeofday\fR will be used instead of . This allows applications on Intel to use <High_Res_Timer> even when <global_scale_factor> is not set. However, setting the <global_scale_factor_> appropriately will result in the finest resolution possible. 
+.SS \fBACE_Time_Value\fR ACE_High_Res_Timer::gettimeofday_hr (void)\fC [static]\fR
+.PP
+Get the current "time" as the high resolution counter at this time. This is intended to be useful for supplying to a ACE_Timer_Queue as the gettimeofday function, thereby basing the timer calculations on the high res timer rather than wall clock time. 
+.SS ACE_UINT32 ACE_High_Res_Timer::global_scale_factor (void)\fC [static]\fR
+.PP
+Returns the global_scale_factor.
+.PP
+.SS void ACE_High_Res_Timer::global_scale_factor (ACE_UINT32 gsf)\fC [static]\fR
+.PP
+global_scale_factor_ is set to <gsf>. All High_Res_Timers use global_scale_factor_. This allows applications to set the scale factor just once for all High_Res_Timers. Check High_Res_Timer.cpp for the default global_scale_factors for several platforms. For many platforms (e.g., Solaris), the global_scale_factor_ is set to 1000 so that <scale_factor> need not be set. Careful, a <scale_factor> of 0 will cause division by zero exceptions. Depending on the platform its units are 1/microsecond or 1/millisecond. Use  inside calculations instead a hardcoded value. 
+.SS void ACE_High_Res_Timer::hrtime_to_tv (\fBACE_Time_Value\fR & tv, const \fBACE_hrtime_t\fR hrt)\fC [static]\fR
+.PP
+Converts an <hrt> to <tv> using global_scale_factor_.
+.PP
+.SS void ACE_High_Res_Timer::print_ave (const \fBACE_TCHAR\fR * message, const int iterations = 1, ACE_HANDLE handle = ACE_STDOUT) const
+.PP
+Print average time.
+.PP
+.SS void ACE_High_Res_Timer::print_total (const \fBACE_TCHAR\fR * message, const int iterations = 1, ACE_HANDLE handle = ACE_STDOUT) const
+.PP
+Print total time. NOTE: only use <print_total> if incremental timings had been used!
+.PP
+.SS void ACE_High_Res_Timer::reset (void)
+.PP
+Reinitialize the timer.
+.PP
+.SS void ACE_High_Res_Timer::start (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)
+.PP
+Start timing.
+.PP
+.SS void ACE_High_Res_Timer::start_incr (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)
+.PP
+Start incremental timing.
+.PP
+.SS void ACE_High_Res_Timer::stop (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)
+.PP
+Stop timing.
+.PP
+.SS void ACE_High_Res_Timer::stop_incr (const \fBACE_OS::ACE_HRTimer_Op\fR = ACE_OS::ACE_HRTIMER_GETTIME)
+.PP
+Stop incremental timing.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_High_Res_Timer::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS \fBACE_hrtime_t\fR ACE_High_Res_Timer::end_\fC [private]\fR
+.PP
+Ending time.
+.PP
+.SS ACE_UINT32 ACE_High_Res_Timer::global_scale_factor_\fC [static, private]\fR
+.PP
+Converts ticks to microseconds. That is, ticks / global_scale_factor_ == microseconds.
+.PP
+.SS int ACE_High_Res_Timer::global_scale_factor_status_\fC [static, private]\fR
+.PP
+Indicates the status of the global scale factor, 0 = hasn't been set 1 = been set -1 = HR timer not supported 
+.SS \fBACE_hrtime_t\fR ACE_High_Res_Timer::start_\fC [private]\fR
+.PP
+Starting time.
+.PP
+.SS \fBACE_hrtime_t\fR ACE_High_Res_Timer::start_incr_\fC [private]\fR
+.PP
+Start time of incremental timing.
+.PP
+.SS \fBACE_hrtime_t\fR ACE_High_Res_Timer::total_\fC [private]\fR
+.PP
+Total elapsed time.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

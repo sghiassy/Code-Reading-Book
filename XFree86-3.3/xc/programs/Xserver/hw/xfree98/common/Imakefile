@@ -1,0 +1,330 @@
+XCOMM $XConsortium: Imakefile /main/19 1996/10/25 21:24:28 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/common/Imakefile,v 3.28.2.1 1997/05/04 03:44:47 dawes Exp $
+
+
+
+#include <Server.tmpl>
+
+#ifdef i386MachArchitecture
+        KBD = xf86KbdMach
+#else
+# ifdef i386BsdArchitecture
+        KBD = xf86KbdBSD
+# else
+#  ifdef LinuxArchitecture
+        KBD = xf86KbdLnx
+#  else
+        KBD = xf86Kbd
+#  endif
+# endif
+#endif
+
+#if BuildXKB
+     XKBDDXSRC = xf86XKB.c
+     XKBDDXOBJ = xf86XKB.o
+#endif
+
+  XCONFIGSRC = xf86Config
+ XCONFIGFILE = XF86Config
+
+#if BuildXInputExt
+ XF86_XINPUT_SRC = xf86Xinput.c
+ XF86_XINPUT_OBJ = xf86Xinput.o
+# if JoystickSupport
+      JOYSTICK_SRC = xf86Jstk.c
+# endif
+# if WacomSupport
+         WACOM_SRC = xf86Wacom.c
+# endif
+# if ElographicsSupport
+   ELOGRAPHICS_SRC = xf86Elo.c
+# endif
+# if SummaSketchSupport
+   SUMMASKETCH_SRC = xf86Summa.c
+# endif
+# if ! BuildDynamicLoading
+    XINPUT_DEVICES = JoystickDefines WacomDefines ElographicsDefines SummaSketchDefines
+#  if JoystickSupport
+      JOYSTICK_OBJ = xf86Jstk.o
+#  endif
+#  if WacomSupport
+         WACOM_OBJ = xf86Wacom.o
+#  endif
+#  if ElographicsSupport
+   ELOGRAPHICS_OBJ = xf86Elo.o
+#  endif
+#  if SummaSketchSupport
+   SUMMASKETCH_OBJ = xf86Summa.o
+#  endif
+# else
+ SHARED_CFLAGS = PositionIndependentCFlags $(MODULEDEFINES)
+#  if JoystickSupport
+#   ifdef LinuxArchitecture
+   ARCH_JSTK = ../os-support/linux/lnx_jstk.o
+#   endif
+#   if defined(FreeBSDArchitecture) || defined(NetBSDArchitecture)
+   ARCH_JSTK = ../os-support/bsd/bsd_jstk.o
+#   endif
+#  endif
+# endif
+#endif
+
+#if BuildDynamicLoading
+#  if PexDynamicModule
+   PEX_MODULE_DEFINES = -DPEX_MODULE
+#  endif
+#  if XieDynamicModule
+   XIE_MODULE_DEFINES = -DXIE_MODULE
+#endif
+   XF86DL_SRC = xf86Dl.c
+   XF86DL_OBJ = xf86Dl.o
+#if HasDlsymBug
+DLSYM_DEFINES = -DDLSYM_BUG
+#endif
+MODULEDEFINES = -DDYNAMIC_MODULE -DDEFAULT_MODULE_PATH=\"$(MODULEDIR)\" $(DLSYM_DEFINES)
+EXT_MODULES_DEFINES = $(PEX_MODULE_DEFINES) $(XIE_MODULE_DEFINES) $(GLX_DEFINES)
+#endif
+
+#ifndef XF86ExpireServer
+#define XF86ExpireServer	NO
+#endif
+
+#if XFree86Version % 10 || XF86ExpireServer
+      BETASRC = xf86Beta.c
+      BETAOBJ = xf86Beta.o
+     BETADEFS = -DDO_CHECK_BETA
+#ifndef NeedXF86Beta
+#define NeedXF86Beta YES
+#endif
+#endif
+
+#if XF86ExpireServer
+EXP_FORCE_DEFINES = -DSHOW_BETA_MESSAGE -DEXPIRE_SERVER
+#endif
+
+SERVERSRCS = \
+	XF86_SVGA.c \
+	XF86_VGA16.c \
+	XF86_Mono.c \
+	XF86_S3.c \
+	XF86_8514.c \
+	XF86_Mach8.c \
+	XF86_Mach32.c \
+	XF86_Mach64.c \
+	XF86_P9000.c \
+	XF86_AGX.c \
+	XF86_W32.c \
+	XF86_I128.c \
+	XF86_TGA.c
+
+SRCS =	\
+	$(XF86DL_SRC) \
+	$(XCONFIGSRC).c \
+	xf86DCConf.c \
+	xf86IniExt.c \
+	xf86MIniExt.c \
+	xf86Cursor.c \
+	xf86Events.c \
+	xf86Init.c \
+	xf86Init_m.c \
+	xf86Io.c \
+	xf86Lock.c \
+	xf86_Mouse.c \
+	xf86_Option.c \
+	$(KBD).c \
+	$(XF86_XINPUT_SRC) \
+	$(JOYSTICK_SRC) \
+	$(WACOM_SRC) \
+	$(ELOGRAPHICS_SRC) \
+	$(SUMMASKETCH_SRC) \
+	$(XKBDDXSRC) \
+	$(BETASRC) \
+	$(SERVERSRCS)
+
+OBJS = \
+	$(XF86DL_OBJ) \
+	$(XCONFIGSRC).o \
+	xf86DCConf.o \
+	xf86Cursor.o \
+	xf86Events.o \
+	xf86Io.o \
+	xf86Lock.o \
+	xf86_Mouse.o \
+	$(XF86_XINPUT_OBJ) \
+	$(JOYSTICK_OBJ) \
+	$(WACOM_OBJ) \
+	$(ELOGRAPHICS_OBJ) \
+	$(SUMMASKETCH_OBJ) \
+	$(XKBDDXOBJ) \
+	$(BETAOBJ) \
+	$(KBD).o
+
+OFILES = \
+	xf86Init.o \
+	xf86Init_m.o \
+	xf86IniExt.o \
+	xf86MIniExt.o \
+	xf86_Option.o
+
+   INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86SRC) -I$(XF86OSSRC) \
+	      -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+	      -I$(SERVERSRC)/os -I$(XINCLUDESRC) -I$(EXTINCSRC)
+
+     OSNAME = OSName
+   OSVENDOR = OSVendor
+  OSNAMEDEF = -DOSNAME='"$(OSNAME)"' -DOSVENDOR='"$(OSVENDOR)"'
+CONSDEFINES = XFree86ConsoleDefines
+EXP_DEFINES = -DEXPIRY_TIME=XF86ServerExpiry $(EXP_FORCE_DEFINES)
+
+    DEFINES = $(XCONFIGDEFINES) $(CONSDEFINES) -DPC98
+
+#if XF98EGCServer
+VGA16BUILD = -DBUILD_VGA16
+#endif
+
+XF86SCREENFLAGS = $(VGA16BUILD) $(VGA16MONOBUILD)
+
+all:: $(OFILES)
+
+#if BuildXInputExt
+SpecialObjectRule(xf86Xinput.o,xf86Xinput.c $(ICONFIGFILES),$(XINPUT_DEVICES) $(MODULEDEFINES))
+# if BuildDynamicLoading
+SpecialObjectRule(xf86Dl.o,xf86Dl.c,$(MODULEDEFINES))
+#  if JoystickSupport
+SpecialObjectRule(xf86Jstk.o,xf86Jstk.c,$(SHARED_CFLAGS))
+DynamicModuleTarget(xf86Jstk.so,xf86Jstk.o $(ARCH_JSTK))
+#   ifndef DontInstallPC98Version
+InstallDynamicModule(xf86Jstk.so,$(MODULEDIR))
+#   endif
+#  endif
+#  if WacomSupport
+SpecialObjectRule(xf86Wacom.o,xf86Wacom.c,$(SHARED_CFLAGS))
+DynamicModuleTarget(xf86Wacom.so,xf86Wacom.o)
+#   ifndef DontInstallPC98Version
+InstallDynamicModule(xf86Wacom.so,$(MODULEDIR))
+#   endif
+#  endif
+#  if ElographicsSupport
+SpecialObjectRule(xf86Elo.o,xf86Elo.c,$(SHARED_CFLAGS))
+DynamicModuleTarget(xf86Elo.so,xf86Elo.o)
+#   ifndef DontInstallPC98Version
+InstallDynamicModule(xf86Elo.so,$(MODULEDIR))
+#   endif
+#  endif
+#  if SummaSketchSupport
+SpecialObjectRule(xf86Summa.o,xf86Summa.c,$(SHARED_CFLAGS))
+DynamicModuleTarget(xf86Summa.so,xf86Summa.o)
+#   ifndef DontInstallPC98Version
+InstallDynamicModule(xf86Summa.so,$(MODULEDIR))
+#   endif
+#  endif
+# endif
+#endif
+SpecialObjectRule($(XCONFIGSRC).o,$(XCONFIGSRC).c,'-DSERVER_CONFIG_FILE="$(LIBDIR)/$(XCONFIGFILE)"' $(MODULEDEFINES) $(EXT_DEFINES))
+SpecialObjectRule(xf86DCConf.o,xf86DCConf.c,'-DSERVER_CONFIG_FILE="$(LIBDIR)/$(XCONFIGFILE)"' $(MODULEDEFINES) $(EXT_DEFINES))
+SpecialObjectRule(xf86Init.o,xf86Init.c $(ICONFIGFILES),$(OSNAMEDEF) $(EXT_DEFINES) $(BETADEFS))
+SpecialCObjectRule(xf86Events,$(ICONFIGFILES),$(EXT_DEFINES))
+#if XF98GANBWAPServer || XF98NEC480Server || XF98NKVNECServer ||\
+    XF98WABSServer || XF98WABEPServer || XF98WSNAServer || XF98TGUIServer
+SpecialObjectRule(XF86_SVGA.o,XF86_SVGA.c $(ICONFIGFILES),$(XF86SCREENFLAGS))
+all:: XF86_SVGA.o
+#endif
+#if XF98EGCServer
+SpecialObjectRule(XF86_VGA16.o,XF86_VGA16.c $(ICONFIGFILES),$(XF86SCREENFLAGS))
+all:: XF86_VGA16.o
+#endif
+#if XF98NECS3Server || XF98PWSKBServer || XF98PWLBServer || XF98GA968Server
+SpecialObjectRule(XF86_S3.o,XF86_S3.c $(ICONFIGFILES),$(XF86SCREENFLAGS))
+all:: XF86_S3.o
+#endif
+
+#if NeedXF86Beta
+SpecialObjectRule($(BETAOBJ),$(BETASRC),$(EXP_DEFINES))
+#endif
+
+ObjectFromSpecialSource(xf86Init_m,xf86Init,$(OSNAMEDEF) $(EXT_DEFINES) $(BETADEFS) -DXF86MONOVGA)
+SpecialObjectRule(xf86IniExt.o,xf86IniExt.c $(ICONFIGFILES),$(EXT_DEFINES) $(EXT_MODULES_DEFINES))
+SpecialObjectRule(xf86MIniExt.o,xf86IniExt.c $(ICONFIGFILES),$(EXT_DEFINES) $(EXT_MODULES_DEFINES) -UPEXEXT -UXIE -UGLXEXT)
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(xf86,$(OBJS))
+
+LinkFile(XF86_Mach8.c,$(XF86SRC)/common/Mach8.c)
+LinkFile(XF86_Mach32.c,$(XF86SRC)/common/Mach32.c)
+LinkFile(XF86_Mach64.c,$(XF86SRC)/common/Mach64.c)
+LinkFile(xf86IniExt.c,$(SERVERSRC)/mi/miinitext.c)
+LinkFile(xf86MIniExt.c,$(SERVERSRC)/mi/miinitext.c)
+LinkSourceFile(XF86_8514.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_AGX.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_Mono.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_P9000.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_S3.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_TGA.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_SVGA.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_VGA16.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_W32.c,$(XF86SRC)/common)
+LinkSourceFile(XF86_I128.c,$(XF86SRC)/common)
+LinkSourceFile(atKeynames.h,$(XF86SRC)/common)
+LinkSourceFile(cfb16.h,$(XF86SRC)/common)
+LinkSourceFile(cfb24.h,$(XF86SRC)/common)
+LinkSourceFile(cfb32.h,$(XF86SRC)/common)
+LinkSourceFile(coKeynames.h,$(XF86SRC)/common)
+LinkSourceFile(compiler.h,$(XF86SRC)/common)
+LinkSourceFile(xf86.h,$(XF86SRC)/common)
+#if NeedXF86Beta
+LinkSourceFile(xf86Beta.c,$(XF86SRC)/common)
+#endif
+LinkSourceFile(xf86Config.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Cursor.c,$(XF86SRC)/common)
+LinkSourceFile(xf86DCConf.c,$(XF86SRC)/common)
+LinkSourceFile(xf86DCConf.h,$(XF86SRC)/common)
+LinkSourceFile(xf86Dl.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Elo.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Events.c,$(XF86SRC)/common)
+LinkSourceFile(xf86ExtInit.h,$(XF86SRC)/common)
+LinkSourceFile(xf86Init.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Jstk.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Summa.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Wacom.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Xinput.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Xinput.h,$(XF86SRC)/common)
+LinkSourceFile(xf86Io.c,$(XF86SRC)/common)
+LinkSourceFile(xf86XKB.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Kbd.c,$(XF86SRC)/common)
+LinkSourceFile(xf86KbdBSD.c,$(XF86SRC)/common)
+LinkSourceFile(xf86KbdLnx.c,$(XF86SRC)/common)
+LinkSourceFile(xf86KbdMach.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Keymap.h,$(XF86SRC)/common)
+LinkSourceFile(xf86Lock.c,$(XF86SRC)/common)
+LinkSourceFile(xf86Priv.h,$(XF86SRC)/common)
+LinkSourceFile(xf86Procs.h,$(XF86SRC)/common)
+LinkSourceFile(xf86_Config.h,$(XF86SRC)/common)
+LinkSourceFile(xf86_Mouse.c,$(XF86SRC)/common)
+LinkSourceFile(xf86_Option.c,$(XF86SRC)/common)
+LinkSourceFile(xf86_Option.h,$(XF86SRC)/common)
+
+InstallLinkKitLibrary(xf86,$(XF98LINKKITDIR)/lib98)
+InstallLinkKitNonExecFile(xf86Init.o,$(XF98LINKKITDIR)/lib98)
+InstallLinkKitNonExecFile(xf86Init_m.o,$(XF98LINKKITDIR)/lib98)
+
+#ifndef DontInstallPC98Version
+InstallLinkKitNonExecFile(xf86.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(xf86ExtInit.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(xf86Priv.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(xf86Procs.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(xf86_Option.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(xf86_Option.c,$(XF98LINKKITDIR))
+InstallLinkKitNonExecFile(xf86_Config.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(xf86DCConf.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(compiler.h,$(XF98LINKKITDIR)/include)
+InstallLinkKitNonExecFile(XF86_SVGA.c,$(XF98LINKKITDIR))
+InstallLinkKitNonExecFile(XF86_VGA16.c,$(XF98LINKKITDIR))
+InstallLinkKitNonExecFile(XF86_S3.c,$(XF98LINKKITDIR))
+#endif
+
+DependTarget()

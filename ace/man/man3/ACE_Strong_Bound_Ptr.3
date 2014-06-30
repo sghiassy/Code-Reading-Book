@@ -1,0 +1,244 @@
+.TH ACE_Strong_Bound_Ptr 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Strong_Bound_Ptr \- This class implements support for a reference counted pointer. Assigning or copying instances of an ACE_Strong_Bound_Ptr will automatically increment the reference count of the underlying object. When the last instance of an ACE_Strong_Bound_Ptr that references a particular object is destroyed or overwritten, it will invoke delete on its underlying pointer. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Bound_Ptr.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_EXPLICIT \fBACE_Strong_Bound_Ptr\fR (X *p = 0)"
+.br
+.RI "\fIConstructor that initializes an ACE_Strong_Bound_Ptr to point to the object 
+.PP
+ immediately.\fR"
+.ti -1c
+.RI "ACE_EXPLICIT \fBACE_Strong_Bound_Ptr\fR (\fBauto_ptr\fR<X> p)"
+.br
+.RI "\fIConstructor that initializes an ACE_Strong_Bound_Ptr by stealing ownership of an object from an \fBauto_ptr\fR.\fR"
+.ti -1c
+.RI "\fBACE_Strong_Bound_Ptr\fR (const ACE_Strong_Bound_Ptr<X, ACE_LOCK> &r)"
+.br
+.RI "\fICopy constructor binds <this> and <r> to the same object.\fR"
+.ti -1c
+.RI "\fBACE_Strong_Bound_Ptr\fR (const \fBACE_Weak_Bound_Ptr\fR<X, ACE_LOCK> &r)"
+.br
+.RI "\fIConstructor binds <this> and <r> to the same object.\fR"
+.ti -1c
+.RI "\fB~ACE_Strong_Bound_Ptr\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Strong_Bound_Ptr<X, ACE_LOCK> &r)"
+.br
+.RI "\fIAssignment operator that binds <this> and <r> to the same object.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const \fBACE_Weak_Bound_Ptr\fR<X, ACE_LOCK> &r)"
+.br
+.RI "\fIAssignment operator that binds <this> and <r> to the same object.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_Strong_Bound_Ptr<X, ACE_LOCK> &r) const"
+.br
+.RI "\fIEquality operator that returns 1 if both ACE_Strong_Bound_Ptr instances point to the same underlying object. Attention: It also returns 1 if both objects have just been instantiated and not used yet.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (const \fBACE_Weak_Bound_Ptr\fR<X, ACE_LOCK> &r) const"
+.br
+.RI "\fIEquality operator that returns 1 if the ACE_Strong_Bound_Ptr and \fBACE_Weak_Bound_Ptr\fR objects point to the same underlying object. Attention: It also returns 1 if both objects have just been instantiated and not used yet.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (X *p) const"
+.br
+.RI "\fIEquality operator that returns 1 if the ACE_Strong_Bound_Ptr and the raw pointer point to the same underlying object.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_Strong_Bound_Ptr<X, ACE_LOCK> &r) const"
+.br
+.RI "\fIInequality operator, which is the opposite of equality.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (const \fBACE_Weak_Bound_Ptr\fR<X, ACE_LOCK> &r) const"
+.br
+.RI "\fIInequality operator, which is the opposite of equality.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (X *p) const"
+.br
+.RI "\fIInequality operator, which is the opposite of equality.\fR"
+.ti -1c
+.RI "X* \fBoperator->\fR (void) const"
+.br
+.RI "\fIRedirection operator.\fR"
+.ti -1c
+.RI "X& \fBoperator *\fR (void) const"
+.br
+.RI "\fIDereference operator.\fR"
+.ti -1c
+.RI "X* \fBget\fR (void)"
+.br
+.RI "\fIGet the pointer value.\fR"
+.ti -1c
+.RI "void \fBreset\fR (X *p = 0)"
+.br
+.RI "\fIResets the ACE_Strong_Bound_Ptr to refer to a different underlying object.\fR"
+.ti -1c
+.RI "void \fBreset\fR (\fBauto_ptr\fR<X> p)"
+.br
+.RI "\fIResets the ACE_Strong_Bound_Ptr to refer to a different underlying object, ownership of which is stolen from the \fBauto_ptr\fR.\fR"
+.ti -1c
+.RI "int \fBnull\fR (void) const"
+.br
+.RI "\fIAllows us to check for NULL on all ACE_Strong_Bound_Ptr objects.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Bound_Ptr_Counter\fR<ACE_LOCK> \fBCOUNTER\fR"
+.br
+.RI "\fIThe \fBACE_Bound_Ptr_Counter\fR type.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBCOUNTER\fR* \fBcounter_\fR"
+.br
+.RI "\fIThe reference counter.\fR"
+.ti -1c
+.RI "X* \fBptr_\fR"
+.br
+.RI "\fIThe underlying object.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Weak_Bound_Ptr< X,ACE_LOCK >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class X, class ACE_LOCK>  template class ACE_Strong_Bound_Ptr
+This class implements support for a reference counted pointer. Assigning or copying instances of an ACE_Strong_Bound_Ptr will automatically increment the reference count of the underlying object. When the last instance of an ACE_Strong_Bound_Ptr that references a particular object is destroyed or overwritten, it will invoke delete on its underlying pointer.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> typedef \fBACE_Bound_Ptr_Counter\fR<ACE_LOCK> ACE_Strong_Bound_Ptr<X, ACE_LOCK>::COUNTER\fC [private]\fR
+.PP
+The \fBACE_Bound_Ptr_Counter\fR type.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> ACE_EXPLICIT ACE_Strong_Bound_Ptr<X, ACE_LOCK>::ACE_Strong_Bound_Ptr<X, ACE_LOCK> (X * p = 0)
+.PP
+Constructor that initializes an ACE_Strong_Bound_Ptr to point to the object 
+.PP
+ immediately.
+.PP
+.SS template<classX, classACE_LOCK> ACE_EXPLICIT ACE_Strong_Bound_Ptr<X, ACE_LOCK>::ACE_Strong_Bound_Ptr<X, ACE_LOCK> (\fBauto_ptr\fR< X > p)
+.PP
+Constructor that initializes an ACE_Strong_Bound_Ptr by stealing ownership of an object from an \fBauto_ptr\fR.
+.PP
+.SS template<classX, classACE_LOCK> ACE_Strong_Bound_Ptr<X, ACE_LOCK>::ACE_Strong_Bound_Ptr<X, ACE_LOCK> (const ACE_Strong_Bound_Ptr< X,ACE_LOCK >& r)
+.PP
+Copy constructor binds <this> and <r> to the same object.
+.PP
+.SS template<classX, classACE_LOCK> ACE_Strong_Bound_Ptr<X, ACE_LOCK>::ACE_Strong_Bound_Ptr<X, ACE_LOCK> (const \fBACE_Weak_Bound_Ptr\fR< X,ACE_LOCK >& r)
+.PP
+Constructor binds <this> and <r> to the same object.
+.PP
+.SS template<classX, classACE_LOCK> ACE_Strong_Bound_Ptr<X, ACE_LOCK>::~ACE_Strong_Bound_Ptr<X, ACE_LOCK> (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> X * ACE_Strong_Bound_Ptr<X, ACE_LOCK>::get (void)
+.PP
+Get the pointer value.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Strong_Bound_Ptr<X, ACE_LOCK>::null (void) const
+.PP
+Allows us to check for NULL on all ACE_Strong_Bound_Ptr objects.
+.PP
+.SS template<classX, classACE_LOCK> X & ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator * (void) const
+.PP
+Dereference operator.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator!= (X * p) const
+.PP
+Inequality operator, which is the opposite of equality.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator!= (const \fBACE_Weak_Bound_Ptr\fR< X,ACE_LOCK >& r) const
+.PP
+Inequality operator, which is the opposite of equality.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator!= (const ACE_Strong_Bound_Ptr< X,ACE_LOCK >& r) const
+.PP
+Inequality operator, which is the opposite of equality.
+.PP
+.SS template<classX, classACE_LOCK> X * ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator-> (void) const
+.PP
+Redirection operator.
+.PP
+.SS template<classX, classACE_LOCK> void ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator= (const \fBACE_Weak_Bound_Ptr\fR< X,ACE_LOCK >& r)
+.PP
+Assignment operator that binds <this> and <r> to the same object.
+.PP
+.SS template<classX, classACE_LOCK> void ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator= (const ACE_Strong_Bound_Ptr< X,ACE_LOCK >& r)
+.PP
+Assignment operator that binds <this> and <r> to the same object.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator== (X * p) const
+.PP
+Equality operator that returns 1 if the ACE_Strong_Bound_Ptr and the raw pointer point to the same underlying object.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator== (const \fBACE_Weak_Bound_Ptr\fR< X,ACE_LOCK >& r) const
+.PP
+Equality operator that returns 1 if the ACE_Strong_Bound_Ptr and \fBACE_Weak_Bound_Ptr\fR objects point to the same underlying object. Attention: It also returns 1 if both objects have just been instantiated and not used yet.
+.PP
+.SS template<classX, classACE_LOCK> int ACE_Strong_Bound_Ptr<X, ACE_LOCK>::operator== (const ACE_Strong_Bound_Ptr< X,ACE_LOCK >& r) const
+.PP
+Equality operator that returns 1 if both ACE_Strong_Bound_Ptr instances point to the same underlying object. Attention: It also returns 1 if both objects have just been instantiated and not used yet.
+.PP
+.SS template<classX, classACE_LOCK> void ACE_Strong_Bound_Ptr<X, ACE_LOCK>::reset (\fBauto_ptr\fR< X > p)
+.PP
+Resets the ACE_Strong_Bound_Ptr to refer to a different underlying object, ownership of which is stolen from the \fBauto_ptr\fR.
+.PP
+.SS template<classX, classACE_LOCK> void ACE_Strong_Bound_Ptr<X, ACE_LOCK>::reset (X * p = 0)
+.PP
+Resets the ACE_Strong_Bound_Ptr to refer to a different underlying object.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> class \fBACE_Weak_Bound_Ptr\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classX, classACE_LOCK> ACE_Strong_Bound_Ptr<X, ACE_LOCK>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classX, classACE_LOCK> \fBCOUNTER\fR * ACE_Strong_Bound_Ptr<X, ACE_LOCK>::counter_\fC [private]\fR
+.PP
+The reference counter.
+.PP
+.SS template<classX, classACE_LOCK> X * ACE_Strong_Bound_Ptr<X, ACE_LOCK>::ptr_\fC [private]\fR
+.PP
+The underlying object.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

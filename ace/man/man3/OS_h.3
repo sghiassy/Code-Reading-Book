@@ -1,0 +1,3232 @@
+.TH OS_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+OS_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/config-all.h"\fR
+.br
+\fC#include "ace/OS_Dirent.h"\fR
+.br
+\fC#include "ace/OS_String.h"\fR
+.br
+\fC#include "ace/OS_Memory.h"\fR
+.br
+\fC#include "ace/OS_TLI.h"\fR
+.br
+\fC#include "ace/OS_Errno.h"\fR
+.br
+\fC#include "ace/Min_Max.h"\fR
+.br
+\fC#include "ace/streams.h"\fR
+.br
+\fC#include "ace/Basic_Types.h"\fR
+.br
+\fC#include "ace/Trace.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Accept_QoS_Params\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Cleanup\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Cleanup_Info\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Countdown_Time\fR"
+.br
+.ti -1c
+.RI "class \fBACE_OS::ace_flock_t\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Flow_Spec\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Object_Manager_Base\fR"
+.br
+.ti -1c
+.RI "class \fBACE_OS\fR"
+.br
+.ti -1c
+.RI "class \fBACE_OS_Exit_Info\fR"
+.br
+.ti -1c
+.RI "class \fBACE_OS_Object_Manager\fR"
+.br
+.ti -1c
+.RI "struct \fBACE_Protocol_Info\fR"
+.br
+.ti -1c
+.RI "class \fBACE_QoS\fR"
+.br
+.ti -1c
+.RI "class \fBACE_QoS_Params\fR"
+.br
+.ti -1c
+.RI "class \fBACE_recursive_thread_mutex_t\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Str_Buf\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Thread_ID\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Time_Value\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TSS_Info\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TSS_Keys\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TSS_Ref\fR"
+.br
+.ti -1c
+.RI "struct \fBcancel_state\fR"
+.br
+.ti -1c
+.RI "struct \fBiovec\fR"
+.br
+.ti -1c
+.RI "struct \fBip_mreq\fR"
+.br
+.ti -1c
+.RI "struct \fBmsghdr\fR"
+.br
+.ti -1c
+.RI "struct \fBmsghdr\fR"
+.br
+.ti -1c
+.RI "struct \fBmsqid_ds\fR"
+.br
+.ti -1c
+.RI "struct \fBrusage\fR"
+.br
+.ti -1c
+.RI "union \fBsemun\fR"
+.br
+.ti -1c
+.RI "struct \fBshmaddr\fR"
+.br
+.ti -1c
+.RI "struct \fBsiginfo_t\fR"
+.br
+.ti -1c
+.RI "struct \fBstrbuf\fR"
+.br
+.ti -1c
+.RI "struct \fBtimespec\fR"
+.br
+.in -1c
+.SS Service Configurator macros
+The following macros are used to define helper objects used in \fBACE\fR's Service Configurator. This is an implementation of the Service Configurator pattern:
+.PP
+http://www.cs.wustl.edu/~schmidt/PDF/SvcConf.pdf
+.PP
+The intent of this pattern is to allow developers to dynamically load and configure services into a system. With a little help from this macros statically linked services can also be dynamically configured.
+.PP
+More details about this component are available in the documentation of the ACE_Service_Configurator class and also \fBACE_Dynamic_Service\fR.
+.PP
+Notice that in all the macros the SERVICE_CLASS parameter must be the name of a class derived from \fBACE_Service_Object\fR.
+.in +1c
+.ti -1c
+.RI "#define \fBACE_STATIC_SVC_DECLARE\fR(SERVICE_CLASS) "
+.br
+.RI "\fIDeclare a the data structure required to register a statically linked service into the service configurator.\fR"
+.ti -1c
+.RI "#define \fBACE_STATIC_SVC_DECLARE_EXPORT\fR(EXPORT_NAME,SERVICE_CLASS) "
+.br
+.RI "\fIAs ACE_STATIC_SVC_DECLARE, but using an export macro for NT compilers.\fR"
+.ti -1c
+.RI "#define \fBACE_STATIC_SVC_DEFINE\fR(SERVICE_CLASS, NAME, TYPE, FN, FLAGS, ACTIVE) "
+.br
+.RI "\fIDefine the data structure used to register a statically linked service into the Service Configurator.\fR"
+.ti -1c
+.RI "#define \fBACE_STATIC_SVC_REQUIRE\fR(SERVICE_CLASS)"
+.br
+.RI "\fIAutomatically register a service with the service configurator.\fR"
+.ti -1c
+.RI "#define \fBACE_STATIC_SVC_REGISTER\fR(SERVICE_CLASS)   do {} while (0)"
+.br
+.ti -1c
+.RI "#define \fBACE_FACTORY_DECLARE\fR(CLS,SERVICE_CLASS) "
+.br
+.RI "\fIDeclare the factory method used to create dynamically loadable services.\fR"
+.ti -1c
+.RI "#define \fBACE_FACTORY_DEFINE\fR(CLS,SERVICE_CLASS) "
+.br
+.RI "\fIDefine the factory method (and destructor) for a dynamically loadable service.\fR"
+.ti -1c
+.RI "#define \fBACE_SVC_NAME\fR(SERVICE_CLASS)   _make_##SERVICE_CLASS"
+.br
+.RI "\fIThe canonical name for a service factory method.\fR"
+.ti -1c
+.RI "#define \fBACE_SVC_INVOKE\fR(SERVICE_CLASS)   _make_##SERVICE_CLASS (0)"
+.br
+.RI "\fIThe canonical way to invoke (i.e. construct) a service factory method.\fR"
+.in -1c
+.SS Helper macros for services defined in the netsvcs library.
+The \fBACE\fR services defined in netsvcs use this helper macros for simplicity.
+.PP
+\fB\fBTodo: \fR\fR
+.in +1c
+ The macros should be moved into the netsvcs library, they have no place in \fBace/OS.h\fR 
+.in +1c
+.ti -1c
+.RI "#define \fBACE_SVC_FACTORY_DECLARE\fR(X)   ACE_FACTORY_DECLARE (ACE_Svc, X)"
+.br
+.ti -1c
+.RI "#define \fBACE_SVC_FACTORY_DEFINE\fR(X)   ACE_FACTORY_DEFINE (ACE_Svc, X)"
+.br
+.in -1c
+.SS A set of wrappers for low-level file operations.
+
+.in +1c
+.ti -1c
+.RI "#define \fBACE_DEFAULT_OPEN_PERMS\fR  (FILE_SHARE_READ | FILE_SHARE_WRITE)"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fB_SC_AIO_MAX\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_PAGEFILE_POOL_BASE\fR  (void *) 0"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_PAGEFILE_POOL_SIZE\fR  (size_t) 0x01000000"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_PAGEFILE_POOL_CHUNK\fR  (size_t) 0x00010000"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_PAGEFILE_POOL_NAME\fR  ACE_LIB_TEXT ("Default_ACE_Pagefile_Memory_Pool")"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MESSAGE_BLOCK_PRIORITY\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SERVICE_REPOSITORY_SIZE\fR  1024"
+.br
+.ti -1c
+.RI "#define \fBACE_REACTOR_NOTIFICATION_ARRAY_SIZE\fR  1024"
+.br
+.ti -1c
+.RI "#define \fBACE_ASCII_SIZE\fR  128"
+.br
+.ti -1c
+.RI "#define \fBACE_EBCDIC_SIZE\fR  256"
+.br
+.ti -1c
+.RI "#define \fBACE_HAS_ASCII\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_STANDARD_CHARACTER_SET_SIZE\fR  128"
+.br
+.ti -1c
+.RI "#define \fBACE_CORBA_1\fR(NAME)   CORBA::NAME"
+.br
+.ti -1c
+.RI "#define \fBACE_CORBA_2\fR(TYPE, NAME)   CORBA::TYPE::NAME"
+.br
+.ti -1c
+.RI "#define \fBACE_CORBA_3\fR(TYPE, NAME)   CORBA::TYPE::NAME"
+.br
+.ti -1c
+.RI "#define \fBACE_NESTED_CLASS\fR(TYPE, NAME)   TYPE::NAME"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_CLOSE_ALL_HANDLES\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_MAX_FULLY_QUALIFIED_NAME_LEN\fR  256"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIMEOUT\fR  5"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_BACKLOG\fR  5"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_THREADS\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_BROADCAST_PORT\fR  20000"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MULTICAST_PORT\fR  20001"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MULTICAST_ADDR\fR  "224.9.9.2""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_HTTP_SERVER_PORT\fR  80"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SERVER_PORT\fR  20002"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_HTTP_PORT\fR  80"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MAX_SOCKET_BUFSIZ\fR  65536"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SERVER_PORT_STR\fR  "20002""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SERVICE_PORT\fR  20003"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_THR_PORT\fR  20004"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOCAL_PORT\fR  20005"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOCAL_PORT_STR\fR  "20005""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_NAME_SERVER_PORT\fR  20006"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_NAME_SERVER_PORT_STR\fR  "20006""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TOKEN_SERVER_PORT\fR  20007"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TOKEN_SERVER_PORT_STR\fR  "20007""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOGGING_SERVER_PORT\fR  20008"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOGGING_SERVER_PORT_STR\fR  "20008""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_THR_LOGGING_SERVER_PORT\fR  20008"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_THR_LOGGING_SERVER_PORT_STR\fR  "20008""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIME_SERVER_PORT\fR  20009"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIME_SERVER_PORT_STR\fR  "20009""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIME_SERVER_STR\fR  "ACE_TS_TIME""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_RENDEZVOUS\fR  "localhost:20010""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SYSLOG_FACILITY\fR  LOG_USER"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOGGER_KEY\fR  ACE_LIB_TEXT ("localhost:20012")"
+.br
+.ti -1c
+.RI "#define \fBACE_LOCALHOST\fR  ACE_LIB_TEXT ("localhost")"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SERVER_HOST\fR  ACE_LOCALHOST"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SHM_KEY\fR  1234"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SEGMENT_SIZE\fR  1024 * 128"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MAX_SEGMENTS\fR  6"
+.br
+.ti -1c
+.RI "#define \fBACE_NAME_SERVER_MAP\fR  "Name Server Map""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_FILE_PERMS\fR  (FILE_SHARE_READ | FILE_SHARE_WRITE)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_DIR_PERMS\fR  0755"
+.br
+.ti -1c
+.RI "#define \fBACE_FD_SETSIZE\fR  FD_SETSIZE"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SELECT_REACTOR_SIZE\fR  ACE_FD_SETSIZE"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIMEPROBE_TABLE_SIZE\fR  8 * 1024"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MAP_SIZE\fR  1024"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIMER_WHEEL_SIZE\fR  1024"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIMER_WHEEL_RESOLUTION\fR  100"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIMER_HASH_TABLE_SIZE\fR  1024"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_FREE_LIST_PREALLOC\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_FREE_LIST_LWM\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_FREE_LIST_HWM\fR  25000"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_FREE_LIST_INC\fR  100"
+.br
+.ti -1c
+.RI "#define \fBACE_UNIQUE_NAME_LEN\fR  100"
+.br
+.ti -1c
+.RI "#define \fBACE_MAX_DGRAM_SIZE\fR  8192"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_ARGV_BUFSIZ\fR  1024 * 4"
+.br
+.ti -1c
+.RI "#define \fBACE_BEGIN_DUMP\fR  ACE_LIB_TEXT ("\\n====\\n(%P|%t|%x)")"
+.br
+.ti -1c
+.RI "#define \fBACE_END_DUMP\fR  ACE_LIB_TEXT ("====\\n")"
+.br
+.ti -1c
+.RI "#define \fBACE_FREE_LIST_WITH_POOL\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_PURE_FREE_LIST\fR  2"
+.br
+.ti -1c
+.RI "#define \fBACE_DB\fR(X)   X"
+.br
+.ti -1c
+.RI "#define \fBACE_MAX_USERID\fR  32"
+.br
+.ti -1c
+.RI "#define \fBACE_NON_BLOCKING_BUG_DELAY\fR  35000"
+.br
+.ti -1c
+.RI "#define \fBACE_NO_HEAP_CHECK\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_ITOA\fR(X)   #X"
+.br
+.ti -1c
+.RI "#define \fBACE_SERVER_ADDRESS\fR(H,P)   H":"P"
+.br
+.ti -1c
+.RI "#define \fBACE_POW\fR(X)   (((X) == 0)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))"
+.br
+.ti -1c
+.RI "#define \fBACE_EVEN\fR(NUM)   (((NUM) & 1) == 0)"
+.br
+.ti -1c
+.RI "#define \fBACE_ODD\fR(NUM)   (((NUM) & 1) == 1)"
+.br
+.ti -1c
+.RI "#define \fBACE_BIT_ENABLED\fR(WORD, BIT)   (((WORD) & (BIT)) != 0)"
+.br
+.ti -1c
+.RI "#define \fBACE_BIT_DISABLED\fR(WORD, BIT)   (((WORD) & (BIT)) == 0)"
+.br
+.ti -1c
+.RI "#define \fBACE_BIT_CMP_MASK\fR(WORD, BIT, MASK)   (((WORD) & (BIT)) == MASK)"
+.br
+.ti -1c
+.RI "#define \fBACE_SET_BITS\fR(WORD, BITS)   (WORD |= (BITS))"
+.br
+.ti -1c
+.RI "#define \fBACE_CLR_BITS\fR(WORD, BITS)   (WORD &= ~(BITS))"
+.br
+.ti -1c
+.RI "#define \fBACE_ENDLESS_LOOP\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_UNIMPLEMENTED_FUNC\fR(f)   f;"
+.br
+.ti -1c
+.RI "#define \fBACE_CLASS_IS_NAMESPACE\fR(CLASSNAME) "
+.br
+.ti -1c
+.RI "#define \fBACE_SPRINTF_ADAPTER\fR(X)   X"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_BASE_ADDR\fR  ((char *) (64 * 1024 * 1024))"
+.br
+.ti -1c
+.RI "#define \fBACE_TIMER_SKEW\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_TRACE\fR(X)   \fBACE_Trace\fR ____ (ACE_LIB_TEXT (X), __LINE__, ACE_LIB_TEXT (__FILE__))"
+.br
+.ti -1c
+.RI "#define \fBACE_OS_TRACE\fR(X)"
+.br
+.ti -1c
+.RI "#define \fBCLOCK_REALTIME\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_USING\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TYPENAME\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TEMPLATE_SPECIALIZATION\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TEMPLATE_METHOD_SPECIALIZATION\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SYNCH_DECL\fR  class _ACE_SYNCH_MUTEX_T, class _ACE_SYNCH_CONDITION_T"
+.br
+.ti -1c
+.RI "#define \fBACE_SYNCH_USE\fR  _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T"
+.br
+.ti -1c
+.RI "#define \fBACE_SYNCH_MUTEX_T\fR  _ACE_SYNCH_MUTEX_T"
+.br
+.ti -1c
+.RI "#define \fBACE_SYNCH_CONDITION_T\fR  _ACE_SYNCH_CONDITION_T"
+.br
+.ti -1c
+.RI "#define \fBACE_SYNCH_SEMAPHORE_T\fR  _ACE_SYNCH_SEMAPHORE_T"
+.br
+.ti -1c
+.RI "#define \fBACE_MEM_POOL_1\fR  class _ACE_MEM_POOL, class _ACE_MEM_POOL_OPTIONS"
+.br
+.ti -1c
+.RI "#define \fBACE_MEM_POOL_2\fR  _ACE_MEM_POOL, _ACE_MEM_POOL_OPTIONS"
+.br
+.ti -1c
+.RI "#define \fBACE_MEM_POOL\fR  _ACE_MEM_POOL"
+.br
+.ti -1c
+.RI "#define \fBACE_MEM_POOL_OPTIONS\fR  _ACE_MEM_POOL_OPTIONS"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_STREAM_1\fR  class _ACE_PEER_STREAM, class _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_STREAM_2\fR  _ACE_PEER_STREAM, _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_STREAM\fR  _ACE_PEER_STREAM"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_STREAM_ADDR\fR  _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_ACCEPTOR_1\fR  class _ACE_PEER_ACCEPTOR, class _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_ACCEPTOR_2\fR  _ACE_PEER_ACCEPTOR, _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_ACCEPTOR\fR  _ACE_PEER_ACCEPTOR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_ACCEPTOR_ADDR\fR  _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_CONNECTOR_1\fR  class _ACE_PEER_CONNECTOR, class _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_CONNECTOR_2\fR  _ACE_PEER_CONNECTOR, _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_CONNECTOR\fR  _ACE_PEER_CONNECTOR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_CONNECTOR_ADDR\fR  _ACE_PEER_ADDR"
+.br
+.ti -1c
+.RI "#define \fBACE_PEER_CONNECTOR_ADDR_ANY\fR  ACE_PEER_CONNECTOR_ADDR::sap_any"
+.br
+.ti -1c
+.RI "#define \fBACE_SOCK_ACCEPTOR\fR  \fBACE_SOCK_Acceptor\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SOCK_CONNECTOR\fR  \fBACE_SOCK_Connector\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SOCK_STREAM\fR  \fBACE_SOCK_Stream\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_MEM_ACCEPTOR\fR  \fBACE_MEM_Acceptor\fR, \fBACE_MEM_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_MEM_CONNECTOR\fR  \fBACE_MEM_Connector\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_MEM_STREAM\fR  \fBACE_MEM_Stream\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_LSOCK_ACCEPTOR\fR  \fBACE_LSOCK_Acceptor\fR, \fBACE_UNIX_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_LSOCK_CONNECTOR\fR  \fBACE_LSOCK_Connector\fR, \fBACE_UNIX_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_LSOCK_STREAM\fR  \fBACE_LSOCK_Stream\fR, \fBACE_UNIX_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TLI_ACCEPTOR\fR  \fBACE_TLI_Acceptor\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TLI_CONNECTOR\fR  \fBACE_TLI_Connector\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_TLI_STREAM\fR  \fBACE_TLI_Stream\fR, \fBACE_INET_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SPIPE_ACCEPTOR\fR  \fBACE_SPIPE_Acceptor\fR, \fBACE_SPIPE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SPIPE_CONNECTOR\fR  \fBACE_SPIPE_Connector\fR, \fBACE_SPIPE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SPIPE_STREAM\fR  \fBACE_SPIPE_Stream\fR, \fBACE_SPIPE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_UPIPE_ACCEPTOR\fR  \fBACE_UPIPE_Acceptor\fR, \fBACE_SPIPE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_UPIPE_CONNECTOR\fR  \fBACE_UPIPE_Connector\fR, \fBACE_SPIPE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_UPIPE_STREAM\fR  \fBACE_UPIPE_Stream\fR, \fBACE_SPIPE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_FILE_CONNECTOR\fR  \fBACE_FILE_Connector\fR, \fBACE_FILE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_FILE_STREAM\fR  \fBACE_FILE_IO\fR, \fBACE_FILE_Addr\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_MMAP_MEMORY_POOL\fR  \fBACE_MMAP_Memory_Pool\fR, \fBACE_MMAP_Memory_Pool_Options\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_LITE_MMAP_MEMORY_POOL\fR  \fBACE_Lite_MMAP_Memory_Pool\fR, \fBACE_MMAP_Memory_Pool_Options\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SBRK_MEMORY_POOL\fR  \fBACE_Sbrk_Memory_Pool\fR, \fBACE_Sbrk_Memory_Pool_Options\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SHARED_MEMORY_POOL\fR  \fBACE_Shared_Memory_Pool\fR, \fBACE_Shared_Memory_Pool_Options\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_LOCAL_MEMORY_POOL\fR  \fBACE_Local_Memory_Pool\fR, \fBACE_Local_Memory_Pool_Options\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_PAGEFILE_MEMORY_POOL\fR  \fBACE_Pagefile_Memory_Pool\fR, \fBACE_Pagefile_Memory_Pool_Options\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_SYNCH_1\fR  ACE_SYNCH_DECL"
+.br
+.ti -1c
+.RI "#define \fBACE_SYNCH_2\fR  ACE_SYNCH_USE"
+.br
+.ti -1c
+.RI "#define \fBACE_WSOCK_VERSION\fR  0, 0"
+.br
+.ti -1c
+.RI "#define \fBACE_TSS_TYPE\fR(T)   T"
+.br
+.ti -1c
+.RI "#define \fBACE_TSS_GET\fR(I, T)   (I)"
+.br
+.ti -1c
+.RI "#define \fBACE_MT\fR(X)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_THREAD_PRIORITY\fR  (-0x7fffffffL - 1L)"
+.br
+.ti -1c
+.RI "#define \fBACE_GUARD\fR(MUTEX,OBJ,LOCK) "
+.br
+.ti -1c
+.RI "#define \fBACE_GUARD_RETURN\fR(MUTEX,OBJ,LOCK,RETURN) "
+.br
+.ti -1c
+.RI "#define \fBACE_WRITE_GUARD\fR(MUTEX,OBJ,LOCK) "
+.br
+.ti -1c
+.RI "#define \fBACE_WRITE_GUARD_RETURN\fR(MUTEX,OBJ,LOCK,RETURN) "
+.br
+.ti -1c
+.RI "#define \fBACE_READ_GUARD\fR(MUTEX,OBJ,LOCK) "
+.br
+.ti -1c
+.RI "#define \fBACE_READ_GUARD_RETURN\fR(MUTEX,OBJ,LOCK,RETURN) "
+.br
+.ti -1c
+.RI "#define \fBACE_THROW_SPEC\fR(X)   throw X"
+.br
+.ti -1c
+.RI "#define \fBACE_SCOPE_PROCESS\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_SCOPE_LWP\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_SCOPE_THREAD\fR  2"
+.br
+.ti -1c
+.RI "#define \fBACE_SCHED_OTHER\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_SCHED_FIFO\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_SCHED_RR\fR  2"
+.br
+.ti -1c
+.RI "#define \fBACE_THR_PRI_FIFO_DEF\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_THR_PRI_OTHER_DEF\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_DONT_INCLUDE_ACE_SIGNAL_H\fR"
+.br
+.ti -1c
+.RI "#define \fBIOV_MAX\fR  16"
+.br
+.ti -1c
+.RI "#define \fBACE_IOV_MAX\fR  IOV_MAX"
+.br
+.ti -1c
+.RI "#define \fBACE_OSTREAM_TYPE\fR  ostream"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOG_STREAM\fR  (&cerr)"
+.br
+.ti -1c
+.RI "#define \fBACE_ONE_SECOND_IN_MSECS\fR  1000L"
+.br
+.ti -1c
+.RI "#define \fBACE_ONE_SECOND_IN_USECS\fR  1000000L"
+.br
+.ti -1c
+.RI "#define \fBACE_ONE_SECOND_IN_NSECS\fR  1000000000L"
+.br
+.ti -1c
+.RI "#define \fBACE_STREAMBUF_SIZE\fR  1024"
+.br
+.ti -1c
+.RI "#define \fBACE_MAX_DEFAULT_PORT\fR  65535"
+.br
+.ti -1c
+.RI "#define \fBACE_PLATFORM_A\fR  "Win32""
+.br
+.ti -1c
+.RI "#define \fBACE_PLATFORM_EXE_SUFFIX_A\fR  ".exe""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SVC_CONF\fR  ACE_LIB_TEXT (".\\\\svc.conf")"
+.br
+.ti -1c
+.RI "#define \fBACE_STDIN\fR  GetStdHandle (STD_INPUT_HANDLE)"
+.br
+.ti -1c
+.RI "#define \fBACE_STDOUT\fR  GetStdHandle (STD_OUTPUT_HANDLE)"
+.br
+.ti -1c
+.RI "#define \fBACE_STDERR\fR  GetStdHandle (STD_ERROR_HANDLE)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SEM_KEY\fR  "ACE_SEM_KEY""
+.br
+.ti -1c
+.RI "#define \fBACE_INVALID_SEM_KEY\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_SEH_TRY\fR  if (1)"
+.br
+.ti -1c
+.RI "#define \fBACE_SEH_EXCEPT\fR(X)   while (0)"
+.br
+.ti -1c
+.RI "#define \fBACE_SEH_FINALLY\fR  if (1)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEV_NULL\fR  "nul""
+.br
+.ti -1c
+.RI "#define \fBACE_DIRECTORY_SEPARATOR_STR_A\fR  "\\\\""
+.br
+.ti -1c
+.RI "#define \fBACE_DIRECTORY_SEPARATOR_CHAR_A\fR  '\\\\'"
+.br
+.ti -1c
+.RI "#define \fBACE_LD_SEARCH_PATH\fR  ACE_LIB_TEXT ("PATH")"
+.br
+.ti -1c
+.RI "#define \fBACE_LD_SEARCH_PATH_SEPARATOR_STR\fR  ACE_LIB_TEXT (";")"
+.br
+.ti -1c
+.RI "#define \fBACE_DLL_SUFFIX\fR  ACE_LIB_TEXT (".dll")"
+.br
+.ti -1c
+.RI "#define \fBACE_DLL_PREFIX\fR  ACE_LIB_TEXT ("")"
+.br
+.ti -1c
+.RI "#define \fBNFDBITS\fR  32"
+.br
+.ti -1c
+.RI "#define \fBMAP_PRIVATE\fR  1"
+.br
+.ti -1c
+.RI "#define \fBMAP_SHARED\fR  2"
+.br
+.ti -1c
+.RI "#define \fBMAP_FIXED\fR  4"
+.br
+.ti -1c
+.RI "#define \fBRUSAGE_SELF\fR  1"
+.br
+.ti -1c
+.RI "#define \fBPROT_READ\fR  PAGE_READONLY"
+.br
+.ti -1c
+.RI "#define \fBPROT_WRITE\fR  PAGE_READWRITE"
+.br
+.ti -1c
+.RI "#define \fBPROT_RDWR\fR  PAGE_READWRITE"
+.br
+.ti -1c
+.RI "#define \fBETIME\fR  ERROR_SEM_TIMEOUT"
+.br
+.ti -1c
+.RI "#define \fBEWOULDBLOCK\fR  WSAEWOULDBLOCK"
+.br
+.ti -1c
+.RI "#define \fBEINPROGRESS\fR  WSAEINPROGRESS"
+.br
+.ti -1c
+.RI "#define \fBEALREADY\fR  WSAEALREADY"
+.br
+.ti -1c
+.RI "#define \fBENOTSOCK\fR  WSAENOTSOCK"
+.br
+.ti -1c
+.RI "#define \fBEDESTADDRREQ\fR  WSAEDESTADDRREQ"
+.br
+.ti -1c
+.RI "#define \fBEMSGSIZE\fR  WSAEMSGSIZE"
+.br
+.ti -1c
+.RI "#define \fBEPROTOTYPE\fR  WSAEPROTOTYPE"
+.br
+.ti -1c
+.RI "#define \fBENOPROTOOPT\fR  WSAENOPROTOOPT"
+.br
+.ti -1c
+.RI "#define \fBEPROTONOSUPPORT\fR  WSAEPROTONOSUPPORT"
+.br
+.ti -1c
+.RI "#define \fBESOCKTNOSUPPORT\fR  WSAESOCKTNOSUPPORT"
+.br
+.ti -1c
+.RI "#define \fBEOPNOTSUPP\fR  WSAEOPNOTSUPP"
+.br
+.ti -1c
+.RI "#define \fBEPFNOSUPPORT\fR  WSAEPFNOSUPPORT"
+.br
+.ti -1c
+.RI "#define \fBEAFNOSUPPORT\fR  WSAEAFNOSUPPORT"
+.br
+.ti -1c
+.RI "#define \fBEADDRINUSE\fR  WSAEADDRINUSE"
+.br
+.ti -1c
+.RI "#define \fBEADDRNOTAVAIL\fR  WSAEADDRNOTAVAIL"
+.br
+.ti -1c
+.RI "#define \fBENETDOWN\fR  WSAENETDOWN"
+.br
+.ti -1c
+.RI "#define \fBENETUNREACH\fR  WSAENETUNREACH"
+.br
+.ti -1c
+.RI "#define \fBENETRESET\fR  WSAENETRESET"
+.br
+.ti -1c
+.RI "#define \fBECONNABORTED\fR  WSAECONNABORTED"
+.br
+.ti -1c
+.RI "#define \fBECONNRESET\fR  WSAECONNRESET"
+.br
+.ti -1c
+.RI "#define \fBENOBUFS\fR  WSAENOBUFS"
+.br
+.ti -1c
+.RI "#define \fBEISCONN\fR  WSAEISCONN"
+.br
+.ti -1c
+.RI "#define \fBENOTCONN\fR  WSAENOTCONN"
+.br
+.ti -1c
+.RI "#define \fBESHUTDOWN\fR  WSAESHUTDOWN"
+.br
+.ti -1c
+.RI "#define \fBETOOMANYREFS\fR  WSAETOOMANYREFS"
+.br
+.ti -1c
+.RI "#define \fBETIMEDOUT\fR  WSAETIMEDOUT"
+.br
+.ti -1c
+.RI "#define \fBECONNREFUSED\fR  WSAECONNREFUSED"
+.br
+.ti -1c
+.RI "#define \fBELOOP\fR  WSAELOOP"
+.br
+.ti -1c
+.RI "#define \fBEHOSTDOWN\fR  WSAEHOSTDOWN"
+.br
+.ti -1c
+.RI "#define \fBEHOSTUNREACH\fR  WSAEHOSTUNREACH"
+.br
+.ti -1c
+.RI "#define \fBEPROCLIM\fR  WSAEPROCLIM"
+.br
+.ti -1c
+.RI "#define \fBEUSERS\fR  WSAEUSERS"
+.br
+.ti -1c
+.RI "#define \fBEDQUOT\fR  WSAEDQUOT"
+.br
+.ti -1c
+.RI "#define \fBESTALE\fR  WSAESTALE"
+.br
+.ti -1c
+.RI "#define \fBEREMOTE\fR  WSAEREMOTE"
+.br
+.ti -1c
+.RI "#define \fBACE_INVALID_PID\fR  ((\fBpid_t\fR) -1)"
+.br
+.ti -1c
+.RI "#define \fBACE_SYSCALL_FAILED\fR  0xFFFFFFFF"
+.br
+.ti -1c
+.RI "#define \fBMS_ASYNC\fR  0"
+.br
+.ti -1c
+.RI "#define \fBMS_INVALIDATE\fR  0"
+.br
+.ti -1c
+.RI "#define \fBO_NDELAY\fR  1"
+.br
+.ti -1c
+.RI "#define \fBMAXPATHLEN\fR  _MAX_PATH"
+.br
+.ti -1c
+.RI "#define \fBMAXNAMLEN\fR  _MAX_FNAME"
+.br
+.ti -1c
+.RI "#define \fBEADDRINUSE\fR  WSAEADDRINUSE"
+.br
+.ti -1c
+.RI "#define \fBACE_SELF\fR  (0)"
+.br
+.ti -1c
+.RI "#define \fBACE_SHLIB_INVALID_HANDLE\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SHLIB_MODE\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_DIRECTORY_SEPARATOR_STR_W\fR  ACE_TEXT_WIDE(ACE_DIRECTORY_SEPARATOR_STR_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DIRECTORY_SEPARATOR_CHAR_W\fR  ACE_TEXT_WIDE(ACE_DIRECTORY_SEPARATOR_CHAR_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_PLATFORM_W\fR  ACE_TEXT_WIDE(ACE_PLATFORM_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_PLATFORM_EXE_SUFFIX_W\fR  ACE_TEXT_WIDE(ACE_PLATFORM_EXE_SUFFIX_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DIRECTORY_SEPARATOR_STR\fR  ACE_LIB_TEXT (ACE_DIRECTORY_SEPARATOR_STR_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DIRECTORY_SEPARATOR_CHAR\fR  ACE_LIB_TEXT (ACE_DIRECTORY_SEPARATOR_CHAR_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_PLATFORM\fR  ACE_LIB_TEXT (ACE_PLATFORM_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_PLATFORM_EXE_SUFFIX\fR  ACE_LIB_TEXT (ACE_PLATFORM_EXE_SUFFIX_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOCALNAME_A\fR  "localnames""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_GLOBALNAME_A\fR  "globalnames""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOCALNAME_W\fR  ACE_TEXT_WIDE(ACE_DEFAULT_LOCALNAME_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_GLOBALNAME_W\fR  ACE_TEXT_WIDE(ACE_DEFAULT_GLOBALNAME_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_LOCALNAME\fR  ACE_LIB_TEXT (ACE_DEFAULT_LOCALNAME_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_GLOBALNAME\fR  ACE_LIB_TEXT (ACE_DEFAULT_GLOBALNAME_A)"
+.br
+.ti -1c
+.RI "#define \fBO_BINARY\fR  0"
+.br
+.ti -1c
+.RI "#define \fB_O_BINARY\fR  O_BINARY"
+.br
+.ti -1c
+.RI "#define \fBO_TEXT\fR  0"
+.br
+.ti -1c
+.RI "#define \fB_O_TEXT\fR  O_TEXT"
+.br
+.ti -1c
+.RI "#define \fBO_RAW\fR  0"
+.br
+.ti -1c
+.RI "#define \fB_O_RAW\fR  O_RAW"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_SYNCH_TYPE\fR  USYNC_THREAD"
+.br
+.ti -1c
+.RI "#define \fBACE_MAP_PRIVATE\fR  MAP_PRIVATE"
+.br
+.ti -1c
+.RI "#define \fBACE_MAP_SHARED\fR  MAP_SHARED"
+.br
+.ti -1c
+.RI "#define \fBACE_MAP_FIXED\fR  MAP_FIXED"
+.br
+.ti -1c
+.RI "#define \fBAF_ANY\fR  (-1)"
+.br
+.ti -1c
+.RI "#define \fBAF_SPIPE\fR  (AF_MAX + 1)"
+.br
+.ti -1c
+.RI "#define \fBAF_FILE\fR  (AF_MAX + 2)"
+.br
+.ti -1c
+.RI "#define \fBAF_DEV\fR  (AF_MAX + 3)"
+.br
+.ti -1c
+.RI "#define \fBAF_UPIPE\fR  (AF_SPIPE)"
+.br
+.ti -1c
+.RI "#define \fBMAXNAMELEN\fR  256"
+.br
+.ti -1c
+.RI "#define \fBMAXHOSTNAMELEN\fR  256"
+.br
+.ti -1c
+.RI "#define \fBINADDR_LOOPBACK\fR  0x7f000001"
+.br
+.ti -1c
+.RI "#define \fBINET_ADDRSTRLEN\fR  16"
+.br
+.ti -1c
+.RI "#define \fBINET6_ADDRSTRLEN\fR  46"
+.br
+.ti -1c
+.RI "#define \fBSIGHUP\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGINT\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGSEGV\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGIO\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGUSR1\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGUSR2\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGCHLD\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGCLD\fR  SIGCHLD"
+.br
+.ti -1c
+.RI "#define \fBSIGQUIT\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGPIPE\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIGALRM\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIG_DFL\fR  ((__sighandler_t) 0)"
+.br
+.ti -1c
+.RI "#define \fBSIG_IGN\fR  ((__sighandler_t) 1)"
+.br
+.ti -1c
+.RI "#define \fBSIG_ERR\fR  ((__sighandler_t) -1)"
+.br
+.ti -1c
+.RI "#define \fBO_NONBLOCK\fR  1"
+.br
+.ti -1c
+.RI "#define \fBSIG_BLOCK\fR  1"
+.br
+.ti -1c
+.RI "#define \fBSIG_UNBLOCK\fR  2"
+.br
+.ti -1c
+.RI "#define \fBSIG_SETMASK\fR  3"
+.br
+.ti -1c
+.RI "#define \fBIPC_CREAT\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIPC_NOWAIT\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIPC_RMID\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIPC_EXCL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIP_DROP_MEMBERSHIP\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIP_ADD_MEMBERSHIP\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_LACKS_IP_ADD_MEMBERSHIP\fR"
+.br
+.ti -1c
+.RI "#define \fBIP_DEFAULT_MULTICAST_TTL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIP_DEFAULT_MULTICAST_LOOP\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIP_MULTICAST_IF\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIP_MULTICAST_TTL\fR  1"
+.br
+.ti -1c
+.RI "#define \fBIP_MAX_MEMBERSHIPS\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIOCGIFBRDADDR\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSIOCGIFADDR\fR  0"
+.br
+.ti -1c
+.RI "#define \fBIPC_PRIVATE\fR  ACE_INVALID_SEM_KEY"
+.br
+.ti -1c
+.RI "#define \fBIPC_STAT\fR  0"
+.br
+.ti -1c
+.RI "#define \fBGETVAL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBF_GETFL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSETVAL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBGETALL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSETALL\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSEM_UNDO\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_NSIG\fR  NSIG"
+.br
+.ti -1c
+.RI "#define \fBR_OK\fR  04"
+.br
+.ti -1c
+.RI "#define \fBW_OK\fR  02"
+.br
+.ti -1c
+.RI "#define \fBX_OK\fR  01"
+.br
+.ti -1c
+.RI "#define \fBF_OK\fR  0"
+.br
+.ti -1c
+.RI "#define \fBESUCCESS\fR  0"
+.br
+.ti -1c
+.RI "#define \fBEIDRM\fR  0"
+.br
+.ti -1c
+.RI "#define \fBENFILE\fR  EMFILE"
+.br
+.ti -1c
+.RI "#define \fBECOMM\fR  ECONNABORTED"
+.br
+.ti -1c
+.RI "#define \fBWNOHANG\fR  0100"
+.br
+.ti -1c
+.RI "#define \fBEDEADLK\fR  1000"
+.br
+.ti -1c
+.RI "#define \fBMS_SYNC\fR  0x0"
+.br
+.ti -1c
+.RI "#define \fBPIPE_BUF\fR  5120"
+.br
+.ti -1c
+.RI "#define \fBACE_NONBLOCK\fR  O_NDELAY"
+.br
+.ti -1c
+.RI "#define \fBACE_SIGIO\fR  -1"
+.br
+.ti -1c
+.RI "#define \fBACE_SIGURG\fR  -2"
+.br
+.ti -1c
+.RI "#define \fBACE_CLOEXEC\fR  -3"
+.br
+.ti -1c
+.RI "#define \fBLOCALNAME\fR  0"
+.br
+.ti -1c
+.RI "#define \fBREMOTENAME\fR  1"
+.br
+.ti -1c
+.RI "#define \fBEBUSY\fR  ETIME"
+.br
+.ti -1c
+.RI "#define \fB_SC_TIMER_MAX\fR  44"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_TIMERS\fR  _SC_TIMER_MAX"
+.br
+.ti -1c
+.RI "#define \fBACE_HOSTENT_DATA_SIZE\fR  (4*1024)"
+.br
+.ti -1c
+.RI "#define \fBACE_SERVENT_DATA_SIZE\fR  (4*1024)"
+.br
+.ti -1c
+.RI "#define \fBACE_PROTOENT_DATA_SIZE\fR  (2*1024)"
+.br
+.ti -1c
+.RI "#define \fBACE_MAXLOGMSGLEN\fR  4 * 1024"
+.br
+.ti -1c
+.RI "#define \fBACE_MAXTOKENNAMELEN\fR  40"
+.br
+.ti -1c
+.RI "#define \fBACE_MAXCLIENTIDLEN\fR  MAXHOSTNAMELEN + 20"
+.br
+.ti -1c
+.RI "#define \fBMAP_FAILED\fR  ((void *) -1)"
+.br
+.ti -1c
+.RI "#define \fBSA_SIGINFO\fR  0"
+.br
+.ti -1c
+.RI "#define \fBSA_RESTART\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_MSB_MASK\fR  (~(1 << (NFDBITS - 1)))"
+.br
+.ti -1c
+.RI "#define \fBACE_IPPROTO_TCP\fR  IPPROTO_TCP"
+.br
+.ti -1c
+.RI "#define \fBACE_OVERLAPPED_SOCKET_FLAG\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_XP1_QOS_SUPPORTED\fR  0x00002000"
+.br
+.ti -1c
+.RI "#define \fBACE_XP1_SUPPORT_MULTIPOINT\fR  0x00000400"
+.br
+.ti -1c
+.RI "#define \fBACE_BASEERR\fR  10000"
+.br
+.ti -1c
+.RI "#define \fBACE_ENOBUFS\fR  (ACE_BASEERR+55)"
+.br
+.ti -1c
+.RI "#define \fBACE_FROM_PROTOCOL_INFO\fR  (-1)"
+.br
+.ti -1c
+.RI "#define \fBACE_FLAG_MULTIPOINT_C_ROOT\fR  0x02"
+.br
+.ti -1c
+.RI "#define \fBACE_FLAG_MULTIPOINT_C_LEAF\fR  0x04"
+.br
+.ti -1c
+.RI "#define \fBACE_FLAG_MULTIPOINT_D_ROOT\fR  0x08"
+.br
+.ti -1c
+.RI "#define \fBACE_FLAG_MULTIPOINT_D_LEAF\fR  0x10"
+.br
+.ti -1c
+.RI "#define \fBACE_QOS_NOT_SPECIFIED\fR  0xFFFFFFFF"
+.br
+.ti -1c
+.RI "#define \fBACE_SERVICETYPE_NOTRAFFIC\fR  0x00000000"
+.br
+.ti -1c
+.RI "#define \fBACE_SERVICETYPE_CONTROLLEDLOAD\fR  0x00000001"
+.br
+.ti -1c
+.RI "#define \fBACE_SERVICETYPE_GUARANTEED\fR  0x00000003"
+.br
+.ti -1c
+.RI "#define \fBACE_JL_SENDER_ONLY\fR  0x01"
+.br
+.ti -1c
+.RI "#define \fBACE_JL_BOTH\fR  0x04"
+.br
+.ti -1c
+.RI "#define \fBACE_SIO_GET_QOS\fR  (0x40000000 | 0x08000000 | 7)"
+.br
+.ti -1c
+.RI "#define \fBACE_SIO_MULTIPOINT_LOOPBACK\fR  (0x08000000 | 9)"
+.br
+.ti -1c
+.RI "#define \fBACE_SIO_MULTICAST_SCOPE\fR  (0x08000000 | 10)"
+.br
+.ti -1c
+.RI "#define \fBACE_SIO_SET_QOS\fR  (0x08000000 | 11)"
+.br
+.ti -1c
+.RI "#define \fBACE_SHUTDOWN_READ\fR  0"
+.br
+.RI "\fIHelper for the \fBACE_OS::cuserid\fR() function.\fR"
+.ti -1c
+.RI "#define \fBACE_SHUTDOWN_WRITE\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_SHUTDOWN_BOTH\fR  2"
+.br
+.ti -1c
+.RI "#define \fBACE_KEY_INDEX\fR(OBJ,KEY)   u_int OBJ = KEY"
+.br
+.ti -1c
+.RI "#define \fBACE_ALLOCATOR_RETURN\fR(POINTER,ALLOCATOR,RET_VAL) "
+.br
+.ti -1c
+.RI "#define \fBACE_ALLOCATOR\fR(POINTER,ALLOCATOR) "
+.br
+.ti -1c
+.RI "#define \fBACE_NEW_MALLOC_RETURN\fR(POINTER,ALLOCATOR,CONSTRUCTOR,RET_VAL) "
+.br
+.ti -1c
+.RI "#define \fBACE_NEW_MALLOC\fR(POINTER,ALLOCATOR,CONSTRUCTOR) "
+.br
+.ti -1c
+.RI "#define \fBACE_NOOP\fR(x)"
+.br
+.ti -1c
+.RI "#define \fBACE_DES_NOFREE\fR(POINTER,CLASS) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_ARRAY_NOFREE\fR(POINTER,SIZE,CLASS) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_FREE\fR(POINTER,DEALLOCATOR,CLASS) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_ARRAY_FREE\fR(POINTER,SIZE,DEALLOCATOR,CLASS) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_NOFREE_TEMPLATE\fR(POINTER,T_CLASS,T_PARAMETER) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_ARRAY_NOFREE_TEMPLATE\fR(POINTER,SIZE,T_CLASS,T_PARAMETER) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_FREE_TEMPLATE\fR(POINTER,DEALLOCATOR,T_CLASS,T_PARAMETER) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_ARRAY_FREE_TEMPLATE\fR(POINTER,SIZE,DEALLOCATOR,T_CLASS,T_PARAMETER) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_FREE_TEMPLATE2\fR(POINTER,DEALLOCATOR,T_CLASS,T_PARAM1,T_PARAM2) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_FREE_TEMPLATE3\fR(POINTER,DEALLOCATOR,T_CLASS,T_PARAM1,T_PARAM2,T_PARAM3) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_FREE_TEMPLATE4\fR(POINTER,DEALLOCATOR,T_CLASS,T_PARAM1,T_PARAM2,T_PARAM3,T_PARAM4) "
+.br
+.ti -1c
+.RI "#define \fBACE_DES_ARRAY_FREE_TEMPLATE2\fR(POINTER,SIZE,DEALLOCATOR,T_CLASS,T_PARAM1,T_PARAM2) "
+.br
+.ti -1c
+.RI "#define \fBACE_PTHREAD_CLEANUP_PUSH\fR(A)"
+.br
+.ti -1c
+.RI "#define \fBACE_PTHREAD_CLEANUP_POP\fR(A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MUTEX_A\fR  "ACE_MUTEX""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MUTEX_W\fR  ACE_TEXT_WIDE(ACE_DEFAULT_MUTEX_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_MUTEX\fR  ACE_LIB_TEXT (ACE_DEFAULT_MUTEX_A)"
+.br
+.ti -1c
+.RI "#define \fBACE_MAIN\fR  main"
+.br
+.ti -1c
+.RI "#define \fBACE_INFINITE\fR  INFINITE"
+.br
+.ti -1c
+.RI "#define \fBACE_STATUS_TIMEOUT\fR  STATUS_TIMEOUT"
+.br
+.ti -1c
+.RI "#define \fBACE_WAIT_FAILED\fR  WAIT_FAILED"
+.br
+.ti -1c
+.RI "#define \fBACE_WAIT_TIMEOUT\fR  WAIT_TIMEOUT"
+.br
+.ti -1c
+.RI "#define \fBACE_SWAP_LONG\fR(L) "
+.br
+.ti -1c
+.RI "#define \fBACE_SWAP_WORD\fR(L)   ((((L) & 0x00FF) << 8) | (((L) & 0xFF00) >> 8))"
+.br
+.ti -1c
+.RI "#define \fBACE_HTONL\fR(X)   X"
+.br
+.ti -1c
+.RI "#define \fBACE_NTOHL\fR(X)   X"
+.br
+.ti -1c
+.RI "#define \fBACE_IDL_NCTOHL\fR(X)   (X << 24)"
+.br
+.ti -1c
+.RI "#define \fBACE_IDL_NSTOHL\fR(X)   ((X) << 16)"
+.br
+.ti -1c
+.RI "#define \fBACE_HTONS\fR(x)   x"
+.br
+.ti -1c
+.RI "#define \fBACE_NTOHS\fR(x)   x"
+.br
+.ti -1c
+.RI "#define \fBACE_RTSIG_MAX\fR  8"
+.br
+.ti -1c
+.RI "#define \fBWIFEXITED\fR(stat)   1"
+.br
+.ti -1c
+.RI "#define \fBWEXITSTATUS\fR(stat)   stat"
+.br
+.ti -1c
+.RI "#define \fBWIFSIGNALED\fR(stat)   0"
+.br
+.ti -1c
+.RI "#define \fBWTERMSIG\fR(stat)   0"
+.br
+.ti -1c
+.RI "#define \fBWIFSTOPPED\fR(stat)   0"
+.br
+.ti -1c
+.RI "#define \fBWSTOPSIG\fR(stat)   0"
+.br
+.ti -1c
+.RI "#define \fBWIFCONTINUED\fR(stat)   0"
+.br
+.ti -1c
+.RI "#define \fBWCOREDUMP\fR(stat)   0"
+.br
+.ti -1c
+.RI "#define \fBACE_CDR_BYTE_ORDER\fR  0"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_CDR_BUFSIZE\fR  512"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_CDR_EXP_GROWTH_MAX\fR  65536"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_CDR_LINEAR_GROWTH_CHUNK\fR  65536"
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_CDR_MEMCPY_TRADEOFF\fR  256"
+.br
+.ti -1c
+.RI "#define \fBACE_align_binary\fR(ptr, alignment) "
+.br
+.ti -1c
+.RI "#define \fBACE_ptr_align_binary\fR(ptr, alignment) "
+.br
+.ti -1c
+.RI "#define \fBACE_SIGRTMIN\fR  SIGRTMIN"
+.br
+.ti -1c
+.RI "#define \fBACE_SIGRTMAX\fR  SIGRTMAX"
+.br
+.in -1c
+.SS Typedefs
+
+.in +1c
+.ti -1c
+.RI "typedef struct \fBtimespec\fR  \fBtimespec_t\fR"
+.br
+.ti -1c
+.RI "typedef int \fBclockid_t\fR"
+.br
+.ti -1c
+.RI "typedef void (* \fBACE_Service_Object_Exterminator\fR )(void *)"
+.br
+.RI "\fIService Objects, i.e., objects dynamically loaded via the service configurator, must provide a destructor function with the following prototype to perform object cleanup.\fR"
+.ti -1c
+.RI "typedef const struct \fBiovec\fR \fBACE_WRITEV_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef struct \fBiovec\fR \fBACE_READV_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef const struct rlimit \fBACE_SETRLIMIT_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef const struct \fBmsghdr\fR \fBACE_SENDMSG_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef u_int \fBACE_RANDR_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef int \fBsig_atomic_t\fR"
+.br
+.ti -1c
+.RI "typedef int \fBssize_t\fR"
+.br
+.ti -1c
+.RI "typedef \fBOVERLAPPED\fR \fBACE_OVERLAPPED\fR"
+.br
+.ti -1c
+.RI "typedef DWORD \fBACE_thread_t\fR"
+.br
+.ti -1c
+.RI "typedef long \fBpid_t\fR"
+.br
+.ti -1c
+.RI "typedef HANDLE \fBACE_hthread_t\fR"
+.br
+.ti -1c
+.RI "typedef DWORD \fBACE_thread_key_t\fR"
+.br
+.ti -1c
+.RI "typedef unsigned __int64 \fBACE_QWORD\fR"
+.br
+.ti -1c
+.RI "typedef unsigned __int64 \fBACE_hrtime_t\fR"
+.br
+.ti -1c
+.RI "typedef DWORD \fBnlink_t\fR"
+.br
+.ti -1c
+.RI "typedef u_short \fBmode_t\fR"
+.br
+.ti -1c
+.RI "typedef long \fBuid_t\fR"
+.br
+.ti -1c
+.RI "typedef long \fBgid_t\fR"
+.br
+.ti -1c
+.RI "typedef char* \fBcaddr_t\fR"
+.br
+.ti -1c
+.RI "typedef DWORD \fBACE_exitcode\fR"
+.br
+.ti -1c
+.RI "typedef int \fBACE_idtype_t\fR"
+.br
+.ti -1c
+.RI "typedef DWORD \fBACE_id_t\fR"
+.br
+.ti -1c
+.RI "typedef int \fBACE_pri_t\fR"
+.br
+.ti -1c
+.RI "typedef HINSTANCE \fBACE_SHLIB_HANDLE\fR"
+.br
+.ti -1c
+.RI "typedef struct utsname \fBACE_utsname\fR"
+.br
+.ti -1c
+.RI "typedef fd_set \fBACE_FD_SET_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef char \fBACE_HOSTENT_DATA\fR [ACE_HOSTENT_DATA_SIZE]"
+.br
+.ti -1c
+.RI "typedef char \fBACE_SERVENT_DATA\fR [ACE_SERVENT_DATA_SIZE]"
+.br
+.ti -1c
+.RI "typedef char \fBACE_PROTOENT_DATA\fR [ACE_PROTOENT_DATA_SIZE]"
+.br
+.ti -1c
+.RI "typedef const char** \fBSYS_SIGLIST\fR"
+.br
+.ti -1c
+.RI "typedef ACE_THR_FUNC \fBACE_THR_FUNC_INTERNAL\fR"
+.br
+.ti -1c
+.RI "typedef void (* \fBACE_THR_C_DEST\fR )(void *)"
+.br
+.ti -1c
+.RI "typedef void (* \fBACE_THR_DEST\fR )(void *)"
+.br
+.ti -1c
+.RI "typedef const \fBACE_TCHAR\fR* \fBACE_DL_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef void (* \fBACE_SIGNAL_C_FUNC\fR )(int,\fBsiginfo_t\fR*,void*)"
+.br
+.ti -1c
+.RI "typedef int \fBucontext_t\fR"
+.br
+.ti -1c
+.RI "typedef void (* \fBACE_Sig_Handler_Ex\fR )(int, \fBsiginfo_t\fR *siginfo, \fBucontext_t\fR *ucontext)"
+.br
+.ti -1c
+.RI "typedef int \fBACE_Sched_Priority\fR"
+.br
+.ti -1c
+.RI "typedef void (* \fBACE_CLEANUP_FUNC\fR )(void *object, void *param)"
+.br
+.ti -1c
+.RI "typedef double \fBACE_timer_t\fR"
+.br
+.ti -1c
+.RI "typedef int \fBACE_Rusage\fR"
+.br
+.ti -1c
+.RI "typedef struct _stat \fBACE_stat\fR"
+.br
+.ti -1c
+.RI "typedef int (* \fBACE_COMPARE_FUNC\fR )(const void *, const void *)"
+.br
+.ti -1c
+.RI "typedef u_long \fBACE_SERVICE_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef u_long \fBACE_SOCK_GROUP\fR"
+.br
+.ti -1c
+.RI "typedef int (* \fBACE_QOS_CONDITION_FUNC\fR )(\fBiovec\fR *caller_id, \fBiovec\fR *caller_data, \fBACE_QoS\fR *socket_qos, \fBACE_QoS\fR *group_socket_qos, \fBiovec\fR *callee_id, \fBiovec\fR *callee_data, \fBACE_SOCK_GROUP\fR *g, u_long callbackdata)"
+.br
+.ti -1c
+.RI "typedef void (* \fBACE_OVERLAPPED_COMPLETION_FUNC\fR )(u_long error, u_long bytes_transferred, \fBACE_OVERLAPPED\fR *overlapped, u_long flags)"
+.br
+.ti -1c
+.RI "typedef TRANSMIT_FILE_BUFFERS \fBACE_TRANSMIT_FILE_BUFFERS\fR"
+.br
+.ti -1c
+.RI "typedef LPTRANSMIT_FILE_BUFFERS \fBACE_LPTRANSMIT_FILE_BUFFERS\fR"
+.br
+.ti -1c
+.RI "typedef PTRANSMIT_FILE_BUFFERS \fBACE_PTRANSMIT_FILE_BUFFERS\fR"
+.br
+.in -1c
+.SS Enumerations
+
+.in +1c
+.ti -1c
+.RI "enum \fBACE_Recyclable_State\fR { \fBACE_RECYCLABLE_IDLE_AND_PURGABLE\fR, \fBACE_RECYCLABLE_IDLE_BUT_NOT_PURGABLE\fR, \fBACE_RECYCLABLE_PURGABLE_BUT_NOT_IDLE\fR, \fBACE_RECYCLABLE_BUSY\fR, \fBACE_RECYCLABLE_CLOSED\fR, \fBACE_RECYCLABLE_UNKNOWN\fR }"
+.br
+.RI "\fIStates of a recyclable object.\fR"
+.in -1c
+.SS Functions
+
+.in +1c
+.ti -1c
+.RI "ACE_OS_Export \fBACE_Time_Value\fR \fBoperator+\fR (const \fBACE_Time_Value\fR &tv1, const \fBACE_Time_Value\fR &tv2)"
+.br
+.ti -1c
+.RI "ACE_OS_Export \fBACE_Time_Value\fR \fBoperator-\fR (const \fBACE_Time_Value\fR &tv1, const \fBACE_Time_Value\fR &tv2)"
+.br
+.ti -1c
+.RI "typedef \fBvoid\fR (__cdecl *ACE_SignalHandler)(int)"
+.br
+.ti -1c
+.RI "\fBACE_QWORD\fR \fBACE_MAKE_QWORD\fR (DWORD lo, DWORD hi)"
+.br
+.ti -1c
+.RI "DWORD \fBACE_LOW_DWORD\fR (\fBACE_QWORD\fR q)"
+.br
+.ti -1c
+.RI "DWORD \fBACE_HIGH_DWORD\fR (\fBACE_QWORD\fR q)"
+.br
+.ti -1c
+.RI "int \fBACE_SEH_Default_Exception_Selector\fR (void *)"
+.br
+.ti -1c
+.RI "int \fBACE_SEH_Default_Exception_Handler\fR (void *)"
+.br
+.ti -1c
+.RI "ACE_OS_Export void \fBace_cleanup_destroyer\fR (\fBACE_Cleanup\fR *, void *param = 0)"
+.br
+.ti -1c
+.RI "long \fBace_timezone\fR ()"
+.br
+.RI "\fIHelper for the \fBACE_OS::timezone\fR() function.\fR"
+.ti -1c
+.RI "double \fBace_difftime\fR (time_t t1, time_t t0)"
+.br
+.RI "\fIHelper for the \fBACE_OS::difftime\fR() function.\fR"
+.ti -1c
+.RI "void \fBACE_OS_Object_Manager_Internal_Exit_Hook\fR (void)"
+.br
+.in -1c
+.SS Variables
+
+.in +1c
+.ti -1c
+.RI "const ACE_UINT32 \fBACE_U_ONE_SECOND_IN_MSECS\fR = 1000U"
+.br
+.ti -1c
+.RI "const ACE_UINT32 \fBACE_U_ONE_SECOND_IN_USECS\fR = 1000000U"
+.br
+.ti -1c
+.RI "const ACE_UINT32 \fBACE_U_ONE_SECOND_IN_NSECS\fR = 1000000000U"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBOS.h\fR,v 4.1100 2001/09/19 23:36:08 irfan Exp
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Douglas C. Schmidt <schmidt@cs.wustl.edu> ,  Jesper S. M|ller<stophph@diku.dk> ,  and a cast of thousands...
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define ACE_ALLOCATOR(POINTER, ALLOCATOR)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { POINTER = ALLOCATOR; \
+     if (POINTER == 0) { errno = ENOMEM; return; } \
+   } while (0)
+.fi
+.SS #define ACE_ALLOCATOR_RETURN(POINTER, ALLOCATOR, RET_VAL)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { POINTER = ALLOCATOR; \
+     if (POINTER == 0) { errno = ENOMEM; return RET_VAL; } \
+   } while (0)
+.fi
+.SS #define ACE_ASCII_SIZE  128
+.PP
+.SS #define ACE_BASEERR  10000
+.PP
+.SS #define ACE_BEGIN_DUMP  ACE_LIB_TEXT ("\\n====\\n(%P|%t|%x)")
+.PP
+.SS #define ACE_BIT_CMP_MASK(WORD, BIT, MASK)  (((WORD) & (BIT)) == MASK)
+.PP
+.SS #define ACE_BIT_DISABLED(WORD, BIT)  (((WORD) & (BIT)) == 0)
+.PP
+.SS #define ACE_BIT_ENABLED(WORD, BIT)  (((WORD) & (BIT)) != 0)
+.PP
+.SS #define ACE_CDR_BYTE_ORDER  0
+.PP
+.SS #define ACE_CLASS_IS_NAMESPACE(CLASSNAME)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+private: \
+CLASSNAME (void); \
+CLASSNAME (const CLASSNAME&); \
+friend class ace_dewarn_gplusplus
+.fi
+.SS #define ACE_CLOEXEC  -3
+.PP
+.SS #define ACE_CLR_BITS(WORD, BITS)  (WORD &= ~(BITS))
+.PP
+.SS #define ACE_CORBA_1(NAME)  CORBA::NAME
+.PP
+.SS #define ACE_CORBA_2(TYPE, NAME)  CORBA::TYPE::NAME
+.PP
+.SS #define ACE_CORBA_3(TYPE, NAME)  CORBA::TYPE::NAME
+.PP
+.SS #define ACE_DB(X)  X
+.PP
+.SS #define ACE_DEFAULT_ARGV_BUFSIZ  1024 * 4
+.PP
+.SS #define ACE_DEFAULT_BACKLOG  5
+.PP
+.SS #define ACE_DEFAULT_BASE_ADDR  ((char *) (64 * 1024 * 1024))
+.PP
+.SS #define ACE_DEFAULT_BROADCAST_PORT  20000
+.PP
+.SS #define ACE_DEFAULT_CDR_BUFSIZE  512
+.PP
+.SS #define ACE_DEFAULT_CDR_EXP_GROWTH_MAX  65536
+.PP
+.SS #define ACE_DEFAULT_CDR_LINEAR_GROWTH_CHUNK  65536
+.PP
+.SS #define ACE_DEFAULT_CDR_MEMCPY_TRADEOFF  256
+.PP
+.SS #define ACE_DEFAULT_CLOSE_ALL_HANDLES  1
+.PP
+.SS #define ACE_DEFAULT_DIR_PERMS  0755
+.PP
+.SS #define ACE_DEFAULT_FILE_PERMS  (FILE_SHARE_READ | FILE_SHARE_WRITE)
+.PP
+.SS #define ACE_DEFAULT_FREE_LIST_HWM  25000
+.PP
+.SS #define ACE_DEFAULT_FREE_LIST_INC  100
+.PP
+.SS #define ACE_DEFAULT_FREE_LIST_LWM  0
+.PP
+.SS #define ACE_DEFAULT_FREE_LIST_PREALLOC  0
+.PP
+.SS #define ACE_DEFAULT_GLOBALNAME  ACE_LIB_TEXT (ACE_DEFAULT_GLOBALNAME_A)
+.PP
+.SS #define ACE_DEFAULT_GLOBALNAME_A  "globalnames"
+.PP
+.SS #define ACE_DEFAULT_GLOBALNAME_W  ACE_TEXT_WIDE(ACE_DEFAULT_GLOBALNAME_A)
+.PP
+.SS #define ACE_DEFAULT_HTTP_PORT  80
+.PP
+.SS #define ACE_DEFAULT_HTTP_SERVER_PORT  80
+.PP
+.SS #define ACE_DEFAULT_LOCALNAME  ACE_LIB_TEXT (ACE_DEFAULT_LOCALNAME_A)
+.PP
+.SS #define ACE_DEFAULT_LOCALNAME_A  "localnames"
+.PP
+.SS #define ACE_DEFAULT_LOCALNAME_W  ACE_TEXT_WIDE(ACE_DEFAULT_LOCALNAME_A)
+.PP
+.SS #define ACE_DEFAULT_LOCAL_PORT  20005
+.PP
+.SS #define ACE_DEFAULT_LOCAL_PORT_STR  "20005"
+.PP
+.SS #define ACE_DEFAULT_LOGGER_KEY  ACE_LIB_TEXT ("localhost:20012")
+.PP
+.SS #define ACE_DEFAULT_LOGGING_SERVER_PORT  20008
+.PP
+.SS #define ACE_DEFAULT_LOGGING_SERVER_PORT_STR  "20008"
+.PP
+.SS #define ACE_DEFAULT_LOG_STREAM  (&cerr)
+.PP
+.SS #define ACE_DEFAULT_MAP_SIZE  1024
+.PP
+.SS #define ACE_DEFAULT_MAX_SEGMENTS  6
+.PP
+.SS #define ACE_DEFAULT_MAX_SOCKET_BUFSIZ  65536
+.PP
+.SS #define ACE_DEFAULT_MESSAGE_BLOCK_PRIORITY  0
+.PP
+.SS #define ACE_DEFAULT_MULTICAST_ADDR  "224.9.9.2"
+.PP
+.SS #define ACE_DEFAULT_MULTICAST_PORT  20001
+.PP
+.SS #define ACE_DEFAULT_MUTEX  ACE_LIB_TEXT (ACE_DEFAULT_MUTEX_A)
+.PP
+.SS #define ACE_DEFAULT_MUTEX_A  "ACE_MUTEX"
+.PP
+.SS #define ACE_DEFAULT_MUTEX_W  ACE_TEXT_WIDE(ACE_DEFAULT_MUTEX_A)
+.PP
+.SS #define ACE_DEFAULT_NAME_SERVER_PORT  20006
+.PP
+.SS #define ACE_DEFAULT_NAME_SERVER_PORT_STR  "20006"
+.PP
+.SS #define ACE_DEFAULT_OPEN_PERMS  (FILE_SHARE_READ | FILE_SHARE_WRITE)
+.PP
+.SS #define ACE_DEFAULT_PAGEFILE_POOL_BASE  (void *) 0
+.PP
+.SS #define ACE_DEFAULT_PAGEFILE_POOL_CHUNK  (size_t) 0x00010000
+.PP
+.SS #define ACE_DEFAULT_PAGEFILE_POOL_NAME  ACE_LIB_TEXT ("Default_ACE_Pagefile_Memory_Pool")
+.PP
+.SS #define ACE_DEFAULT_PAGEFILE_POOL_SIZE  (size_t) 0x01000000
+.PP
+.SS #define ACE_DEFAULT_RENDEZVOUS  "localhost:20010"
+.PP
+.SS #define ACE_DEFAULT_SEGMENT_SIZE  1024 * 128
+.PP
+.SS #define ACE_DEFAULT_SELECT_REACTOR_SIZE  ACE_FD_SETSIZE
+.PP
+.SS #define ACE_DEFAULT_SEM_KEY  "ACE_SEM_KEY"
+.PP
+.SS #define ACE_DEFAULT_SERVER_HOST  ACE_LOCALHOST
+.PP
+.SS #define ACE_DEFAULT_SERVER_PORT  20002
+.PP
+.SS #define ACE_DEFAULT_SERVER_PORT_STR  "20002"
+.PP
+.SS #define ACE_DEFAULT_SERVICE_PORT  20003
+.PP
+.SS #define ACE_DEFAULT_SERVICE_REPOSITORY_SIZE  1024
+.PP
+.SS #define ACE_DEFAULT_SHLIB_MODE  0
+.PP
+.SS #define ACE_DEFAULT_SHM_KEY  1234
+.PP
+.SS #define ACE_DEFAULT_SVC_CONF  ACE_LIB_TEXT (".\\\\svc.conf")
+.PP
+.SS #define ACE_DEFAULT_SYNCH_TYPE  USYNC_THREAD
+.PP
+.SS #define ACE_DEFAULT_SYSLOG_FACILITY  LOG_USER
+.PP
+.SS #define ACE_DEFAULT_THREADS  1
+.PP
+.SS #define ACE_DEFAULT_THREAD_PRIORITY  (-0x7fffffffL - 1L)
+.PP
+.SS #define ACE_DEFAULT_THR_LOGGING_SERVER_PORT  20008
+.PP
+.SS #define ACE_DEFAULT_THR_LOGGING_SERVER_PORT_STR  "20008"
+.PP
+.SS #define ACE_DEFAULT_THR_PORT  20004
+.PP
+.SS #define ACE_DEFAULT_TIMEOUT  5
+.PP
+.SS #define ACE_DEFAULT_TIMEPROBE_TABLE_SIZE  8 * 1024
+.PP
+.SS #define ACE_DEFAULT_TIMERS  _SC_TIMER_MAX
+.PP
+.SS #define ACE_DEFAULT_TIMER_HASH_TABLE_SIZE  1024
+.PP
+.SS #define ACE_DEFAULT_TIMER_WHEEL_RESOLUTION  100
+.PP
+.SS #define ACE_DEFAULT_TIMER_WHEEL_SIZE  1024
+.PP
+.SS #define ACE_DEFAULT_TIME_SERVER_PORT  20009
+.PP
+.SS #define ACE_DEFAULT_TIME_SERVER_PORT_STR  "20009"
+.PP
+.SS #define ACE_DEFAULT_TIME_SERVER_STR  "ACE_TS_TIME"
+.PP
+.SS #define ACE_DEFAULT_TOKEN_SERVER_PORT  20007
+.PP
+.SS #define ACE_DEFAULT_TOKEN_SERVER_PORT_STR  "20007"
+.PP
+.SS #define ACE_DES_ARRAY_FREE(POINTER, SIZE, DEALLOCATOR, CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { \
+        if (POINTER) \
+          { \
+            for (size_t i = 0; \
+                 i < SIZE; \
+                 ++i) \
+            { \
+              (&(POINTER)[i])->~CLASS (); \
+            } \
+            DEALLOCATOR (POINTER); \
+          } \
+      } \
+   while (0)
+.fi
+.SS #define ACE_DES_ARRAY_FREE_TEMPLATE(POINTER, SIZE, DEALLOCATOR, T_CLASS, T_PARAMETER)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+       do { \
+            if (POINTER) \
+              { \
+                for (size_t i = 0; \
+                     i < SIZE; \
+                     ++i) \
+                { \
+                  POINTER[i].T_CLASS T_PARAMETER::~T_CLASS (); \
+                } \
+                DEALLOCATOR (POINTER); \
+              } \
+          } \
+       while (0)
+.fi
+.SS #define ACE_DES_ARRAY_FREE_TEMPLATE2(POINTER, SIZE, DEALLOCATOR, T_CLASS, T_PARAM1, T_PARAM2)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+       do { \
+            if (POINTER) \
+              { \
+                for (size_t i = 0; \
+                     i < SIZE; \
+                     ++i) \
+                { \
+                  POINTER[i].T_CLASS <T_PARAM1, T_PARAM2>::~T_CLASS (); \
+                } \
+                DEALLOCATOR (POINTER); \
+              } \
+          } \
+       while (0)
+.fi
+.SS #define ACE_DES_ARRAY_NOFREE(POINTER, SIZE, CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { \
+        if (POINTER) \
+          { \
+            for (size_t i = 0; \
+                 i < SIZE; \
+                 ++i) \
+            { \
+              (&(POINTER)[i])->~CLASS (); \
+            } \
+          } \
+      } \
+   while (0)
+.fi
+.SS #define ACE_DES_ARRAY_NOFREE_TEMPLATE(POINTER, SIZE, T_CLASS, T_PARAMETER)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+     do { \
+          if (POINTER) \
+            { \
+              for (size_t i = 0; \
+                   i < SIZE; \
+                   ++i) \
+              { \
+                (POINTER)[i].T_CLASS T_PARAMETER::~T_CLASS (); \
+              } \
+            } \
+        } \
+     while (0)
+.fi
+.SS #define ACE_DES_FREE(POINTER, DEALLOCATOR, CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { \
+        if (POINTER) \
+          { \
+            (POINTER)->~CLASS (); \
+            DEALLOCATOR (POINTER); \
+          } \
+      } \
+   while (0)
+.fi
+.SS #define ACE_DES_FREE_TEMPLATE(POINTER, DEALLOCATOR, T_CLASS, T_PARAMETER)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+       do { \
+            if (POINTER) \
+              { \
+                POINTER->T_CLASS T_PARAMETER::~T_CLASS (); \
+                DEALLOCATOR (POINTER); \
+              } \
+          } \
+       while (0)
+.fi
+.SS #define ACE_DES_FREE_TEMPLATE2(POINTER, DEALLOCATOR, T_CLASS, T_PARAM1, T_PARAM2)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+       do { \
+            if (POINTER) \
+              { \
+                POINTER->T_CLASS <T_PARAM1, T_PARAM2>::~T_CLASS (); \
+                DEALLOCATOR (POINTER); \
+              } \
+          } \
+       while (0)
+.fi
+.SS #define ACE_DES_FREE_TEMPLATE3(POINTER, DEALLOCATOR, T_CLASS, T_PARAM1, T_PARAM2, T_PARAM3)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+       do { \
+            if (POINTER) \
+              { \
+                POINTER->T_CLASS <T_PARAM1, T_PARAM2, T_PARAM3>::~T_CLASS (); \
+                DEALLOCATOR (POINTER); \
+              } \
+          } \
+       while (0)
+.fi
+.SS #define ACE_DES_FREE_TEMPLATE4(POINTER, DEALLOCATOR, T_CLASS, T_PARAM1, T_PARAM2, T_PARAM3, T_PARAM4)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+       do { \
+            if (POINTER) \
+              { \
+                POINTER->T_CLASS <T_PARAM1, T_PARAM2, T_PARAM3, T_PARAM4>::~T_CLASS (); \
+                DEALLOCATOR (POINTER); \
+              } \
+          } \
+       while (0)
+.fi
+.SS #define ACE_DES_NOFREE(POINTER, CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { \
+        if (POINTER) \
+          { \
+            (POINTER)->~CLASS (); \
+          } \
+      } \
+   while (0)
+.fi
+.SS #define ACE_DES_NOFREE_TEMPLATE(POINTER, T_CLASS, T_PARAMETER)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+     do { \
+          if (POINTER) \
+            { \
+              (POINTER)->T_CLASS T_PARAMETER::~T_CLASS (); \
+            } \
+        } \
+     while (0)
+.fi
+.SS #define ACE_DEV_NULL  "nul"
+.PP
+.SS #define ACE_DIRECTORY_SEPARATOR_CHAR  ACE_LIB_TEXT (ACE_DIRECTORY_SEPARATOR_CHAR_A)
+.PP
+.SS #define ACE_DIRECTORY_SEPARATOR_CHAR_A  '\\\\'
+.PP
+.SS #define ACE_DIRECTORY_SEPARATOR_CHAR_W  ACE_TEXT_WIDE(ACE_DIRECTORY_SEPARATOR_CHAR_A)
+.PP
+.SS #define ACE_DIRECTORY_SEPARATOR_STR  ACE_LIB_TEXT (ACE_DIRECTORY_SEPARATOR_STR_A)
+.PP
+.SS #define ACE_DIRECTORY_SEPARATOR_STR_A  "\\\\"
+.PP
+.SS #define ACE_DIRECTORY_SEPARATOR_STR_W  ACE_TEXT_WIDE(ACE_DIRECTORY_SEPARATOR_STR_A)
+.PP
+.SS #define ACE_DLL_PREFIX  ACE_LIB_TEXT ("")
+.PP
+.SS #define ACE_DLL_SUFFIX  ACE_LIB_TEXT (".dll")
+.PP
+.SS #define ACE_DONT_INCLUDE_ACE_SIGNAL_H
+.PP
+.SS #define ACE_EBCDIC_SIZE  256
+.PP
+.SS #define ACE_ENDLESS_LOOP
+.PP
+.SS #define ACE_END_DUMP  ACE_LIB_TEXT ("====\\n")
+.PP
+.SS #define ACE_ENOBUFS  (ACE_BASEERR+55)
+.PP
+.SS #define ACE_EVEN(NUM)  (((NUM) & 1) == 0)
+.PP
+.SS #define ACE_FACTORY_DECLARE(CLS, SERVICE_CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+extern "C" CLS##_Export ACE_Service_Object *\
+_make_##SERVICE_CLASS (ACE_Service_Object_Exterminator *);
+.fi
+Declare the factory method used to create dynamically loadable services.
+.PP
+Once the service implementation is dynamically loaded the Service Configurator uses a factory method to create the object. This macro declares such a factory function with the proper interface and export macros. Normally used in the header file that declares the service implementation.
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fICLS\fR\fR must match the prefix of the export macro used for this service. 
+.TP
+\fB\fISERVICE_CLASS\fR\fR must match the name of the class that implements the service. 
+.SS #define ACE_FACTORY_DEFINE(CLS, SERVICE_CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+extern "C" void _gobble_##SERVICE_CLASS (void *p) { \
+  ACE_Service_Object *_p = ACE_reinterpret_cast (ACE_Service_Object *, p); \
+  ACE_ASSERT (_p != 0); \
+  delete _p; } \
+extern "C" ACE_Service_Object *\
+_make_##SERVICE_CLASS (ACE_Service_Object_Exterminator *gobbler) \
+{ \
+  ACE_TRACE (#SERVICE_CLASS); \
+  if (gobbler != 0) \
+    *gobbler = (ACE_Service_Object_Exterminator) _gobble_##SERVICE_CLASS; \
+  return new SERVICE_CLASS; \
+}
+.fi
+Define the factory method (and destructor) for a dynamically loadable service.
+.PP
+Use with arguments matching ACE_FACTORY_DECLARE. Normally used in the .cpp file that defines the service implementation.
+.PP
+This macro defines both the factory method and the function used to cleanup the service object. 
+.SS #define ACE_FD_SETSIZE  FD_SETSIZE
+.PP
+.SS #define ACE_FILE_CONNECTOR  \fBACE_FILE_Connector\fR, \fBACE_FILE_Addr\fR
+.PP
+.SS #define ACE_FILE_STREAM  \fBACE_FILE_IO\fR, \fBACE_FILE_Addr\fR
+.PP
+.SS #define ACE_FLAG_MULTIPOINT_C_LEAF  0x04
+.PP
+.SS #define ACE_FLAG_MULTIPOINT_C_ROOT  0x02
+.PP
+.SS #define ACE_FLAG_MULTIPOINT_D_LEAF  0x10
+.PP
+.SS #define ACE_FLAG_MULTIPOINT_D_ROOT  0x08
+.PP
+.SS #define ACE_FREE_LIST_WITH_POOL  1
+.PP
+.SS #define ACE_FROM_PROTOCOL_INFO  (-1)
+.PP
+.SS #define ACE_GUARD(MUTEX, OBJ, LOCK)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) return;
+.fi
+.SS #define ACE_GUARD_RETURN(MUTEX, OBJ, LOCK, RETURN)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) return RETURN;
+.fi
+.SS #define ACE_HAS_ASCII
+.PP
+.SS #define ACE_HOSTENT_DATA_SIZE  (4*1024)
+.PP
+.SS #define ACE_HTONL(X)  X
+.PP
+.SS #define ACE_HTONS(x)  x
+.PP
+.SS #define ACE_IDL_NCTOHL(X)  (X << 24)
+.PP
+.SS #define ACE_IDL_NSTOHL(X)  ((X) << 16)
+.PP
+.SS #define ACE_INFINITE  INFINITE
+.PP
+.SS #define ACE_INVALID_PID  ((\fBpid_t\fR) -1)
+.PP
+.SS #define ACE_INVALID_SEM_KEY  0
+.PP
+.SS #define ACE_IOV_MAX  IOV_MAX
+.PP
+.SS #define ACE_IPPROTO_TCP  IPPROTO_TCP
+.PP
+.SS #define ACE_ITOA(X)  #X
+.PP
+.SS #define ACE_JL_BOTH  0x04
+.PP
+.SS #define ACE_JL_SENDER_ONLY  0x01
+.PP
+.SS #define ACE_KEY_INDEX(OBJ, KEY)  u_int OBJ = KEY
+.PP
+.SS #define ACE_LACKS_IP_ADD_MEMBERSHIP
+.PP
+.SS #define ACE_LD_SEARCH_PATH  ACE_LIB_TEXT ("PATH")
+.PP
+.SS #define ACE_LD_SEARCH_PATH_SEPARATOR_STR  ACE_LIB_TEXT (";")
+.PP
+.SS #define ACE_LITE_MMAP_MEMORY_POOL  \fBACE_Lite_MMAP_Memory_Pool\fR, \fBACE_MMAP_Memory_Pool_Options\fR
+.PP
+.SS #define ACE_LOCALHOST  ACE_LIB_TEXT ("localhost")
+.PP
+.SS #define ACE_LOCAL_MEMORY_POOL  \fBACE_Local_Memory_Pool\fR, \fBACE_Local_Memory_Pool_Options\fR
+.PP
+.SS #define ACE_LSOCK_ACCEPTOR  \fBACE_LSOCK_Acceptor\fR, \fBACE_UNIX_Addr\fR
+.PP
+.SS #define ACE_LSOCK_CONNECTOR  \fBACE_LSOCK_Connector\fR, \fBACE_UNIX_Addr\fR
+.PP
+.SS #define ACE_LSOCK_STREAM  \fBACE_LSOCK_Stream\fR, \fBACE_UNIX_Addr\fR
+.PP
+.SS #define ACE_MAIN  main
+.PP
+.SS #define ACE_MAP_FIXED  MAP_FIXED
+.PP
+.SS #define ACE_MAP_PRIVATE  MAP_PRIVATE
+.PP
+.SS #define ACE_MAP_SHARED  MAP_SHARED
+.PP
+.SS #define ACE_MAXCLIENTIDLEN  MAXHOSTNAMELEN + 20
+.PP
+.SS #define ACE_MAXLOGMSGLEN  4 * 1024
+.PP
+.SS #define ACE_MAXTOKENNAMELEN  40
+.PP
+.SS #define ACE_MAX_DEFAULT_PORT  65535
+.PP
+.SS #define ACE_MAX_DGRAM_SIZE  8192
+.PP
+.SS #define ACE_MAX_FULLY_QUALIFIED_NAME_LEN  256
+.PP
+.SS #define ACE_MAX_USERID  32
+.PP
+.SS #define ACE_MEM_ACCEPTOR  \fBACE_MEM_Acceptor\fR, \fBACE_MEM_Addr\fR
+.PP
+.SS #define ACE_MEM_CONNECTOR  \fBACE_MEM_Connector\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_MEM_POOL  _ACE_MEM_POOL
+.PP
+.SS #define ACE_MEM_POOL_1  class _ACE_MEM_POOL, class _ACE_MEM_POOL_OPTIONS
+.PP
+.SS #define ACE_MEM_POOL_2  _ACE_MEM_POOL, _ACE_MEM_POOL_OPTIONS
+.PP
+.SS #define ACE_MEM_POOL_OPTIONS  _ACE_MEM_POOL_OPTIONS
+.PP
+.SS #define ACE_MEM_STREAM  \fBACE_MEM_Stream\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_MMAP_MEMORY_POOL  \fBACE_MMAP_Memory_Pool\fR, \fBACE_MMAP_Memory_Pool_Options\fR
+.PP
+.SS #define ACE_MSB_MASK  (~(1 << (NFDBITS - 1)))
+.PP
+.SS #define ACE_MT(X)
+.PP
+.SS #define ACE_NAME_SERVER_MAP  "Name Server Map"
+.PP
+.SS #define ACE_NESTED_CLASS(TYPE, NAME)  TYPE::NAME
+.PP
+.SS #define ACE_NEW_MALLOC(POINTER, ALLOCATOR, CONSTRUCTOR)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { POINTER = ALLOCATOR; \
+     if (POINTER == 0) { errno = ENOMEM; return;} \
+     else { new (POINTER) CONSTRUCTOR; } \
+   } while (0)
+.fi
+.SS #define ACE_NEW_MALLOC_RETURN(POINTER, ALLOCATOR, CONSTRUCTOR, RET_VAL)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+   do { POINTER = ALLOCATOR; \
+     if (POINTER == 0) { errno = ENOMEM; return RET_VAL;} \
+     else { new (POINTER) CONSTRUCTOR; } \
+   } while (0)
+.fi
+.SS #define ACE_NONBLOCK  O_NDELAY
+.PP
+.SS #define ACE_NON_BLOCKING_BUG_DELAY  35000
+.PP
+.SS #define ACE_NOOP(x)
+.PP
+.SS #define ACE_NO_HEAP_CHECK
+.PP
+.SS #define ACE_NSIG  NSIG
+.PP
+.SS #define ACE_NTOHL(X)  X
+.PP
+.SS #define ACE_NTOHS(x)  x
+.PP
+.SS #define ACE_ODD(NUM)  (((NUM) & 1) == 1)
+.PP
+.SS #define ACE_ONE_SECOND_IN_MSECS  1000L
+.PP
+.SS #define ACE_ONE_SECOND_IN_NSECS  1000000000L
+.PP
+.SS #define ACE_ONE_SECOND_IN_USECS  1000000L
+.PP
+.SS #define ACE_OSTREAM_TYPE  ostream
+.PP
+.SS #define ACE_OS_TRACE(X)
+.PP
+.SS #define ACE_OVERLAPPED_SOCKET_FLAG  0
+.PP
+.SS #define ACE_PAGEFILE_MEMORY_POOL  \fBACE_Pagefile_Memory_Pool\fR, \fBACE_Pagefile_Memory_Pool_Options\fR
+.PP
+.SS #define ACE_PEER_ACCEPTOR  _ACE_PEER_ACCEPTOR
+.PP
+.SS #define ACE_PEER_ACCEPTOR_1  class _ACE_PEER_ACCEPTOR, class _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_ACCEPTOR_2  _ACE_PEER_ACCEPTOR, _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_ACCEPTOR_ADDR  _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_CONNECTOR  _ACE_PEER_CONNECTOR
+.PP
+.SS #define ACE_PEER_CONNECTOR_1  class _ACE_PEER_CONNECTOR, class _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_CONNECTOR_2  _ACE_PEER_CONNECTOR, _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_CONNECTOR_ADDR  _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_CONNECTOR_ADDR_ANY  ACE_PEER_CONNECTOR_ADDR::sap_any
+.PP
+.SS #define ACE_PEER_STREAM  _ACE_PEER_STREAM
+.PP
+.SS #define ACE_PEER_STREAM_1  class _ACE_PEER_STREAM, class _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_STREAM_2  _ACE_PEER_STREAM, _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PEER_STREAM_ADDR  _ACE_PEER_ADDR
+.PP
+.SS #define ACE_PLATFORM  ACE_LIB_TEXT (ACE_PLATFORM_A)
+.PP
+.SS #define ACE_PLATFORM_A  "Win32"
+.PP
+.SS #define ACE_PLATFORM_EXE_SUFFIX  ACE_LIB_TEXT (ACE_PLATFORM_EXE_SUFFIX_A)
+.PP
+.SS #define ACE_PLATFORM_EXE_SUFFIX_A  ".exe"
+.PP
+.SS #define ACE_PLATFORM_EXE_SUFFIX_W  ACE_TEXT_WIDE(ACE_PLATFORM_EXE_SUFFIX_A)
+.PP
+.SS #define ACE_PLATFORM_W  ACE_TEXT_WIDE(ACE_PLATFORM_A)
+.PP
+.SS #define ACE_POW(X)  (((X) == 0)?1:(X-=1,X|=X>>1,X|=X>>2,X|=X>>4,X|=X>>8,X|=X>>16,(++X)))
+.PP
+.SS #define ACE_PROTOENT_DATA_SIZE  (2*1024)
+.PP
+.SS #define ACE_PTHREAD_CLEANUP_POP(A)
+.PP
+.SS #define ACE_PTHREAD_CLEANUP_PUSH(A)
+.PP
+.SS #define ACE_PURE_FREE_LIST  2
+.PP
+.SS #define ACE_QOS_NOT_SPECIFIED  0xFFFFFFFF
+.PP
+.SS #define ACE_REACTOR_NOTIFICATION_ARRAY_SIZE  1024
+.PP
+.SS #define ACE_READ_GUARD(MUTEX, OBJ, LOCK)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Read_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) return;
+.fi
+.SS #define ACE_READ_GUARD_RETURN(MUTEX, OBJ, LOCK, RETURN)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Read_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) return RETURN;
+.fi
+.SS #define ACE_RTSIG_MAX  8
+.PP
+.SS #define ACE_SBRK_MEMORY_POOL  \fBACE_Sbrk_Memory_Pool\fR, \fBACE_Sbrk_Memory_Pool_Options\fR
+.PP
+.SS #define ACE_SCHED_FIFO  1
+.PP
+.SS #define ACE_SCHED_OTHER  0
+.PP
+.SS #define ACE_SCHED_RR  2
+.PP
+.SS #define ACE_SCOPE_LWP  1
+.PP
+.SS #define ACE_SCOPE_PROCESS  0
+.PP
+.SS #define ACE_SCOPE_THREAD  2
+.PP
+.SS #define ACE_SEH_EXCEPT(X)  while (0)
+.PP
+.SS #define ACE_SEH_FINALLY  if (1)
+.PP
+.SS #define ACE_SEH_TRY  if (1)
+.PP
+.SS #define ACE_SELF  (0)
+.PP
+.SS #define ACE_SERVENT_DATA_SIZE  (4*1024)
+.PP
+.SS #define ACE_SERVER_ADDRESS(H, P)  H":"P
+.PP
+.SS #define ACE_SERVICETYPE_CONTROLLEDLOAD  0x00000001
+.PP
+.SS #define ACE_SERVICETYPE_GUARANTEED  0x00000003
+.PP
+.SS #define ACE_SERVICETYPE_NOTRAFFIC  0x00000000
+.PP
+.SS #define ACE_SET_BITS(WORD, BITS)  (WORD |= (BITS))
+.PP
+.SS #define ACE_SHARED_MEMORY_POOL  \fBACE_Shared_Memory_Pool\fR, \fBACE_Shared_Memory_Pool_Options\fR
+.PP
+.SS #define ACE_SHLIB_INVALID_HANDLE  0
+.PP
+.SS #define ACE_SHUTDOWN_BOTH  2
+.PP
+.SS #define ACE_SHUTDOWN_READ  0
+.PP
+Helper for the \fBACE_OS::cuserid\fR() function.
+.PP
+On some platforms cuserid is a macro. Defining \fBACE_OS::cuserid\fR() becomes really hard, as there is no way to save the macro definition using the pre-processor. This inline function achieves the same effect, without namespace pollution or performance penalties.
+.PP
+\fB\fBTodo: \fR\fR
+.in +1c
+ We maybe should move a lot of the code in \fBACE_OS::cuserid\fR here so it is treated the same as the above ace_difftime and ace_timezone. But since there is a good deal more code in \fBACE_OS::cuserid\fR, we probably need to move some of it off into some sort of emulation function.  
+.SS #define ACE_SHUTDOWN_WRITE  1
+.PP
+.SS #define ACE_SIGIO  -1
+.PP
+.SS #define ACE_SIGRTMAX  SIGRTMAX
+.PP
+.SS #define ACE_SIGRTMIN  SIGRTMIN
+.PP
+.SS #define ACE_SIGURG  -2
+.PP
+.SS #define ACE_SIO_GET_QOS  (0x40000000 | 0x08000000 | 7)
+.PP
+.SS #define ACE_SIO_MULTICAST_SCOPE  (0x08000000 | 10)
+.PP
+.SS #define ACE_SIO_MULTIPOINT_LOOPBACK  (0x08000000 | 9)
+.PP
+.SS #define ACE_SIO_SET_QOS  (0x08000000 | 11)
+.PP
+.SS #define ACE_SOCK_ACCEPTOR  \fBACE_SOCK_Acceptor\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_SOCK_CONNECTOR  \fBACE_SOCK_Connector\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_SOCK_STREAM  \fBACE_SOCK_Stream\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_SPIPE_ACCEPTOR  \fBACE_SPIPE_Acceptor\fR, \fBACE_SPIPE_Addr\fR
+.PP
+.SS #define ACE_SPIPE_CONNECTOR  \fBACE_SPIPE_Connector\fR, \fBACE_SPIPE_Addr\fR
+.PP
+.SS #define ACE_SPIPE_STREAM  \fBACE_SPIPE_Stream\fR, \fBACE_SPIPE_Addr\fR
+.PP
+.SS #define ACE_SPRINTF_ADAPTER(X)  X
+.PP
+.SS #define ACE_STANDARD_CHARACTER_SET_SIZE  128
+.PP
+.SS #define ACE_STATIC_SVC_DECLARE(SERVICE_CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+extern ACE_Static_Svc_Descriptor ace_svc_desc_##SERVICE_CLASS ;
+.fi
+Declare a the data structure required to register a statically linked service into the service configurator.
+.PP
+The macro should be used in the header file where the service is declared, its only argument is usually the name of the class that implements the service.
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fISERVICE_CLASS\fR\fR The name of the class implementing the service. 
+.SS #define ACE_STATIC_SVC_DECLARE_EXPORT(EXPORT_NAME, SERVICE_CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+extern EXPORT_NAME##_Export ACE_Static_Svc_Descriptor ace_svc_desc_##SERVICE_CLASS;
+.fi
+As ACE_STATIC_SVC_DECLARE, but using an export macro for NT compilers.
+.PP
+NT compilers require the use of explicit directives to export and import symbols from a DLL. If you need to define a service in a dynamic library you should use this version instead. Normally \fBACE\fR uses a macro to inject the correct export/import directives on NT. Naturally it also the macro expands to a blank on platforms that do not require such directives. The first argument (EXPORT_NAME) is the prefix for this export macro, the full name is formed by appending _Export. \fBACE\fR provides tools to generate header files that define the macro correctly on all platforms, please see $ACE_ROOT/bin/generate_export_file.pl
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIEXPORT_NAME\fR\fR The export macro name prefix. 
+.TP
+\fB\fISERVICE_CLASS\fR\fR The name of the class implementing the service. 
+.SS #define ACE_STATIC_SVC_DEFINE(SERVICE_CLASS, NAME, TYPE, FN, FLAGS, ACTIVE)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+ACE_Static_Svc_Descriptor ace_svc_desc_##SERVICE_CLASS = { NAME, TYPE, FN, FLAGS, ACTIVE };
+.fi
+Define the data structure used to register a statically linked service into the Service Configurator.
+.PP
+The service configurator requires several arguments to build and control an statically linked service, including its name, the factory function used to construct the service, and some flags. All those parameters are configured in a single structure, an instance of this structure is statically initialized using the following macro.
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fISERVICE_CLASS\fR\fR The name of the class that implements the service, must derive from ACE_Service_Configurator. 
+.TP
+\fB\fINAME\fR\fR The name for this service, this name is used by the service configurator to match configuration options provided in the svc.conf file. 
+.TP
+\fB\fITYPE\fR\fR The type of object. Objects can be streams or service objects. Please read the ACE_Service_Configurator and ASX documentation for more details. 
+.TP
+\fB\fIFN\fR\fR The name of the factory function, usually the ACE_SVC_NAME macro can be used to generate the name. The factory function is often defined using ACE_FACTORY_DECLARE and ACE_FACTORY_DEFINE. 
+.TP
+\fB\fIFLAGS\fR\fR Flags to control the ownership and lifecycle of the object. Please read the ACE_Service_Configurator documentation for more details. 
+.TP
+\fB\fIACTIVE\fR\fR If not zero then a thread will be dedicate to the service. Please read the ACE_Service_Configurator documentation for more details. 
+.SS #define ACE_STATIC_SVC_REGISTER(SERVICE_CLASS)  do {} while (0)
+.PP
+.SS #define ACE_STATIC_SVC_REQUIRE(SERVICE_CLASS)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+class ACE_Static_Svc_##SERVICE_CLASS {\
+public:\
+  ACE_Static_Svc_##SERVICE_CLASS() { \
+    ACE_Service_Config::static_svcs ()->insert (\
+         &ace_svc_desc_##SERVICE_CLASS); \
+    } \
+};\
+static ACE_Static_Svc_##SERVICE_CLASS ace_static_svc_##SERVICE_CLASS;
+.fi
+Automatically register a service with the service configurator.
+.PP
+In some applications the services must be automatically registered with the service configurator, before main() starts. The ACE_STATIC_SVC_REQUIRE macro defines a class whose constructor register the service, it also defines a static instance of that class to ensure that the service is registered before main.
+.PP
+On platforms that lack adequate support for static C++ objects the macro ACE_STATIC_SVC_REGISTER can be used to explicitly register the service.
+.PP
+\fB\fBTodo: \fR\fR
+.in +1c
+ One class per-Service_Object seems wasteful. It should be possible to define a single class and re-use it for all the service objects, just by passing the Service_Descriptor as an argument to the constructor.  
+.SS #define ACE_STATUS_TIMEOUT  STATUS_TIMEOUT
+.PP
+.SS #define ACE_STDERR  GetStdHandle (STD_ERROR_HANDLE)
+.PP
+.SS #define ACE_STDIN  GetStdHandle (STD_INPUT_HANDLE)
+.PP
+.SS #define ACE_STDOUT  GetStdHandle (STD_OUTPUT_HANDLE)
+.PP
+.SS #define ACE_STREAMBUF_SIZE  1024
+.PP
+.SS #define ACE_SVC_FACTORY_DECLARE(X)  ACE_FACTORY_DECLARE (ACE_Svc, X)
+.PP
+.SS #define ACE_SVC_FACTORY_DEFINE(X)  ACE_FACTORY_DEFINE (ACE_Svc, X)
+.PP
+.SS #define ACE_SVC_INVOKE(SERVICE_CLASS)  _make_##SERVICE_CLASS (0)
+.PP
+The canonical way to invoke (i.e. construct) a service factory method.
+.PP
+.SS #define ACE_SVC_NAME(SERVICE_CLASS)  _make_##SERVICE_CLASS
+.PP
+The canonical name for a service factory method.
+.PP
+.SS #define ACE_SWAP_LONG(L)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+((ACE_SWAP_WORD ((L) & 0xFFFF) << 16) \
+            | ACE_SWAP_WORD(((L) >> 16) & 0xFFFF))
+.fi
+.SS #define ACE_SWAP_WORD(L)  ((((L) & 0x00FF) << 8) | (((L) & 0xFF00) >> 8))
+.PP
+.SS #define ACE_SYNCH_1  ACE_SYNCH_DECL
+.PP
+.SS #define ACE_SYNCH_2  ACE_SYNCH_USE
+.PP
+.SS #define ACE_SYNCH_CONDITION_T  _ACE_SYNCH_CONDITION_T
+.PP
+.SS #define ACE_SYNCH_DECL  class _ACE_SYNCH_MUTEX_T, class _ACE_SYNCH_CONDITION_T
+.PP
+.SS #define ACE_SYNCH_MUTEX_T  _ACE_SYNCH_MUTEX_T
+.PP
+.SS #define ACE_SYNCH_SEMAPHORE_T  _ACE_SYNCH_SEMAPHORE_T
+.PP
+.SS #define ACE_SYNCH_USE  _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T
+.PP
+.SS #define ACE_SYSCALL_FAILED  0xFFFFFFFF
+.PP
+.SS #define ACE_TEMPLATE_METHOD_SPECIALIZATION
+.PP
+.SS #define ACE_TEMPLATE_SPECIALIZATION
+.PP
+.SS #define ACE_THROW_SPEC(X)  throw X
+.PP
+.SS #define ACE_THR_PRI_FIFO_DEF  0
+.PP
+.SS #define ACE_THR_PRI_OTHER_DEF  0
+.PP
+.SS #define ACE_TIMER_SKEW  0
+.PP
+.SS #define ACE_TLI_ACCEPTOR  \fBACE_TLI_Acceptor\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_TLI_CONNECTOR  \fBACE_TLI_Connector\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_TLI_STREAM  \fBACE_TLI_Stream\fR, \fBACE_INET_Addr\fR
+.PP
+.SS #define ACE_TRACE(X)  \fBACE_Trace\fR ____ (ACE_LIB_TEXT (X), __LINE__, ACE_LIB_TEXT (__FILE__))
+.PP
+.SS #define ACE_TSS_GET(I, T)  (I)
+.PP
+.SS #define ACE_TSS_TYPE(T)  T
+.PP
+.SS #define ACE_TYPENAME
+.PP
+.SS #define ACE_UNIMPLEMENTED_FUNC(f)  f;
+.PP
+.SS #define ACE_UNIQUE_NAME_LEN  100
+.PP
+.SS #define ACE_UPIPE_ACCEPTOR  \fBACE_UPIPE_Acceptor\fR, \fBACE_SPIPE_Addr\fR
+.PP
+.SS #define ACE_UPIPE_CONNECTOR  \fBACE_UPIPE_Connector\fR, \fBACE_SPIPE_Addr\fR
+.PP
+.SS #define ACE_UPIPE_STREAM  \fBACE_UPIPE_Stream\fR, \fBACE_SPIPE_Addr\fR
+.PP
+.SS #define ACE_USING
+.PP
+.SS #define ACE_WAIT_FAILED  WAIT_FAILED
+.PP
+.SS #define ACE_WAIT_TIMEOUT  WAIT_TIMEOUT
+.PP
+.SS #define ACE_WRITE_GUARD(MUTEX, OBJ, LOCK)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Write_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) return;
+.fi
+.SS #define ACE_WRITE_GUARD_RETURN(MUTEX, OBJ, LOCK, RETURN)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+  ACE_Write_Guard< MUTEX > OBJ (LOCK); \
+    if (OBJ.locked () == 0) return RETURN;
+.fi
+.SS #define ACE_WSOCK_VERSION  0, 0
+.PP
+.SS #define ACE_XP1_QOS_SUPPORTED  0x00002000
+.PP
+.SS #define ACE_XP1_SUPPORT_MULTIPOINT  0x00000400
+.PP
+.SS #define ACE_align_binary(ptr, alignment)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+    ((ptr + ((ptr_arith_t)((alignment)-1))) & (~((ptr_arith_t)((alignment)-1))))
+.fi
+.SS #define ACE_ptr_align_binary(ptr, alignment)
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+        ((char *) ACE_align_binary (((ptr_arith_t) (ptr)), (alignment)))
+.fi
+.SS #define AF_ANY  (-1)
+.PP
+.SS #define AF_DEV  (AF_MAX + 3)
+.PP
+.SS #define AF_FILE  (AF_MAX + 2)
+.PP
+.SS #define AF_SPIPE  (AF_MAX + 1)
+.PP
+.SS #define AF_UPIPE  (AF_SPIPE)
+.PP
+.SS #define CLOCK_REALTIME  0
+.PP
+.SS #define EADDRINUSE  WSAEADDRINUSE
+.PP
+.SS #define EADDRINUSE  WSAEADDRINUSE
+.PP
+.SS #define EADDRNOTAVAIL  WSAEADDRNOTAVAIL
+.PP
+.SS #define EAFNOSUPPORT  WSAEAFNOSUPPORT
+.PP
+.SS #define EALREADY  WSAEALREADY
+.PP
+.SS #define EBUSY  ETIME
+.PP
+.SS #define ECOMM  ECONNABORTED
+.PP
+.SS #define ECONNABORTED  WSAECONNABORTED
+.PP
+.SS #define ECONNREFUSED  WSAECONNREFUSED
+.PP
+.SS #define ECONNRESET  WSAECONNRESET
+.PP
+.SS #define EDEADLK  1000
+.PP
+.SS #define EDESTADDRREQ  WSAEDESTADDRREQ
+.PP
+.SS #define EDQUOT  WSAEDQUOT
+.PP
+.SS #define EHOSTDOWN  WSAEHOSTDOWN
+.PP
+.SS #define EHOSTUNREACH  WSAEHOSTUNREACH
+.PP
+.SS #define EIDRM  0
+.PP
+.SS #define EINPROGRESS  WSAEINPROGRESS
+.PP
+.SS #define EISCONN  WSAEISCONN
+.PP
+.SS #define ELOOP  WSAELOOP
+.PP
+.SS #define EMSGSIZE  WSAEMSGSIZE
+.PP
+.SS #define ENETDOWN  WSAENETDOWN
+.PP
+.SS #define ENETRESET  WSAENETRESET
+.PP
+.SS #define ENETUNREACH  WSAENETUNREACH
+.PP
+.SS #define ENFILE  EMFILE
+.PP
+.SS #define ENOBUFS  WSAENOBUFS
+.PP
+.SS #define ENOPROTOOPT  WSAENOPROTOOPT
+.PP
+.SS #define ENOTCONN  WSAENOTCONN
+.PP
+.SS #define ENOTSOCK  WSAENOTSOCK
+.PP
+.SS #define EOPNOTSUPP  WSAEOPNOTSUPP
+.PP
+.SS #define EPFNOSUPPORT  WSAEPFNOSUPPORT
+.PP
+.SS #define EPROCLIM  WSAEPROCLIM
+.PP
+.SS #define EPROTONOSUPPORT  WSAEPROTONOSUPPORT
+.PP
+.SS #define EPROTOTYPE  WSAEPROTOTYPE
+.PP
+.SS #define EREMOTE  WSAEREMOTE
+.PP
+.SS #define ESHUTDOWN  WSAESHUTDOWN
+.PP
+.SS #define ESOCKTNOSUPPORT  WSAESOCKTNOSUPPORT
+.PP
+.SS #define ESTALE  WSAESTALE
+.PP
+.SS #define ESUCCESS  0
+.PP
+.SS #define ETIME  ERROR_SEM_TIMEOUT
+.PP
+.SS #define ETIMEDOUT  WSAETIMEDOUT
+.PP
+.SS #define ETOOMANYREFS  WSAETOOMANYREFS
+.PP
+.SS #define EUSERS  WSAEUSERS
+.PP
+.SS #define EWOULDBLOCK  WSAEWOULDBLOCK
+.PP
+.SS #define F_GETFL  0
+.PP
+.SS #define F_OK  0
+.PP
+.SS #define GETALL  0
+.PP
+.SS #define GETVAL  0
+.PP
+.SS #define INADDR_LOOPBACK  0x7f000001
+.PP
+.SS #define INET6_ADDRSTRLEN  46
+.PP
+.SS #define INET_ADDRSTRLEN  16
+.PP
+.SS #define IOV_MAX  16
+.PP
+.SS #define IPC_CREAT  0
+.PP
+.SS #define IPC_EXCL  0
+.PP
+.SS #define IPC_NOWAIT  0
+.PP
+.SS #define IPC_PRIVATE  ACE_INVALID_SEM_KEY
+.PP
+.SS #define IPC_RMID  0
+.PP
+.SS #define IPC_STAT  0
+.PP
+.SS #define IP_ADD_MEMBERSHIP  0
+.PP
+.SS #define IP_DEFAULT_MULTICAST_LOOP  0
+.PP
+.SS #define IP_DEFAULT_MULTICAST_TTL  0
+.PP
+.SS #define IP_DROP_MEMBERSHIP  0
+.PP
+.SS #define IP_MAX_MEMBERSHIPS  0
+.PP
+.SS #define IP_MULTICAST_IF  0
+.PP
+.SS #define IP_MULTICAST_TTL  1
+.PP
+.SS #define LOCALNAME  0
+.PP
+.SS #define MAP_FAILED  ((void *) -1)
+.PP
+.SS #define MAP_FIXED  4
+.PP
+.SS #define MAP_PRIVATE  1
+.PP
+.SS #define MAP_SHARED  2
+.PP
+.SS #define MAXHOSTNAMELEN  256
+.PP
+.SS #define MAXNAMELEN  256
+.PP
+.SS #define MAXNAMLEN  _MAX_FNAME
+.PP
+.SS #define MAXPATHLEN  _MAX_PATH
+.PP
+.SS #define MS_ASYNC  0
+.PP
+.SS #define MS_INVALIDATE  0
+.PP
+.SS #define MS_SYNC  0x0
+.PP
+.SS #define NFDBITS  32
+.PP
+.SS #define O_BINARY  0
+.PP
+.SS #define O_NDELAY  1
+.PP
+.SS #define O_NONBLOCK  1
+.PP
+.SS #define O_RAW  0
+.PP
+.SS #define O_TEXT  0
+.PP
+.SS #define PIPE_BUF  5120
+.PP
+.SS #define PROT_RDWR  PAGE_READWRITE
+.PP
+.SS #define PROT_READ  PAGE_READONLY
+.PP
+.SS #define PROT_WRITE  PAGE_READWRITE
+.PP
+.SS #define REMOTENAME  1
+.PP
+.SS #define RUSAGE_SELF  1
+.PP
+.SS #define R_OK  04
+.PP
+.SS #define SA_RESTART  0
+.PP
+.SS #define SA_SIGINFO  0
+.PP
+.SS #define SEM_UNDO  0
+.PP
+.SS #define SETALL  0
+.PP
+.SS #define SETVAL  0
+.PP
+.SS #define SIGALRM  0
+.PP
+.SS #define SIGCHLD  0
+.PP
+.SS #define SIGCLD  SIGCHLD
+.PP
+.SS #define SIGHUP  0
+.PP
+.SS #define SIGINT  0
+.PP
+.SS #define SIGIO  0
+.PP
+.SS #define SIGPIPE  0
+.PP
+.SS #define SIGQUIT  0
+.PP
+.SS #define SIGSEGV  0
+.PP
+.SS #define SIGUSR1  0
+.PP
+.SS #define SIGUSR2  0
+.PP
+.SS #define SIG_BLOCK  1
+.PP
+.SS #define SIG_DFL  ((__sighandler_t) 0)
+.PP
+.SS #define SIG_ERR  ((__sighandler_t) -1)
+.PP
+.SS #define SIG_IGN  ((__sighandler_t) 1)
+.PP
+.SS #define SIG_SETMASK  3
+.PP
+.SS #define SIG_UNBLOCK  2
+.PP
+.SS #define SIOCGIFADDR  0
+.PP
+.SS #define SIOCGIFBRDADDR  0
+.PP
+.SS #define WCOREDUMP(stat)  0
+.PP
+.SS #define WEXITSTATUS(stat)  stat
+.PP
+.SS #define WIFCONTINUED(stat)  0
+.PP
+.SS #define WIFEXITED(stat)  1
+.PP
+.SS #define WIFSIGNALED(stat)  0
+.PP
+.SS #define WIFSTOPPED(stat)  0
+.PP
+.SS #define WNOHANG  0100
+.PP
+.SS #define WSTOPSIG(stat)  0
+.PP
+.SS #define WTERMSIG(stat)  0
+.PP
+.SS #define W_OK  02
+.PP
+.SS #define X_OK  01
+.PP
+.SS #define _O_BINARY  O_BINARY
+.PP
+.SS #define _O_RAW  O_RAW
+.PP
+.SS #define _O_TEXT  O_TEXT
+.PP
+.SS #define _SC_AIO_MAX  1
+.PP
+.SS #define _SC_TIMER_MAX  44
+.PP
+.SH TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef void (* ACE_CLEANUP_FUNC)(void *object, void *param)
+.PP
+.SS typedef int (* ACE_COMPARE_FUNC)(const void *, const void *)
+.PP
+.SS typedef const \fBACE_TCHAR\fR* ACE_DL_TYPE
+.PP
+.SS typedef fd_set ACE_FD_SET_TYPE
+.PP
+.SS typedef char ACE_HOSTENT_DATA[ACE_HOSTENT_DATA_SIZE]
+.PP
+.SS typedef LPTRANSMIT_FILE_BUFFERS ACE_LPTRANSMIT_FILE_BUFFERS
+.PP
+.SS typedef \fBOVERLAPPED\fR ACE_OVERLAPPED
+.PP
+.SS typedef void (* ACE_OVERLAPPED_COMPLETION_FUNC)(u_long error, u_long bytes_transferred, \fBACE_OVERLAPPED\fR *overlapped, u_long flags)
+.PP
+.SS typedef char ACE_PROTOENT_DATA[ACE_PROTOENT_DATA_SIZE]
+.PP
+.SS typedef PTRANSMIT_FILE_BUFFERS ACE_PTRANSMIT_FILE_BUFFERS
+.PP
+.SS typedef int (* ACE_QOS_CONDITION_FUNC)(\fBiovec\fR *caller_id, \fBiovec\fR *caller_data, \fBACE_QoS\fR *socket_qos, \fBACE_QoS\fR *group_socket_qos, \fBiovec\fR *callee_id, \fBiovec\fR *callee_data, \fBACE_SOCK_GROUP\fR *g, u_long callbackdata)
+.PP
+.SS typedef unsigned __int64 ACE_QWORD
+.PP
+.SS typedef u_int ACE_RANDR_TYPE
+.PP
+.SS typedef struct \fBiovec\fR ACE_READV_TYPE
+.PP
+.SS typedef int ACE_Rusage
+.PP
+.SS typedef const struct \fBmsghdr\fR ACE_SENDMSG_TYPE
+.PP
+.SS typedef char ACE_SERVENT_DATA[ACE_SERVENT_DATA_SIZE]
+.PP
+.SS typedef u_long ACE_SERVICE_TYPE
+.PP
+.SS typedef const struct rlimit ACE_SETRLIMIT_TYPE
+.PP
+.SS typedef HINSTANCE ACE_SHLIB_HANDLE
+.PP
+.SS typedef void (* ACE_SIGNAL_C_FUNC)(int,\fBsiginfo_t\fR*,void*)
+.PP
+.SS typedef u_long ACE_SOCK_GROUP
+.PP
+.SS typedef int ACE_Sched_Priority
+.PP
+.SS typedef void (* ACE_Service_Object_Exterminator)(void *)
+.PP
+Service Objects, i.e., objects dynamically loaded via the service configurator, must provide a destructor function with the following prototype to perform object cleanup.
+.PP
+.SS typedef void (* ACE_Sig_Handler_Ex)(int, \fBsiginfo_t\fR *siginfo, \fBucontext_t\fR *ucontext)
+.PP
+.SS typedef void (* ACE_THR_C_DEST)(void *)
+.PP
+.SS typedef void (* ACE_THR_DEST)(void *)
+.PP
+.SS typedef ACE_THR_FUNC ACE_THR_FUNC_INTERNAL
+.PP
+.SS typedef TRANSMIT_FILE_BUFFERS ACE_TRANSMIT_FILE_BUFFERS
+.PP
+.SS typedef const struct \fBiovec\fR ACE_WRITEV_TYPE
+.PP
+.SS typedef DWORD ACE_exitcode
+.PP
+.SS typedef unsigned __int64 ACE_hrtime_t
+.PP
+.SS typedef HANDLE ACE_hthread_t
+.PP
+.SS typedef DWORD ACE_id_t
+.PP
+.SS typedef int ACE_idtype_t
+.PP
+.SS typedef int ACE_pri_t
+.PP
+.SS typedef struct _stat ACE_stat
+.PP
+.SS typedef DWORD ACE_thread_key_t
+.PP
+.SS typedef DWORD ACE_thread_t
+.PP
+.SS typedef double ACE_timer_t
+.PP
+.SS typedef struct utsname ACE_utsname
+.PP
+.SS typedef const char** SYS_SIGLIST
+.PP
+.SS typedef char* caddr_t
+.PP
+.SS typedef int clockid_t
+.PP
+.SS typedef long gid_t
+.PP
+.SS typedef u_short mode_t
+.PP
+.SS typedef DWORD nlink_t
+.PP
+.SS typedef long pid_t
+.PP
+.SS typedef int sig_atomic_t
+.PP
+.SS typedef int ssize_t
+.PP
+.SS typedef struct \fBtimespec\fR  timespec_t
+.PP
+.SS typedef int ucontext_t
+.PP
+.SS typedef long uid_t
+.PP
+.SH ENUMERATION TYPE DOCUMENTATION
+.PP 
+.SS enum ACE_Recyclable_State
+.PP
+States of a recyclable object.
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_RECYCLABLE_IDLE_AND_PURGABLE\fR \fRIdle and can be purged.
+.TP
+\fB\fIACE_RECYCLABLE_IDLE_BUT_NOT_PURGABLE\fR \fRIdle but cannot be purged.
+.TP
+\fB\fIACE_RECYCLABLE_PURGABLE_BUT_NOT_IDLE\fR \fRCan be purged, but is not idle (mostly for debugging).
+.TP
+\fB\fIACE_RECYCLABLE_BUSY\fR \fRBusy (i.e., cannot be recycled or purged).
+.TP
+\fB\fIACE_RECYCLABLE_CLOSED\fR \fRClosed.
+.TP
+\fB\fIACE_RECYCLABLE_UNKNOWN\fR \fRUnknown state.
+.SH FUNCTION DOCUMENTATION
+.PP 
+.SS DWORD ACE_HIGH_DWORD (\fBACE_QWORD\fR q)\fC [inline]\fR
+.PP
+.SS DWORD ACE_LOW_DWORD (\fBACE_QWORD\fR q)\fC [inline]\fR
+.PP
+.SS \fBACE_QWORD\fR ACE_MAKE_QWORD (DWORD lo, DWORD hi)\fC [inline]\fR
+.PP
+.SS void ACE_OS_Object_Manager_Internal_Exit_Hook (void)
+.PP
+.SS int ACE_SEH_Default_Exception_Handler (void *)
+.PP
+.SS int ACE_SEH_Default_Exception_Selector (void *)
+.PP
+.SS ACE_OS_Export void ace_cleanup_destroyer (\fBACE_Cleanup\fR *, void * param = 0)
+.PP
+.SS double ace_difftime (time_t t1, time_t t0)\fC [inline]\fR
+.PP
+Helper for the \fBACE_OS::difftime\fR() function.
+.PP
+We moved the difftime code that used to be in \fBACE_OS::difftime\fR() here because on some platforms "difftime" is a macro. Because of this, the name \fBACE_OS::difftime\fR will cause errors. So in order to use the macro as it is defined but also keep the name \fBACE_OS::difftime\fR, we use difftime first here in this inline function, and then undefine it. 
+.SS long ace_timezone ()\fC [inline]\fR
+.PP
+Helper for the \fBACE_OS::timezone\fR() function.
+.PP
+We put all the timezone stuff that used to be in \fBACE_OS::timezone\fR() here because on some platforms "timezone" is a macro. Because of this, the name \fBACE_OS::timezone\fR will cause errors. So in order to use the macro as it is defined but also keep the name \fBACE_OS::timezone\fR, we use timezone first here in this inline function, and then undefine timezone. 
+.SS ACE_OS_Export \fBACE_Time_Value\fR operator+ (const \fBACE_Time_Value\fR & tv1, const \fBACE_Time_Value\fR & tv2)
+.PP
+.SS ACE_OS_Export \fBACE_Time_Value\fR operator- (const \fBACE_Time_Value\fR & tv1, const \fBACE_Time_Value\fR & tv2)
+.PP
+.SS typedef void (__cdecl * ACE_SignalHandlerV)
+.PP
+.SH VARIABLE DOCUMENTATION
+.PP 
+.SS const ACE_UINT32 ACE_U_ONE_SECOND_IN_MSECS = 1000U\fC [static]\fR
+.PP
+.SS const ACE_UINT32 ACE_U_ONE_SECOND_IN_NSECS = 1000000000U\fC [static]\fR
+.PP
+.SS const ACE_UINT32 ACE_U_ONE_SECOND_IN_USECS = 1000000U\fC [static]\fR
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

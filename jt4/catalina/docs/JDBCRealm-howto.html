@@ -1,0 +1,240 @@
+<html>
+<link rel="stylesheet" href="style.css">
+<style type="text/css">
+    td {
+        background-color: #E0E0E0;
+        vertical-align: text-top;
+    }
+    th {
+        background-color: #d0d0d0;
+    }
+    table {
+        width: 75%;
+        background-color: #000000;
+    }
+    </style>
+<title>Working with JDBCRealm</title><body>
+<a href="index.html">Home</a>
+
+<h1>Working with JDBCRealm</h1>
+
+<h2>What is JDBCRealm?</h2>
+<p>Is an implementation of a tomcat 4.X Realm that use a  set of configurable tables inside a RDMS to store  user's data, this tables are accessed by means of standard JDBC drivers.<br>
+The passwords can be stored  as digested ( using standard Java's MessageDigest ) or in plain form.<br>
+All the parameters, drivers, tables, and columns are user configurable. </p>
+<h2>Example Config for JDBCRealm</h2>
+This is an example of how to set up a JDBCRealm. For this example I used the MySQL JDBC driver.  
+<h3>1. Create a database. </h3>
+<blockquote>
+<p>	I made the database named "authority"</p>
+</blockquote>
+<h3>  2. Create needed tables.       </h3>
+<blockquote>
+<h4>	1. The user table. </h4>
+<blockquote>
+<p>This table needs the user's name and a password          field. In the example I use "users" for the table name,          "user_name" for the column that holds the user's name, and          "user_pass" for the user's password.      </p>
+</blockquote>
+<h4>2. The role table. </h4>
+<blockquote>
+<p>This table needs the role's set up that will be         in any deployment descriptor that is managed under the container         this Realm is in. In the example I use "roles" as the table name         and "role_name" as the role's name. NB: This table doesn't get         used at all by tomcat.      </p>
+</blockquote>
+<h4>3. The role to user table. </h4>
+<blockquote>
+<p>This table joins a set of roles to a         single user. In the example the table name is "user_roles",         the role's name is "role_name" , and the user's name is assumed         to have the same column name as in the user's table ("user_name"         in this example.  </p>
+<p>Here is the SQL I used to create the tables: 
+</p>
+</blockquote>
+</blockquote>
+<table  align="center">
+<tr>
+<td>
+<pre>create table users
+(
+  user_name varchar(15) not null primary key,
+  user_pass varchar(15) not null
+);
+
+
+create table roles
+(
+  role_name varchar(15) not null primary key
+);
+
+create table user_roles
+(
+  user_name varchar(15) not null,
+  role_name varchar(15) not null,
+  primary key( user_name, role_name )
+);
+
+</pre>
+</td>
+</tr>
+</table>
+<blockquote>
+<blockquote>
+<p><br>
+Here is sample output from the tables:
+<br>
+<br>
+</p>
+</blockquote>
+</blockquote>
+<table align="center" border="0">
+<tr>
+<td>
+<pre>
+mysql> select * from users;
++-----------+-----------+
+| user_name | user_pass |
++-----------+-----------+
+| tomcat    | tomcat    |
+| user1     | tomcat    |
+| user2     | tomcat    |
+| user3     | tomcat    |
++-----------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> 
+mysql> select * from roles;
++------------+
+| role_name  |
++------------+
+| tomcat     |
+| role1      |
++------------+
+2 rows in set (0.02 sec)
+
+mysql> 
+
+
+mysql> select * from user_roles;
++------------+-----------+
+| role_name  | user_name |
++------------+-----------+
+| tomcat     | user1     |
+| role1      | user2     |
+| tomcat     | tomcat    |
+| role1      | tomcat    |
++------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> 
+</pre>
+</td>
+</tr>
+
+</table>
+<h3>3. Configure Tomcat </h3>
+<blockquote>
+<p>Add the information to the server.xml file. For this example I used    this entry inside: </p>
+</blockquote>
+<table width="100%" border="0" align="center">
+<tr>
+<td>
+<blockquote>
+<p><code><br>
+&lt;RequestInterceptor 
+	className="org.apache.catalina.realm.JDBCRealm"<br>
+ 
+	debug="99"      
+	driverName="org.gjt.mm.mysql.Driver" <br>
+     
+	connectionURL="jdbc:mysql://localhost/authority?user=test;password=test"      
+	userTable="users"<br>
+ 
+	userNameCol="user_name"<br>
+ 
+	userCredCol="user_pass"<br>
+      
+	userRoleTable="user_roles" 
+	roleNameCol="role_name" /&gt;
+<br>
+</code></p>
+</blockquote>
+</td>
+</tr>
+</table>
+<p>The meaning of the attributes is as follow:</p>
+<table align="center" width="51%">
+<tr>
+<th height="32">
+<p>attribute</p>
+</th>
+<th>Meaning</th>
+</tr>
+
+<tr>
+<td height="32">   driverName</td>
+<td height="32"> The name of the driver needed to connect to the database
+		</td>
+</tr>
+<tr>
+<td height="32">connectionURL</td>
+<td height="32"> 	The connection URL used to connect to the database
+</td>
+</tr>
+<tr>
+<td height="32">userTable</td>
+<td> 		The user's tables
+</td>
+</tr>
+<tr>
+<td height="32">userNameCol</td>
+<td> 		The column in the user's table that contains the name
+</td>
+</tr>
+<tr>
+<td height="32">userCredCol</td>
+<td> 		The column in the user's table that contains the password
+</td>
+</tr>
+<tr>
+<td height="33">userRoleTable</td>
+<td height="33"> 	The user's roles table
+</td>
+</tr>
+<tr>
+<td height="32">roleNameCol</td>
+<td> 		The column in the user's table that contains a role given
+                      	to a user
+</td>
+</tr>
+
+<tr>
+<td height="32">      connectionName</td>
+<td> The name to use when connecting to the database.
+(Optional)</td>
+</tr>
+<tr>
+<td height="32">connectionPassword</td>
+<td>The password to use when connecting to the database.
+(Optional)
+</td>
+</tr>
+<tr>
+<td height="32">Digest       </td>
+<td>The algorithm used for digest passwords or &quot;No&quot; for plain passwords, the values can be &quot;MD5&quot;, etc... (Optional) </td>
+</tr>
+</table>
+<p>&nbsp;</p>
+<p>Done!!
+</p>
+<h2>Using digested passwords</h2>
+<p>To use digested password you need to store them digested.
+To achieve this, you will  need to use the same digest strategies that JDBCrealm uses to store the passwords, either by using:<br>
+<ul>
+    <li>The static method inside JDBCRealm. <code>final public static String Digest(String password,String algorithm)</code></li>
+    <li>Use the scripts in the bin directory, <code>digest.bat</code> for Windows or <code>digest.sh</code> for unix/linux systems</li>
+</ul>
+</p>
+<h2>Hints</h2>
+<p>
+   
+   - Make sure that the JDBC driver is in the lib directory.
+<br>
+- If you have problem connecting you can specify connectionName and connectionPassword</p>
+<div align="center">$Header: /home/cvspublic/jakarta-tomcat-4.0/catalina/docs/JDBCRealm-howto.html,v 1.4 2001/05/22 20:47:05 bip Exp $
+</div>
+</body>
+</html>

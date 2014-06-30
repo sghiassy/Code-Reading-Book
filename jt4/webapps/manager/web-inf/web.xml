@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+
+  <!-- Define the Manager Servlet
+       Change servlet-class to: org.apache.catalina.servlets.HTMLManagerServlet
+       to get a Servlet with a more intuitive HTML interface, don't change if you
+       have software that is expected to parse the output from ManagerServlet
+       since they're not compatible.
+   -->
+  <servlet>
+    <servlet-name>Manager</servlet-name>
+    <servlet-class>org.apache.catalina.servlets.ManagerServlet</servlet-class>
+    <init-param>
+      <param-name>debug</param-name>
+      <param-value>2</param-value>
+    </init-param>
+  </servlet>
+
+  <!-- Define the Manager Servlet Mapping -->
+  <servlet-mapping>
+    <servlet-name>Manager</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+  <!-- Define a Security Constraint on this Application -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Entire Application</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+       <!-- NOTE:  This role is not present in the default users file -->
+       <role-name>manager</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <!-- Define the Login Configuration for this Application -->
+  <login-config>
+    <auth-method>BASIC</auth-method>
+    <realm-name>Tomcat Manager Application</realm-name>
+  </login-config>
+
+</web-app>

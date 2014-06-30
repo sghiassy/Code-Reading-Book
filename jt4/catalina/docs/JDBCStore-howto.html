@@ -1,0 +1,197 @@
+<html>
+<link rel="stylesheet" href="style.css">
+<style type="text/css">
+    td {
+        background-color: #E0E0E0;
+        vertical-align: text-top;
+    }
+    th {
+        background-color: #d0d0d0;
+    }
+    table {
+        width: 75%;
+        background-color: #000000;
+    }
+    </style>
+<title>Using JDBCStore for Session persistence</title><body>
+<a href="index.html">Home</a>
+
+<h1>Using JDBCStore for Session persistence</h1>
+
+<h2>What is JDBCStore?</h2>
+<p>Is an implementation of a tomcat 4.X Store that use a table to store sessions. When to store sessions is configured in the Manager, currently
+the only Manager supported is the PersistentManager. Please consult the Manager manual for configuring the PersistentManager.<br>
+All the parameters, drivers, tables, and columns are user configurable. </p>
+<h2>Example Config for JDBCStore</h2>
+This is an example of how to set up a JDBCStore. For this example I used the MySQL JDBC driver.
+<h3>1. Create a database. </h3>
+<blockquote>
+<p>	I made the database named "tomcat"</p>
+</blockquote>
+<h3>2. Create the needed table.</h3>
+<blockquote>
+<h4>1. The session table.</h4>
+<blockquote>
+<p>This table holds the sessions currently stored due to backup/swapout/maxidle or other criteria met.
+</p>
+</blockquote>
+<table  align="center">
+<tr>
+<td>
+<pre>
+create database tomcat;
+
+create table tomcat$sessions
+(
+    id varchar(100) not null primary key,
+    valid char(1) not null,
+    maxinactive int not null,
+    lastaccess bigint,
+    data mediumblob
+);
+</pre>
+</td>
+</tr>
+</table>
+<blockquote>
+<blockquote>
+<p><br>
+Here is sample output from the tables:
+<br>
+<br>
+</p>
+</blockquote>
+</blockquote>
+<table align="center" border="0">
+<tr>
+<td>
+<pre>
+mysql> create database tomcat;
+Query OK, 1 row affected (0.02 sec)
+
+mysql> use tomcat;
+Database changed
+
+mysql> create table tomcat$sessions
+    -> (
+    -> id varchar(100) not null primary key,
+    -> valid char(1) not null,
+    -> maxinactive int not null,
+    -> lastaccess bigint,
+    -> data mediumblob);
+Query OK, 0 rows affected (0.01 sec)
+</pre>
+</td>
+</tr>
+
+</table>
+<h3>3. Configure Tomcat </h3>
+<blockquote>
+<p>Add the information to the server.xml file. Make sure that you configure the Store inside a Manger. PersistentManager is the only
+one supported as of writing. For this example I used this entry inside: </p>
+</blockquote>
+<table width="100%" border="0" align="center">
+<tr>
+<td>
+<blockquote>
+<p><code><br>
+&lt;Manager className="org.apache.catalina.session.PersistentManager"
+    debug="0"
+    saveOnRestart="true"
+    maxActiveSessions="-1"
+    minIdleSwap="-1"
+    maxIdleSwap="-1"
+    maxIdleBackup="-1"&gt;<br>
+<font color="#FF0000">
+&lt;Store
+    className="org.apache.catalina.session.JDBCStore"<br>
+    driverName="org.gjt.mm.mysql.Driver"<br>
+    connectionURL="jdbc:mysql://localhost/tomcat?user=test&amp;amp;password=test"<br>
+    sessionTable="tomcat$sessions"<br>
+    sessionIdCol="id"<br>
+    sessionDataCol="data"<br>
+    sessionValidCol="valid"<br>
+    sessionMaxInactiveCol="maxinactive"<br>
+    sessionLastAccessedCol="lastaccess"<br>
+    checkInterval="60"<br>
+    debug="99" /&gt;<br>
+</font>
+&lt;Manager&gt;
+<br>
+</code></p>
+</blockquote>
+</td>
+</tr>
+</table>
+<p>The meaning of the attributes is as follow:</p>
+<table align="center" width="51%">
+<tr>
+<th height="32">
+<p>attribute</p>
+</th>
+<th>Meaning</th>
+</tr>
+
+<tr>
+<td height="32">   className</td>
+<td height="32"> The class to use as a Store, If you want to use a different Store than JDBCStore you're reading the wrong file
+		</td>
+</tr>
+<tr>
+<td height="32">   driverName</td>
+<td height="32"> The name of the driver needed to connect to the database
+		</td>
+</tr>
+<tr>
+<td height="32">connectionURL</td>
+<td height="32"> 	The connection URL used to connect to the database
+</td>
+</tr>
+<tr>
+<td height="32">sessionTable</td>
+<td> 		The table in which we store our sessions
+</td>
+</tr>
+<tr>
+<td height="32">sessionIdCol</td>
+<td> 		The column in the session table that contains the session ID
+</td>
+</tr>
+<tr>
+<td height="32">sessionDataCol</td>
+<td> 		The column in the session table that contains the session data
+</td>
+</tr>
+<tr>
+<td height="33">sessionValidCol</td>
+<td> 		The column in the session table that holds if the session is valid or not.
+</td>
+</tr>
+<tr>
+<td height="32">sessionMaxInactiveCol</td>
+<td> 		The column in the session table that contains the sessions Max Inactive property
+</td>
+</tr>
+<tr>
+<td height="32">sessionLastAccessedCol</td>
+<td> 		The column in the session table that contains the last accesed time
+</td>
+</tr>
+<tr>
+<td height="32">checkInterval</td>
+<td> 		The time in seconds for the processExpires thread to sleep, a lower value causes more accurate
+expiring and removing old sessions from the RDBMS but could cause a heavily loaded site to go on it's knees if set to low.
+</td>
+</tr>
+<tr>
+<td height="32">debug</td>
+<td> 		The debug level for this Store, 0 means don't log any debug information and that's probably what you
+would want for a production enviroment.
+</td>
+</tr>
+</table>
+<p>&nbsp;</p>
+<div align="center">$Header: /home/cvspublic/jakarta-tomcat-4.0/catalina/docs/JDBCStore-howto.html,v 1.1 2001/04/27 22:11:03 bip Exp $
+</div>
+</body>
+</html>

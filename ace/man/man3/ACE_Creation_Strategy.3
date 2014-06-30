@@ -1,0 +1,99 @@
+.TH ACE_Creation_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Creation_Strategy \- Defines the interface for specifying a creation strategy for a SVC_HANDLER. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Strategies_T.h>\fR
+.PP
+Inherited by \fBACE_DLL_Strategy\fR, \fBACE_NOOP_Creation_Strategy\fR, and \fBACE_Singleton_Strategy\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Creation_Strategy\fR (\fBACE_Thread_Manager\fR * = 0)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Thread_Manager\fR * = 0)"
+.br
+.RI "\fIA <Thread_Manager> is useful when creating active objects.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Creation_Strategy\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBmake_svc_handler\fR (SVC_HANDLER *&sh)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBthr_mgr_\fR"
+.br
+.RI "\fIPointer to a thread manager.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER>  template class ACE_Creation_Strategy
+Defines the interface for specifying a creation strategy for a SVC_HANDLER.
+.PP
+.PP
+ The default behavior is to make a new SVC_HANDLER. However, subclasses can override this strategy to perform SVC_HANDLER creation in any way that they like (such as creating subclass instances of SVC_HANDLER, using a singleton, dynamically linking the handler, etc.). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_Creation_Strategy<SVC_HANDLER>::ACE_Creation_Strategy<SVC_HANDLER> (\fBACE_Thread_Manager\fR * = 0)
+.PP
+Default constructor.
+.PP
+.SS template<classSVC_HANDLER> virtual ACE_Creation_Strategy<SVC_HANDLER>::~ACE_Creation_Strategy<SVC_HANDLER> (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> void ACE_Creation_Strategy<SVC_HANDLER>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Singleton_Strategy\fR, and \fBACE_DLL_Strategy\fR.
+.SS template<classSVC_HANDLER> int ACE_Creation_Strategy<SVC_HANDLER>::make_svc_handler (SVC_HANDLER *& sh)\fC [virtual]\fR
+.PP
+Create a SVC_HANDLER with the appropriate creation strategy. The default behavior of this method is to make a new <SVC_HANDLER> if <sh> == 0 (passing in the <Thread_Manager>), else <sh> is unchanged. Returns -1 on failure, else 0. 
+.PP
+Reimplemented in \fBACE_Singleton_Strategy\fR, \fBACE_DLL_Strategy\fR, and \fBACE_NOOP_Creation_Strategy\fR.
+.SS template<classSVC_HANDLER> int ACE_Creation_Strategy<SVC_HANDLER>::open (\fBACE_Thread_Manager\fR * = 0)
+.PP
+A <Thread_Manager> is useful when creating active objects.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_Creation_Strategy<SVC_HANDLER>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_Singleton_Strategy\fR, and \fBACE_DLL_Strategy\fR.
+.SS template<classSVC_HANDLER> \fBACE_Thread_Manager\fR * ACE_Creation_Strategy<SVC_HANDLER>::thr_mgr_\fC [protected]\fR
+.PP
+Pointer to a thread manager.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,560 @@
+<html>
+<head>
+<title>Catalina - A Proposed Architecture for Tomcat</title>
+</head>
+<body bgcolor=white>
+
+<div align="center">
+<h1>CATALINA - A PROPOSED ARCHITECTURE FOR TOMCAT</h1>
+<h3>Craig R. McClanahan</h3>
+<h3>Last Revised:  January 19, 2000</h3>
+</div>
+
+<hr>
+
+<h1>1.  INTRODUCTION</h1>
+
+<h2>1.1 BACKGROUND</h2>
+
+<p>In June 1999, Sun announced that they were contributing the source code
+of the Tomcat servlet container, and the Josper (later Jasper) JSP engine,
+to the Jakarta project <http://jakarta.apache.org>.  At that time, significant
+work had taken place within the Java Apache project <http://java.apache.org>
+on a new servlet container design with a component based architecture.  This
+architecture offered substantial improvements in the understandability of the
+basic pieces of a servlet container, as well as flexibility in customizing
+the underlying functionality for different server environments.</p>
+
+<p>With the announcement of Jakarta, interest declined in a new version of
+Apache JServ based on this architecture, based on the (quite reasonable)
+conclusion that Jakarta would become the successor to Apache JServ when it
+became available.  Now that this has occurred, and we have had a chance to
+examine the source code, it is clear that the core servlet container portions
+of Tomcat (primarily in package <code>org.apache.tomcat.core</code>) are in
+need of the same architectural remodel, for the same reasons.</p>
+
+<p>This document proposes just such an architecture for a future
+version of Tomcat, based on a core set of interfaces for which a variety
+of implementations may be created.  These component implementations can
+then interoperate cleanly with other new and existing components, as long
+as the interface contracts are honored.</p>
+
+<p>It is expected that conversion to this architecture will require a
+major refactoring of the existing Tomcat core package, as well as other
+packages with internal dependencies on the core.  It will also require
+substantial changes in the deployment configuration files for the engine.
+Therefore, it seems appropriate to implement these changes at a <i>major</i>
+revision level update of Tomcat.</p>
+
+<h2>1.2 DESIGN GOALS</h2>
+
+<p>The new architecture was designed with the following goals in mind:</p>
+
+<h3>1.2.1 Diverse Deployment Environments</h3>
+
+<p>Tomcat should be easy to configure and deploy in a variety of operational
+environments, including:</p>
+<ul>
+<li>Stand-alone HTTP based application and web server, with full
+    support for multiple applications and multiple virtual hosts.</li>
+<li>Servlet/JSP environment for an existing web server (such as Apache),
+    using either embedded process or separate process implementations.</li>
+<li>Servlet/JSP environment embedded within an application server
+    (such as a J2EE-compatible platform), able to support advanced
+    session persistence and load balancing facilities for distributable
+    applications.</li>
+<li>Servlet/JSP environment providing a web-based administration
+    interface for an existing server application (for example,
+    a firewall or a DBMS system).</li>
+<li>Servlet/JSP environment providing a web-based administration
+    interface for an embedded device application (for example,
+    a router, a WebTV-type set-top box, or a network of X10-based
+    home automation devices).</li>
+</ul>
+
+<p>This is accomplished by allowing the deployer to pick and choose among the
+required Container and Session implementations needed to support the required
+features.</p>
+
+<h3>1.2.2 Plug-In Functionality Support</h3>
+
+<p>Tomcat should allow the server administrator to choose whether or not
+certain functionality (such as persistent support for session data, or load
+balancing across servers) is required.  In addition, it should be possible
+for server developers to provide customized versions of one or more Tomcat
+components, and have them interoperate with the remainder of the system
+seamlessly.</p>
+
+<p>This is accomplished by virtue of the fact that all interactions between
+Tomcat components are based on standard Java interfaces, which can be
+implemented in a variety of ways but still interoperate.</p>
+
+<h3>1.2.3 Extensible Request Processing</h3>
+
+<p>Besides the standard request/response processing described in the servlet
+API, it is desireable in many environments to support additional request
+processing functionality within the server.  Examples include:</p>
+
+<ul>
+<li>Request checking at the entire server, virtual host, or servlet context
+    level.  This is very important in an ISP environment hosting multiple
+    applications for multiple customers on the same server.</li>
+<li>Security checking integrated with legacy realm resources (provided by
+    a surrounding application server, or already used by other legacy
+    applications), without requiring this logic to be coded within user
+    applications (servlets and JSP pages).</li>
+<li>Logging facilities (customized application logs, or standard web server
+    style logs when Tomcat runs standalone) at the entire server, virtual host,
+    or servlet context level.</li>
+</ul>
+
+<p>This goal is met through the use of the <code>Interceptor</code>
+architecture (similar in spirit to the <code>Valve</code> architecture
+from Apache JServ, as well as the existing Interceptor style support
+that already exists within Tomcat.</p>
+
+<h2>1.3 COMPONENT CATEGORIES</h2>
+
+<p>There are three primary families of components in the proposed architecture.
+The details for each component will be presented in the following section.</p>
+<ul>
+<li><i>Communications Adapter Components</i> are the diverse means by which
+    the Tomcat core servlet container is connected to the outside world.  The
+    primary interface between the adapter components and the remainder of the
+    system is the Request and Response interfaces, which represent the
+    <code>HttpServletRequest</code> being processed, and the
+    <code>HttpServletResponse</code> being produced, respectively.</li>
+<li><i>Servlet Container Components</i> are responsible for accepting a
+    Request from a communications adapter
+    component, invoking the required processing functionality, and returning
+    the corresponding Response.  All container components implement the base
+    interface Container, which supports the insertion of
+    arbitrary Interceptor layers that can
+    participate in request processing without requiring re-implementation
+    of the entire underlying Container.</li>
+<li><i>Session Management Components</i> include
+    Session, which represents an individual
+    <code>HttpSession</code>, and Manager, which
+    controls the pool of active sessions visible to a particular container.
+    </li>
+</ul>
+
+<hr>
+
+<h1>2.  PRIMARY ARCHITECTURE COMPONENTS</h1>
+
+<h2>2.1 Communications Adapter Components</h2>
+
+<p>The following interfaces define the major components related to
+communication adapters:</p>
+<ul>
+<li><b>Adapter</b>.  Representation of a component which,
+    by some communications protocol or interface API, receives requests from
+    client applications, calls the appropriate processing logic, and returns
+    the generated response.  Because the functional requirements of adapters
+    vary widely, few common method signatures are required.</li>
+<li><b>Request</b>.  Representation of an
+    <code>HttpServletRequest</code> that is utilized throughout the Tomcat
+    servlet container to represent the incoming request.</li>
+<li><b>Response</b>.  Representation of an
+    <code>HttpServletResponse</code> that is utilized throughout the Tomcat
+    servlet container to represent the generated response.</li>
+</ul>
+
+<p>Reduced to its essentials, the functional processing performed by an
+Adapter is described as follows:
+<ul>
+<li>Receive a request from a client application (such as a browser via
+    HTTP, or a web server via some connection protocol).</li>
+<li>Create appropriate Request and Response instances, and populate
+    their properties based on the contents of the received request.</li>
+<li>Identify an appropriate Container to use
+    for processing this request.  For a stand-alone Tomcat installation,
+    this will probaby be a singleton Engine
+    implementation.  For an adapter attaching Tomcat to a web server
+    such as Apache, this step could take advantage of parsing already
+    performed within the web server to identify the
+    Context, and perhaps even the Wrapper, to be utilized.</li>
+<li>Call the <code>invoke()</code> method of the selected container,
+    passing the initialized request and response instances as arguments.</li>
+<li>Return the headers and data contents of the response created by this
+    container to the client application submitting the request.</li>
+</ul>
+
+<h2>2.2 Servlet Container Components</h2>
+
+<h3>2.2.1 Container Components</h3>
+
+<p>The fundamental servlet container interface is named, naturally enough,
+Container.  The fundamental responsibility of a
+Container is to execute Requests received from a communications Adapter, or
+from a parent Container, returning the corresponding Response.  This
+responsibility is represented by the <code>invoke()</code> method of the
+Container.  Each container is optionally associated with an instance of each
+of the Support Components described below, and also has the following
+characteristics:</p>
+<ul>
+<li>A set of child Container objects representing
+    the next hierarchically lower level of responsibility for request
+    processing within this Tomcat deployment.  For example, a Container
+    representing a virtual host would have child Containers representing
+    the web applications defined for that virtual host.</li>
+<li>A set of Interceptor objects providing
+    plug-in processing layers for this Context.  See the next subsection
+    for more information about Interceptors.</li>
+<li>A name that is used to uniquely identify this Container in the set of
+    children of this Container's parent Container.</li>
+<li>A parent Container with which this Container
+    is associated.  Parent-child relationships are usually hierarchical,
+    with child Containers being responsible for successively smaller subsets
+    of all possible requests processed by this Tomcat deployment.</li>
+</ul>
+
+<p>The <code>service()</code> method of a Container is used to implement the
+required processing logic of this hierarchical level of a Tomcat deployment,
+independent of any Interceptors that may have been defined.  See the following
+subsection for more information about how request processing with Interceptors
+is actually implemented.</p>
+
+<p>Two extensions of the Container interface
+will be used in nearly every deployment of Tomcat:</p>
+<ul>
+<li><b>Context</b>.  Representation of a single
+    <code>ServletContext</code> which will typically be associated with a
+    child Wrapper container for each defined servlet.</li>
+<li><b>Wrapper</b>.  Representation of a single
+    servlet definition (which may support multiple servlet instances if the
+    servlet itself represents <code>SingleThreadModel</code>).</li>
+</ul>
+
+<p>In an embedded deployment, a single Context
+instance, representing the entire embedded web application, will usually be
+the highest level Container component utilized.</p>
+
+<p>When Tomcat is executed in a standalone deployment using an HTTP adapter,
+the following extensions of the Container interface are provided:</p>
+<ul>
+<li><b>Engine</b>.  Representation of the entire Tomcat
+    servlet engine, associated with one or more Host
+    implementations (if this deployment supports multiple virtual hosts) or
+    one or more Context implementations (if this
+    deployment is for a single virtual host).  Generally, the implementation
+    of this interface will be deployed as a singleton, with no parent
+    container.  Any Interceptor objects
+    associated with an Engine will process all requests passed to the
+    Tomcat engine.</li>
+<li><b>Host</b>.  Representation of a virtual host that is
+    associated with a number of Context children.
+    The parent container will generally be an Engine.
+    This representation is useful when you wish to interpose one or more
+    Interceptor objects to process all requests
+    to web applications within this virtual host.</li>
+</ul>
+
+<h3>2.2.2 Interceptor Components</h3>
+
+<p>As mentioned above, a Container supports the
+definition of a stack of Interceptor objects
+that are allowed to participate in request processing both before and after
+the <code>service()</code> method of the owning Container is called.  The
+functional purpose of Interceptors is best understood by examining several
+operational scenarios.</p>
+
+<p>Under normal circumstances (each activated Interceptor returns
+<code>true</code>, and no exceptions are thrown by an Interceptor or the
+<code>service()</code> method of the associated Container), the following
+processing logic must be performed by the <code>invoke()</code> method of
+a Container:</p>
+<ul>
+<li>The <code>preService()</code> method of all Interceptors associated with
+    this Container are called, starting with the <b>most</b> recently added
+    Interceptor.  It is assumed each <code>preService()</code> method returns
+    <code>true</code> to indicate that processing should continue.  It is also
+    assumed for this scenario that no exception is thrown.</li>
+<li>The <code>service()</code> method of the owning Container itself is called.
+    It is assumed for this scenario that no exception is thrown.</li>
+<li>The <code>postService()</code> method of all Interceptors associated with
+    this Container are called, starting with the <b>least</b> recently added
+    Interceptor.  It is assumed for this scenario that no exception is thrown.
+    </li>
+</ul>
+
+<p>A <code>preService()</code> method of an Interceptor is allowed to return
+<code>false</code> instead of <code>true</code>.  Doing so is an indication
+that this Interceptor has in fact created the corresponding response, and that
+no further processing for this request is required.  When such a return
+happens, the following changes to the previously described logic occur:
+<ul>
+<li>The <code>preService()</code> methods of any Interceptors added to this
+    Container earlier than the current one are <b>not</b> called.</li>
+<li>The <code>service()</code> method of the owning Container itself is
+    <b>not</b> called.</li>
+<li>The <code>postService()</code> methods of any Interceptors added to this
+    Container earlier than the current one are <b>not</b> called.</li>
+<li>The <code>postService()</code> methods of the current Interceptor, and
+    any Interceptor added to this Container after the current Interceptor,
+    <b>are</b> called.</li>
+</ul>
+
+<p>If an exception is thrown by any call to a <code>preService()</code>,
+<code>service()</code>, or <code>postService()</code> method, all subsequent
+method calls described above are skipped.  The exception will be rippled out
+to the highest level Container whose <code>invoke()</code> method was
+originally called, and from there to the calling Adapter.</p>
+
+<p>The JavaDoc comments for an Interceptor
+outlines the requirements described above from the viewpoint of an individual
+Interceptor.  Consult this documentation for additional information.</p>
+
+<h3>2.2.3 Support Components</h3>
+
+<p>A single instance of each of the following support components may optionally
+be associated with each Container, accessible through the usual JavaBeans
+property accessor methods.  As a general rule, a <code>get</code> method
+returning such a support component should return the component last specified
+by a corresponding <code>set</code> method call, if any; otherwise, a
+corresponding <code>get</code> method call to this Container's parent
+Container (if any) should be performed.  This approach allows a general
+deployment style where support components are only attached at the highest
+required hierarchical Container level.</p>
+
+<ul>
+<li><b>Loader</b>.  Representation of a Java class loader
+    used to load executable servlets and other code utilized within a
+    container.  The interface defines support for detection of changes in the
+    underlying repository (essentially a container-specific class path), and
+    the unloading and reloading of all Java classes loaded by this loader.
+    </li>
+<li><b>Logger</b>.  Representation of the
+    <code>log()</code> methods defined in the <code>ServletContext</code>
+    interface.  Implementations can store log output wherever desired, or
+    integrate it with the log output of the server in which Tomcat is
+    embedded.</li>
+<li><b>Manager</b>.  Representation of a manager for the
+    pool of active sessions associated with this Container.  See the following
+    section for more information.</li>
+<li><b>Realm</b>.  Representation of a security realm in
+    which a user <code>Principal</code> can be authenticated, and from which
+    the set of roles associated with that <code>Principal</code> can be
+    identified.  Implementations can be created to integrate with existing
+    legacy security realms, integrate with the security realm of the server
+    in which Tomcat is embedded, or for custom, application-specific,
+    security realms.</li>
+<li><b>Resources</b>.  Normally, a container implements
+    methods like <code>getResource()</code> and
+    <code>getResourceAsStream()</code> by accessing data resources included
+    with the web application.  In some environments (such as Tomcat connected
+    to a web server such as Apache), it is desireable to use the web server's
+    facilities to access these resources instead.  This interface allows such
+    accesses to be customized.</li>
+</ul>
+
+<h2>2.3 Session Management Components</h2>
+
+<p>Support for the session management functionality of the servlet API
+specification is provided by components that implement the following
+interfaces:</p>
+
+<ul>
+<li><b>Manager</b>.  Representation of a collection
+    manager for a set of active sessions associated with a container.
+    This interface can be extended to support advanced capabilities such
+    as session persistence across server restarts, swapping of active
+    but idle sessions, and relocation of sessions in a distributed server
+    environment.</li>
+<li><b>Session</b>.  Representation of an
+    <code>HttpSession</code> that is utilized throughout the Tomcat
+    servlet container to represent the session and its associated
+    user data objects.</li>
+</ul>
+
+<hr>
+
+<h1>3.  OTHER ISSUES</h1>
+
+<h2>3.1 Component Configuration</h2>
+
+<p>A significant implementation challenge in this architecture is the elegant
+initialization and shutdown of the various components.  This proposal suggests
+an approach, also used in the Apache JServ architecture, based on the
+Lifecycle interface.  The use of this approach
+includes the following elements:</p>
+<ul>
+<li>The implementation class of a component may <b>optionally</b> implement
+    the Lifecycle interface, if it wishes to take
+    advantage of the configuration services.</li>
+<li>An object factory that creates a new component will perform the following
+    logic in its creation method:
+    <ul>
+    <li>Instantiate a new instance of the component implementation class
+        (usually based on a fully qualified Java class name that is configured
+        as a parameter of the factory component).</li>
+    <li>Determine whether or not the new component implements the
+        Lifecycle interface (usually by use of
+        the <code>instanceof</code> operator).  If the component does not
+        implement Lifecycle, the remaining steps are skipped.</li>
+    <li>Call the new component's <code>configure()</code> method, passing
+        an XML document fragment (<code>org.w3c.dom.DocumentFragment</code>)
+        containing the configuration parameters for this component.  This
+        approach is based on the assumption that XML-based configuration files
+        will be utilized to configure Tomcat components.  [IMHO it is overkill
+        to convert such configuration parameters (which are typically processed
+        only once) into an internal <code>XmlTree</code> architecture, as is
+        done in the current Tomcat approach.]</li>
+    <li>Call the new component's <code>start()</code> method.  Successful
+        return from this method (no exception thrown) indicates that the
+        component has been completely configured, and is available for normal
+        use by other components.</li>
+    </ul></li>
+<li>The component's public methods will be called as required during the
+    lifetime of this component (often the life of the Tomcat deployment itself,
+    but this is not required).</li>
+<li>When the server (usually a parent component) wishes to retire a particular
+    component from active use, it will perform the following logic:
+    <ul>
+    <li>Change its own internal state to indicate that this component is
+        no longer available.</li>
+    <li>Determine whether or not the component implements the
+        Lifecycle interface (usually by use of
+        the <code>instanceof</code> operator).  If the component does not
+        implement Lifecycle, the remaining steps are skipped.</li>
+    <li>Call the component's <code>stop()</code> method.  This call tells the
+        component to gracefully clean up its resources (for example, a JDBC
+        connection pool would close and release all of its allocated
+        connections to the underlying database).</li>
+    </ul></li>
+</ul>
+
+<h2>3.2 Package Naming Suggestions</h2>
+
+<p>The current Tomcat servlet container architecture has nearly all of the
+executable code in a single package (<code>org.apache.tomcat.core</code>).
+This proposal suggests the following package naming conventions:</p>
+<ul>
+<li><code>org.apache.tomcat</code> - Contains the interface definitions for
+    all of the core components described in this document.</li>
+<li><code>org.apache.tomcat.adapter.xxxxx</code> - Contains implementations
+    of the each Adapter component, and their
+    associated Request and Response components, in subpackages named
+    for each implementation.</li>
+<li><code>org.apache.tomcat.container.xxxxx</code> - Contains implementations
+    of the various Container interfaces, and the
+    corresponding support component implementations, in subpackages named
+    for each implementation.</li>
+<li><code>org.apache.tomcat.session.xxxxx</code> - Contains implementations
+    of the Manager and Session interfaces, in subpackages named for
+    each implementation.</li>
+</ul>
+
+<p>The suggested naming conventions maximize the ability to localize private
+implementation details within a package (through the use of <i>package
+private</i> scoping of method names), while encouraging independence between
+packages by using only the commonly defined interfaces.</p>
+
+<h2>3.3 Example Interceptor Scenarios</h2>
+
+<p>The following examples illustrate several types of functionality that might
+be implemented using the Interceptor feature
+of the proposed architecture:</p>
+<ul>
+<li><i>Custom Request Validation</i>.  In an ISP environment, the server
+    administrator might wish to add an
+    Interceptor that performs site specific
+    validation on all incoming requests (if the Interceptor is attached at
+    the Engine level, for example), or on all requests to a particular
+    customer's virtual host (if the Interceptor is attached at the
+    Host level, for example).</li>
+<li><i>Enforce Authentication and Access Control Constraints</i>.  An
+    Interceptor can be defined to enforce the
+    <code>&lt;security-constraint&gt;</code> elements included in a web
+    application's deployment descriptor.  Such an Interceptor would include
+    logic in the <code>preService()</code> method to examine the incoming
+    Request properties.  If an authentication
+    challenge is required, the <code>preService()</code> method would
+    complete the corresponding Response with
+    the correct challenge (based on the configuration specified in the
+    corresponding <code>&lt;login-config&gt;</code> element), and return
+    <code>false</code> to bypass any remaining processing for this Request.
+    </li>
+<li><i>Integration with Application Server Functionality</i>.  An application
+    server environment might provide services, addressable via a URI, while
+    wanting to use standard servlet support as well.  An
+    Interceptor could be created that would
+    examine the incoming Request for those requiring internal services,
+    call the internal service API, construct an appropriate Response,
+    and return <code>false</code> from the <code>preService()</code>
+    method, to skip remaining request processing within Tomcat.
+    Requests that should be processed via normal servlet API functionality
+    are passed on by having the <code>preService()</code>
+    method return <code>true</code> instead.</li>
+<li><i>Performance Measurement</i>.  The processing time required for each
+    incoming request can be calculated by starting a timer in the
+    <code>preService()</code> method, and stopping that timer in the
+    corresponding <code>postService()</code> method of the same
+    Interceptor.  Measuring performance at
+    this point is useful, because it eliminates the variable overhead of
+    communications adapters.  Such measurements may also contribute to
+    decisions made by a load balancing module in an application server that
+    supports distributed processing.</li>
+<li><i>URI Hit Counter</i>.  An Interceptor
+    with an appropriate <code>postService()</code> method could be utilized
+    to capture hit count statistics for requested URIs, and store this
+    information in some persistent storage location.</li>
+<li><i>Web Server Style Access Log</i>.  When Tomcat is deployed in a stand
+    alone environment with an HTTP communications adapter, it may be desireable
+    to produce an access log file, in a format similar to that created by
+    standard web servers such as Apache.  Such a log can be easily created by
+    an Interceptor with the log file writing
+    logic embedded in the <code>postService()</code> method.  You can have an
+    access log per web application by attaching this Interceptor to the
+    corresponding Context instance, or a combined
+    log file by attaching it at either the Host or
+    Engine level, with no changes to any of the
+    Container implementation classes.</li>
+</ul>
+
+<h2>3.4 Example Component Implementations</h2>
+
+<p>The following implementation examples are included with this proposal, to
+illustrate the development approach that would normally be used:</p>
+
+<i>In package <code>org.apache.tomcat.core</i>:
+<ul>
+<li><b>ContainerBase</b>.  Abstract base class that
+    contains the logic common to all Container
+    implementations.  This class can easily be subclassed to provide
+    container-specific logic, because only the <code>getInfo()</code> and
+    <code>service()</code> methods must be implemented (although additional
+    methods may be overridden if necessary).</li>
+<li><b>StandardContext</b>.  Example implementation of the Context interface.
+    </li>
+<li><b>StandardEngine</b>.  Example implementation of the Engine interface.
+    </li>
+<li><b>StandardHost</b>.  Example implementation of the Host interface.</li>
+</ul>
+
+<i>In package <code>org.apache.tomcat.logger</i>:
+<ul>
+<li><b>FileLogger</b>.  Implementation of Logger that writes to disk files
+    in a specified directory, automatically switching to a new file at
+    midnight each night.</li>
+<li><b>SystemErrLogger</b>.  Implementation of Logger that writes to the
+    System.err output stream.</li>
+<li><b>SystemOutLogger</b>.  Implementation of Logger that writes to the
+    System.out output stream.</li>
+</ul>
+
+<i>In package <code>org.apache.tomcat.security</i>:
+<ul>
+<li><b>SecurityInterceptor</b>.  Implementation of Interceptor that enforces
+    the authentication and access control directives in the deployment
+    descriptor of a web application.</li>
+</ul>
+
+<i>In package <code>org.apache.tomcat.session</i>:
+<ul>
+<li><b>StandardManager</b>.  Example implementation of Manager that provides
+    the same session management capabilities as Tomcat 3.0.</li>
+<li><b>StandardSession</b>.  Example implementation of Session that
+    encapsulates an individual HttpSession within Tomcat.</li>
+</ul>

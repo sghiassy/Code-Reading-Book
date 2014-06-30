@@ -1,0 +1,535 @@
+.TH ACE_Message_Queue 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Message_Queue \- A threaded message queueing facility, modeled after the queueing facilities in System V STREAMs. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Message_Queue_T.h>\fR
+.PP
+Inherits \fBACE_Message_Queue_Base\fR.
+.PP
+Inherited by \fBACE_Dynamic_Message_Queue\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Message_Queue_Iterator\fR<ACE_SYNCH_USE> \fBITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Message_Queue_Reverse_Iterator\fR<ACE_SYNCH_USE> \fBREVERSE_ITERATOR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Queue\fR (size_t high_water_mark = ACE_Message_Queue_Base::DEFAULT_HWM, size_t low_water_mark = ACE_Message_Queue_Base::DEFAULT_LWM, \fBACE_Notification_Strategy\fR * = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBopen\fR (size_t hwm = ACE_Message_Queue_Base::DEFAULT_HWM, size_t lwm = ACE_Message_Queue_Base::DEFAULT_LWM, \fBACE_Notification_Strategy\fR * = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the message queue and release all resources.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Message_Queue\fR (void)"
+.br
+.RI "\fIClose down the message queue and release all resources.\fR"
+.ti -1c
+.RI "virtual int \fBpeek_dequeue_head\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBenqueue_prio\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBenqueue\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBenqueue_tail\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBenqueue_head\fR (\fBACE_Message_Block\fR *new_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBdequeue\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.RI "\fIThis method is an alias for the following <dequeue_head> method.\fR"
+.ti -1c
+.RI "virtual int \fBdequeue_head\fR (\fBACE_Message_Block\fR *&first_item, \fBACE_Time_Value\fR *timeout = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBis_full\fR (void)"
+.br
+.RI "\fITrue if queue is full, else false.\fR"
+.ti -1c
+.RI "virtual int \fBis_empty\fR (void)"
+.br
+.RI "\fITrue if queue is empty, else false.\fR"
+.ti -1c
+.RI "virtual size_t \fBmessage_bytes\fR (void)"
+.br
+.ti -1c
+.RI "virtual size_t \fBmessage_length\fR (void)"
+.br
+.ti -1c
+.RI "virtual size_t \fBmessage_count\fR (void)"
+.br
+.ti -1c
+.RI "virtual void \fBmessage_bytes\fR (size_t new_size)"
+.br
+.ti -1c
+.RI "virtual void \fBmessage_length\fR (size_t new_length)"
+.br
+.ti -1c
+.RI "virtual size_t \fBhigh_water_mark\fR (void)"
+.br
+.ti -1c
+.RI "virtual void \fBhigh_water_mark\fR (size_t hwm)"
+.br
+.ti -1c
+.RI "virtual size_t \fBlow_water_mark\fR (void)"
+.br
+.ti -1c
+.RI "virtual void \fBlow_water_mark\fR (size_t lwm)"
+.br
+.ti -1c
+.RI "virtual int \fBdeactivate\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBactivate\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBdeactivated\fR (void)"
+.br
+.RI "\fIReturns true if <deactivated_> is enabled.\fR"
+.ti -1c
+.RI "virtual int \fBnotify\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Notification_Strategy\fR* \fBnotification_strategy\fR (void)"
+.br
+.ti -1c
+.RI "virtual void \fBnotification_strategy\fR (\fBACE_Notification_Strategy\fR *s)"
+.br
+.ti -1c
+.RI "virtual ACE_SYNCH_MUTEX_T& \fBlock\fR (void)"
+.br
+.RI "\fIReturns a reference to the lock used by the .\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBenqueue_i\fR (\fBACE_Message_Block\fR *new_item)"
+.br
+.RI "\fIEnqueue an  in accordance with its priority.\fR"
+.ti -1c
+.RI "virtual int \fBenqueue_tail_i\fR (\fBACE_Message_Block\fR *new_item)"
+.br
+.RI "\fIEnqueue an  at the end of the queue.\fR"
+.ti -1c
+.RI "virtual int \fBenqueue_head_i\fR (\fBACE_Message_Block\fR *new_item)"
+.br
+.RI "\fIEnqueue an  at the head of the queue.\fR"
+.ti -1c
+.RI "virtual int \fBdequeue_head_i\fR (\fBACE_Message_Block\fR *&first_item)"
+.br
+.RI "\fIDequeue and return the  at the head of the queue.\fR"
+.ti -1c
+.RI "virtual int \fBis_full_i\fR (void)"
+.br
+.RI "\fITrue if queue is full, else false.\fR"
+.ti -1c
+.RI "virtual int \fBis_empty_i\fR (void)"
+.br
+.RI "\fITrue if queue is empty, else false.\fR"
+.ti -1c
+.RI "virtual int \fBdeactivate_i\fR (void)"
+.br
+.RI "\fIDeactivate the queue.\fR"
+.ti -1c
+.RI "virtual int \fBactivate_i\fR (void)"
+.br
+.RI "\fIActivate the queue.\fR"
+.ti -1c
+.RI "virtual int \fBwait_not_full_cond\fR (\fBACE_Guard\fR<ACE_SYNCH_MUTEX_T> &mon, \fBACE_Time_Value\fR *timeout)"
+.br
+.RI "\fIWait for the queue to become non-full.\fR"
+.ti -1c
+.RI "virtual int \fBwait_not_empty_cond\fR (\fBACE_Guard\fR<ACE_SYNCH_MUTEX_T> &mon, \fBACE_Time_Value\fR *timeout)"
+.br
+.RI "\fIWait for the queue to become non-empty.\fR"
+.ti -1c
+.RI "virtual int \fBsignal_enqueue_waiters\fR (void)"
+.br
+.RI "\fIInform any threads waiting to enqueue that they can procede.\fR"
+.ti -1c
+.RI "virtual int \fBsignal_dequeue_waiters\fR (void)"
+.br
+.RI "\fIInform any threads waiting to dequeue that they can procede.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBhead_\fR"
+.br
+.RI "\fIPointer to head of \fBACE_Message_Block\fR list.\fR"
+.ti -1c
+.RI "\fBACE_Message_Block\fR* \fBtail_\fR"
+.br
+.RI "\fIPointer to tail of \fBACE_Message_Block\fR list.\fR"
+.ti -1c
+.RI "size_t \fBlow_water_mark_\fR"
+.br
+.RI "\fILowest number before unblocking occurs.\fR"
+.ti -1c
+.RI "size_t \fBhigh_water_mark_\fR"
+.br
+.RI "\fIGreatest number of bytes before blocking.\fR"
+.ti -1c
+.RI "size_t \fBcur_bytes_\fR"
+.br
+.RI "\fICurrent number of bytes in the queue.\fR"
+.ti -1c
+.RI "size_t \fBcur_length_\fR"
+.br
+.RI "\fICurrent length of messages in the queue.\fR"
+.ti -1c
+.RI "size_t \fBcur_count_\fR"
+.br
+.RI "\fICurrent number of messages in the queue.\fR"
+.ti -1c
+.RI "int \fBdeactivated_\fR"
+.br
+.RI "\fIIndicates that the queue is inactive.\fR"
+.ti -1c
+.RI "\fBACE_Notification_Strategy\fR* \fBnotification_strategy_\fR"
+.br
+.RI "\fIThe notification strategy used when a new message is enqueued.\fR"
+.ti -1c
+.RI "ACE_SYNCH_MUTEX_T \fBlock_\fR"
+.br
+.RI "\fIProtect queue from concurrent access.\fR"
+.ti -1c
+.RI "ACE_SYNCH_CONDITION_T \fBnot_empty_cond_\fR"
+.br
+.RI "\fIUsed to make threads sleep until the queue is no longer empty.\fR"
+.ti -1c
+.RI "ACE_SYNCH_CONDITION_T \fBnot_full_cond_\fR"
+.br
+.RI "\fIUsed to make threads sleep until the queue is no longer full.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Message_Queue< _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T > &)"
+.br
+.ti -1c
+.RI "\fBACE_Message_Queue\fR (const ACE_Message_Queue< _ACE_SYNCH_MUTEX_T, _ACE_SYNCH_CONDITION_T > &)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Message_Queue_Iterator< ACE_SYNCH_USE >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Message_Queue_Reverse_Iterator< ACE_SYNCH_USE >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_SYNCH_DECL>  template class ACE_Message_Queue
+A threaded message queueing facility, modeled after the queueing facilities in System V STREAMs.
+.PP
+.PP
+ An  is the central queueing facility for messages in the \fBACE\fR framework. If  is  then all operations are thread-safe. Otherwise, if it's  then there's no locking overhead. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> typedef \fBACE_Message_Queue_Iterator\fR<ACE_SYNCH_USE> ACE_Message_Queue<>::ITERATOR
+.PP
+.SS template<ACE_SYNCH_DECL> typedef \fBACE_Message_Queue_Reverse_Iterator\fR<ACE_SYNCH_USE> ACE_Message_Queue<>::REVERSE_ITERATOR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Message_Queue<>::ACE_Message_Queue<> (size_t high_water_mark = ACE_Message_Queue_Base::DEFAULT_HWM, size_t low_water_mark = ACE_Message_Queue_Base::DEFAULT_LWM, \fBACE_Notification_Strategy\fR * = 0)
+.PP
+Initialize an . The <high_water_mark> determines how many bytes can be stored in a queue before it's considered "full." Supplier threads must block until the queue is no longer full. The <low_water_mark> determines how many bytes must be in the queue before supplier threads are allowed to enqueue additional s. By default, the <high_water_mark> equals the <low_water_mark>, which means that suppliers will be able to enqueue new messages as soon as a consumer removes any message from the queue. Making the <low_water_mark> smaller than the <high_water_mark> forces consumers to drain more messages from the queue before suppliers can enqueue new messages, which can minimize the "silly window syndrome." 
+.SS template<ACE_SYNCH_DECL> ACE_Message_Queue<>::~ACE_Message_Queue<> (void)\fC [virtual]\fR
+.PP
+Close down the message queue and release all resources.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_Message_Queue<>::ACE_Message_Queue<> (const ACE_Message_Queue< _ACE_SYNCH_MUTEX_T,_ACE_SYNCH_CONDITION_T >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::activate (void)\fC [virtual]\fR
+.PP
+Reactivate the queue so that threads can enqueue and dequeue messages again. Returns WAS_INACTIVE if queue was inactive before the call and WAS_ACTIVE if queue was active before the call. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::activate_i (void)\fC [protected, virtual]\fR
+.PP
+Activate the queue.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::close (void)\fC [virtual]\fR
+.PP
+Close down the message queue and release all resources.
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::deactivate (void)\fC [virtual]\fR
+.PP
+Deactivate the queue and wakeup all threads waiting on the queue so they can continue. No messages are removed from the queue, however. Any other operations called until the queue is activated again will immediately return -1 with <errno> == ESHUTDOWN. Returns WAS_INACTIVE if queue was inactive before the call and WAS_ACTIVE if queue was active before the call. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::deactivate_i (void)\fC [protected, virtual]\fR
+.PP
+Deactivate the queue.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::deactivated (void)\fC [virtual]\fR
+.PP
+Returns true if <deactivated_> is enabled.
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::dequeue (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+This method is an alias for the following <dequeue_head> method.
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::dequeue_head (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Dequeue and return the  at the head of the queue. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. If the <timeout> elapses without receiving a message -1 is returned and <errno> is set to <EWOULDBLOCK>. If the queue is deactivated -1 is returned and <errno> is set to <ESHUTDOWN>. Otherwise, returns -1 on failure, else the number of items still on the queue. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::dequeue_head_i (\fBACE_Message_Block\fR *& first_item)\fC [protected, virtual]\fR
+.PP
+Dequeue and return the  at the head of the queue.
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> void ACE_Message_Queue<>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::enqueue (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+This is an alias for <enqueue_prio>. It's only here for backwards compatibility and will go away in a subsequent release. Please use <enqueue_prio> instead. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::enqueue_head (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Enqueue an  at the head of the queue. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. If the <timeout> elapses without receiving a message -1 is returned and <errno> is set to <EWOULDBLOCK>. If the queue is deactivated -1 is returned and <errno> is set to <ESHUTDOWN>. Otherwise, returns -1 on failure, else the number of items still on the queue. 
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::enqueue_head_i (\fBACE_Message_Block\fR * new_item)\fC [protected, virtual]\fR
+.PP
+Enqueue an  at the head of the queue.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::enqueue_i (\fBACE_Message_Block\fR * new_item)\fC [protected, virtual]\fR
+.PP
+Enqueue an  in accordance with its priority.
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::enqueue_prio (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Enqueue an  into the <Message_Queue> in accordance with its <msg_priority> (0 is lowest priority). FIFO order is maintained when messages of the same priority are inserted consecutively. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. If the <timeout> elapses without receiving a message -1 is returned and <errno> is set to <EWOULDBLOCK>. If the queue is deactivated -1 is returned and <errno> is set to <ESHUTDOWN>. Otherwise, returns -1 on failure, else the number of items still on the queue. 
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::enqueue_tail (\fBACE_Message_Block\fR * new_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Enqueue an  at the end of the queue. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. If the <timeout> elapses without receiving a message -1 is returned and <errno> is set to <EWOULDBLOCK>. If the queue is deactivated -1 is returned and <errno> is set to <ESHUTDOWN>. Otherwise, returns -1 on failure, else the number of items still on the queue. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::enqueue_tail_i (\fBACE_Message_Block\fR * new_item)\fC [protected, virtual]\fR
+.PP
+Enqueue an  at the end of the queue.
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Message_Queue<>::high_water_mark (size_t hwm)\fC [virtual]\fR
+.PP
+Set the high watermark, which determines how many bytes can be stored in a queue before it's considered "full." 
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::high_water_mark (void)\fC [virtual]\fR
+.PP
+Get high watermark. 
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::is_empty (void)\fC [virtual]\fR
+.PP
+True if queue is empty, else false.
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::is_empty_i (void)\fC [protected, virtual]\fR
+.PP
+True if queue is empty, else false.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::is_full (void)\fC [virtual]\fR
+.PP
+True if queue is full, else false.
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::is_full_i (void)\fC [protected, virtual]\fR
+.PP
+True if queue is full, else false.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_SYNCH_MUTEX_T & ACE_Message_Queue<>::lock (void)\fC [inline, virtual]\fR
+.PP
+Returns a reference to the lock used by the .
+.PP
+.SS template<ACE_SYNCH_DECL> void ACE_Message_Queue<>::low_water_mark (size_t lwm)\fC [virtual]\fR
+.PP
+Set the low watermark, which determines how many bytes must be in the queue before supplier threads are allowed to enqueue additional s. 
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::low_water_mark (void)\fC [virtual]\fR
+.PP
+Get low watermark. 
+.SS template<ACE_SYNCH_DECL> void ACE_Message_Queue<>::message_bytes (size_t new_size)\fC [virtual]\fR
+.PP
+New value of the number of total bytes on the queue, i.e., sum of the message block sizes. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::message_bytes (void)\fC [virtual]\fR
+.PP
+Number of total bytes on the queue, i.e., sum of the message block sizes. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::message_count (void)\fC [virtual]\fR
+.PP
+Number of total messages on the queue. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> void ACE_Message_Queue<>::message_length (size_t new_length)\fC [virtual]\fR
+.PP
+New value of the number of total length on the queue, i.e., sum of the message block lengths. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::message_length (void)\fC [virtual]\fR
+.PP
+Number of total length on the queue, i.e., sum of the message block lengths. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> virtual void ACE_Message_Queue<>::notification_strategy (\fBACE_Notification_Strategy\fR * s)\fC [virtual]\fR
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> virtual \fBACE_Notification_Strategy\fR* ACE_Message_Queue<>::notification_strategy (void)\fC [virtual]\fR
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::notify (void)\fC [virtual]\fR
+.PP
+This hook is automatically invoked by <enqueue_head>, <enqueue_tail>, and <enqueue_prio> when a new item is inserted into the queue. Subclasses can override this method to perform specific notification strategies (e.g., signaling events for a <WFMO_Reactor>, notifying a <Reactor>, etc.). In a multi-threaded application with concurrent consumers, there is no guarantee that the queue will be still be non-empty by the time the notification occurs. 
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::open (size_t hwm = ACE_Message_Queue_Base::DEFAULT_HWM, size_t lwm = ACE_Message_Queue_Base::DEFAULT_LWM, \fBACE_Notification_Strategy\fR * = 0)\fC [virtual]\fR
+.PP
+Initialize an . The <high_water_mark> determines how many bytes can be stored in a queue before it's considered "full." Supplier threads must block until the queue is no longer full. The <low_water_mark> determines how many bytes must be in the queue before supplier threads are allowed to enqueue additional s. By default, the <high_water_mark> equals the <low_water_mark>, which means that suppliers will be able to enqueue new messages as soon as a consumer removes any message from the queue. Making the <low_water_mark> smaller than the <high_water_mark> forces consumers to drain more messages from the queue before suppliers can enqueue new messages, which can minimize the "silly window syndrome." 
+.SS template<ACE_SYNCH_DECL> void ACE_Message_Queue<>::operator= (const ACE_Message_Queue< _ACE_SYNCH_MUTEX_T,_ACE_SYNCH_CONDITION_T >&)\fC [private]\fR
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::peek_dequeue_head (\fBACE_Message_Block\fR *& first_item, \fBACE_Time_Value\fR * timeout = 0)\fC [virtual]\fR
+.PP
+Retrieve the first  without removing it. Note that <timeout> uses <{absolute}> time rather than <{relative}> time. If the <timeout> elapses without receiving a message -1 is returned and <errno> is set to <EWOULDBLOCK>. If the queue is deactivated -1 is returned and <errno> is set to <ESHUTDOWN>. Otherwise, returns -1 on failure, else the number of items still on the queue. 
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::signal_dequeue_waiters (void)\fC [protected, virtual]\fR
+.PP
+Inform any threads waiting to dequeue that they can procede.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::signal_enqueue_waiters (void)\fC [protected, virtual]\fR
+.PP
+Inform any threads waiting to enqueue that they can procede.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::wait_not_empty_cond (\fBACE_Guard\fR< ACE_SYNCH_MUTEX_T >& mon, \fBACE_Time_Value\fR * timeout)\fC [protected, virtual]\fR
+.PP
+Wait for the queue to become non-empty.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::wait_not_full_cond (\fBACE_Guard\fR< ACE_SYNCH_MUTEX_T >& mon, \fBACE_Time_Value\fR * timeout)\fC [protected, virtual]\fR
+.PP
+Wait for the queue to become non-full.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> class \fBACE_Message_Queue_Iterator\fR\fC [friend]\fR
+.PP
+.SS template<ACE_SYNCH_DECL> class \fBACE_Message_Queue_Reverse_Iterator\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_SYNCH_DECL> ACE_Message_Queue<>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Message_Queue_Base\fR.
+.PP
+Reimplemented in \fBACE_Dynamic_Message_Queue\fR.
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::cur_bytes_\fC [protected]\fR
+.PP
+Current number of bytes in the queue.
+.PP
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::cur_count_\fC [protected]\fR
+.PP
+Current number of messages in the queue.
+.PP
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::cur_length_\fC [protected]\fR
+.PP
+Current length of messages in the queue.
+.PP
+.SS template<ACE_SYNCH_DECL> int ACE_Message_Queue<>::deactivated_\fC [protected]\fR
+.PP
+Indicates that the queue is inactive.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Message_Queue<>::head_\fC [protected]\fR
+.PP
+Pointer to head of \fBACE_Message_Block\fR list.
+.PP
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::high_water_mark_\fC [protected]\fR
+.PP
+Greatest number of bytes before blocking.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_SYNCH_MUTEX_T ACE_Message_Queue<>::lock_\fC [protected]\fR
+.PP
+Protect queue from concurrent access.
+.PP
+.SS template<ACE_SYNCH_DECL> size_t ACE_Message_Queue<>::low_water_mark_\fC [protected]\fR
+.PP
+Lowest number before unblocking occurs.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_SYNCH_CONDITION_T ACE_Message_Queue<>::not_empty_cond_\fC [protected]\fR
+.PP
+Used to make threads sleep until the queue is no longer empty.
+.PP
+.SS template<ACE_SYNCH_DECL> ACE_SYNCH_CONDITION_T ACE_Message_Queue<>::not_full_cond_\fC [protected]\fR
+.PP
+Used to make threads sleep until the queue is no longer full.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Notification_Strategy\fR * ACE_Message_Queue<>::notification_strategy_\fC [protected]\fR
+.PP
+The notification strategy used when a new message is enqueued.
+.PP
+.SS template<ACE_SYNCH_DECL> \fBACE_Message_Block\fR * ACE_Message_Queue<>::tail_\fC [protected]\fR
+.PP
+Pointer to tail of \fBACE_Message_Block\fR list.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

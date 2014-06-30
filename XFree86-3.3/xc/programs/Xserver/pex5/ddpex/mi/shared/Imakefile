@@ -1,0 +1,102 @@
+XCOMM
+XCOMM $XConsortium: Imakefile /main/12 1996/09/28 16:54:42 rws $
+XCOMM $XFree86: xc/programs/Xserver/PEX5/ddpex/mi/shared/Imakefile,v 3.4 1996/12/23 06:26:18 dawes Exp $
+XCOMM
+XCOMM 
+XCOMM Copyright 1989, 1990, 1991 by Sun Microsystems, Inc. and the X Consortium
+XCOMM 
+XCOMM			 All Rights Reserved
+XCOMM 
+XCOMM Permission to use, copy, modify, and distribute this software and its 
+XCOMM documentation for any purpose and without fee is hereby granted, 
+XCOMM provided that the above copyright notice appear in all copies and that
+XCOMM both that copyright notice and this permission notice appear in 
+XCOMM supporting documentation, and that the names of Sun Microsystems
+XCOMM or the X Consortium not be used in advertising or publicity 
+XCOMM pertaining to distribution of the software without specific, written 
+XCOMM prior permission.  
+XCOMM 
+XCOMM SUN MICROSYSTEMS DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, 
+XCOMM INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+XCOMM EVENT SHALL SUN MICROSYSTEMS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+XCOMM CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+XCOMM USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+XCOMM OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+XCOMM PERFORMANCE OF THIS SOFTWARE.
+
+#include <Server.tmpl>
+
+#ifndef PexDdpexCDebugFlags
+#define PexDdpexCDebugFlags ServerCDebugFlags
+#endif
+
+XCOMM -D defines for ddpex:
+XCOMM	DDTEST turns on some fprintf(stderr...)s for debugging
+XCOMM	PEX_DEFAULT_FONTPATH defines the default path to PEX fonts
+
+    DEFINES = PexDdpexDefines
+EXT_DEFINES = ExtensionDefines
+CDEBUGFLAGS = PexDdpexCDebugFlags
+
+  PEXSERVINC = ../../../include
+DDPEXINCLUDE = ../include
+
+INCLUDES = -I. \
+	-I$(DDPEXINCLUDE) \
+	-I$(XINCLUDESRC) \
+	-I$(PEXSERVINC) \
+	-I$(SERVERSRC)/include
+
+SRCS = miFont.c \
+	miLUT.c \
+	miLineLUT.c \
+	miMarkLUT.c \
+	miTextLUT.c \
+	miEdgeLUT.c \
+	miIntLUT.c \
+	miPattLUT.c \
+	miFontLUT.c \
+	miViewLUT.c \
+	miColrLUT.c \
+	miClrApLUT.c \
+	miLightLUT.c \
+	miDCueLUT.c \
+	miNS.c \
+	miUtils.c \
+	miMisc.c 
+
+OBJS = miFont.o \
+	miLUT.o \
+	miLineLUT.o \
+	miMarkLUT.o \
+	miTextLUT.o \
+	miEdgeLUT.o \
+	miIntLUT.o \
+	miPattLUT.o \
+	miFontLUT.o \
+	miViewLUT.o \
+	miColrLUT.o \
+	miClrApLUT.o \
+	miLightLUT.o \
+	miDCueLUT.o \
+	miNS.o \
+	miUtils.o \
+	miMisc.o 
+
+#define DoSharedLib	PexDynamicModule
+#include <ServerLib.tmpl>
+#if DoSharedLib
+SubdirLibraryRule($(OBJS))
+UnsharedLibraryTarget(ddpexs,$(OBJS),unshared,..)
+#else
+NormalLibraryTarget(ddpexs,$(OBJS))
+#endif
+LintLibraryTarget(dps, $(SRCS))
+NormalLintTarget($(SRCS))
+
+InstallLinkKitLibrary(ddpexs,$(LINKKITDIR)/lib)
+
+SpecialCLibObjectRule(miMisc,$(ICONFIGFILES),$(EXT_DEFINES))
+
+DependTarget()
+

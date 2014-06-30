@@ -1,0 +1,88 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_TextureUpdateWithFBRegion</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_TextureUpdateWithFBRegion</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_TextureUpdateWithFBRegion</h4>
+<dd>DEMOGL_TextureUpdateWithFBRegion updates an uploaded texture with with the color fragments from the backbuffer in the region specified.
+	The region is (iX,iY) - ((iX + iWidth),(iY + iHeight)), and this region is placed in the texture on (iXDext, iYDest) as lower left corner.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_TextureUpdateWithFBRegion(
+	<b>const int</b> <i>iX</i>,
+	<b>const int</b> <i>iY</i>,
+	<b>const int</b> <i>iWidth</i>,
+	<b>const int</b> <i>iHeight</i>,
+	<b>const int</b> <i>iXDest</i>,
+	<b>const int</b> <i>iYDest</i>,
+	<b>const GLuint</b> <i>iTextureID</i>,
+	<b>const int</b> <i>iDimensions</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iX</i>
+	<dd>Specifies the X-coordinate of the left lower corner of the region of the backbuffer which should be read for the texture data. This
+		is a screencoordinate in pixels, starting from the left of the screen.
+	<dt><i>iY</i>
+	<dd>Specifies the Y-coordinate of the left lower corner of the region of the backbuffer which should be read for the texture data. This
+		is a screencoordinate in pixels, starting from the bottom of the screen.
+	<dt><i>iWidth</i>
+	<dd>Specifies the width of the texture, which pixeldata is stored in the buffer pointed by <i>pbyBuffer</i> in pixels.
+		Must be 2<i><sup>n</sup></i> for some integer <i>n</i>. 
+	<dt><i>iHeight</i>
+	<dd>Specifies the height of the texture, which pixeldata is stored in the buffer pointed by <i>pbyBuffer</i> in pixels.
+		Must be 2<i><sup>n</sup></i> for some integer <i>n</i>. 
+	<dt><i>iXDest</i>
+	<dd>Specifies the X-coordinate of the left lower corner in the texture data where the region should be placed. This is in pixels.
+	<dt><i>iYDest</i>
+	<dd>Specifies the Y-coordinate of the left lower corner in the texture data where the region should be placed. This is in pixels.
+	<dt><i>iTextureID</i>
+	<dd>Specifies the TextureID of the texture which texturedata should be partial overwritten with the region from the framebuffer, as specified.
+	<dt><i>iDimensions</i>
+	<dd>Specifies the amount of dimensions of the texture, needed for the upload process of the texture data to OpenGL.
+		Can be one of the following values: DGL_TEXTUREDIMENSION_1D for 1D textures (only <i>iWidth</i> and <i>iXDest</i> is used),
+		DGL_TEXTUREDIMENSION_2D for	2D textures (only <i>iWidth</i>, <i>iHeight</i>, <i>iXDest</i> and <i>iYDest</i> are used) or DGL_TEXTUREDIMENSION_3D
+		for 3D textures, which are currently not implemented in full in DemoGL.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns <i>SYS_NOK</i>.
+	<p>
+<dt><b>Remarks.</b>
+<dd>Support for 3D textures is not fully implemented in DemoGL due to the lack of OpenGL 1.2 support in the Windows OpenGL implementation.
+	<b>DEMOGL_TextureUpdateWithFBRegion</b> will overwrite a part or completely the texturedata uploaded of the given texture. The texture
+	data stored in the texture store inside DemoGL, if applicable, is left untouched. You can't update a texture's data if
+	that particular texture is not uploaded, DemoGL will return SYS_NOK then.
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_TextureCreateFromBuffer.htm" target="main">DEMOGL_TextureCreateFromBuffer</a>,
+	<a HREF="ref_functions_DEMOGL_TextureUpload.htm" target="main">DEMOGL_TextureUpload</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 15-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

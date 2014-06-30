@@ -1,0 +1,176 @@
+.TH ACE_Recursive_Thread_Mutex 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Recursive_Thread_Mutex \- Implement a C++ wrapper that allows nested acquisition and release of a mutex that occurs in the same thread. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Recursive_Thread_Mutex\fR (const \fBACE_TCHAR\fR *name = 0, ACE_mutexattr_t *arg = 0)"
+.br
+.RI "\fIInitialize a recursive mutex.\fR"
+.ti -1c
+.RI "\fB~ACE_Recursive_Thread_Mutex\fR (void)"
+.br
+.RI "\fIImplicitly release a recursive mutex.\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.ti -1c
+.RI "int \fBacquire\fR (void)"
+.br
+.ti -1c
+.RI "int \fBtryacquire\fR (void)"
+.br
+.ti -1c
+.RI "int \fBacquire_read\fR (void)"
+.br
+.ti -1c
+.RI "int \fBacquire_write\fR (void)"
+.br
+.ti -1c
+.RI "int \fBtryacquire_read\fR (void)"
+.br
+.ti -1c
+.RI "int \fBtryacquire_write\fR (void)"
+.br
+.ti -1c
+.RI "int \fBtryacquire_write_upgrade\fR (void)"
+.br
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBget_thread_id\fR (void)"
+.br
+.RI "\fIReturn the id of the thread that currently owns the mutex.\fR"
+.ti -1c
+.RI "int \fBget_nesting_level\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBset_thread_id\fR (\fBACE_thread_t\fR t)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_recursive_thread_mutex_t\fR \fBrecursive_mutex_\fR"
+.br
+.RI "\fIRecursive mutex.\fR"
+.ti -1c
+.RI "int \fBremoved_\fR"
+.br
+.RI "\fIKeeps track of whether <remove> has been called yet to avoid multiple <remove> calls, e.g., explicitly and implicitly in the destructor. This flag isn't protected by a lock, so make sure that you don't have multiple threads simultaneously calling <remove> on the same object, which is a bad idea anyway...\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Recursive_Thread_Mutex &)"
+.br
+.ti -1c
+.RI "\fBACE_Recursive_Thread_Mutex\fR (const ACE_Recursive_Thread_Mutex &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Implement a C++ wrapper that allows nested acquisition and release of a mutex that occurs in the same thread.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Recursive_Thread_Mutex::ACE_Recursive_Thread_Mutex (const \fBACE_TCHAR\fR * name = 0, ACE_mutexattr_t * arg = 0)
+.PP
+Initialize a recursive mutex.
+.PP
+.SS ACE_Recursive_Thread_Mutex::~ACE_Recursive_Thread_Mutex (void)
+.PP
+Implicitly release a recursive mutex.
+.PP
+.SS ACE_Recursive_Thread_Mutex::ACE_Recursive_Thread_Mutex (const ACE_Recursive_Thread_Mutex &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Recursive_Thread_Mutex::acquire (void)
+.PP
+Acquire a recursive mutex (will increment the nesting level and not deadmutex if the owner of the mutex calls this method more than once). 
+.SS int ACE_Recursive_Thread_Mutex::acquire_read (void)
+.PP
+Acquire mutex ownership. This calls  and is only here to make the  interface consistent with the other synchronization APIs. 
+.SS int ACE_Recursive_Thread_Mutex::acquire_write (void)
+.PP
+Acquire mutex ownership. This calls  and is only here to make the  interface consistent with the other synchronization APIs. 
+.SS void ACE_Recursive_Thread_Mutex::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_Recursive_Thread_Mutex::get_nesting_level (void)
+.PP
+Return the nesting level of the recursion. When a thread has acquired the mutex for the first time, the nesting level == 1. The nesting level is incremented every time the thread acquires the mutex recursively. 
+.SS \fBACE_thread_t\fR ACE_Recursive_Thread_Mutex::get_thread_id (void)
+.PP
+Return the id of the thread that currently owns the mutex.
+.PP
+.SS void ACE_Recursive_Thread_Mutex::operator= (const ACE_Recursive_Thread_Mutex &)\fC [private]\fR
+.PP
+.SS int ACE_Recursive_Thread_Mutex::release (void)
+.PP
+Releases a recursive mutex (will not release mutex until all the nesting level drops to 0, which means the mutex is no longer held). 
+.SS int ACE_Recursive_Thread_Mutex::remove (void)
+.PP
+Implicitly release a recursive mutex. Note that only one thread should call this method since it doesn't protect against race conditions. 
+.SS void ACE_Recursive_Thread_Mutex::set_thread_id (\fBACE_thread_t\fR t)\fC [protected]\fR
+.PP
+.SS int ACE_Recursive_Thread_Mutex::tryacquire (void)
+.PP
+Conditionally acquire a recursive mutex (i.e., won't block). Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.SS int ACE_Recursive_Thread_Mutex::tryacquire_read (void)
+.PP
+Conditionally acquire mutex (i.e., won't block). This calls <tryacquire> and is only here to make the  interface consistent with the other synchronization APIs. Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.SS int ACE_Recursive_Thread_Mutex::tryacquire_write (void)
+.PP
+Conditionally acquire mutex (i.e., won't block). This calls <tryacquire> and is only here to make the  interface consistent with the other synchronization APIs. Returns -1 on failure. If we "failed" because someone else already had the lock, <errno> is set to <EBUSY>. 
+.SS int ACE_Recursive_Thread_Mutex::tryacquire_write_upgrade (void)
+.PP
+This is only here to make the  interface consistent with the other synchronization APIs. Assumes the caller has already acquired the mutex using one of the above calls, and returns 0 (success) always. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Recursive_Thread_Mutex::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS \fBACE_recursive_thread_mutex_t\fR ACE_Recursive_Thread_Mutex::recursive_mutex_\fC [protected]\fR
+.PP
+Recursive mutex.
+.PP
+.SS int ACE_Recursive_Thread_Mutex::removed_\fC [protected]\fR
+.PP
+Keeps track of whether <remove> has been called yet to avoid multiple <remove> calls, e.g., explicitly and implicitly in the destructor. This flag isn't protected by a lock, so make sure that you don't have multiple threads simultaneously calling <remove> on the same object, which is a bad idea anyway...
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

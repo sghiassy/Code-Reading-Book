@@ -1,0 +1,120 @@
+.TH ACE_Refcounted_Recyclable_Handler_Caching_Utility 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Refcounted_Recyclable_Handler_Caching_Utility \- Defines a helper class for the Caching Strategies. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Caching_Utility_T.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Refcounted_Recyclable_Handler_Cleanup_Strategy\fR<KEY, VALUE, CONTAINER> \fBCLEANUP_STRATEGY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Cleanup_Strategy\fR<KEY, VALUE, CONTAINER> \fBCLEANUP_STRATEGY_BASE\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Refcounted_Recyclable_Handler_Caching_Utility\fR (\fBACE_Cleanup_Strategy\fR<KEY, VALUE, CONTAINER> *cleanup_strategy = 0, int delete_cleanup_strategy = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_Refcounted_Recyclable_Handler_Caching_Utility\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBclear_cache\fR (CONTAINER &container, double purge_percent)"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBminimum\fR (CONTAINER &container, KEY *&key_to_remove, VALUE *&value_to_remove)"
+.br
+.RI "\fIFind the entry with minimum caching attributes.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBCLEANUP_STRATEGY_BASE\fR* \fBcleanup_strategy_\fR"
+.br
+.RI "\fIThis is the default Cleanup Strategy for this utility.\fR"
+.ti -1c
+.RI "int \fBdelete_cleanup_strategy_\fR"
+.br
+.RI "\fIWhether the cleanup_strategy should be destroyed or not.\fR"
+.ti -1c
+.RI "size_t \fBmarked_as_closed_entries_\fR"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ARRHUTIL <KEY,VALUE,CONTAINER,ITERATOR,ATTRIBUTES> &)"
+.br
+.ti -1c
+.RI "\fBARRHUTIL\fR (const ARRHUTIL <KEY,VALUE,CONTAINER,ITERATOR,ATTRIBUTES> &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class KEY, class VALUE, class CONTAINER, class ITERATOR, class ATTRIBUTES>  template class ACE_Refcounted_Recyclable_Handler_Caching_Utility
+Defines a helper class for the Caching Strategies.
+.PP
+.PP
+ This class defines the methods commonly used by the different caching strategies. For instance: clear_cache () method which decides and purges the entry from the container. Note: This class helps in the caching_strategies using a container containing entries of <Refcounted_KEY, Recyclable_Connection_Handler> kind. The attributes helps in deciding the entries to be purged. The Cleanup_Strategy is the callback class to which the entries to be cleaned up will be delegated. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> typedef \fBACE_Refcounted_Recyclable_Handler_Cleanup_Strategy\fR<KEY, VALUE, CONTAINER> ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::CLEANUP_STRATEGY
+.PP
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> typedef \fBACE_Cleanup_Strategy\fR<KEY, VALUE, CONTAINER> ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::CLEANUP_STRATEGY_BASE
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES> (\fBACE_Cleanup_Strategy\fR< KEY,VALUE,CONTAINER >* cleanup_strategy = 0, int delete_cleanup_strategy = 0)
+.PP
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::~ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES> (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::ARRHUTIL (const ARRHUTIL< KEY,VALUE,CONTAINER,ITERATOR,ATTRIBUTES >&)\fC [private]\fR
+.PP
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> int ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::clear_cache (CONTAINER & container, double purge_percent)
+.PP
+Purge entries from the <container>. The Cleanup_Strategy will do the actual job of cleanup once the entries to be cleaned up are decided. 
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> void ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::minimum (CONTAINER & container, KEY *& key_to_remove, VALUE *& value_to_remove)\fC [protected]\fR
+.PP
+Find the entry with minimum caching attributes.
+.PP
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> void ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::operator= (const ARRHUTIL< KEY,VALUE,CONTAINER,ITERATOR,ATTRIBUTES >&)\fC [private]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> \fBCLEANUP_STRATEGY_BASE\fR * ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::cleanup_strategy_\fC [protected]\fR
+.PP
+This is the default Cleanup Strategy for this utility.
+.PP
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> int ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::delete_cleanup_strategy_\fC [protected]\fR
+.PP
+Whether the cleanup_strategy should be destroyed or not.
+.PP
+.SS template<classKEY, classVALUE, classCONTAINER, classITERATOR, classATTRIBUTES> size_t ACE_Refcounted_Recyclable_Handler_Caching_Utility<KEY, VALUE, CONTAINER, ITERATOR, ATTRIBUTES>::marked_as_closed_entries_\fC [protected]\fR
+.PP
+This figure denotes the number of entries are there in the container which have been marked as closed already but might not have been unbound from the container. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

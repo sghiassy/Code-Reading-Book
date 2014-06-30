@@ -1,0 +1,549 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document> 
+ <header>
+  <title>Understanding Apache Cocoon</title>
+  <authors>
+   <person name="Pankaj Kumar" email="pankaj_kumar@hp.com"/>
+   <person name="Davanum Srinivas" email="dims@yahoo.com"/>
+  </authors>
+ </header>
+
+ <body>
+   <s1 title="Overview">
+     <p>
+     This document is intended for both Users and Developers 
+     and presents an overall picture of Apache Cocoon.
+     </p>
+
+     <ul>
+       <li>
+         <link href="#pre-requisites">
+           Prerequisites
+         </link>
+       </li>
+       <li>
+         <link href="#a-little-history">
+           A Little History
+         </link>
+       </li>
+       <li>
+         <link href="#what-problems">
+           What problem does Cocoon solve?
+         </link>
+       </li>
+       <li>
+         <link href="#basic-mechanisms">
+           Basic Mechanisms.
+         </link>
+       </li>
+       <li>
+         <link href="#c2-architecture">
+           Architecture.
+         </link>
+       </li>
+       <li>
+         <link href="#c2-abstractions">
+           Abstraction.
+         </link>
+       </li>
+       <li>
+         <link href="#cocoon-configuration">
+           Apache Cocoon Configuration.
+         </link>
+       </li>
+       <li>
+         <link href="#work-area">
+           Apache Cocoon Work Area.
+         </link>
+       </li>
+       <li>
+         <link href="#use-with-tomcat">
+           Use with Tomcat
+         </link>
+       </li>
+     </ul>
+  </s1>
+
+  <anchor id="pre-requisites"/>
+  <s1 title="Prerequisites">
+    <p>What You Should know:</p> 
+    <ul> 
+         <li>XML, XML Namespaces</li>
+         <li>Basics of XPath, XSLT</li>
+         <li>Java language</li>
+         <li>Servlets, HTTP</li>
+    </ul> 
+    <p>What You need not know:</p> 
+    <ul> 
+         <li>Cocoon 1</li>
+    </ul> 
+  </s1>
+  <anchor id="a-little-history"/>
+  <s1 title="A Little History">
+    <s2 title="Cocoon 1">
+      <ul> 
+            <li>Cocoon project was founded in Jan. 1999 by Stefano Mazzocchi as an open source project under Apache Software Foundation.</li>
+            <li>Started as a simple servlet for XSL styling of XML content.</li>
+            <li>Was based on DOM level 1 API. This choice turned out to be quite limiting for speed/memory efficiency.</li>
+            <li>Used reactor pattern to connect components. This allowed the reaction instructions to be placed inside the documents.  Though appealing, it caused difficulties in managing highly dynamic web-sites.</li>
+            <li>Allowed context overlap to happen by having processing instructions in documents/stylesheets.</li>
+      </ul> 
+    </s2>
+    <s2 title="Apache Cocoon">
+      <ul> 
+            <li>A separate codebase to incorporate Cocoon 1 learnings.</li>
+            <li>Designed for execution speed/memory efficiency and scalability to process very large documents by switching processing model from DOM to SAX.</li>
+            <li>Centralizes the management functions by allowing processing pipeline specification in a sitemap (an XML file), replacing the embedded processing instruction model.</li>
+            <li>Better support for pre-compilation, pre-generation and caching for better performance.</li>
+      </ul>
+    </s2>
+  </s1>
+  <anchor id="what-problems"/>
+  <s1 title="What problem does Cocoon solve?">
+    <p>Basic problem to be solved:</p>
+    <s2 title="Separation of content, style, logic and management functions in an XML content based web site (and web services).">
+      <figure src="images/pyramid-model.gif"
+              alt="The Apache Cocoon Pyramid Model of Contracts"
+              width="313" height="159"/>
+    </s2>
+    <s2 title="Data Mapping">
+      <figure src="images/data-mapping.gif" alt="The Apache Cocoon Data Mapping"
+              width="339" height="174"/>
+    </s2>
+  </s1>
+  <anchor id="basic-mechanisms"/>
+  <s1 title="Basic Mechanisms.">
+    <p>Basic mechanisms for processing XML documents:</p>
+    <ul>
+      <li>Dispatching based on Matchers.</li>
+      <li>Generation of XML documents (from content, logic, Relation DB, objects or any combination) through Generators</li>
+      <li>Transformation (to another XML, objects or any combination) of XML documents through Transformers</li>
+      <li>Aggregation of XML documents through Aggregators</li>
+      <li>Rendering XML through Serializers</li>
+    </ul>
+    <figure src="images/basic-mechanism.gif" alt="Basic Mechanisms"
+            width="288" height="386"/>
+    <s2 title="Pipeline Processing">
+        <p>Sequence of Interactions</p>
+        <figure src="images/interaction-sequence.gif"
+                alt="Interaction Sequence"
+                width="613" height="347"/>
+        <p>Pipeline</p>
+        <figure src="images/pipeline.gif" alt="Pipeline"
+                width="713" height="223"/>
+    </s2>
+  </s1>
+  <anchor id="c2-architecture"/>
+  <s1 title="Architecture.">
+    <figure src="images/architecture.gif" alt="Architecture"
+            width="430" height="349"/>
+    <s2 title="Core Cocoon">
+      <ul>
+        <li>Avalon framework for logging, configuration, threading, context etc.</li>
+        <li>Caching mechanism</li>
+        <li>Pipeline handling</li>
+        <li>Program generation, compilation, loading and execution.</li>
+        <li>Base classes for generation, transformation, serialization, components.</li>
+        <li>...</li>
+      </ul>
+    </s2>
+    <s2 title="Cocoon Components">
+      <ul>
+        <li>Specific generators</li>
+        <li>Specific transformers</li>
+        <li>Specific matchers</li>
+        <li>Specific serializers</li>
+        <li>...</li>
+      </ul>
+    </s2>
+    <s2 title="Built-in Logicsheets">
+      <ul>
+        <li>sitemap.xsl</li>
+        <li>xsp.xsl</li>
+        <li>esql.xsl</li>
+        <li>request.xsl</li>
+        <li>response.xsl</li>
+        <li>...</li>
+      </ul>
+    </s2>
+    <s2 title="Site specific configuration, components, logicsheets and content">
+      <ul>
+        <li>...</li>
+      </ul>
+    </s2>
+  </s1>
+  <anchor id="c2-abstractions"/>
+  <s1 title="Abstraction.">
+    <s2 title="eXtensible Server Pages (XSPs)">
+      <p>An XSP page is an XML page with following requirements:</p>
+        <ul>
+          <li>The document root must be <code>&lt;xsp:page&gt;</code></li>
+          <li>It must have language declaration as an attribute in the <code>&lt;xsp:page&gt;</code> element.</li>
+          <li>It must have namespace declaration for xsp as an attribute in the <code>&lt;xsp:page&gt;</code> element.</li>
+          <li>For an XSP to be useful, it must also require at least an <code>&lt;xsp:logic&gt;</code> and an <code>&lt;xsp:expr&gt;</code> element.</li>
+        </ul>
+<source><![CDATA[
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page language="java" xmlns:xsp="http://apache.org/xsp">
+
+  <xsp:logic>
+  static private int counter = 0;
+  private synchronized int count()
+  {
+    return counter++;
+  }
+  </xsp:logic>
+
+  <page>
+  <p>I have been requested <xsp:expr>count()</xsp:expr> times.</p>
+  </page>
+
+</xsp:page>
+]]></source>
+
+      <p>An XSP page is used by a generator to generate XML document.</p>
+    </s2>
+    <s2 title="XSP Processing (Code Generation)">
+<source><![CDATA[
+package org.apache.cocoon.www.docs.samples.xsp;
+
+import java.io.File;
+// A bunch of other imports 
+
+public class counter_xsp extends XSPGenerator {
+   // .. Bookkeeping stuff commented out.
+  /* User Class Declarations */
+  static private int counter = 0;
+  private synchronized int count() {
+    return counter++;
+  }
+  /* Generate XML data. */
+  public void generate() throws SAXException {
+    this.contentHandler.startDocument();
+    AttributesImpl xspAttr = new AttributesImpl();
+    this.contentHandler.startPrefixMapping("xsp", "http://apache.org/xsp");
+    this.contentHandler.startElement("", "page", "page", xspAttr);
+    // Statements to build the XML document (Omitted)
+    this.contentHandler.endElement("", "page", "page");
+    this.contentHandler.endPrefixMapping("xsp");
+    this.contentHandler.endDocument();
+  }
+]]></source>
+    </s2>
+    <s2 title="Ways of Creating XSPs">
+      <s3 title="Embedded Logic">
+      <ul>
+        <li>Code is embedded in the XML page</li>
+        <li>No separation of content and logic</li>
+        <li>Okay for small examples but terrible for large systems.</li>
+      </ul>
+      <figure src="images/xsp-way.gif" alt="ways of creating xsp's"
+              width="323" height="384"/>
+      </s3>
+      <s3 title="Included Logicsheet">
+      <ul>
+        <li>Code is in a separate logicsheet (an XSL file)</li>
+        <li>Effective separation of content and logic</li>
+        <li>Preferred way to create XSPs</li>
+      </ul>
+      <figure src="images/xsp-way2.gif" alt="ways of creating xsp's"
+              width="318" height="403"/>
+      </s3>
+      <s3 title="Logicsheet as tag library">
+      <ul>
+        <li>The logicsheet is packaged as a reusable tag library and registered with Cocoon in cocoon.xconf file.</li>
+        <li>Tag library has a namespace declaration, declared in the original logicsheet and matched in <code>&lt;xsp:page&gt;</code> xmlns:... attribute.</li>
+        <li>Effective separation of content, logic and management</li>
+      </ul>
+      <figure src="images/xsp-way3.gif" alt="ways of creating xsp's"
+              width="344" height="409"/>
+      </s3>
+    </s2>
+    <s2 title="Sitemap">
+<source><![CDATA[
+<?xml version="1.0"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+<map:components>
+...
+</map:components>
+
+<map:views>
+...
+</map:views>
+<map:pipelines>
+<map:pipeline>
+<map:match> 
+...
+</map:match>
+...
+</map:pipeline>
+...
+</map:pipelines>
+...
+</map:sitemap>
+]]></source>
+      <p>Sitemap contains configuration information for a Cocoon engine:</p>
+        <ul>
+           <li>list of matchers</li>
+           <li>list of generators</li>
+           <li>list of transformers</li>
+           <li>list of readers</li>
+           <li>list of serializers</li>
+           <li>list of selectors</li>
+           <li>list of processing pipelines with match patterns</li>
+           <li>...</li>
+        </ul>
+      <p>Sitemap is an XML file corresponding to a sitemap DTD.</p>
+      <p>Sitemap can be edited to add new elements.</p>
+      <p>Sitemap is generated into a program and is compiled into an executable unit.</p>
+    </s2>
+    <s2 title="Matchers">
+      <p>A Matcher attempts to match an URI with a specified pattern for dispatching the request to a specific processing pipeline.</p>
+      <p>Different types of matchers:</p>
+        <ul>
+           <li>wildcard matcher</li>
+           <li>regexp matcher</li>
+        </ul>
+      <p>More matchers can be added without modifying Cocoon.</p>
+      <p>Matchers help in specifying a specific pipeline processing for a group of URIs.</p>
+      <p>Sitemap entries for different types of matchers</p>
+<source><![CDATA[
+<map:matchers default="wildcard">
+ <map:matcher name="wildcard" factory="org.apache.cocoon.matching.WildcardURIMatcherFactory"/>
+ <map:matcher name="regexp" factory="org.apache.cocoon.matching.RegexpURIMatcherFactory"/>
+</map:matchers>
+]]></source>
+      <p>Pipeline entries in sitemap file</p>
+<source><![CDATA[
+<map:match pattern="jsp/*">
+  <map:generate type="jsp" src="/docs/samples/jsp/{1}.jsp"/>
+  ...
+  </map:match>
+<map:match pattern="hello.pdf">
+</map:match
+]]></source>
+    </s2>
+    <s2 title="Generators">
+      <p>A Generator is used to create an XML structure from an input source (file, directory, stream ...)</p>
+      <figure src="images/xsp-way3.gif" alt="ways of creating xsp's"
+              width="344" height="409"/>
+      <p>Different types of generators:</p>
+        <ul>
+           <li>file generator</li>
+           <li>directory generator</li>
+           <li>XSP generator</li>
+           <li>JSP generator</li>
+           <li>Request generator</li>
+           <li>...</li>
+        </ul>
+      <p>More generators can be added without modifying Cocoon.</p>
+      <p>Sitemap entries for different types of generators</p>
+<source><![CDATA[
+<map:generators default="file">
+ <map:generator name="file"
+                src="org.apache.cocoon.generation.FileGenerator"
+                label="content"/>
+ <map:generator name="directory"
+                src="org.apache.cocoon.generation.DirectoryGenerator"
+                label="content"/>
+ <map:generator name="serverpages"
+                src="org.apache.cocoon.generation.ServerPagesGenerator"
+                label="content"/>
+ <map:generator name="request"
+                src="org.apache.cocoon.generation.RequestGenerator"/>
+ ...
+</map:generators>
+]]></source>
+      <p>A sample generator entries in a pipeline</p>
+<source><![CDATA[
+<map:match pattern="hello.html">
+    <map:generate src="docs/samples/hello-page.xml"/>
+    <map:transform src="stylesheets/page/simple-page2html.xsl"/>
+    <map:serialize type="html"/>
+</map:match>
+]]></source>
+
+      <p>A Generator turns an XML document, after applying appropriate transformations, into a compiled program whose output is an XML document.</p>
+      <p>An XSP generator applies all the logicsheets specified in the source XML file before generating the program.</p>
+      <p>Generators cache the compiled programs for better runtime efficiency.</p>
+    </s2>
+    <s2 title="Transformers">
+      <p>A Transformer is used to map an input XML structure into another XML structure.</p>
+      <p>Different types of transformers:</p>
+        <ul>
+           <li>XSLT Transformer</li>
+           <li>Log Transformer</li>
+           <li>SQL Transformer</li>
+           <li>I18N Transformer</li>
+           <li>...</li>
+        </ul>
+      <p>Log Transformer is a good debugging tool.</p>
+      <p>More transformers can be added without modifying Cocoon.</p>
+      <p>Sitemap entries for different types of transformers</p>
+<source><![CDATA[
+<map:transformers default="xslt">
+   <map:transformer name="xslt" src="org.apache.cocoon.transformation.TraxTransformer">
+    <use-store map:value="true"/>
+    <use-request-parameters map:value="false"/>
+    <use-browser-capabilities-db map:value="false"/>
+   </map:transformer>
+   <map:transformer name="log" src="org.apache.cocoon.transformation.LogTransformer"/>
+...
+
+</map:transformers>
+]]></source>
+      <p>A sample transformer entry in a pipeline</p>
+<source><![CDATA[
+<map:match pattern="hello.html">
+ <map:generate src="docs/samples/hello-page.xml"/>
+ <map:transform src="stylesheets/page/simple-page2html.xsl"/>
+ <map:serialize type="html"/>
+</map:match>
+]]></source>
+    </s2>
+    <s2 title="Serializers">
+      <p>A Serializer is used to render an input XML structure into some other format (not necessarily XML)</p>
+      <p>Different types of serializers:</p>
+        <ul>
+           <li>HTML Serializer</li>
+           <li>FOP Serializer</li>
+           <li>Text Serializer</li>
+           <li>XML Serializer</li>
+           <li>...</li>
+        </ul>
+      <p>More serializers can be added without modifying Cocoon.</p>
+      <p>Sitemap entries for different types of serializers</p>
+<source><![CDATA[
+<map:serializers default="html">
+ <map:serializer name="xml"
+                 mime-type="text/xml"
+                 src="org.apache.cocoon.serialization.XMLSerializer"/>
+ <map:serializer name="html"
+                 mime-type="text/html"
+                 src="org.apache.cocoon.serialization.HTMLSerializer"/>
+ <map:serializer name="fo2pdf"
+                 mime-type="application/pdf"
+                 src="org.apache.cocoon.serialization.FOPSerializer"/>
+ <map:serializer name="vrml"
+                 mime-type="model/vrml"
+                 src="org.apache.cocoon.serialization.TextSerializer"/>
+ ...
+</map:serializers>
+]]></source>
+      <p>A sample serializer entry in a pipeline</p>
+<source><![CDATA[
+ <map:match pattern="hello.html">
+    <map:generate src="docs/samples/hello-page.xml"/>
+    <map:transform src="stylesheets/page/simple-page2html.xsl"/>
+    <map:serialize type="html"/>
+   </map:match>
+]]></source>
+    </s2>
+    <s2 title="Pipeline Processing">
+      <p>The sitemap configuration allows dynamic setup of processing pipelines consisting of a generator, multiple transformers and a serializer.</p>
+      <p>Requests are dispatched to a pipeline based on request URI and the pipeline matching pattern (either with wildcards or as a regexp)</p>
+      <p>The pipeline is setup in the generated file <code>sitemap_xmap.java</code> (This file gets generated [possibly asynchronously] everytime the <code>sitemap.xmap</code> is modified.</p>
+      <figure src="images/pipeline2.gif" alt="Pipeline Entry"
+              width="379" height="341"/>
+    </s2>
+    <s2 title="Logicsheets">
+      <p>Logicsheets are XSL files with an associated namespace.</p>
+      <p>Primary mechanism to add program logic (code) to XSPs.</p>
+      <p>These need to be registered in configuration file cocoon.xconf.</p>
+      <p>Logicsheets are used by the generator to transform XML structure before generating program.</p>
+      <p>Cocoon comes with a no. of built-in logic sheets:</p>
+        <ul>
+           <li>request.xsl</li>
+           <li>response.xsl</li>
+           <li>session.xsl</li>
+           <li>cookie.xsl</li>
+           <li>esql.xsl</li>
+           <li>log.xsl</li>
+           <li>...</li>
+        </ul>
+      <p>Log.xsl structure</p>
+<source><![CDATA[
+<xsl:stylesheet  version="1.0"
+                 xmlns:xsp="http://apache.org/xsp"
+                 xmlns:log="http://apache.org/xsp/log"
+                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+<xsl:template match="log:logger">
+... variable and xsp:logic statements ...
+</xsl:template>
+
+<xsl:template match="log:debug">
+  <xsp:logic>
+   if(getLogger() != null)
+     getLogger().debug("<xsl:value-of select="."/>");    
+  </xsp:logic>  
+</xsl:template>
+<xsl:template match="log:error">
+...  
+</xsl:template>
+</xsl:stylesheet>
+]]></source>
+      <p>A sample use</p>
+<source><![CDATA[
+<xsp:page language="java"
+          xmlns:xsp="http://apache.org/xsp"
+          xmlns:log="http://apache.org/xsp/log">
+
+  <page>
+  <log:logger name="test" filename="test.log"/>
+  <log:debug>Test Message</log:debug>
+  </page>
+</xsp:page>
+]]></source>
+    </s2>
+  </s1>
+  <anchor id="cocoon-configuration"/>
+  <s1 title="Apache Cocoon Configuration.">
+    <p>Cocoon is highly configurable. Main configuration files, assuming Cocoon deployment as a servlet in a servlet container, are (directory locations assume Tomcat servlet container):</p>
+    <ul>
+       <li><code>sitemap.xmap</code>: the sitemap file. By default, located in <code>$TOMCAT_HOME/webapps/cocoon</code> directory.</li>
+       <li><code>cocoon.xconf</code>: configuration file having logicsheet registrations. Specifies, sitemap.xmap location and other such parameters. By default, located in <code>$TOMCAT_HOME/webapps/cocoon</code> directory.</li>
+       <li><code>web.xml</code>: servlet deployment descriptor. Specifies location of cocoon.xconf, log file location and other such parameters. Located in <code>$TOMCAT_HOME/webapps/cocoon/WEB-INF</code> directory.</li>
+       <li><code>cocoon.roles</code>: mapping file for Core Cocoon components name and implementation classes. For example, if you want to use a parser other than the default one, you need to modify this file.</li>
+    </ul>
+  </s1>
+  <anchor id="work-area"/>
+  <s1 title="Apache Cocoon Work Area">
+    <p>Cocoon produces execution log entries for debugging/auditing.</p>
+    <ul>
+       <li>The amount of data to be logged can be controlled by
+       log-level parameter in web.xml file. The default is DEBUG
+       (maximum data).</li>
+       <li>By default, the log file is:
+       <code>$TOMCAT_HOME/webapps/cocoon/WEB-INF/logs/cocoon.log</code>.</li>
+    </ul>
+
+    <p>Cocoon keeps the generated .java files in a directory tree
+    starting at (by default):<br/>
+    <code>$TOMCAT_HOME/webapps/work/localhost_8080%2Fcocoon/org/apache/cocoon/www</code>.</p>
+
+<p>You can find sitemap_xmap.java here.</p>
+
+    <p>Files created by LogTransformer are kept (by default) in <code>$TOMCAT_HOME</code> directory.</p>
+  </s1>
+  <anchor id="use-with-tomcat"/>
+  <s1 title="Use with Tomcat">
+    <p>Download Tomcat from Apache site.</p>
+    <p>Download Cocoon sources from Apache CVS. [Command assume UNIX Bourne shell]</p>
+<source><![CDATA[
+export CVSROOT=:pserver:anoncvs@cvs.apache.org:/home/cvspublic 
+cvs login 
+Password: anoncvs 
+cvs checkout xml-cocoon2
+]]></source>
+    <p>Build sources as per instruction in Install file.</p>
+    <p>Move the <code>cocoon.war</code> file to <code>$TOMCAT_HOME/webapps</code> directory.</p>
+    <p>Start the servlet engine. Type-in the URL <code>http://localhost:8080/cocoon</code> in your browser. You should see the Cocoon welcome message.</p>
+    <p>Consult Install file if you face problems.</p>
+  </s1>
+</body>
+</document>

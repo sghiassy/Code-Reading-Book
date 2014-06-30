@@ -1,0 +1,43 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/et4000w32/w32/Imakefile,v 3.11.2.2 1997/05/22 14:00:36 dawes Exp $
+
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/9 1996/10/24 06:07:38 kaleb $
+
+#include <Server.tmpl>
+
+SRCS = 	vgaHW.c vga.c vgaBank.s et4_bank.s w32vars.c \
+	et4000.c et4000w32.c dummy.c ramdac.c vgaPCI.c
+
+OBJS = 	vgaHW.o vga.o vgaBank.o et4_bank.o w32vars.o \
+	et4000.o et4000w32.o dummy.o ramdac.o vgaPCI.o
+
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+	   -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+           -I$(SERVERSRC)/include -I$(SERVERSRC)/cfb \
+           -I$(XINCLUDESRC) -I$(FONTINCSRC) \
+	   -I$(XF86SRC)/vga256/enhanced \
+	   -I$(XF86SRC)/vga256/vga
+
+#if DirtyStartup
+STARTUPDEFINES = -DDIRTY_STARTUP
+#endif
+
+DEFINES = $(SPEEDUPDEFINES) $(STARTUPDEFINES) -DPSZ=8 \
+          -DW32_SUPPORT -DW32_ACCEL_SUPPORT -DUSE_PIXMUX -UDPMSExtension
+
+NormalAsmObjectRule()
+NormalLibraryObjectRule()
+NormalLibraryTarget(w32,$(OBJS))
+
+LinkSourceFile(vgaHW.c,../../../vga256/vga)
+LinkSourceFile(vgaPCI.c,../../../vga256/vga)
+LinkSourceFile(vgaBank.s,../../../vga256/vga)
+ObjectFromSpecialAsmSource(et4_bank,$(VGADRIVERSRC)/et4000/bank,NullParameter)
+
+InstallLinkKitLibrary(w32,$(LINKKITDIR)/drivers)
+
+DependTarget()

@@ -1,0 +1,205 @@
+.TH ACE_Array_Base 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Array_Base \- Implement a simple dynamic array. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Array_Base.h>\fR
+.PP
+Inherited by \fBACE_Array\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef T \fBTYPE\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Array_Iterator\fR<T> \fBITERATOR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Array_Base\fR (size_t size = 0, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIDynamically create an uninitialized array.\fR"
+.ti -1c
+.RI "\fBACE_Array_Base\fR (size_t size, const T &default_value, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIDynamically initialize the entire array to the <default_value>.\fR"
+.ti -1c
+.RI "\fBACE_Array_Base\fR (const ACE_Array_Base<T> &s)"
+.br
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Array_Base<T> &s)"
+.br
+.ti -1c
+.RI "\fB~ACE_Array_Base\fR (void)"
+.br
+.RI "\fIClean up the array (e.g., delete dynamically allocated memory).\fR"
+.ti -1c
+.RI "T& \fBoperator[]\fR (size_t slot)"
+.br
+.RI "\fISet item in the array at location <slot>. Doesn't perform range checking.\fR"
+.ti -1c
+.RI "const T& \fBoperator[]\fR (size_t slot) const"
+.br
+.RI "\fIGet item in the array at location <slot>. Doesn't perform range checking.\fR"
+.ti -1c
+.RI "int \fBset\fR (const T &new_item, size_t slot)"
+.br
+.RI "\fISet an item in the array at location <slot>. Returns -1 if <slot> is not in range, else returns 0.\fR"
+.ti -1c
+.RI "int \fBget\fR (T &item, size_t slot) const"
+.br
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIReturns the <cur_size_> of the array.\fR"
+.ti -1c
+.RI "int \fBsize\fR (size_t new_size)"
+.br
+.ti -1c
+.RI "size_t \fBmax_size\fR (void) const"
+.br
+.RI "\fIReturns the <max_size_> of the array.\fR"
+.ti -1c
+.RI "int \fBmax_size\fR (size_t new_size)"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBin_range\fR (size_t slot) const"
+.br
+.RI "\fIReturns 1 if <slot> is within range, i.e., 0 >= <slot> < <cur_size_>, else returns 0.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBmax_size_\fR"
+.br
+.RI "\fIMaximum size of the array, i.e., the total number of <T> elements in .\fR"
+.ti -1c
+.RI "size_t \fBcur_size_\fR"
+.br
+.ti -1c
+.RI "T* \fBarray_\fR"
+.br
+.RI "\fIPointer to the array's storage buffer.\fR"
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIAllocation strategy of the ACE_Array_Base.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Array_Iterator< T >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Array_Base
+Implement a simple dynamic array.
+.PP
+.PP
+ This parametric class implements a simple dynamic array; resizing must be controlled by the user. No comparison or find operations are implemented. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classT> typedef \fBACE_Array_Iterator\fR<T> ACE_Array_Base<T>::ITERATOR
+.PP
+Reimplemented in \fBACE_Array\fR.
+.SS template<classT> typedef T ACE_Array_Base<T>::TYPE
+.PP
+Reimplemented in \fBACE_Array\fR.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Array_Base<T>::ACE_Array_Base<T> (size_t size = 0, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Dynamically create an uninitialized array.
+.PP
+.SS template<classT> ACE_Array_Base<T>::ACE_Array_Base<T> (size_t size, const T & default_value, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Dynamically initialize the entire array to the <default_value>.
+.PP
+.SS template<classT> ACE_Array_Base<T>::ACE_Array_Base<T> (const ACE_Array_Base< T >& s)
+.PP
+The copy constructor performs initialization by making an exact copy of the contents of parameter <s>, i.e., *this == s will return true. 
+.SS template<classT> ACE_Array_Base<T>::~ACE_Array_Base<T> (void)
+.PP
+Clean up the array (e.g., delete dynamically allocated memory).
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> int ACE_Array_Base<T>::get (T & item, size_t slot) const
+.PP
+Get an item in the array at location <slot>. Returns -1 if <slot> is not in range, else returns 0. Note that this function copies the item. If you want to avoid the copy, you can use the const operator [], but then you'll be responsible for range checking. 
+.SS template<classT> int ACE_Array_Base<T>::in_range (size_t slot) const\fC [private]\fR
+.PP
+Returns 1 if <slot> is within range, i.e., 0 >= <slot> < <cur_size_>, else returns 0.
+.PP
+.SS template<classT> int ACE_Array_Base<T>::max_size (size_t new_size)
+.PP
+Changes the size of the array to match <new_size>. It copies the old contents into the new array. Return -1 on failure. It does not affect new_size 
+.SS template<classT> size_t ACE_Array_Base<T>::max_size (void) const
+.PP
+Returns the <max_size_> of the array.
+.PP
+.SS template<classT> void ACE_Array_Base<T>::operator= (const ACE_Array_Base< T >& s)
+.PP
+Assignment operator performs an assignment by making an exact copy of the contents of parameter <s>, i.e., *this == s will return true. Note that if the <max_size_> of  is >= than <s.max_size_> we can copy it without reallocating. However, if <max_size_> is < <s.max_size_> we must delete the , reallocate a new , and then copy the contents of <s>. 
+.SS template<classT> const T & ACE_Array_Base<T>::operator[] (size_t slot) const
+.PP
+Get item in the array at location <slot>. Doesn't perform range checking.
+.PP
+.SS template<classT> T & ACE_Array_Base<T>::operator[] (size_t slot)
+.PP
+Set item in the array at location <slot>. Doesn't perform range checking.
+.PP
+.SS template<classT> int ACE_Array_Base<T>::set (const T & new_item, size_t slot)
+.PP
+Set an item in the array at location <slot>. Returns -1 if <slot> is not in range, else returns 0.
+.PP
+.SS template<classT> int ACE_Array_Base<T>::size (size_t new_size)
+.PP
+Changes the size of the array to match <new_size>. It copies the old contents into the new array. Return -1 on failure. 
+.SS template<classT> size_t ACE_Array_Base<T>::size (void) const
+.PP
+Returns the <cur_size_> of the array.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> class \fBACE_Array_Iterator\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> \fBACE_Allocator\fR * ACE_Array_Base<T>::allocator_\fC [private]\fR
+.PP
+Allocation strategy of the ACE_Array_Base.
+.PP
+.SS template<classT> T * ACE_Array_Base<T>::array_\fC [private]\fR
+.PP
+Pointer to the array's storage buffer.
+.PP
+.SS template<classT> size_t ACE_Array_Base<T>::cur_size_\fC [private]\fR
+.PP
+Current size of the array. This starts out being == to <max_size_>. However, if we are assigned a smaller array, then <cur_size_> will become less than <max_size_>. The purpose of keeping track of both sizes is to avoid reallocating memory if we don't have to. 
+.SS template<classT> size_t ACE_Array_Base<T>::max_size_\fC [private]\fR
+.PP
+Maximum size of the array, i.e., the total number of <T> elements in .
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

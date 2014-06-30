@@ -1,0 +1,144 @@
+XCOMM $XConsortium: Imakefile /main/9 1996/10/25 15:39:32 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/SuperProbe/Imakefile,v 3.12.2.2 1997/05/06 13:29:35 dawes Exp $
+#if defined(SVR3Architecture) || defined(SVR4Architecture) || defined(SCOArchitecture)
+# define OSModule OS_SYSV
+#endif
+
+#if defined(SVR4Architecture)
+# include <Server.tmpl>
+#endif
+
+#if defined(SVR4Architecture) && defined(SunArchitecture) && !HasGcc
+  OS_IO_SRC = SolX86IO.s
+  OS_IO_OBJ = SolX86IO.o
+#endif
+#if defined(LinuxArchitecture)
+# define OSModule OS_Linux
+#endif
+#if defined(LynxOSArchitecture)
+# define OSModule OS_LynxOS
+#endif
+#if defined(i386BsdArchitecture)
+# define OSModule OS_386BSD
+#endif
+#if defined(MinixArchitecture)
+# define OSModule OS_Minix
+#endif
+#if defined(i386MachArchitecture)
+   SYS_LIBRARIES = /usr/lib/libmach.a
+# define OSModule OS_Mach
+#endif
+#if defined(OS2Architecture)
+# define OSModule OS_Os2
+  CCOPTIONS = -Zmts
+#endif
+#if defined(NetBSDArchitecture) \
+   && ((OSMajorVersion == 1 && OSMinorVersion >= 1) || OSMajorVersion >= 2)
+  IOPERMDEFINES = -DUSE_I386_IOPL
+  SYS_LIBRARIES = -li386
+#endif
+
+OS_SRC = OSModule.c $(OS_IO_SRC)
+OS_OBJ = OSModule.o $(OS_IO_OBJ)
+BASE_SRC = MDA.c Herc.c CGA.c VGA.c RamDac.c MemProbe.c PCI.c
+BASE_OBJ = MDA.o Herc.o CGA.o VGA.o RamDac.o MemProbe.o PCI.o
+SVGA_SRC = Tseng.c WD.c ChipsTech.c Video7.c Genoa.c Trident.c Oak.c \
+	   Cirrus.c Ahead.c ATI.c S3.c AL.c Yamaha.c NCR.c MX.c \
+	   RealTek.c Primus.c Compaq.c HMC.c UMC.c Weitek.c SiS.c \
+	   ARK.c Alliance.c Matrox.c SigmaDesigns.c
+SVGA_OBJ = Tseng.o WD.o ChipsTech.o Video7.o Genoa.o Trident.o Oak.o \
+	   Cirrus.o Ahead.o ATI.o S3.o AL.o Yamaha.o NCR.o MX.o \
+	   RealTek.o Primus.o Compaq.o HMC.o UMC.o Weitek.o SiS.o \
+	   ARK.o Alliance.o Matrox.o SigmaDesigns.o
+COPROC_SRC = 8514.c ATIMach.c I128.c GLINT.c
+COPROC_OBJ = 8514.o ATIMach.o I128.o GLINT.o
+SRCS = Main.c $(SVGA_SRC) $(COPROC_SRC) $(BASE_SRC) Print.c Utils.c $(OS_SRC)
+OBJS = Main.o $(SVGA_OBJ) $(COPROC_OBJ) $(BASE_OBJ) Print.o Utils.o $(OS_OBJ)
+
+#ifdef GccGasOption
+GASDEFINES = GccGasOption
+#endif
+CONSDEFINES = XFree86ConsoleDefines
+
+#ifdef OS2Architecture
+SPECIALS= sprobe.def
+#endif
+
+DEFINES = $(GASDEFINES) $(CONSDEFINES) $(IOPERMDEFINES)
+
+PROG = SuperProbe
+
+AllTarget(ProgramTargetName($(PROG)))
+SetUIDProgramTarget($(PROG),$(OBJS),NullParameter,$(SPECIALS),NullParameter)
+#ifndef DontInstallPC98Version
+InstallProgramWithFlags($(PROG),$(BINDIR),$(INSTUIDFLAGS))
+InstallManPage($(PROG),$(MANDIR))
+#endif
+
+LinkSourceFile(00README,$(XF86SRC)/SuperProbe)
+LinkSourceFile(01.CopyRights,$(XF86SRC)/SuperProbe)
+LinkSourceFile(8514.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(AL.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(ARK.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(ATI.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(ATIMach.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Ahead.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Alliance.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Amake.cmds,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Amake.srclist,$(XF86SRC)/SuperProbe)
+LinkSourceFile(AsmMacros.h,$(XF86SRC)/SuperProbe)
+LinkSourceFile(CGA.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(ChangeLog,$(XF86SRC)/SuperProbe)
+LinkSourceFile(ChipsTech.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Cirrus.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Compaq.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(GLINT.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Genoa.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(HMC.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Herc.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(I128.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(MDA.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(MX.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Main.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Makefile.std,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Matrox.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(MemProbe.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(NCR.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(OS_386BSD.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(OS_Linux.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(OS_LynxOS.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(OS_Mach.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(OS_Minix.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(OS_Os2.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(OS_SYSV.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Oak.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(PCI.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(PCI.h,$(XF86SRC)/SuperProbe)
+LinkSourceFile(PatchLevel.h,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Primus.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Print.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Probe.h,$(XF86SRC)/SuperProbe)
+LinkSourceFile(RamDac.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(RealTek.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(S3.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(SigmaDesigns.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(SiS.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(SolX86IO.s,$(XF86SRC)/SuperProbe)
+LinkSourceFile(SuperProbe.man,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Trident.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Tseng.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(UMC.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Utils.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(VGA.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Video7.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(WD.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Weitek.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(Yamaha.c,$(XF86SRC)/SuperProbe)
+LinkSourceFile(sprobe.def,$(XF86SRC)/SuperProbe)
+
+DependTarget()

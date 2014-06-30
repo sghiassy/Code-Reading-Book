@@ -1,0 +1,226 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Creating an effectclass</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Creating an effectclass</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Creating an effectclass.</h4>
+One of the most important tasks of a developer using DemoGL is to create effectclasses which instances
+will be executed by DemoGL. Any effectclass should have in it's chain of inheritance as baseclass the 
+<a HREF="ref_classes_CEffect.htm">CEffect</a> class provided by DemoGL. 
+<p>
+The developer doesn't have to implement all methods of CEffect. The methods that should be implemented however
+are Init() and one of the two render methods: RenderFrame or RenderFrameEx() (see 
+<a HREF="ref_functions_DEMOGL_SetVariable.htm">DEMOGL_SetVariable</a> for the variable DGL_VF_USERENDERFRAMEEX)
+Init(), because DemoGL calls the Init method of every registered effectobject (the instance of an effectclass, registered with DemoGL)
+during startup, and one of the render methods because otherwise the effectobject is never executed during application execution.
+<p>
+Below we create a simple effect class that will fade in a splashscreen in orthogonal projection. First the header file is
+created, since a good habit in C++ programming is to place the class definitions in headerfiles and the class implementation
+in a .cpp file. The class created below is called CSplash. 
+<p>
+The header file, csplash.h, contains the following code:
+<pre>
+// CSplash.h header file, belongs to CSplash.cpp
+///////////////////////////////////////////////////////////
+
+#ifndef _CSPLASH_H
+#define _CSPLASH_H
+
+// Include the DemoGL CEffect class header file
+#include	&quot;DemoGL_Effect.h&quot;
+
+// Class definition
+class CSplash:public CEffect
+{
+	// public method declarations. Only 4 methods are
+	// implemented
+	public:
+				CSplash();
+		virtual		~CSplash();
+		int		Init(int iWidth, int iHeight);
+		void		RenderFrame(long lElapsedTime);
+		void		Prepare(void);
+		void		End(void);
+
+	// private methods
+	private:
+		void		DrawLogo(long lNow);
+
+	// Private members
+	private:
+		int		m_iWidth;
+		int		m_iHeight;
+		GLuint		m_iTexture;
+		long		m_lTimeStart;
+};
+#endif
+</pre>
+<p>
+The class CSplash now has to be implemented. The code below is the implementation of the CSplash class
+and stored in the csplash.cpp file. It uses a texture, logo.jpg, which is loaded using DemoGL's texture
+load routines and is located in the subdir 'demotex'.
+<pre>
+// CSplash class implementation
+////////////////////////////////////////////////
+
+#include	&lt;0windows.h&gt;
+#include	&lt;GL/gl.h&gt;
+
+#include	&quot;DemoGL_DLL.h&quot;
+#include	&quot;CSplash.h&quot;
+
+
+//Purpose: Constructor
+CSplash::CSplash()
+{
+}
+
+// Purpose: destructor
+CSplash::~CSplash()
+{
+}
+
+// Purpose: implementation of init()
+int
+CSplash::Init(int iWidth, int iHeight)
+{
+	m_iWidth=iWidth;
+	m_iHeight=iHeight;
+
+	m_lTimeStart = -1;
+
+	// load the logotexture
+	m_iTexture = DEMOGL_TextureLoad(&quot;demotex\\logo.jpg&quot;, DGL_FTYPE_JPGFILE, 0, 
+		GL_REPEAT, GL_REPEAT, GL_LINEAR, GL_LINEAR, false, false, 0,
+		GL_RGB5_A1, DGL_TEXTUREDIMENSION_2D);
+	if(m_iTexture &gt; 0)
+	{
+		// all fine
+		return SYS_OK;
+	}
+	else
+	{
+		// some error occured. signal we failed.
+		return SYS_NOK;
+	}
+}
+
+// Purpose: implementation of the prepare()
+void
+CSplash::Prepare()
+{
+	// upload the texture
+	DEMOGL_TextureUpload(m_iTexture);
+}
+
+
+// Purpose: implementation of the end()
+void
+CSplash::End()
+{
+	// unupload the logotexture
+	DEMOGL_TextxureUnUpload(m_iTexture);
+}
+
+
+// Purpose: draws the actual splashscreen.
+void
+CSplash::DrawLogo(long lNow)
+{
+	float	fPassedSeconds;
+
+	fPassedSeconds = ((float)(lNow - m_lTimeStart))/1000.f;
+	// we will fade up in 10 seconds. So we will go from 0 to 1.0 in 10 seconds.
+	// start drawing a quad.
+	glColor4f(1.0f,1.0f,1.0f, fPassedSeconds/10.0f);			
+	glBegin(GL_QUADS);
+		glTexCoord2f(0.0f,0.0f);glVertex3f(0.2f,0.125f,-0.45f);
+		glTexCoord2f(1.0f,0.0f);glVertex3f(0.8f,0.125f,-0.45f);
+		glTexCoord2f(1.0f,1.0f);glVertex3f(0.8f,0.875f,-0.45f);
+		glTexCoord2f(0.0f,1.0f);glVertex3f(0.2f,0.875f,-0.45f);
+	glEnd();
+
+	// draw white background
+	glDisable(GL_TEXTURE_2D);
+	glBegin(GL_QUADS);
+		glVertex3f(0.0f,0.0f,-0.5f);
+		glVertex3f(1.0f,0.0f,-0.5f);
+		glVertex3f(1.0f,1.0f,-0.5f);
+		glVertex3f(0.0f,1.0f,-0.5f);
+	glEnd();
+}
+
+// Purpose: implementation of the RenderFrame()
+void
+CSplash::RenderFrame(long lElapsedTime)
+{
+	if(m_lTimeStart <0)
+	{
+		// first time 
+		m_lTimeStart=lElapsedTime;
+	}
+	glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | 
+		GL_DEPTH_BUFFER_BIT | GL_POLYGON_BIT); 
+	
+	// enable blending so an almost transparent set of polies will 
+	// be almost invisible so we can fade up nicely 
+	glEnable(GL_BLEND); 
+	glBlendFunc(GL_SRC_ALPHA,GL_ONE); 
+	
+	// insert a scissortest to get black bars as a 'movie on TV' effect. 
+	glScissor(0, (m_iHeight (int)((m_iWidth * 9)/20)) / 2, 
+		m_iWidth, (int)((m_iWidth * 9)/20)); 
+	glEnable(GL_SCISSOR_TEST); 
+	glEnable(GL_DEPTH_TEST); 
+	glDepthFunc(GL_LEQUAL); 
+	glEnable(GL_TEXTURE_2D); 
+	
+	// bind to the logo texture 
+	glBindTexture(GL_TEXTURE_2D, m_iTexture); 
+	glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE); 
+	// set up orthogonal view. 
+	glMatrixMode(GL_PROJECTION); 
+	glPushMatrix(); 
+		glLoadIdentity(); 
+		glOrtho(0.0f,1.0f,0,1.0f,-1.0f,1.0f); 
+		
+		// set matrixmode in Modelview. 
+		glMatrixMode(GL_MODELVIEW); 
+		// load the identity matrix into the modelview matrix. 
+		glLoadIdentity(); 
+		
+		// position the camera. 
+		glTranslatef(0.0f,0.0f,-0.1f); 
+		
+		// draw the logo 
+		DrawLogo(lElapsedTime); 
+		glMatrixMode(GL_PROJECTION); 
+	glPopMatrix(); 
+	glPopAttrib(); 
+} 
+</PRE>
+<p>
+Now that this class is created, an instance can be created from it and registered with DemoGL.
+Then the object (instance) of this class can be scheduled using a script. All that's done in
+this class is implement the actual effect. Which is exactly what we wanted: program effects.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 02-jun-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

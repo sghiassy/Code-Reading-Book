@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+  language="java"
+  xmlns:xsp="http://apache.org/xsp"
+  xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+  xmlns:log="http://apache.org/xsp/log/2.0"
+  xmlns:capture="http://apache.org/cocoon/capture/1.0"
+>
+
+  <xsp:structure>
+   <xsp:include>org.apache.avalon.framework.context.ContextException</xsp:include>
+   <xsp:include>org.apache.avalon.framework.component.ComponentException</xsp:include>
+   <xsp:include>org.apache.cocoon.ProcessingException</xsp:include>
+   <xsp:include>java.net.URL</xsp:include>
+   <xsp:include>java.net.MalformedURLException</xsp:include>
+   <xsp:include>org.apache.cocoon.components.language.markup.xsp.XSPUtil</xsp:include>
+   <xsp:include>org.apache.avalon.framework.context.ContextException</xsp:include>
+   <xsp:include>org.apache.cocoon.components.search.*</xsp:include>
+   <xsp:include>org.apache.lucene.store.Directory</xsp:include>
+   <xsp:include>org.apache.lucene.analysis.Analyzer</xsp:include>
+  </xsp:structure>
+
+  <xsp:logic>
+  File workDir = null;
+  /** Contextualize this class */
+  public void contextualize(Context context) throws ContextException {
+    super.contextualize( context );
+    workDir = (File) context.get(Constants.CONTEXT_WORK_DIR);
+  }
+  
+  LuceneCocoonIndexer lcii;
+  Analyzer analyzer = LuceneCocoonHelper.getAnalyzer( "org.apache.lucene.analysis.standard.StandardAnalyzer" );
+  
+  void createIndex(String baseURL, boolean create) throws ProcessingException {
+    try {
+      
+      lcii = (LuceneCocoonIndexer)this.manager.lookup( LuceneCocoonIndexer.ROLE );
+      Directory directory = LuceneCocoonHelper.getDirectory( new File( workDir, "index" ), create );
+      lcii.setAnalyzer( analyzer );
+      // "http://localhost:8080/cocoon/documents/index.html"
+      URL base_url = new URL( baseURL );
+      lcii.index( directory, create, base_url );
+    } catch (MalformedURLException mue) {
+      throw new ProcessingException( "MalformedURLException in createIndex()!", mue );
+    } catch (IOException ioe) {
+      // ignore ??
+      throw new ProcessingException( "IOException in createIndex()!", ioe );
+    } catch (ComponentException ce) {
+      // ignore ??
+      throw new ProcessingException( "ComponentException in createIndex()!", ce );
+    } finally {
+      if (lcii != null) {
+        this.manager.release( lcii );
+      }
+      lcii = null;
+    }
+  }
+
+  </xsp:logic>
+
+  <page>
+    <xsp:logic>
+      boolean create;
+      String createParam = <xsp-request:get-parameter name="create" />;
+      if (createParam == null) {
+        create = false;
+      } else {
+        create = true;
+      }
+      
+      String baseURL = <xsp-request:get-parameter name="baseURL" />;
+      if (baseURL != null &amp;&amp; baseURL.length() > 0) {
+        createIndex(baseURL, create );
+      }
+      if (baseURL == null || baseURL.length() &lt; 1) {
+        baseURL = 
+          "http://" + 
+          <xsp-request:get-server-name/> +
+          ":" + <xsp-request:get-server-port/> +
+          <xsp-request:get-context-path/> + "/" + "documents/index.html";
+      }
+    </xsp:logic>
+    <content>
+      <h1>Create a Lucene search index</h1>
+      <para>
+        This process might take some time (follow the tail of your logfiles
+        to see the indexer in progress).
+        <ul>
+          <li>LuceneCocoonIndexer.ROLE <xsp:expr>LuceneCocoonIndexer.ROLE</xsp:expr>
+          </li>
+          <li>context-path <xsp-request:get-context-path/>
+          </li>
+          <li>baseURL <xsp:expr>baseURL</xsp:expr>
+          </li>
+          <li>create <xsp:expr>String.valueOf(createParam)</xsp:expr>,
+            <xsp:expr>String.valueOf( create )</xsp:expr>
+          </li>
+          <li>get-uri <xsp-request:get-uri/>
+          </li>
+          <li>get-sitemap-uri <xsp-request:get-sitemap-uri/>
+          </li>
+        </ul>
+
+        <form action="create">
+        <table>
+          <tr>
+            <td>BaseURL</td>
+            <td>
+              <input type="text" name="baseURL" size="60">
+                <xsp:attribute name="value"><xsp:expr>baseURL</xsp:expr></xsp:attribute>
+              </input>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="radio" name="create" value="true" checked="checked"/>
+              Create/Overwrite the Index, or
+              <input type="radio" name="create" value="false"/>
+              Update the existing Index
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <input type="submit" name="find" value="Create"/>
+            </td>
+          </tr>
+        </table>
+        </form>
+
+      </para>
+    </content>
+  </page>
+
+</xsp:page>
+

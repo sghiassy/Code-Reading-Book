@@ -1,0 +1,341 @@
+.TH ACE_Connector 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Connector \- Generic factory for actively connecting clients and creating service handlers (SVC_HANDLERs). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Connector.h>\fR
+.PP
+Inherits \fBACE_Service_Object\fR.
+.PP
+Inherited by \fBACE_Strategy_Connector\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef ACE_TYPENAME _ACE_PEER_CONNECTOR::PEER_ADDR \fBACE_TYPENAME_ACE_PEER_CONNECTOR_PEER_ADDR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Connector\fR (\fBACE_Reactor\fR *r = ACE_Reactor::instance (), int flags = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBopen\fR (\fBACE_Reactor\fR *r = ACE_Reactor::instance (), int flags = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Connector\fR (void)"
+.br
+.RI "\fIShutdown a connector and release resources.\fR"
+.ti -1c
+.RI "virtual int \fBconnect\fR (SVC_HANDLER *&svc_handler, const ACE_PEER_CONNECTOR_ADDR &remote_addr, const \fBACE_Synch_Options\fR &synch_options = \fBACE_Synch_Options::defaults\fR, const ACE_PEER_CONNECTOR_ADDR &local_addr = (\fBACE_TYPENAME_ACE_PEER_CONNECTOR_PEER_ADDR\fR &) ACE_PEER_CONNECTOR_ADDR_ANY, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBconnect\fR (SVC_HANDLER *&svc_handler_hint, SVC_HANDLER *&svc_handler, const ACE_PEER_CONNECTOR_ADDR &remote_addr, const \fBACE_Synch_Options\fR &synch_options = \fBACE_Synch_Options::defaults\fR, const ACE_PEER_CONNECTOR_ADDR &local_addr = (\fBACE_TYPENAME_ACE_PEER_CONNECTOR_PEER_ADDR\fR &) ACE_PEER_CONNECTOR_ADDR_ANY, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBconnect_n\fR (size_t n, SVC_HANDLER *svc_handlers[], ACE_PEER_CONNECTOR_ADDR remote_addrs[], \fBACE_TCHAR\fR *failed_svc_handlers = 0, const \fBACE_Synch_Options\fR &synch_options = \fBACE_Synch_Options::defaults\fR)"
+.br
+.ti -1c
+.RI "virtual int \fBcancel\fR (SVC_HANDLER *svc_handler)"
+.br
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the Connector.\fR"
+.ti -1c
+.RI "virtual ACE_PEER_CONNECTOR& \fBconnector\fR (void) const"
+.br
+.RI "\fIReturn the underlying PEER_ACCEPTOR object.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Svc_Tuple\fR<SVC_HANDLER> \fBAST\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Manager\fR<ACE_HANDLE, \fBACE_Svc_Tuple\fR<SVC_HANDLER> *, ACE_SYNCH_RW_MUTEX> \fBMAP_MANAGER\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Iterator\fR<ACE_HANDLE, \fBACE_Svc_Tuple\fR<SVC_HANDLER> *, ACE_SYNCH_RW_MUTEX> \fBMAP_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Entry\fR<ACE_HANDLE, \fBACE_Svc_Tuple\fR<SVC_HANDLER> *> \fBMAP_ENTRY\fR"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBmake_svc_handler\fR (SVC_HANDLER *&sh)"
+.br
+.ti -1c
+.RI "virtual int \fBconnect_svc_handler\fR (SVC_HANDLER *&svc_handler, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms)"
+.br
+.ti -1c
+.RI "virtual int \fBconnect_svc_handler\fR (SVC_HANDLER *&svc_handler, SVC_HANDLER *&sh_copy, const ACE_PEER_CONNECTOR_ADDR &remote_addr, \fBACE_Time_Value\fR *timeout, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms)"
+.br
+.ti -1c
+.RI "virtual int \fBactivate_svc_handler\fR (SVC_HANDLER *svc_handler)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_input\fR (ACE_HANDLE)"
+.br
+.RI "\fICalled by \fBACE_Reactor\fR when asynchronous connections fail.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_output\fR (ACE_HANDLE)"
+.br
+.RI "\fICalled by \fBACE_Reactor\fR when asynchronous connections succeed.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_exception\fR (ACE_HANDLE fd = ACE_INVALID_HANDLE)"
+.br
+.RI "\fICalled by \fBACE_Reactor\fR when asynchronous connections complete (on some platforms only).\fR"
+.ti -1c
+.RI "virtual int \fBinit\fR (int argc, \fBACE_TCHAR\fR *argv[])"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fICalls <handle_close> to shutdown the Connector gracefully.\fR"
+.ti -1c
+.RI "virtual int \fBinfo\fR (\fBACE_TCHAR\fR **, size_t) const"
+.br
+.RI "\fIDefault version returns address info in <buf>.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_close\fR (ACE_HANDLE = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_timeout\fR (const \fBACE_Time_Value\fR &tv, const void *arg)"
+.br
+.RI "\fIThis method is called if a connection times out before completing.\fR"
+.ti -1c
+.RI "virtual int \fBsuspend\fR (void)"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBresume\fR (void)"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "int \fBcreate_AST\fR (SVC_HANDLER *, const \fBACE_Synch_Options\fR &)"
+.br
+.RI "\fICreates and inserts an \fBACE_Svc_Tuple\fR into the <handler_map_>. so that we can continue accepting this connection asynchronously.\fR"
+.ti -1c
+.RI "int \fBcleanup_AST\fR (ACE_HANDLE, \fBAST\fR *&)"
+.br
+.RI "\fICleanup the <handler_map_> and returns the appropriate \fBACE_Svc_Tuple\fR (which is 0 if there is no associated tuple).\fR"
+.ti -1c
+.RI "virtual int \fBconnect_i\fR (SVC_HANDLER *&svc_handler, SVC_HANDLER **sh_copy, const ACE_PEER_CONNECTOR_ADDR &remote_addr, const \fBACE_Synch_Options\fR &synch_options, const ACE_PEER_CONNECTOR_ADDR &local_addr, int reuse_addr, int flags, int perms)"
+.br
+.RI "\fIImplementation the <connect> methods.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBMAP_MANAGER\fR \fBhandler_map_\fR"
+.br
+.RI "\fILookup table that maps an I/O handle to a SVC_HANDLER *.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_PEER_CONNECTOR \fBconnector_\fR"
+.br
+.RI "\fIThis is the concrete connector factory (it keeps no state so the  is reentrant).\fR"
+.ti -1c
+.RI "char \fBclosing_\fR"
+.br
+.RI "\fIKeeps track of whether we are in the process of closing (required to avoid circular calls to <handle_close>).\fR"
+.ti -1c
+.RI "int \fBflags_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER, ACE_PEER_CONNECTOR_1>  template class ACE_Connector
+Generic factory for actively connecting clients and creating service handlers (SVC_HANDLERs).
+.PP
+.PP
+ Implements the strategy for actively establishing connections with clients. An ACE_Connector is parameterized by concrete types that conform to the interfaces of PEER_CONNECTOR and SVC_HANDLER. The PEER_CONNECTOR is instantiated with a transport mechanism that passively establishes connections. The SVC_HANDLER is instantiated with a concrete type that performs the application-specific service. An ACE_Connector inherits from \fBACE_Service_Object\fR, which in turn inherits from \fBACE_Event_Handler\fR. This enables the \fBACE_Reactor\fR to dispatch the ACE_Connector's handle_output method when connections complete asynchronously. The handle_output method performs the connector's active connection establishment and service activation strategy. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> typedef ACE_TYPENAME _ACE_PEER_CONNECTOR::PEER_ADDR ACE_Connector<SVC_HANDLER, >::ACE_TYPENAME_ACE_PEER_CONNECTOR_PEER_ADDR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> typedef \fBACE_Svc_Tuple\fR<SVC_HANDLER> ACE_Connector<SVC_HANDLER, >::AST\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> typedef \fBACE_Map_Entry\fR<ACE_HANDLE, \fBACE_Svc_Tuple\fR<SVC_HANDLER> *> ACE_Connector<SVC_HANDLER, >::MAP_ENTRY\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> typedef \fBACE_Map_Iterator\fR<ACE_HANDLE, \fBACE_Svc_Tuple\fR<SVC_HANDLER> *, ACE_SYNCH_RW_MUTEX> ACE_Connector<SVC_HANDLER, >::MAP_ITERATOR\fC [protected]\fR
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> typedef \fBACE_Map_Manager\fR<ACE_HANDLE, \fBACE_Svc_Tuple\fR<SVC_HANDLER> *, ACE_SYNCH_RW_MUTEX> ACE_Connector<SVC_HANDLER, >::MAP_MANAGER\fC [protected]\fR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> ACE_Connector<SVC_HANDLER, >::ACE_Connector<SVC_HANDLER, > (\fBACE_Reactor\fR * r = ACE_Reactor::instance (), int flags = 0)
+.PP
+Initialize a connector. <flags> indicates how <SVC_HANDLER>'s should be initialized prior to being activated. Right now, the only flag that is processed is , which enabled non-blocking I/O on the <SVC_HANDLER> when it is opened. 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> ACE_Connector<SVC_HANDLER, >::~ACE_Connector<SVC_HANDLER, > (void)\fC [virtual]\fR
+.PP
+Shutdown a connector and release resources.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::activate_svc_handler (SVC_HANDLER * svc_handler)\fC [protected, virtual]\fR
+.PP
+Bridge method for activating a <svc_handler> with the appropriate concurrency strategy. The default behavior of this method is to activate the SVC_HANDLER by calling its <open> method (which allows the SVC_HANDLER to define its own concurrency strategy). However, subclasses can override this strategy to do more sophisticated concurrency activations (such as creating the SVC_HANDLER as an "active object" via multi-threading or multi-processing). 
+.PP
+Reimplemented in \fBACE_Strategy_Connector\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::cancel (SVC_HANDLER * svc_handler)\fC [virtual]\fR
+.PP
+Cancel a <svc_handler> that was started asynchronously. Note that this is the only case when the Connector does not actively close the <svc_handler>. It is left up to the caller of <cancel> to decide the fate of the <svc_handler>. 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::cleanup_AST (ACE_HANDLE, \fBAST\fR *&)\fC [protected]\fR
+.PP
+Cleanup the <handler_map_> and returns the appropriate \fBACE_Svc_Tuple\fR (which is 0 if there is no associated tuple).
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::close (void)\fC [virtual]\fR
+.PP
+Close down the Connector.
+.PP
+Reimplemented in \fBACE_Strategy_Connector\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::connect (SVC_HANDLER *& svc_handler_hint, SVC_HANDLER *& svc_handler, const ACE_PEER_CONNECTOR_ADDR & remote_addr, const \fBACE_Synch_Options\fR & synch_options = \fBACE_Synch_Options::defaults\fR, const ACE_PEER_CONNECTOR_ADDR & local_addr = (\fBACE_TYPENAME_ACE_PEER_CONNECTOR_PEER_ADDR\fR &) ACE_PEER_CONNECTOR_ADDR_ANY, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)\fC [virtual]\fR
+.PP
+This is a variation on the previous <connect> method. On cached connectors the <svc_handler_hint> variable can be used as a hint for future lookups. Since this variable is modified in the context of the internal cache its use is thread-safe. But the actual svc_handler for the current connection is returned in the second parameter <svc_handler>. If the connection fails the <close> hook on the <svc_handler> will be called automatically to prevent resource leaks. 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::connect (SVC_HANDLER *& svc_handler, const ACE_PEER_CONNECTOR_ADDR & remote_addr, const \fBACE_Synch_Options\fR & synch_options = \fBACE_Synch_Options::defaults\fR, const ACE_PEER_CONNECTOR_ADDR & local_addr = (\fBACE_TYPENAME_ACE_PEER_CONNECTOR_PEER_ADDR\fR &) ACE_PEER_CONNECTOR_ADDR_ANY, int reuse_addr = 0, int flags = O_RDWR, int perms = 0)\fC [virtual]\fR
+.PP
+Initiate connection of <svc_handler> to peer at <remote_addr> using <synch_options>. If the caller wants to designate the selected <local_addr> they can (and can also insist that the <local_addr> be reused by passing a value <reuse_addr> == 1). <flags> and <perms> can be used to pass any flags that are needed to perform specific operations such as opening a file within connect with certain permissions. If the connection fails the <close> hook on the <svc_handler> will be called automatically to prevent resource leaks. 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::connect_i (SVC_HANDLER *& svc_handler, SVC_HANDLER ** sh_copy, const ACE_PEER_CONNECTOR_ADDR & remote_addr, const \fBACE_Synch_Options\fR & synch_options, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms)\fC [protected, virtual]\fR
+.PP
+Implementation the <connect> methods.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::connect_n (size_t n, SVC_HANDLER * svc_handlers[], ACE_PEER_CONNECTOR_ADDR remote_addrs[], \fBACE_TCHAR\fR * failed_svc_handlers = 0, const \fBACE_Synch_Options\fR & synch_options = \fBACE_Synch_Options::defaults\fR)\fC [virtual]\fR
+.PP
+Initiate connection of <n> <svc_handlers> to peers at <remote_addrs> using <synch_options>. Returns -1 if failure occurs and 0 otherwise. If <failed_svc_handlers> is non-NULL, a 1 is placed in the corresponding index of <failed_svc_handler> for each <svc_handlers[i]> that failed to connect, else a 0 is placed in that index. 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> virtual int ACE_Connector<SVC_HANDLER, >::connect_svc_handler (SVC_HANDLER *& sh, SVC_HANDLER *& sh_copy, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms)\fC [protected, virtual]\fR
+.PP
+Reimplemented in \fBACE_Strategy_Connector\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::connect_svc_handler (SVC_HANDLER *& sh, const ACE_PEER_CONNECTOR_ADDR & remote_addr, \fBACE_Time_Value\fR * timeout, const ACE_PEER_CONNECTOR_ADDR & local_addr, int reuse_addr, int flags, int perms)\fC [protected, virtual]\fR
+.PP
+Bridge method for connecting the <svc_handler> to the <remote_addr>. The default behavior delegates to the <PEER_CONNECTOR::connect>. 
+.PP
+Reimplemented in \fBACE_Strategy_Connector\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> ACE_PEER_CONNECTOR & ACE_Connector<SVC_HANDLER, >::connector (void) const\fC [virtual]\fR
+.PP
+Return the underlying PEER_ACCEPTOR object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::create_AST (SVC_HANDLER *, const \fBACE_Synch_Options\fR &)\fC [protected]\fR
+.PP
+Creates and inserts an \fBACE_Svc_Tuple\fR into the <handler_map_>. so that we can continue accepting this connection asynchronously.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> void ACE_Connector<SVC_HANDLER, >::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::fini (void)\fC [protected, virtual]\fR
+.PP
+Calls <handle_close> to shutdown the Connector gracefully.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::handle_close (ACE_HANDLE handle = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR close_mask = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [protected, virtual]\fR
+.PP
+Terminate the Client ACE_Connector by iterating over any unconnected \fBACE_Svc_Handler\fR's and removing them from the \fBACE_Reactor\fR. 
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::handle_exception (ACE_HANDLE fd = ACE_INVALID_HANDLE)\fC [protected, virtual]\fR
+.PP
+Called by \fBACE_Reactor\fR when asynchronous connections complete (on some platforms only).
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::handle_input (ACE_HANDLE fd)\fC [protected, virtual]\fR
+.PP
+Called by \fBACE_Reactor\fR when asynchronous connections fail.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::handle_output (ACE_HANDLE fd)\fC [protected, virtual]\fR
+.PP
+Called by \fBACE_Reactor\fR when asynchronous connections succeed.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::handle_timeout (const \fBACE_Time_Value\fR & tv, const void * arg)\fC [protected, virtual]\fR
+.PP
+This method is called if a connection times out before completing.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::info (\fBACE_TCHAR\fR ** buf, size_t length) const\fC [protected, virtual]\fR
+.PP
+Default version returns address info in <buf>.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::init (int argc, \fBACE_TCHAR\fR * argv[])\fC [protected, virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::make_svc_handler (SVC_HANDLER *& sh)\fC [protected, virtual]\fR
+.PP
+Bridge method for creating a SVC_HANDLER. The default is to create a new SVC_HANDLER only if <sh> == 0, else <sh> is unchanged. However, subclasses can override this policy to perform SVC_HANDLER creation in any way that they like (such as creating subclass instances of SVC_HANDLER, using a singleton, dynamically linking the handler, etc.). Returns -1 if failure, else 0. 
+.PP
+Reimplemented in \fBACE_Strategy_Connector\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::open (\fBACE_Reactor\fR * r = ACE_Reactor::instance (), int flags = 0)\fC [virtual]\fR
+.PP
+Initialize a connector. <flags> indicates how <SVC_HANDLER>'s should be initialized prior to being activated. Right now, the only flag that is processed is , which enabled non-blocking I/O on the <SVC_HANDLER> when it is opened. 
+.PP
+Reimplemented in \fBACE_Strategy_Connector\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::resume (void)\fC [protected, virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Service_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::suspend (void)\fC [protected, virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Service_Object\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> ACE_Connector<SVC_HANDLER, >::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> char ACE_Connector<SVC_HANDLER, >::closing_\fC [private]\fR
+.PP
+Keeps track of whether we are in the process of closing (required to avoid circular calls to <handle_close>).
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> ACE_PEER_CONNECTOR ACE_Connector<SVC_HANDLER, >::connector_\fC [private]\fR
+.PP
+This is the concrete connector factory (it keeps no state so the  is reentrant).
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> int ACE_Connector<SVC_HANDLER, >::flags_\fC [private]\fR
+.PP
+Flags that indicate how <SVC_HANDLER>'s should be initialized prior to being activated. Right now, the only flag that is processed is , which enabled non-blocking I/O on the <SVC_HANDLER> when it is opened. 
+.SS template<classSVC_HANDLER, ACE_PEER_CONNECTOR_1> \fBMAP_MANAGER\fR ACE_Connector<SVC_HANDLER, >::handler_map_\fC [protected]\fR
+.PP
+Lookup table that maps an I/O handle to a SVC_HANDLER *.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

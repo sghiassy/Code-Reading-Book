@@ -1,0 +1,340 @@
+<!DOCTYPE linuxdoc PUBLIC "-//XFree86//DTD linuxdoc//EN">
+<article>
+
+<!-- Title information -->
+
+<title>Information for Solaris for x86 Users
+<author>David Holland
+<date>16 May 1997
+
+<!-- Table of contents -->
+<toc>
+
+<!-- Begin the document -->
+
+
+<!--Contents
+--------
+
+	1) What is XFree86 3.3
+	2) Solaris versions on which XFree86 has been tested.
+	3) The VT-switching sub-system in Solaris x86
+	4) Various notes for building XFree86 on Solaris x86
+	5) Known bugs, and work arounds.
+ -->
+
+
+<sect>What is XFree86 3.3<p>
+
+	XFree86 3.3 is a port of X11R6.3 that supports several versions of 
+	Intel-based Unix.  It is derived from X386 1.2 which was the X server 
+	distributed with X11R5.  This release consists of many new features 
+	and 
+	performance improvements as well as many bug fixes.  The release is 
+	available as source patches against the X Consortium code, as well as 
+	binary distributions for many architectures.
+<p>
+The sources for XFree86 are available by anonymous ftp from:
+<quote>
+	<htmlurl name="ftp://ftp.XFree86.org/pub/XFree86/current"
+	url="ftp://ftp.XFree86.org/pub/XFree86/current">
+</quote>
+Solaris binaries for XFree86 are available for anonymous ftp from:
+<quote>
+	<htmlurl name="ftp://ftp.XFree86.org/pub/XFree86/current/binaries/Solaris"
+	url="ftp://ftp.XFree86.org/pub/XFree86/current/binaries/Solaris"><p>
+</quote>
+<!--
+Many thanks to <bf/Jerry Whelan/ for making the space available for these 
+binaries.
+-->
+
+<sect> Solaris for x86, versions on which XFree86 3.3 has been tested<p>
+
+XFree86 3.3 has been actively tested on:
+<itemize>
+<!--
+<item>Solaris 2.1 for x86
+<item>Solaris 2.4 EA1 for x86
+-->
+<item>Solaris 2.4 for x86 FCS
+<item>Solaris 2.5.1 for x86
+</itemize>
+And is expected to run under:
+<itemize>
+<item>Solaris 2.4 EA2 for x86
+<item>Solaris 2.5 for x86
+</itemize>
+
+<sect>The VT-switching sub-system in Solaris x86<p>
+
+	The virtual terminal sub-system is a undocumented, and unsupported 
+	feature of Solaris x86. Therefore if you use Virtual Terminals, you 
+	do so at <bf>YOUR OWN RISK</bf>.<p>
+
+	The virtual terminals of Solaris work basically the same way as 
+	most other Intel based SVR4 VT sub-systems.  However, there are a 
+	number of limitations documented below.<p>
+
+	First, if you are running a Solaris 2.4 x86 system, and you want VT's, 
+	you will have to create the necessary devices first, so become root.<p>
+
+	First verify the chanmux device driver's major number is 100:<p>
+<tscreen><verb>
+	# grep -i chanmux /etc/name_to_major
+	chanmux 100
+	#
+</verb></tscreen>
+	If the number after 'chanmux' is anything but 100, I would suggest 
+	you immediately abort your attempt to create virtual terminals, and 
+	learn to live without them.<p> 
+
+	However, if it is 100, then as root type the following commands to 
+	create the maximum allowable number of virtual terminals.<p>
+<tscreen><verb>
+	# cd /dev
+	# mknod vt01 c 100 1
+	# mknod vt02 c 100 2 
+	# mknod vt03 c 100 3
+	# mknod vt04 c 100 4
+	# mknod vt05 c 100 5
+	# mknod vt06 c 100 6
+	# mknod vt07 c 100 7
+</verb></tscreen>
+	There is no need for a reconfiguration boot.<p>
+
+	Secondly, for both 2.1, and 2.4 x86 systems, add a few lines to the 
+	<tt/inittab/ to enable logins on them.<p>
+
+(<bf>Note</bf>, do <bf>NOT</bf> make a mistake here, you could 
+lock yourself out of the system)<p>
+<verb>
+--------------------->Snip Snip<-----------------------------------------------
+v1:234:respawn:/usr/lib/saf/ttymon -g -h -p "`uname -n` VT01 login: " -T AT386 -d /dev/vt01 -l console
+v2:234:respawn:/usr/lib/saf/ttymon -g -h -p "`uname -n` VT02 login: " -T AT386 -d /dev/vt02 -l console
+v3:234:respawn:/usr/lib/saf/ttymon -g -h -p "`uname -n` VT03 login: " -T AT386 -d /dev/vt03 -l console
+v4:234:respawn:/usr/lib/saf/ttymon -g -h -p "`uname -n` VT04 login: " -T AT386 -d /dev/vt04 -l console
+---------------------->End Here<----------------------------------------------- 
+</verb>
+	These four lines enable four VT's on Alt-SysReq-F1 through 
+	Alt-SysReq-F4.<p>
+
+	Then execute the command '<tt>init q</tt>' to immediately 
+	enable the virtual 
+	terminals.<p>
+
+The keys used for VT switching are as follows:<p>
+
+<quote>
+	<tt>Alt-SysReq-F1</tt> through <tt>Alt-SysReq-F7</tt> 
+	enable VT screens 1-7 respectively 
+	(if the VT is active).<p>
+	<tt>Alt-SysReq-n</tt> enables the next active VT screen.<p>
+	<tt>Alt-SysReq-p</tt> enables the previous active VT screen.<p>
+	<tt>Alt-SysReq-h</tt> returns to the console.<p>
+</quote>
+	If you are using virtual terminals, you must leave at least one free 
+	for use by the Xserver.<p>
+
+
+Limitations of the virtual terminal sub-system under Solaris x86:<p>
+
+	There are only a total of 8 available VT's (7 normal VT's + 1 console) 
+	not the usual 15. If you have all 8 allocated, and you attempt to 
+	allocate a additional VT you will panic the system. (This bug is 
+	worked around in the Solaris XFree86 Xserver.)<p>
+
+	From a programming stand point, they work pretty much as documented in 
+	the AT&amp;T Unix System V/386 Release 4 Integrated Software 
+	Development 
+	Guide, however a number of <tt>ioctl()</tt> calls are broken.<p>
+
+
+<sect>Notes for building XFree86 on Solaris x86<p>
+
+<enum>
+<item>The majority of all modifications you will need to make are now in 
+	<tt>~xc/config/cf/xf86site.def</tt>.
+
+<!--
+	except one. You will need to set OSName, 
+	and OSMinorVersion correctly in <tt>~xc/config/cf/sun.cf</tt>.
+
+Under Solaris 2.1 for x86, <tt>sun.cf</tt> needs to read 
+(near the top of the file)
+
+<verb>	#ifdef SVR4Architecture
+	#ifdef i386Architecture
+	#define OSName			SunOS 5.1 x86
+	XCOMM operating system:  OSName
+	#define OSMajorVersion		5
+	#define OSMinorVersion		1
+</verb>
+
+Under Solaris 2.4 for x86, <tt>sun.cf</tt> needs to read 
+(near the top of the file)
+
+<verb>	#ifdef SVR4Architecture
+	#ifdef i386Architecture
+	#define OSName			SunOS 5.4 x86
+	XCOMM operating system:  OSName
+	#define OSMajorVersion		5
+	#define OSMinorVersion		4
+</verb>
+-->
+
+<item>Both Gcc, and ProWorks are supported by XFree86. Gcc-2.5.8 or
+        gcc-2.7.2  are 
+	suggested, Gcc-2.6.0 is known not to work.  You also need to set 
+	HasGcc2 correctly in <tt>~xc/config/cf/xf86site.def</tt>.
+
+	You should also make certain your version of GCC predefines `sun'.
+	2.4.5 is known NOT to by default.  If needed edit
+	<tt>/usr/local/lib/gcc-lib/*/*/specs</tt>, and modify the
+	<tt>*predefines:</tt> line.<p>
+
+	Note: A Threaded Xlib compiled with GCC has subtle problems.
+	It'll work 98&percnt; of the time, however clients will occasionally
+	exhibit strange hangs. Most notably image viewers such as
+	xv-3.10 exhibit this problem.<p>
+
+	It is recommended that you set ThreadedX in
+	<tt>~xc/config/cf/sun.cf</tt> to NO, if you are using GCC.
+	ProWorks does not have this problem.
+
+<item> To build XFree86 with gcc you need gcc and (optionally)
+       c++filt from  GNU binutils. Don't install gas or ld from GNU
+       binutils, use the one provided by Sun. 
+       <p>
+       With XFree86 3.3, you will need to setup a /opt/SUNWspro/bin
+       directory containing symbolic links named <tt/cc/, <tt/CC/, and
+       <tt/c++filt/ pointing respectively to the actual <tt/gcc/,
+       <tt/g++/ and <tt/c++filt/ commands.
+
+<item>If you don't have c++filt or if you have troubles in making
+	World with c++filt, you need to set UseExportLists to NO in
+	<tt>~xc/config/cf/host.def</tt>.<p>
+
+<!--
+	If you use c++filt, you need to check the definition of PATH in
+	<tt>~xc/config/util/elistgen.sun</tt>.<p>
+-->        
+
+<item>If you are using ProWorks to compile the XFree86 distribution, you 
+	need to modify your PATH appropriately so the ProWorks tools are 
+	available. Normally, they should be in <tt>/opt/SUNWspro/bin</tt><p>
+
+
+<item>You <bf>MUST</bf> put <tt>/usr/ccs/bin</tt>
+ 	at the front of your PATH. There are known 
+	problems with some GNU replacements for the utilities found there. So 
+	the <tt>/usr/ccs/bin</tt> versions of these programs 
+must be found before any 
+	other possible GNU versions. (Most notably GNU '<tt/ar/' does not work 
+	during the build).<p>
+
+<item>If you wish to use the "memory aperture" feature of the S3, and Mach32 
+	servers, you need to compile, and install the Solaris x86 aperture 
+	driver for memory mapped I/O support.  This driver is <bf>REQUIRED</bf>
+	for the I128, P9000 and Mach 64 servers.<p>
+
+	You  need to set HasSolx86apertureDrv to YES in 
+	<tt>~xc/config/cf/xf86site.def</tt>.<p> to enable the aperture
+	driver. 
+
+        Under Solaris 2.5 and 2.5.1, there's a system driver
+        (<tt>/dev/xsvc</tt> that provides this functionality. It will
+        be detected automatically by the server, so you don't need to
+        install the driver.
+
+	For Solaris 2.1 and 2.4, the source for this driver is included in 
+	<tt>~xc/programs/Xserver/hw/xfree86/etc/apSolx86.shar</tt>.  
+	Building, and 
+	installing the driver is relatively straight forward. Please read 
+	its accompanying README file.<p>
+
+
+
+</enum>
+<sect> Notes for running XFree86 on Solaris x86<p>
+
+<enum>
+<item>If you have not made the Virtual Terminal devices, you will need to 
+	specify the terminal device to run the Xserver on.  The correct 
+	device is vt00 so your <tt>xinit</tt> command would look like so:<p>
+<tscreen><verb>
+		xinit -- vt00
+</verb></tscreen>
+	If you have made the virtual terminal devices you do not need to 
+	specify the VT to run the Xserver on.<p>
+
+	To be able to run XF86Setup, you must at least create
+	/dev/vt01. Otherwise XF86Setup won't start.
+
+<item>For Solaris you will probably want to set your LD_LIBRARY_PATH to 
+	<tt>/usr/X11R6/lib:/usr/openwin/lib:/usr/dt/lib</tt>.  
+	Including <tt>/usr/X11R6/lib</tt> in your 
+	LD_LIBRARY_PATH is probably not necessary, however it doesn't hurt. :)
+<p>
+	Including <tt>/usr/openwin/lib</tt> in the LD_LIBRARY_PATH is 
+	recommended 
+	because some Sun supplied binaries were not compiled with LD_RUN_PATH 
+	set properly at compile time.<p>
+<p>
+        Motif and CDE applications may require <tt>/usr/dt/lib</tt> in your
+        LD_LIBRARY_PATH too.
+
+<item>Xqueue is <bf>NOT</bf> supported under Solaris. 
+	The includes necessary for 
+	Xqueue are available, however the driver does not seem to be in the 
+	kernel. (Go figure)<p>
+
+
+<item>If you want to use xdm with Solaris, extract the files from the shar 
+	file in <tt>/usr/X11R6/lib/X11/etc/XdmConf.svr4</tt> into a temporary 
+	directory. The <tt>README</tt> file tells where 
+	the individual files need to 
+	be installed.  Be sure to read through each file and make any 
+	site-specific changes that you need.<p>
+
+</enum>
+
+<sect> Known bugs, and work arounds with Solaris x86<p>
+
+<enum>
+
+<item>The Solaris 2.1 for x86 OpenWindows filemgr does not work against a 
+	X11R5 Xserver, it probably will also not work against a X11R6 
+Xserver.  
+	Attempting to 'Drag and Drop' a file causes the filemgr to abort 
+	with a 'X error'<p>
+
+	Solaris 2.4 does not have this problem.<p>
+
+	There is no known work around.<p>
+
+<!--
+<item>It has been reported that the aperture driver doesn't work
+        under Solaris 2.5.1. It probably doesn't work either under
+	2.5. 
+-->
+
+</enum>
+<sect> Bug Notification<p>
+
+	Bug reports need to be sent to <bf/XFree86@XFree86.org/, or posted to 
+	the comp.windows.x.i386unix newsgroup.  Questions or comments about 
+	the Solaris support, or the Solaris distribution need to be made to 
+	<it/davidh@use.com/, or <it/danson@lgc.com./<p>
+
+
+<verb>
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/SOLX86.sgml,v 3.12.2.4 1997/05/24 08:36:08 dawes Exp $
+
+
+
+
+
+$XConsortium: SOLX86.sgml /main/7 1996/10/28 05:43:28 kaleb $
+</verb>
+</article>

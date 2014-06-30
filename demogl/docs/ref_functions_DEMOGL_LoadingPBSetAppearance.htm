@@ -1,0 +1,114 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_LoadingPBSetAppearance</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_LoadingPBSetAppearance</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_LoadingPBSetAppearance</h4>
+<dd>DEMOGL_LoadingPBSetAppearance sets the appearance of the progress bar build into DemoGL and which is enabled
+	by using <a HREF="ref_functions_DEMOGL_LoadingPBEnable.htm" target="main">DEMOGL_LoadingPBEnable</a>.
+	<p>
+	<pre>
+<b>void</b>
+DEMOGL_LoadingPBSetAppearance(
+	<b>const bool</b> <i>bHorizontal</i>, 
+	<b>const bool</b> <i>bBlend</i>, 
+	<b>const GLenum</b> <i>iBlendSrc</i>, 
+	<b>const GLenum</b> <i>iBlendDst</i>, 
+	<b>const float</b> <i>fOpacity</i>,
+	<b>const float</b> <i>fBGColor_R</i>, 
+	<b>const float</b> <i>fBGColor_G</i>,	
+	<b>const float</b> <i>fBGColor_B</i>, 
+	<b>const float</b> <i>fBarColor_R</i>, 
+	<b>const float</b> <i>fBarColor_G</i>, 
+	<b>const float</b> <i>fBarColor_B</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>bHorizontal</i>
+	<dd>Specifies if the progress bar should be a horizontal progress bar (true) or a vertical (false).
+	<dt><i>bBlend</i>
+	<dd>Specifies if the progress bar should be blended with the contents of the framebuffer. This way you
+	    can create semi transparent progress bars. If <i>bBlend</i> is <i>false</i>, <i>iBlendSrc</i> and
+	    <i>iBlendDst</i> are ignored.
+	<dt><i>iBlendSrc</i>
+	<dd>Specifies the source color fragment blending function. Similar to the first
+		parameter of OpenGL function <i>glBlendFunc</i>. See that function for possible values for <i>iBlendSrc</i>
+	<dt><i>iBlendDst</i>
+	<dd>Specifies the destination color fragment blending function. Similar to the second
+		parameter of OpenGL function <i>glBlendFunc</i>. See that function for possible values for <i>iBlendDst</i>
+	<dt><i>fOpacity</i>
+	<dd>Specifies the alpha value of the background and bar itself. When <i>bBlend</i> is <i>false</i> this value
+		will not have any effect. This value should be in the range [0.0, 1.0]. OpenGL will clamp all values
+		outside this range to this range.
+	<dt><i>fBGColor_R</i>
+	<dd>Specifies the red color fragment of the background of the progress bar. 
+		This value should be in the range [0.0, 1.0]. OpenGL will clamp all values outside this range to this range.
+	<dt><i>fBGColor_G</i>
+	<dd>Specifies the green color fragment of the background of the progress bar. 
+		This value should be in the range [0.0, 1.0]. OpenGL will clamp all values outside this range to this range.
+	<dt><i>fBGColor_B</i>
+	<dd>Specifies the blue color fragment of the background of the progress bar. 
+		This value should be in the range [0.0, 1.0]. OpenGL will clamp all values outside this range to this range.
+	<dt><i>fBarColor_R</i>
+	<dd>Specifies the red color fragment of the enlarging bar of the progress bar. 
+		This value should be in the range [0.0, 1.0]. OpenGL will clamp all values outside this range to this range.
+	<dt><i>fBarColor_G</i>
+	<dd>Specifies the green color fragment of the enlarging bar of the progress bar. 
+		This value should be in the range [0.0, 1.0]. OpenGL will clamp all values outside this range to this range.
+	<dt><i>fBarColor_B</i>
+	<dd>Specifies the blue color fragment of the enlarging bar of the progress bar. 
+		This value should be in the range [0.0, 1.0]. OpenGL will clamp all values outside this range to this range.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd><p>
+<dt><b>Remarks.</b>
+<dd>After you've enabled the progress bar with 
+	<a HREF="ref_functions_DEMOGL_LoadingPBEnable.htm" target="main">DEMOGL_LoadingPBEnable</a>, you can give it
+	a custom look with <b>DEMOGL_LoadingPBSetAppearance</b>. The progress bar has the same size for background and
+	enlarging bar. It's important to understand that the width and height specified with 
+	<a HREF="ref_functions_DEMOGL_LoadingPBEnable.htm" target="main">DEMOGL_LoadingPBEnable</a> will affect different
+	sides of the progress bar when <i>bHorizontal</i> is flipped from <i>true</i> to <i>false</i> or vice versa. So you
+	should first determine if your progress bar is a horizontal or vertical bar and then determine the width and height.
+	<p>
+	When this function is called, it will have effect immediately, you can call this function more times after eachother,
+	for example from every Init() method of all your effects.
+<dt><b>Example.</b>
+<dd><pre>
+// Enable the progress bar at the bottom of the screen, screenwide.
+// Make it a linear progress bar.
+DEMOGL_LoadingPBEnable(DGL_CNTRL_PGB_LINEAR, 1.0f, 0.02f,  0.0f, 0.0f);
+
+// Set Progress bar appearance. Make it horizontal
+DEMOGL_LoadingPBSetAppearance(true, false, GL_SRC_COLOR, 
+	GL_ONE_MINUS_SRC_COLOR, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f);
+
+	</pre>
+	<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_LoadingPBEnable.htm" target="main">DEMOGL_LoadingPBEnable</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

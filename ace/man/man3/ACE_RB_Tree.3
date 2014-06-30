@@ -1,0 +1,532 @@
+.TH ACE_RB_Tree 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_RB_Tree \- Implements a Red-Black Tree ADT, according to T. H. Corman, C. E. Leiserson, and R. L. Rivest, "Introduction to Algorithms" 1990, MIT, chapter 14. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <RB_Tree.h>\fR
+.PP
+Inherits \fBACE_RB_Tree_Base\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef EXT_ID \fBKEY\fR"
+.br
+.ti -1c
+.RI "typedef INT_ID \fBVALUE\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> \fBENTRY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_RB_Tree_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_RB_Tree_Reverse_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBREVERSE_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_RB_Tree_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBiterator\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_RB_Tree_Reverse_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBreverse_iterator\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_RB_Tree\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree\fR (const ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> &rbt)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize an RB Tree.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down an RB_Tree and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_RB_Tree\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const EXT_ID &item, const INT_ID &int_id)"
+.br
+.ti -1c
+.RI "int \fBbind\fR (const EXT_ID &ext_id, const INT_ID &int_id, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBtrybind\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.ti -1c
+.RI "int \fBtrybind\fR (const EXT_ID &ext_id, INT_ID &int_id, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, INT_ID &old_int_id)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, INT_ID &old_int_id, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, EXT_ID &old_ext_id, INT_ID &old_int_id)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, EXT_ID &old_ext_id, INT_ID &old_int_id, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.RI "\fILocate <ext_id> and pass out parameter via <int_id>. If found, return 0, returns -1 if not found.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const EXT_ID &ext_id, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.RI "\fILocate <ext_id> and pass out parameter via <entry>. If found, return 0, returns -1 if not found.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const EXT_ID &ext_id)"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.RI "\fIBreak any association of <ext_id>. Returns the value of <int_id> in case the caller needs to deallocate memory.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *entry)"
+.br
+.ti -1c
+.RI "size_t \fBcurrent_size\fR (void) const"
+.br
+.RI "\fIReturns the current number of nodes in the tree.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> &rbt)"
+.br
+.RI "\fIAssignment operator.\fR"
+.ti -1c
+.RI "virtual int \fBlessthan\fR (const EXT_ID &k1, const EXT_ID &k2)"
+.br
+.RI "\fILess than comparison function for keys, using comparison functor.\fR"
+.ti -1c
+.RI "ACE_LOCK& \fBmutex\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBbegin\fR (void)"
+.br
+.RI "\fIReturn forward iterator positioned at first node in tree.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBend\fR (void)"
+.br
+.RI "\fIReturn forward iterator positioned at last node in tree.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Reverse_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBrbegin\fR (void)"
+.br
+.RI "\fIReturn reverse iterator positioned at last node in tree.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Reverse_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> \fBrend\fR (void)"
+.br
+.RI "\fIReturn reverse iterator positioned at first node in tree.\fR"
+.ti -1c
+.RI "int \fBtest_invariant\fR (void)"
+.br
+.RI "\fIRecursively tests the invariant red-black properties at each node of the tree. Returns 0 if invariant holds, else -1. This method is computationally expensive, and should only be called for testing purposes, and not in code that depends on the algorithmic complexity bounds provided by the other methods.\fR"
+.ti -1c
+.RI "INT_ID* \fBfind\fR (const EXT_ID &k)"
+.br
+.ti -1c
+.RI "INT_ID* \fBinsert\fR (const EXT_ID &k, const INT_ID &t)"
+.br
+.ti -1c
+.RI "int \fBremove\fR (const EXT_ID &k)"
+.br
+.ti -1c
+.RI "void \fBclear\fR (void)"
+.br
+.RI "\fIDestroys all nodes and sets the root pointer null. @deprecated.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBtest_invariant_recurse\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> * x, int & expected_black_height, int measured_black_height)"
+.br
+.RI "\fIRecursively tests the invariant red-black properties at each node of the tree. Returns 0 if invariant holds, else -1.\fR"
+.ti -1c
+.RI "void \fBRB_rotate_right\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> * x)"
+.br
+.RI "\fIMethod for right rotation of the tree about a given node.\fR"
+.ti -1c
+.RI "void \fBRB_rotate_left\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> * x)"
+.br
+.RI "\fIMethod for left rotation of the tree about a given node.\fR"
+.ti -1c
+.RI "void \fBRB_delete_fixup\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> * x, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> * parent)"
+.br
+.RI "\fIMethod for restoring Red-Black properties after deletion.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* \fBRB_tree_successor\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *x) const"
+.br
+.RI "\fIMethod to find the successor node of the given node in the tree.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* \fBRB_tree_predecessor\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *x) const"
+.br
+.RI "\fIMethod to find the predecessor node of the given node in the tree.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* \fBRB_tree_minimum\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *x) const"
+.br
+.RI "\fIMethod to find the minimum node of the subtree rooted at the given node.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* \fBRB_tree_maximum\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *x) const"
+.br
+.RI "\fIMethod to find the maximum node of the subtree rooted at the given node.\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* \fBfind_node\fR (const EXT_ID &k, \fBACE_RB_Tree_Base::RB_SearchResult\fR &result)"
+.br
+.ti -1c
+.RI "void \fBRB_rebalance\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> * x)"
+.br
+.RI "\fIRebalance the tree after insertion of a node.\fR"
+.ti -1c
+.RI "int \fBclose_i\fR (void)"
+.br
+.RI "\fIClose down an RB_Tree. this method should only be called with locks already held.\fR"
+.ti -1c
+.RI "int \fBfind_i\fR (const EXT_ID &ext_id, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* &entry)"
+.br
+.ti -1c
+.RI "INT_ID* \fBinsert_i\fR (const EXT_ID &k, const INT_ID &t)"
+.br
+.ti -1c
+.RI "int \fBinsert_i\fR (const EXT_ID &k, const INT_ID &t, \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBremove_i\fR (const EXT_ID &k, INT_ID &i)"
+.br
+.ti -1c
+.RI "int \fBremove_i\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *z)"
+.br
+.RI "\fIRemoves the item associated with the given key from the tree and destroys it.\fR"
+.ti -1c
+.RI "void \fBdump_i\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> *node) const"
+.br
+.RI "\fIRecursive function to dump the state of an object.\fR"
+.ti -1c
+.RI "void \fBdump_node_i\fR (\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> &node) const"
+.br
+.RI "\fIFunction to dump node contents. Does nothing in its basic form, but template specialization can be used to provide definitions for various EXT_ID and INT_ID types.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIPointer to a memory allocator.\fR"
+.ti -1c
+.RI "ACE_LOCK \fBlock_\fR"
+.br
+.RI "\fISynchronization variable for the MT_SAFE .\fR"
+.ti -1c
+.RI "\fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID>* \fBroot_\fR"
+.br
+.RI "\fIThe root of the tree.\fR"
+.ti -1c
+.RI "COMPARE_KEYS \fBcompare_keys_\fR"
+.br
+.RI "\fIComparison functor for comparing nodes in the tree.\fR"
+.ti -1c
+.RI "size_t \fBcurrent_size_\fR"
+.br
+.RI "\fIThe current number of nodes in the tree.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_RB_Tree_Iterator_Base< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_RB_Tree_Iterator< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_RB_Tree_Reverse_Iterator< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class EXT_ID, class INT_ID, class COMPARE_KEYS, class ACE_LOCK>  template class ACE_RB_Tree
+Implements a Red-Black Tree ADT, according to T. H. Corman, C. E. Leiserson, and R. L. Rivest, "Introduction to Algorithms" 1990, MIT, chapter 14.
+.PP
+.PP
+ A number of Changes have been made to this class template in order to conform to the \fBACE_Hash_Map_Manager_Ex\fR interface. All previously supported public methods are still part of this class. However, these are marked as DEPRECATED and will be removed from this class in a future version of \fBACE\fR. Please migrate your code to the appropriate public methods indicated in the method deprecation comments. This class uses an  to allocate memory. The user can make this a persistent class by providing an  with a persistable memory pool. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_RB_Tree_Node\fR<EXT_ID, INT_ID> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ENTRY
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_RB_Tree_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ITERATOR
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> typedef EXT_ID ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::KEY
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_RB_Tree_Reverse_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::REVERSE_ITERATOR
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> typedef INT_ID ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::VALUE
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_RB_Tree_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::iterator
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_RB_Tree_Reverse_Iterator\fR<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::reverse_iterator
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> (\fBACE_Allocator\fR * alloc = 0)
+.PP
+Constructor.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> (const ACE_RB_Tree< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >& rbt)
+.PP
+Copy constructor.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::~ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK> (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_delete_fixup (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* parent)\fC [protected]\fR
+.PP
+Method for restoring Red-Black properties after deletion.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_rebalance (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x)\fC [protected]\fR
+.PP
+Rebalance the tree after insertion of a node.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_rotate_left (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x)\fC [protected]\fR
+.PP
+Method for left rotation of the tree about a given node.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_rotate_right (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x)\fC [protected]\fR
+.PP
+Method for right rotation of the tree about a given node.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_tree_maximum (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x) const\fC [protected]\fR
+.PP
+Method to find the maximum node of the subtree rooted at the given node.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_tree_minimum (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x) const\fC [protected]\fR
+.PP
+Method to find the minimum node of the subtree rooted at the given node.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_tree_predecessor (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x) const\fC [protected]\fR
+.PP
+Method to find the predecessor node of the given node in the tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::RB_tree_successor (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x) const\fC [protected]\fR
+.PP
+Method to find the successor node of the given node in the tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Iterator\fR< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK > ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::begin (void)
+.PP
+Return forward iterator positioned at first node in tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::bind (const EXT_ID & ext_id, const INT_ID & int_id, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal bind, except the tree entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::bind (const EXT_ID & item, const INT_ID & int_id)
+.PP
+Associate <ext_id> with <int_id>. If <ext_id> is already in the tree then the  is not changed. Returns 0 if a new entry is bound successfully, returns 1 if an attempt is made to bind an existing entry, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::clear (void)
+.PP
+Destroys all nodes and sets the root pointer null. @deprecated.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::close (void)
+.PP
+Close down an RB_Tree and release dynamically allocated resources.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::close_i (void)\fC [protected]\fR
+.PP
+Close down an RB_Tree. this method should only be called with locks already held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> size_t ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::current_size (void) const
+.PP
+Returns the current number of nodes in the tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::dump_i (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* node) const\fC [protected]\fR
+.PP
+Recursive function to dump the state of an object.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::dump_node_i (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >& node) const\fC [protected]\fR
+.PP
+Function to dump node contents. Does nothing in its basic form, but template specialization can be used to provide definitions for various EXT_ID and INT_ID types.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Iterator\fR< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK > ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::end (void)
+.PP
+Return forward iterator positioned at last node in tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> INT_ID * ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::find (const EXT_ID & k)
+.PP
+Returns a pointer to the item corresponding to the given key, or 0 if it cannot find the key in the tree.
+.PP
+\fBDeprecated: \fR
+.in +1c
+ signature will change to become int find (const EXT_ID &ext_id); which will return 0 if the <ext_id> is in the tree, otherwise -1. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::find (const EXT_ID & ext_id, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Locate <ext_id> and pass out parameter via <entry>. If found, return 0, returns -1 if not found.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::find (const EXT_ID & ext_id, INT_ID & int_id)
+.PP
+Locate <ext_id> and pass out parameter via <int_id>. If found, return 0, returns -1 if not found.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::find_i (const EXT_ID & ext_id, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Retrieves a pointer to the item corresponding to the given key. Returns 0 for success, or -1 if it cannot find the key in the tree. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::find_node (const EXT_ID & k, \fBACE_RB_Tree_Base::RB_SearchResult\fR & result)\fC [protected]\fR
+.PP
+Returns a pointer to a matching node if there is one, a pointer to the node under which to insert the item if the tree is not empty and there is no such match, or 0 if the tree is empty. It stores the result of the search in the result argument: LEFT if the node is to the left of the node to be inserted, RIGHT if the node is to the right of the node to be inserted, or EXACT if an exactly matching node already exists. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> INT_ID * ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::insert (const EXT_ID & k, const INT_ID & t)
+.PP
+Inserts a *copy* of the key and the item into the tree: both the key type EXT_ID and the item type INT_ID must have well defined semantics for copy construction. The default implementation also requires that the key type support well defined < semantics. This method returns a pointer to the inserted item copy, or 0 if an error occurred. NOTE: if an identical key already exists in the tree, no new item is created, and the returned pointer addresses the existing item associated with the existing key. 
+.PP
+\fBDeprecated: \fR
+.in +1c
+ 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::insert_i (const EXT_ID & k, const INT_ID & t, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Inserts a *copy* of the key and the item into the tree: both the key type EXT_ID and the item type INT_ID must have well defined semantics for copy construction. The default implementation also requires that the key type support well defined < semantics. This method passes back a pointer to the inserted (or existing) node, and the search status. If the node already exists, the method returns 1. If the node does not exist, and a new one is successfully created, and the method returns 0. If there was an error, the method returns -1. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> INT_ID * ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::insert_i (const EXT_ID & k, const INT_ID & t)\fC [protected]\fR
+.PP
+Inserts a *copy* of the key and the item into the tree: both the key type EXT_ID and the item type INT_ID must have well defined semantics for copy construction. The default implementation also requires that the key type support well defined < semantics. This method returns a pointer to the inserted item copy, or 0 if an error occurred. NOTE: if an identical key already exists in the tree, no new item is created, and the returned pointer addresses the existing item associated with the existing key. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::lessthan (const EXT_ID & k1, const EXT_ID & k2)\fC [virtual]\fR
+.PP
+Less than comparison function for keys, using comparison functor.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_LOCK & ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::mutex (void)
+.PP
+Returns a reference to the underlying . This makes it possible to acquire the lock explicitly, which can be useful in some cases if you instantiate the  with an  or , or if you need to guard the state of an iterator. NOTE: the right name would be <lock>, but HP/C++ will choke on that! 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::open (\fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize an RB Tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> void ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::operator= (const ACE_RB_Tree< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK >& rbt)
+.PP
+Assignment operator.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Reverse_Iterator\fR< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK > ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rbegin (void)
+.PP
+Return reverse iterator positioned at last node in tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, EXT_ID & old_ext_id, INT_ID & old_int_id, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal rebind, except the tree entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, EXT_ID & old_ext_id, INT_ID & old_int_id)
+.PP
+Associate <ext_id> with <int_id>. If <ext_id> is not in the tree then behaves just like <bind>. Otherwise, store the old values of <ext_id> and <int_id> into the "out" parameters and rebind the new parameters. This is very useful if you need to have an atomic way of updating  and you also need full control over memory allocation. Returns 0 if a new entry is bound successfully, returns 1 if an existing entry was rebound, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, INT_ID & old_int_id, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal rebind, except the tree entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, INT_ID & old_int_id)
+.PP
+Associate <ext_id> with <int_id>. If <ext_id> is not in the tree then behaves just like <bind>. Otherwise, store the old value of <int_id> into the "out" parameter and rebind the new parameters. Returns 0 if a new entry is bound successfully, returns 1 if an existing entry was rebound, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal rebind, except the tree entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id)
+.PP
+Reassociate <ext_id> with <int_id>. If <ext_id> is not in the tree then behaves just like <bind>. Returns 0 if a new entry is bound successfully, returns 1 if an existing entry was rebound, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::remove (const EXT_ID & k)
+.PP
+Removes the item associated with the given key from the tree and destroys it. Returns 1 if it found the item and successfully destroyed it, 0 if it did not find the item, or -1 if an error occurred. 
+.PP
+\fBDeprecated: \fR
+.in +1c
+ 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::remove_i (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* z)\fC [protected]\fR
+.PP
+Removes the item associated with the given key from the tree and destroys it.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::remove_i (const EXT_ID & k, INT_ID & i)\fC [protected]\fR
+.PP
+Removes the item associated with the given key from the tree and destroys it. Returns 1 if it found the item and successfully destroyed it, 0 if it did not find the item, or -1 if an error occurred. Returns the stored internal id in the second argument. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Reverse_Iterator\fR< EXT_ID,INT_ID,COMPARE_KEYS,ACE_LOCK > ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::rend (void)
+.PP
+Return reverse iterator positioned at first node in tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::test_invariant (void)
+.PP
+Recursively tests the invariant red-black properties at each node of the tree. Returns 0 if invariant holds, else -1. This method is computationally expensive, and should only be called for testing purposes, and not in code that depends on the algorithmic complexity bounds provided by the other methods.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::test_invariant_recurse (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* x, int & expected_black_height, int measured_black_height)\fC [protected]\fR
+.PP
+Recursively tests the invariant red-black properties at each node of the tree. Returns 0 if invariant holds, else -1.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::trybind (const EXT_ID & ext_id, INT_ID & int_id, \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal trybind, except the tree entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::trybind (const EXT_ID & ext_id, INT_ID & int_id)
+.PP
+Associate <ext_id> with <int_id> if and only if <ext_id> is not in the tree. If <ext_id> is already in the tree then the <int_id> parameter is assigned the existing value in the tree. Returns 0 if a new entry is bound successfully, returns 1 if an attempt is made to bind an existing entry, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::unbind (\fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* entry)
+.PP
+Remove entry from tree. This method should be used with *extreme* caution, and only for optimization purposes. The node being passed in had better have been allocated by the tree that is unbinding it. 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::unbind (const EXT_ID & ext_id, INT_ID & int_id)
+.PP
+Break any association of <ext_id>. Returns the value of <int_id> in case the caller needs to deallocate memory.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> int ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::unbind (const EXT_ID & ext_id)
+.PP
+Unbind (remove) the <ext_id> from the tree. Don't return the <int_id> to the caller (this is useful for collections where the <int_id>s are *not* dynamically allocated...) 
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_RB_Tree_Iterator\fR\fC [friend]\fR
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_RB_Tree_Iterator_Base\fR\fC [friend]\fR
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_RB_Tree_Reverse_Iterator\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_Allocator\fR * ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::allocator_\fC [private]\fR
+.PP
+Pointer to a memory allocator.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> COMPARE_KEYS ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::compare_keys_\fC [private]\fR
+.PP
+Comparison functor for comparing nodes in the tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> size_t ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::current_size_\fC [private]\fR
+.PP
+The current number of nodes in the tree.
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> ACE_LOCK ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::lock_\fC [private]\fR
+.PP
+Synchronization variable for the MT_SAFE .
+.PP
+.SS template<classEXT_ID, classINT_ID, classCOMPARE_KEYS, classACE_LOCK> \fBACE_RB_Tree_Node\fR< EXT_ID,INT_ID >* ACE_RB_Tree<EXT_ID, INT_ID, COMPARE_KEYS, ACE_LOCK>::root_\fC [private]\fR
+.PP
+The root of the tree.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

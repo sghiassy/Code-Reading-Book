@@ -1,0 +1,201 @@
+.TH ACE_Stats 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Stats \- Provides simple statistical analysis. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Stats.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Stats\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "int \fBsample\fR (const ACE_INT32 value)"
+.br
+.RI "\fIProvide a new sample. Returns 0 on success, -1 if it fails due to running out of memory, or to rolling over of the sample count.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBsamples\fR (void) const"
+.br
+.RI "\fIAccess the number of samples provided so far.\fR"
+.ti -1c
+.RI "ACE_INT32 \fBmin_value\fR (void) const"
+.br
+.RI "\fIValue of the minimum sample provided so far.\fR"
+.ti -1c
+.RI "ACE_INT32 \fBmax_value\fR (void) const"
+.br
+.RI "\fIValue of the maximum sample provided so far.\fR"
+.ti -1c
+.RI "void \fBmean\fR (\fBACE_Stats_Value\fR &mean, const ACE_UINT32 scale_factor = 1)"
+.br
+.ti -1c
+.RI "int \fBstd_dev\fR (\fBACE_Stats_Value\fR &std_dev, const ACE_UINT32 scale_factor = 1)"
+.br
+.RI "\fIAccess the standard deviation, whole and fractional parts. See description of <mean> method for argument descriptions.\fR"
+.ti -1c
+.RI "int \fBprint_summary\fR (const u_int precision, const ACE_UINT32 scale_factor = 1, FILE * = stdout) const"
+.br
+.ti -1c
+.RI "void \fBreset\fR (void)"
+.br
+.RI "\fIInitialize internal state.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIPrint summary statistics to stdout.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBquotient\fR (const \fBACE_UINT64\fR dividend, const ACE_UINT32 divisor, \fBACE_Stats_Value\fR &quotient)"
+.br
+.RI "\fIUtility division function, for ACE_UINT64 dividend.\fR"
+.ti -1c
+.RI "void \fBquotient\fR (const \fBACE_Stats_Value\fR &dividend, const ACE_UINT32 divisor, \fBACE_Stats_Value\fR &quotient)"
+.br
+.RI "\fIUtility division function, for \fBACE_Stats_Value\fR dividend.\fR"
+.ti -1c
+.RI "void \fBsquare_root\fR (const \fBACE_UINT64\fR n, \fBACE_Stats_Value\fR &square_root)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "u_int \fBoverflow_\fR"
+.br
+.RI "\fIInternal indication of whether there has been overflow. Contains the errno corresponding to the cause of overflow.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBnumber_of_samples_\fR"
+.br
+.RI "\fINumber of samples.\fR"
+.ti -1c
+.RI "ACE_INT32 \fBmin_\fR"
+.br
+.RI "\fIMinimum sample value.\fR"
+.ti -1c
+.RI "ACE_INT32 \fBmax_\fR"
+.br
+.RI "\fIMaximum sample value.\fR"
+.ti -1c
+.RI "\fBACE_Unbounded_Queue\fR<ACE_INT32> \fBsamples_\fR"
+.br
+.RI "\fIThe samples.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Provides simple statistical analysis.
+.PP
+.PP
+ Simple statistical analysis package. Prominent features are:
+.TP
+It does not use any floating point arithmetic.
+.TP
+It handles positive and/or negative sample values. The sample value type is ACE_INT32.
+.TP
+It uses 64 bit unsigned, but not 64 bit signed, quantities internally.
+.TP
+It checks for overflow of internal state.
+.TP
+It has no static variables of other than built-in types.Example usage:
+.PP
+.nf
+
+ * ACE_Stats stats;
+ * for (u_int i = 0; i < n; ++i)
+ * {
+ * const ACE_UINT32 sample = ...;
+ * stats.sample (sample);
+ * }
+ * stats.print_summary (3);
+ * 
+.fi
+ 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Stats::ACE_Stats (void)
+.PP
+Default constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Stats::dump (void) const
+.PP
+Print summary statistics to stdout.
+.PP
+.SS ACE_INT32 ACE_Stats::max_value (void) const
+.PP
+Value of the maximum sample provided so far.
+.PP
+.SS void ACE_Stats::mean (\fBACE_Stats_Value\fR & mean, const ACE_UINT32 scale_factor = 1)
+.PP
+Access the mean of all samples provided so far. The fractional part is to the specified number of digits. E.g., 3 fractional digits specifies that the fractional part is in thousandths. 
+.SS ACE_INT32 ACE_Stats::min_value (void) const
+.PP
+Value of the minimum sample provided so far.
+.PP
+.SS int ACE_Stats::print_summary (const u_int precision, const ACE_UINT32 scale_factor = 1, FILE * = stdout) const
+.PP
+Print summary statistics. If scale_factor is not 1, then the results are divided by it, i.e., each of the samples is scaled down by it. If internal overflow is reached with the specified scale factor, it successively tries to reduce it. Returns -1 if there is overflow even with a 0 scale factor. 
+.SS void ACE_Stats::quotient (const \fBACE_Stats_Value\fR & dividend, const ACE_UINT32 divisor, \fBACE_Stats_Value\fR & quotient)\fC [static]\fR
+.PP
+Utility division function, for \fBACE_Stats_Value\fR dividend.
+.PP
+.SS void ACE_Stats::quotient (const \fBACE_UINT64\fR dividend, const ACE_UINT32 divisor, \fBACE_Stats_Value\fR & quotient)\fC [static]\fR
+.PP
+Utility division function, for ACE_UINT64 dividend.
+.PP
+.SS void ACE_Stats::reset (void)
+.PP
+Initialize internal state.
+.PP
+.SS int ACE_Stats::sample (const ACE_INT32 value)
+.PP
+Provide a new sample. Returns 0 on success, -1 if it fails due to running out of memory, or to rolling over of the sample count.
+.PP
+.SS ACE_UINT32 ACE_Stats::samples (void) const
+.PP
+Access the number of samples provided so far.
+.PP
+.SS void ACE_Stats::square_root (const \fBACE_UINT64\fR n, \fBACE_Stats_Value\fR & square_root)\fC [static]\fR
+.PP
+Sqrt function, which uses an oversimplified version of Newton's method. It's not fast, but it doesn't require floating point support. 
+.SS int ACE_Stats::std_dev (\fBACE_Stats_Value\fR & std_dev, const ACE_UINT32 scale_factor = 1)
+.PP
+Access the standard deviation, whole and fractional parts. See description of <mean> method for argument descriptions.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_INT32 ACE_Stats::max_\fC [private]\fR
+.PP
+Maximum sample value.
+.PP
+.SS ACE_INT32 ACE_Stats::min_\fC [private]\fR
+.PP
+Minimum sample value.
+.PP
+.SS ACE_UINT32 ACE_Stats::number_of_samples_\fC [private]\fR
+.PP
+Number of samples.
+.PP
+.SS u_int ACE_Stats::overflow_\fC [private]\fR
+.PP
+Internal indication of whether there has been overflow. Contains the errno corresponding to the cause of overflow.
+.PP
+.SS \fBACE_Unbounded_Queue\fR< ACE_INT32 > ACE_Stats::samples_\fC [private]\fR
+.PP
+The samples.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

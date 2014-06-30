@@ -1,0 +1,28 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/03/09 15:17:55 gildea $
+XCOMM $XFree86: contrib/Imakefile,v 3.3 1996/10/24 13:00:35 dawes Exp $
+#define IHaveSubdirs
+#define PassCDebugFlags CDEBUGFLAGS="$(CDEBUGFLAGS)"
+
+#ifdef XF86Contrib
+SUBDIRS = programs
+#else
+SUBDIRS = lib programs examples test
+#endif
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+
+#ifndef XF86Contrib
+/* This is more complicated than it could be because we don't
+   want to remove Manifest.PS on "make clean" */
+AllTarget(Manifest.PS)
+mnftemp.ms: Manifest.ms
+	$(CP) Manifest.ms $@
+clean::
+	$(RM) mnftemp.ms
+MakeSimpleDoc(mnftemp,mnftemp.ms)
+Manifest.PS: mnftemp.PS
+	$(CP) mnftemp.PS $@
+Manifest.txt: mnftemp.txt
+	$(CP) mnftemp.txt $@
+#endif

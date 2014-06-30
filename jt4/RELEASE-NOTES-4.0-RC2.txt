@@ -1,0 +1,260 @@
+             Apache Tomcat Version 4.0 Release Candidate 2
+             =============================================
+                            Release Notes
+                            =============
+
+$Id: RELEASE-NOTES-4.0-RC2.txt,v 1.1 2001/09/14 06:09:00 craigmcc Exp $
+
+
+============
+INTRODUCTION:
+============
+
+
+This document describes the changes that have been made in the current
+release candidate release of Apache Tomcat, relative to the previous release.
+
+Bug reports should be entered at the bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please report bugs and feature requests under product name "Tomcat 4".
+
+This version of Tomcat 4 should be considered a "release candidate" for
+all capabilities except the mod_webapp connector.  Only bugfix changes will
+be implemented before a Tomcat 4.0 final release is made available, which
+will occur when the Servlet 2.3 and JSP 1.2 specifications go final.
+
+
+----> UPCOMING CHANGE NOTICE:  In a future release of Tomcat 4.0, it
+----> is likely that the default operational mode will be to run Tomcat
+----> under a security manager (rather than the current default of not
+----> using one).  This may necessitate editing the policy permissions
+----> file ($CATALINA_HOME/conf/catalina.policy) if your web applications
+----> require permissions that are not enabled by default (such as connecting
+----> to network ports).  You are urged to test your applications with
+----> Tomcat 4.0-b5 running under the security manager now, so that this
+----> upcoming change will not be disruptive.  To do so, start Tomcat 4.0
+----> with the command "$CATALINA_HOME/bin/catalina.sh start -security"
+----> (Unix) or "%CATALINA_HOME%\bin\catalina start -security" (Windows).
+
+
+============
+NEW FEATURES:
+============
+
+
+--------------------
+General New Features:
+--------------------
+
+You can now specify an environment variable JSSE_HOME that points at the
+directory where you have installed JSSE 1.0.2.  This avoids the need to
+install the corresponding JAR files as system extensions, which is not
+possible in all environments.
+
+Message resource bundle translations have been updated (Spanish) and
+added (Japanese).
+
+
+---------------------
+Catalina New Features:
+---------------------
+
+
+
+-------------------
+Jasper New Features:
+-------------------
+
+
+--------------------
+Webapps New Features:
+--------------------
+
+Finish documentation in the Server Configuration Reference section.
+
+Add new document describing how to set up and use JNDI resources.
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+------------------
+Generic Bug Fixes:
+------------------
+
+Startup Scripts:  Improve the CYGWIN compatibility of the various startup
+scripts (catalina.sh, digest.sh, jasper.sh) included with Tomcat 4.
+
+
+------------------
+Catalina Bug Fixes:
+------------------
+
+JndiPermission:  No need to override the equals() method.
+
+ApplicationContext:  Add path separator between host and path when creating
+"jndi:" URLs.
+
+StandardClassLoader:  Improve thread safety by synchronizing around calls to
+URLClassLoader.findClass().
+
+MemoryRealm:  Fix NullPointerException (regression introduced just prior to
+release of Tomcat 4.0-rc1).
+
+HttpConnector:  Tweak log messages printed during connector startup to avoid
+printing "null" before the thread name has been initialized (which might
+incorrectly imply that something is wrong).
+
+Embedded:  Require that "catalina.home" be set before starting can succeed.
+If "catalina.base" is not set, copy it from "catalina.home".
+
+Bootstrap/BootstrapService:  Consistently initialize "catalina.base" from
+"catalina.home" if it is not set already.
+
+HttpRequestBase:  Make date formats non-static (that is, an instance per
+HttpRequest instance) to avoid a JDK thread-unsafe bug.
+
+DefaultServlet:  Must use rebind when overwriting in the PUT method.
+
+SSLServerSocketFactory:  Register the JSSE security provider if needed.  This
+avoids the need to manually modify the JDK "java.security" file.
+
+BootstrapService:  Apply some patches applied earlier to Bootstrap, which
+fix problems causing StandardClassLoader to fail.
+
+Bootstrap/BootstrapService:  Add org.apache.catalina.util.URL to the list of
+preloaded classes to avoid problems under a security manager.
+
+ResourceAttributes:  Make this class non-final so it can be subclassed.
+
+
+-------------------
+Connector Bug Fixes:
+-------------------
+
+WarpRequestHandler:  Fix problem that prevented BASIC authentication from
+working via mod_webapp.
+
+
+----------------
+Jasper Bug Fixes:
+----------------
+
+ParserXJspSaxHandler:  Fix bug where character data was being rearranged in the
+XML view of a page originally processed in XML syntax.
+
+JspC:  Support tag library descriptors when running command line compiles.
+
+
+-----------------
+Webapps Bug Fixes:
+-----------------
+
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
+JAXP/1.1 reference implementation) to web applications.  This is no longer
+the case, because Jasper loads its parser with a new class loader instead.
+Keep the following points in mind when considering how to use XML parsers
+in Tomcat 4.0 and your web applications:
+
+* If you wish to make the JAXP/1.1 RI XML parser available to all web
+  applications, simply move the "jaxp.jar" and "crimson.jar" files from
+  the "$CATALINA_HOME/jasper" directory to the "$CATALINA_HOME/lib" directory.
+
+* If you wish to make another XML parser that is JAXP/1.1-compatible
+  available to all web applications, install that parser into the
+  "$CATALINA_HOME/lib" directory and remove "jaxp.jar" and "crimson.jar"
+  from the "$CATALINA_HOME/jasper" directory.  It has been reported that
+  Xerces 1.3.1 can be used in this fashion, but 2.x alpha releases
+  can not be.
+
+* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
+  directory of your web application, this should now be possible, because
+  of the modified JAXP 1.1 parser mentioned below.
+
+* Make sure you do *not* place an XML parser in your Java system extensions
+  directory ($JAVA_HOME/jre/lib/ext), or modify the startup scripts to include
+  such a parser in the CLASSPATH under which Tomcat executes.
+
+WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
+(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.
+
+
+---------------------
+Tomcat 4.0 and Apache:
+---------------------
+
+The binary distribution for Tomcat 4.0 includes the most recent stable version
+of the WARP connector, which is the Tomcat component that talks to mod_webapp
+inside Apache 1.3.  The current state of this support is summarized as follows:
+
+* The mod_webapp connector is configured based on the contents of the
+  web.xml file for your web application.  The only required per-webapp
+  configuration information in your Apache 1.3 httpd.conf file is
+  something like this:
+
+    WebAppDeploy examples   warpConnection   /examples/
+
+  which causes mod_webapp to automatically recognize all of your servlet
+  mappings, security constraints, and other configuration elements.
+
+* Currently, mod_webapp forwards *all* requests under the specified
+  context path to Tomcat for processing.  When Tomcat 4.0 final is released,
+  it will automatically configure itself to serve static resources
+  from Apache *unless* the resource is subject to filtering, or subject
+  to a security constraint, as defined in web.xml.  No extra configuration
+  in httpd.conf will be required.
+
+* With this release, FORM-based authentication will work correctly, but
+  there is a bug that prevents BASIC authentication from operating.  This
+  will be addressed before final release.
+
+* If you restart Tomcat, you must also restart Apache to avoid receiving
+  "Error 400 - Bad Request" errors.  This will be handled transparently
+  in the final release.
+
+* The combination of Apache+Tomcat currently passes all spec validation
+  tests in the "jakarta-watchdog-4.0" suite.
+
+
+-------------------------------------
+Tomcat 4.0 and JNI Based Applications:
+-------------------------------------
+
+Applications that require native libraries must ensure that the libraries have
+been loaded prior to use.  Typically, this is done with a call like:
+
+  static {
+    System.loadLibrary("path-to-library-file");
+  }
+
+in some class.  However, the application must also ensure that the library is
+not loaded more than once.  If the above code were placed in a class inside
+the web application (i.e. under /WEB-INF/classes or /WEB-INF/lib), and the
+application were reloaded, the loadLibrary() call would be attempted a second
+time.
+
+To avoid this problem, place classes that load native libraries outside of the
+web application, and ensure that the loadLibrary() call is executed only once
+during the lifetime of a particular JVM.
+
+

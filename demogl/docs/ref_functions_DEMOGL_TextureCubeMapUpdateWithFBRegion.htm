@@ -1,0 +1,120 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_TextureCubeMapUpdateWithFBRegion</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_TextureCubeMapUpdateWithFBRegion</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_TextureCubeMapUpdateWithFBRegion</h4>
+<dd>DEMOGL_TextureCubeMapUpdateWithFBRegion updates one side of an uploaded <i>cubemap</i> texture with with the color fragments from the 
+    backbuffer in the region specified. The region is (iX,iY) - ((iX + iWidth),(iY + iHeight)), and this region is placed in the 
+    texture at side <i>iCubeSide</i> on (iXDext, iYDest) as lower left corner.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_TextureCubeMapUpdateWithFBRegion(
+	<b>const GLuint</b> <i>iTextureID</i>,
+	<b>const int</b> <i>iCubeSide</i>,
+	<b>const int</b> <i>iX</i>,
+	<b>const int</b> <i>iY</i>,
+	<b>const int</b> <i>iWidth</i>,
+	<b>const int</b> <i>iHeight</i>,
+	<b>const int</b> <i>iXDest</i>,
+	<b>const int</b> <i>iYDest</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iTextureID</i>
+	<dd>Specifies the TextureID of the cubemap texture which <I>iCubeSide</i>'s texturedata should be partial overwritten with the region from the 
+	    framebuffer, as specified.
+	<dt><i>iCubeSide</i>
+	<dd>Specifies the side of the cubemap which should be updated. Cubemap can be one of the following values:
+	    <p>
+   		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Cube side</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Value</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Positive X</td>
+			<td WIDTH="70%">DGL_CUBEMAPSIDE_POSX</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Negative X</td>
+			<td WIDTH="70%">DGL_CUBEMAPSIDE_NEGX</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Positive Y</td>
+			<td WIDTH="70%">DGL_CUBEMAPSIDE_POSY</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Negative Y</td>
+			<td WIDTH="70%">DGL_CUBEMAPSIDE_NEGY</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Positive Z</td>
+			<td WIDTH="70%">DGL_CUBEMAPSIDE_POSZ</TD>
+		</TR>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">Negative Z</td>
+			<td WIDTH="70%">DGL_CUBEMAPSIDE_NEGZ</TD>
+		</TR>
+		</Table>
+		<p>
+	<dt><i>iX</i>
+	<dd>Specifies the X-coordinate of the left lower corner of the region of the backbuffer which should be read for the texture data. This
+		is a screencoordinate in pixels, starting from the left of the screen.
+	<dt><i>iY</i>
+	<dd>Specifies the Y-coordinate of the left lower corner of the region of the backbuffer which should be read for the texture data. This
+		is a screencoordinate in pixels, starting from the bottom of the screen.
+	<dt><i>iWidth</i>
+	<dd>Specifies the width of the texture, which pixeldata is stored in the buffer pointed by <i>pbyBuffer</i> in pixels.
+		Must be 2<i><sup>n</sup></i> for some integer <i>n</i>. 
+	<dt><i>iHeight</i>
+	<dd>Specifies the height of the texture, which pixeldata is stored in the buffer pointed by <i>pbyBuffer</i> in pixels.
+		Must be 2<i><sup>n</sup></i> for some integer <i>n</i>. 
+	<dt><i>iXDest</i>
+	<dd>Specifies the X-coordinate of the left lower corner in the texture data where the region should be placed. This is in pixels.
+	<dt><i>iYDest</i>
+	<dd>Specifies the Y-coordinate of the left lower corner in the texture data where the region should be placed. This is in pixels.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns <i>SYS_NOK</i>.
+	<p>
+<dt><b>Remarks.</b>
+<dd><b>DEMOGL_TextureCubeMapUpdateWithFBRegion</b> will overwrite a part or completely the texturedata stored in the given cubeside of the
+    cubemap with the id <i>iTextureID</i> texture. The texture
+	data stored in the texture store inside DemoGL, if applicable, is left untouched. You can't update a texture's data if
+	that particular texture is not uploaded, DemoGL will return SYS_NOK then.
+<p>
+<dt><b>Example.</b>
+<dd>See DemoGL Example 6 for an example of dynamic created cubemaps and a usage of <B>DEMOGL_TextureCubeMapUpdateWithFBRegion</B>
+<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_TextureCubeMapCreateDynamic.htm" target="main">DEMOGL_TextureCubeMapCreateDynamic</a>,
+	<a HREF="ref_functions_DEMOGL_TextureUpload.htm" target="main">DEMOGL_TextureUpload</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 31-may-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

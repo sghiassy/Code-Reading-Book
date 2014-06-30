@@ -1,0 +1,319 @@
+.TH ACE_Log_Record 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Log_Record \- Defines the structure of an \fBACE\fR logging record. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Log_Record.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBMAXLOGMSGLEN\fR = ACE_MAXLOGMSGLEN, \fBALIGN_WORDB\fR = 8, \fBVERBOSE_LEN\fR = 128, \fBMAXVERBOSELOGMSGLEN\fR = VERBOSE_LEN + MAXLOGMSGLEN }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Log_Record\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Log_Record\fR (\fBACE_Log_Priority\fR lp, long time_stamp, long pid)"
+.br
+.ti -1c
+.RI "\fBACE_Log_Record\fR (\fBACE_Log_Priority\fR lp, const \fBACE_Time_Value\fR &time_stamp, long pid)"
+.br
+.ti -1c
+.RI "\fB~ACE_Log_Record\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBprint\fR (const \fBACE_TCHAR\fR host_name[], u_long verbose_flag, FILE *fp = stderr)"
+.br
+.RI "\fIWrite the contents of the logging record to the appropriate <FILE>.\fR"
+.ti -1c
+.RI "int \fBprint\fR (const \fBACE_TCHAR\fR host_name[], u_long verbose_flag, ostream &stream)"
+.br
+.RI "\fIWrite the contents of the logging record to the appropriate <ostream>.\fR"
+.ti -1c
+.RI "int \fBformat_msg\fR (const \fBACE_TCHAR\fR host_name[], u_long verbose_flag, \fBACE_TCHAR\fR *verbose_msg)"
+.br
+.ti -1c
+.RI "void \fBencode\fR (void)"
+.br
+.RI "\fIEncode the <Log_Record> for transmission on the network.\fR"
+.ti -1c
+.RI "void \fBdecode\fR (void)"
+.br
+.RI "\fIDecode the <Log_Record> received from the network.\fR"
+.ti -1c
+.RI "long \fBtype\fR (void) const"
+.br
+.RI "\fIGet the type of the <Log_Record>.\fR"
+.ti -1c
+.RI "void \fBtype\fR (long)"
+.br
+.RI "\fISet the type of the <Log_Record>.\fR"
+.ti -1c
+.RI "u_long \fBpriority\fR (void) const"
+.br
+.ti -1c
+.RI "void \fBpriority\fR (u_long num)"
+.br
+.RI "\fISet the priority of the <Log_Record> <type_> (which must be a power of 2, as defined by the enums in ).\fR"
+.ti -1c
+.RI "long \fBlength\fR (void) const"
+.br
+.RI "\fIGet the length of the <Log_Record>.\fR"
+.ti -1c
+.RI "void \fBlength\fR (long)"
+.br
+.RI "\fISet the length of the <Log_Record>.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBtime_stamp\fR (void) const"
+.br
+.RI "\fIGet the time stamp of the <Log_Record>.\fR"
+.ti -1c
+.RI "void \fBtime_stamp\fR (const \fBACE_Time_Value\fR &)"
+.br
+.RI "\fISet the time stamp of the <Log_Record>.\fR"
+.ti -1c
+.RI "long \fBpid\fR (void) const"
+.br
+.RI "\fIGet the process id of the <Log_Record>.\fR"
+.ti -1c
+.RI "void \fBpid\fR (long)"
+.br
+.RI "\fISet the process id of the <Log_Record>.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBmsg_data\fR (void) const"
+.br
+.RI "\fIGet the message data of the <Log_Record>.\fR"
+.ti -1c
+.RI "void \fBmsg_data\fR (const \fBACE_TCHAR\fR *data)"
+.br
+.RI "\fISet the message data of the <Log_Record>.\fR"
+.ti -1c
+.RI "size_t \fBmsg_data_len\fR (void) const"
+.br
+.RI "\fIGet the size of the message data of the <Log_Record>, including a byte for the NUL.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBpriority_name\fR (\fBACE_Log_Priority\fR p)"
+.br
+.ti -1c
+.RI "void \fBpriority_name\fR (\fBACE_Log_Priority\fR p, const \fBACE_TCHAR\fR *name)"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBround_up\fR (void)"
+.br
+.RI "\fIRound up to the alignment restrictions.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_INT32 \fBlength_\fR"
+.br
+.ti -1c
+.RI "ACE_UINT32 \fBtype_\fR"
+.br
+.RI "\fIType of logging record.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBsecs_\fR"
+.br
+.RI "\fITime that the logging record was generated.\fR"
+.ti -1c
+.RI "ACE_UINT32 \fBusecs_\fR"
+.br
+.ti -1c
+.RI "ACE_UINT32 \fBpid_\fR"
+.br
+.RI "\fIId of process that generated the logging record.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBmsg_data_\fR [MAXLOGMSGLEN + 1]"
+.br
+.RI "\fILogging record data.\fR"
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBpriority_names_\fR []"
+.br
+.RI "\fISymbolic names for the  enums.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the structure of an \fBACE\fR logging record.
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIMAXLOGMSGLEN\fR \fRMaximum size of a logging message.
+.TP
+\fB\fIALIGN_WORDB\fR \fRMost restrictive alignment.
+.TP
+\fB\fIVERBOSE_LEN\fR \fRSize used by verbose mode. 20 (date) + 15 (host_name) + 10 (pid) + 10 (type) + 4 (@) ... + ? (progname).
+.TP
+\fB\fIMAXVERBOSELOGMSGLEN\fR \fRMaximum size of a logging message with the verbose headers.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Log_Record::ACE_Log_Record (void)
+.PP
+Create a <Log_Record> and set its priority, time stamp, and process id. Create a <Log_Record> and set its priority, time stamp, and process id. 
+.SS ACE_Log_Record::ACE_Log_Record (\fBACE_Log_Priority\fR lp, long time_stamp, long pid)
+.PP
+.SS ACE_Log_Record::ACE_Log_Record (\fBACE_Log_Priority\fR lp, const \fBACE_Time_Value\fR & time_stamp, long pid)
+.PP
+.SS ACE_Log_Record::~ACE_Log_Record (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Log_Record::decode (void)
+.PP
+Decode the <Log_Record> received from the network.
+.PP
+.SS void ACE_Log_Record::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS void ACE_Log_Record::encode (void)
+.PP
+Encode the <Log_Record> for transmission on the network.
+.PP
+.SS int ACE_Log_Record::format_msg (const \fBACE_TCHAR\fR host_name[], u_long verbose_flag, \fBACE_TCHAR\fR * verbose_msg)
+.PP
+.SS void ACE_Log_Record::length (long)
+.PP
+Set the length of the <Log_Record>.
+.PP
+.SS long ACE_Log_Record::length (void) const
+.PP
+Get the length of the <Log_Record>.
+.PP
+.SS void ACE_Log_Record::msg_data (const \fBACE_TCHAR\fR * data)
+.PP
+Set the message data of the <Log_Record>.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Log_Record::msg_data (void) const
+.PP
+Get the message data of the <Log_Record>.
+.PP
+.SS size_t ACE_Log_Record::msg_data_len (void) const
+.PP
+Get the size of the message data of the <Log_Record>, including a byte for the NUL.
+.PP
+.SS void ACE_Log_Record::pid (long)
+.PP
+Set the process id of the <Log_Record>.
+.PP
+.SS long ACE_Log_Record::pid (void) const
+.PP
+Get the process id of the <Log_Record>.
+.PP
+.SS int ACE_Log_Record::print (const \fBACE_TCHAR\fR host_name[], u_long verbose_flag, ostream & stream)
+.PP
+Write the contents of the logging record to the appropriate <ostream>.
+.PP
+.SS int ACE_Log_Record::print (const \fBACE_TCHAR\fR host_name[], u_long verbose_flag, FILE * fp = stderr)
+.PP
+Write the contents of the logging record to the appropriate <FILE>.
+.PP
+.SS void ACE_Log_Record::priority (u_long num)
+.PP
+Set the priority of the <Log_Record> <type_> (which must be a power of 2, as defined by the enums in ).
+.PP
+.SS u_long ACE_Log_Record::priority (void) const
+.PP
+Get the priority of the <Log_Record> <type_>. This is computed as the base 2 logarithm of <type_> (which must be a power of 2, as defined by the enums in ). 
+.SS void ACE_Log_Record::priority_name (\fBACE_Log_Priority\fR p, const \fBACE_TCHAR\fR * name)\fC [static]\fR
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Log_Record::priority_name (\fBACE_Log_Priority\fR p)\fC [static]\fR
+.PP
+Returns a character array with the string form of the  parameter. This is used for the verbose printing format. 
+.SS void ACE_Log_Record::round_up (void)\fC [private]\fR
+.PP
+Round up to the alignment restrictions.
+.PP
+.SS void ACE_Log_Record::time_stamp (const \fBACE_Time_Value\fR &)
+.PP
+Set the time stamp of the <Log_Record>.
+.PP
+.SS \fBACE_Time_Value\fR ACE_Log_Record::time_stamp (void) const
+.PP
+Get the time stamp of the <Log_Record>.
+.PP
+.SS void ACE_Log_Record::type (long)
+.PP
+Set the type of the <Log_Record>.
+.PP
+.SS long ACE_Log_Record::type (void) const
+.PP
+Get the type of the <Log_Record>.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Log_Record::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS ACE_INT32 ACE_Log_Record::length_\fC [private]\fR
+.PP
+Total length of the logging record in bytes. This field *must* come first in order for various IPC framing mechanisms to work correctly. In addition, the field must be an ACE_INT32 in order to be passed portably across platforms. 
+.SS \fBACE_TCHAR\fR ACE_Log_Record::msg_data_[MAXLOGMSGLEN+1]\fC [private]\fR
+.PP
+Logging record data.
+.PP
+.SS ACE_UINT32 ACE_Log_Record::pid_\fC [private]\fR
+.PP
+Id of process that generated the logging record.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Log_Record::priority_names_[]\fC [static, private]\fR
+.PP
+Symbolic names for the  enums.
+.PP
+.SS ACE_UINT32 ACE_Log_Record::secs_\fC [private]\fR
+.PP
+Time that the logging record was generated.
+.PP
+.SS ACE_UINT32 ACE_Log_Record::type_\fC [private]\fR
+.PP
+Type of logging record.
+.PP
+.SS ACE_UINT32 ACE_Log_Record::usecs_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

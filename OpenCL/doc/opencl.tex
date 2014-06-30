@@ -1,0 +1,1100 @@
+\documentclass{article}
+
+\setlength{\textwidth}{6.5in} % 1 inch side margins
+\setlength{\textheight}{9in} % ~1 inch top and bottom margins
+
+\setlength{\headheight}{0in}
+\setlength{\topmargin}{0in}
+\setlength{\headsep}{0in}
+
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+
+\title{OpenCL 0.7.6}
+\author{Jack Lloyd (lloyd@acm.jhu.edu)}
+\date{October 10, 2001}
+
+\newcommand{\filename}[1]{\texttt{#1}}
+\newcommand{\manpage}[2]{\texttt{#1}(#2)}
+
+\newcommand{\function}[1]{\textbf{#1}}
+\newcommand{\type}[1]{\texttt{#1}}
+\renewcommand{\arg}[1]{\textsl{#1}}
+
+\begin{document}
+
+\maketitle
+
+\parskip=3pt
+\tableofcontents
+
+\parskip=5pt
+\pagebreak
+
+\section{Introduction}
+
+OpenCL is a C++ library which attempts to provide the most common cryptographic
+algorithms in an easy to use and portable package.  Currently it runs on a wide
+variety of systems, using numerous different compilers and on many different
+architectures.
+
+The base library is written in ISO C++, so it can be ported to a wide variety
+of architectures with minimal fuss, but OpenCL also supports a modules system,
+which allows system dependent code to be compiled into the library.
+
+While you are reading this, you may want to refer to the files
+\filename{opencl.h} and \filename{filters.h}. These files contain the classes
+that form the basic interface for the library.
+
+All declarations in the library are contained within the namespace
+\texttt{OpenCL}.  OpenCL declares several typedef'ed types to help buffer it
+against changes in machine architecture. These types are used extensively in
+the interface, and thus it would be often be convenient to use them without the
+\texttt{OpenCL::} prefix.  You can, by \texttt{using} the namespace
+\texttt{OpenCL\_types} (this way you can use the type names without the
+namespace prefix, but the remainder of the library stays out of the global
+namespace). The included types are \type{byte} and \type{u32bit}, which are
+unsigned integer types.
+
+\pagebreak
+
+\section{Building The Library}
+
+These are the basic steps for compiling OpenCL on a Unix or Unix-like system:
+
+\begin{verbatim}
+   $ ./configure.pl CC-OS-CPU
+   $ make
+   $ make check # optional, but recommended
+   # make install
+\end{verbatim}
+
+The \filename{./configure.pl} script is written in Perl; you'll need at least
+version 5.005 to run the script. To get the list of values for \verb|CC|,
+\verb|OS|, and \verb|CPU| that \filename{./configure.pl} supports, run it with
+the ``\verb|--help|'' option.
+
+The \verb|make install| target has a default directory in which it will install
+OpenCL (on Unix, it's usually \verb|/usr/local|). You can override this by
+changing the value of the INSTALLROOT variable (like so:
+\verb|make INSTALLROOT=/some/path install|).
+
+On Unix, the makefile has to decide who should own the files once they are
+installed. By default, it uses \texttt{root:root}, but on many systems (for
+example, MacOS X), there is no \texttt{root} group. Also, if you don't have
+root access on the system you will want them to be installed owned by something
+other than root (like yourself). You can override the defaults in a simliar
+manner to the \texttt{INSTALLROOT}. Here's an example:
+\verb|make OWNER=lloyd GROUP=users INSTALLROOT=$HOME/binaries install|
+
+The script tries to guess what kind of makefile to generate, but it might guess
+wrong, so you can override it with \verb|--make-style=somestyle|. Currently,
+the script only knows how to make Unix style makefiles, so this option is
+useless right now.
+
+You can put basically anything reasonable for CPU: the script knows about a
+large number of different architectures, their submodels, and common aliases
+for them. The script does not display all the possiblities in it's help message
+because there are simply too many entries (if you're curious about what exactly
+is available, you can look at the \verb|%ARCH|, \verb|%ARCH_ALIAS|, and
+\verb|%SUBMODEL_ALIAS| hashes at the start of the script).
+
+Note that you should only select the 64-bit version of a CPU (like ``sparc64''
+or ``mips64'') if your operating system knows how to handle 64-bit object code
+-- a 32-bit kernel on a 64-bit CPU will generally not like 64-bit code. For
+example, gcc-solaris-sparc64-ultra2 will not work unless you're running a
+64-bit Solaris kernel (for 32-bit Solaris, you want gcc-solaris-sparc32-v9).
+You may or may not have to install 64-bit versions of libc and related system
+libraries as well.
+
+The script also knows about the various extension modules available. You can
+enable one or more with the option ``\verb|--modules=MOD|'', where \verb|MOD|
+is some name that identifies the extension (or a comma separated list of them).
+Modules provide additional capabilities such as a \filename{/dev/urandom}
+\type{EntropySource} on Linux or replace the implementation of
+\function{system\_clock()} with \function{gettimeofday()} on some Unices. You
+should enable any extensions which makes sense for your system.
+
+Note that not all OSes or CPUs have specific support. If your CPU architecture
+isn't supported by \filename{./configure.pl}, use 'generic'. This simply
+disables machine-specific optimization flags. Similarly, setting OS to
+'generic' disables things which depend greatly on OS support (specifically,
+shared libraries).
+
+However, it's impossible to guess which options to give to a system compiler.
+Thus, if you want to compile OpenCL with a compiler which
+\filename{./configure.pl} does not support, the script will have to be updated.
+Preferably, mail the man pages (or simliar documentation) for the C and C++
+compilers and the system linker to the author.
+
+\pagebreak
+
+\subsection{Configuration Parameters}
+
+There are some configuration parameters which you may want to tweak before
+building the library. These can be found in \filename{config.h}. Keep in mind
+this file is overwritten every time the configure script is run (and does not
+exist until you run the script the first time).
+
+Also included in \filename{config.h} are macros which are defined if one or
+more extensions are available. All of them begin with \verb|OPENCL_EXT_|. For
+example, if \verb|OPENCL_EXT_BZIP2| is defined, then an application using
+OpenCL can include \filename{<opencl/bzip2.h>} and use the Bzip2 filters.
+
+\texttt{DEFAULT\_BUFFERSIZE}: This constant is used as the size of buffers
+throughout OpenCL. A good rule of thumb would be to use the page size of your
+machine (beware that a lot of things use this size, so keep it small if you're
+worried about memory use).
+
+\pagebreak
+
+\section{The Basic Interface}
+
+OpenCL has two different interfaces. The one documented in this section is
+meant more for implementing higher-level types (see the section on filters,
+below) than for use by applications.
+
+Virtually every class listed here implements the function \type{void}
+\function{clear()}, which destroys any sensitive data contained within the
+object and returns it to it's initial state. This is called by the destructor
+of each class, so usually you will not have to call it, but occasionally it may
+be useful.
+
+\subsection{Symmetrically Keyed Algorithms}
+
+Block ciphers, stream ciphers, and MACs all handle keys in pretty much the same
+way. To make this similarity explicit, all algorithms of those types are
+derived from the \type{SymmetricAlgorithm} base class. This type has only two
+functions:
+
+\vskip 10pt \noindent
+\type{void} \function{set\_key}(\type{const byte} \arg{key}[], \type{u32bit}
+\arg{length}):
+
+\vskip 5pt
+
+Most algorithms only accept keys of certain lengths. If you attempt to call
+\function{set\_key} with a key length that is not supported, the exception
+\type{InvalidKeyLength} will be thrown.
+
+Objects of this type have a parameter KEYLENGTH, which gives one value that the
+algorithm supports. This will generally be the largest key length possible (or
+256 bits, whichever is less). Unless you have a reason to do otherwise, using
+KEYLENGTH as the length of the key is recommended.
+
+\vskip 10pt \noindent
+\type{bool} \function{valid\_keylength}(\type{u32bit} \arg{length}) const:
+
+\vskip 5pt
+
+This function returns true if a key of the given length will be accepted by
+the cipher.
+
+\subsection{Block Ciphers}
+
+Block ciphers implement the interface \type{BlockCipher}, found in
+\filename{opencl.h}.
+
+\vskip 10pt \noindent
+\type{void} \function{encrypt}(\type{const byte} \arg{in}[BLOCKSIZE],
+                               \type{byte} \arg{out}[BLOCKSIZE]) const
+
+\noindent
+\type{void} \function{encrypt}(\type{byte} \arg{block}[BLOCKSIZE]) const
+
+\vskip 5pt
+
+These functions apply the block cipher transformation to \arg{in} and place the
+result in \arg{out}, or encrypts \arg{block} in place (\arg{in} may be the same
+as \arg{out}). BLOCKSIZE is a constant which specifies how much data a block
+cipher can process at one time.
+
+\type{BlockCipher}s have similar functions \function{decrypt}, which perform
+the inverse operation. All variations of \function{encrypt} and
+\function{decrypt} assume that \function{set\_key} has already been called.
+
+Block ciphers implement the \type{SymmetricAlgorithm} interface.
+
+\subsection{Stream Ciphers}
+
+Stream ciphers are somewhat different from block ciphers, in that encrypting
+data results in changing the internal state of the cipher. Also, you may
+encrypt any length of data in one go (in byte amounts).
+
+\vskip 10pt \noindent
+\type{void} \function{encrypt}(\type{const byte} \arg{in}[], \type{byte}
+\arg{out}[], \type{u32bit} \arg{length})
+
+\noindent
+\type{void} \function{encrypt}(\type{byte} \arg{data}[], \type{u32bit}
+\arg{length}):
+
+\vskip 5pt
+
+These functions encrypt the arbitrary length (well, less than 4 gigabyte long)
+string \arg{in} and place it into \arg{out}, or encrypts it in place in
+\arg{data}.  The \function{decrypt} functions look just like
+\function{encrypt}.
+
+Stream ciphers implement the \type{SymmetricAlgorithm} interface.
+
+Some stream ciphers support random access to any point in their cipher stream.
+These ciphers have the interface \type{RandomAccessStreamCipher} (which is
+derived from \type{StreamCipher}). For these ciphers, calling \type{void}
+\function{seek}(\type{u32bit} \arg{byte}) will change the ciphers state so that
+it as if the cipher and been keyed as normal, then encrypted \arg{byte} -- 1
+bytes of data (so the next byte in the cipher stream is byte number
+\arg{byte}).
+
+\subsection{Hash Functions}
+
+Hash functions take their input without producing any output, only producing
+anything when all input has already taken place.
+
+\vskip 10pt \noindent
+\type{void} \function{update}(\type{const byte} \arg{input}[], \type{u32bit}
+\arg{length}):
+
+\vskip 5pt
+Update the hash function with \arg{length} more bytes in \arg{input}.
+
+\vskip 10pt \noindent
+\type{void} \function{final}(\type{byte} \arg{hash}[HASHLENGTH]):
+
+\vskip 5pt
+Complete the hash calculation and place the result into \arg{hash}. HASHLENGTH
+is a public constant in each class that gives the length of the hash in bytes.
+After you call \function{final}, the hash function is reset to it's initial
+state, so it may be reused immediately.
+
+\subsection{Message Authentication Codes}
+
+A MAC is essentially a keyed hash function, so classes derived from
+\type{MessageAuthCode} have \function{update} and \function{final} classes just
+like a \type{HashFunction} (and like a \type{HashFunction}, after
+\function{final} is called, it can be used to make a new MAC right away; the
+key is kept around).  One minor difference is that the constant called
+HASHLENGTH in a hash function is called MACLENGTH in a MAC object.
+
+Additionally, a MAC has the \type{SymmetricAlgorithm} interface (a MAC should
+be keyed before being used).
+
+\subsection{Random Number Generators}
+
+The random number generators provided in OpenCL are meant for creating keys,
+IVs, padding, nonces, and anything else which requires 'random' data. It is
+important to remember that the output of these classes will vary, even if they
+are supplied with exactly the same seed (ie, two Randpools with similar initial
+states will not produce the same output).
+
+To ensure good quality output, you need to seed the RNG with truly 'random'
+data, such as timing data from hardware. Preferably, you should use an
+\type{EntropySource} (see below).
+
+To add entropy to a RNG, you can use \type{void}
+\function{add\_entropy}(\type{const byte} \arg{data}[], \type{u32bit}
+\arg{length}) or the \type{EntropySource} interface.
+
+One a RNG has been initialized, you can get a single byte of random data by
+calling \type{byte} \function{random()}, or get a large block by calling
+\type{void} \function{randomize}(\type{byte} \arg{data}[], \type{u32bit}
+\arg{length}), which will put random bytes into each member of the array from
+indexes 0 $\ldots$ \arg{length} -- 1.
+
+\subsubsection{Randpool}
+
+\type{Randpool} is based around a large pool of data and a hash function (by
+default, MD5). \type{Randpool} is slower than \type{X917}, but can easily
+satisfy any reasonable demand (on a 350 MHz Pentium II \type{Randpool} can
+produce over 100K of data per second). Because the internal state of
+\type{Randpool} is much larger than \type{X917}, it is more likely to be
+secure, and it is recommended that \type{Randpool} be used over \type{X917} in
+most cases.
+
+\subsubsection{X917}
+
+\type{X917} is based on the ANSI X9.17 standard, which makes use of a block
+cipher.  \type{X917} is quite a bit faster than \type{Randpool} (depending on
+the block cipher used).  Using \type{Square}, usually one of the fastest
+ciphers in the suite, \type{X917} is about 7 times faster than
+\type{Randpool}. The version used is a variant of the normal X9.17; most
+importantly, only 1/2 of the output of the block cipher is actually given to
+the caller (then a new block is computed), the timestamp is encrypted in CBC
+mode instead of ECB mode, and that after a \type{X917} object has generated a
+certain number of blocks (normally set to 32), it will automatically rekey
+itself using it's internal state. These alterations make any attack much harder
+(at the cost of reducing speed). \type{X917} is a template which takes a block
+cipher as an parameter.
+
+\subsubsection{Entropy Sources}
+
+For a RNG to be secure, it has to be seeded with some amount of ``truly
+random'' data. Because OpenCL is designed to be platform independent, no
+routines for this are provided. However, OpenCL does have an
+\type{EntropySource} interface, which can be subclassed for each individual
+platform. Some OSes (such as Linux, FreeBSD, and Windows NT) provide easy ways
+to get random data from the OS itself, while others (like most commercial
+Unices) will require very specialized code. \type{EntropySource}s for some
+systems can be found as modules in the OpenCL distribution.
+
+\type{EntropySource} has a pair of functions for getting entropy,
+\function{fast\_poll} and \function{slow\_poll}. You can use an
+\type{EntropySource} to seed a RNG by calling \type{void}
+\function{add\_entropy}(\type{EntropySource\&} \arg{source}, \type{bool}
+\arg{slow}).  This tells the RNG to ask the \type{EntropySource} for some
+amount of random data.
+
+If \arg{slow} is \type{true}, the RNG will ask \function{slow\_poll} to gather
+a fairly large amount of data; otherwise \function{fast\_poll} will be called
+in order to get some basic information quickly. Seeding the RNG with a slow
+poll at least once (when your application starts up, for example) is a
+\emph{highly} recommended idea, because it ensures that your RNG is in a good
+(ie, highly random and unpredictable) state.
+
+The \type{EntropySource} shouldn't write more data into the array than was
+requested (otherwise memory not owned by the process will probably be written
+to), however, it can write less (for instance, if it cannot collect enough
+data, or collecting that much would take too long). For this reason, the
+\function{get\_entropy} function returns how much data it actually wrote (which
+should never be more than the \arg{length} field passed to the function).
+
+Note for writers of \type{EntropySource}s: it isn't necessary to use any kind
+of cryptographic hash on your output. The data produced by an EntropySource is
+only used by an application after it has been hashed by the
+\type{RandomNumberGenerator} which asked for the entropy, and thus any hashing
+you do will be wasteful of both CPU cycles and possibly entropy.
+
+\subsection{Miscellaneous}
+
+This section has documentation for anything that just didn't fit into any of
+the major categories.
+
+\subsubsection{S2K Algorithms}
+
+There are various procedures (usually fairly ad-hoc) for turning a passphrase
+into an arbitrary length key for a symmetric cipher. A general interface for
+such algorithms is presented in \filename{s2k.h}. The main function is
+\function{derive}, which takes a string and the desired length of the output
+key, and returns a key of that length, deterministically produced from the
+passphrase.
+
+Most such algorithms allow the use of a ``salt'', which provides some extra
+randomness and helps against dictionary attacks on the passphrase. Simply
+call \function{change\_salt} (there are variations of it for most of the
+ways you might wish to specify a salt, check the header for details) with
+a block of random data.
+
+Additionally some algorithms allow you to set some sort of iteration count,
+which will make the algorithm take longer to compute the final key (hurting the
+speed of brute-force attacks of various kinds). A note of warning: the only
+currently implemented S2K algorithm, the one specified for OpenPGP (in
+\filename{pgp\_s2k.h}), uses the iteration count in a strange manner; instead
+of specifying how many times to iterate the hash, it tells how many
+\emph{bytes} should be hashed in total (including the salt). So the exact
+iteration count will depend on the size of the salt (which is fixed at 8 bytes
+for OpenPGP, though the implementation will allow any salt size) and the size
+of the passphrase.
+
+To get what OpenPGP calls ``Simple S2K'', set iterations to 0 (the default for
+OpenPGP S2K), and do not specify a salt. To get ``Salted S2K'', again leave the
+iteration count at 0, but give an 8-byte salt. ``Salted and Iterated S2K''
+requires an 8-byte salt and some iteration count (generally, this should be
+significantly larger than the size of the longest passphrase that might
+reasonably be used; somewhere from 1024 to 65536 would probably be about
+right).
+
+While OpenPGP's S2K algorithm supports both salting and iterating, not all
+S2K algorithms will. However, if they do not support such things, they will
+simply ignore the number of iterations and/or the salt (ie, you can call
+\function{change\_salt} on any S2K object without fear of an exception because
+that particular S2K doesn't support salting).
+
+\subsubsection{Checksums}
+
+Checksums are very similar to hash functions, and in fact share the same
+interface. However, there are some significant differences, the major ones
+being that the output size is very small (usually in the range of 2 to 4
+bytes), and is not designed to be cryptographically secure. But for their
+intended purpose (error checking), they perform very well. Some examples of
+checksums included in OpenCL are the Adler32 and CRC32 checksums.
+
+\subsubsection{Exceptions}
+
+Sooner or later, something is going to go wrong. OpenCL's behavior when
+something unusual occurs, like most C++ software, is to throw an exception.
+Exceptions in OpenCL are derived from it's \type{Exception} class. You can see
+most of the major varieties of exceptions used in OpenCL by looking at
+\filename{exceptn.h}. The only function you really need to concern yourself
+with is \type{const char*} \function{what()}. This will return an error message
+relevant to the error that occurred. For example:
+
+\begin{verbatim}
+try {
+   // various OpenCL operations
+   }
+catch(OpenCL::Exception& e)
+   {
+   cout << "OpenCL exception caught: " << e.what() << endl;
+   // error handling, or just abort
+   }
+\end{verbatim}
+
+OpenCL's exceptions are derived from \type{std::exception}, so you don't need
+to explicitly check for OpenCL exceptions if you're already catching the
+ISO standard ones.
+
+\subsubsection{Secure Memory}
+
+A major concern with mixing modern multiuser OSes and cryptographic code is
+that at any time the code (including secret keys) could be swapped to disk,
+where it can later be read by an attacker. OpenCL stores almost everything (and
+especially anything sensitive) in memory buffers which a) clear out their
+contents when their destructors are called, and b) have easy plugins for
+various memory locking functions, such as the \function{mlock}(2) call on many
+Unix systems.
+
+These classes should also be used within your own code for storing sensitive
+data. They are only meant for primitive data types (int, long, etc): if you
+want a container of higher level OpenCL objects, you can just use a
+\verb|std::vector|, since these objects know how to clear themselves when they
+are destroyed. You cannot, however, have a \verb|std::vector| (or any other
+container) of \type{Pipe}s or \type{Filter}s, because these types have pointers
+to other \type{Filter}s, and implementing copy constructors for these types
+would be both hard and quite expensive.
+
+These types are not described in any great detail: for more information,
+consult the files \filename{secmem.h} and \filename{secalloc.h}.
+
+\type{SecureBuffer} is a simple array type, whose size is specified at compile
+time. It will automatically convert to an array of the appropriate type, and
+has various useful functions, including \function{clear()}, and \type{u32bit}
+\function{size()}, which returns the length of the array. It is a template that
+takes as parameters a type, and a constant integer which is how long the array
+is (for example: \verb|SecureBuffer<byte, 8> key;|).
+
+\type{SecureVector} is a variable length array. It's size can be increased or
+decreased as need be, and it has a wide variety of functions useful for copying
+data into it's buffer. Like \type{SecureBuffer}, it implements \function{clear}
+and \function{size}.
+
+\subsubsection{Timers}
+
+OpenCL includes a pair of functions, \function{system\_time} and
+\function{system\_clock}, which are used extensively in some areas of the code
+(especially in the random number generators). These functions by default use
+\function{std::time} and \function{std::clock}, but often you can do better
+with system-dependent functions, especially for the system clock (for example,
+returning the microseconds value from \function{gettimeofday}, or the
+nanoseconds value from the POSIX.1b \function{clock\_gettime}, is far
+superior). Modules for this exist for several systems.
+
+\pagebreak
+
+\section{Filters}
+
+\subsection{Basic Filter Usage}
+
+Up until this point, using OpenCL would be very tedious; to do anything you
+would have to bother with putting data into arrays, doing whatever you want
+with it, and then sending it someplace. The filter metaphor (defining a series
+of operations which take some amount of input, process it, then send it along
+to the next filter) works very well in this situation. If you've ever used a
+Unix system, the usage of filters in OpenCL should be very intuitive (and even
+if you haven't, don't worry, it's pretty easy). For instance, here is how you
+encrypt a file with Blowfish in CBC mode with PKCS\#7 padding, then encode it
+with Base64 and send it to standard output (we assume you have already created
+\verb|key| and \verb|iv|, probably using one of OpenCL's
+\type{RandomNumberGenerator} types, and that \verb|file| is an open
+\type{istream}):
+
+\begin{verbatim}
+Pipe encryptor(new CBC_Encryption<Blowfish, PKCSPadding>(key, iv),
+               new Base64Encoder);
+file >> encryptor;
+encryptor.close(); // flush buffers, complete computations
+cout << encryptor;
+\end{verbatim}
+
+\type{Pipe} works in conjunction with the \type{Filter} class (for example, the
+\type{CBC\_Encryption} and \type{Base64Encoder} types used above are
+\type{Filter}s), but you should never have to deal with them directly (in fact,
+it's a distinctly bad idea, as \type{Pipe} and \type{Filter} are closely tied
+and rely on knowing a great deal about each other to work correctly).
+
+Some useful functions in \type{Pipe} not shown above are \type{u32bit}
+\function{remaining()}, which returns how many bytes are available for
+immediate reading, and several different I/O functions. Using the
+\type{istream}/\type{ostream} operators above, all data available (either
+stored in the pipe or until EOF from an istream) is taken out. Sometimes, you
+want only a small amount at a time, or you are getting your input in small
+chunks, in which case you can use \type{u32bit} \function{read}(\type{byte}
+\arg{output}[], \type{u32bit} \arg{len}), which will read up to \arg{len} bytes
+into \arg{output} and return how many bytes were actually written into the
+array, and \type{void} \function{write}(\type{byte} \arg{input}[],
+\type{u32bit} \arg{len}), which writes \arg{len} bytes from \arg{input} into
+the pipe. There are also versions of \function{read} and \function{write} which
+take a single byte as their argument, as convenience functions.
+Additionally, you can read everything currently stored in the pipe, using
+\type{SecureVector<byte>} \function{read\_all}() and
+\type{std::string} \function{read\_all\_as\_string}(). You can see the
+complete declaration for \type{Pipe} in \filename{filebase.h}
+
+You can reuse a \type{Pipe} by calling it's \function{reset} function, which
+restores a pipe to it's initial state of no filters (writing into the
+\type{Pipe} and then reading will give you back your data unchanged).  This
+usually isn't too useful, so you can use \type{void}
+\function{attach}(\type{Filter}* \arg{filter}) to attach a new filter onto the
+pipe again. You can call \function{attach} as many times as you like; each
+filter added will be attached to the end of the current set of filters (note
+that you can use \function{attach} even if you haven't called
+\function{reset}). Calling \function{reset} will also destroy any output
+currently stored in the pipe.
+
+One last point: if you call \function{attach}, everything which has previously
+been processed by the \type{Pipe} remains as-is. To prevent various problems,
+if you are calling \function{attach} on a \type{Pipe} which already has had
+input written into it (and you haven't reset the \type{Pipe}), you should call
+\function{close} first (this may not be exactly what you're looking for either:
+different filters have different semantics when they are closed).
+
+\subsection{Fork}
+
+It's fairly common that you might receive some data and want to perform more
+than one operation on it (ie, encrypt it with DES and calculate the MD5 hash of
+the plaintext at the same time). That's where \type{Fork} comes in. \type{Fork}
+is a filter that takes it's input and passes it on to \emph{one or more}
+\type{Filter}s which are attached to it.
+
+\type{Fork} changes the nature of the pipe system completely. Instead of being
+a linked list, it becomes a tree. Each ``leaf'' of this tree has it's own
+output buffer. When you read data from the pipe, your request for a read passes
+through all the \type{Filter}s in the pipe until it reaches the end, whereupon
+your data is retrieved from an output buffer. Obviously, if \type{Fork}
+forwarded your request to read to all it's ``children'', confusion would
+result: \type{Filter}s would be stepping on each other Filter's toes (and
+output), as they all try to write into your buffer. Also, what value should
+\function{remaining()} return?
+
+The solution to this dilemma is that you have to inform \type{Fork} what you
+want it to do. You do this by calling the function \type{void}
+\function{set\_port}(\type{u32bit} \arg{port}). The \arg{port} specifies which
+\type{Filter} it is that \type{Fork} should pass read requests on to.  You can
+find out how many ports there are by calling \type{u32bit}
+\function{total\_ports()} (valid port numbers range from $0 \ldots n - 1$,
+where $n$ is the return value of \function{total\_ports()}), and the currently
+selected port from \type{u32bit} \function{current\_port()}. Generally, after
+you have finished entering input, you will iterate through all ports reading
+the output.
+
+Since you will have to call \function{set\_port} when using \type{Fork}, you
+need to keep a pointer to the \type{Fork}s you are using, rather than simply
+calling \verb|new| in the call to the constructor. See the section ``A Filter
+Example'' for an example of using \type{Fork}.
+
+\subsection{Chain}
+
+\type{Chain} is about as simple as it gets. \type{Chain} creates a chain of
+\type{Filter}s and encapsulates them inside a single filter (itself). This is
+primarily useful for passing a sequence of filters into something which is
+expecting only a single \type{Filter} (most notably, \type{Fork}). You can call
+\type{Chain}'s constructor with up to 4 \type{Filter*}s (they will be added in
+order), or with an array of \type{Filter*}s and a \type{u32bit} which tells
+\type{Chain} how many \type{Filter*}s are in the array (again, they will be
+attached in order).
+
+See the next section for an example of using \type{Chain}.
+
+\pagebreak
+
+\subsection{A Filter Example}
+
+Here is some code which takes one or more filenames as it's arguments and
+calculates the result of several hash functions for each file. The complete
+program can be found as \filename{hasher.cpp} in the OpenCL distribution. For
+brevity, most error checking has been removed.
+
+\begin{verbatim}
+   OpenCL::Filter* hash[3] = {
+      new OpenCL::Chain(new OpenCL::HashFilter<OpenCL::MD5>,
+                        new OpenCL::HexEncoder),
+      new OpenCL::Chain(new OpenCL::HashFilter<OpenCL::SHA1>,
+                        new OpenCL::HexEncoder),
+      new OpenCL::Chain(new OpenCL::HashFilter<OpenCL::RIPEMD160>,
+                        new OpenCL::HexEncoder) };
+   string name[3] = { "MD5", "SHA-1", "RIPE-MD160" };
+
+   OpenCL::Fork* fork = new OpenCL::Fork(hash, COUNT);
+   OpenCL::Pipe pipe(fork);
+
+   for(u32bit j = 1; argv[j] != 0; j++)
+      {
+      ifstream file(argv[j]);
+      file >> pipe;
+      file.close();
+      pipe.close();
+      for(u32bit k = 0; k != 3; k++)
+         {
+         fork->set_port(k);
+         cout << name[k] << "(" << argv[j] << ") = " << pipe << endl;
+         }
+      }
+\end{verbatim}
+
+\pagebreak
+
+\subsection{Rolling Your Own}
+
+Well, now that you know how filters work in OpenCL, you probably want to write
+your own. Lucky for you, all of the hard work is done by the \type{Filter} base
+class, leaving you to handle the details of what your filter is supposed to
+do. The first thing is to make sure to do is derive your filter from OpenCL's
+\type{Filter} class. Remember that if you get confused about any of this, you
+can always look at the implementation of OpenCL's filters to see exactly how
+everything works.
+
+There are basically only three functions that a filter need worry about:
+
+\vskip 10pt \noindent
+\type{void} \function{write}(\type{byte} \arg{input}[], \type{u32bit}
+\arg{length}):
+
+\vskip 5pt
+The \function{write} function is what is called when a filter receives input
+for it to process. The filter is \emph{not} required to process it right away;
+many filters buffer their input before producing any output. A filter will
+usually have \function{write} called many times during it's lifetime.
+
+\vskip 10pt \noindent
+\type{void} \function{send}(\type{byte} \arg{output}[], \type{u32bit}
+\arg{length}):
+
+\vskip 5pt
+Eventually, a filter will want to produce some output to send along to the next
+filter in the pipeline. It does so by calling \function{send} with whatever it
+wants to send along to the next filter. There is also a version of
+\function{send} taking a single byte argument, as a convenience.
+
+\vskip 10pt \noindent
+\type{void} \function{final()}:
+
+\vskip 5pt
+Implementing the \function{final} function is optional. It is called when it
+has been requested that filters finish up their computations. Note that they
+should \emph{not} deallocate their resources; this should be done by their
+destructor. They should simply finish up with whatever computation they have
+been working on (for example, a compressing filter would flush the compressor
+and \function{send} the final block), and empty any buffers in preparation for
+processing a fresh new set of input.
+
+\vskip 10pt
+Additionally, if necessary, filters should define a constructor that takes any
+needed arguments, and a destructor to deal with deallocating memory, closing
+files, etc.
+
+\pagebreak
+
+\subsection{The Filter Directory}
+
+This section contains descriptions of every \type{Filter} included in OpenCL.
+Note that modules which provide \type{Filter}s are documented elsewhere --
+these \type{Filter}s are available on any installation of OpenCL.
+
+\subsubsection{Keys}
+
+Key handling is a little different for \type{Filter}s. Instead of a (very low
+level) interface of an array of bytes and a length parameter, they use a
+(slightly higher level) \type{SymmetricKey}. The major functions of this type
+are it's constructors:
+
+\vskip 5pt \noindent
+\function{SymmetricKey}(\type{RandomNumberGenerator\&} \arg{rng}, \type{u32bit}
+\arg{length}):
+
+This constructor takes \arg{length} bytes of output from \arg{rng} and uses it
+for a key.
+
+\vskip 5pt \noindent
+\function{SymmetricKey}(\type{const byte} \arg{input}[], \type{u32bit}
+\arg{length}):
+
+This constructor simply copies it's input.
+
+\vskip 5pt \noindent
+\function{SymmetricKey}(\type{const std::string} \arg{str})
+
+The argument \arg{str} is assumed to be a hex string; it is converted to binary
+and stored as the key.
+
+\vskip 10pt
+Synonyms for this type include \type{BlockCipherKey}, \type{StreamCipherKey},
+\type{MACKey}, and \type{BlockCipherModeIV} (they're all exactly the same
+thing, the different names just makes it clear what the bytes are being used
+for).
+
+\subsubsection{Basic Wrappers}
+
+Stream ciphers, hash functions, and MACs don't need anything special when it
+comes to filters. Stream ciphers take their input, encrypt it, and send it
+along to the next \type{Filter}. Hash functions and MACs both take their input
+and produce no output until \function{final()} is called, at which time they
+complete the hash and send that as output.
+
+\vskip 10pt \noindent
+\function{StreamCipherFilter}(\type{const StreamCipherKey\&} \arg{key})
+
+\vskip 5pt
+The constructor for a \type{StreamCipherFilter} takes the a key, which it will
+pass pretty much directly on to the \type{StreamCipher} being used, so if the
+key length is inappropriate for the cipher used, \type{InvalidKeyLength} will
+be thrown.
+
+\vskip 10pt \noindent
+\function{HashFilter}(\type{u32bit} \arg{outlength}):
+
+\vskip 5pt
+The constructor for a \type{HashFilter} takes only one argument, which is a
+number specifying how much of the hash should be produced as output.
+Sometimes, you will only want to use (say) half of the hash, and this mechanism
+lets you do this easily. It defaults to the full size of the hash. If
+\arg{outlength} is greater than the size of the output, the full hash is used.
+
+\vskip 10pt \noindent
+\function{MACFilter}(\type{const MACKey\&} \arg{key},
+                     \type{u32bit} \arg{outlength}):
+
+\vskip 5pt
+The constructor for a \type{MACFilter} takes a key, used in calculating the
+MAC, and a length parameter, which has semantics exactly the same as the one
+passed to \type{HashFilter}s constructor.
+
+\vskip 10pt
+All three of \type{StreamCipherFilter}, \type{HashFilter}, and \type{MACFilter}
+are templates, which take the desired type as an parameter. These filters can
+be found in \filename{filters.h}.
+
+\subsubsection{Cipher Modes}
+
+For block ciphers, the situation is more complicated. Because ECB mode is
+dangerous (a message may be easily altered without detection and similar
+plaintext encrypts to similar ciphertext), block ciphers must be used in a
+different mode. The modes provided with OpenCL are CBC, CFB, OFB, and
+Counter. All are templates, taking a \type{BlockCipher} as a parameter. They
+are presented in \filename{cbc.h}, \filename{cfb.h}, and \filename{ofb.h} (as
+counter mode is a type of OFB it is included in \filename{ofb.h}, and derive
+from \type{CipherMode}, which is a subclass of \type{Filter} (this allows you
+to enforce that a particular filter is, in fact, a block cipher mode, without
+having special cases for each mode).
+
+Only their constructors are interesting; other than that they are just like any
+other filter, and are used like any other discussed in this documentation.
+
+\vskip 10pt \noindent
+\function{CBC\_Encryption}(\type{const BlockCipherKey\&} \arg{key},
+                           \type{const BlockCipherModeIV\&} \arg{iv}):
+
+\vskip 5pt
+This is quite simple: a key, of a length suitable for the cipher, and an IV,
+which is the size of the cipher block (if it is not an exception will be
+thrown). The constructor for \type{CBC\_Decryption} is exactly the
+same.
+
+In addition to the \type{BlockCipher} parameter, CBC mode templates take an
+additional parameter which specifies how to pad the input, if any. Until OpenCL
+0.7.5, the only method available was PKCS7-style padding (as part of the
+\type{CBC\_wPadding} classes). If you don't want to use padding, you can use
+the \type{NoPadding} padding method. However, in that case, if the input to the
+filter is not an exact multiple of the block size an exception will be
+thrown. You can see which padding methods are available in
+\filename{padding.h}. This file is included automatically when you include the
+header for CBC mode so you don't have to explicitly include it.
+
+Some padding methods can only work with block ciphers that have certain block
+sizes (for example, PKCSPadding), while others (such as OneAndZeros) will work
+for any size block cihper. If the chosen block cipher/padding method pair
+cannot work together, a \type{InvalidBlocksize} exception will be thrown by the
+constructor.
+
+Additionally, a \type{DecodingError} exception can be thrown when
+\function{close()} is called 
+
+\vskip 10pt \noindent
+\function{CFB\_Encryption}(\type{const BlockCipherKey\&} \arg{key},
+                           \type{const BlockCipherModeIV\&} \arg{iv},
+                           \type{u32bit} \arg{feedback}):
+
+\vskip 5pt
+This is just like CBC, but it takes an (optional) additional argument, the size
+of the feedback (it will default to the full blocksize of the cipher being
+used). This value is given in bytes, and can range from 1 to BLOCKSIZE. If the
+\arg{feedback} is not a valid amount, \type{InvalidArgument} will be
+thrown. \type{CFB\_Decryption}, the inverse operation, takes similar arguments.
+
+\vskip 10pt \noindent
+\function{OFB}(\type{const BlockCipherKey\&} \arg{key},
+               \type{const BlockCipherModeIV\&} \arg{iv}):
+
+\vskip 5pt
+This is the usual OFB mode. Variable feedback sizes are not supported, as it
+has been shown that they are insecure. \type{Counter} is a variant of
+\type{OFB}, whose constructor takes the same arguments. Remember that a block
+cipher operating in either OFB or counter modes is like a stream cipher, and
+thus you should never encrypt two messages with the same key without changing
+the IV.
+
+\subsubsection{Encoders}
+
+Often you want your data to be in some form of text (for sending over channels
+which aren't 8-bit clean, printing it, etc). The filters \type{HexEncoder} and
+\type{Base64Encoder} will convert arbitrary binary data into Hex or Base64
+formats. Not surprisingly, you can use \type{HexDecoder} and
+\type{Base64Decoder} to convert it back into it's original form. You can find
+the declarations for these types in \filename{encoder.h}.
+
+\pagebreak
+
+\section{Writing Modules}
+
+It's a lot simpler to write modules for OpenCL that it is to write code in the
+core library, for several reasons. First, a module can rely on external
+libraries and services beyond the base ISO C++ libraries, and also machine
+dependent features (assembler, anyone?). Also, the code can be added at
+configuration time on the user's end with very little effort (ie the code
+can be distributed seperately and without depending on patching anything).
+
+Creating a module is quite simple. First, there must be a subdirectory in the
+\filename{modules} directory for it. The name of the module is the same as the
+name of this directory. Inside this directory, there needs to be a file, with
+exactly the same name as the directory (that's so the configuration script
+knows where to look). This file contains various directives it uses to specify
+what this module does, what systems it runs on, and so on. Comments start with
+a \verb|#| character and continue to end of line.
+
+Recognized directives include:
+
+\newcommand{\directive}[2]{
+   \vskip 4pt
+   \noindent
+   \texttt{#1}: #2
+}
+
+\directive{realname <name>}{Specify that the 'real world' name of this module
+   is \texttt{<name>}}
+
+\directive{define <macro>}{Define \texttt{OPENCL\_EXT\_<macro>} in
+   \filename{config.h}. This should only be used if the module creates
+   user-visible changes. As a convention, if the module implements an
+   \type{EntropySource}, the macro should begin with \texttt{ENTROPY\_SRC\_}}
+
+\directive{link\_to <lib>}{The module should link against this library (can
+   be used multiple times). The C, C++, and math libraries are linked by
+   default, so you don't need to specify those}
+
+\directive{needs\_std <std>}{Specify that the module requires the abilities of
+   \texttt{<std>}. Values currently known are ``posix1'', ``posix1b'', and
+   ``pthreads''}
+
+\directive{subsystem <sub>}{Specify that the module alters the behavior of
+   subsystem \texttt{<sub>} in some way (which implies that another module
+   cannot change the same subsystem). If you're considering choosing a new
+   subsystem name for a module, please email \texttt{lloyd@acm.jhu.edu} to
+   help coordinate consistent subsystem naming}
+
+\directive{add\_file <file>}{Tell the configuration script to add the file
+   given into the source tree. This file must exist in the module directory}
+
+\directive{ignore\_file <file>}{Tell the configuration script to ignore the
+   file given in the main source tree}
+
+\directive{replace\_file <file>}{Tell the configuration script to ignore the
+   file given in the main source tree, and instead use the one in the module's
+   directory}
+
+\directive{patch\_file <file> <patch>}{Tell the configuration script to patch
+   the file named (in the main source tree) with the patch given. The patch
+   filename \textit{must} end with ``.dif''. The patch file is recommended to
+   be (but is not required to be) a context diff}
+
+\vskip 10pt
+\noindent
+Additionally, the module file can contain blocks, delimited by
+the following pairs:
+
+\texttt{<os> / </os>}, \texttt{<cpu> / </cpu>}, \texttt{<cc> / </cc>}
+
+\noindent
+For example, putting ``alpha'' and ``ia64'' in a \texttt{<cpu>} block will make
+the configuration script only allow the module to be compiled on those
+architectures.  Not having a block means any value is acceptable.
+
+\pagebreak
+
+\section{More Information}
+
+\subsection{Portability}
+
+A fair amount of effort was made into making this library portable to a wide
+variety of platforms, assuming an implementation of the C++ standard. OpenCL
+has been successfully compiled, tested, and used with the following systems:
+
+\newcommand{\sys}[3]{
+#1 & #2 & #3 \\
+}
+
+\vskip 10pt \noindent
+\begin{tabular}{|l|l|l|}                                          \hline
+OS      & CPU             & Compiler(s)                        \\ \hline
+\sys{Linux}  {IA-32} {egcs 1.1.2, gcc 3.0, KAI C++ 3.4g, KAI C++ 4.0e}
+\sys{Linux}  {SPARC} {egcs 1.1.2}
+\sys{Linux}  {Alpha / ARM / IA-64 / PowerPC}{gcc 2.95.x}
+\sys{Tru64}  {Alpha} {Compaq C++ 6.1, 6.2, 6.3}
+\sys{Solaris}{SPARC} {gcc 2.95.2}
+\sys{IRIX}   {MIPS}  {MIPSProC++ 7.2.1.1m}
+\hline
+\end{tabular}
+\vskip 10pt
+
+\subsection{Compatibility}
+
+Generally, cryptographic algorithms are well standardized, and thus
+compatibility between implementations is relatively simple (of course, not all
+algorithms are supported by all implementations). However, there are a few
+algorithms which are poorly specified, and these should be avoided if you wish
+your data to be processed in the same way by another implementation (including
+future version of OpenCL).
+
+The block cipher GOST has a particularly poor specification: there are no
+standard Sboxes, and the specification does not give test vectors even for
+sample boxes, which leads to issues of endian conventions, etc. Other
+algorithms including in OpenCL suffering from these problems (though to a less
+serious degree) include HAVAL, ISAAC, and EMAC.
+
+If you wish maximum portability between different implementations of an
+algorithm, it's best to stick to strongly defined and well standardized
+algorithms: TripleDES, Blowfish, CAST5, Rijndael, Serpent, HMAC, MD5, SHA-1,
+and RIPE-MD160 all being good examples.
+
+\subsection{Patents}
+
+Some of the algorithms implemented by OpenCL are covered by patents. Algorithms
+known to be patented in the United States or other countries (where the patent
+holder has not granted royalty-free use for any purpose) include: IDEA, MISTY1,
+RC5, RC6, and SEAL. Note that just because an algorithm is not listed here, you
+should not assume that it is not encumbered by patents.
+
+\pagebreak
+
+\subsection{Further Reading and Information}
+
+It's probably a very good idea if you have some knowledge of cryptography prior
+to trying to use OpenCL. It is recommended you read one or more of these books
+before seriously using the library (note that the Handbook of Applied
+Cryptography is available online in it's entirety):
+
+\setlength{\parskip}{5pt}
+
+\noindent
+\textit{Handbook of Applied Cryptography}, by Alfred J. Menezes,
+Paul C. Van Oorschot, and Scott A. Vanstone; CRC Press
+
+\noindent
+\textit{Cryptography: Theory and Practice}, by Douglas R. Stinson; CRC Press
+
+\noindent
+\textit{Applied Cryptography, 2nd Ed.}, by Bruce Schneier; John Wiley \& Sons
+
+\setlength{\parskip}{0pt}
+
+\subsection{Acknowledgments}
+
+\setlength{\parskip}{5pt}
+
+\noindent
+The implementation of DES is based off a public domain implementation by Phil
+Karn from 1994 (he, in turn, credits Richard Outerbridge and Jim Gillogly).
+
+\noindent
+Matthew Skala's public domain \filename{twofish.c} (as given in GnuPG 0.9.8)
+provided the basis for Twofish (mostly the key schedule).
+
+\noindent
+Rijndael and Square are based on the reference implementations written by the
+inventors, Joan Daemon and Vincent Rijmen.
+
+\noindent
+ThreeWay is based on reference code written by Joan Daemon.
+
+\noindent
+The Serpent S-Boxes used were discovered by Dag Arne Osvik and detailed in his
+paper "Speeding Up Serpent".
+
+\noindent
+Some of the hash functions (MD5, SHA-1, etc) use an optimized implementation
+of one of the boolean functions, which is from an implementation by
+Colin Plumb.
+
+\noindent
+The design of Randpool takes some of it's design principles from those
+suggested by Eric A. Young in his SSLeay documentation and Peter Guttman's
+paper "Software Generation of Practically Strong Random Numbers".
+
+\noindent
+X917's design was changed from the X9.17 standard in response to the attacks
+presented in the paper "Cryptanalytic Attacks on Pseudorandom Number
+Generators", by Kelsey, Schneier, Wagner, and Hall.
+
+\setlength{\parskip}{0pt}
+
+\pagebreak
+
+\subsection{Contact Information}
+
+A PGP DSA key with a fingerprint of
+\verb|33E3 9768 1D13 E7B4 1A01 BBCE A63F 2CBD FA02 FBCC| is used to sign all
+OpenCL releases. This key can be found in the file \filename{doc/pgpkeys.asc};
+PGP keys for the developers are also stored there.
+
+\vskip 5pt \noindent
+%Email: \verb|opencl@opencl.org|
+Email: \verb|opencl@acm.jhu.edu|
+
+\vskip 5pt \noindent
+%OpenCL Web Site: \verb|http://www.opencl.org|
+OpenCL Web Site: \verb|http://opencl.sourceforge.net|
+
+\vskip 5pt \noindent
+OpenCL Download Site (HTTP): \verb|http://prdownloads.sf.net/opencl|
+
+\vskip 5pt \noindent
+%OpenCL Download Site (FTP): \verb|ftp://ftp.opencl.org/pub/OpenCL|
+OpenCL Download Site (FTP): \verb|ftp://acm.jhu.edu/pub/lloyd/OpenCL|
+
+\vskip 5pt \noindent
+Development both of and with OpenCL is discussed on the opencl-devel mailing
+list; see the web page for details.
+
+\subsection{Developers}
+
+The following people have contributed to the development of OpenCL:
+
+\newcommand{\developer}[4]{
+\noindent \vskip 5pt
+Name: #1
+
+Email: \texttt{<#2>}
+
+PGP Key Fingerprint: \texttt{#3}
+
+Credits: #4
+
+\vskip 3pt
+}
+
+\developer{Jack Lloyd}{lloyd@acm.jhu.edu}
+{2DD2 95F9 C7E3 A15E AF29 80E1 D6A9 A5B9 4DCD F398}
+{Initial design and coding}
+
+\developer{Peter J. Jones}{pjones@pmade.org}
+{70D4 3997 A57B 1A72 CDB5 0F3B F955 61E3 8082 EBE9}
+{Bzip2 Filter and parts of the Zlib filter}
+
+\end{document}

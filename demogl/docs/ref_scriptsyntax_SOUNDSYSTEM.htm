@@ -1,0 +1,774 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:ScriptSyntax:_SOUNDSYSTEM</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::ScriptSyntax::<b>_SOUNDSYSTEM</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>_SOUNDSYSTEM</h4>
+Below are the definitions for all the commands which can be specified with the _SOUNDSYSTEM object in the script.
+You can add as much whitespace around commands and object names in the scriptcommands as you like, these will be 
+stripped off anyway. 
+<p>
+All the commands below are prefixed with the timeline position in milliseconds when the command should be executed.
+This timeline position can be negative, which means the command is executed prior application execution. All negative timeline events
+are executed at once, prior to the start of the application, in the order on the timeline, so more negative times come first.
+<p>
+Example:
+<pre>
+1000;LOADMP3;mycooltune.mp3;MP3_1;1;
+</pre>
+<p>
+This will load at timeline spot 1000, which is after 1 second, the MP3 'mycooltune.mp3' and assing 'MP3_1' to it as ElementScriptID. The
+element should use 3D sound.
+<p>
+<!-- DGL_SS_MP3ELEMENT-->
+<dl>
+<dt><hr size="1" width="80%" align="left">
+	<b>LOADMP3</b>
+<pre>
+_SOUNDSYSTEM;LOADMP3;Filename;ElementScriptID;Uses 3D;
+</pre>
+<dd>Loads a sound element of type DGL_SS_MP3ELEMENT.
+	<p>
+	<dl>
+	<dt><i>Filename</i>
+	<dd>Specifies the name of the file which contains the DGL_SS_MP3ELEMENT data to load.<br>
+		<b>Type:</b> string.
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ElementScriptID for the sound element to load. Should be unique.<br>
+		<b>Type:</b> string.
+	<dt><i>Uses 3D</i>
+	<dd>Specifies if the sound element uses 3D sound logic (1) or not (0).<br>
+		<b>Type:</b> integer.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>PLAYMP3</b>
+<pre>
+_SOUNDSYSTEM;PLAYMP3;ElementScriptID;Start position;Volume;Panning;Loop;ChannelScriptID;
+</pre>
+<dd>Starts/plays a sound element of type DGL_SS_MP3ELEMENT with ID ElementScriptID on the channel
+	with ID ChannelScriptID.
+	<p>
+	<dl>
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ElementScriptID for the sound element to play. Should be loaded first.<br>
+		<b>Type:</b> string.
+	<dt><i>Start position</i>
+	<dd>Specifies the start position of the play of the sound data. In miliseconds.<br>
+		<b>Type:</b> long.
+	<dt><i>Volume</i>
+	<dd>Specifies the volume the sound should be started on. Uses logaritmic scale. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [0,100].
+	<dt><i>Panning</i>
+	<dd>Specifies the panning of the sound. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [-100, 100]. 
+	<dt><i>Loop</i>
+	<dd>Specifies if the playback of the sound data should be restarted at the beginning when the end of the
+		sounddata is reached (1) or not (0).<br>
+		<b>Type:</b> integer.
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel on which the playback will be started. This ID can then be used to refer to
+		the channel when properties of that channel should be changed.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemStartElement.htm" target="main">DEMOGL_SoundSystemStartElement</a>. Conversion
+	   between ElementScriptID and ElementCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemElementScriptID2ElementCodeID.htm" target="main">DEMOGL_SoundSystemElementScriptID2ElementCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>STOPMP3</b>
+<pre>
+_SOUNDSYSTEM;STOPMP3;ChannelScriptID;
+</pre>
+<dd>Stops the playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_MP3ELEMENT. 
+	Playback can't be resumed and should be restarted using <i>PLAYMP3</i>.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be stopped.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemStopChannel.htm" target="main">DEMOGL_SoundSystemStopChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>PAUSEMP3</b>
+<pre>
+_SOUNDSYSTEM;PAUSEMP3;ChannelScriptID;
+</pre>
+<dd>Pauses the playback of a sound channel with ID [ChannelScriptID] which plays data owned by a sound element of type DGL_SS_MP3ELEMENT.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be paused.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemPauseChannel.htm" target="main">DEMOGL_SoundSystemPauseChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>CONTINUEMP3</b>
+<pre>
+_SOUNDSYSTEM;CONTINUEMP3;ChannelScriptID;
+</pre>
+<dd>Continues a paused playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_MP3ELEMENT.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be resumed.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemContinueChannel.htm" target="main">DEMOGL_SoundSystemContinueChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SEEKINMP3</b>
+<pre>
+_SOUNDSYSTEM;SEEKINMP3;ChannelScriptID;Start position;
+</pre>
+<dd>Resumes the active playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_MP3ELEMENT at
+    the position Start position.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be resumed at the given start position.<br>
+		<b>Type:</b> string.
+	<dt><i>start position</i>
+	<dd>Specifies the re-start position of the play of the sound data. In miliseconds.<br>
+		<b>Type:</b> long.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSeekInChannel.htm" target="main">DEMOGL_SoundSystemSeekInChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>EAXMIXMP3</b>
+<pre>
+_SOUNDSYSTEM;EAXMIXMP3;ChannelScriptID;Mix value;
+</pre>
+<dd>Sets the reverb mixing value for the MP3 playing on channel with ID ChannelScriptID.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Mix value</i>
+	<dd>Specifies the reverd mixing value. Legal values fall in the range of [-1.0, 1.0]. Has no effect on
+		3D enabled sound channels <br>
+		<b>Type:</b> float.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetEAXMixChannel.htm" target="main">DEMOGL_SoundSystemSetEAXMixChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SETVOLUMEMP3</b>
+<pre>
+_SOUNDSYSTEM;SETVOLUMEMP3;ChannelScriptID;Volume;
+</pre>
+<dd>Sets the volume for the MP3 playing on channel with ID ChannelScriptID, using a logaritmic scale.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Volume</i>
+	<dd>Specifies the volume value to be set. Uses logaritmic scale. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [0,100].
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SETPANMP3</b>
+<pre>
+_SOUNDSYSTEM;SETPANMP3;ChannelScriptID;Panning;
+</pre>
+<dd>Sets the panning for the MP3 playing on channel with ID ChannelScriptID, using a linear scale.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Panning</i>
+	<dd>Specifies the panning of the sound. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [-100, 100]. 
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>FREEMP3</b>
+<pre>
+_SOUNDSYSTEM;FREEMP3;ElementScriptID;
+</pre>
+<dd>Removes the sound element with ID ElementScriptID from the soundsystem. The opposite of LoadMP3
+	<p>
+	<dl>
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ID of the sound element which should be removed.
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm" target="main">DEMOGL_SoundSystemFreeElement</a>. Conversion
+	   between ElementScriptID and ElementCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemElementScriptID2ElementCodeID.htm" target="main">DEMOGL_SoundSystemElementScriptID2ElementCodeID</a>
+	   for that.
+	<p>	
+
+<!-- DGL_SS_MODELEMENT-->
+
+<dt><hr size="1" width="80%" align="left">
+	<b>LOADMOD</b>
+<pre>
+_SOUNDSYSTEM;LOADMOD;Filename;ElementScriptID;Uses 3D;
+</pre>
+<dd>Loads a sound element of type DGL_SS_MODELEMENT.
+	<p>
+	<dl>
+	<dt><i>Filename</i>
+	<dd>Specifies the name of the file which contains the DGL_SS_MODELEMENT data to load.<br>
+		<b>Type:</b> string.
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ElementScriptID for the sound element to load. Should be unique.<br>
+		<b>Type:</b> string.
+	<dt><i>Uses 3D</i>
+	<dd>Specifies if the sound element uses 3D sound logic (1) or not (0).<br>
+		<b>Type:</b> integer.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>PLAYMOD</b>
+<pre>
+_SOUNDSYSTEM;PLAYMOD;ElementScriptID;Start position;Volume;Panning;Loop;ChannelScriptID;
+</pre>
+<dd>Starts/plays a sound element of type DGL_SS_MODELEMENT with ID ElementScriptID on the channel
+	with ID ChannelScriptID.
+	<p>
+	<dl>
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ElementScriptID for the sound element to play. Should be loaded first.<br>
+		<b>Type:</b> string.
+	<dt><i>start position</i>
+	<dd>Specifies the start position of the play of the sound data. SPecified in ROW/ORDER format: 
+		highword is row, lowword is order. Can be hexadecimal number, like 0xNumber.<br>
+	<dt><i>Volume</i>
+	<dd>Specifies the volume the sound should be started on. Uses logaritmic scale. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [0,100].
+	<dt><i>Panning</i>
+	<dd>Specifies the panning of the sound. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [-100, 100]. 
+	<dt><i>Loop</i>
+	<dd>Specifies if the playback of the sound data should be restarted at the beginning when the end of the
+		sounddata is reached (1) or not (0).<br>
+		<b>Type:</b> integer.
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel on which the playback will be started. This ID can then be used to refer to
+		the channel when properties of that channel should be changed.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemStartElement.htm" target="main">DEMOGL_SoundSystemStartElement</a>. Conversion
+	   between ElementScriptID and ElementCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemElementScriptID2ElementCodeID.htm" target="main">DEMOGL_SoundSystemElementScriptID2ElementCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>STOPMOD</b>
+<pre>
+_SOUNDSYSTEM;STOPMOD;ChannelScriptID;
+</pre>
+<dd>Stops the playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_MODELEMENT. 
+	Playback can't be resumed and should be restarted using <i>PLAYMOD</i>.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be stopped.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemStopChannel.htm" target="main">DEMOGL_SoundSystemStopChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>PAUSEMOD</b>
+<pre>
+_SOUNDSYSTEM;PAUSEMOD;ChannelScriptID;
+</pre>
+<dd>Pauses the playback of a sound channel with ID [ChannelScriptID] which plays data owned by a sound element of type DGL_SS_MODELEMENT.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be paused.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemPauseChannel.htm" target="main">DEMOGL_SoundSystemPauseChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>CONTINUEMOD</b>
+<pre>
+_SOUNDSYSTEM;CONTINUEMOD;ChannelScriptID;
+</pre>
+<dd>Continues a paused playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_MODELEMENT.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be resumed.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemContinueChannel.htm" target="main">DEMOGL_SoundSystemContinueChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SEEKINMOD</b>
+<pre>
+_SOUNDSYSTEM;SEEKINMOD;ChannelScriptID;Start position;
+</pre>
+<dd>Resumes the active playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_MODELEMENT at
+    the position Start position.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be resumed at the given start position.<br>
+		<b>Type:</b> string.
+	<dt><i>start position</i>
+	<dd>Specifies the re-start position of the play of the sound data. SPecified in ROW/ORDER format: 
+		highword is row, lowword is order. Can be hexadecimal number, like 0xNumber.<br>
+		<b>Type:</b> long.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSeekInChannel.htm" target="main">DEMOGL_SoundSystemSeekInChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>EAXMIXMOD</b>
+<pre>
+_SOUNDSYSTEM;EAXMIXMOD;ChannelScriptID;Mix value;
+</pre>
+<dd>Sets the reverb mixing value for the MOD playing on channel with ID ChannelScriptID.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Mix value</i>
+	<dd>Specifies the reverd mixing value. Legal values fall in the range of [-1.0, 1.0]. Has no effect on
+		3D enabled sound channels <br>
+		<b>Type:</b> float.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetEAXMixChannel.htm" target="main">DEMOGL_SoundSystemSetEAXMixChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SETVOLUMEMOD</b>
+<pre>
+_SOUNDSYSTEM;SETVOLUMEMOD;ChannelScriptID;Volume;
+</pre>
+<dd>Sets the volume for the MOD playing on channel with ID ChannelScriptID, using a logaritmic scale.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Volume</i>
+	<dd>Specifies the volume value to be set. Uses logaritmic scale. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [0,100].
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SETPANMOD</b>
+<pre>
+_SOUNDSYSTEM;SETPANMOD;ChannelScriptID;Panning;
+</pre>
+<dd>Sets the panning for the MOD playing on channel with ID ChannelScriptID, using a linear scale.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Panning</i>
+	<dd>Specifies the panning of the sound. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [-100, 100]. 
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>FREEMOD</b>
+<pre>
+_SOUNDSYSTEM;FREEMOD;ElementScriptID;
+</pre>
+<dd>Removes the sound element with ID ElementScriptID from the soundsystem. The opposite of LoadMOD
+	<p>
+	<dl>
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ID of the sound element which should be removed.
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm" target="main">DEMOGL_SoundSystemFreeElement</a>. Conversion
+	   between ElementScriptID and ElementCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemElementScriptID2ElementCodeID.htm" target="main">DEMOGL_SoundSystemElementScriptID2ElementCodeID</a>
+	   for that.
+	<p>	
+
+<!-- DGL_SS_SAMPLEELEMENT-->
+
+<dt><hr size="1" width="80%" align="left">
+	<b>LOADSMPL</b>
+<pre>
+_SOUNDSYSTEM;LOADSMPL;Filename;ElementScriptID;Uses 3D;
+</pre>
+<dd>Loads a sound element of type DGL_SS_SAMPLEELEMENT.
+	<p>
+	<dl>
+	<dt><i>Filename</i>
+	<dd>Specifies the name of the file which contains the DGL_SS_SAMPLEELEMENT data to load.<br>
+		<b>Type:</b> string.
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ElementScriptID for the sound element to load. Should be unique.<br>
+		<b>Type:</b> string.
+	<dt><i>Uses 3D</i>
+	<dd>Specifies if the sound element uses 3D sound logic (1) or not (0).<br>
+		<b>Type:</b> integer.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>PLAYSMPL</b>
+<pre>
+_SOUNDSYSTEM;PLAYSMPL;ElementScriptID;Start position;Volume;Panning;Loop;ChannelScriptID;
+</pre>
+<dd>Starts/plays a sound element of type DGL_SS_SAMPLEELEMENT with ID ElementScriptID on the channel
+	with ID ChannelScriptID.
+	<p>
+	<dl>
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ElementScriptID for the sound element to play. Should be loaded first.<br>
+		<b>Type:</b> string.
+	<dt><i>Start position</i>
+	<dd>Specifies the start position of the play of the sound data. In bytes.<br>
+		<b>Type:</b> long.
+	<dt><i>Volume</i>
+	<dd>Specifies the volume the sound should be started on. Uses logaritmic scale. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [0,100].
+	<dt><i>Panning</i>
+	<dd>Specifies the panning of the sound. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [-100, 100]. 
+	<dt><i>Frequency</i>
+	<dd>Specifies the frequency of the sound output. <br>
+		<b>Type:</b> integer, value in the range of [0,44100] to specify a frequency or -1, to keep the DGL_SS_SAMPLEELEMENT's frequency stored
+		with the filedata.
+	<dt><i>Loop</i>
+	<dd>Specifies if the playback of the sound data should be restarted at the beginning when the end of the
+		sounddata is reached (1) or not (0).<br>
+		<b>Type:</b> integer.
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel on which the playback will be started. This ID can then be used to refer to
+		the channel when properties of that channel should be changed.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemStartElement.htm" target="main">DEMOGL_SoundSystemStartElement</a>. Conversion
+	   between ElementScriptID and ElementCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemElementScriptID2ElementCodeID.htm" target="main">DEMOGL_SoundSystemElementScriptID2ElementCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>STOPSMPL</b>
+<pre>
+_SOUNDSYSTEM;STOPSMPL;ChannelScriptID;
+</pre>
+<dd>Stops the playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_SAMPLEELEMENT. 
+	Playback can't be resumed and should be restarted using <i>PLAYSMPL</i>.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be stopped.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemStopChannel.htm" target="main">DEMOGL_SoundSystemStopChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>PAUSESMPL</b>
+<pre>
+_SOUNDSYSTEM;PAUSESMPL;ChannelScriptID;
+</pre>
+<dd>Pauses the playback of a sound channel with ID [ChannelScriptID] which plays data owned by a sound element of type DGL_SS_SAMPLEELEMENT.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be paused.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemPauseChannel.htm" target="main">DEMOGL_SoundSystemPauseChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>CONTINUESMPL</b>
+<pre>
+_SOUNDSYSTEM;CONTINUESMPL;ChannelScriptID;
+</pre>
+<dd>Continues a paused playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_SAMPLEELEMENT.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be resumed.<br>
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemContinueChannel.htm" target="main">DEMOGL_SoundSystemContinueChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SEEKINSMPL</b>
+<pre>
+_SOUNDSYSTEM;SEEKINSMPL;ChannelScriptID;Start position;
+</pre>
+<dd>Resumes the active playback of a sound channel with ID ChannelScriptID which plays data owned by a sound element of type DGL_SS_SAMPLEELEMENT at
+    the position Start position.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which the playback should be resumed at the given start position.<br>
+		<b>Type:</b> string.
+	<dt><i>Start position</i>
+	<dd>Specifies the start position of the play of the sound data. In bytes.<br>
+		<b>Type:</b> long.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSeekInChannel.htm" target="main">DEMOGL_SoundSystemSeekInChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>EAXMIXSMPL</b>
+<pre>
+_SOUNDSYSTEM;EAXMIXSMPL;ChannelScriptID;Mix value;
+</pre>
+<dd>Sets the reverb mixing value for the SMPL playing on channel with ID ChannelScriptID.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Mix value</i>
+	<dd>Specifies the reverd mixing value. Legal values fall in the range of [-1.0, 1.0]. Has no effect on
+		3D enabled sound channels <br>
+		<b>Type:</b> float.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetEAXMixChannel.htm" target="main">DEMOGL_SoundSystemSetEAXMixChannel</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SETVOLUMESMPL</b>
+<pre>
+_SOUNDSYSTEM;SETVOLUMESMPL;ChannelScriptID;Volume;
+</pre>
+<dd>Sets the volume for the SMPL playing on channel with ID ChannelScriptID, using a logaritmic scale.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Volume</i>
+	<dd>Specifies the volume value to be set. Uses logaritmic scale. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [0,100].
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SETPANSMPL</b>
+<pre>
+_SOUNDSYSTEM;SETPANSMPL;ChannelScriptID;Panning;
+</pre>
+<dd>Sets the panning for the SMPL playing on channel with ID ChannelScriptID, using a linear scale.
+	<p>
+	<dl>
+	<dt><i>ChannelScriptID</i>
+	<dd>Specifies the ID of the channel which EAX reverb mixing value should be set.<br>
+		<b>Type:</b> string.
+	<dt><i>Panning</i>
+	<dd>Specifies the panning of the sound. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [-100, 100]. 
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetChannelAttributes.htm" target="main">DEMOGL_SoundSystemSetChannelAttributes</a>. Conversion
+	   between ChannelScriptID and ChannelCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>
+	   for that.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>FREESMPL</b>
+<pre>
+_SOUNDSYSTEM;FREESMPL;ElementScriptID;
+</pre>
+<dd>Removes the sound element with ID ElementScriptID from the soundsystem. The opposite of LoadSMPL
+	<p>
+	<dl>
+	<dt><i>ElementScriptID</i>
+	<dd>Specifies the ID of the sound element which should be removed.
+		<b>Type:</b> string.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm" target="main">DEMOGL_SoundSystemFreeElement</a>. Conversion
+	   between ElementScriptID and ElementCodeID is needed with that function. Use 
+	   <a HREF="ref_functions_DEMOGL_SoundSystemElementScriptID2ElementCodeID.htm" target="main">DEMOGL_SoundSystemElementScriptID2ElementCodeID</a>
+	   for that.
+	<p>	
+<dt><hr size="1" width="80%" align="left">
+	<b>SETEAXENV</b>
+<pre>
+_SOUNDSYSTEM;SETEAXENV;EAX Environment constant;Reverb volume;Decay;Damp;
+</pre>
+<dd>Sets the global EAX environment settings, affecting all playing sound channels.
+	<p>
+	<dl>
+	<dt><i>EAX Environment constant</i>
+	<dd>Constant to specify a predefined EAX environment setting. See 
+		<a HREF="ref_functions_DEMOGL_SoundSystemSetEAXEnv.htm" target="main">DEMOGL_SoundSystemSetEAXEnv</a> and <b>DemoGL_Bass.h</b>.<br>
+		<b>Type:</b> integer.
+	<dt><i>Reverb volume</i>
+	<dd>Specifies the volume of the reverb, i.e. the amount of reverb.
+		<b>Type:</b> float. Legal values fall in the range [0.0, 1.0], and <0.0 leaves current setting untouched <DT><i>Decay</i>
+	<dd>Specifies the time in seconds it takes the reverb to diminish by 60dB.
+		<b>Type:</b> float. Legal values fall in the range [0.1, 20.0], and  0.0 leaves current setting untouched
+	<dt><i>Damp</i>
+	<dd>Specifies the damping of the sound, which frequency area should decay faster: higher or lower frequencies.
+		<b>Type:</b> float. Legal values are: 0.0: high frequencies decay quickest, 1.0: low/high frequencies decay equally,
+		2.0: low frequencies decay quickest. Specifying a value &lt; 0.0 leaves the	current value for <i>fDamp</i> untouched.
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetEAXEnv.htm" target="main">DEMOGL_SoundSystemSetEAXEnv</a>.
+	<p>		
+<dt><hr size="1" width="80%" align="left">
+	<b>SETVOLUME</b>
+<pre>
+_SOUNDSYSTEM;SETVOLUME;Volume;
+</pre>
+<dd>Sets the global output volume for all sound, using a logaritmic scale.
+	<p>
+	<dl>
+	<dt><i>Volume</i>
+	<dd>Specifies the volume value to be set. Uses logaritmic scale. Has no effect on 3D enabled sound elements.<br>
+		<b>Type:</b> integer, value in the range of [0,100].
+	</dl>
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemSetVolume.htm" target="main">DEMOGL_SoundSystemSetVolume</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>STOPALL</b>
+<pre>
+_SOUNDSYSTEM;STOPALL;
+</pre>
+<dd>Stops all playback of all channels. Cannot be resumed, all channels have to be restarted using the PLAY[element type] commands.
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemStopAll.htm" target="main">DEMOGL_SoundSystemStopAll</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>PAUSEALL</b>
+<pre>
+_SOUNDSYSTEM;PAUSEALL;
+</pre>
+<dd>Pauses all playback of all channels. Can be resumed by using CONTINUEALL.
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemPauseAll.htm" target="main">DEMOGL_SoundSystemPauseAll</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>CONTINUEALL</b>
+<pre>
+_SOUNDSYSTEM;CONTINUEALL;
+</pre>
+<dd>Resumes the paused playback of all channels, which are paused using the PAUSEALL command. 
+	<p>
+	<b>See equivalent:</b> <a HREF="ref_functions_DEMOGL_SoundSystemContinueAll.htm" target="main">DEMOGL_SoundSystemContinueAll</a>.
+	<p>
+<dt><hr size="2" width="80%" align="left">
+<b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

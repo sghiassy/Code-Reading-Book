@@ -1,0 +1,24 @@
+XCOMM $XConsortium: Imakefile /main/10 1996/12/06 15:58:45 swick $
+
+         DEFINES = StrcasecmpDefines
+
+         DEPLIBS = $(DEPXTOOLLIB) $(DEPXLIB)
+ LOCAL_LIBRARIES = $(XTOOLLIB) $(XLIB)
+
+         HEADERS = PM.h PMproto.h
+
+           SRCS1 = main.c pmdb.c config.c
+                   
+           OBJS1 = main.o pmdb.o config.o
+
+          PROGS1 = proxymngr
+
+        PROGRAMS = $(PROGS1)
+
+BuildIncludes($(HEADERS),X11/PM,../..)
+InstallMultipleFlags($(HEADERS),$(INCDIR)/X11/PM,$(INSTINCFLAGS))
+
+ComplexProgramTarget_1(proxymngr,$(LOCAL_LIBRARIES),NullParameter)
+SpecialCObjectRule(main,$(_NOOP_),'-DCONFIG_FILE="'$(PROXYMANAGERDIR)'/pmconfig"')
+InstallNonExecFile(pmconfig,$(PROXYMANAGERDIR))
+InstallManPage(proxymngr,$(MANDIR))

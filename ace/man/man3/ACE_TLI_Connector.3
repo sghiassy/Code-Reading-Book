@@ -1,0 +1,99 @@
+.TH ACE_TLI_Connector 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_TLI_Connector \- Defines an active connection factory for the \fBACE_TLI\fR C++ wrappers. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <TLI_Connector.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_INET_Addr\fR \fBPEER_ADDR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_TLI_Stream\fR \fBPEER_STREAM\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TLI_Connector\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_TLI_Connector\fR (\fBACE_TLI_Stream\fR &new_stream, const \fBACE_Addr\fR &remote_sap, \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0, const char device[] = ACE_TLI_TCP_DEVICE, struct t_info *info = 0, int rw_flag = 1, struct netbuf *udata = 0, struct netbuf *opt = 0)"
+.br
+.ti -1c
+.RI "int \fBconnect\fR (\fBACE_TLI_Stream\fR &new_stream, const \fBACE_Addr\fR &remote_sap, \fBACE_Time_Value\fR *timeout = 0, const \fBACE_Addr\fR &local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0, const char device[] = ACE_TLI_TCP_DEVICE, struct t_info *info = 0, int rw_flag = 1, struct netbuf *udata = 0, struct netbuf *opt = 0)"
+.br
+.ti -1c
+.RI "int \fBcomplete\fR (\fBACE_TLI_Stream\fR &new_stream, \fBACE_Addr\fR *remote_sap, \fBACE_Time_Value\fR *tv)"
+.br
+.ti -1c
+.RI "int \fBreset_new_handle\fR (ACE_HANDLE handle)"
+.br
+.RI "\fIResets any event associations on this handle.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines an active connection factory for the \fBACE_TLI\fR C++ wrappers.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_INET_Addr\fR ACE_TLI_Connector::PEER_ADDR
+.PP
+.SS typedef \fBACE_TLI_Stream\fR ACE_TLI_Connector::PEER_STREAM
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_TLI_Connector::ACE_TLI_Connector (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_TLI_Connector::ACE_TLI_Connector (\fBACE_TLI_Stream\fR & new_stream, const \fBACE_Addr\fR & remote_sap, \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0, const char device[] = ACE_TLI_TCP_DEVICE, struct t_info * info = 0, int rw_flag = 1, struct netbuf * udata = 0, struct netbuf * opt = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the maximum amount of time to wait before timing out. If the time expires before the connection is made <errno == ETIME>. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleanedup yet. 
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_TLI_Connector::complete (\fBACE_TLI_Stream\fR & new_stream, \fBACE_Addr\fR * remote_sap, \fBACE_Time_Value\fR * tv)
+.PP
+Try to complete a non-blocking connection. If connection completion is successful then <new_stream> contains the connected \fBACE_SOCK_Stream\fR. If <remote_sap> is non-NULL then it will contain the address of the connected peer. 
+.SS int ACE_TLI_Connector::connect (\fBACE_TLI_Stream\fR & new_stream, const \fBACE_Addr\fR & remote_sap, \fBACE_Time_Value\fR * timeout = 0, const \fBACE_Addr\fR & local_sap = \fBACE_Addr::sap_any\fR, int reuse_addr = 0, int flags = O_RDWR, int perms = 0, const char device[] = ACE_TLI_TCP_DEVICE, struct t_info * info = 0, int rw_flag = 1, struct netbuf * udata = 0, struct netbuf * opt = 0)
+.PP
+Actively connect and produce a <new_stream> if things go well. The <remote_sap> is the address that we are trying to connect with. The <timeout> is the amount of time to wait to connect. If it's 0 then we block indefinitely. If *timeout == {0, 0} then the connection is done using non-blocking mode. In this case, if the connection can't be made immediately the value of -1 is returned with <errno == EWOULDBLOCK>. If *timeout > {0, 0} then this is the maximum amount of time to wait before timing out. If the time expires before the connection is made <errno == ETIME>. The <local_sap> is the value of local address to bind to. If it's the default value of  then the user is letting the OS do the binding. If <reuse_addr> == 1 then the <local_addr> is reused, even if it hasn't been cleanedup yet. 
+.SS void ACE_TLI_Connector::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_TLI_Connector::reset_new_handle (ACE_HANDLE handle)
+.PP
+Resets any event associations on this handle.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_TLI_Connector::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

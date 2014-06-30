@@ -1,0 +1,318 @@
+.TH ACE_POSIX_Proactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_POSIX_Proactor \- POSIX implementation of the Proactor. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <POSIX_Proactor.h>\fR
+.PP
+Inherits \fBACE_Proactor_Impl\fR.
+.PP
+Inherited by \fBACE_POSIX_AIOCB_Proactor\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBProactor_Type\fR { \fBPROACTOR_POSIX\fR = 0, \fBPROACTOR_AIOCB\fR = 1, \fBPROACTOR_SIG\fR = 2, \fBPROACTOR_SUN\fR = 3 }"
+.br
+.ti -1c
+.RI "enum \fBSystemType\fR { \fBOS_UNDEFINED\fR = 0x0000, \fBOS_WIN\fR = 0x0100, \fBOS_WIN_NT\fR = OS_WIN | 0x0001, \fBOS_WIN_2000\fR = OS_WIN | 0x0002, \fBOS_SUN\fR = 0x0200, \fBOS_SUN_55\fR = OS_SUN | 0x0001, \fBOS_SUN_56\fR = OS_SUN | 0x0002, \fBOS_SUN_57\fR = OS_SUN | 0x0004, \fBOS_SUN_58\fR = OS_SUN | 0x0008, \fBOS_HPUX\fR = 0x0400, \fBOS_HPUX_11\fR = OS_HPUX | 0x0001, \fBOS_LINUX\fR = 0x0800, \fBOS_FREEBSD\fR = 0x1000 }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fBProactor_Type\fR \fBget_impl_type\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_POSIX_Proactor\fR (void)"
+.br
+.RI "\fIVirtual destructor.\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the Proactor.\fR"
+.ti -1c
+.RI "virtual int \fBregister_handle\fR (ACE_HANDLE handle, const void *completion_key)"
+.br
+.RI "\fIThis function is a no-op function for Unix systems. Returns 0.\fR"
+.ti -1c
+.RI "virtual int \fBpost_completion\fR (\fBACE_POSIX_Asynch_Result\fR *result) = 0"
+.br
+.ti -1c
+.RI "int \fBwake_up_dispatch_threads\fR (void)"
+.br
+.RI "\fIThis is a no-op on POSIX platforms. Returns 0.\fR"
+.ti -1c
+.RI "int \fBclose_dispatch_threads\fR (int wait)"
+.br
+.RI "\fIThis is a no-op on POSIX platforms. Returns 0.\fR"
+.ti -1c
+.RI "size_t \fBnumber_of_threads\fR (void) const"
+.br
+.RI "\fIThis is a no-op on POSIX platforms. Returns 0.\fR"
+.ti -1c
+.RI "void \fBnumber_of_threads\fR (size_t threads)"
+.br
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIThis is a no-op in POSIX. Returns ACE_INVALID_HANDLE.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Stream_Result_Impl\fR* \fBcreate_asynch_read_stream_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void *act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_Stream::Result\fR class.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Stream_Result_Impl\fR* \fBcreate_asynch_write_stream_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_write, const void *act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_Stream::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_File_Result_Impl\fR* \fBcreate_asynch_read_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void *act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_File_Result_Impl\fR* \fBcreate_asynch_write_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_write, const void *act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Read_Dgram_Result_Impl\fR* \fBcreate_asynch_read_dgram_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR *message_block, size_t bytes_to_read, int flags, int protocol_family, const void* act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Read_Dgram::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Write_Dgram_Result_Impl\fR* \fBcreate_asynch_write_dgram_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle, \fBACE_Message_Block\fR *message_block, size_t bytes_to_write, int flags, const void* act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Write_Dgram::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Accept_Result_Impl\fR* \fBcreate_asynch_accept_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE listen_handle, ACE_HANDLE accept_handle, \fBACE_Message_Block\fR &message_block, u_long bytes_to_read, const void *act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Accept::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Transmit_File_Result_Impl\fR* \fBcreate_asynch_transmit_file_result\fR (\fBACE_Handler\fR &handler, ACE_HANDLE socket, ACE_HANDLE file, \fBACE_Asynch_Transmit_File::Header_And_Trailer\fR *header_and_trailer, u_long bytes_to_write, u_long offset, u_long offset_high, u_long bytes_per_send, u_long flags, const void *act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate the correct implementation class for \fBACE_Asynch_Transmit_File::Result\fR.\fR"
+.ti -1c
+.RI "virtual \fBACE_Asynch_Result_Impl\fR* \fBcreate_asynch_timer\fR (\fBACE_Handler\fR &handler, const void *act, const \fBACE_Time_Value\fR &tv, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.RI "\fICreate a timer result object which can be used with the Timer mechanism of the Proactor.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_POSIX_Proactor\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "void \fBapplication_specific_code\fR (\fBACE_POSIX_Asynch_Result\fR *asynch_result, u_long bytes_transferred, int success, const void *completion_key, u_long error)"
+.br
+.ti -1c
+.RI "virtual int \fBpost_wakeup_completions\fR (int how_many)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Handler\fR \fBwakeup_handler_\fR"
+.br
+.RI "\fIHandler to handle the wakeups. This works in conjunction with the .\fR"
+.ti -1c
+.RI "int \fBos_id_\fR"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_POSIX_SIG_Asynch_Accept_Handler\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+POSIX implementation of the Proactor.
+.PP
+.PP
+ There are two different strategies by which Proactor can get to know the completion of  operations. One is based on Asynchronous I/O Control Blocks (AIOCB) where a list of AIOCBs are stored and completion status of the corresponding operations are queried on them. The other one is based on POSIX Real Time signals. This class abstracts out the common code needed for both the strategies.  and  specialize this class for each strategy. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_POSIX_Proactor::Proactor_Type
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIPROACTOR_POSIX\fR \fR
+.TP
+\fB\fIPROACTOR_AIOCB\fR \fR
+.TP
+\fB\fIPROACTOR_SIG\fR \fR
+.TP
+\fB\fIPROACTOR_SUN\fR \fR
+.SS enum ACE_POSIX_Proactor::SystemType
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIOS_UNDEFINED\fR \fR
+.TP
+\fB\fIOS_WIN\fR \fR
+.TP
+\fB\fIOS_WIN_NT\fR \fR
+.TP
+\fB\fIOS_WIN_2000\fR \fR
+.TP
+\fB\fIOS_SUN\fR \fR
+.TP
+\fB\fIOS_SUN_55\fR \fR
+.TP
+\fB\fIOS_SUN_56\fR \fR
+.TP
+\fB\fIOS_SUN_57\fR \fR
+.TP
+\fB\fIOS_SUN_58\fR \fR
+.TP
+\fB\fIOS_HPUX\fR \fR
+.TP
+\fB\fIOS_HPUX_11\fR \fR
+.TP
+\fB\fIOS_LINUX\fR \fR
+.TP
+\fB\fIOS_FREEBSD\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_POSIX_Proactor::~ACE_POSIX_Proactor (void)\fC [virtual]\fR
+.PP
+Virtual destructor.
+.PP
+.SS ACE_POSIX_Proactor::ACE_POSIX_Proactor (void)\fC [protected]\fR
+.PP
+Constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_POSIX_Proactor::application_specific_code (\fBACE_POSIX_Asynch_Result\fR * asynch_result, u_long bytes_transferred, int success, const void * completion_key, u_long error)\fC [protected]\fR
+.PP
+Protect against structured exceptions caused by user code when dispatching handles. The <completion_key> is not very useful compared to  that can be associated each asynchronous operation. <completion_key> is implemented right now for the POSIX Proators. 
+.PP
+Reimplemented in \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS int ACE_POSIX_Proactor::close (void)\fC [virtual]\fR
+.PP
+Close down the Proactor.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_POSIX_Proactor::close_dispatch_threads (int wait)\fC [virtual]\fR
+.PP
+This is a no-op on POSIX platforms. Returns 0.
+.PP
+@ 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Accept_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_accept_result (\fBACE_Handler\fR & handler, ACE_HANDLE listen_handle, ACE_HANDLE accept_handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Accept::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_Dgram_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_read_dgram_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR * message_block, size_t bytes_to_read, int flags, int protocol_family, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_Dgram::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_File_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_read_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_File::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Read_Stream_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_read_stream_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_read, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Read_Stream::Result\fR class.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS \fBACE_Asynch_Result_Impl\fR * ACE_POSIX_Proactor::create_asynch_timer (\fBACE_Handler\fR & handler, const void * act, const \fBACE_Time_Value\fR & tv, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create a timer result object which can be used with the Timer mechanism of the Proactor.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.PP
+Reimplemented in \fBACE_POSIX_SIG_Proactor\fR.
+.SS virtual \fBACE_Asynch_Transmit_File_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_transmit_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE socket, ACE_HANDLE file, \fBACE_Asynch_Transmit_File::Header_And_Trailer\fR * header_and_trailer, u_long bytes_to_write, u_long offset, u_long offset_high, u_long bytes_per_send, u_long flags, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Transmit_File::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_Dgram_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_write_dgram_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR * message_block, size_t bytes_to_write, int flags, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_Dgram::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_File_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_write_file_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_write, const void * act, u_long offset, u_long offset_high, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_File::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBACE_Asynch_Write_Stream_Result_Impl\fR* ACE_POSIX_Proactor::create_asynch_write_stream_result (\fBACE_Handler\fR & handler, ACE_HANDLE handle, \fBACE_Message_Block\fR & message_block, u_long bytes_to_write, const void * act, ACE_HANDLE event = ACE_INVALID_HANDLE, int priority = 0, int signal_number = ACE_SIGRTMIN)\fC [virtual]\fR
+.PP
+Create the correct implementation class for \fBACE_Asynch_Write_Stream::Result\fR.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS ACE_HANDLE ACE_POSIX_Proactor::get_handle (void) const\fC [virtual]\fR
+.PP
+This is a no-op in POSIX. Returns ACE_INVALID_HANDLE.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS virtual \fBProactor_Type\fR ACE_POSIX_Proactor::get_impl_type (void)\fC [virtual]\fR
+.PP
+Reimplemented in \fBACE_POSIX_AIOCB_Proactor\fR, and \fBACE_POSIX_SIG_Proactor\fR.
+.SS void ACE_POSIX_Proactor::number_of_threads (size_t threads)\fC [virtual]\fR
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS size_t ACE_POSIX_Proactor::number_of_threads (void) const\fC [virtual]\fR
+.PP
+This is a no-op on POSIX platforms. Returns 0.
+.PP
+@ 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_POSIX_Proactor::post_completion (\fBACE_POSIX_Asynch_Result\fR * result)\fC [pure virtual]\fR
+.PP
+Post a result to the completion port of the Proactor. If errors occur, the result will be deleted by this method. If successful, the result will be deleted by the Proactor when the result is removed from the completion port. Therefore, the result should have been dynamically allocated and should be orphaned by the user once this method is called. 
+.PP
+Reimplemented in \fBACE_POSIX_AIOCB_Proactor\fR.
+.SS int ACE_POSIX_Proactor::post_wakeup_completions (int how_many)\fC [protected, virtual]\fR
+.PP
+Post <how_many> completions to the completion port so that all threads can wake up. This is used in conjunction with the <run_event_loop>. 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_POSIX_Proactor::register_handle (ACE_HANDLE handle, const void * completion_key)\fC [virtual]\fR
+.PP
+This function is a no-op function for Unix systems. Returns 0.
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SS int ACE_POSIX_Proactor::wake_up_dispatch_threads (void)\fC [virtual]\fR
+.PP
+This is a no-op on POSIX platforms. Returns 0.
+.PP
+@ 
+.PP
+Reimplemented from \fBACE_Proactor_Impl\fR.
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_POSIX_SIG_Asynch_Accept_Handler\fC [friend]\fR
+.PP
+For <POSIX_SIG_Asynch_Accept> operation, this handler class does the actual work, has to register the real-time signal with the Proactor. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_POSIX_Proactor::os_id_\fC [protected]\fR
+.PP
+.SS \fBACE_Handler\fR ACE_POSIX_Proactor::wakeup_handler_\fC [protected]\fR
+.PP
+Handler to handle the wakeups. This works in conjunction with the .
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

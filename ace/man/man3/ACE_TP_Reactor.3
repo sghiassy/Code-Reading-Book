@@ -1,0 +1,241 @@
+.TH ACE_TP_Reactor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_TP_Reactor \- Specialization of Select Reactor to support thread-pool based event dispatching. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <TP_Reactor.h>\fR
+.PP
+Inherits \fBACE_Select_Reactor_T\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TP_Reactor\fR (\fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0, int mask_signals = 1)"
+.br
+.RI "\fIInitialize  with the default size.\fR"
+.ti -1c
+.RI "\fBACE_TP_Reactor\fR (size_t max_number_of_handles, int restart = 0, \fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0, int mask_signals = 1)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR *max_wait_time = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_events\fR (\fBACE_Time_Value\fR &max_wait_time)"
+.br
+.ti -1c
+.RI "virtual int \fBresumable_handler\fR (void)"
+.br
+.RI "\fIDoes the reactor allow the application to resume the handle on its own ie. can it pass on the control of handle resumption to the application. The TP reactor has can allow applications to resume handles. So return a +ve value.\fR"
+.ti -1c
+.RI "virtual int \fBmask_ops\fR (\fBACE_Event_Handler\fR *eh, \fBACE_Reactor_Mask\fR mask, int ops)"
+.br
+.RI "\fIGET/SET/ADD/CLR the dispatch mask "bit" bound with the <eh> and <mask>.\fR"
+.ti -1c
+.RI "virtual int \fBmask_ops\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, int ops)"
+.br
+.RI "\fIGET/SET/ADD/CLR the dispatch mask "bit" bound with the <handle> and <mask>.\fR"
+.ti -1c
+.RI "virtual int \fBowner\fR (\fBACE_thread_t\fR n_id, \fBACE_thread_t\fR *o_id = 0)"
+.br
+.RI "\fISet the new owner of the thread and return the old owner.\fR"
+.ti -1c
+.RI "virtual int \fBowner\fR (\fBACE_thread_t\fR *)"
+.br
+.RI "\fIReturn the current owner of the thread.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBno_op_sleep_hook\fR (void *)"
+.br
+.RI "\fICalled from handle events.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBdispatch_i\fR (\fBACE_Time_Value\fR *max_wait_time, \fBACE_TP_Token_Guard\fR &guard)"
+.br
+.RI "\fIDispatch just 1 signal, timer, notification handlers.\fR"
+.ti -1c
+.RI "int \fBget_event_for_dispatching\fR (\fBACE_Time_Value\fR *max_wait_time)"
+.br
+.RI "\fIGet the event that needs dispatching.It could be either a signal, timer, notification handlers or return possibly 1 I/O handler for dispatching. In the most common use case, this would return 1 I/O handler for dispatching.\fR"
+.ti -1c
+.RI "int \fBhandle_signals\fR (int &event_count, \fBACE_TP_Token_Guard\fR &g)"
+.br
+.RI "\fIMethod to handle signals NOTE: It is just busted at this point in time.\fR"
+.ti -1c
+.RI "int \fBhandle_timer_events\fR (int &event_count, \fBACE_TP_Token_Guard\fR &g)"
+.br
+.RI "\fIHandle timer events.\fR"
+.ti -1c
+.RI "int \fBhandle_notify_events\fR (int &event_count, \fBACE_TP_Token_Guard\fR &g)"
+.br
+.RI "\fIHandle notify events.\fR"
+.ti -1c
+.RI "int \fBhandle_socket_events\fR (int &event_count, \fBACE_TP_Token_Guard\fR &g)"
+.br
+.RI "\fIhandle socket events.\fR"
+.ti -1c
+.RI "virtual void \fBnotify_handle\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Handle_Set\fR &, \fBACE_Event_Handler\fR *eh, \fBACE_EH_PTMF\fR callback)"
+.br
+.RI "\fIThis method shouldn't get called.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_HANDLE \fBget_notify_handle\fR (void)"
+.br
+.RI "\fIGet the handle of the notify pipe from the ready set if there is an event in the notify pipe.\fR"
+.ti -1c
+.RI "int \fBget_socket_event_info\fR (\fBACE_EH_Dispatch_Info\fR &info)"
+.br
+.RI "\fIGet socket event dispatch information.\fR"
+.ti -1c
+.RI "int \fBdispatch_socket_event\fR (\fBACE_EH_Dispatch_Info\fR &dispatch_info)"
+.br
+.RI "\fINotify the appropriate <callback> in the context of the <eh> associated with <handle> that a particular event has occurred.\fR"
+.ti -1c
+.RI "\fBACE_TP_Reactor\fR (const ACE_TP_Reactor &)"
+.br
+.RI "\fIDeny access since member-wise won't work...\fR"
+.ti -1c
+.RI "ACE_TP_Reactor& \fBoperator=\fR (const ACE_TP_Reactor &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Specialization of Select Reactor to support thread-pool based event dispatching.
+.PP
+.PP
+ One of the short comings of the Select_Reactor in \fBACE\fR is that it did not support a thread pool based event dispatching model, similar to the one in WFMO_Reactor. In Select_Reactor, only thread can be blocked in <handle_events> at any given time. A new Reactor has been added to \fBACE\fR that removes this short-coming. TP_Reactor is a specialization of Select Reactor to support thread-pool based event dispatching. This Reactor takes advantage of the fact that events reported by <select> are persistent if not acted upon immediately. It works by remembering the event handler that just got activated, releasing the internal lock (so that some other thread can start waiting in the event loop) and then dispatching the event handler outside the context of the Reactor lock. This Reactor is best suited for situations when the callbacks to event handlers can take arbitrarily long and/or a number of threads are available to run the event loops. Note that callback code in Event Handlers (e.g. Event_Handler::handle_input) does not have to be modified or made thread-safe for this Reactor. This is because an activated Event Handler is suspended in the Reactor before the upcall is made and resumed after the upcall completes. Therefore, one Event Handler cannot be called by multiple threads simultaneously. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_TP_Reactor::ACE_TP_Reactor (\fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0, int mask_signals = 1)
+.PP
+Initialize  with the default size.
+.PP
+.SS ACE_TP_Reactor::ACE_TP_Reactor (size_t max_number_of_handles, int restart = 0, \fBACE_Sig_Handler\fR * = 0, \fBACE_Timer_Queue\fR * = 0, int mask_signals = 1)
+.PP
+Initialize the  to manage <max_number_of_handles>. If <restart> is non-0 then the 's <handle_events> method will be restarted automatically when <EINTR> occurs. If <signal_handler> or <timer_queue> are non-0 they are used as the signal handler and timer queue, respectively. 
+.SS ACE_TP_Reactor::ACE_TP_Reactor (const ACE_TP_Reactor &)\fC [private]\fR
+.PP
+Deny access since member-wise won't work...
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_TP_Reactor::dispatch_i (\fBACE_Time_Value\fR * max_wait_time, \fBACE_TP_Token_Guard\fR & guard)\fC [protected]\fR
+.PP
+Dispatch just 1 signal, timer, notification handlers.
+.PP
+.SS int ACE_TP_Reactor::dispatch_socket_event (\fBACE_EH_Dispatch_Info\fR & dispatch_info)\fC [private]\fR
+.PP
+Notify the appropriate <callback> in the context of the <eh> associated with <handle> that a particular event has occurred.
+.PP
+.SS int ACE_TP_Reactor::get_event_for_dispatching (\fBACE_Time_Value\fR * max_wait_time)\fC [protected]\fR
+.PP
+Get the event that needs dispatching.It could be either a signal, timer, notification handlers or return possibly 1 I/O handler for dispatching. In the most common use case, this would return 1 I/O handler for dispatching.
+.PP
+.SS ACE_HANDLE ACE_TP_Reactor::get_notify_handle (void)\fC [private]\fR
+.PP
+Get the handle of the notify pipe from the ready set if there is an event in the notify pipe.
+.PP
+.SS int ACE_TP_Reactor::get_socket_event_info (\fBACE_EH_Dispatch_Info\fR & info)\fC [private]\fR
+.PP
+Get socket event dispatch information.
+.PP
+.SS virtual int ACE_TP_Reactor::handle_events (\fBACE_Time_Value\fR & max_wait_time)\fC [virtual]\fR
+.PP
+This method is just like the one above, except the <max_wait_time> value is a reference and can therefore never be NULL.
+.PP
+Current  is identical to <handle_events>. 
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_TP_Reactor::handle_events (\fBACE_Time_Value\fR * max_wait_time = 0)\fC [virtual]\fR
+.PP
+This event loop driver that blocks for <max_wait_time> before returning. It will return earlier if timer events, I/O events, or signal events occur. Note that <max_wait_time> can be 0, in which case this method blocks indefinitely until events occur.
+.PP
+<max_wait_time> is decremented to reflect how much time this call took. For instance, if a time value of 3 seconds is passed to handle_events and an event occurs after 2 seconds, <max_wait_time> will equal 1 second. This can be used if an application wishes to handle events for some fixed amount of time.
+.PP
+Returns the total number of s that were dispatched, 0 if the <max_wait_time> elapsed without dispatching any handlers, or -1 if something goes wrong. 
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_TP_Reactor::handle_notify_events (int & event_count, \fBACE_TP_Token_Guard\fR & g)\fC [protected]\fR
+.PP
+Handle notify events.
+.PP
+.SS int ACE_TP_Reactor::handle_signals (int & event_count, \fBACE_TP_Token_Guard\fR & g)\fC [protected]\fR
+.PP
+Method to handle signals NOTE: It is just busted at this point in time.
+.PP
+.SS int ACE_TP_Reactor::handle_socket_events (int & event_count, \fBACE_TP_Token_Guard\fR & g)\fC [protected]\fR
+.PP
+handle socket events.
+.PP
+.SS int ACE_TP_Reactor::handle_timer_events (int & event_count, \fBACE_TP_Token_Guard\fR & g)\fC [protected]\fR
+.PP
+Handle timer events.
+.PP
+.SS int ACE_TP_Reactor::mask_ops (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, int ops)\fC [virtual]\fR
+.PP
+GET/SET/ADD/CLR the dispatch mask "bit" bound with the <handle> and <mask>.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_TP_Reactor::mask_ops (\fBACE_Event_Handler\fR * eh, \fBACE_Reactor_Mask\fR mask, int ops)\fC [virtual]\fR
+.PP
+GET/SET/ADD/CLR the dispatch mask "bit" bound with the <eh> and <mask>.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS void ACE_TP_Reactor::no_op_sleep_hook (void *)\fC [static]\fR
+.PP
+Called from handle events.
+.PP
+.SS void ACE_TP_Reactor::notify_handle (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR mask, \fBACE_Handle_Set\fR &, \fBACE_Event_Handler\fR * eh, \fBACE_EH_PTMF\fR callback)\fC [protected, virtual]\fR
+.PP
+This method shouldn't get called.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS ACE_TP_Reactor& ACE_TP_Reactor::operator= (const ACE_TP_Reactor &)\fC [private]\fR
+.PP
+.SS int ACE_TP_Reactor::owner (\fBACE_thread_t\fR * owner)\fC [virtual]\fR
+.PP
+Return the current owner of the thread.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_TP_Reactor::owner (\fBACE_thread_t\fR n_id, \fBACE_thread_t\fR * o_id = 0)\fC [virtual]\fR
+.PP
+Set the new owner of the thread and return the old owner.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+.SS int ACE_TP_Reactor::resumable_handler (void)\fC [virtual]\fR
+.PP
+Does the reactor allow the application to resume the handle on its own ie. can it pass on the control of handle resumption to the application. The TP reactor has can allow applications to resume handles. So return a +ve value.
+.PP
+Reimplemented from \fBACE_Select_Reactor_Impl\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_TP_Reactor::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Select_Reactor_T\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

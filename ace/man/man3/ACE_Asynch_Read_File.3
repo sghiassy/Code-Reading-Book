@@ -1,0 +1,97 @@
+.TH ACE_Asynch_Read_File 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Asynch_Read_File \- This class is a factory for starting off asynchronous reads on a file. This class forwards all methods to its implementation class. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Read_Stream\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Read_File\fR (void)"
+.br
+.RI "\fIA do nothing constructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Asynch_Read_File\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBopen\fR (\fBACE_Handler\fR &handler, ACE_HANDLE handle = ACE_INVALID_HANDLE, const void *completion_key = 0, \fBACE_Proactor\fR *proactor = 0)"
+.br
+.ti -1c
+.RI "int \fBread\fR (\fBACE_Message_Block\fR &message_block, u_long bytes_to_read, u_long offset = 0, u_long offset_high = 0, const void *act = 0, int priority = 0, int signal_number = ACE_SIGRTMIN)"
+.br
+.ti -1c
+.RI "\fBACE_Asynch_Read_File_Impl\fR* \fBimplementation\fR (void) const"
+.br
+.RI "\fIReturn the underlying implementation class.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBimplementation\fR (\fBACE_Asynch_Read_File_Impl\fR *implementation)"
+.br
+.RI "\fISet the implementation class.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Asynch_Read_File_Impl\fR* \fBimplementation_\fR"
+.br
+.RI "\fIDelegation/implementation class that all methods will be forwarded to.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class is a factory for starting off asynchronous reads on a file. This class forwards all methods to its implementation class.
+.PP
+.PP
+ Once <open> is called, multiple asynchronous <read>s can started using this class. An \fBACE_Asynch_Read_File::Result\fR will be passed back to the <handler> when the asynchronous reads completes through the  callback. This class differs slightly from \fBACE_Asynch_Read_Stream\fR as it allows the user to specify an offset for the read. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Asynch_Read_File::ACE_Asynch_Read_File (void)
+.PP
+A do nothing constructor.
+.PP
+.SS ACE_Asynch_Read_File::~ACE_Asynch_Read_File (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Asynch_Read_File::implementation (\fBACE_Asynch_Read_File_Impl\fR * implementation)\fC [protected]\fR
+.PP
+Set the implementation class.
+.PP
+.SS \fBACE_Asynch_Read_File_Impl\fR * ACE_Asynch_Read_File::implementation (void) const
+.PP
+Return the underlying implementation class.
+.PP
+Reimplemented from \fBACE_Asynch_Read_Stream\fR.
+.SS int ACE_Asynch_Read_File::open (\fBACE_Handler\fR & handler, ACE_HANDLE handle = ACE_INVALID_HANDLE, const void * completion_key = 0, \fBACE_Proactor\fR * proactor = 0)
+.PP
+Initializes the factory with information which will be used with each asynchronous call. If (<handle> == ACE_INVALID_HANDLE),  will be called on the <handler> to get the correct handle. 
+.PP
+Reimplemented from \fBACE_Asynch_Read_Stream\fR.
+.SS int ACE_Asynch_Read_File::read (\fBACE_Message_Block\fR & message_block, u_long bytes_to_read, u_long offset = 0, u_long offset_high = 0, const void * act = 0, int priority = 0, int signal_number = ACE_SIGRTMIN)
+.PP
+This starts off an asynchronous read. Upto <bytes_to_read> will be read and stored in the <message_block>. The read will start at <offset> from the beginning of the file. Priority of the operation is specified by <priority>. On POSIX4-Unix, this is supported. Works like <nice> in Unix. Negative values are not allowed. 0 means priority of the operation same as the process priority. 1 means priority of the operation is one less than process. And so forth. On Win32, this argument is a no-op. <signal_number> is the POSIX4 real-time signal number to be used for the operation. <signal_number> ranges from ACE_SIGRTMIN to ACE_SIGRTMAX. This argument is a no-op on non-POSIX4 systems. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Asynch_Read_File_Impl\fR * ACE_Asynch_Read_File::implementation_\fC [protected]\fR
+.PP
+Delegation/implementation class that all methods will be forwarded to.
+.PP
+Reimplemented from \fBACE_Asynch_Read_Stream\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

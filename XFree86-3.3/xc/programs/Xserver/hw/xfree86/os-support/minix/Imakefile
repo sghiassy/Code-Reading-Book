@@ -1,0 +1,29 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/minix/Imakefile,v 3.4 1996/12/23 06:50:15 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/5 1996/09/28 17:24:04 rws $
+
+#include <Server.tmpl>
+
+SRCS = mnx_init.c mnx_video.c mnx_io.c bios_devmem.c mapVT_noop.c \
+       ioperm_noop.c VTsw_noop.c std_mouse.c posix_tty.c
+
+OBJS = mnx_init.o mnx_video.o mnx_io.o bios_devmem.o mapVT_noop.o \
+       ioperm_noop.o VTsw_noop.o posix_tty.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+ObjectFromSpecialSource(mapVT_noop,../shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(ioperm_noop,../shared/ioperm_noop,/**/)
+ObjectFromSpecialSource(VTsw_noop,../shared/VTsw_noop,/**/)
+ObjectFromSpecialSource(posix_tty,../shared/posix_tty,/**/)
+
+DependTarget()

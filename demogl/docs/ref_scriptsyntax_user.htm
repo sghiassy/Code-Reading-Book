@@ -1,0 +1,194 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:ScriptSyntax:Effect object</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::ScriptSyntax::<b>Effect object</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Effect object</h4>
+Below are the definitions for all the commands which can be specified in the script with a registered effect object. You should
+use the name specified when you registered the effects with <a HREF="ref_functions_DEMOGL_EffectRegister.htm" target="main">DEMOGL_EffectRegister</a>
+as object name, similar to '_SOUNDSYSTEM' when specifying a command for the _SOUNDSYSTEM object
+You can add as much whitespace around commands and object names in the scriptcommands as you like, these will be 
+stripped off anyway. 
+<p>
+All the commands below are prefixed with the timeline position in milliseconds when the command should be executed.
+This timeline position can be negative, which means the command is executed prior application execution. All negative timeline events
+are executed at once, prior to the start of the application, in the order on the timeline, so more negative times come first.
+<p>
+Example:
+<pre>
+-100;MYEFFECT;PREPARE;
+</pre>
+<p>
+This will make DemoGL call the Prepare() method of the object which was registered with the name 'MYEFFECT', prior to execution of the application.
+<p>
+Below, the effect object is referenced with 'Effectname'. You should replace that with the name of the effect object which is the target of the
+command.
+<dl>
+<dt><hr size="1" width="80%" align="left">
+	<b>PREPARE</b>
+<pre>
+Effectname;PREPARE;
+</pre>
+<dd>Will make DemoGL call the Prepare() method of the effect object registered with the name 'Effectname'. 
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>START</b>
+<pre>
+Effectname;START;Layer number;
+</pre>
+<dd>DemoGL will place the effect with registered name 'Effect name' on the layer with number Layer number. When the layer does not
+	exist, it will be created. When the layer exists and contains another effect, this effect will be replaced by the effect with
+	name 'Effectname'. The removed effect will be stopped, but can be assigned to another layer and continue execution. Layers are
+	rendered starting with the layer with the lowest number, then the layer with the next lowest number etc. Layer numbers don't have
+	to be sequencial, you can specify layer 0, 10 and 10000 for example, which results in first layer 0 is rendered, then 10 and then
+	10000. You can start an effect object on as many layers as you want.
+	<p>
+	<dl>
+	<dt><i>Layer number</i>
+	<dd>Specifies the number of the layer on which the effect should be placed.<br>
+		<b>Type:</b> long. Legal values are &gt;=0.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>STOP</b>
+<pre>
+Effectname;STOP;
+</pre>
+<dd>The effect object registered with the name 'Effectname' will be stopped, all layers the effect is running on are removed. The effect
+	stays inside DemoGL so it can be restarted later using the START command.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>END</b>
+<pre>
+Effectname;END;
+</pre>
+<dd>As STOP but will make DemoGL also call the End() method of the effect object registered with the name 'Effectname'. The effect is, unlike STOP,
+	removed from DemoGL and cannot be restarted, but should be re-registered again using <a HREF="ref_functions_DEMOGL_EffectRegister.htm" target="main">DEMOGL_EffectRegister</a>.
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>MOVETOLYR</b>
+<pre>
+Effectname;MOVETOLYR;Layer number;
+</pre>
+<dd>DemoGL will move the effect with registered name 'Effect name' to the layer with number Layer number. When that layer does not
+	exist, it will be created. When the layer exists and contains another effect, this effect will be replaced by the effect with
+	name 'Effectname'. The removed effect will be stopped, but can be assigned to another layer and continue execution. 
+	The layer where the effect was running on is removed.
+	Layers are rendered starting with the layer with the lowest number, then the layer with the next lowest number etc. Layer numbers don't have
+	to be sequencial, you can specify layer 0, 10 and 10000 for example, which results in first layer 0 is rendered, then 10 and then
+	10000.
+	<p>
+	<dl>
+	<dt><i>Layer number</i>
+	<dd>Specifies the number of the layer to which the effect should be moved to, i.e. placed on.<br>
+		<b>Type:</b> long. Legal values are &gt;=0.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SEND</b>
+<pre>
+Effectname;SEND;value to send;
+</pre>
+<dd><b>Deprecated command. Do not use.</b> DemoGL will call the ReceiveParam() method of the effect object registered with the name 'Effectname', passing
+	the <i>value to send</i> as parameter. Use SENDINT, SENDFLOAT or SENDSTRING equivalents instead.
+	<p>
+	<dl>
+	<dt><i>Value to send</i>
+	<dd>Any string that will be send to the effect object.
+		<b>Type:</b> string. Cannot contain ';' characters.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SENDINT</b>
+<pre>
+Effectname;SENDINT;Value name;value to send;Layer number;
+</pre>
+<dd>DemoGL will call the ReceiveInt() method of the effect object registered with the name 'Effectname', passing
+	the <i>value to send</i> as <i>iParam</i> parameter, <i>value name</i> as <i>pszName</i> and <i>Layer number</i> as
+	<i>lLayer</i>. See <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> for details.
+	<p>
+	<dl>
+	<dt><i>Value name</i>
+	<dd>Name of the value in <i>value to send</i>. This way you can set variables in the effect objects using script commands.
+		<b>Type:</b> string. Cannot contain ';' characters.
+	<dt><i>Value to send</i>
+	<dd>Any number that will be send to the effect object.
+		<b>Type:</b> integer.
+	<dt><i>Layer number</i>
+	<dd>The number of the layer for which this send is ment. An effect object can be started on many layers, and the value send
+		can now be send to one layer in particular. It depends on the code inside the effect object if the layer number matters
+		but it's possible for the effect object to distinquish between layers when handling values that are received.
+		<b>Type:</b> integer.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SENDFLOAT</b>
+<pre>
+Effectname;SENDFLOAT;Value name;value to send;Layer number;
+</pre>
+<dd>DemoGL will call the ReceiveFloat() method of the effect object registered with the name 'Effectname', passing
+	the <i>value to send</i> as <i>fParam</i> parameter, <i>value name</i> as <i>pszName</i> and <i>Layer number</i> as
+	<i>lLayer</i>. See <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> for details.
+	<p>
+	<dl>
+	<dt><i>Value name</i>
+	<dd>Name of the value in <i>value to send</i>. This way you can set variables in the effect objects using script commands.
+		<b>Type:</b> string. Cannot contain ';' characters.
+	<dt><i>Value to send</i>
+	<dd>Any number that will be send to the effect object.
+		<b>Type:</b> float.
+	<dt><i>Layer number</i>
+	<dd>The number of the layer for which this send is ment. An effect object can be started on many layers, and the value send
+		can now be send to one layer in particular. It depends on the code inside the effect object if the layer number matters
+		but it's possible for the effect object to distinquish between layers when handling values that are received.
+		<b>Type:</b> integer.
+	</dl>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>SENDSTRING</b>
+<pre>
+Effectname;SENDSTRING;Value name;value to send;Layer number;
+</pre>
+<dd>DemoGL will call the ReceiveString() method of the effect object registered with the name 'Effectname', passing
+	the <i>value to send</i> as <i>pszParam</i> parameter, <i>value name</i> as <i>pszName</i> and <i>Layer number</i> as
+	<i>lLayer</i>. See <a HREF="ref_classes_CEffect.htm" target="main">CEffect</a> for details.
+	<p>
+	<dl>
+	<dt><i>Value name</i>
+	<dd>Name of the value in <i>value to send</i>. This way you can set variables in the effect objects using script commands.
+		<b>Type:</b> string. Cannot contain ';' characters.
+	<dt><i>Value to send</i>
+	<dd>Any string that will be send to the effect object.
+		<b>Type:</b> string. Cannot contain ';' characters.
+	<dt><i>Layer number</i>
+	<dd>The number of the layer for which this send is ment. An effect object can be started on many layers, and the value send
+		can now be send to one layer in particular. It depends on the code inside the effect object if the layer number matters
+		but it's possible for the effect object to distinquish between layers when handling values that are received.
+		<b>Type:</b> integer.
+	</dl>
+	<p>
+
+<dt><hr size="2" width="80%" align="left">
+<b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,125 @@
+A joint production of:
+
+	Andy Pierce 		IBM Cambridge Scientific Center
+
+	Ron Harter		IBM Austin
+	Terry Wang
+	Jeanne K. Smith
+	Jim Miller
+	James Miller
+
+	Walt Daniels		IBM T.J. Watson Research 
+	Steve Smith
+
+	Bob Scheifler		MIT Laboratory for Computer Science
+	Keith Packard
+	and everyone else at the X Consortium!
+
+This version of the IBM X11 driver uses ../mi,  ../mfb and ../cfb to support
+the following configuration:
+
+	RISC System 6000 with skyway adapter (8 bit color adapter)
+
+All other configurations will NOT work! However the release 5 clients 
+and libraries should build and run on other RISC System 6000 platforms.
+It should also be noted that this version of the X server does NOT support 
+the AIX X extensions, such as Display PostScript (*) or GL.
+
+(*) Trademark of Adobe System Incorporated
+
+This version of the server does not use the same font format as AIXWindows 
+does, and you may run into some inconsistencies with applications which
+expect AIXWindows fonts (especially InfoExplorer).
+
+The code supplied with this release, while it has been tested with the skyway  
+adapter, is completely unsupported, and if you have problems installing or
+using it you are on your own. You may find, in your particular 
+environment, the performance of this server is different from that of
+the AIX product server.  If the performance in your environment is 
+not acceptable, then you should stick with the product level of the 
+server. The performance of this server is not indicative of the performance
+of the AIX product level server.
+
+Things to check before building:
+
+0)	Decide on what level of AIX you want to build X-Server for ?  
+	By default the file xc/config/cf/ibm.cf is set up to build for 
+	AIX 4+. If you want to build on AIX 3.2 system, change the
+	line #if 0 to #if 1, to use the AIX 3.2 defines.
+
+1)	Decide if you want to build the server. If not, change the line
+	in config/ibm.cf from:
+	#define BuildServer             YES
+		to 
+	#define BuildServer             NO
+
+2)	Decide if you want the PEX extension to the server.
+	If you do not, then add this line to config/ibm.cf:
+	#define BuildPex                NO
+
+2)	The existing configuration will install the shared libraries and 
+	executables under the /usr/local tree, to avoid clobbering
+	existing product level executables. It is strongly suggested that you 
+	keep both the AIX product level of X and the release 5 level.
+
+Building the system:
+
+1)	Go for it.  In the top-level directory, type
+
+	make World
+
+	This takes quite a long time because of the optimization that 
+	will be performed.
+
+2)	After the complete system build, you can install the shared 
+	libraries and executables by becoming superuser (chown is 
+	restricted to superuser!), and typing:
+
+	make install
+
+	Otherwise, you'll want to create a bunch of symbolic links to
+	the various executables and data files scattered throughout
+	the hierarchy.
+
+
+3)	On the console, put whatever you chose for BINDIR (in ibm.cf)
+	in your search path before the /usr/bin/X11 directory, and then 
+	start the server:
+
+	    xinit
+
+4)	xinit should start up an xterm window that acts as a console.  When
+	this xterm terminates, the xinit will kill the server.  You can also
+	start up client programs from a terminal or rlogin, but you must
+	first set the DISPLAY environment variable:
+
+	    setenv DISPLAY unix:0
+	    xterm &
+
+
+5)	To shut the server down,  press the Ctrl, Alt and Backspace keys 
+	at the same time, or kill the last program started by your .xinitrc
+	file.
+
+----------------------------------------------------------------------------
+NOTES for building on AIX 4+
+----------------------------
+
+The following changes were made to work on AIX 4+ systems, which uses lft 
+instead of hft
+
+1. In the config/cf/ibm.cf file, define the OSMajorVersion as 4
+   (See note (0) above)
+   This will enable -D_IBM_LFT define in the ServerExtraDefines, which
+   will enable the code for lft and disable the code for hft, in 
+   hw/ibm/AIX, hw/ibm/skyway and hw/ibm/common directories.
+2. The code has been modified to run only on Skyway  (Color Graphics Adapter)
+   (listed as gda{0,1..} for DEV_NAME , when you run the lsdisp command on
+   AIX 4.+ systems).
+3. Two new files have been created lftUtils.c and lftUtils.h.
+
+9/13/1995
+------------------------------------------------------------------------------
+
+	
+

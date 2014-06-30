@@ -1,0 +1,15 @@
+echo Preparing list of files...
+find ./include ./src ./build ./VCFBuilder2 ./AppServer ./tests ./ClassServer -iname *.h -o -iname *.cpp -o -iname *.c -o -iname *.dsw -o -iname *.dsp -o -iname *.bmp -o -iname *.rgs -o -iname *.rc -o -iname *.idl -o -iname *.def -o -iname *.ico -o -iname *.rc2 -o -iname *.odl -o -iname *.vff > srcfiles.out
+find ./tests -iname *.h -o -iname *.cpp -o -iname *.dsw -o -iname *.dsp -o -iname *.bmp -o -iname *.rgs -o -iname *.rc -o -iname *.idl -o -iname *.def -o -iname *.ico -o -iname *.rc2 -o -iname *.odl -o -iname *.vff -o -iname *.html > tests.out
+cat srcfiles.out tests.out > files.out
+echo Creating tar file...
+tar -cf ./vcf.tar -T files.out
+tar -rf ./vcf.tar readme.txt
+tar -rf ./vcf.tar vcfLicense.txt
+tar -rf ./vcf.tar tarvcf
+rm files.out
+rm tests.out
+rm srcfiles.out
+echo Compressing tar file with gzip...
+gzip -f ./vcf.tar
+echo Done ! 

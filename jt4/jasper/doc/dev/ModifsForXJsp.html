@@ -1,0 +1,117 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <title>Modifications to support XML syntax in JSP</title>
+</head>
+<body>
+
+<h1>XML Syntax in JSP</h1>
+<h4>Summary of "first batch" Changes</h4>
+JSP 1.2 has made the XML view of a JSP page available for input, as well as for validation. Below is a summary of the first batch changes that were made to Jasper to support this new feature of the JSP specification.
+
+<hr>
+<h2>New Classes</h2>
+All in org.apache.jasper.compiler
+<h3>ParserController</h3>
+<pre>
+ * Controller for the parsing of a JSP page.
+ * <p>
+ * A translation unit (JSP source file and any files included via the
+ * include directive) may involve the processing of JSP pages
+ * written with different syntaxes (currently the original JSP syntax,
+ * as well as the XML syntax (as of JSP 1.2)). This class encapsulates 
+ * the behavior related to the selection and invocation of 
+ * the proper parser.
+</pre>
+
+<h3>ParserXJspSax</h3>
+<pre>
+ * SAX Parser to handle XJsp syntax.
+</pre>
+
+<h3>ParserXJspSaxHandler</h3>
+<pre>
+ * The SAX (2.0) parser event handler.
+</pre>
+
+<h3>XmlOutputter</h3>
+<pre>
+ * Class responsible for generating the XML stream representing
+ * the JSP translation unit being compiled.
+</pre>
+
+<h3>PageInfoImpl</h3>
+<pre>
+ * Implementation of abstract class javax.servlet.jsp.tagext.PageInfo.
+</pre>
+
+<hr>
+<h2>Classes Modified</h2>
+All in org.apache.jasper.compiler
+
+<h3>Compiler</h3>
+<ul>
+<li>now uses ParserController which abstracts the selection of the
+    proper parser.
+</ul>
+
+<h3>ParseEventListener</h3>
+<ul>
+  <li>added setReader() method
+  <li>handler methods that have 'text' associated with them now have it
+    explicitly declared in the method signature so that these methods
+    can be reused by both the JSP and the XML parser.
+  <li>new handler methods: handleRootBegin() and handleRootEnd()
+  <li>include behavior changed to use ParserController
+</ul>
+
+<h3>BaseJspListener</h3>
+DelegatingListener
+<ul>
+<li>see ParseEventListener changes
+</ul>
+
+<h3>JspParseEventListener</h3>
+<ul>
+  <li>see ParseEventListener changes
+  <li>constructor now takes ParserController as argument
+  <li>include directive now calls back into the parser controller
+    (instead of just pushing new file into the JspReader)
+  <li>xml genration code added to handler methods
+  <li>validate() method added as a convenience method for XML validation
+</ul>
+
+<h3>Parser</h3>
+<ul>
+  <li>new contructor
+    (creates the reader and passes it the ctxt)
+  <li>we now pass the char[] of text directly to the event listener
+    so that the listener does not have to refer back to the reader
+    (so xml parser can also work with listener)
+</ul>
+
+<h3>JspReader</h3>
+<ul>
+  <li>new constructor (now JspReader is created by ParserController)
+  <li>supports 'single file' mode (to easily reuse the reader
+    when figuring out the content of a file)
+  <li>changed the logic of 'pushFile()/popFile()' since the input documents
+    may now be of various syntax, and handled by different parsers.
+  <li>logic of resolving filename has been moved to parser controller
+    so it can be shared among all parsers
+</ul>
+          
+<h3>Mark</h3>
+<ul>
+  <li>Added new constructor so it can be used by the XML parser.
+</ul>
+
+<h3>TagLibraries</h3>
+<ul>
+  <li>Added method TagLibInfos() to get the list of TagLibraryInfo's.
+</ul>
+
+<h3>TagLibraryInfoImpl</h3>
+<ul>
+  <li>now handles the new validatorclass tag
+</ul>

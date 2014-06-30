@@ -1,0 +1,134 @@
+.TH ACE_Name_Space 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Name_Space \- Abstract base class that provides an abstract interface to the database without exposing any implemenation details. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Name_Space.h>\fR
+.PP
+Inherited by \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Name_Space\fR (void)"
+.br
+.RI "\fIvirtual destructor to ensure destructors of subclasses get called.\fR"
+.ti -1c
+.RI "virtual int \fBbind\fR (const \fBACE_WString\fR &name_in, const \fBACE_WString\fR &value_in, const char *type_in = "") = 0"
+.br
+.RI "\fIBind a new name to a naming context (Wide character strings).\fR"
+.ti -1c
+.RI "virtual int \fBrebind\fR (const \fBACE_WString\fR &name_in, const \fBACE_WString\fR &value_in, const char *type_in = "") = 0"
+.br
+.ti -1c
+.RI "virtual int \fBunbind\fR (const \fBACE_WString\fR &name_in) = 0"
+.br
+.RI "\fIDelete a name from a ACE_Name_Space (Wide charcter strings Interface).\fR"
+.ti -1c
+.RI "virtual int \fBresolve\fR (const \fBACE_WString\fR &name_in, \fBACE_WString\fR &value_out, char *&type_out) = 0"
+.br
+.RI "\fIGet value and type of a given name binding (Wide chars). The caller is responsible for deleting both <value_out> and <type_out>!\fR"
+.ti -1c
+.RI "virtual int \fBlist_names\fR (\fBACE_WSTRING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in) = 0"
+.br
+.RI "\fIGet a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string.\fR"
+.ti -1c
+.RI "virtual int \fBlist_values\fR (\fBACE_WSTRING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in) = 0"
+.br
+.RI "\fIGet a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string.\fR"
+.ti -1c
+.RI "virtual int \fBlist_types\fR (\fBACE_WSTRING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in) = 0"
+.br
+.RI "\fIGet a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string.\fR"
+.ti -1c
+.RI "virtual int \fBlist_name_entries\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBlist_value_entries\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBlist_type_entries\fR (\fBACE_BINDING_SET\fR &set, const \fBACE_WString\fR &pattern) = 0"
+.br
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const = 0"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Abstract base class that provides an abstract interface to the database without exposing any implemenation details.
+.PP
+.PP
+ Manages a Naming Service Name Space. Provides the basic methods -- bind, unbind, rebind, find, and listnames. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Name_Space::~ACE_Name_Space (void)\fC [virtual]\fR
+.PP
+virtual destructor to ensure destructors of subclasses get called.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Name_Space::bind (const \fBACE_WString\fR & name_in, const \fBACE_WString\fR & value_in, const char * type_in = "")\fC [pure virtual]\fR
+.PP
+Bind a new name to a naming context (Wide character strings).
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS void ACE_Name_Space::dump (void) const\fC [pure virtual]\fR
+.PP
+Dump the state of the object.
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::list_name_entries (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [pure virtual]\fR
+.PP
+Get a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::list_names (\fBACE_WSTRING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)\fC [pure virtual]\fR
+.PP
+Get a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string.
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::list_type_entries (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [pure virtual]\fR
+.PP
+Get a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::list_types (\fBACE_WSTRING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)\fC [pure virtual]\fR
+.PP
+Get a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string.
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::list_value_entries (\fBACE_BINDING_SET\fR & set, const \fBACE_WString\fR & pattern)\fC [pure virtual]\fR
+.PP
+Get a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::list_values (\fBACE_WSTRING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)\fC [pure virtual]\fR
+.PP
+Get a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string.
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::rebind (const \fBACE_WString\fR & name_in, const \fBACE_WString\fR & value_in, const char * type_in = "")\fC [pure virtual]\fR
+.PP
+Overwrite the value or type of an existing name in a ACE_Name_Space or bind a new name to the context, if it didn't exist yet. (Wide charcter strings interface). 
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::resolve (const \fBACE_WString\fR & name_in, \fBACE_WString\fR & value_out, char *& type_out)\fC [pure virtual]\fR
+.PP
+Get value and type of a given name binding (Wide chars). The caller is responsible for deleting both <value_out> and <type_out>!
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+.SS int ACE_Name_Space::unbind (const \fBACE_WString\fR & name_in)\fC [pure virtual]\fR
+.PP
+Delete a name from a ACE_Name_Space (Wide charcter strings Interface).
+.PP
+Reimplemented in \fBACE_Local_Name_Space\fR, and \fBACE_Remote_Name_Space\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

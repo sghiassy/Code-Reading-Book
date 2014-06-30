@@ -1,0 +1,63 @@
+// VCFBuilder.odl : type library source for VCFBuilder.dll
+
+// This file will be processed by the Make Type Library (mktyplib) tool to
+// produce the type library (VCFBuilder.tlb).
+
+[	uuid(1F4B4346-902F-4D1F-8928-776FDA241E51), version(1.0),
+	helpstring ("VCFBUILDER Developer Studio Add-in") ]
+library VCFBuilder
+{
+	importlib("stdole32.tlb");
+	importlib("devshl.dll");
+	importlib("ide\devdbg.pkg");
+	
+
+	//  Dual interface for CCommands
+	//
+	//  All commands that your add-in adds to DevStudio
+	//   must appear in this interface.  You may use the
+	//   ClassView to add methods to this interface, which
+	//   will cause stub implementations of those methods to
+	//   appear in your CCommands class.
+	
+	[	uuid(AAD052B9-5A96-4449-AAE8-68C85A423112),
+		oleautomation,
+		dual
+	]
+
+	interface ICommands : IDispatch
+	{
+		// methods
+		[id(1)]HRESULT ActivateDevStdioEnvironment();
+		[id(2)]HRESULT ActivateVCFBuilderEnvironment();
+		[id(3), helpstring("method OpenProject")] HRESULT OpenProject();
+		[id(4), helpstring("method NewProject")] HRESULT NewProject();
+		[id(5), helpstring("method SaveProject")] HRESULT SaveProject();
+		[id(6), helpstring("method SaveProjectAs")] HRESULT SaveProjectAs();
+		[id(7), helpstring("method NewForm")] HRESULT NewForm();
+		[id(8), helpstring("method ActivateVCFBuilderEnvStandalone")] HRESULT ActivateVCFBuilderEnvStandalone();
+	};
+
+	//  Class information for CCommands
+
+	[ uuid(DEAF1BE8-2184-4FD1-8A6F-4E3222A9BE67) ]
+	coclass Commands
+	{
+		[default] interface ICommands;
+	};
+
+	[ hidden, uuid(2B3F0992-9E9B-40BE-8100-7D1ECA183289) ]
+	coclass ApplicationEvents
+	{
+		[default] interface IApplicationEvents;
+	}
+
+	[ hidden, uuid(F053F7EA-6784-4197-9137-016B6DC21F5E) ]
+	coclass DebuggerEvents
+	{
+		[default] interface IDebuggerEvents;
+	}
+
+	//{{AFX_APPEND_ODL}}
+	//}}AFX_APPEND_ODL}}
+};

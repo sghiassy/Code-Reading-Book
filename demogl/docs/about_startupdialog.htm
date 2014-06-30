@@ -1,0 +1,67 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:The startup dialog</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>The startup dialog</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>The startup dialog.</h4>
+DemoGL provides true resolution/bitdepth/screendepth/soundhardware independance for the developer. This way
+the developer just programs for one resolution (using floating point coordinates instead of pixel oriented int
+coordinates) and bitdepth (32bpp), and the end user can select the settings that fits his/her system best. DemoGL
+powered applications by default start with the startup dialog (a developer can provide his own startup dialog, 
+see for more information <a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a> in the DemoGL Reference manual
+on a discussion about runtypes). The startup dialog provides the user to set all kinds of runtime settings, like 
+windowed or full screen execution, window resolution, bitdepth for textures, bitdepth for the framebuffer, soundsystem 
+related options like EAX/A3D support, playback quality etc.
+The developer can customize this default startup dialog by supplying a bitmap as resource in the application. The bitmap
+should have a size of 91x433 pixels (width X height). The resource should have ID symbol 140.
+<p>
+A typical startup dialog looks like this:
+<p>
+<center>
+<img SRC="images/dglstartupdialog.gif" border="0" WIDTH="456" HEIGHT="438">
+<p class="SmallFontREF">
+A typical startup dialog
+</p>
+</center>
+<p>
+The default settings of the different controls on the startup dialog are retrieved from the registry and if the registry doesn't
+contain any settings for the particular application, DemoGL fill use the supplied settings in the 
+<a HREF="ref_structures_SStartupDat.htm">SStartupDat</a>
+structure, passed
+to <a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a> when the application execution was started. When an application
+is ran for the first time on a machine, the registry will not contain any settings for the application. When the user selects
+the option 'Save settings in registry' on the startup dialog, DemoGL will save all control's settings to the registry key:
+HKCU/Software/DemoGL/Application/<i>Application title</i>/AppData. When the application is ran again, DemoGL will read these
+settings and will overrule any setting set in the SStartupDat structure passed to DEMOGL_AppRun.
+<p>
+A developer can block certain settings in the startup dialog. When the developer doesn't want any rescaling of texturedata, 
+this feature can be blocked by setting the variable DGL_VF_NEVERRESCALETEXTURES using 
+<a HREF="ref_functions_DEMOGL_SetVariable.htm">DEMOGL_SetVariable</a>. When the application doesn't use any sound, it's recommended
+to block the enable sound option in the startup dialog. This can be done by setting the SStartupDat member <b>m_bSound</b> to false.
+<p>
+<b>Screensavers</b><br>
+When the application is a screensaver, DemoGL will not start with the startup dialog, because a screensaver should start immediately.
+Instead, DemoGL will show the startup dialog when the user presses 'Settings' on the screensaver tab in 'display properties' in Windows.
+This is default behaviour which can be overruled by providing an own dialog for 'configurating' the screensaver properties. See 
+<a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a> in the DemoGL Reference manual for details.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

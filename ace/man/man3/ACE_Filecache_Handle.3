@@ -1,0 +1,161 @@
+.TH ACE_Filecache_Handle 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Filecache_Handle \- Abstraction over a real file. This is meant to be the entry point into the Cached Virtual Filesystem. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Filecache.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBACE_SUCCESS\fR = 0, \fBACE_ACCESS_FAILED\fR, \fBACE_OPEN_FAILED\fR, \fBACE_COPY_FAILED\fR, \fBACE_STAT_FAILED\fR, \fBACE_MEMMAP_FAILED\fR, \fBACE_WRITE_FAILED\fR }"
+.br
+.RI "\fIThese come from \fBACE_Filecache_Object\fR, which is an internal class.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Filecache_Handle\fR (const \fBACE_TCHAR\fR *filename, \fBACE_Filecache_Flag\fR mapit = ACE_MAPIT)"
+.br
+.RI "\fIQuery cache for file, and acquire it. Assumes the file is being opened for reading.\fR"
+.ti -1c
+.RI "\fBACE_Filecache_Handle\fR (const \fBACE_TCHAR\fR *filename, int size, \fBACE_Filecache_Flag\fR mapit = ACE_MAPIT)"
+.br
+.ti -1c
+.RI "\fB~ACE_Filecache_Handle\fR (void)"
+.br
+.RI "\fICloses any open handles, release acquired file.\fR"
+.ti -1c
+.RI "void* \fBaddress\fR (void) const"
+.br
+.RI "\fIBase address of memory mapped file.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle\fR (void) const"
+.br
+.RI "\fIA handle (e.g., UNIX file descriptor, or NT file handle).\fR"
+.ti -1c
+.RI "int \fBerror\fR (void) const"
+.br
+.RI "\fIAny associated error in handle creation and acquisition.\fR"
+.ti -1c
+.RI "size_t \fBsize\fR (void) const"
+.br
+.RI "\fIThe size of the file.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Filecache_Handle\fR (void)"
+.br
+.RI "\fIDefault do nothing constructor. Prevent it from being called.\fR"
+.ti -1c
+.RI "void \fBinit\fR (void)"
+.br
+.RI "\fICommon initializations for constructors.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Filecache_Object\fR* \fBfile_\fR"
+.br
+.RI "\fIA reference to the low level instance.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBhandle_\fR"
+.br
+.RI "\fIA <dup>'d version of the one from <file_>.\fR"
+.ti -1c
+.RI "int \fBmapit_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Abstraction over a real file. This is meant to be the entry point into the Cached Virtual Filesystem.
+.PP
+.PP
+ This is a cached filesystem implementation based loosely on the implementation of JAWS_File. The interfaces will be nearly the same. The under-the-hood implementation should hopefully be a much faster thing. These will be given their own implementations later. For now, we borrow the implementation provided by JAWS. On creation, the cache is checked, and reference count is incremented. On destruction, reference count is decremented. If the reference count is 0, the file is removed from the cache. E.g. 1, { ACE_Filecache_Handle foo("foo.html"); this->peer ().send (foo.address (), foo.size ()); } E.g. 2, { ACE_Filecache_Handle foo("foo.html"); io->transmitfile (foo.handle (), this->peer ().handle ()); } E.g. 3, { ACE_Filecache_Handle foo("foo.html", content_length); this->peer ().recv (foo.address (), content_length); } TODO: 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+These come from \fBACE_Filecache_Object\fR, which is an internal class.
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIACE_SUCCESS\fR \fR
+.TP
+\fB\fIACE_ACCESS_FAILED\fR \fR
+.TP
+\fB\fIACE_OPEN_FAILED\fR \fR
+.TP
+\fB\fIACE_COPY_FAILED\fR \fR
+.TP
+\fB\fIACE_STAT_FAILED\fR \fR
+.TP
+\fB\fIACE_MEMMAP_FAILED\fR \fR
+.TP
+\fB\fIACE_WRITE_FAILED\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Filecache_Handle::ACE_Filecache_Handle (const \fBACE_TCHAR\fR * filename, \fBACE_Filecache_Flag\fR mapit = ACE_MAPIT)
+.PP
+Query cache for file, and acquire it. Assumes the file is being opened for reading.
+.PP
+.SS ACE_Filecache_Handle::ACE_Filecache_Handle (const \fBACE_TCHAR\fR * filename, int size, \fBACE_Filecache_Flag\fR mapit = ACE_MAPIT)
+.PP
+Create new entry, and acquire it. Presence of SIZE assumes the file is being opened for writing. If SIZE is zero, assumes the file is to be removed from the cache. 
+.SS ACE_Filecache_Handle::~ACE_Filecache_Handle (void)
+.PP
+Closes any open handles, release acquired file.
+.PP
+.SS ACE_Filecache_Handle::ACE_Filecache_Handle (void)\fC [protected]\fR
+.PP
+Default do nothing constructor. Prevent it from being called.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void * ACE_Filecache_Handle::address (void) const
+.PP
+Base address of memory mapped file.
+.PP
+.SS int ACE_Filecache_Handle::error (void) const
+.PP
+Any associated error in handle creation and acquisition.
+.PP
+.SS ACE_HANDLE ACE_Filecache_Handle::handle (void) const
+.PP
+A handle (e.g., UNIX file descriptor, or NT file handle).
+.PP
+.SS void ACE_Filecache_Handle::init (void)\fC [protected]\fR
+.PP
+Common initializations for constructors.
+.PP
+.SS size_t ACE_Filecache_Handle::size (void) const
+.PP
+The size of the file.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Filecache_Object\fR * ACE_Filecache_Handle::file_\fC [private]\fR
+.PP
+A reference to the low level instance.
+.PP
+.SS ACE_HANDLE ACE_Filecache_Handle::handle_\fC [private]\fR
+.PP
+A <dup>'d version of the one from <file_>.
+.PP
+.SS int ACE_Filecache_Handle::mapit_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- =============== Cocoon Sitemap Working Draft ============================
+
+ Copyright (C) 2000 The Apache Software Foundation. All rights reserved.
+ 
+ Redistribution of this document is permitted provided that the following 
+ conditions are met:
+ 
+ 1. Redistributions must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+ 
+ 2. This document is referred to and considered only as "working draft".
+ 
+ 3. Any software implementation inspired by this document must indicate
+    in its documentation: 
+
+     "inspired by research and development on behalf of the 
+      Apache Software Foundation"
+ 
+ 4. The names "Cocoon" and  "Apache Software Foundation"  must not be used to
+    endorse  or promote  products inspired  from this  document without  prior
+    written permission. For written permission, please contact
+    apache@apache.org.
+ 
+ 5. Products  derived from this document may not  be called "Cocoon", nor may
+    "Cocoon" nor "Apache" appear in their name, without prior written 
+    permission  of the Apache Software Foundation.
+ 
+ THIS DOCUMENT IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+ ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ This document  consists of voluntary contributions made  by many individuals
+ on  behalf of the Apache Software  Foundation. For more information on the 
+ Apache Software Foundation, please see <http://www.apache.org/>.
+
+==============================================================================
+
+This document contains an example used as a working draft for 
+Cocoon architects to test and understand the issues associated with 
+sitemaps and XML publishing in general. It must be considered as a working 
+draft and may be updated at any time.
+
+============================================================================ -->
+
+<schema xmlns="http://www.w3.org/1999/XMLSchema"
+        xmlns:map="http://apache.org/cocoon/sitemap/1.0"
+        targetNamespace="http://apache.org/cocoon/sitemap/1.0">
+
+	<complexType name="groupType">
+		<!-- 
+		  Is it possible to have the type be an enumeration of the 
+		  values of the children's type attribute? 
+	   -->
+		<attribute name="default" type="string" use="required"/>
+	</complexType>
+
+	<complexType name="componentType" base="string">
+		<!-- Anything goes for parameter values... -->
+		<any minOccurs="0" maxOccurs="unbounded"/>
+		<attribute name="type" type="string" use="required"/>
+		<attribute name="src" type="uriReference" use="required"/>
+		<attribute name="label" type="string"/>
+	</complexType>
+
+	<complexType name="actionType">
+		<attribute name="type" type="string" use="optional"/>
+		<attribute name="src" type="uriReference" use="optional"/>
+	</complexType>
+
+	<complexType name="generateType">
+		<element name="generate" minOccurs="1" maxOccurs="1" type="map:actionType"/>
+	</complexType>
+
+	<complexType name="actionTypes">
+		<sequence>
+			<element name="generate" minOccurs="1" maxOccurs="1" type="map:actionType"/>
+			<element name="transform" minOccurs="0" maxOccurs="unbounded" type="map:actionType"/>
+			<element name="serialize" minOccurs="1" maxOccurs="1">
+				<complexType base="map:actionType">
+					<attribute name="status-code" type="short"/>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="matchType">
+		<attribute name="type" type="string" use="optional"/>
+		<attribute name="pattern" type="string" use="required"/>
+	</complexType>
+
+	<element name="sitemap" minOccurs="1" maxOccurs="1">
+		<complexType>
+			<element name="components" minOccurs="1" maxOccurs="1">
+				<complexType>
+					<element name="generators" minOccurs="1" maxOccurs="1">
+						<complexType base="map:groupType">
+							<element name="generator" minOccurs="1" maxOccurs="unbounded" type="map:componentType"/>
+						</complexType>
+					</element>
+					<element name="transformers" minOccurs="0" maxOccurs="1">
+						<complexType base="map:groupType">
+							<element name="transformer" minOccurs="1" maxOccurs="unbounded" type="map:componentType"/>
+						</complexType>
+					</element>
+					<element name="serializers" minOccurs="1" maxOccurs="1">
+						<complexType base="map:groupType">
+							<element name="serializer" minOccurs="1" maxOccurs="unbounded">
+								<complexType base="map:componentType">
+									<attribute name="mime-type" type="string"/>
+								</complexType>
+							</element>
+						</complexType>
+					</element>
+					<element name="choosers" minOccurs="0" maxOccurs="1">
+						<complexType base="map:groupType">
+							<element name="chooser" minOccurs="1" maxOccurs="unbounded" type="map:componentType"/>
+						</complexType>
+					</element>
+					<element name="matchers" minOccurs="0" maxOccurs="1">
+						<complexType base="map:groupType">
+							<element name="matcher" minOccurs="1" maxOccurs="unbounded" type="map:componentType"/>
+						</complexType>
+					</element>
+				</complexType>
+			</element>
+			<!-- end components -->
+			<element name="views" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<element name="view" minOccurs="1" maxOccurs="unbounded">
+						<complexType>
+							<element name="transform" minOccurs="0" maxOccurs="unbounded" type="map:actionType"/>
+							<element name="serialize" minOccurs="1" maxOccurs="1" type="map:actionType"/>
+							<attribute name="name" type="string" use="required"/>
+							<attribute name="generate-from" type="string" use="required"/>
+						</complexType>
+					</element>
+				</complexType>
+			</element>
+			<element name="resources" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<element name="resource" minOccurs="1" maxOccurs="unbounded">
+						<complexType base="map:actionTypes">
+							<attribute name="name" type="string" use="required"/>
+						</complexType>
+					</element>
+				</complexType>
+			</element>
+			<element name="pipelines" minOccurs="0" maxOccurs="1">
+				<complexType>
+					<element name="pipeline" minOccurs="1" maxOccurs="unbounded">
+						<complexType>
+							<element name="match" minOccurs="1" maxOccurs="unbounded">
+								<complexType base="map:matchType"/>
+							</element>
+						</complexType>
+					</element>
+				</complexType>
+			</element>
+		</complexType>
+	</element>
+</schema>

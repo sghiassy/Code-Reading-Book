@@ -1,0 +1,49 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/10/25 15:42:42 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/os-support/sysv/Imakefile,v 3.5 1996/12/27 07:07:19 dawes Exp $
+
+
+
+#include <Server.tmpl>
+
+#if defined(SVR4Architecture) || defined(i386Sco325Architecture)
+BIOS_MOD = bios_V4mmap
+#else
+BIOS_MOD = bios_devmem
+#endif
+
+SRCS = sysv_init.c sysv_video.c IO_utils.c sysv_io.c $(BIOS_MOD).c VTsw_usl.c \
+       sysv_kbd.c std_kbdEv.c sysv_tty.c std_mouse.c std_mseEv.c xqueue.c
+
+OBJS = sysv_init.o sysv_video.o IO_utils.o sysv_io.o $(BIOS_MOD).o VTsw_usl.o \
+       sysv_kbd.o std_kbdEv.o sysv_tty.o std_mouse.o std_mseEv.o xqueue.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC) -I$(EXTINCSRC)
+
+DEFINES = -DPC98
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+
+LinkSourceFile(bios_V4mmap.c,$(XF86SRC)/os-support/sysv)
+LinkSourceFile(sysv_init.c,$(XF86SRC)/os-support/sysv)
+LinkSourceFile(sysv_io.c,$(XF86SRC)/os-support/sysv)
+LinkSourceFile(sysv_video.c,$(XF86SRC)/os-support/sysv)
+LinkSourceFile(xqueue.c,$(XF86SRC)/os-support/sysv)
+
+#if !defined(SVR4Architecture)
+ObjectFromSpecialSource(bios_devmem,$(XF86SRC)/os-support/shared/bios_devmem,/**/)
+#endif
+ObjectFromSpecialSource(VTsw_usl,$(XF86SRC)/os-support/shared/VTsw_usl,/**/)
+ObjectFromSpecialSource(IO_utils,$(XF86SRC)/os-support/shared/IO_utils,/**/)
+ObjectFromSpecialSource(sysv_kbd,$(XF86SRC)/os-support/shared/sysv_kbd,/**/)
+ObjectFromSpecialSource(std_kbdEv,$(XF86SRC)/os-support/shared/std_kbdEv,/**/)
+ObjectFromSpecialSource(sysv_tty,$(XF86SRC)/os-support/shared/sysv_tty,/**/)
+ObjectFromSpecialSource(std_mouse,$(XF86SRC)/os-support/shared/std_mouse,/**/)
+ObjectFromSpecialSource(std_mseEv,$(XF86SRC)/os-support/shared/std_mseEv,/**/)
+
+DependTarget()

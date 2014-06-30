@@ -1,0 +1,172 @@
+XCOMM $XConsortium: Imakefile /main/9 1996/10/25 15:43:07 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/vga256/Imakefile,v 3.10.2.1 1997/05/03 09:50:37 dawes Exp $
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+#if XF98GANBWAPServer
+GANBWAPSUBDIRS = ganbwap 
+GANBWAPSRCS    = ganbwap/?*.c
+GANBWAPOBJS    = ganbwap/?*.o
+GANBWAPDONES   = ganbwap/DONE
+#endif
+
+#if XF98NEC480Server
+NEC480SUBDIRS = nec480
+NEC480SRCS    = nec480/?*.c
+NEC480OBJS    = nec480/?*.o
+NEC480DONES   = nec480/DONE
+#endif
+
+#if XF98NKVNECServer
+NKVNECSUBDIRS = nkvnec
+NKVNECSRCS    = nkvnec/?*.c
+NKVNECOBJS    = nkvnec/?*.o
+NKVNECDONES   = nkvnec/DONE
+#endif
+
+#if XF98WABSServer
+WABSSUBDIRS = wabs
+WABSSRCS    = wabs/?*.c
+WABSOBJS    = wabs/?*.o
+WABSDONES   = wabs/DONE
+#endif
+
+#if XF98WABEPServer
+WABEPSUBDIRS = wabep
+WABEPSRCS    = wabep/?*.c
+WABEPOBJS    = wabep/?*.o
+WABEPDONES   = wabep/DONE
+#endif
+
+#if XF98WSNAServer
+WSNASUBDIRS = wsna
+WSNASRCS    = wsna/?*.c
+WSNAOBJS    = wsna/?*.o
+WSNADONES   = wsna/DONE
+#endif
+
+#if XF98TGUIServer
+TGUISUBDIRS = trident
+TGUISRCS    = trident/?*.c
+TGUIOBJS    = trident/?*.o
+TGUIDONES   = trident/DONE
+#endif
+
+SUBDIRS = $(GANBWAPSUBDIRS) $(NEC480SUBDIRS) $(NKVNECSUBDIRS) \
+	  $(WABSSUBDIRS) $(WABEPSUBDIRS) $(WSNASUBDIRS) $(TGUISUBDIRS) \
+	  drivers
+SRCS    = $(GANBWAPSRCS) $(NEC480SRCS) $(NKVNECSRCS) $(WABSSRCS) \
+	  $(WABEPSRCS) $(WSNASRCS) $(TGUISRCS)
+OBJS    = $(GANBWAPOBJS) $(NEC480OBJS) $(NKVNECOBJS) $(WABSOBJS) \
+	  $(WABEPOBJS) $(WSNAOBJS) $(TGUIOBJS)
+DONES   = $(GANBWAPDONES) $(NEC480DONES) $(NKVNECDONES) $(WABSDONES) \
+	  $(WABEPDONES) $(WSNADONES) $(TGUIDONES)
+
+INCLUDES = -I$(XF86SRC)/vga256/vga -I$(XF86COMSRC) -I$(XF86OSSRC) \
+	   -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+VGADRIVERS = XF98SvgaDrivers
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS) $(OBJS) $(DONES))
+#endif
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)
+#endif
+
+#if XF98GANBWAPServer
+ConfigTargetNoDepend(vga256Conf,$(ICONFIGFILES),cvga256.SHsuf,cirrus)
+#endif
+#if XF98WSNAServer
+ConfigTargetNoDepend(vga256Conf,$(ICONFIGFILES),cvga256.SHsuf,cirrus)
+#endif
+#if XF98NEC480Server
+ConfigTargetNoDepend(nec480Conf,$(ICONFIGFILES),cnec480.SHsuf,nec480)
+#endif
+#if XF98NKVNECServer
+ConfigTargetNoDepend(vga256Conf,$(ICONFIGFILES),cvga256.SHsuf,cirrus)
+#endif
+#if XF98WABSServer
+ConfigTargetNoDepend(vga256Conf,$(ICONFIGFILES),cvga256.SHsuf,cirrus)
+#endif
+#if XF98WABEPServer
+ConfigTargetNoDepend(vga256Conf,$(ICONFIGFILES),cvga256.SHsuf,cirrus)
+#endif
+#if XF98TGUIServer
+ConfigTargetNoDepend(tguiConf,$(ICONFIGFILES),ctgui.SHsuf,tvga8900)
+#endif
+
+#ifdef OS2Architecture
+all:: DONE
+	cp $(OBJS) .
+
+#if XF98GANBWAPServer
+NormalDepLibraryTarget(ganbwap,$(GANBWAPSUBDIRS) drivers $(GANBWAPDONES),?*.o)
+#endif
+#if XF98WSNAServer
+NormalDepLibraryTarget(wsna,$(WSNASUBDIRS) drivers $(WSNADONES),?*.o)
+#endif
+#if XF98NEC480Server
+NormalDepLibraryTarget(nec480,$(NEC480SUBDIRS) drivers $(NEC480DONES),?*.o)
+#endif
+#if XF98NKVNECServer
+NormalDepLibraryTarget(nkvnec,$(NKVNECSUBDIRS) drivers $(NKVNECDONES),?*.o)
+#endif
+#if XF98WABSServer
+NormalDepLibraryTarget(wabs,$(WABSSUBDIRS) drivers $(WABSDONES),?*.o)
+#endif
+#if XF98WABEPServer
+NormalDepLibraryTarget(wabep,$(WABEPSUBDIRS) drivers $(WABEPDONES),?*.o)
+#endif
+#if XF98TGUIServer
+NormalDepLibraryTarget(trident,$(TGUISUBDIRS) drivers $(TGUIDONES),?*.o)
+#endif
+#else
+#if XF98GANBWAPServer
+NormalDepLibraryTarget(ganbwap,$(GANBWAPSUBDIRS) drivers $(GANBWAPDONES),$(GANBWAPOBJS))
+#endif
+#if XF98WSNAServer
+NormalDepLibraryTarget(wsna,$(WSNASUBDIRS) drivers $(WSNADONES),$(WSNAOBJS))
+#endif
+#if XF98NEC480Server
+NormalDepLibraryTarget(nec480,$(NEC480SUBDIRS) drivers $(NEC480DONES),$(NEC480OBJS))
+#endif
+#if XF98NKVNECServer
+NormalDepLibraryTarget(nkvnec,$(NKVNECSUBDIRS) drivers $(NKVNECDONES),$(NKVNECOBJS))
+#endif
+#if XF98WABSServer
+NormalDepLibraryTarget(wabs,$(WABSSUBDIRS) drivers $(WABSDONES),$(WABSOBJS))
+#endif
+#if XF98WABEPServer
+NormalDepLibraryTarget(wabep,$(WABEPSUBDIRS) drivers $(WABEPDONES),$(WABEPOBJS))
+#endif
+#if XF98TGUIServer
+NormalDepLibraryTarget(trident,$(TGUISUBDIRS) drivers $(TGUIDONES),$(TGUIOBJS))
+#endif
+#endif
+
+NormalLibraryObjectRule()
+
+ForceSubdirs($(SUBDIRS))
+
+InstallLinkKitLibrary(ganbwap,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitLibrary(nec480,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitLibrary(nkvnec,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitLibrary(trident,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitLibrary(wabep,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitLibrary(wabs,$(XF98LINKKITDIR)/drivers98)
+InstallLinkKitLibrary(wsna,$(XF98LINKKITDIR)/drivers98)
+#ifndef DontInstallPC98Version
+InstallLinkKitNonExecFile(cvga256.SHsuf,$(XF98LINKKITDIR))
+#endif
+InstallLinkKitNonExecFile(cnec480.SHsuf,$(XF98LINKKITDIR))
+InstallLinkKitNonExecFile(ctgui.SHsuf,$(XF98LINKKITDIR))
+
+DependSubdirs($(SUBDIRS))

@@ -1,0 +1,88 @@
+.TH ACE_Lib_Find 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Lib_Find \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Lib_Find.h>\fR
+.PP
+Inherited by \fBACE\fR.
+.PP
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBldfind\fR (const \fBACE_TCHAR\fR *filename, \fBACE_TCHAR\fR *pathname, size_t maxlen)"
+.br
+.ti -1c
+.RI "FILE* \fBldopen\fR (const \fBACE_TCHAR\fR *filename, const \fBACE_TCHAR\fR *type)"
+.br
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBldname\fR (const \fBACE_TCHAR\fR *entry_point)"
+.br
+.ti -1c
+.RI "int \fBget_temp_dir\fR (\fBACE_TCHAR\fR *buffer, size_t buffer_len)"
+.br
+.ti -1c
+.RI "ACE_HANDLE \fBopen_temp_file\fR (const \fBACE_TCHAR\fR *name, int mode, int perm = 0)"
+.br
+.RI "\fIOpening the temp file. File is automagically unlinked when it is closed. This is useful for have temp files.\fR"
+.ti -1c
+.RI "size_t \fBstrrepl\fR (char *s, char search, char replace)"
+.br
+.RI "\fIReplace all instances of <search> in <s> with <replace>. Returns the number of replacements made.\fR"
+.ti -1c
+.RI "char* \fBstrsplit_r\fR (char *s, const char *token, char *&next_start)"
+.br
+.ti -1c
+.RI "size_t \fBstrrepl\fR (wchar_t *s, wchar_t search, wchar_t replace)"
+.br
+.RI "\fIAs strrepl, but for wide characters.\fR"
+.ti -1c
+.RI "wchar_t* \fBstrsplit_r\fR (wchar_t *s, const wchar_t *token, wchar_t *&next_start)"
+.br
+.RI "\fIAs strsplit_r, but for wide characters.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class includes all the static function calls needed to search and open shared libraries. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Lib_Find::get_temp_dir (\fBACE_TCHAR\fR * buffer, size_t buffer_len)\fC [static]\fR
+.PP
+Returns the temporary directory including the trailing slash in <buffer>. Returns -1 for an error or if the buffer_len is not long enough. 
+.SS int ACE_Lib_Find::ldfind (const \fBACE_TCHAR\fR * filename, \fBACE_TCHAR\fR * pathname, size_t maxlen)\fC [static]\fR
+.PP
+Finds the file <filename> either using an absolute path or using a relative path in conjunction with ACE_LD_SEARCH_PATH (e.g., $LD_LIBRARY_PATH on UNIX or $PATH on Win32). This function will add appropriate suffix (e.g., .dll on Win32 or .so on UNIX) according to the OS platform. In addition, this function will apply the appropriate prefix (e.g., "lib" on UNIX and "" on Win32) if the <filename> doesn't match directly. 
+.SS \fBACE_TCHAR\fR * ACE_Lib_Find::ldname (const \fBACE_TCHAR\fR * entry_point)\fC [static]\fR
+.PP
+Transforms <entry_point> into a form that can be located in a dynamic library using <dlsym>. For example, with Win32/Borland extern "C" functions which use the default calling convention have a '_' prepended. Always returns a buffer that has been dynamically allocated using <operator new>. 
+.SS FILE * ACE_Lib_Find::ldopen (const \fBACE_TCHAR\fR * filename, const \fBACE_TCHAR\fR * type)\fC [static]\fR
+.PP
+Uses <ldopen> to locate and open the appropriate <filename> and returns a pointer to the file, else it returns a NULL pointer. <type> specifies how the file should be open. 
+.SS ACE_HANDLE ACE_Lib_Find::open_temp_file (const \fBACE_TCHAR\fR * name, int mode, int perm = 0)\fC [static]\fR
+.PP
+Opening the temp file. File is automagically unlinked when it is closed. This is useful for have temp files.
+.PP
+.SS size_t ACE_Lib_Find::strrepl (wchar_t * s, wchar_t search, wchar_t replace)\fC [static]\fR
+.PP
+As strrepl, but for wide characters.
+.PP
+.SS size_t ACE_Lib_Find::strrepl (char * s, char search, char replace)\fC [static]\fR
+.PP
+Replace all instances of <search> in <s> with <replace>. Returns the number of replacements made.
+.PP
+.SS wchar_t * ACE_Lib_Find::strsplit_r (wchar_t * s, const wchar_t * token, wchar_t *& next_start)\fC [static]\fR
+.PP
+As strsplit_r, but for wide characters.
+.PP
+.SS char * ACE_Lib_Find::strsplit_r (char * s, const char * token, char *& next_start)\fC [static]\fR
+.PP
+Splits string <s> into pieces separated by the string <token>. <next_start> is an opaque cookie handed back by the call to store its state for the next invocation, thus making it re-entrant. This operates very similar to Perl's <split> function except that it returns pieces one at a time instead of into an array. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

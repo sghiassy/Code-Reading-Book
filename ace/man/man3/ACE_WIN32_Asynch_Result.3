@@ -1,0 +1,244 @@
+.TH ACE_WIN32_Asynch_Result 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WIN32_Asynch_Result \- An abstract class which adds information to the \fBOVERLAPPED\fR structure to make it more useful. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <WIN32_Asynch_IO.h>\fR
+.PP
+Inherits \fBACE_Asynch_Result_Impl\fR, and \fBOVERLAPPED\fR.
+.PP
+Inherited by \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Timer\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Write_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Stream_Result\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "u_long \fBbytes_transferred\fR (void) const"
+.br
+.RI "\fINumber of bytes transferred by the operation.\fR"
+.ti -1c
+.RI "const void* \fBact\fR (void) const"
+.br
+.RI "\fIACT associated with the operation.\fR"
+.ti -1c
+.RI "int \fBsuccess\fR (void) const"
+.br
+.RI "\fIDid the operation succeed?\fR"
+.ti -1c
+.RI "const void* \fBcompletion_key\fR (void) const"
+.br
+.ti -1c
+.RI "u_long \fBerror\fR (void) const"
+.br
+.RI "\fIError value if the operation fail.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBevent\fR (void) const"
+.br
+.RI "\fIEvent associated with the \fBOVERLAPPED\fR structure.\fR"
+.ti -1c
+.RI "u_long \fBoffset\fR (void) const"
+.br
+.RI "\fIThis really make sense only when doing file I/O.\fR"
+.ti -1c
+.RI "u_long \fBoffset_high\fR (void) const"
+.br
+.RI "\fIOffset_high associated with the \fBOVERLAPPED\fR structure.\fR"
+.ti -1c
+.RI "int \fBpriority\fR (void) const"
+.br
+.RI "\fIThe priority of the asynchronous operation. Currently, this is not supported on Win32.\fR"
+.ti -1c
+.RI "int \fBsignal_number\fR (void) const"
+.br
+.RI "\fIReturns 0.\fR"
+.ti -1c
+.RI "int \fBpost_completion\fR (\fBACE_Proactor_Impl\fR *proactor)"
+.br
+.RI "\fIPost <this> to the Proactor's completion port.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_WIN32_Asynch_Result\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "void \fBset_error\fR (u_long errcode)"
+.br
+.RI "\fISimulate error value to use in the post_completion ().\fR"
+.ti -1c
+.RI "void \fBset_bytes_transferred\fR (u_long nbytes)"
+.br
+.RI "\fISimulate value to use in the post_completion ().\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_WIN32_Asynch_Result\fR (\fBACE_Handler\fR &handler, const void* act, ACE_HANDLE event, u_long offset, u_long offset_high, int priority, int signal_number = 0)"
+.br
+.RI "\fIConstructor.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Handler\fR& \fBhandler_\fR"
+.br
+.RI "\fIHandler that will be called back.\fR"
+.ti -1c
+.RI "const void* \fBact_\fR"
+.br
+.RI "\fIACT for this operation.\fR"
+.ti -1c
+.RI "u_long \fBbytes_transferred_\fR"
+.br
+.RI "\fIBytes transferred by this operation.\fR"
+.ti -1c
+.RI "int \fBsuccess_\fR"
+.br
+.RI "\fISuccess indicator.\fR"
+.ti -1c
+.RI "const void* \fBcompletion_key_\fR"
+.br
+.RI "\fIACT associated with handle.\fR"
+.ti -1c
+.RI "u_long \fBerror_\fR"
+.br
+.RI "\fIError if operation failed.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_WIN32_Asynch_Accept\fR"
+.br
+.ti -1c
+.RI "class \fBACE_WIN32_Proactor\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An abstract class which adds information to the \fBOVERLAPPED\fR structure to make it more useful.
+.PP
+.PP
+ An abstract base class from which you can obtain some basic information like the number of bytes transferred, the ACT associated with the asynchronous operation, indication of success or failure, etc. Subclasses may want to store more information that is particular to the asynchronous operation it represents. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_WIN32_Asynch_Result::~ACE_WIN32_Asynch_Result (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS ACE_WIN32_Asynch_Result::ACE_WIN32_Asynch_Result (\fBACE_Handler\fR & handler, const void * act, ACE_HANDLE event, u_long offset, u_long offset_high, int priority, int signal_number = 0)\fC [protected]\fR
+.PP
+Constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS const void * ACE_WIN32_Asynch_Result::act (void) const
+.PP
+ACT associated with the operation.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS u_long ACE_WIN32_Asynch_Result::bytes_transferred (void) const
+.PP
+Number of bytes transferred by the operation.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS const void * ACE_WIN32_Asynch_Result::completion_key (void) const
+.PP
+This returns the ACT associated with the handle when it was registered with the I/O completion port. This ACT is not the same as the ACT associated with the asynchronous operation. 
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS u_long ACE_WIN32_Asynch_Result::error (void) const
+.PP
+Error value if the operation fail.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS ACE_HANDLE ACE_WIN32_Asynch_Result::event (void) const
+.PP
+Event associated with the \fBOVERLAPPED\fR structure.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS u_long ACE_WIN32_Asynch_Result::offset (void) const
+.PP
+This really make sense only when doing file I/O.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS u_long ACE_WIN32_Asynch_Result::offset_high (void) const
+.PP
+Offset_high associated with the \fBOVERLAPPED\fR structure.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS int ACE_WIN32_Asynch_Result::post_completion (\fBACE_Proactor_Impl\fR * proactor)
+.PP
+Post <this> to the Proactor's completion port.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS int ACE_WIN32_Asynch_Result::priority (void) const
+.PP
+The priority of the asynchronous operation. Currently, this is not supported on Win32.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS void ACE_WIN32_Asynch_Result::set_bytes_transferred (u_long nbytes)
+.PP
+Simulate value to use in the post_completion ().
+.PP
+.SS void ACE_WIN32_Asynch_Result::set_error (u_long errcode)
+.PP
+Simulate error value to use in the post_completion ().
+.PP
+.SS int ACE_WIN32_Asynch_Result::signal_number (void) const
+.PP
+Returns 0.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SS int ACE_WIN32_Asynch_Result::success (void) const
+.PP
+Did the operation succeed?
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Write_Dgram_Result\fR.
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_WIN32_Asynch_Accept\fC [friend]\fR
+.PP
+Factory class has special permissions.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Accept_Result\fR.
+.SS class ACE_WIN32_Proactor\fC [friend]\fR
+.PP
+Proactor class has special permission.
+.PP
+Reimplemented in \fBACE_WIN32_Asynch_Read_Stream_Result\fR, \fBACE_WIN32_Asynch_Write_Stream_Result\fR, \fBACE_WIN32_Asynch_Read_File_Result\fR, \fBACE_WIN32_Asynch_Write_File_Result\fR, \fBACE_WIN32_Asynch_Accept_Result\fR, \fBACE_WIN32_Asynch_Transmit_File_Result\fR, \fBACE_WIN32_Asynch_Read_Dgram_Result\fR, \fBACE_WIN32_Asynch_Write_Dgram_Result\fR, and \fBACE_WIN32_Asynch_Timer\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS const void * ACE_WIN32_Asynch_Result::act_\fC [protected]\fR
+.PP
+ACT for this operation.
+.PP
+.SS u_long ACE_WIN32_Asynch_Result::bytes_transferred_\fC [protected]\fR
+.PP
+Bytes transferred by this operation.
+.PP
+.SS const void * ACE_WIN32_Asynch_Result::completion_key_\fC [protected]\fR
+.PP
+ACT associated with handle.
+.PP
+.SS u_long ACE_WIN32_Asynch_Result::error_\fC [protected]\fR
+.PP
+Error if operation failed.
+.PP
+.SS \fBACE_Handler\fR & ACE_WIN32_Asynch_Result::handler_\fC [protected]\fR
+.PP
+Handler that will be called back.
+.PP
+.SS int ACE_WIN32_Asynch_Result::success_\fC [protected]\fR
+.PP
+Success indicator.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

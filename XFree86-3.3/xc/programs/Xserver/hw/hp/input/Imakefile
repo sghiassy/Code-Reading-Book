@@ -1,0 +1,69 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/09/28 17:12:35 rws $
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS=drivers
+
+SRCS1 =	\
+	hpKeyMap.c	\
+	x_hil.c		\
+	x_hilinit.c	\
+	xtest1imp.c	\
+	getkeysym.c
+
+
+SRCS2 = \
+        cr16.s          \
+        get_tv.c
+
+
+NONHILOBJS = \
+	hpKeyMap.o	\
+	xtest1imp.o	\
+	getkeysym.o
+
+
+NONHILOBJS2 = \
+        cr16.o          \
+        get_tv.o
+
+
+SRCS = $(SRCS1) $(SRCS2) 
+
+
+HILOBJS = \
+	x_hil.o		\
+	x_hilinit.o
+
+OBJS = $(NONHILOBJS) $(NONHILOBJS2) $(HILOBJS)
+
+LOBJS = \
+	hpKeyMap.ln	\
+	x_hil.ln	\
+	x_hilinit.ln	\
+	xtest1imp.ln	\
+	getkeysym.ln
+
+   DEFINES = ExtensionOSDefines -DOSMAJORVERSION=OSMajorVersion
+   LIB_DEFINES = -DLIBDIR=\"$(LIBDIR)\"
+   INCLUDES = -I. -I.. -I../include -I../../../include -I./X11 \
+	      -I../../../cfb -I../../../mfb -I../../../mi \
+	      -I$(XINCLUDESRC) -I$(EXTINCSRC) -I./drivers
+   LINTLIBS = ../../../dix/llib-ldix.ln ../../../os/hpux/llib-los.ln
+
+all::
+
+MakeSubdirs($(SUBDIRS))
+DependSubdirs($(SUBDIRS))
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(hp,$(OBJS))
+
+SpecialCObjectRule(x_hilinit,$(ICONFIGFILES),$(LIB_DEFINES))
+SpecialCObjectRule(x_hil,$(ICONFIGFILES),$(LIB_DEFINES))
+SpecialCObjectRule(getkeysym,$(ICONFIGFILES),$(LIB_DEFINES))
+DependTarget()
+
+LintLibraryTarget(hp,$(SRCS1))
+NormalLintTarget($(SRCS1))

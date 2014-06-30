@@ -1,0 +1,36 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:26:47 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga2/drivers/et3000/Imakefile,v 3.6 1996/12/23 06:54:32 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = et3_driver.c et3_bank.s
+
+OBJS = et3_driver.o et3_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I../../../vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+DEFINES = -DMONOVGA
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+
+NormalRelocatableTarget(et3_drv, $(OBJS))
+
+LinkSourceFile(et3_driver.c,$(VGADRIVERSRC)/et3000)
+ObjectFromSpecialAsmSource(et3_bank,$(VGADRIVERSRC)/et3000/bank,NullParameter)
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga2/et3000)
+
+DependTarget()
+

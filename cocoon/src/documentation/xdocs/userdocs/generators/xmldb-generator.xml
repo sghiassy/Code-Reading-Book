@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>XML:DB Generator</title>
+		<version>0.1</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Gianugo Rabellino" email="gianugo@rabellino.it"/>
+		 </authors>
+		 <abstract>This document describes the XML:DB generator of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="XML:DB Generator">
+			<p>
+         Generates XML documents out of an XML:DB compliant database. XML:DB
+         is a generic API developed by the XML:DB group in order to allow access
+         via a consistent API to the upcoming XML databases such as dbXML,
+         Ozone and eXist (as of now only the first one has an almost compliant
+         API implementation).
+         For the sake of this document, an XML:DB compliant database can be 
+         seen as a filesystem where directories are called "collections" and 
+         files are called "resources".
+      </p>
+      <ul>
+        <li>Name: xmldb</li>
+        <li>Class: org.apache.cocoon.generation.XMLDBGenerator</li>
+        <li>Cacheable: no</li>
+      </ul>
+      <p>
+         The generator needs to be configured in a "JDBCish" way: a driver 
+         (a class name) must be provided, together with a "base" URI. An example
+         configuration, based on the stock dbXML implementation, will look like 
+         this:
+      </p>
+      <source>
+      <![CDATA[
+<map:generator  name="xmldb"  src="org.apache.cocoon.generation.XMLDBGenerator" label="content">
+  <driver>org.dbxml.client.xmldb.DatabaseImpl</driver>
+  <base>xmldb:dbxml:///db/</base>
+</map:generator>
+      ]]>
+      </source>
+      <p>
+         Note that the content of the "base" tag will be prepended to the 
+         requested resource. It's important to keep a trailing slash at the
+         end of the <code>base</code> tag.
+      </p>
+    </s1>
+	</body>
+</document>

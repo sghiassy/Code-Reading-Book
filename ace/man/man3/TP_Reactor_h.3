@@ -1,0 +1,44 @@
+.TH TP_Reactor_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+TP_Reactor_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/Select_Reactor.h"\fR
+.br
+\fC#include "ace/Log_Msg.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_EH_Dispatch_Info\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TP_Reactor\fR"
+.br
+.ti -1c
+.RI "class \fBACE_TP_Token_Guard\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBTP_Reactor.h\fR,v 4.28 2001/09/01 00:27:25 bala Exp
+.PP
+The  (aka, Thread Pool Reactor) uses the Leader/Followers pattern to demultiplex events among a pool of threads. When using a thread pool reactor, an application pre-spawns a _fixed_ number of threads. When these threads invoke the 's <handle_events> method, one thread will become the leader and wait for an event. The other follower threads will queue up waiting for their turn to become the leader. When an event occurs, the leader will pick a follower to become the leader and go on to handle the event. The consequence of using  is the amortization of the costs used to creating threads. The context switching cost will also reduce. More over, the total resources used by threads are bounded because there are a fixed number of threads.
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Irfan Pyarali <irfan@cs.wustl.edu> ,  Nanbor Wang <nanbor@cs.wustl.edu>
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

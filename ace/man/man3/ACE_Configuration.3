@@ -1,0 +1,252 @@
+.TH ACE_Configuration 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Configuration \- Base class for configuration databases. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Configuration.h>\fR
+.PP
+Inherited by \fBACE_Configuration_Heap\fR, and \fBACE_Configuration_Win32Registry\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBVALUETYPE\fR { \fBSTRING\fR, \fBINTEGER\fR, \fBBINARY\fR, \fBINVALID\fR }"
+.br
+.RI "\fIEnumeration for the various types of values we can store.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Configuration\fR (void)"
+.br
+.RI "\fIdestructor.\fR"
+.ti -1c
+.RI "virtual const \fBACE_Configuration_Section_Key\fR& \fBroot_section\fR (void) const"
+.br
+.RI "\fIReturns the root section of this configuration.\fR"
+.ti -1c
+.RI "virtual int \fBopen_section\fR (const \fBACE_Configuration_Section_Key\fR &base, const \fBACE_TCHAR\fR *sub_section, int create, \fBACE_Configuration_Section_Key\fR& result) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBremove_section\fR (const \fBACE_Configuration_Section_Key\fR &key, const \fBACE_TCHAR\fR *sub_section, int recursive) = 0"
+.br
+.RI "\fIRemoves the <sub_section> from <key>. If recursive is non zero, any subkeys below <sub_section> are remove as well.\fR"
+.ti -1c
+.RI "virtual int \fBenumerate_values\fR (const \fBACE_Configuration_Section_Key\fR& key, int index, ACE_TString& name, \fBVALUETYPE\fR& type) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBenumerate_sections\fR (const \fBACE_Configuration_Section_Key\fR& key, int index, ACE_TString& name) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBset_string_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, const ACE_TString& value) = 0"
+.br
+.RI "\fIsets the value in <key> with <name> to a string of <value>.\fR"
+.ti -1c
+.RI "virtual int \fBset_integer_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, u_int value) = 0"
+.br
+.RI "\fIsets the value in <key> with <name> to an integer of <value>.\fR"
+.ti -1c
+.RI "virtual int \fBset_binary_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, const void* data, u_int length) = 0"
+.br
+.RI "\fIsets the value in <key> with <name> to binary data of <data> with <length>.\fR"
+.ti -1c
+.RI "virtual int \fBget_string_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, ACE_TString& value) = 0"
+.br
+.RI "\fIgets the string value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not a string).\fR"
+.ti -1c
+.RI "virtual int \fBget_integer_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, u_int& value) = 0"
+.br
+.RI "\fIgets the integer value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not an integer).\fR"
+.ti -1c
+.RI "virtual int \fBget_binary_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, void*& data, u_int& length) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBfind_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name, \fBVALUETYPE\fR& type) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBremove_value\fR (const \fBACE_Configuration_Section_Key\fR& key, const \fBACE_TCHAR\fR* name) = 0"
+.br
+.RI "\fIRemoves the the value <name> from <key>. returns non zero on error.\fR"
+.ti -1c
+.RI "int \fBexpand_path\fR (const \fBACE_Configuration_Section_Key\fR& key, const ACE_TString& path_in, \fBACE_Configuration_Section_Key\fR& key_out, int create = 1)"
+.br
+.ti -1c
+.RI "int \fBexport_config\fR (const \fBACE_TCHAR\fR* filename)"
+.br
+.ti -1c
+.RI "int \fBimport_config\fR (const \fBACE_TCHAR\fR* filename)"
+.br
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_Configuration& rhs) const"
+.br
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_Configuration& rhs) const"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Configuration\fR (void)"
+.br
+.RI "\fIDefault ctor.\fR"
+.ti -1c
+.RI "\fBACE_Section_Key_Internal\fR* \fBget_internal_key\fR (const \fBACE_Configuration_Section_Key\fR& key)"
+.br
+.RI "\fIresolves the internal key from a section key.\fR"
+.ti -1c
+.RI "int \fBvalidate_name\fR (const \fBACE_TCHAR\fR* name)"
+.br
+.ti -1c
+.RI "\fBACE_Configuration\fR (const ACE_Configuration& rhs)"
+.br
+.ti -1c
+.RI "ACE_Configuration& \fBoperator=\fR (const ACE_Configuration& rhs)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Configuration_Section_Key\fR \fBroot_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Base class for configuration databases.
+.PP
+.PP
+ This class provides an interface for configuration databases. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_Configuration::VALUETYPE
+.PP
+Enumeration for the various types of values we can store.
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fISTRING\fR \fR
+.TP
+\fB\fIINTEGER\fR \fR
+.TP
+\fB\fIBINARY\fR \fR
+.TP
+\fB\fIINVALID\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Configuration::~ACE_Configuration (void)\fC [virtual]\fR
+.PP
+destructor.
+.PP
+.SS ACE_Configuration::ACE_Configuration (void)\fC [protected]\fR
+.PP
+Default ctor.
+.PP
+.SS ACE_Configuration::ACE_Configuration (const ACE_Configuration & rhs)\fC [protected]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Configuration::enumerate_sections (const \fBACE_Configuration_Section_Key\fR & key, int Index, ACE_TString & name)\fC [pure virtual]\fR
+.PP
+method to enumerate through the <name> subsections in <key>. To begin iteration, <index> must zero. to continue iteration, invoke enumerate_sections again while incrementing index. Each iteration will return the <name> of the sub section. This method returns 0 on success, <0 on error and 1 when there are no more subsections to iterate through. Note - you may not delete or add values while enumerating. If you need to do this, you start the enumeration over again. 
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::enumerate_values (const \fBACE_Configuration_Section_Key\fR & key, int Index, ACE_TString & name, \fBVALUETYPE\fR & type)\fC [pure virtual]\fR
+.PP
+method to enumerate through the <name> and <type> of values in a <key>. To begin iteration, <index> must be zero. to continue iteration, invoke enumerate_values again while incrementing index. Each iteration will return the <name> of the value and its <type>. This method returns 0 on success, <0 on error and 1 when there are no more values to iterate through. Note - you may not delete or add values while enumerating. If you need to do this, you start the enumeration over again. 
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::expand_path (const \fBACE_Configuration_Section_Key\fR & key, const ACE_TString & path_in, \fBACE_Configuration_Section_Key\fR & key_out, int create = 1)
+.PP
+Expands <path_in> to <key_out> from <key>. If create is true, the subsections are created. Returns 0 on success, non zero on error The path consists of sections separated by the backslash '\\' or forward slash '/'.  Returns 0 on success, -1 if <create) is 0 and the path refers  a nonexistant section 
+.SS int ACE_Configuration::export_config (const \fBACE_TCHAR\fR * filename)
+.PP
+Exports the configuration database to filename. If <filename> is already present, it is overwritten. This function is deprecated and will be removed in a future version of \fBACE\fR. Please use either \fBACE_Registry_ImpExp\fR or \fBACE_Ini_ImpExp\fR instead. 
+.SS int ACE_Configuration::find_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, \fBVALUETYPE\fR & type)\fC [pure virtual]\fR
+.PP
+checks to see if an entry of <name> is in <key> and places the data type in <type>. Returns 0 on success (entry is found), -1 on error 
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::get_binary_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, void *& data, u_int & length)\fC [pure virtual]\fR
+.PP
+gets the binary value of <name> from <key> and places a copy in <data> and sets <length> to the length of the data. caller is responsible for deleting <data>. Returns non zero on error (if value is not binary). 
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::get_integer_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, u_int & value)\fC [pure virtual]\fR
+.PP
+gets the integer value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not an integer).
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS \fBACE_Section_Key_Internal\fR * ACE_Configuration::get_internal_key (const \fBACE_Configuration_Section_Key\fR & key)\fC [protected]\fR
+.PP
+resolves the internal key from a section key.
+.PP
+.SS int ACE_Configuration::get_string_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, ACE_TString & value)\fC [pure virtual]\fR
+.PP
+gets the string value of <name> from <key> and places it in <value>. Returns non zero on error (if value is not a string).
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::import_config (const \fBACE_TCHAR\fR * filename)
+.PP
+Imports the configuration database from filename. Any existing data is not removed. This function is deprecated and will be removed in a future version of \fBACE\fR. Please use \fBACE_Registry_ImpExp\fR or \fBACE_Ini_ImpExp\fR instead. 
+.SS int ACE_Configuration::open_section (const \fBACE_Configuration_Section_Key\fR & base, const \fBACE_TCHAR\fR * sub_section, int create, \fBACE_Configuration_Section_Key\fR & result)\fC [pure virtual]\fR
+.PP
+Finds a <sub_section> in <base> and places the resulting key in <result>. If create is non zero, the sub_section will be created if it doesn't exist 
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::operator!= (const ACE_Configuration & rhs) const\fC [inline]\fR
+.PP
+Determine if the contents of this object are different from the  contents of the object on the right hand side. Returns 0 (False) if they are equal and 1 (True) if they are not equal 
+.SS ACE_Configuration& ACE_Configuration::operator= (const ACE_Configuration & rhs)\fC [protected]\fR
+.PP
+.SS int ACE_Configuration::operator== (const ACE_Configuration & rhs) const
+.PP
+Determine if the contents of this object is the same as the  contents of the object on the right hand side. Returns 1 (True) if they are equal and 0 (False) if they are not equal 
+.SS int ACE_Configuration::remove_section (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * sub_section, int recursive)\fC [pure virtual]\fR
+.PP
+Removes the <sub_section> from <key>. If recursive is non zero, any subkeys below <sub_section> are remove as well.
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::remove_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name)\fC [pure virtual]\fR
+.PP
+Removes the the value <name> from <key>. returns non zero on error.
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS const \fBACE_Configuration_Section_Key\fR & ACE_Configuration::root_section (void) const\fC [virtual]\fR
+.PP
+Returns the root section of this configuration.
+.PP
+.SS int ACE_Configuration::set_binary_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, const void * data, u_int length)\fC [pure virtual]\fR
+.PP
+sets the value in <key> with <name> to binary data of <data> with <length>.
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::set_integer_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, u_int value)\fC [pure virtual]\fR
+.PP
+sets the value in <key> with <name> to an integer of <value>.
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::set_string_value (const \fBACE_Configuration_Section_Key\fR & key, const \fBACE_TCHAR\fR * name, const ACE_TString & value)\fC [pure virtual]\fR
+.PP
+sets the value in <key> with <name> to a string of <value>.
+.PP
+Reimplemented in \fBACE_Configuration_Win32Registry\fR, and \fBACE_Configuration_Heap\fR.
+.SS int ACE_Configuration::validate_name (const \fBACE_TCHAR\fR * name)\fC [protected]\fR
+.PP
+tests to see if <name> is valid. <name> must be < 255 characters and not contain the path separator '\\', brackets [] or = (maybe just restrict to alphanumeric?) returns non zero if name is not valid 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Configuration_Section_Key\fR ACE_Configuration::root_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

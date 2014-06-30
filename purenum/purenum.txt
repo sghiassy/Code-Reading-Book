@@ -1,0 +1,189 @@
+------------------
+Purenum 0.4e alpha
+------------------
+purenum.txt
+------------------
+
+
+AUTHOR
+
+       Original Author: Shawn Yarbrough
+  Contributing Authors: (none)
+              Web Site: http://www.nailstorm.com/products/purenum/
+                 Email: info@nailstorm.com    (subject: Purenum)
+Original Creation Date: July 19, 1998
+ Original Release Date: August 15, 2000
+     This Version Date: December 22, 2001
+
+
+ALPHA VERSION 
+
+Some features may not work at all or may not work properly, even if they are
+described later in this document as working properly.
+
+
+INTRODUCTION TO PURENUM
+
+Purenum is a C++ bignum library for programmers.  Its unlimited-width Integer
+type works with all of the C++ math operators (+ and / and *= etc.) but unlike
+the int type there can never be overflow errors.  Division by zero and running
+out of memory are catchable exceptions.  Optimized inline code is used and the
+software Integer operations for single-width values run almost as quickly as
+hardware int operations do.  An Array type provides for resizeable arrays of
+bignums.
+
+
+BIGNUMS
+
+A simple bignum example: the number 1,234,567,890 easily fits within a 32-bit
+unsigned integer value.  But multiply it by ten and a 32-bit computer chokes
+because it can't handle numbers higher than 4,294,967,295 (which is about 2 to
+the 32nd power).  Most computers today (as of Jun 2001) would "overflow" the
+correct answer of 12,345,678,900 resulting in a wrong answer of 3,755,744,308.
+It's wrong, but it's less than 4,294,967,295 so a 32-bit computer is happy.
+Yes, this probably means your computer.  Each program, and the entire operating
+system, must be carefully designed to avoid these overflow errors.
+
+Overflow errors are bad for four reasons:
+
+1. the overflowed answer is wrong
+2. the overflow error is silent, and processing continues
+3. programmers must carefully avoid these overflow errors
+4. programmers make mistakes
+
+If a program has a rare overflow bug it can often go undetected by the
+programmer.  Users will sometimes end up with corrupted data but only the rare
+crash will signal that something is really wrong.  By the way, this is only one
+of the many problems with modern computer designs that can cause mysterious
+crashes.
+
+Bignum software fixes the overflow problem by teaching the computer in software
+how to overcome it's hardware limitations.  Programs based on bignum math
+always "do the right thing".  They give the right answers without ever
+overflowing.  This increased reliability comes at the price of slower speed.
+
+
+PURENUM
+
+The Purenum library provides bignums with a minimal slowdown.  Other bignum
+projects spend much design effort trying to make really huge numbers be
+processed efficiently.  That's great for scientists and mathematicians but most
+programs rarely use numbers over the low billions.  The problem for most
+programmers is the occasional unnoticed overflow, not the exact diameter of the
+galaxy measured in centimeters.
+
+Purenum provides bignums whenever they are needed (at any speed) but it runs
+it's absolute fastest while processing those common smaller numbers used by
+most programs most of the time.  An existing program converted to use Purenum
+will run almost as quickly as it did in the first place... AND all of it's
+subtle overflow bugs will automatically be fixed.
+
+Another advantage of Purenum is program portability between different kinds of
+computers.  A Purenum-based C++ program should recompile and run on 16-bit,
+32-bit, 64-bit, and other kinds of CPUs with no integer code changes.  Extra
+CPU power will be taken advantage of where it is available.  The program will
+work everywhere, even on slow, obsolete hardware.  Hardware independence is a
+wonderful thing!
+
+
+C++ CLASS INT
+
+class Int        // unlimited-width bignum integer type
+{                // (summary, for exact definition see file 'integer.h')
+public:
+    Int();                     // default constructor
+    Int(int);                  // construct from a signed hardware int
+    Int(unsigned int);         // construct from an unsigned hardware int
+    Int(char *);               // construct from a number in an ASCIIZ string
+    operator++();              // increment
+    operator--();              // decrement
+    operator+=(Int &);         // add
+    operator-=(Int &);         // subtract
+    operator*=(Int &);         // multiply
+    operator/=(Int &);         // divide
+    operator%=(Int &);         // remainder
+    // ...all the other standard C++ operators are also provided
+    class exception { };                          // math errors cause throws
+    class divisionbyzero : public exception { };  // bad division attempted
+    class outofmemory : public exception { };     // value too large for memory
+    class outofrange : public exception { };      // bad conversion attempted
+    class badstring : public exception { };       // corruptly formatted string
+private:
+    unsigned int memorysize;   // integer size limited only by available memory
+    unsigned int *memory;      // array for storing the unlimited-width value
+};
+
+By default the Int class (defined by int.h) is actually just another name for
+the very portable Integer class (located in integer.h and integer.c).  This
+default can be changed in the makefile.  There are several different bignum
+classes to choose from, each of which provides a different level of efficiency.
+Each of these classes provides the same Purenum Int interface:
+
+Integer           most portable Int, least optimized, should work everywhere
+Integer_2C        an Int optimized for most computers (w/two's-complement) **
+Integer_GMP       an Int based on the GNU Multi-Precision library (GMP) *
+Integer_x86       an Int well-optimzed for Intel-type computers only **
+Integer_68K       an Int well-optimzed for Motorola-type computers only **
+Integer_fat       optimized at expense of size (absolutely all code inline) **
+Integer_std       same as Integer but using the C++ standard library more **
+Integer_fake      NOT A BIGNUM: a regular 'signed int' with an Int interface
+Integer_fakeu     NOT A BIGNUM: a regular 'unsigned int' with an Int interface
+
+* GMP is a C bignum library for scientists and mathematicians
+  (Integer_GMP is over 10 times slower than Integer, for smallnums)
+  see for more info: http://www.swox.com/gmp/
+
+** not yet available -- this is an alpha release!
+   (don't worry, even the plain Integer class is really fast for smallnums)
+
+Programs using Purenum's different bignum classes may choose to use the Int
+type and then set the default bignum implementation for Int in the makefile.
+The chosen version will then automatically be substituted for Int.  As an
+alternative, the different bignum versions may be used directly thru the names
+listed above.
+
+
+FREQUENTLY ASKED QUESTIONS
+
+Q: Why bother with bignums?
+
+A: Bignums are easier to use, more reliable, and more portable.  Design for
+   correctness first.  Design for efficiency last.  Purenum makes this easy.
+   And you can always subsitute in Integer_fake later for a small speed
+   increase if you are confident that your program has no overflow bugs.  ;)
+
+
+PURENUM DESIGN PRIORITIES
+
+1. portability
+2. ease-of-use
+3. execution speed
+4. memory size
+5. compilation speed
+
+
+NOTES
+
+Bitwise operations do not behave the same with software integers as they do
+with hardware integers.  For example, a bit in a hardware integer can never
+possibly be shifted in one direction more than 31 times consecutively on a
+32-bit processor.  But in a software integer the bit can be shifted over and
+over, probably thousands or millions of times or more, until finally producing
+a number so large that memory runs out.
+
+This behavor is correct but will break programs which depend on the physical
+size (in memory) of an integer when those programs are converted to use class
+Integer.  The whole point of class Integer is to protect programmers from low-
+level hardware details such as this, so this is a good thing.
+
+Bitwise operations only affect the absolute value (magnitude) of an Integer.
+The sign is considered to be a seperate value, regardless of the underlying
+implementation of the sign.
+
+Different Int versions can be mixed in the same program with no conflicts,
+however they can NOT directly interact with each other.  Polymorphism was
+sacrificed for speed in the Purenum design.  For example, an Integer_x86 is not
+an Integer as far as the compiler knows.  In reality this should rarely be a
+problem.  Programs seriously needing to convert between different kinds of
+Integer values could use string integers as an intermediate type.
+

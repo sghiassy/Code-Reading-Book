@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Third Party Contributions</title>
+  <authors>
+   <person name="Robin Green" email="greenrd@hotmail.com"/>
+   <person name="Ovidiu Predescu" email="ovidiu@cup.hp.com"/> <!-- author of emacs editing functions -->
+  </authors>
+ </header>
+
+ <body>
+
+ <s1 title="How to Contribute">
+  <p>
+   See <connect href="contrib.xml">How to contribute to Apache Cocoon</connect>.
+  </p>
+
+ </s1>
+
+ <s1 title="Contributed Components">
+  <p>
+   These are not necessarily deemed to be high enough quality to be included in the
+   core distribution, but they have been tested under <connect href="contrib.xml">
+   several key environments</connect>, they are provided under the same license
+   as Apache Cocoon, and they are included in the Cocoon distribution under the
+   <code>contrib/</code> directory.
+  </p>
+
+  <p>
+   <strong>None as yet!</strong> - although you can expect that some of the links
+   listed below will eventually migrate to the "contributed components" level, and
+   then maybe even into the main distribution.
+  </p>
+ </s1>
+
+ <s1 title="Patch Queue">
+  <p><connect href="patches.xml">Submissions of modifications</connect>
+   to Cocoon which are awaiting review. Anyone can
+   comment on them on the cocoon-dev mailing list - code reviewers are needed!
+   <strong>Use these at your own risk</strong> - although Cocoon has no guarantee
+   either, these patches have not been reviewed, let alone accepted.
+  </p>
+ </s1>
+
+ <s1 title="Other Extensions">
+  <p>The other extensions listed here are <strong>not endorsed</strong> by the Cocoon
+   project either - they are provided as a convenience only. They may or may not work,
+   they may or may not be open source, etc.
+  </p>
+
+  <p>To have a link added to this table, see <connect href="contrib.xml">How to contribute
+   to Cocoon</connect>.</p>
+
+  <table>
+   <tr>
+    <th>Name and Link</th>
+    <th>Type</th>
+    <th>Description</th>
+    <th>Status</th>
+    <th>Licensing</th>
+    <th>Contact</th>
+   </tr>
+   <tr>
+    <td><link href="http://www.geocities.com/SiliconValley/Monitor/7464/emacs/xslt-process/">
+     XSLT-process</link></td>
+    <td>Development Environment</td>
+    <td>A minor mode for (X)Emacs that allows you to invoke an XSLT processor, or Cocoon on a buffer,
+     thus yielding a fast turnaround time.</td>
+    <td>Supports Xalan, Apache Cocoon, Saxon</td>
+    <td>?</td>
+    <td><link href="mailto:ovidiu@cup.hp.com">Ovidiu Predescu</link></td>
+   </tr>
+  </table>
+  <p></p>
+
+  <s2 title="Emacs Editing Functions for XSL/XSP">
+   <p>Thanks to <link href="mailto:ovidiu@cup.hp.com">Ovidiu Predescu</link> for these.</p>
+
+   <p><em>"For those of you that use Emacs/Xemacs to edit XSL/XSP pages, here are some
+   handy functions you can use in your .emacs to speed up the editing. They insert
+   the commonly used tags in the current buffer, indented and nicely formatted.
+   They were developed and used on Xemacs 21.1, but they should work on GNU Emacs
+   as well.</em></p>
+
+   <p><em>"I'd be curious to know what other little things people use in emacs to speed up
+   development."</em></p>
+
+<source><![CDATA[
+(require 'tempo)
+
+   (defun get-value-from-minibuffer (display format-string)
+     (let ((input (read-from-minibuffer display)))
+       (if (string= input "")
+           ""
+         (format format-string input))))
+
+   (tempo-define-template "xsl-template"
+    '('&'o'> "<xsl:template"
+      (get-value-from-minibuffer "Template name: " " match=\"%s\"")
+      ">" 'n'>'n
+      "</xsl:template>" '>
+      (end-of-line 0)))
+
+   (tempo-define-template "xsl-if"
+    '('&'o'> "<xsl:if"
+      (get-value-from-minibuffer "Test expression: " " test=\"%s\"")
+      ">" 'n'>'n
+      "</xsl:if>" '>
+      (end-of-line 0)))
+
+   (tempo-define-template "xsl-for-each"
+    '('&'o'> "<xsl:for-each"
+      (get-value-from-minibuffer "Select expression: " " select=\"%s\"")
+      ">" 'n'>'n
+      "</xsl:for-each>" '>
+      (end-of-line 0)))
+
+   (tempo-define-template "xsp-logic"
+    '('&'o'> "<xsp:logic>" '>'n'>'n
+      "</xsp:logic>" '>'n
+      (end-of-line -1)))
+
+   (tempo-define-template "xsp-expr"
+    '('&'o'> "<xsp:expr>" '>'n'>'n
+      "</xsp:expr>" '>'n
+      (end-of-line -1)))
+
+   (tempo-define-template "xsl-value-of"
+    '('> "<xsl:value-of"
+      (get-value-from-minibuffer "Value: " " select=\"%s\"")
+      "/>" '>))
+
+   (tempo-define-template "xsl-apply-templates"
+    '('> "<xsl:apply-templates"
+      (get-value-from-minibuffer "Select: " " select=\"%s\"")
+      "/>" '>))
+
+   (defun my-xml-templates-hook()
+     (define-key xml-mode-map "\C-ct" 'tempo-template-xsl-template)
+     (define-key xml-mode-map "\C-ci" 'tempo-template-xsl-if)
+     (define-key xml-mode-map "\C-cf" 'tempo-template-xsl-for-each)
+     (define-key xml-mode-map "\C-cv" 'tempo-template-xsl-value-of)
+     (define-key xml-mode-map "\C-ca" 'tempo-template-xsl-apply-templates)
+     (define-key xml-mode-map "\C-cl" 'tempo-template-xsp-logic)
+     (define-key xml-mode-map "\C-ce" 'tempo-template-xsp-expr))
+
+   (add-hook 'xml-mode-hook 'my-xml-templates-hook)
+]]>
+</source>
+
+  </s2>
+
+ </s1>
+</body>
+</document>

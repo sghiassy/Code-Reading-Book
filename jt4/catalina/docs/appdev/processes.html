@@ -1,0 +1,278 @@
+<html>
+
+<head>
+<title>Developing Applications With Tomcat -- Processes</title>
+</head>
+
+<body bgcolor="white">
+
+<!-- Navigation Links -->
+<table border=0 width="100%">
+<tr>
+<td align="left" width="25%">
+  <a href="source.html">Previous</a>
+</td>
+<td align="center" width="50%">
+  <a href="contents.html">Top</a>
+</td>
+<td align="right" width="25%">
+  Next
+</td>
+</tr>
+<tr>
+<td align="center" colspan=3>
+  <a href="#Create">Create</a>
+  <a href="#Configure">Configure</a>
+  <a href="#Edit">Develop</a>
+  <a href="#Build">Build</a>
+  <a href="#Test">Test</a>
+  <a href="#Deploy">Deploy</a>
+</td>
+</tr>
+</table>
+
+<h1>5. Development Processes</h1>
+
+<p>Although application development can take many forms, this manual proposes
+a fairly generic process for creating web applications using Tomcat.  The
+following sections highlight the commands and tasks that you, as the developer
+of the code, will perform.  The same basic approach works when you have
+multiple programmers involved, as long as you have an appropriate source code
+control system and internal team rules about who is working on what parts
+of the application at any given time.
+
+<p>The task descriptions below assume that you will be using CVS for source
+code control, and that you have already configured access to the appropriate
+CVS repository.  Instructions for doing this are beyond the scope of this
+manual.  If you are using a different source code control environment, you
+will need to figure out the corresponding commands for your system.
+
+
+<!-- 5.1 Create -->
+<a name="Create"></a>
+<h2>5.1 Create Project Source Directory</h2>
+
+<p>The first step is to create a new project source directory, and customize
+the <code>build.xml</code> and build script you will be using.  The directory
+structure is described in <a href="source.html">Section 4</a>, or you can
+use the <a href="sample" target="_new">sample</a> application as a starting
+point.
+
+<p>Create your project source directory, and define it within your CVS
+repository.  This might be done by a series of commands like this, where
+<code>{project}</code> is the name under which your project should be
+stored in the CVS repository, and {username} is your login username:
+<pre>
+	cd {my home directory}
+	mkdir myapp	<-- Assumed "project source directory"
+	cd myapp
+	mkdir etc
+	mkdir lib
+	mkdir src
+	mkdir web
+	cvs import -m "Initial Project Creation" {project} \
+		{username} start
+</pre>
+
+<p>Now, to verify that it was created correctly in CVS, we will perform a
+checkout of the new project:
+<pre>
+	cd ..
+	mv myapp myapp.bu
+	cvs checkout {project}
+</pre>
+
+
+<p>Next, you will need to create and check in an initial version of the
+<code>build.xml</code> and <code>build</code> or <code>build.bat</code>
+script to be used for development.  You can base <code>build.xml</code> on the
+<a href="build.xml.txt" target="_new">basic build.xml file</a>,
+or code it from scratch.
+<pre>
+	cd {my home directory}
+	cd myapp
+	emacs build.xml		<-- if you want a real editor :-)
+	cvs add build.xml
+	emacs build		<-- or build.bat on Windows
+	chmod +x build		<-- on Unix, make it executable
+	cvs add build		<-- or build.bat on Windows
+	cvs commit
+</pre>
+
+<p>So far, all the editing you've done to the <code>build.xml</code> file,
+and the corresponding build script, is local to your development directory.
+Committing the changes makes them visible to other developers.
+
+<p>Now, create the initial version of the web application deployment
+descriptor.  You can base <code>web.xml</code> on the
+<a href="web.xml.txt" target="_new">basic web.xml file</a>,
+or code it from scratch.
+<pre>
+	cd {my home directory}
+	cd myapp/etc		<-- Ultimate destination will be WEB-INF
+	emacs web.xml
+	cvs add web.xml
+	cvs commit
+</pre>
+
+
+<!-- 5.2 Configure -->
+<a name="Configure"></a>
+<h2>5.2 Configure Tomcat To Recognize Your Application</h2>
+
+<p>In order for Tomcat to recognize your application, you must integrate
+it as described in <a href="deployment.html#Integration">Section 3.4</a>.
+Any of the proposed techniques can be used.  For our purposes, we will assume
+that you are using the first approach (unpacked hierarchy), because we set
+the deployment home to be an appropriate directory under the
+<code>$CATALINA_HOME/webapps</code> directory.  With multiple developers, it
+is easiest to install Tomcat separately for each of them, so that they can
+have their own CATALINA_HOME (as well as start and stop Tomcat) independently.
+
+
+<!-- 5.3 Edit -->
+<a name="Edit"></a>
+<h2>5.3 Edit Source Code and Pages</h2>
+
+<p>The edit/build/test tasks will generally be your most common activities
+during development and maintenance.  The following general principles apply.
+As described in <a href="source.html">Section 4</a>, newly created
+source files should be located in the appropriate subdirectory, under your
+project source directory.
+
+<p>Whenever you wish to refresh your development directory to reflect the
+work performed by other developers, you will ask CVS to do it for you:
+<pre>
+	cd {my home directory}
+	cd myapp
+	cvs update -d		<-- -d means create dirs if necessary
+</pre>
+
+<p>To create a new file, go to the appropriate directory, create the file,
+and register it with CVS.  When you are satisfied with it's contents (after
+building and testing is successful), commit the new file to the repository.
+For example, to create a new JSP page:
+<pre>
+	cd {my home directory}
+	cd myapp/web		<-- Ultimate destination is document root
+	emacs mypage.jsp
+	cvs add mypage.jsp
+	... build and test the application ...
+	cvs commit
+</pre>
+
+<p>Java source code that is defined in packages should be organized in a
+directory hierarchy (under the <b>src/</b> subdirectory) that matches the
+package names.  For example, a Java class named
+<code>com.mycompany.mypackage.MyClass.java</code> should be stored in file
+<code>src/com/mycompany/mypackage/MyClass.java</code> under your project
+source directory.  Whenever you create a new subdirectory, don't forget to
+register it with CVS.
+
+<p>To edit an existing source file, you will generally just start editing
+and testing, then commit the changed file when everything works.  Although
+CVS can be configured to required you to "check out" or "lock" a file you
+are going to be modifying, this is generally not used.
+
+
+<!-- 5.4 Build -->
+<a name="Build"></a>
+<h2>5.4 Build The Web Application</h2>
+
+<p>When you are ready to compile the application, issue the following
+commands (generally, you will want a shell window open that is set to
+the project source directory, so that only the last command is needed):
+<pre>
+	cd {my home directory}
+	cd myapp		<-- Normally leave a window open here
+	build			<-- (Windows) Defaults to "build compile"
+	./build.sh		<-- (Unix) Defaults to "build compile"
+</pre>
+
+<p>The Ant tool will be utilized to compile any new or updated Java code.
+If this is the first time you compile after a "build clean", it will cause
+everything to be recompiled.
+
+<p>To force the recompilation of your entire application, do this instead:
+<pre>
+	cd {my home directory}
+	cd myapp
+	build all                <-- (Windows)
+        ./build.sh all           <-- (Unix)
+</pre>
+
+<p>This is a very good habit immediately before checking in changes, to
+make sure that you have not introduced any subtle problems that Javac's
+conditional checking did not catch.
+
+
+<!-- 5.5 Test -->
+<a name="Test"></a>
+<h2>5.5 Test Your Web Application</h2>
+
+<p>To test your application, you will want to execute it under Tomcat.
+Assuming you have integrated your application as described earlier, this
+is very simple.  Under Unix, simply execute:
+<pre>
+	$CATALINA_HOME/bin/startup.sh
+</pre>
+
+<p>or, under Windows, execute:
+<pre>
+	%CATALINA_HOME%\bin\startup
+</pre>
+
+<p>This command starts Tomcat as a background process.  Now, point your
+web browser at the home page for your application, by opening the following
+URL (where "/myapp" is the context path you have assigned to it):
+<pre>
+	http://localhost:8080/myapp
+</pre>
+
+<p>Now, you can exercize your application to verify that it operates
+correctly.  When you discover something that needs to change, fix it as
+follows:
+<ul>
+<li>To change a JSP page, modify it in the <b>source</b> directory and
+    then re-execute the <code>build</code> script.  The updated
+    page will be recopied, and Tomcat will recognize this the next time
+    that page is accessed -- the page will then be recompiled automatically.
+<li>Changing a servlet or other Java class is similar, but the effort
+    required depends on whether you selected the "autoreload" attribute
+    for this context when you integrated with Tomcat.  First, edit the
+    file in its <b>source</b> directory, and re-execute the
+    <code>build</code> script.  The updated Java class will be recompiled.
+    If autoreloading is selected, Tomcat will notice this change the next
+    time this class is referenced, and will automatically unload and reload
+    your application.  Otherwise, you will need to manually stop and restart
+    Tomcat before continuing.
+</ul>
+
+<p>Using a debugger on servlets and JSP pages is currently outside the scope
+of this document.  Enhancements to describe these procedures is requested.
+
+<p>Do not forget to commit your changes to the source code repository when
+you have completed your testing!
+
+
+<!-- 5.6 Deploy -->
+<a name="Deploy"></a>
+<h2>5.6 Deploy Your Web Application</h2>
+
+<p>When you are through adding new functionality, and you've tested everything
+(you DO test, don't you :-), it is time to create the distributable version
+of your web application that can be deployed on the production server.  The
+following general steps are required:
+<ul>
+<li>Issue the command <code>build all</code> from the project source
+    directory, to rebuild everything from scratch one last time.
+<li>Issue the command <code>build dist</code> to create a distributable
+    web application archive (WAR) file, as well as a JAR file containing
+    the corresponding source code.
+<li>Give the WAR file to the system administrator of your production
+    server environment, so that he or she can install it.
+</ul>
+
+</body>
+
+</html>

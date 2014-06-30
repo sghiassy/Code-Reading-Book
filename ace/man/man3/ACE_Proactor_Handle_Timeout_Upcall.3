@@ -1,0 +1,115 @@
+.TH ACE_Proactor_Handle_Timeout_Upcall 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Proactor_Handle_Timeout_Upcall \- Functor for . 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Proactor.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Proactor_Handle_Timeout_Upcall\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "int \fBtimeout\fR (\fBTIMER_QUEUE\fR &timer_queue, \fBACE_Handler\fR *handler, const void *arg, const \fBACE_Time_Value\fR &cur_time)"
+.br
+.RI "\fIThis method is called when the timer expires.\fR"
+.ti -1c
+.RI "int \fBcancellation\fR (\fBTIMER_QUEUE\fR &timer_queue, \fBACE_Handler\fR *handler)"
+.br
+.RI "\fIThis method is called when the timer is canceled.\fR"
+.ti -1c
+.RI "int \fBdeletion\fR (\fBTIMER_QUEUE\fR &timer_queue, \fBACE_Handler\fR *handler, const void *arg)"
+.br
+.RI "\fIThis method is called when the timer queue is destroyed and the timer is still contained in it.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBproactor\fR (\fBACE_Proactor\fR &proactor)"
+.br
+.RI "\fISet the proactor. This will fail, if one is already set!\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Proactor\fR* \fBproactor_\fR"
+.br
+.RI "\fIHandle to the proactor. This is needed for posting a timer result to the Proactor's completion queue.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_Queue_T\fR<\fBACE_Handler\fR *, ACE_Proactor_Handle_Timeout_Upcall, ACE_SYNCH_RECURSIVE_MUTEX> \fBTIMER_QUEUE\fR"
+.br
+.RI "\fIType def for the timer queue.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Proactor\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Functor for .
+.PP
+.PP
+ This class implements the functor required by the Timer Queue to call <handle_timeout> on ACE_Handlers. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Timer_Queue_T\fR<\fBACE_Handler\fR *, ACE_Proactor_Handle_Timeout_Upcall, ACE_SYNCH_RECURSIVE_MUTEX> ACE_Proactor_Handle_Timeout_Upcall::TIMER_QUEUE\fC [private]\fR
+.PP
+Type def for the timer queue.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Proactor_Handle_Timeout_Upcall::ACE_Proactor_Handle_Timeout_Upcall (void)
+.PP
+Constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Proactor_Handle_Timeout_Upcall::cancellation (\fBTIMER_QUEUE\fR & timer_queue, \fBACE_Handler\fR * handler)
+.PP
+This method is called when the timer is canceled.
+.PP
+.SS int ACE_Proactor_Handle_Timeout_Upcall::deletion (\fBTIMER_QUEUE\fR & timer_queue, \fBACE_Handler\fR * handler, const void * arg)
+.PP
+This method is called when the timer queue is destroyed and the timer is still contained in it.
+.PP
+.SS int ACE_Proactor_Handle_Timeout_Upcall::proactor (\fBACE_Proactor\fR & proactor)\fC [protected]\fR
+.PP
+Set the proactor. This will fail, if one is already set!
+.PP
+.SS int ACE_Proactor_Handle_Timeout_Upcall::timeout (\fBTIMER_QUEUE\fR & timer_queue, \fBACE_Handler\fR * handler, const void * arg, const \fBACE_Time_Value\fR & cur_time)
+.PP
+This method is called when the timer expires.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_Proactor\fC [friend]\fR
+.PP
+The main Proactor class has special permissions.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Proactor\fR * ACE_Proactor_Handle_Timeout_Upcall::proactor_\fC [protected]\fR
+.PP
+Handle to the proactor. This is needed for posting a timer result to the Proactor's completion queue.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

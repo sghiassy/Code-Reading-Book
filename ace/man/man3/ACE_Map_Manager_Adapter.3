@@ -1,0 +1,327 @@
+.TH ACE_Map_Manager_Adapter 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Map_Manager_Adapter \- Defines a map implementation. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Map_T.h>\fR
+.PP
+Inherits \fBACE_Map< KEY,VALUE >\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Map_Manager_Iterator_Adapter\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE>, KEY, VALUE> \fBiterator_impl\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Manager_Reverse_Iterator_Adapter\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE>, KEY, VALUE> \fBreverse_iterator_impl\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Map_Manager\fR<KEY, VALUE, \fBACE_Null_Mutex\fR> \fBimplementation\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Map_Manager_Adapter\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize with the .\fR"
+.ti -1c
+.RI "\fBACE_Map_Manager_Adapter\fR (size_t size, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize with <size> entries. The <size> parameter is ignored by maps for which an initialize size does not make sense.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Map_Manager_Adapter\fR (void)"
+.br
+.RI "\fIClose down and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (size_t length = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a <Map> with size <length>.\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIClose down a <Map> and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "virtual int \fBbind\fR (const KEY &key, const VALUE &value)"
+.br
+.ti -1c
+.RI "virtual int \fBbind_modify_key\fR (const VALUE &value, KEY &key)"
+.br
+.ti -1c
+.RI "virtual int \fBcreate_key\fR (KEY &key)"
+.br
+.ti -1c
+.RI "virtual int \fBbind_create_key\fR (const VALUE &value, KEY &key)"
+.br
+.ti -1c
+.RI "virtual int \fBbind_create_key\fR (const VALUE &value)"
+.br
+.ti -1c
+.RI "virtual int \fBrecover_key\fR (const KEY &modified_key, KEY &original_key)"
+.br
+.RI "\fIRecovers the original key potentially modified by the map during <bind_modify_key>.\fR"
+.ti -1c
+.RI "virtual int \fBrebind\fR (const KEY &key, const VALUE &value)"
+.br
+.ti -1c
+.RI "virtual int \fBrebind\fR (const KEY &key, const VALUE &value, VALUE &old_value)"
+.br
+.ti -1c
+.RI "virtual int \fBrebind\fR (const KEY &key, const VALUE &value, KEY &old_key, VALUE &old_value)"
+.br
+.ti -1c
+.RI "virtual int \fBtrybind\fR (const KEY &key, VALUE &value)"
+.br
+.ti -1c
+.RI "virtual int \fBfind\fR (const KEY &key, VALUE &value)"
+.br
+.RI "\fILocate <value> associated with <key>.\fR"
+.ti -1c
+.RI "virtual int \fBfind\fR (const KEY &key)"
+.br
+.RI "\fIIs <key> in the map?\fR"
+.ti -1c
+.RI "virtual int \fBunbind\fR (const KEY &key)"
+.br
+.RI "\fIRemove <key> from the map.\fR"
+.ti -1c
+.RI "virtual int \fBunbind\fR (const KEY &key, VALUE &value)"
+.br
+.RI "\fIRemove <key> from the map, and return the <value> associated with <key>.\fR"
+.ti -1c
+.RI "virtual size_t \fBcurrent_size\fR (void) const"
+.br
+.RI "\fIReturn the current size of the map.\fR"
+.ti -1c
+.RI "virtual size_t \fBtotal_size\fR (void) const"
+.br
+.RI "\fIReturn the total size of the map.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "\fBACE_Map_Manager\fR<KEY, VALUE, \fBACE_Null_Mutex\fR>& \fBimpl\fR (void)"
+.br
+.RI "\fIAccessor to implementation object.\fR"
+.ti -1c
+.RI "KEY_GENERATOR& \fBkey_generator\fR (void)"
+.br
+.RI "\fIAccessor to key generator.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fBACE_Iterator_Impl\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE> >* \fBbegin_impl\fR (void)"
+.br
+.RI "\fIReturn forward iterator.\fR"
+.ti -1c
+.RI "virtual \fBACE_Iterator_Impl\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE> >* \fBend_impl\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Reverse_Iterator_Impl\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE> >* \fBrbegin_impl\fR (void)"
+.br
+.RI "\fIReturn reverse iterator.\fR"
+.ti -1c
+.RI "virtual \fBACE_Reverse_Iterator_Impl\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE> >* \fBrend_impl\fR (void)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Map_Manager\fR<KEY, VALUE, \fBACE_Null_Mutex\fR> \fBimplementation_\fR"
+.br
+.RI "\fIAll implementation details are forwarded to this class.\fR"
+.ti -1c
+.RI "KEY_GENERATOR \fBkey_generator_\fR"
+.br
+.RI "\fIFunctor class used for generating key.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR> &)"
+.br
+.ti -1c
+.RI "\fBACE_Map_Manager_Adapter\fR (const ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR> &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class KEY, class VALUE, class KEY_GENERATOR>  template class ACE_Map_Manager_Adapter
+Defines a map implementation.
+.PP
+.PP
+ Implementation to be provided by . 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> typedef \fBACE_Map_Manager\fR<KEY, VALUE, \fBACE_Null_Mutex\fR> ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::implementation
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> typedef \fBACE_Map_Manager_Iterator_Adapter\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE>, KEY, VALUE> ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::iterator_impl
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> typedef \fBACE_Map_Manager_Reverse_Iterator_Adapter\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE>, KEY, VALUE> ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::reverse_iterator_impl
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR> (\fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize with the .
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR> (size_t size, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize with <size> entries. The <size> parameter is ignored by maps for which an initialize size does not make sense.
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::~ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR> (void)\fC [virtual]\fR
+.PP
+Close down and release dynamically allocated resources.
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR> (const ACE_Map_Manager_Adapter< KEY,VALUE,KEY_GENERATOR >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> \fBACE_Iterator_Impl\fR< \fBACE_Reference_Pair\fR< const KEY,VALUE > >* ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::begin_impl (void)\fC [protected, virtual]\fR
+.PP
+Return forward iterator.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::bind (const KEY & key, const VALUE & value)\fC [virtual]\fR
+.PP
+Add <key>/<value> pair to the map. If <key> is already in the map then no changes are made and 1 is returned. Returns 0 on a successful addition. This function fails for maps that do not allow user specified keys. <key> is an "in" parameter. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::bind_create_key (const VALUE & value)\fC [virtual]\fR
+.PP
+Add <value> to the map. The user does not care about the corresponding key produced by the Map. For maps that do not naturally produce keys, the map adapters will use the <KEY_GENERATOR> class to produce a key. However, the users are responsible for not jeopardizing this key production scheme by using user specified keys with keys produced by the key generator. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::bind_create_key (const VALUE & value, KEY & key)\fC [virtual]\fR
+.PP
+Add <value> to the map, and the corresponding key produced by the Map is returned through <key> which is an "out" parameter. For maps that do not naturally produce keys, the map adapters will use the <KEY_GENERATOR> class to produce a key. However, the users are responsible for not jeopardizing this key production scheme by using user specified keys with keys produced by the key generator. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::bind_modify_key (const VALUE & value, KEY & key)\fC [virtual]\fR
+.PP
+Add <key>/<value> pair to the map. <key> is an "inout" parameter and maybe modified/extended by the map to add additional information. To recover original key, call the <recover_key> method. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::close (void)\fC [virtual]\fR
+.PP
+Close down a <Map> and release dynamically allocated resources.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::create_key (KEY & key)\fC [virtual]\fR
+.PP
+Produce a key and return it through <key> which is an "out" parameter. For maps that do not naturally produce keys, the map adapters will use the <KEY_GENERATOR> class to produce a key. However, the users are responsible for not jeopardizing this key production scheme by using user specified keys with keys produced by the key generator. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> size_t ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::current_size (void) const\fC [virtual]\fR
+.PP
+Return the current size of the map.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> void ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> virtual \fBACE_Iterator_Impl\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE> >* ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::end_impl (void)\fC [protected, virtual]\fR
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::find (const KEY & key)\fC [virtual]\fR
+.PP
+Is <key> in the map?
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::find (const KEY & key, VALUE & value)\fC [virtual]\fR
+.PP
+Locate <value> associated with <key>.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> \fBACE_Map_Manager\fR< KEY,VALUE,\fBACE_Null_Mutex\fR >& ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::impl (void)
+.PP
+Accessor to implementation object.
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> KEY_GENERATOR & ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::key_generator (void)
+.PP
+Accessor to key generator.
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::open (size_t length = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR * alloc = 0)\fC [virtual]\fR
+.PP
+Initialize a <Map> with size <length>.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> void ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::operator= (const ACE_Map_Manager_Adapter< KEY,VALUE,KEY_GENERATOR >&)\fC [private]\fR
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> \fBACE_Reverse_Iterator_Impl\fR< \fBACE_Reference_Pair\fR< const KEY,VALUE > >* ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::rbegin_impl (void)\fC [protected, virtual]\fR
+.PP
+Return reverse iterator.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::rebind (const KEY & key, const VALUE & value, KEY & old_key, VALUE & old_value)\fC [virtual]\fR
+.PP
+Reassociate <key> with <value>, storing the old key and value into the "out" parameters <old_key> and <old_value>. The function fails if <key> is not in the map for maps that do not allow user specified keys. However, for maps that allow user specified keys, if the key is not in the map, a new <key>/<value> association is created. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::rebind (const KEY & key, const VALUE & value, VALUE & old_value)\fC [virtual]\fR
+.PP
+Reassociate <key> with <value>, storing the old value into the "out" parameter <old_value>. The function fails if <key> is not in the map for maps that do not allow user specified keys. However, for maps that allow user specified keys, if the key is not in the map, a new <key>/<value> association is created. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::rebind (const KEY & key, const VALUE & value)\fC [virtual]\fR
+.PP
+Reassociate <key> with <value>. The function fails if <key> is not in the map for maps that do not allow user specified keys. However, for maps that allow user specified keys, if the key is not in the map, a new <key>/<value> association is created. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::recover_key (const KEY & modified_key, KEY & original_key)\fC [virtual]\fR
+.PP
+Recovers the original key potentially modified by the map during <bind_modify_key>.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> virtual \fBACE_Reverse_Iterator_Impl\fR<\fBACE_Reference_Pair\fR<const KEY, VALUE> >* ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::rend_impl (void)\fC [protected, virtual]\fR
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> size_t ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::total_size (void) const\fC [virtual]\fR
+.PP
+Return the total size of the map.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::trybind (const KEY & key, VALUE & value)\fC [virtual]\fR
+.PP
+Associate <key> with <value> if and only if <key> is not in the map. If <key> is already in the map, then the <value> parameter is overwritten with the existing value in the map. Returns 0 if a new <key>/<value> association is created. Returns 1 if an attempt is made to bind an existing entry. This function fails for maps that do not allow user specified keys. 
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::unbind (const KEY & key, VALUE & value)\fC [virtual]\fR
+.PP
+Remove <key> from the map, and return the <value> associated with <key>.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> int ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::unbind (const KEY & key)\fC [virtual]\fR
+.PP
+Remove <key> from the map.
+.PP
+Reimplemented from \fBACE_Map\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> \fBACE_Map_Manager\fR< KEY,VALUE,\fBACE_Null_Mutex\fR > ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::implementation_\fC [protected]\fR
+.PP
+All implementation details are forwarded to this class.
+.PP
+.SS template<classKEY, classVALUE, classKEY_GENERATOR> KEY_GENERATOR ACE_Map_Manager_Adapter<KEY, VALUE, KEY_GENERATOR>::key_generator_\fC [protected]\fR
+.PP
+Functor class used for generating key.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

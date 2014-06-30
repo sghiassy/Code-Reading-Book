@@ -1,0 +1,114 @@
+.TH ACE_TSS_Singleton 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_TSS_Singleton \- This class uses the Adapter pattern to turn ordinary classes into Thread-specific Singletons optimized with the Double-Checked Locking optimization pattern. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Singleton.h>\fR
+.PP
+Inherits \fBACE_Cleanup\fR.
+.PP
+Inherited by \fBACE_Unmanaged_TSS_Singleton\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual void \fBcleanup\fR (void *param = 0)"
+.br
+.RI "\fICleanup method, used by  to destroy the singleton.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "TYPE* \fBinstance\fR (void)"
+.br
+.RI "\fIGlobal access point to the Singleton.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void)"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_TSS_Singleton\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_TSS_TYPE\fR (TYPE) instance_"
+.br
+.RI "\fIContained instance.\fR"
+.in -1c
+.SS Static Protected Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_TSS_Singleton<TYPE, ACE_LOCK>*& \fBinstance_i\fR (void)"
+.br
+.RI "\fIGet pointer to the TSS Singleton instance.\fR"
+.in -1c
+.SS Static Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_TSS_Singleton<TYPE, ACE_LOCK>* \fBsingleton_\fR"
+.br
+.RI "\fIPointer to the Singleton (\fBACE_Cleanup\fR) instance.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE, class ACE_LOCK>  template class ACE_TSS_Singleton
+This class uses the Adapter pattern to turn ordinary classes into Thread-specific Singletons optimized with the Double-Checked Locking optimization pattern.
+.PP
+.PP
+ This implementation is another variation on the GoF Singleton pattern. In this case, a single  > instance is allocated here, not a <TYPE> instance. Each call to the <instance> static method returns a Singleton whose pointer resides in thread-specific storage. As with , we use the  so that the Singleton can be cleaned up when the process exits. For this scheme to work, a (static) <cleanup> function must be provided.  provides one so that TYPE doesn't need to. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE, classACE_LOCK> ACE_TSS_Singleton<TYPE, ACE_LOCK>::ACE_TSS_Singleton<TYPE, ACE_LOCK> (void)\fC [protected]\fR
+.PP
+Default constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE, classACE_LOCK> ACE_TSS_Singleton<TYPE, ACE_LOCK>::ACE_TSS_TYPE (TYPE)\fC [protected]\fR
+.PP
+Contained instance.
+.PP
+.SS template<classTYPE, classACE_LOCK> void ACE_TSS_Singleton<TYPE, ACE_LOCK>::cleanup (void * param = 0)\fC [virtual]\fR
+.PP
+Cleanup method, used by  to destroy the singleton.
+.PP
+Reimplemented from \fBACE_Cleanup\fR.
+.SS template<classTYPE, classACE_LOCK> void ACE_TSS_Singleton<TYPE, ACE_LOCK>::dump (void)\fC [static]\fR
+.PP
+Dump the state of the object.
+.PP
+Reimplemented in \fBACE_Unmanaged_TSS_Singleton\fR.
+.SS template<classTYPE, classACE_LOCK> TYPE * ACE_TSS_Singleton<TYPE, ACE_LOCK>::instance (void)\fC [static]\fR
+.PP
+Global access point to the Singleton.
+.PP
+Reimplemented in \fBACE_Unmanaged_TSS_Singleton\fR.
+.SS template<classTYPE, classACE_LOCK> ACE_TSS_Singleton< TYPE,ACE_LOCK >*& ACE_TSS_Singleton<TYPE, ACE_LOCK>::instance_i (void)\fC [static, protected]\fR
+.PP
+Get pointer to the TSS Singleton instance.
+.PP
+Reimplemented in \fBACE_Unmanaged_TSS_Singleton\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTYPE, classACE_LOCK> ACE_TSS_Singleton< TYPE,ACE_LOCK >* ACE_TSS_Singleton<TYPE, ACE_LOCK>::singleton_\fC [static, protected]\fR
+.PP
+Pointer to the Singleton (\fBACE_Cleanup\fR) instance.
+.PP
+Reimplemented in \fBACE_Unmanaged_TSS_Singleton\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

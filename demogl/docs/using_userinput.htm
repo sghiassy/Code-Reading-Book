@@ -1,0 +1,103 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Reacting on userinput</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Reacting on userinput</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Reacting on userinput.</h4>
+Some audiovisual applications are non-interactive, they visualize effects and play audio at the same time
+to entertain the people watching. However, it might be possible to have some interaction from the user
+of the application, for example a game using DemoGL as the execution host, or a demonstration program that
+needs mouse support to click objects shown in the effects.
+<p>
+Besides the possibility to use DirectInput to retrieve keyboard, mouse and joystick feedback from the user,
+it's possible to use basic Windows messages to react on keyboard and mouse activity (for joysticks you need
+DirectInput). DirectInput can be placed in one effectobject that polls every cycle in its RenderFrame method
+the activity queue.
+<p>
+To retrieve normal Windows messages received on keyboard and/or mouse activity, first enable the
+MessageHandler of the effectobjects that have to receive the input by using 
+<a HREF="ref_functions_DEMOGL_MessageHandlerEnable.htm">DEMOGL_MessageHandlerEnable</a>. Then to 
+react on keyboard and mouse activity, you could implement something like the code snippet below, in the
+MessageHandler method of the effectobject which messagehandler is enabled.
+<pre>
+// Purpose: the messagehandler of this effect. if we enable it we'll receive 
+// every message posted to the window of the current app. This is handy if we want to 
+// receive keyboard or mouse messages.
+void
+C3DView::MessageHandler(HWND hWnd, UINT uMsg, WPARAM  wParam, LPARAM  lParam)
+{
+	int		iX, iY;
+
+	switch(uMsg)
+	{
+		case WM_MOUSEMOVE:
+		{
+			if(m_bLMBDown)
+			{
+				// user is dragging with the mouse. get x and y delta's and
+				// reflect the delta's on the rotation angles of a rotating
+				// object.
+				
+				// get X and Y
+				iX=GET_X_LPARAM(lParam);
+				iY=GET_Y_LPARAM(lParam);
+				m_fAlpha= m_fAlpha + (float)(iY - m_iYPrev);
+				m_fBeta= m_fBeta + (float)(iX - m_iXPrev);
+				m_iXPrev=iX;
+				m_iYPrev=iY;
+			}
+		};break;
+		case WM_LBUTTONDOWN:
+		{
+			m_bLMBDown=true;
+			iX=GET_X_LPARAM(lParam);
+			iY=GET_Y_LPARAM(lParam);
+		}; break;
+		case WM_LBUTTONUP:
+		{
+			m_bLMBDown=false;
+		};break;
+		case WM_RBUTTONDOWN:
+		{
+			// as an example, exit the application.
+			DEMOGL_ExecuteCommand(&quot;_SYSTEM;END;&quot;);
+		};break;
+		case WM_CHAR:
+		{
+			// received a character done by a keypress (in: (char)wParam)
+		}; break;
+		case WM_KEYDOWN:
+		{
+			// received a keycode done by a keypress (in: wParam)
+		}; break;
+	}
+}
+</pre>
+The codesnippet above will receive mouse activity related messages and will react on them, for example, the 
+dragging of the user will result in the rotation of an object visualized by the C3DView class this method is
+a member of. For fast paced games it's perhaps wise to use DirectInput, but for normal mouse and keyboard
+usage this scheme with Windows Messages is good enough.
+<p>
+DemoGL will pass every message received to the effectobjects which messagehandlers are enabled. The developer
+doesn't have to pass back the messages to windows. This is done by DemoGL.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

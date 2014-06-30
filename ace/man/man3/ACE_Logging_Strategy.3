@@ -1,0 +1,219 @@
+.TH ACE_Logging_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Logging_Strategy \- This class provides the hooks to control the output produced by any of the network services. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Logging_Strategy.h>\fR
+.PP
+Inherits \fBACE_Service_Object\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Logging_Strategy\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual int \fBinit\fR (int argc, \fBACE_TCHAR\fR *argv[])"
+.br
+.RI "\fIDynamic linking initialization hook.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fIDynamic linking termination hook.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_timeout\fR (const \fBACE_Time_Value\fR& tv, const void* arg)"
+.br
+.ti -1c
+.RI "int \fBparse_args\fR (int argc, \fBACE_TCHAR\fR *argv[])"
+.br
+.ti -1c
+.RI "void \fBlog_msg\fR (\fBACE_Log_Msg\fR *log_msg)"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBtokenize\fR (\fBACE_TCHAR\fR *flag_string)"
+.br
+.RI "\fITokenize to set all the flags.\fR"
+.ti -1c
+.RI "void \fBpriorities\fR (\fBACE_TCHAR\fR *priority_string, \fBACE_Log_Msg::MASK_TYPE\fR mask)"
+.br
+.RI "\fITokenize to set priorities (either process or thread one).\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "u_long \fBthread_priority_mask_\fR"
+.br
+.RI "\fICurrent thread's priority mask set by <priorities>.\fR"
+.ti -1c
+.RI "u_long \fBprocess_priority_mask_\fR"
+.br
+.RI "\fIProcess-wide priority mask set by <priorities>.\fR"
+.ti -1c
+.RI "u_long \fBflags_\fR"
+.br
+.RI "\fIFlags we keep track of.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBfilename_\fR"
+.br
+.RI "\fIFile name we're logging to.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBlogger_key_\fR"
+.br
+.RI "\fILogger key for distributed logging.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR* \fBprogram_name_\fR"
+.br
+.RI "\fIProgram name to be used for n format specifier.\fR"
+.ti -1c
+.RI "int \fBwipeout_logfile_\fR"
+.br
+.RI "\fIIf non-0 then wipeout the logfile, otherwise append to it. Default value is 0.\fR"
+.ti -1c
+.RI "int \fBcount_\fR"
+.br
+.RI "\fIThis tells us in what file we last wrote. It will be increased to enable multiple log files.\fR"
+.ti -1c
+.RI "int \fBfixed_number_\fR"
+.br
+.RI "\fIIf non-0 we have a maximum number of log files we can write. Default value is 0, i.e., no maximum number.\fR"
+.ti -1c
+.RI "int \fBorder_files_\fR"
+.br
+.RI "\fIIf non-0 we order the files as we rotate them. Default value is 0, i.e., we do not rotate files by default.\fR"
+.ti -1c
+.RI "int \fBmax_file_number_\fR"
+.br
+.RI "\fITells us what is the maximum log file to write. We will write <max_file_number_> + 1 files (includes the current log file). Default value is 1, i.e., 2 files by default.\fR"
+.ti -1c
+.RI "u_long \fBinterval_\fR"
+.br
+.RI "\fIIf non-zero, sampling interval (in secs) at which maximum logfile size is checked, otherwise logfile size can grow indefinitely. Default value is 0.\fR"
+.ti -1c
+.RI "u_long \fBmax_size_\fR"
+.br
+.RI "\fIMaximum logfile size (in KB). Default value is .\fR"
+.ti -1c
+.RI "\fBACE_Log_Msg\fR* \fBlog_msg_\fR"
+.br
+.RI "\fI\fBACE_Log_Msg\fR instance to work with.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This class provides the hooks to control the output produced by any of the network services.
+.PP
+.PP
+ Depending upon when this service is invoked and with what flags, the output of other network services can be controlled. The output can be streamed to stderr, to a file, to a logging daemon, or it can be set to be "silent". If logging records are output to a file, the file can be set to a maximum size and repeatedly split into new files. The log file size can be limited at any logging point (i.e., application, client logging daemon, or server logging daemon) by specifying the -i <sample_interval_in_secs> and -m <max_size_in_KB> options for the Logging_Strategy class in a svc.conf file.
+.PP
+By default, two logfiles are generated. It's possible, however, to generate as many logfiles as necessary to store all the information. To achieve this, it is only necessary to indicate the maximum size of the logfiles via the -m option and the process will generate automatically the logfiles. You can control the total number of logfiles created via the -n option.
+.PP
+By using the -o option we can also choose the mode of organization of the files, e.g., the first one is the normal used in Unix systems (when cron rotates the logs it keeps the lowest number the most recent one), the second is for increasing speed (we only create a new log file, and don't rotate the others (fewer accesses to disk)). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Logging_Strategy::ACE_Logging_Strategy (void)
+.PP
+Constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Logging_Strategy::fini (void)\fC [virtual]\fR
+.PP
+Dynamic linking termination hook.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS int ACE_Logging_Strategy::handle_timeout (const \fBACE_Time_Value\fR & tv, const void * arg)\fC [virtual]\fR
+.PP
+Timeout handler which tests logfile size. If the current logfile size exceeds <max_size_>, the current logfile is closed, saved to logfile.old, and a new logfile is reopened. 
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS int ACE_Logging_Strategy::init (int argc, \fBACE_TCHAR\fR * argv[])\fC [virtual]\fR
+.PP
+Dynamic linking initialization hook.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS void ACE_Logging_Strategy::log_msg (\fBACE_Log_Msg\fR * log_msg)
+.PP
+.SS int ACE_Logging_Strategy::parse_args (int argc, \fBACE_TCHAR\fR * argv[])
+.PP
+Parse arguments provided in svc.conf file. '-f' Pass in the flags (such as OSTREAM, STDERR, LOGGER, VERBOSE, SILENT, VERBOSE_LITE) used to control logging.  '-i' The interval (in seconds) at which the logfile size is sampled (default is 0, i.e., do not sample by default). '-k' Set the logging key. '-m' Maximum logfile size in Kbytes. '-n' Set the program name for the n format specifier. '-N' The maximum number of logfiles that we want created. '-o' Specifies that we want the no standard logfiles ordering (fastest processing in <handle_timeout>). Default is not to order logfiles.  '-p' Pass in the process-wide priorities to either enable (e.g., DEBUG, INFO, WARNING, NOTICE, ERROR, CRITICAL, ALERT, EMERGENCY) or to disable (e.g., ~DEBUG, ~INFO, ~WARNING, ~NOTICE, ~ERROR, ~CRITICAL, ~ALERT, ~EMERGENCY). '-s' Ensure that the OSTREAM flag is set '-t' Pass in the thread-wide priorities to either enable (e.g., DEBUG, INFO, WARNING, NOTICE, ERROR, CRITICAL, ALERT, EMERGENCY) or to disable (e.g., ~DEBUG, ~INFO, ~WARNING, ~NOTICE, ~ERROR, ~CRITICAL, ~ALERT, ~EMERGENCY). '-w' Cause the logfile to be wiped out, both on startup and on reconfiguration. 
+.SS void ACE_Logging_Strategy::priorities (\fBACE_TCHAR\fR * priority_string, \fBACE_Log_Msg::MASK_TYPE\fR mask)\fC [private]\fR
+.PP
+Tokenize to set priorities (either process or thread one).
+.PP
+.SS void ACE_Logging_Strategy::tokenize (\fBACE_TCHAR\fR * flag_string)\fC [private]\fR
+.PP
+Tokenize to set all the flags.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Logging_Strategy::count_\fC [private]\fR
+.PP
+This tells us in what file we last wrote. It will be increased to enable multiple log files.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Logging_Strategy::filename_\fC [private]\fR
+.PP
+File name we're logging to.
+.PP
+.SS int ACE_Logging_Strategy::fixed_number_\fC [private]\fR
+.PP
+If non-0 we have a maximum number of log files we can write. Default value is 0, i.e., no maximum number.
+.PP
+.SS u_long ACE_Logging_Strategy::flags_\fC [private]\fR
+.PP
+Flags we keep track of.
+.PP
+.SS u_long ACE_Logging_Strategy::interval_\fC [private]\fR
+.PP
+If non-zero, sampling interval (in secs) at which maximum logfile size is checked, otherwise logfile size can grow indefinitely. Default value is 0.
+.PP
+.SS \fBACE_Log_Msg\fR * ACE_Logging_Strategy::log_msg_\fC [private]\fR
+.PP
+\fBACE_Log_Msg\fR instance to work with.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Logging_Strategy::logger_key_\fC [private]\fR
+.PP
+Logger key for distributed logging.
+.PP
+.SS int ACE_Logging_Strategy::max_file_number_\fC [private]\fR
+.PP
+Tells us what is the maximum log file to write. We will write <max_file_number_> + 1 files (includes the current log file). Default value is 1, i.e., 2 files by default.
+.PP
+.SS u_long ACE_Logging_Strategy::max_size_\fC [private]\fR
+.PP
+Maximum logfile size (in KB). Default value is .
+.PP
+.SS int ACE_Logging_Strategy::order_files_\fC [private]\fR
+.PP
+If non-0 we order the files as we rotate them. Default value is 0, i.e., we do not rotate files by default.
+.PP
+.SS u_long ACE_Logging_Strategy::process_priority_mask_\fC [private]\fR
+.PP
+Process-wide priority mask set by <priorities>.
+.PP
+.SS \fBACE_TCHAR\fR * ACE_Logging_Strategy::program_name_\fC [private]\fR
+.PP
+Program name to be used for n format specifier.
+.PP
+.SS u_long ACE_Logging_Strategy::thread_priority_mask_\fC [private]\fR
+.PP
+Current thread's priority mask set by <priorities>.
+.PP
+.SS int ACE_Logging_Strategy::wipeout_logfile_\fC [private]\fR
+.PP
+If non-0 then wipeout the logfile, otherwise append to it. Default value is 0.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

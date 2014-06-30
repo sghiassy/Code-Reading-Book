@@ -1,0 +1,113 @@
+.TH Malloc_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Malloc_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/ACE.h"\fR
+.br
+\fC#include "ace/Log_Msg.h"\fR
+.br
+\fC#include "ace/Malloc_T.h"\fR
+.br
+\fC#include "ace/Memory_Pool.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Control_Block\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Control_Block::ACE_Malloc_Header\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Control_Block::ACE_Name_Node\fR"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBACE_MALLOC_STATS\fR(X)"
+.br
+.ti -1c
+.RI "#define \fBACE_MALLOC_PADDING\fR  1"
+.br
+.ti -1c
+.RI "#define \fBACE_MALLOC_HEADER_SIZE\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_MALLOC_PADDING_SIZE\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_CONTROL_BLOCK_SIZE\fR"
+.br
+.ti -1c
+.RI "#define \fBACE_CONTROL_BLOCK_ALIGN_LONGS\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBMalloc.h\fR,v 4.75 2001/05/16 00:37:02 shuston Exp
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Doug Schmidt and Irfan Pyarali
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define ACE_CONTROL_BLOCK_ALIGN_LONGS
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+\
+            ((ACE_CONTROL_BLOCK_SIZE % ACE_MALLOC_ALIGN != 0 \
+              ? ACE_MALLOC_ALIGN - (ACE_CONTROL_BLOCK_SIZE % ACE_MALLOC_ALIGN) \
+              : ACE_MALLOC_ALIGN) / int (sizeof (long)))
+.fi
+.SS #define ACE_CONTROL_BLOCK_SIZE
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+((int)(sizeof (ACE_Name_Node*) \
+                                      + sizeof (ACE_Malloc_Header*) \
+                                      + sizeof (int) \
+                                      + MAXNAMELEN))
+.fi
+.SS #define ACE_MALLOC_HEADER_SIZE
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+(ACE_MALLOC_PADDING % ACE_MALLOC_ALIGN == 0 \
+                                ? ACE_MALLOC_PADDING \
+                                : (((ACE_MALLOC_PADDING / ACE_MALLOC_ALIGN) + 1) \
+                                   * ACE_MALLOC_ALIGN))
+.fi
+.SS #define ACE_MALLOC_PADDING  1
+.PP
+.SS #define ACE_MALLOC_PADDING_SIZE
+.PP
+\fBInitializer:\fR
+.PP
+.nf
+((int) (ACE_MALLOC_HEADER_SIZE - \
+                                    (sizeof (ACE_Malloc_Header*) + sizeof (size_t)))\
+                                    / (int) sizeof (long))
+.fi
+.SS #define ACE_MALLOC_STATS(X)
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

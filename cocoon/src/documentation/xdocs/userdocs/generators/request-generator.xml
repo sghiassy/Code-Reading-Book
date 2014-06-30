@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+    <header>
+        <title>Request Generator</title>
+        <version>0.9</version>
+        <type>Technical document</type>
+        <authors>
+            <person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+         </authors>
+         <abstract>This document describes the request generator of Cocoon.</abstract>
+    </header>
+    <body>
+        <s1 title="Request Generator">
+            <p>The request generator uses the current request to produce xml data.
+                     It converts some of the information contained in the request
+                     to structured xml.</p>
+            <ul>
+                <li>Name : request</li>
+                <li>Class: org.apache.cocoon.generation.RequestGenerator</li>
+                <li>Cacheable: no.</li>
+            </ul>
+<source>
+     <![CDATA[
+  <map:generate type="request"/>
+  <!-- The src attribute is optional -->
+     ]]>
+</source>
+            <p>The output has the following schema. All elements have the namespace
+               <code>http://xml.apache.org/cocoon/requestgenerator/2.0</code></p>
+<source>
+     <![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- The root element is request. The target attribute is the requested uri
+     and the source attribute is the optional source attribute of the sitemap
+     entry for this pipeline. -->
+<request target="/cocoon/request" source=""
+         xmlns="http://xml.apache.org/cocoon/requestgenerator/2.0">
+
+  <!-- First the headers: -->
+  <requestHeaders>
+    <header name="accept-language">de</header>
+    <header name="connection">Keep-Alive</header>
+    <header name="accept">image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, */*</header>
+    <header name="host">thehost.serving.cocoon</header>
+    <header name="accept-encoding">gzip, deflate</header>
+    <header name="user-agent">Browser User Agent</header>
+    <header name="referer">http://thehost.serving.cocoon/cocoon/welcome</header>
+  </requestHeaders>
+
+  <!-- All request parameters: -->
+  <requestParameters>
+    <!-- Create a parameter element for each parameter -->
+    <parameter name="login">
+      <!-- Create a value element for each value -->
+      <value>test</value>
+    </parameter>
+  </requestParameters>
+
+  <!-- All configuration parameters: -->
+  <configurationParameters>
+    <!-- Create a parameter element for each parameter specified in the pipeline
+         for this generator-->
+    <parameter name="test_sitemap_parameter">the value</parameter>
+  </configurationParameters>
+
+</request>
+]]>
+</source>
+        </s1>
+    </body>
+</document>

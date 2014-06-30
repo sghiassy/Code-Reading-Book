@@ -1,0 +1,47 @@
+XCOMM
+XCOMM This is an Imakefile for the IGS driver.  
+XCOMM 
+
+#include <Server.tmpl>
+
+#ifdef i386Architecture
+IGSSRCS = igs_bank.s
+IGSOBJS = igs_bank.o
+#else
+IGSSRCS = igs_bank.c
+IGSOBJS = igs_bank.o
+#endif
+
+SRCS = igs_driver.c $(IGSSRCS)
+
+OBJS = igs_driver.o $(IGSOBJS)
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) \
+           -I$(XF86OSSRC) -I../../../vga256/vga \
+           -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+DEFINES = -DXF86VGA16
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(igs_drv, $(OBJS))
+
+LinkSourceFile(igs_driver.c,$(VGADRIVERSRC)/igs)
+LinkSourceFile(igs_driver.h,$(VGADRIVERSRC)/igs)
+#ifdef i386Architecture
+LinkSourceFile(igs_bank.s,$(VGADRIVERSRC)/igs)
+#else
+LinkSourceFile(igs_bank.c,$(VGADRIVERSRC)/igs)
+#endif
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga16/igs)
+
+DependTarget()

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+    <document>
+        <header>
+            <title>Parent Component Manager</title>
+            <version>0.9</version>
+            <type>Technical document</type>
+            <authors>
+                <person name="Leo Sutic" email="leo.sutic@inspireinfrastructure.com"/>
+            </authors>
+            <abstract>This document describes how to use a parent component manager in Cocoon.</abstract>
+        </header>
+        <body>
+            <s1 title="Parent Component Manager">
+                <p>When using Apache Cocoon it is sometimes neccessary to obtain
+                    components from other sources than the <code>user.roles</code> file,
+                    or preferable to have a common component manager for several web applications.</p>
+                
+                <p>The pattern chosen for Cocoon is the dynamic loading of a component manager class.
+                    The initialization parameter parent-component-manager in web.xml specifies a class
+                    that will be loaded, instantiated and used as a parent component manager for 
+                    Cocoon's component manager.</p>
+                
+                <p>The recommended procedure is for the class, when it is initialized, to create a 
+                    delegate in the form of an <code>ExcaliburComponentManager</code>, configure it
+                    by looking up a <code>Configuration</code> object via JNDI, and delegate any requests to it.</p>
+                
+                <p>In order to provide a way to pass parameters to the parent component manager class 
+                    (the class specified in parent-component-manager), Cocoon will instantiate the class
+                    via the constructor that takes a single <code>String</code> argument, passing
+                    anything to the right of the first <code>'/'</code> in the parameter value to the
+                    constructor. Subsequently Cocoon examines whether the class implements 
+                    <code>org.apache.avalon.framework.logger.Loggable</code> and/or 
+                    <code>org.apache.avalon.framework.activity.Initializable</code> and calls
+                    <code>setLogger</code> and/or <code>initialize</code>, as appropriate.
+                    The instance is then used as a parent component manager.
+                </p>
+                                
+                <p>Since that didn't make much sense in itself, let's look at the sample.</p>
+                
+                <p>The goal is to define a component that can give us the time of day and
+                    let it be managed by a parent component manager.</p>
+                
+                <p>So, first we need to put a Configuration object into JNDI, and then 
+                    grab that object, use it to configure an ExcaliburComponentManager,
+                    and pass on any requests to that manager.</p>
+                
+                <s2 title="Step 1: Creating a configuration object">
+                
+                    <p>We'll do this the quick and dirty way. The static initializer of a class
+                        will create a Configuration instance with a single role and bind it
+                        to <code>org/apache/cocoon/samples/parentcm/ParentCMConfigration</code>.
+                    </p>
+                
+                    <p>The following code was taken from org/apache/cocoon/samples/parentcm/Configurator.java</p>
+                    
+                    <source>
+public class Configurator  {
+
+    static {
+        try {
+            //
+            // Create a new role.
+            //
+            DefaultConfiguration config = new DefaultConfiguration("roles", "");
+            DefaultConfiguration timeComponent = new DefaultConfiguration("role", "roles");
+            timeComponent.addAttribute("name", Time.ROLE);
+            timeComponent.addAttribute("default-class", TimeComponent.class.getName());
+            timeComponent.addAttribute("shorthand", "samples-parentcm-time");
+            config.addChild(timeComponent);
+            
+            //
+            // Bind it - get an initial context.
+            //
+            Hashtable environment = new Hashtable();
+            environment.put(Context.INITIAL_CONTEXT_FACTORY, 
+                            MemoryInitialContextFactory.class.getName());
+            initialContext = new InitialContext(environment);
+            
+            //
+            // Create subcontexts and bind the configuration.
+            //
+            Context ctx = initialContext.createSubcontext("org");
+            ctx = ctx.createSubcontext("apache");
+            ctx = ctx.createSubcontext("cocoon");
+            ctx = ctx.createSubcontext("samples");
+            ctx = ctx.createSubcontext("parentcm");
+            ctx.rebind("ParentCMConfiguration", config);
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
+    }    
+}</source>
+                
+                <p>To make sure the static initializer runs we make Cocoon force-load the class
+                    by making a change to the web.xml file:</p>
+                
+                <source>
+&lt;init-param&gt;
+  &lt;param-name&gt;load-class&lt;/param-name&gt;
+  &lt;param-value&gt;
+    &lt;!-- For IBM WebSphere: 
+    com.ibm.servlet.classloader.Handler --&gt;
+
+    &lt;!-- For Database Driver: --&gt;
+    org.hsqldb.jdbcDriver
+        
+    &lt;!-- For parent ComponentManager sample:
+            This will cause the static initializer to run,
+            and thus the Configuration object to be created
+            and bound. --&gt;
+    org.apache.cocoon.samples.parentcm.Configurator 
+  &lt;/param-value&gt;
+&lt;/init-param&gt;</source>
+                </s2>
+                
+                <s2 title="Step 2: Write the component manager">
+                
+                    <p>Now that the configuration object is sitting there waiting for us, let's craft
+                        the component manager. Please see the file org/apache/cocoon/samples/parentcm/ParentComponentManager.java
+                        for an example. It is too much to paste in here.</p>
+                
+                </s2>
+                    
+                <s2 title="Step 3: Tell Cocoon to use the component manager">
+                    <p>Change the web.xml file to:</p>
+                    
+                    <source>
+&lt;init-param&gt;
+  &lt;param-name&gt;parent-component-manager&lt;/param-name&gt;
+  &lt;param-value&gt;org.apache.cocoon.samples.parentcm.ParentComponentManager/(remove this line break)
+org/apache/cocoon/samples/parentcm/ParentCMConfiguration&lt;/param-value&gt;
+&lt;/init-param&gt;</source>
+                    
+                    <p>Cocoon will now do the following: First, it will split the parameter value at the first slash,
+                        in this case ending up with the strings <code>"org.apache.cocoon.samples.parentcm.ParentComponentManager"</code>
+                        and <code>"org/apache/cocoon/samples/parentcm/ParentCMConfiguration"</code>. The first string is the 
+                        class to instantiate. The second is the parameter that will be passed to the constructor.</p>
+                    
+                    <p>Next, Cocoon loads the component manager class and uses reflection to find a constructor that
+                        will accept a single <code>String</code> argument. Upon finding one, it instantiates the
+                        class in a manner similar to:</p>
+                    
+                    <source>
+ComponentManager cm = new 
+    org.apache.cocoon.samples.parentcm.ParentComponentManager(
+        "org/apache/cocoon/samples/parentcm/ParentCMConfiguration");</source>
+                    
+                    <p>
+                        After this Cocoon checks whether the parent component manager class implements <code>Initializable</code> and/or
+                        <code>Loggable</code>. Since the <code>ParentComponentManager</code> class implements both, Cocoon
+                        does the following (with simplification):
+                    </p>
+                    
+                    <source>
+((Loggable) cm).setLogger(logger);
+((Initializable) cm).initialize();</source>
+                    
+                    <p>Finally, the instance is used as parent component manager of Cocoon's own component manager.</p>
+                </s2>
+                
+                <s2 title="Step 4: Use the component">
+                
+                    <p>Cocoon components can now use the ComponentManager given to them by Cocoon to look up the
+                        component managed by the parent component manager:</p>
+                
+                    <p>The following code was taken from org/apache/cocoon/samples/parentcm/Generator.java</p>
+                
+                    <source>
+public void setup(SourceResolver resolver, Map objectModel, String src, Parameters par)
+    throws ProcessingException, SAXException, IOException {
+            
+    Time timeGiver = null;
+    try {
+        timeGiver = (Time) manager.lookup(Time.ROLE);
+        this.time = timeGiver.getTime ();
+    } catch (ComponentException ce) {
+        throw new ProcessingException ("Could not obtain current time.", ce);
+    } finally {
+        manager.release(timeGiver);
+    }
+}</source>
+                </s2>
+                
+                <p>And that concludes the tour. A parent component manager was initialized with a configuration
+                    obtained via JNDI and its components used by a Cocoon generator.</p>
+            </s1>
+        </body>
+    </document>

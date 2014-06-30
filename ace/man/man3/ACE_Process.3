@@ -1,0 +1,212 @@
+.TH ACE_Process 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Process \- Process. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Process.h>\fR
+.PP
+Inherited by \fBACE_Managed_Process\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Process\fR (void)"
+.br
+.RI "\fIDefault construction. Must use  to start.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Process\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBprepare\fR (\fBACE_Process_Options\fR &options)"
+.br
+.ti -1c
+.RI "virtual \fBpid_t\fR \fBspawn\fR (\fBACE_Process_Options\fR &options)"
+.br
+.ti -1c
+.RI "virtual void \fBparent\fR (\fBpid_t\fR child)"
+.br
+.RI "\fICalled just after  in the parent's context, if the <fork> succeeds. The default is to do nothing.\fR"
+.ti -1c
+.RI "virtual void \fBchild\fR (\fBpid_t\fR parent)"
+.br
+.ti -1c
+.RI "virtual void \fBunmanage\fR (void)"
+.br
+.RI "\fICalled by a <Process_Manager> that is removing this Process from its table of managed Processes. Default is to do nothing.\fR"
+.ti -1c
+.RI "\fBpid_t\fR \fBwait\fR (\fBACE_exitcode\fR *status = 0, int wait_options = 0)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBwait\fR (const \fBACE_Time_Value\fR &tv, \fBACE_exitcode\fR *status = 0)"
+.br
+.ti -1c
+.RI "int \fBkill\fR (int signum = SIGINT)"
+.br
+.RI "\fISend the process a signal. This is only portable to operating systems that support signals, such as UNIX/POSIX.\fR"
+.ti -1c
+.RI "int \fBterminate\fR (void)"
+.br
+.ti -1c
+.RI "\fBpid_t\fR \fBgetpid\fR (void) const"
+.br
+.RI "\fIReturn the process id of the new child process.\fR"
+.ti -1c
+.RI "ACE_HANDLE \fBgethandle\fR (void) const"
+.br
+.RI "\fIReturn the handle of the process, if it has one.\fR"
+.ti -1c
+.RI "int \fBrunning\fR (void) const"
+.br
+.RI "\fIReturn 1 if running; 0 otherwise.\fR"
+.ti -1c
+.RI "int \fBexit_code\fR (void) const"
+.br
+.RI "\fIReturn the Process' exit code.\fR"
+.ti -1c
+.RI "void \fBexit_code\fR (int code)"
+.br
+.RI "\fISet the Process' exit code (completely unrelated to whether the Process has actually exited)!\fR"
+.ti -1c
+.RI "void \fBclose_dup_handles\fR (void)"
+.br
+.RI "\fIClose all the handles in the set obtained from the 
+.TP
+ \fBACE_Process_Options::dup_handles\fR object used to spawn the process.\fR"
+.ti -1c
+.RI "void \fBclose_passed_handles\fR (void)"
+.br
+.RI "\fIClose all the handles in the set obtained from the 
+.TP
+ \fBACE_Process_Options::passed_handles\fR object used to spawn the process.\fR"
+.ti -1c
+.RI "PROCESS_INFORMATION \fBprocess_info\fR (void)"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "PROCESS_INFORMATION \fBprocess_info_\fR"
+.br
+.ti -1c
+.RI "int \fBexit_code_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Handle_Set\fR \fBhandles_passed_\fR"
+.br
+.RI "\fISet of handles that were passed to the child process.\fR"
+.ti -1c
+.RI "\fBACE_Handle_Set\fR \fBdup_handles_\fR"
+.br
+.RI "\fIHandle duplicates made for the child process.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Process.
+.PP
+.PP
+ A Portable encapsulation for creating new processes. Notice that on UNIX platforms, if the <setenv> is used, the <spawn> is using the <execve> system call. It means that the <command_line> should include a full path to the program file (<execve> does not search the PATH). If <setenv> is not used then, the <spawn> is using the <execvp> which searches for the program file in the PATH variable. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Process::ACE_Process (void)
+.PP
+Default construction. Must use  to start.
+.PP
+.SS ACE_Process::~ACE_Process (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Process::child (\fBpid_t\fR parent)\fC [virtual]\fR
+.PP
+Called just after  in the child's context. The default does nothing. This function is *not* called on Win32 because the process-creation scheme does not allow it. 
+.SS void ACE_Process::close_dup_handles (void)
+.PP
+Close all the handles in the set obtained from the 
+.TP
+ \fBACE_Process_Options::dup_handles\fR object used to spawn the process.
+.PP
+.SS void ACE_Process::close_passed_handles (void)
+.PP
+Close all the handles in the set obtained from the 
+.TP
+ \fBACE_Process_Options::passed_handles\fR object used to spawn the process.
+.PP
+.SS void ACE_Process::exit_code (int code)
+.PP
+Set the Process' exit code (completely unrelated to whether the Process has actually exited)!
+.PP
+.SS int ACE_Process::exit_code (void) const
+.PP
+Return the Process' exit code.
+.PP
+.SS ACE_HANDLE ACE_Process::gethandle (void) const
+.PP
+Return the handle of the process, if it has one.
+.PP
+.SS \fBpid_t\fR ACE_Process::getpid (void) const
+.PP
+Return the process id of the new child process.
+.PP
+.SS int ACE_Process::kill (int signum = SIGINT)
+.PP
+Send the process a signal. This is only portable to operating systems that support signals, such as UNIX/POSIX.
+.PP
+.SS void ACE_Process::parent (\fBpid_t\fR child)\fC [virtual]\fR
+.PP
+Called just after  in the parent's context, if the <fork> succeeds. The default is to do nothing.
+.PP
+.SS int ACE_Process::prepare (\fBACE_Process_Options\fR & options)\fC [virtual]\fR
+.PP
+Called just before  in the <spawn>. If this returns non-zero, the <spawn> is aborted (and returns ACE_INVALID_PID). The default simply returns zero. 
+.SS PROCESS_INFORMATION ACE_Process::process_info (void)
+.PP
+.SS int ACE_Process::running (void) const
+.PP
+Return 1 if running; 0 otherwise.
+.PP
+.SS \fBpid_t\fR ACE_Process::spawn (\fBACE_Process_Options\fR & options)\fC [virtual]\fR
+.PP
+Launch a new process as described by <options>. Returns the process id of the newly spawned child on success or -1 on failure. 
+.SS int ACE_Process::terminate (void)
+.PP
+Terminate the process abruptly using . This call doesn't give the process a chance to cleanup, so use it with caution... 
+.SS void ACE_Process::unmanage (void)\fC [virtual]\fR
+.PP
+Called by a <Process_Manager> that is removing this Process from its table of managed Processes. Default is to do nothing.
+.PP
+Reimplemented in \fBACE_Managed_Process\fR.
+.SS \fBpid_t\fR ACE_Process::wait (const \fBACE_Time_Value\fR & tv, \fBACE_exitcode\fR * status = 0)
+.PP
+Timed wait for the process we've created to exit. A return value of -1 indicates that the something failed; 0 indicates that a timeout occurred. Otherwise, the child's process id is returned. If <status> != 0, it points to an integer where the function stores the child's exit status.
+.PP
+NOTE: on UNIX platforms this function uses <ualarm>, i.e., it overwrites any existing alarm. In addition, it steals all <SIGCHLD>s during the timeout period, which will break another  in the same process that's expecting <SIGCHLD> to kick off process reaping. 
+.SS \fBpid_t\fR ACE_Process::wait (\fBACE_exitcode\fR * status = 0, int wait_options = 0)
+.PP
+Wait for the process we've created to exit. If <status> != 0, it points to an integer where the function store the exit status of child process to. If <wait_options> == <WNOHANG> then return 0 and don't block if the child process hasn't exited yet. A return value of -1 represents the <wait> operation failed, otherwise, the child process id is returned. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_Handle_Set\fR ACE_Process::dup_handles_\fC [protected]\fR
+.PP
+Handle duplicates made for the child process.
+.PP
+.SS int ACE_Process::exit_code_\fC [protected]\fR
+.PP
+.SS \fBACE_Handle_Set\fR ACE_Process::handles_passed_\fC [protected]\fR
+.PP
+Set of handles that were passed to the child process.
+.PP
+.SS PROCESS_INFORMATION ACE_Process::process_info_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

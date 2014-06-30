@@ -1,0 +1,234 @@
+.TH ACE_Thread_Descriptor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Thread_Descriptor \- Information for controlling threads that run under the control of the <Thread_Manager>. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Thread_Manager.h>\fR
+.PP
+Inherits \fBACE_Thread_Descriptor_Base\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Thread_Descriptor\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_thread_t\fR \fBself\fR (void) const"
+.br
+.RI "\fIUnique thread id.\fR"
+.ti -1c
+.RI "void \fBself\fR (\fBACE_hthread_t\fR &)"
+.br
+.RI "\fIUnique handle to thread (used by Win32 and AIX).\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "void \fBlog_msg_cleanup\fR (\fBACE_Log_Msg\fR* log_msg)"
+.br
+.ti -1c
+.RI "int \fBat_exit\fR (\fBACE_At_Thread_Exit\fR* cleanup)"
+.br
+.ti -1c
+.RI "int \fBat_exit\fR (\fBACE_At_Thread_Exit\fR& cleanup)"
+.br
+.RI "\fIRegister an At_Thread_Exit hook and the ownership is retained for the caller. Normally used when the at_exit hook is created in stack.\fR"
+.ti -1c
+.RI "int \fBat_exit\fR (void *object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void *param)"
+.br
+.ti -1c
+.RI "\fB~ACE_Thread_Descriptor\fR (void)"
+.br
+.RI "\fIDo nothing destructor to keep some compilers happy.\fR"
+.ti -1c
+.RI "void \fBacquire_release\fR (void)"
+.br
+.ti -1c
+.RI "ACE_INLINE_FOR_GNUC void \fBset_next\fR (ACE_Thread_Descriptor *td)"
+.br
+.ti -1c
+.RI "ACE_INLINE_FOR_GNUC ACE_Thread_Descriptor* \fBget_next\fR (void) const"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBreset\fR (\fBACE_Thread_Manager\fR *tm)"
+.br
+.RI "\fIReset this thread descriptor.\fR"
+.ti -1c
+.RI "void \fBat_pop\fR (int apply = 1)"
+.br
+.RI "\fIPop an At_Thread_Exit from at thread termination list, apply the at if apply is true.\fR"
+.ti -1c
+.RI "void \fBat_push\fR (\fBACE_At_Thread_Exit\fR* cleanup, int is_owner = 0)"
+.br
+.RI "\fIPush an At_Thread_Exit to at thread termination list and set the ownership of at.\fR"
+.ti -1c
+.RI "void \fBdo_at_exit\fR (void)"
+.br
+.RI "\fIRun the AT_Thread_Exit hooks.\fR"
+.ti -1c
+.RI "void \fBterminate\fR (void)"
+.br
+.RI "\fIterminate realize the cleanup process to thread termination.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Log_Msg\fR* \fBlog_msg_\fR"
+.br
+.RI "\fIThread_Descriptor is the ownership of \fBACE_Log_Msg\fR if log_msg_!=0 This can occur because ACE_TSS_cleanup was executed before terminate.\fR"
+.ti -1c
+.RI "\fBACE_At_Thread_Exit\fR* \fBat_exit_list_\fR"
+.br
+.RI "\fIThe AT_Thread_Exit list.\fR"
+.ti -1c
+.RI "\fBACE_Cleanup_Info\fR \fBcleanup_info_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Thread_Manager\fR* \fBtm_\fR"
+.br
+.RI "\fIPointer to an  or NULL if there's no .\fR"
+.ti -1c
+.RI "ACE_DEFAULT_THREAD_MANAGER_LOCK* \fBsync_\fR"
+.br
+.RI "\fIRegistration lock to prevent premature removal of thread descriptor.\fR"
+.ti -1c
+.RI "int \fBterminated_\fR"
+.br
+.RI "\fIKeep track of termination status.\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_At_Thread_Exit\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Thread_Manager\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Double_Linked_List< ACE_Thread_Descriptor >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Double_Linked_List_Iterator< ACE_Thread_Descriptor >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Information for controlling threads that run under the control of the <Thread_Manager>.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Thread_Descriptor::ACE_Thread_Descriptor (void)
+.PP
+.SS ACE_Thread_Descriptor::~ACE_Thread_Descriptor (void)
+.PP
+Do nothing destructor to keep some compilers happy.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Thread_Descriptor::acquire_release (void)
+.PP
+Do nothing but to acquire the thread descriptor's lock and release. This will first check if the thread is registered or not. If it is already registered, there's no need to reacquire the lock again. This is used mainly to get newly spawned thread in synch with thread manager and prevent it from accessing its thread descriptor before it gets fully built. This function is only called from \fBACE_Log_Msg::thr_desc\fR. 
+.SS int ACE_Thread_Descriptor::at_exit (void * object, \fBACE_CLEANUP_FUNC\fR cleanup_hook, void * param)
+.PP
+Register an object (or array) for cleanup at thread termination. "cleanup_hook" points to a (global, or static member) function that is called for the object or array when it to be destroyed. It may perform any necessary cleanup specific for that object or its class. "param" is passed as the second parameter to the "cleanup_hook" function; the first parameter is the object (or array) to be destroyed. Returns 0 on success, non-zero on failure: -1 if virtual memory is exhausted or 1 if the object (or arrayt) had already been registered. 
+.SS int ACE_Thread_Descriptor::at_exit (\fBACE_At_Thread_Exit\fR & cleanup)
+.PP
+Register an At_Thread_Exit hook and the ownership is retained for the caller. Normally used when the at_exit hook is created in stack.
+.PP
+.SS int ACE_Thread_Descriptor::at_exit (\fBACE_At_Thread_Exit\fR * cleanup)
+.PP
+Register an At_Thread_Exit hook and the ownership is acquire by Thread_Descriptor, this is the usual case when the AT is dynamically allocated. 
+.SS void ACE_Thread_Descriptor::at_pop (int apply = 1)\fC [private]\fR
+.PP
+Pop an At_Thread_Exit from at thread termination list, apply the at if apply is true.
+.PP
+.SS void ACE_Thread_Descriptor::at_push (\fBACE_At_Thread_Exit\fR * cleanup, int is_owner = 0)\fC [private]\fR
+.PP
+Push an At_Thread_Exit to at thread termination list and set the ownership of at.
+.PP
+.SS void ACE_Thread_Descriptor::do_at_exit (void)\fC [private]\fR
+.PP
+Run the AT_Thread_Exit hooks.
+.PP
+.SS void ACE_Thread_Descriptor::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS ACE_INLINE_FOR_GNUC ACE_Thread_Descriptor* ACE_Thread_Descriptor::get_next (void) const
+.PP
+.SS void ACE_Thread_Descriptor::log_msg_cleanup (\fBACE_Log_Msg\fR * log_msg)
+.PP
+This cleanup function must be called only for ACE_TSS_cleanup. The ACE_TSS_cleanup delegate Log_Msg instance destruction when Log_Msg cleanup is called before terminate. 
+.SS void ACE_Thread_Descriptor::reset (\fBACE_Thread_Manager\fR * tm)\fC [private]\fR
+.PP
+Reset this thread descriptor.
+.PP
+.SS void ACE_Thread_Descriptor::self (\fBACE_hthread_t\fR &)
+.PP
+Unique handle to thread (used by Win32 and AIX).
+.PP
+.SS \fBACE_thread_t\fR ACE_Thread_Descriptor::self (void) const
+.PP
+Unique thread id.
+.PP
+.SS ACE_INLINE_FOR_GNUC void ACE_Thread_Descriptor::set_next (ACE_Thread_Descriptor * td)
+.PP
+Set/get the <next_> pointer. These are required by the \fBACE_Free_List\fR. ACE_INLINE is specified here because one version of g++ couldn't grok this code without it. 
+.SS void ACE_Thread_Descriptor::terminate (void)\fC [private]\fR
+.PP
+terminate realize the cleanup process to thread termination.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS class ACE_At_Thread_Exit\fC [friend]\fR
+.PP
+.SS class \fBACE_Double_Linked_List\fR\fC [friend]\fR
+.PP
+Reimplemented from \fBACE_Thread_Descriptor_Base\fR.
+.SS class \fBACE_Double_Linked_List_Iterator\fR\fC [friend]\fR
+.PP
+Reimplemented from \fBACE_Thread_Descriptor_Base\fR.
+.SS class ACE_Thread_Manager\fC [friend]\fR
+.PP
+Reimplemented from \fBACE_Thread_Descriptor_Base\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_At_Thread_Exit\fR * ACE_Thread_Descriptor::at_exit_list_\fC [private]\fR
+.PP
+The AT_Thread_Exit list.
+.PP
+.SS \fBACE_Cleanup_Info\fR ACE_Thread_Descriptor::cleanup_info_\fC [private]\fR
+.PP
+Stores the cleanup info for a thread. @ Note, this should be generalized to be a stack of s. 
+.SS \fBACE_Log_Msg\fR * ACE_Thread_Descriptor::log_msg_\fC [private]\fR
+.PP
+Thread_Descriptor is the ownership of \fBACE_Log_Msg\fR if log_msg_!=0 This can occur because ACE_TSS_cleanup was executed before terminate.
+.PP
+.SS ACE_DEFAULT_THREAD_MANAGER_LOCK * ACE_Thread_Descriptor::sync_\fC [private]\fR
+.PP
+Registration lock to prevent premature removal of thread descriptor.
+.PP
+.SS int ACE_Thread_Descriptor::terminated_\fC [private]\fR
+.PP
+Keep track of termination status.
+.PP
+.SS \fBACE_Thread_Manager\fR * ACE_Thread_Descriptor::tm_\fC [private]\fR
+.PP
+Pointer to an  or NULL if there's no .
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

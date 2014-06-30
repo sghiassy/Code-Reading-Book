@@ -1,0 +1,65 @@
+These are instructions on how to setup the command line Scheme
+interaction program to be used from within Emacs. With this setup
+editing and evaluating expressions and definition in the Scheme
+servlet is a snap.
+
+There are two setups that you need to do to hook-up Emacs to a running
+instance of Cocoon. One is on the servlet container side, and the
+other is on your Emacs side.
+
+
+1. Setup he servlet container part
+
+The Emacs process will send commands for evaluation to a dedicated
+servlet running inside the same web application with the Scheme/Cocoon
+engine.
+
+For security reasons this servlet is setup to accept only
+authenticated connections. The setup is defined in the web.xml file in
+the webapps/WEB-INF/ directory. It accepts connections only from the
+user whose role is 'cocoon_admin'.
+
+To setup such a user on your servlet container, please refer to the
+documentation that comes with your servlet container. If you're using
+Tomcat 3.3, simply add a line like this in the
+conf/users/global-users.xml file:
+
+  <user name="user-name" password="your-password" roles="cocoon_admin"/>
+
+
+2. Setup your Emacs
+
+Add the following in your ~/.emacs (change the location of
+sisc-servlet script to suit your needs):
+
+(require 'cl)
+(defvar sisc-location "~/src/xml-cocoon2/src/scratchpad/schecoon/emacs")
+(pushnew sisc-location load-path)
+(require 'siscscheme)
+(setq sisc-program-name (concat sisc-location "/sisc-servlet"))
+
+Then visit a Scheme file. Type M-x run-sisc to start the inferior
+Scheme. Use the keys defined below to evaluate in the servlet the
+definitions you want.
+
+C-c e or M-C-x		evaluate the definition containing the point
+C-x C-e			evaluate the S-expression before point
+
+C-c C-e			evaluate the definition containing the point 
+			and select the scheme buffer after
+
+C-c r			evaluate the selected region
+
+C-c C-r			evaluate the selected region and select the
+			scheme buffer after
+
+C-c l			evaluate the current buffer
+
+The first time you evaluate something, you will be asked for a
+username and a password. Switch to the *scheme* buffer to enter them,
+if this buffer is not already selected. Enter the user name and
+password you entered in the first step.
+
+This setup was tested with XEmacs 21.4.4, but it should work with
+other versions of XEmacs and GNU Emacs as well. Let me (Ovidiu) know
+if you have problems.

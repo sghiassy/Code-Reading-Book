@@ -1,0 +1,219 @@
+.TH ACE_SOCK_Dgram 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SOCK_Dgram \- Defines the member functions for the \fBACE_SOCK\fR datagram abstraction. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SOCK_Dgram.h>\fR
+.PP
+Inherits \fBACE_SOCK\fR.
+.PP
+Inherited by \fBACE_LSOCK_Dgram\fR, \fBACE_SOCK_Dgram_Bcast\fR, and \fBACE_SOCK_Dgram_Mcast\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SOCK_Dgram\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "\fBACE_SOCK_Dgram\fR (const \fBACE_Addr\fR &local, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0)"
+.br
+.RI "\fIThis is a BSD-style method (i.e., no QoS) for initiating a socket dgram that will accept datagrams at the <local> address.\fR"
+.ti -1c
+.RI "\fBACE_SOCK_Dgram\fR (const \fBACE_Addr\fR &local, int protocol_family, int protocol, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_Addr\fR &local, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0)"
+.br
+.RI "\fIThis is a BSD-style method (i.e., no QoS) for initiating a socket dgram that will accept datagrams at the <local> address.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_Addr\fR &local, int protocol_family, int protocol, \fBACE_Protocol_Info\fR *protocolinfo, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0)"
+.br
+.ti -1c
+.RI "\fB~ACE_SOCK_Dgram\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, const \fBACE_Addr\fR &addr, int flags = 0) const"
+.br
+.RI "\fISend an <n> byte <buf> to the datagram socket (uses <sendto(3)>).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, \fBACE_Addr\fR &addr, int flags = 0) const"
+.br
+.RI "\fIReceive an <n> byte <buf> from the datagram socket (uses <recvfrom(3)>).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (\fBiovec\fR *io_vec, \fBACE_Addr\fR &addr, int flags = 0, const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const \fBiovec\fR iov[], size_t n, const \fBACE_Addr\fR &addr, int flags = 0) const"
+.br
+.RI "\fISend an <\fBiovec\fR> of size <n> to the datagram socket (uses <sendmsg(3)>).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (\fBiovec\fR iov[], size_t n, \fBACE_Addr\fR &addr, int flags = 0) const"
+.br
+.RI "\fIRecv an <\fBiovec\fR> of size <n> to the datagram socket (uses <recvmsg(3)>).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, \fBACE_Addr\fR &addr, int flags, const \fBACE_Time_Value\fR *timeout) const"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, const \fBACE_Addr\fR &addr, int flags, const \fBACE_Time_Value\fR *timeout) const"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const \fBiovec\fR buffers[], int buffer_count, size_t &number_of_bytes_sent, int flags, const \fBACE_Addr\fR &addr, \fBACE_OVERLAPPED\fR *overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const"
+.br
+.RI "\fISend <buffer_count> worth of <buffers> to  using overlapped I/O (uses <WSASentTo>). Returns 0 on success.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (\fBiovec\fR buffers[], int buffer_count, size_t &number_of_bytes_recvd, int &flags, \fBACE_Addr\fR &addr, \fBACE_OVERLAPPED\fR *overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const"
+.br
+.RI "\fIRecv <buffer_count> worth of <buffers> from  using overlapped I/O (uses <WSARecvFrom>). Returns 0 on success.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend\fR (const void *buf, size_t n, const \fBACE_Addr\fR &addr, int flags, \fBACE_OVERLAPPED\fR *overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const"
+.br
+.RI "\fISend an <n> byte <buf> to the datagram socket (uses <WSASentTo>).\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv\fR (void *buf, size_t n, \fBACE_Addr\fR &addr, int flags, \fBACE_OVERLAPPED\fR *overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const"
+.br
+.RI "\fIReceive an <n> byte <buf> from the datagram socket (uses <WSARecvFrom>).\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "void \fBset_nic\fR (const char *option_value)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBshared_open\fR (const \fBACE_Addr\fR &local, int protocol_family)"
+.br
+.RI "\fIOpen is shared by this and by <LSOCK_Dgram>.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBget_remote_addr\fR (\fBACE_Addr\fR &) const"
+.br
+.RI "\fIDo not allow this function to percolate up to this interface...\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the member functions for the \fBACE_SOCK\fR datagram abstraction.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Dgram::ACE_SOCK_Dgram (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_SOCK_Dgram::ACE_SOCK_Dgram (const \fBACE_Addr\fR & local, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0)
+.PP
+This is a BSD-style method (i.e., no QoS) for initiating a socket dgram that will accept datagrams at the <local> address.
+.PP
+.SS ACE_SOCK_Dgram::ACE_SOCK_Dgram (const \fBACE_Addr\fR & local, int protocol_family, int protocol, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0)
+.PP
+This is a QoS-enabed method for initiating a socket dgram that will accept datagrams at the <local> address. The <qos_params> are passed to . 
+.SS ACE_SOCK_Dgram::~ACE_SOCK_Dgram (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_SOCK_Dgram::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Dgram\fR, \fBACE_SOCK_Dgram_Bcast\fR, and \fBACE_SOCK_Dgram_Mcast\fR.
+.SS int ACE_SOCK_Dgram::get_remote_addr (\fBACE_Addr\fR &) const\fC [private]\fR
+.PP
+Do not allow this function to percolate up to this interface...
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_SOCK_Dgram_Bcast\fR.
+.SS int ACE_SOCK_Dgram::open (const \fBACE_Addr\fR & local, int protocol_family, int protocol, \fBACE_Protocol_Info\fR * protocolinfo, \fBACE_SOCK_GROUP\fR g = 0, u_long flags = 0, int reuse_addr = 0)
+.PP
+This is a QoS-enabed method for initiating a socket dgram that will accept datagrams at the <local> address. The <qos_params> are passed to . 
+.SS int ACE_SOCK_Dgram::open (const \fBACE_Addr\fR & mcast_addr, int protocol_family = PF_INET, int protocol = 0, int reuse_addr = 0)
+.PP
+This is a BSD-style method (i.e., no QoS) for initiating a socket dgram that will accept datagrams at the <local> address.
+.PP
+Reimplemented in \fBACE_SOCK_Dgram_Mcast\fR.
+.SS \fBssize_t\fR ACE_SOCK_Dgram::recv (void * buf, size_t n, \fBACE_Addr\fR & addr, int flags, \fBACE_OVERLAPPED\fR * overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const
+.PP
+Receive an <n> byte <buf> from the datagram socket (uses <WSARecvFrom>).
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram::recv (\fBiovec\fR buffers[], int buffer_count, size_t & number_of_bytes_recvd, int & flags, \fBACE_Addr\fR & addr, \fBACE_OVERLAPPED\fR * overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const
+.PP
+Recv <buffer_count> worth of <buffers> from  using overlapped I/O (uses <WSARecvFrom>). Returns 0 on success.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram::recv (void * buf, size_t n, \fBACE_Addr\fR & addr, int flags, const \fBACE_Time_Value\fR * timeout) const
+.PP
+Wait up to <timeout> amount of time to receive a datagram into <buf>. The  indicates how long to blocking trying to receive. If <timeout> == 0, the caller will block until action is possible, else will wait until the relative time specified in *<timeout> elapses). If <recv> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes received is returned. 
+.SS \fBssize_t\fR ACE_SOCK_Dgram::recv (\fBiovec\fR iov[], size_t n, \fBACE_Addr\fR & addr, int flags = 0) const
+.PP
+Recv an <\fBiovec\fR> of size <n> to the datagram socket (uses <recvmsg(3)>).
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram::recv (\fBiovec\fR * io_vec, \fBACE_Addr\fR & addr, int flags = 0, const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+Allows a client to read from a socket without having to provide a buffer to read. This method determines how much data is in the socket, allocates a buffer of this size, reads in the data, and returns the number of bytes read. The caller is responsible for deleting the member in the <iov_base> field of <io_vec> using the ``delete []'' syntax. 
+.SS \fBssize_t\fR ACE_SOCK_Dgram::recv (void * buf, size_t n, \fBACE_Addr\fR & addr, int flags = 0) const
+.PP
+Receive an <n> byte <buf> from the datagram socket (uses <recvfrom(3)>).
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram::send (const void * buf, size_t n, const \fBACE_Addr\fR & addr, int flags, \fBACE_OVERLAPPED\fR * overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const
+.PP
+Send an <n> byte <buf> to the datagram socket (uses <WSASentTo>).
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram::send (const \fBiovec\fR buffers[], int buffer_count, size_t & number_of_bytes_sent, int flags, const \fBACE_Addr\fR & addr, \fBACE_OVERLAPPED\fR * overlapped, \fBACE_OVERLAPPED_COMPLETION_FUNC\fR func) const
+.PP
+Send <buffer_count> worth of <buffers> to  using overlapped I/O (uses <WSASentTo>). Returns 0 on success.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Dgram::send (const void * buf, size_t n, const \fBACE_Addr\fR & addr, int flags, const \fBACE_Time_Value\fR * timeout) const
+.PP
+Wait up to <timeout> amount of time to receive a datagram into <buf>. The  indicates how long to blocking trying to receive. If <timeout> == 0, the caller will block until action is possible, else will wait until the relative time specified in *<timeout> elapses). If <send> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes sent is returned. 
+.SS \fBssize_t\fR ACE_SOCK_Dgram::send (const \fBiovec\fR iov[], size_t n, const \fBACE_Addr\fR & addr, int flags = 0) const
+.PP
+Send an <\fBiovec\fR> of size <n> to the datagram socket (uses <sendmsg(3)>).
+.PP
+Reimplemented in \fBACE_SOCK_Dgram_Bcast\fR, and \fBACE_SOCK_Dgram_Mcast\fR.
+.SS \fBssize_t\fR ACE_SOCK_Dgram::send (const void * buf, size_t n, const \fBACE_Addr\fR & addr, int flags = 0) const
+.PP
+Send an <n> byte <buf> to the datagram socket (uses <sendto(3)>).
+.PP
+Reimplemented in \fBACE_SOCK_Dgram_Bcast\fR, and \fBACE_SOCK_Dgram_Mcast\fR.
+.SS void ACE_SOCK_Dgram::set_nic (const char * option_value)
+.PP
+.SS int ACE_SOCK_Dgram::shared_open (const \fBACE_Addr\fR & local, int protocol_family)\fC [protected]\fR
+.PP
+Open is shared by this and by <LSOCK_Dgram>.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Dgram::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Dgram\fR, \fBACE_SOCK_Dgram_Bcast\fR, and \fBACE_SOCK_Dgram_Mcast\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

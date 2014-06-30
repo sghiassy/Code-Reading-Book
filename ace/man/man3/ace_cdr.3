@@ -1,0 +1,206 @@
+.TH ACE_CDR 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_CDR \- Keep constants and some routines common to both Output and Input CDR streams. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <CDR_Base.h>\fR
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef u_char \fBBoolean\fR"
+.br
+.ti -1c
+.RI "typedef u_char \fBOctet\fR"
+.br
+.ti -1c
+.RI "typedef char \fBChar\fR"
+.br
+.ti -1c
+.RI "typedef ACE_OS::WChar \fBWChar\fR"
+.br
+.ti -1c
+.RI "typedef ACE_INT16 \fBShort\fR"
+.br
+.ti -1c
+.RI "typedef ACE_UINT16 \fBUShort\fR"
+.br
+.ti -1c
+.RI "typedef ACE_INT32 \fBLong\fR"
+.br
+.ti -1c
+.RI "typedef ACE_UINT32 \fBULong\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_UINT64\fR \fBULongLong\fR"
+.br
+.ti -1c
+.RI "typedef long long \fBLongLong\fR"
+.br
+.ti -1c
+.RI "enum { \fBOCTET_SIZE\fR = 1, \fBSHORT_SIZE\fR = 2, \fBLONG_SIZE\fR = 4, \fBLONGLONG_SIZE\fR = 8, \fBLONGDOUBLE_SIZE\fR = 16, \fBOCTET_ALIGN\fR = 1, \fBSHORT_ALIGN\fR = 2, \fBLONG_ALIGN\fR = 4, \fBLONGLONG_ALIGN\fR = 8, \fBLONGDOUBLE_ALIGN\fR = 8, \fBMAX_ALIGNMENT\fR = 8, \fBDEFAULT_BUFSIZE\fR = ACE_DEFAULT_CDR_BUFSIZE, \fBEXP_GROWTH_MAX\fR = ACE_DEFAULT_CDR_EXP_GROWTH_MAX, \fBLINEAR_GROWTH_CHUNK\fR = ACE_DEFAULT_CDR_LINEAR_GROWTH_CHUNK }"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBswap_2\fR (const char *orig, char *target)"
+.br
+.ti -1c
+.RI "void \fBswap_4\fR (const char *orig, char *target)"
+.br
+.ti -1c
+.RI "void \fBswap_8\fR (const char *orig, char *target)"
+.br
+.ti -1c
+.RI "void \fBswap_16\fR (const char *orig, char *target)"
+.br
+.ti -1c
+.RI "void \fBswap_2_array\fR (const char *orig, char *target, size_t length)"
+.br
+.ti -1c
+.RI "void \fBswap_4_array\fR (const char *orig, char *target, size_t length)"
+.br
+.ti -1c
+.RI "void \fBswap_8_array\fR (const char *orig, char *target, size_t length)"
+.br
+.ti -1c
+.RI "void \fBswap_16_array\fR (const char *orig, char *target, size_t length)"
+.br
+.ti -1c
+.RI "void \fBmb_align\fR (\fBACE_Message_Block\fR *mb)"
+.br
+.RI "\fIAlign the message block to \fBACE_CDR::MAX_ALIGNMENT\fR, set by the CORBA spec at 8 bytes.\fR"
+.ti -1c
+.RI "size_t \fBfirst_size\fR (size_t minsize)"
+.br
+.ti -1c
+.RI "size_t \fBnext_size\fR (size_t minsize)"
+.br
+.RI "\fICompute not the smallest, but the second smallest buffer that will fir <minsize> bytes.\fR"
+.ti -1c
+.RI "int \fBgrow\fR (\fBACE_Message_Block\fR *mb, size_t minsize)"
+.br
+.ti -1c
+.RI "void \fBconsolidate\fR (\fBACE_Message_Block\fR *dst, const \fBACE_Message_Block\fR *src)"
+.br
+.RI "\fICopy a message block chain into a single message block, preserving the alignment of the original stream.\fR"
+.ti -1c
+.RI "size_t \fBtotal_length\fR (const \fBACE_Message_Block\fR *begin, const \fBACE_Message_Block\fR *end)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Keep constants and some routines common to both Output and Input CDR streams.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef u_char ACE_CDR::Boolean
+.PP
+.SS typedef char ACE_CDR::Char
+.PP
+.SS typedef ACE_INT32 ACE_CDR::Long
+.PP
+.SS typedef long long ACE_CDR::LongLong
+.PP
+.SS typedef u_char ACE_CDR::Octet
+.PP
+.SS typedef ACE_INT16 ACE_CDR::Short
+.PP
+.SS typedef ACE_UINT32 ACE_CDR::ULong
+.PP
+.SS typedef \fBACE_UINT64\fR ACE_CDR::ULongLong
+.PP
+.SS typedef ACE_UINT16 ACE_CDR::UShort
+.PP
+.SS typedef ACE_OS::WChar ACE_CDR::WChar
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIOCTET_SIZE\fR \fR
+.TP
+\fB\fISHORT_SIZE\fR \fR
+.TP
+\fB\fILONG_SIZE\fR \fR
+.TP
+\fB\fILONGLONG_SIZE\fR \fR
+.TP
+\fB\fILONGDOUBLE_SIZE\fR \fR
+.TP
+\fB\fIOCTET_ALIGN\fR \fR
+.TP
+\fB\fISHORT_ALIGN\fR \fR
+.TP
+\fB\fILONG_ALIGN\fR \fR
+.TP
+\fB\fILONGLONG_ALIGN\fR \fR
+.TP
+\fB\fILONGDOUBLE_ALIGN\fR \fR\fBNote: \fR
+.in +1c
+ the CORBA \fBLongDouble\fR alignment requirements do not match its size...
+.TP
+\fB\fIMAX_ALIGNMENT\fR \fRMaximal CDR 1.1 alignment: "quad precision" FP (i.e. "CDR::Long double", size as above).
+.TP
+\fB\fIDEFAULT_BUFSIZE\fR \fRThe default buffer size.
+.PP
+\fB\fBTodo: \fR\fR
+.in +1c
+ We want to add options to control this default value, so this constant should be read as the default default value ;-)  
+.TP
+\fB\fIEXP_GROWTH_MAX\fR \fRThe buffer size grows exponentially until it reaches this size; afterwards it grows linearly using the next constant.
+.TP
+\fB\fILINEAR_GROWTH_CHUNK\fR \fROnce exponential growth is ruled out the buffer size increases in chunks of this size, note that this constants have the same value right now, but it does not need to be so.
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_CDR::consolidate (\fBACE_Message_Block\fR * dst, const \fBACE_Message_Block\fR * src)\fC [static]\fR
+.PP
+Copy a message block chain into a single message block, preserving the alignment of the original stream.
+.PP
+.SS size_t ACE_CDR::first_size (size_t minsize)\fC [static]\fR
+.PP
+Compute the size of the smallest buffer that can contain at least <minsize> bytes. To understand how a "best fit" is computed look at the algorithm in the code. Basically the buffers grow exponentially, up to a certain point, then the buffer size grows linearly. The advantage of this algorithm is that is rapidly grows to a large value, but does not explode at the end. 
+.SS int ACE_CDR::grow (\fBACE_Message_Block\fR * mb, size_t minsize)\fC [static]\fR
+.PP
+Increase the capacity of mb to contain at least <minsize> bytes. If <minsize> is zero the size is increased by an amount at least large enough to contain any of the basic IDL types. Return -1 on failure, 0 on success. 
+.SS void ACE_CDR::mb_align (\fBACE_Message_Block\fR * mb)\fC [static]\fR
+.PP
+Align the message block to \fBACE_CDR::MAX_ALIGNMENT\fR, set by the CORBA spec at 8 bytes.
+.PP
+.SS size_t ACE_CDR::next_size (size_t minsize)\fC [static]\fR
+.PP
+Compute not the smallest, but the second smallest buffer that will fir <minsize> bytes.
+.PP
+.SS void ACE_CDR::swap_16 (const char * orig, char * target)\fC [static]\fR
+.PP
+.SS void ACE_CDR::swap_16_array (const char * orig, char * target, size_t length)\fC [static]\fR
+.PP
+.SS void ACE_CDR::swap_2 (const char * orig, char * target)\fC [static]\fR
+.PP
+Do byte swapping for each basic IDL type size. There exist only routines to put byte, halfword (2 bytes), word (4 bytes), doubleword (8 bytes) and quadword (16 byte); because those are the IDL basic type sizes. 
+.SS void ACE_CDR::swap_2_array (const char * orig, char * target, size_t length)\fC [static]\fR
+.PP
+.SS void ACE_CDR::swap_4 (const char * orig, char * target)\fC [static]\fR
+.PP
+.SS void ACE_CDR::swap_4_array (const char * orig, char * target, size_t length)\fC [static]\fR
+.PP
+.SS void ACE_CDR::swap_8 (const char * orig, char * target)\fC [static]\fR
+.PP
+.SS void ACE_CDR::swap_8_array (const char * orig, char * target, size_t length)\fC [static]\fR
+.PP
+.SS size_t ACE_CDR::total_length (const \fBACE_Message_Block\fR * begin, const \fBACE_Message_Block\fR * end)\fC [static]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

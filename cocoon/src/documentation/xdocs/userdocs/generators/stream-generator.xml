@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>Stream Generator</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+            	<person name="Kinga Dziembowska" email="kingadziembowska@msn.com"/>
+			<person name="Davanum Srinivas" email="dims@yahoo.com"/>
+		 </authors>
+		 <abstract>This document describes the stream generator of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="Stream Generator">
+	            <p>
+      	      The StreamGenerator is a class that reads XML from an HttpRequest 
+            	InputStream and generates SAX Events. StreamGenerator expects 
+	            XML data coming as POST message. 
+      	      </p>
+			<ul>
+				<li>Name : stream</li>
+				<li>Class: org.apache.cocoon.generation.StreamGenerator</li>
+				<li>Cacheable: no.</li>
+			</ul>
+           		<p>
+         		For POST requests with mimetype of application/x-www-form-urlencoded, 
+		      the xml data expects to be associated with the name specified 
+            	in the sitemap parameter.
+	            </p>
+
+      	      <p>
+            	For POST requests with mimetypes: text/plain, text/xml, application/xml 
+	            the xml data is in the body of the POST request and its length is 
+      	      specified by the value returned by getContentLength() method.
+            	</p>
+			<s2 title="PostInputStream">
+            	<p>
+	            The StreamGenerator uses helper class org.apache.cocoon.util.PostInputStream 
+      	      for InputStream reading operations. At the time that Parser reads the data 
+            	out of InputStream - Parser has no knowledge about the length of data to be
+	            read. The only way to signal to the Parser that all data was read from the 
+      	      InputStream is to control reading   operation - PostInputStream- and to 
+            	return to the requestor -1 when the number of bytes read is equal to the 
+	            getContentLength() value.
+      	      </p>
+			</s2>
+
+			<s2 title="See it in Action">
+	            <p>
+            	The Generator is a generic object, i.e. it can process any stream out of the 
+      	      POST message there are two ways to see StreamGenerator in action:
+	            </p>
+            
+            	<ul>
+	                <li>To invoke URL http://localhost:8080/cocoon/Order</li>
+      	          <li>To use telnet program to generate POST request</li>
+            	</ul>
+            
+      	      <p>  
+	            The first option is not a "pure" stream invocation, but it is quick way to 
+            	observe desired effects. The result of this invocation is a form containing 
+      	      the XML document embedded in the textarea of the form. Submission of this 
+	            form will invoke StreamGenerator. The testarea name/value par is specified 
+            	as a parameter in the sitemap definition for the StreamGenerator. The expected 
+      	      result is the submitted xml document send back to the browser.
+	            </p>
+            
+            	<p>
+      	      The second or "pure" option of testing StreamGenerator "in action," requires the 
+	            use of Telnet program or any other process able to generate correct POST message. 
+            	The procedure is:
+      	      </p>
+
+	            <ul>
+            	    <li>To invoke telnet, connect to localhost 8080 and to use content of 
+      	              <link href="telnet.txt">telnet.txt</link> file as a post message. 
+	                </li>
+            	    <li>Here, the Copy-Paste method should be used.</li>
+      	          <li>Remember to hit the enter button twice enter after the contents of the post are set in telnet.</li>
+	            </ul>
+
+            	<p>
+      	      It is important because Content-len is calculated assuming two "enter" in the end of http message. 
+	            Once again, the performed task results in the mirror of the original document being sent back to the requestor. 
+            	</p>
+            
+      	      <p>
+	            The "pure" stream generation can be observed using the telnet utility where you can invoke a 
+            	message targeting my processing. Any other method is good (URL object connection) as 
+      	      long the message is well formed.
+	            </p>
+<source>
+     <![CDATA[
+  <map:generate type="stream"/>
+     ]]>
+</source>
+        		</s2>
+		</s1>
+	</body>
+</document>

@@ -1,0 +1,1747 @@
+
+This document describes the XAA (XFree86 Acceleration Architecture),
+which is the new acceleration interface for the SVGA server (but not
+limited to the SVGA server).
+
+This code is not at all dependent on the SVGA server, but does
+assume linear addressing at > 8bpp. It might be extendable to an
+mi-based set up for configurations that can't use cfb. There are
+still configurations around that need banked support for 16bpp.
+
+To use the new acceleration interface, write low-level functions
+like the sampledrv.c and ark_accel.c and call the ChipInitAccel()
+function before screen initialization (from FbInit in a SVGA
+driver, for example).
+
+You're welcome to comment, test, debug, or add to this code.
+
+Have fun...
+
+Harm Hanemaayer
+H.Hanemaayer@inter.nl.net
+
+Here's a list of known problems (roughly in order of importance). If you
+can confirm a problem using the lastest version, please do so.
+
+- I've seen crashes when using Netscape related to stipple functions.
+  These might be caused by the "fall-back" logic still getting it
+  wrong.  It seems to be triggered by a call of
+  vga8256FillRectTransparentStippled32. Fixed by mod 186?
+
+- The "NonTE" text acceleration triggers core dumps (related to an invalid
+  fall-back function scheme in ValidateGC). It might also trigger lock-ups
+  (which would point towards a problem in NonTE text color expansion).
+  These functions are currently disabled.
+
+- Color expanded (monochrome) 8x8 pattern is may not be working correctly
+  yet in all cases (not fully tested).
+
+- The disabled non-terminal emulator font acceleration is suspect, I
+  don't think it handles horizontally overlapping characters correctly
+  (no visible evidence yet) in the xf86DrawNonTETextScanline function. 
+  I don't know enough about the X font parameters to correctly
+  implement it.
+
+- The SCANLINE_PAD_BYTE and SCANLINE_NO_PAD text transfer code for CPU
+  to screen color expansion has not been fully tested, nor has the
+  FIXED_BASE support.
+
+- The pattern fill primitives are taken to have the same graphics operation
+  restrictions (planemask, rop etc) as ScreenToScreenCopy.
+
+- The support for TRIPLE_BITS_24BPP has improved, but it has not yet
+  been fully tested.
+
+- For color expansion implementation of stipples the graphics operation
+  restriction of color expansion are not honoured, but instead the
+  CopyArea ones are used. This is now sort-of fixed, but it has not been
+  tested in relevant cases.
+
+- Instead of not accelerating GXinvert operations that would normally
+  access the source, we could instead to a GXinvert FillRectSolid.
+
+When the server crashes, run 'gdb -c core XF86_SVGA' and print a
+back-trace ('backtrace').
+
+Change Log:
+
+218. As well as GXinvert, also avoid GXclear, GXnoop, and GXset.
+217. Don't accelerate functions that use source bitmap data (such as text,
+     stipples, bitmaps) when the raster-op is GXinvert.
+216. Truncate pixel values to pixel depth in ValidateGC.
+
+XFree86 3.2v
+215. Rotate monochrome patterns stored in video memory in opposite
+     direction (David Bateman). I doubt whether this is correct.
+214. Add FullPlanemask field to xf86AccelInfoRec, and use it for planemask
+     checks.
+213. Use GC alu instead of cfb reduced "rrop" when checking raster-op
+     restrictions.
+212. Add secondary restriction flag hack for stippled rectangles to
+     correctly handle different restrictions for pixmap cache and color
+     expansion stipple acceleration.
+211. Move macros for graphics operations restriction checks to from
+     xf86gcmisc.c to xf86local.h.
+210. Fix the check for server resets in xf86initac.c and xf86scrin.c (use
+     serverGeneration instead of xf86Resetting).
+
+XFree86 3.2u
+209. Fix monochrome pattern stored in video memory with PROGRAMMED_ORIGIN
+     and SCREEN_ORIGIN (Corin Anderson).
+
+XFree86 3.2s
+208. Respect CapStyle when using TwoPointLine for a non-clipped segment.
+207. Fix line clipping when hardware clipping is used with multiple
+     clipping regions (Xavier Ducoin).
+206. Add a hack to counter cfb cheating in PolyGlyphBlt when it does not
+     call ValidateGC when changing the foreground color to fill in the
+     background (affecting RGB_EQUAL).
+205. Remove left-over fall-back tile function setting code in xf86gcmisc.c
+     that may have caused problems.
+204. At ValidateGC time, take note of background color changes for
+     evaluation of RGB_EQUAL restrictions.
+203. Add support for a monochrome pattern with PROGRAMMED_BITS that
+     needs to be rotated in software, so that all possible monochrome
+     pattern variations are now supported.
+202. Add NO_TEXT_COLOR_EXPANSION flag.
+201. Fix bitmap (CopyPlane1ToN) color expansion acceleration at 24bpp with
+     TRIPLE_BITS_24BPP defined.
+200. Fix support for ScanlineScreenToScreenColorExpand with
+     TRIPLE_BITS_24BPP defined.
+199. Fix the case of a monochrome 8x8 pattern stored in video memory.
+     The code was not consistently assuming that the patternx
+     coordinate is in units of "bits" (David Bateman).
+198. Invalidate the pixmap cache when VT-switching back (suggested by
+     Andrew Vanderstock).
+197. If color expansion is used for stipples, say so in the start-up
+     messages.
+196. Indicate in start-up messages whether 8x8 pattern fill is actually
+     usable.
+195. Better RGB_EQUAL checks for text acceleration with TRIPLE_BITS_24BPP
+     (David Bateman).
+194. Do not accelerate lines with non-FillSolid fill style. Stippled lines
+     were rendered incorrectly as solid lines.
+
+XFree86 3.2r
+193. Check RGB_EQUAL for text acceleration with TRIPLE_BITS_24BPP
+     (David Bateman).
+192. Honour RGB_EQUAL when deciding CopyPlane1To24 acceleration in
+     xf86plane.c.
+191. Fix bugs in handling of left edge in CPU-to-screen color expansion
+     of bitmaps.
+190. When the server resets, don't execute the start-up benchmarks.
+189. When the server resets, don't execute the main part of the
+     xf86GCInfoRec and xf86AccelInfoRec initialization code, which
+     depends on default values for some fields.
+188. When there is any kind of accelerated stippled rectangle fill, also
+     use it for stippled spans.
+187. Add 10x10 CPU-to-screen color expansion benchmark.
+186. Remove left-over broken fall-back stipple function setting code
+     in xf86gcmisc.c, probably fixing crashes.
+185. Implement "no_pixmap_cache", and new "xaa_benchmark" and
+     "xaa_no_color_exp" server flags.
+184. Only print detailed messages when xf86Verbose is TRUE.
+183. Implement color expansion acceleration of stipple-filled rectangles
+     in xf86stip.c. Requires SCANLINE_PAD_DWORD for CPU-to-screen color
+     expansion, and does not support TRIPLE_BITS_24BPP.
+182. Fix SCANLINE_NO_PAD CPU-to-screen color expansion by not defining
+     the flag definition as zero (Koen Gadeyne).
+181. Add LEFT_EDGE_CLIPPING_NEGATIVE_X color expansion flag.
+180. Fix potential bug in handling of LEFT_EDGE_CLIPPING.
+179. Add new file xf86tables.c with byte expansion tables for
+     TRIPLE_BITS_24BPP.
+178. Support TRIPLE_BITS_24BPP for bitmap color expansion, with the
+     exception of non-DWORD scanline padding of CPU-to-screen color
+     expansion.
+177. Fix a probable bug in CPU-to-screen bitmap color expansion in
+     MSB-first mode without left edge clipping.
+176. When checking for hardware pattern usage for tiles, prefer the
+     color expand (monochrome) pattern.
+175. Improve TRIPLE_BITS_24BPP support with color expansion enabled for
+     text using screen-to-screen color color expansion or CPU-to-screen
+     with SCANLINE_PAD_DWORD.
+174. Add TRANSPARENCY_GXCOPY graphics operation flag, and take it into
+     consideration for ScreenToScreenCopy with transparency.
+
+XFree86 3.2q
+173. Fix infinite loop in CPU_TRANSFER_BASE_FIXED color expansion
+     (Xavier Ducoin).
+172. Fix color expansion benchmark when TRIPLE_BITS_24BPP is defined
+     (David Bateman).
+171. When using the monochrome pattern, use an existing cache entry when
+     the stipple is the same but the colors are different.
+170. Fix bugs in pattern handling code.
+169. Fix a bug in the MSB-first version of the Pentium-optimized text
+     bitmap transfer functions (David Bateman).
+168. Fully implement detection of tiles that only use two colors in order
+     to use a monochrome (color-expand) hardware pattern.
+167. Potentially fix the case of rotated monochrome patterns stored video
+     memory.
+166. Change start-up messages a little.
+165. Add support for 8x8 hardware pattern with SCREEN_ORIGIN in addition
+     to PROGRAMMED_ORIGIN, and take into account the bit order when
+     PROGRAMMED_BITS is defined (Radek).
+164. Mark pixmaps that are found to be unsuitable for caching.
+163. Make caching of transparent stipples possible for chips that don't
+     have ScreenToScreenCopy with transparency but do have a color-expand
+     pattern fill that supports transparency.
+162. Add low-level benchmarks for 10x10 pattern fill.
+161. Use 64-bit access on DEC alpha in CPU-to-framebuffer bandwidth
+     benchmark.
+160. Add the HARDWARE_PATTERN_MONO_TRANSPARENCY flag to further
+     differentiate between mono pattern and regular color expansion.
+159. Use depth instead of bitsperpixel in planemask check for line
+     rectangles.
+158. Reorganize the "cfbGetLongWidthAndPointer" function.
+157. Support the HARDWARE_PATTERN_PROGRAMMED_ORIGIN for non-color
+     expanded patterns (including patterns that must be aligned on a 64
+     pixel boundary) and for color-expanded patterns that are stored
+     in video memory.
+156. Various fixes for the cfb8 (non-vga256) support.
+155. At start-up, display a message when no acceleration primitives
+     are defined.
+154. Add ScratchBufferBase field to support scanline screen-to-screen
+     color expansion without a linear framebuffer.
+153. Support multiple buffers for scanline screen-to-screen color
+     expansion. Adds the PingPongBuffers field.
+
+XFree86 3.2n
+152. Add HARDWARE_PATTERN_BIT_ORDER_MSBFIRST flag to differentiate between
+     mono hardware pattern and regular color expansion.
+151. Fix missing fields in xf86defs.c.
+150. Delay the actual initialization of the pixmap cache until general XAA
+     initialization. A server InfoRec field and pixmap cache memory boundary
+     fields are added to the xf86AccelInfoRec. This also eliminates the
+     dependency of the XAA code on vga256 (the SVGA server).
+149. Lift the SCANLINE_PAD_DWORD requirement in xf86initac.c for the
+     enabling of text color expansion.
+148. Add functions in xf86expblt.c for whole text bitmap transfer in the
+     case of BYTE padding or no padding at the end of scanlines, and
+     support this in xf86text.c.
+147. Add a cfb8-based layer to support stand-alone servers not using
+     vga256.
+146. Enable fixed-base CPU-to-screen color-expansion for bitmap and TE text.
+145. Add FIXEDBASE support to color expansion functions in xf86expblt.c.
+144. Add the HARDWARE_PATTERN_PROGRAMMED_BITS and HARDWARE_PATTERN_
+     PROGRAMMED_ORIGIN flags, and implement 8x8 mono pattern code
+     used when both flags are set.
+143. Don't use scanline-byte-padded CPU to screen color expansion since
+     it doesn't work.
+142. Use MSB-first versions of Pentium-optimized text transfer functions
+     when required.
+141. Finally fix the flawed fall-back function schemes, potentially fixing
+     crashes associated with some span and rectangle fills. Still not stable.
+140. More heavily unroll the CPU to framebuffer benchmark code (mainly
+     for the Cyrix 6x86).
+
+XFree86 3.2g
+139. Enable 24bpp CopyPlane acceleration (Dirk).
+
+Version of 17 December 1996 (XFree86 3.2f)
+138. Enable the Pentium-optimized text transfer functions for 6 and 8-pixel
+     wide fonts.
+137. Fix a problem with accelerated horizontal and vertical lines clashing
+     with framebuffer lines.
+136. In some places, fix the "NO_PLANEMASK" check to only check bits up to
+     the actual depth (rather than PMSK).
+135. Avoid recursive xf86miFillRectStippledFallBack call.
+134. When the new HARDWARE_PATTERN_MOD_64_OFFSET flag is set, do use
+     the hardware pattern when the framebuffer width guarantees
+     corrects alignment.
+133. Avoid unaligned accesses in xf86expblt.c for DEC Alpha. Not tested.
+     What's a mem_barrier? Do we need them?
+132. Do not use 8x8 pattern stipple fill at 24bpp because there's no
+     pixmap-to-pixmap CopyPlane1ToN primitive.
+131. Allow CopyPlane1ToN to be accelerated at 24bpp.
+130. Remove messages printed when xf86miStippleFallBack is called.
+129. Add FillRectSolid graphics operation restriction flags to the line
+     draw restrictions in xf86initac.c, fixing a problem with planemask
+     restrictions not being honoured for some lines.
+128. Add some Pentium-optimized text bitmap transfer functions in
+     xf86txtblt.s, but they are not used yet.
+
+XFree86 3.2e
+127. ImakefileBPP renamed to Imakefile.BPP
+
+Version 0.4f (XFree86 3.2d) (28 November 1996)
+126. Fix typo in xf86frect.c, pixmap-cache re-enabled (Alan).
+125. Disable Non-TE text acceleration.
+124. Add text fall-back functions in xf86gcmisc.c.
+123. Fix ImakefileBPP.
+
+Version 0.4e (XFree86 3.2c) (24 November 1996)
+122. Fix some problems with drawing of Non-TE of text strings.
+121. Fix compilation problem in xf86spans.c (Takaaki Nomura).
+120. Add sanity checks in PolyFillRect and FillSpans for <= 0 specified
+     rects or spans.
+119. Make sure the cfb fall-back text functions are initialized correctly.
+     This problem showed up when non-TE text acceleration was added.
+118. Add the TWO_POINT_LINE_ERROR_TERM flag, but don't implement it yet.
+117. Implement a stipple bitmap scanline function in xf86expblt.c for
+     future use in color expansion stipple acceleration.
+116. Implement color expansion text acceleration for non-terminal emulator
+     fonts. Fix non-TE text scanline function in xf86expblt.c.
+115. Add NO_SYNC_AFTER_CPU_COLOR_EXPAND flag.
+114. When cfb MatchCommon is succesful in ValidateGC, make sure the
+     devPrivate.val is still correct. Fixes memory leak.
+113. Fix bug in xf86PolyFillRect. This does not fix the pixmap cache.
+
+Version 0.4d (XFree86 3.2a) (18 November 1996)
+112. Prepare for integration into source tree (hw/xfree86/xaa/*).
+111. Move the declaration of xf86PixmapIndex into xf86initac.c.
+110. Screeninit functions renamed; vgabpp.h renamed to xf86scrin.h.
+109. Cosmetic changes in preparation for integration into source tree.
+108. Rename xf86gc.h to xf86xaa.h, and modify some long filenames.
+107. In ValidateGC, correctly handle the case of the drawable of an
+     on-screen GC being changed to a pixmap.
+106. Fix a problem with byte-padded CPU to screen color expansion in
+     xf86bitmap.c.
+105. Initialize CPUToScreenColorExpandRange to default value of 64K
+     if it is not defined.
+104. Fix missing cfb stipple function mappings in vga256map.h.
+
+Version 0.4c (15 November 1996)
+103. Really fix the CPU-to-screen color expansion benchmark.
+102. Disable the accidently enabled debugging on-screen pixmap cache.
+
+Version 0.4b (15 November 1996)
+101. Add the UsingVGA256 flag to the xf86AccelInfoRec, and use this
+     to adjust the address pointer for low-level line fall-backs for
+     vga256 so that the non-bank checking versions will be used when
+     linear addressing is enabled (implemented in cfb8GetLongWidthAndPointer
+     in xf86im.c).
+100. Add general line acceleration for chips that can only accelerate
+     horizontal/vertical lines using FillRectSolid and for chips that
+     only have TwoPointLine without fool-proof hardware clipping.
+ 99. Fix crash with line rectangles when the raster-op is not GXcopy.
+ 98. Change the 8x8 pattern benchmark a little.
+ 97. Add an aligned screen copy (scroll) test to the low-level benchmarks,
+     and remove the transparent color expansion tests.
+ 96. Fix related type warnings in xf86bitmap.c (Radek).
+ 95. Really fix the initialization of CPUToScreenColorExpandEndMarker
+     (Radek). 
+ 94. Fix the initialization of CPUToScreenColorExpandEndMarker in
+     xf86initacl.c
+ 93. Fix problems with small patterns when using 8x8 hardware pattern fill.
+ 92. Fix for CopyPlane1to32 (resolves olvwm crash at 32bpp).
+ 91. Fix the CPU to screen color expansion benchmark (Radek).
+ 90. Use the accelerated FillPolygonSolid from the GCInfoRec in ValidateGC.
+ 89. In xf86orect.c, use cfbGCGetPrivate().
+ 88. Add monochrome 8x8 tile detection (not used yet).
+ 87. Fix external byte_reversed declaration in xf86expblt.c and
+     xf86pcache.c (fixes problem with 8x8 color expanded pattern).
+ 86. Fix xf86expblt.c inline asm for different OSs (Takaaki Nomura).
+ 85. Support xf86bench.c on different OSs (Akio Morita).
+ 84. Fix a bug in the color expanded 8x8 pattern code.
+ 83. In ReduceTileToSize8, don't give up when not using 8bpp.
+ 82. Cosmetic changes to sampledrv.c.
+ 81. Improve the start-up messages.
+ 80. In the benchmark routines, avoid memset().
+ 79. Lift the LSBFIRST requirement for buffered screen-to-screen color
+     expansion.
+
+Version 0.4a (7 November 1996)
+ 78. Correct xf86AccelInfoRec.BitsPerPixel for 24bpp.
+ 77. Add ONLY_LEFT_TO_RIGHT_BITBLT for chips that only support screen-to-
+     screen BitBLTs with xdir = 1, and support this in CopyArea.
+ 76. Make decisions in InitAccel about whether specified CPU-to-screen
+     color expansion memory range is large enough.
+ 75. Add FramebufferWidth (equivalent to infoRec.displayWidth).
+ 74. Add CPUToScreenColorExpandRange, which is taken into account after
+     each scanline in text and bitmap color-expansion operations
+     (CPUToScreenColorExpandEndMarker is derived from it).
+ 73. Only allow text CPU-to-screen color expansion with SCANLINE_PAD_DWORD
+     defined.
+ 72. If the CPUToScreenColorExpandBase isn't initialized, use the
+     start of the framebuffer as color expansion base address.
+ 71. Fix bug in DrawNonTETextScanline (a function not yet used).
+ 70. Add ONLY_TWO_BITBLT_DIRECTIONS for chips that only support screen-to-
+     screen BitBLTs with xdir = ydir, and support this in CopyArea.
+ 69. Add VIDEO_SOURCE_GRANULARITY_DWORD flag for color expansion.
+ 68. Fix cfbPushPixels8 name mapping for vga256. This was probably causing
+     most of the stability problems.
+
+Version 0.4 (5 November 1996)
+ 67. Add support for color-expanded 8x8 hardware patterns (untested).
+ 66. Fix a bug in FillSpansSolid that caused some spans to be drawn
+     at the wrong position (Radek).
+ 65. In FillSpansSolid, correctly handle the case of no spans remaining
+     after clipping.
+ 64. When doing the raster-op precomputations for cfb in ValidateGC,
+     don't clear the flag indicating that the raster-op has changed
+     since we must still evaluate accelerated functions.
+ 63. Correctly modify devPrivate.val when new GC ops are created in
+     ValidateGC.
+ 62. Reduce tiles to 8x8 pixels if possible.
+ 61. Set the USE_TWO_POINT_LINE flag if appropriate.
+ 60. Reduce stipples to 8x8 pixels if possible.
+ 59. Add start-up benchmark timings for low-level primitives.
+ 58. Reduce stipples and tiles to 8 pixels wide if possible in order to
+     use the 8x8 hardware pattern.
+ 57. Add 8x8 hardware pattern stipples.
+ 56. Provide a mechanism to call non-accelerated CopyPlane1toN
+     directly. Adds CopyPlane1toNFallBack to GCInfoRec.
+ 55. Add the HARDWARE_PATTERN_ALIGN_64 flag (not supported yet).
+ 54. Debug the 8x8 hardware pattern.
+ 53. Guarantee a different transparency color instead of using the GC
+     background color when caching transparent stipples.
+ 52. Add support for 8x8 hardware patterns, and use them for small
+     tiles.
+ 51. Add BitsPerPixel to xf86AccelInfoRec.
+ 50. Assign fall-back function to xf86AccelInfoRec.ImageWrite if
+     necessary for convenience.
+ 49. Lift the VIDEO_SOURCE_GRANULARITY_PIXEL requirement for indirect
+     screen-to-screen text color expansion.
+ 48. Add an extra set of wide slots to the pixmap cache. Disabled.
+ 47. Honour ONE_RECT_CLIPPING flag when checking line drawing function.
+ 46. Support WriteBitmap when only non-transparent color expansion is
+     supported.
+
+Version 0.3b (31 October 1996)
+ 45. Update vga256 patch (vga.c) to force GC validation after a VT-switch.
+ 44. Support ImageText when only transparent color expansion is supported.
+ 43. Add PolyText color expansion for TE fonts.
+ 42. Use devPrivate.val to signal status of GC ops, and use this to
+     modify them when required.
+ 41. Create new GC ops when GC ops are still pointing to a defaults
+     structure when modifying GC ops in ValidateGC.
+ 40. As a stop-gap measure, reset all GC ops and pretend everything in
+     the GC has changed when a switch-away is detected in ValidateGC.
+ 39. Update sampledrv.c.
+ 38. Disable the pixmap cache if the memory range is wrongly specified
+     (Alan).
+ 37. Fix typo in pixmap cache initialization in sampledrv.c.
+ 36. Make xf86PolyRectangle use new line drawing functions for vertical
+     lines.
+ 35. Add ErrorTermBits to the xf86AccelInfoRec for re-scaling Bresenham
+     error terms when software clipping is used.
+ 34. Add flags to indicate whether PolySegment is supported with CapNotLast
+     using TwoPointLine.
+ 33. Implement xf86PolyLine/Segment using BresenhamLine or TwoPointLine
+     (untested).
+ 32. Add BresenhamLine and TwoPointLine primitives.
+ 32. Fix initial coordinates for color-expanded text.
+ 31. Move function prototypes from xf86gc.h to xf86local.h.
+ 30. Take into account source offset into first byte of bitmap scanline.
+ 29. Bitmap with buffered screen-to-screen color expansion now works.
+ 28. Fix prototypes for intermediate-level text functions.
+ 27. Fix source overrun problems in xf86DrawBitmapScanline.
+ 26. Intialize FramebufferBase in ScreenInit.
+ 25. Implement untested/unused functions for filling 24bpp pixels using
+     8bpp mode color expansion in two passes.
+ 24. Fix color expand flag testing in xf86bitmap.c.
+
+Version 0.3a (28 October 1996)
+ 23. If tiles are cached but not stipples (but stipples are accelerated),
+     be aware of this in xf86PolyFillRect.
+ 22. Disable updating of the PolyGlyphBlt GC op in ValidateGC because of an
+     unresolved problem showing up at > 8bpp.
+ 21. Implement a better understanding of how GC changes affect the selection
+     of cfb and accelerated functions in ValidateGC.
+ 20. Fix the way ValidateGC handles cfb operations initialized with
+     MatchCommon.
+ 19. Add xf86mapfuncs.h for local functions that are depth-mapped.
+ 18. Fix bugs accidently introduced into xf86initacl.c in version 0.3,
+     which effectively disabled pixmap caching.
+ 17. Add untested, unoptimized CopyPlane1to24 (GXcopy, no planemask),
+     for use with stipple caching. Doesn't work yet.
+
+Version 0.3 (27 October 1996)
+ 16. Use framebuffer function for some vertical lines in PolyRectangle.
+ 15. Fix SaveAreas and RestoreAreas for vga256.
+ 14. Add PolyLine and PolySegment hooks to the xf86GCInfoRec.
+ 13. Fix missing cfbPolyFillArc mappings in vga256map.h.
+ 12. Fix MatchCommon call in ValidateGC. This fixes vga256 operation.
+ 11. Fix updating of GC ops for text functions during ValidateGC.
+ 10. Optimize the CopyPlane1to16/32 functions.
+  9. Update the docs, and include a sample driver template.
+
+Version 0.2 (26 October 1996)
+  8. Re-enable CopyPlane hook.
+  7. Fix typo that prevented CopyArea from being accelerated.
+  6. Fix confusion over arguments of cfbBitBlt helper function.
+  5. Call the correct depth-specific cfbBitBlt helper function.
+  4. Fix the coordinates for the transparent stipple mi fall-back.
+  3. Fix problem with zero-width spans in FillSpansAsRects.
+  2. Disable CopyPlane hook because it doesn't work.
+
+Version 0.1 (25 October 1996)
+  1. First logged version. Implements solid filled rectangles, arcs,
+     polygons, CopyArea, pixmap caching.
+     Untested are line-drawn rectangles, color expansion text, color
+     expansion stipple upload, bitmaps.
+
+
+Overview of XAA
+---------------
+
+1.1
+
+Some advantages of this new interface:
+
+- Easier implementation of accelerated functions.
+- More efficient use of accelerated functions.
+- Code size reduction.
+- Source code size reduction (less duplicated code).
+- Greater test base for higher level code.
+- Improvements can be beneficial for all drivers.
+
+Disadvantages:
+
+- More overhead in ValidateGC.
+- Arguably more complex set of acceleration primitives.
+
+
+1.2	Graphics Operation Flags
+
+GXCOPY_ONLY
+
+    Indicates that the graphics operation only allows a GXcopy
+    raster-op (copy source). If this flag is not defined, the graphics
+    operation is assumed to be supported with all 16 raster operations.
+
+NO_PLANEMASK
+
+    Indicates that the graphics operation does not allow a write
+    planemask. All bits in a pixel are written.
+
+ONE_RECT_CLIPPING
+
+    Indicates that an accelerated function (usually a high-level one that 
+    handles clipping) only accepts one clipping rectangle. This may be
+    of use for line drawing. [It is only checked for line drawing]
+
+RGB_EQUAL
+
+    Indicates that the graphics operation requires that the red, green,
+    and blue bytes of the foreground color (and background color, if
+    applicable) are equal. This is useful for 24bpp when the graphics
+    coprocessor is used in 8bpp mode, which is the often the case since
+    most chips have no or only limited support for acceleration at
+    24bpp. This way, many operations will be accelerated for the common
+    case of "grayscale" colors. It should only be defined for 24bpp.
+
+NO_TRANSPARENCY
+
+    Indicates that the graphics operation does not handle transparency.
+    This can be enabled for screen-to-screen copy.
+
+NO_CAP_NOT_LAST
+
+    Indicates that the graphics operation (typically PolySegment) does
+    not support not drawing of the last pixel.
+
+TRANSPARENCY_GXCOPY
+
+    Indicates that, unlike the case of no transparency, when
+    transparency is enabled only the GXcopy raster-op is allowed. This
+    is valid only for ScreenToScreenCopy.
+
+
+1.3	The AccelInfoRec
+
+Flags
+
+    This is a set of flags that controls some overall parameters for
+    the acceleration code.
+
+    BACKGROUND_OPERATIONS
+
+    If enabled, the "simple" acceleration functions are not assumed to
+    wait until the graphic coprocessor operation is finished. The
+    generic acceleration functions will call Sync() when all operations
+    have been done.
+
+    PIXMAP_CACHE
+
+    Use a pixmap cache for tiles and stipples, when the required
+    low-level functions (such as ScreenToScreenCopy) are available.
+
+    COP_FRAMEBUFFER_CONCURRENCY
+
+    CPU access to the framebuffer can continue while a screen-to-screen
+    coprocessor operation is being executed. This is taken advantage of
+    in some color expansion routines when CPU-to-screen color expansion
+    is not available, and potentially in some other places.
+
+    DO_NOT_CACHE_STIPPLES
+
+    Do not cache stipples, but instead use the CPU-to-screen color
+    expansion routines for stipples. These routines have not yet been
+    implemented.
+
+    HARDWARE_CLIP_LINE
+
+    When a general line has to be clipped, use hardware clipping
+    (SetClippingRectangle must be defined, and clipping must only
+    be active for the single following general line draw).
+
+    USE_TWO_POINT_LINE
+
+    Use two-point lines (TwoPointLine) instead of Bresenham lines for
+    general lines. This flag is automatically set if appropriate. It
+    should not be set in a driver in any case.
+
+    TWO_POINT_LINE_NOT_LAST
+
+    Indicates that TwoPointLine supports the notlast flag that indicates
+    whether the last pixel should be drawn. If this is not supported,
+    PolySegment cannot support the CapNotLast CapStyle.
+
+    TWO_POINT_LINE_ERROR_TERM
+
+    Indicates that TwoPointLine supports the optional error term flag
+    and parameter that allows the initial error term to be provided
+    for software clipped lines.
+
+    HARDWARE_PATTERN_SCREEN_ORIGIN
+
+    Indicates that the baseline origin for hardware 8x8 pattern fills
+    is the top left corner of the screen, as opposed to the top left
+    corner of the area to be filled. Note that an origin offset feature
+    might still be supported.
+
+    HARDWARE_PATTERN_TRANSPARENCY
+
+    Indicates that the hardware 8x8 pattern fill supports transparency
+    color compare (does not apply to mono pattern).
+
+    HARDWARE_PATTERN_ALIGN_64
+
+    Indicates that the 8x8 hardware pattern must be stored on a
+    64-pixel boundary in video memory, and programmed pattern start
+    location must be the start of such a pattern. In the absence of a
+    programmable origin, this requires a lot more pre-rotated copies to
+    be made, although they should still fit within a 128x128 cache
+    area.
+
+    HARDWARE_PATTERN_MOD_64_OFFSET
+
+    Indicates that while the 8x8 hardware pattern must be stored
+    aligned on a 64-pixel boundary, the programmed pattern start
+    location can in fact include a multiple-of-8-pixels offset, which
+    indicates the vertical offset into the pattern. This flag is
+    mutually exclusive to HARDWARE_PATTERN_ALIGN_64. If you can also
+    specify the horizontal offset, do not use this flag, but instead
+    use HARDWARE_PATTERN_PROGRAMMED_ORIGIN.
+
+    HARDWARE_PATTERN_PROGRAMMED_BITS
+
+    Indicates that the monochrome (color expand) 8x8 pattern data must be
+    programmed into registers, rather than stored in video memory. This
+    is only supported in combination with the following flag.
+
+    HARDWARE_PATTERN_PROGRAMMED_ORIGIN
+
+    Indicates that the hardware pattern supports a programmable origin
+    (x and y offsets into the pattern). This is supported for all three
+    pattern storage types (programmed monochrome, monochrome in video
+    memory and regular (pixel depth) in video memory).
+
+    HARDWARE_PATTERN_BIT_ORDER_MSBFIRST
+
+    Indicates that the monochrome 8x8 pattern data is in MSB-first bit
+    order ("Windows-style").
+
+    HARDWARE_PATTERN_MONO_TRANSPARENCY
+
+    Indicates that the monochrome 8x8 pattern supports transparency
+    (signalled by a background color equal to -1).
+
+    HARDWARE_PATTERN_NOT_LINEAR
+
+    Indicates that the 8x8 pattern data should not be stored linearly
+    in video memory, but rather, as a tiled 8x8 pattern in the cache.
+
+    ONLY_TWO_BITBLT_DIRECTIONS
+
+    Indicates that ScreenToScreenCopy is only allowed with xdir = ydir
+    (both -1 or both 1). BitBLTs are converted to smaller BitBLTs with
+    supported directions if necessary.
+
+    ONLY_LEFT_TO_RIGHT_BITBLT
+
+    Indicates that ScreenToScreenCopy is only allowed with xdir = 1.
+    BitBLTs are converted to smaller BitBLTs with supported directions
+    if necessary.
+
+    NO_SYNC_AFTER_CPU_COLOR_EXPAND
+
+    Indicates that a Sync() is not required after a CPU-to-screen color
+    expansion operation. Generally, this can be defined if host color
+    expansion data is processed by the graphics chip in the same way as
+    accelerated graphics commands (it uses the command FIFO).
+
+    NO_TEXT_COLOR_EXPANSION
+
+    Do not use color expansion to accelerate text. Define this if
+    color expansion is slower than plain framebuffer for text (which
+    might happen with scanline screen-to-screen color expansion,
+    when there is little video memory bandwidth but the CPU to
+    framebuffer bandwidth is decent).
+
+Sync()
+
+    This function should be defined if BACKGROUND_OPERATIONS is enabled
+    (and also if any kind of CPU-to-screen color expansion is used). It
+    should wait for all graphics coprocessor operations to finish. It
+    also provides an opportunity to clean up the coprocessor state
+    after a batch for commands.
+
+SetupForFillRectSolid(color, rop, planemask)
+
+    Sets up the color, raster-op and planemask for a solid rectangle
+    fill. It is called once before a batch of "Subsequent" fill
+    commands. Currently the restrictions for the operation are set up 
+    with xf86GCInfoRec.PolyFillRectSolidFlags.
+
+    Another acceleration commmand might still be executing when a SetUp
+    function is called (assuming BACKGROUND_OPERATIONS). You may have
+    to do a Sync() here. In the current XAA code this doesn't happen,
+    but it might in the future.
+
+SubsequentFillRectSolid(x, y, w, h)
+
+    This actually fills a rectangle. When writing spans, h will
+    be 1. It is usually called many times in a row.
+
+    A key thing to notice here is that the function call overhead
+    is "eaten" when performing coprocessor operations "in the
+    background" (concurrently with CPU processing). If you need to
+    wait for the previous operation to finish before sending the
+    commands for the next one, you can do that in this function.
+    Generally, you want to avoid querying the chip as much as
+    possible since PCI read operations have a devastating effect
+    on performance.
+
+    This function is taken advantage of when filling solid rectangles,
+    spans, polygons and arcs, and in other places.
+
+SetupForScreenToScreenCopy(xdir, ydir, rop, planemask, transparency_color)
+
+    Set up for a screen-to-screen BitBLT. The transparency color is -1
+    when there is no transparency. Transparency is used when drawing
+    transparent stipples from the pixmap cache. There are general flags
+    (set in xf86AccelInfoRec.Flags) to indicate restrictions for the
+    direction of the BitBLT (xdir, ydir); if restrictions exist, the
+    generic code converts the blits to allowable blits. Currently the
+    other restrictions for the operation are set up with
+    xf86GCInfoRec.CopyAreaFlags.
+
+SubsequentScreenToScreenCopy(x1, y1, x2, y2, w, h)
+
+    Perform a screen-to-screen BitBLT. Again often there is
+    a batch of commands. Note that (x1, y1) is always the top-left
+    corner, regardless of the direction.
+
+    It is used for screen-to-screen area copies (such as scrolling),
+    and for the pixmap cache.
+
+SubsequentBresenhamLine(x1, y1, octant, err, e1, e2, length)
+
+    Draw a line using the Bresenham algorithm. This is the most common
+    general line drawing feature that chips support. The octant consists
+    of bitflags that are defined as follows (miline.h defines them):
+
+    XDECREASING	    4	Draw from right to left (a.o.t. right to left).
+    YDECREASING	    2	Draw from bottom to top (top to bottom).
+    YMAJOR	    1	Y is the major axis (X is the major axis).
+
+    The error terms are usually no bigger than a screen coordinate, but
+    when software clipping is used, the error time might be too big; it
+    is then rescaled according to the number of bits specified in
+    ErrorTermBits. When HARDWARE_CLIP_LINE is defined,
+    SetClippingRectangle must be defined. It seems to me that hardware
+    clipping makes the implicit assumption that the chip can handle
+    coordinates in the range [-37268, 32767]. Or are coordinates
+    guaranteed to be on-screen? Anyway I think having the chip trace
+    lines way off the screen does not sound like a good idea.
+
+    There is no SetUp function. SetupForFillRectSolid is called before
+    a batch of lines (this linked to the fact that horizontal lines
+    are drawn with FillRectSolid; they should not be affected by
+    hardware clipping).
+
+SubsequentTwoPointLine(x1, y1, x2, y2, bias)
+
+    Draw a line between (x1, y1) and (x2, y2); the last point is drawn. 
+    This is found in some newer chips. It is taken advantage of. The 8
+    lower bits of bias indicate whether 1 should be subtracted from the
+    error term for each of the octants (e.g. bit 0 matches octant 0),
+    it is not a requirement to support this parameter.  If bit 8
+    (0x100) of bias is set, the last pixel should not be drawn (use
+    TWO_POINT_LINE_NOT_LAST to indicate whether this flag is
+    supported). This function requires hardware clipping.
+
+    Note that horizontal lines are always drawn with FillRectSolid.
+
+SetClippingRectangle(x1, y1, x2, y2)
+
+    Set the hardware clipping rectangle. (x2, y2) is the inclusive
+    right-bottom corner. Clipping should be active only for the first
+    following line draw (BresenhamLine or TwoPointLine). This function
+    is only used when HARDWARE_CLIP_LINE is enabled.
+
+ImageWrite(x, y, w, h, src, srcwidth, rop, planemask)
+
+    This hasn't been formalized yet. It used only to upload a tile
+    to the pixmap cache (usually there's not much benefit compared
+    to the unaccelerated version).
+
+SetupForFill8x8Pattern(patternx, patterny, rop, planemask, trans_col)
+
+    Set up for hardware 8x8 pattern fill (non-color expanded). If
+    neither the HARDWARE_PATTERN_SCREEN_ORIGIN flag or the HARDWARE_
+    PATTERN_PROGRAMMED_ORIGIN flag is set, patternx and patterny can be
+    ignored. Otherwise, patternx and patterny just indicate the video
+    memory address where the pattern is stored. The pattern is stored
+    linearly in video memory. When the transparency color is -1 there
+    is no transparency.
+
+SubsequentFill8x8Pattern(patternx, patterny, x, y, w, h)
+
+    Perform a hardware 8x8 pattern fill. If the flag HARDWARE_PATTERN_
+    SCREEN_ORIGIN is set, patternx and patterny can be ignored;
+    otherwise, patternx and patterny indicate the video memory address
+    where the pattern is stored. However, if HARDWARE_PATTERN_
+    PROGRAMMED_ORIGIN is set patternx and patterny define the origin
+    offset into the pattern. Any rotation issues are handled by the
+    generic code by generating pre-rotated copies of the pattern. The
+    pattern address will always be at a multiple of 8 pixels offset
+    from the start of a scanline (x will be a multiple of 8), unless
+    the HARDWARE_PATTERN_ALIGN_64 is set. At the moment, setting
+    HARDWARE_PATTERN_ALIGN_64 in the absence of HARDWARE_PATTERN_
+    PROGRAMMED_ORIGIN will disable the use of this function, but this
+    will change in a future version.
+
+SetupFor8x8PatternColorExpand(patternx, patterny, bg, fg, rop, planemask)
+
+    Set up for hardware color-expanded 8x8 pattern fill. If the flag
+    HARDWARE_PATTERN_SCREEN_ORIGIN is set, or HARDWARE_PATTERN_
+    PROGRAMMED_ORIGIN is set in the absence of HARDWARE_PATTERN_
+    PROGRAMMED_BITS, patternx and patterny indicate the video memory
+    address where the pattern is stored, which will be on an 8 byte
+    boundary relative to the start of a scanline. Otherwise, patternx
+    and patterny can be ignored. The pattern x-coordinate will be in
+    units of "bits", that is, a byte offset of one relative to the
+    start of the scanline is represented by a patternx value of 8.
+
+    If HARDWARE_PATTERN_PROGRAMMED_BITS is set, patternx and patterny
+    are overloaded as follows: patternx holds the first 4 lines (32
+    pixels) of the pattern, with each byte (MSB-first bit order if the
+    HARDWARE_PATTERN_BIT_ORDER_MSBFIRST flag is set) corresponding to a
+    scanline of the pattern. patterny holds the second half of the
+    pattern. This is the so-called "Windows-format".
+
+    A background color of -1 indicates transparency (support of
+    transparency is indicated by HARDWARE_PATTERN_MONO_TRANSPARENCY).
+
+Subsequent8x8PatternColorExpand(patternx, patterny, x, y, w, h)
+
+    Perform a hardware color-expanded 8x8 pattern fill. If the flag
+    HARDWARE_PATTERN_SCREEN_ORIGIN is set, patternx and patterny
+    can be ignored; otherwise, patternx and patterny indicate the
+    video memory address where the pattern is stored. Any rotating
+    issues are handled by the generic code by generating pre-rotated
+    copies of the pattern. Again patternx is in "bit" or "stencil"
+    units.
+
+    If HARDWARE_PATTERN_PROGRAMMED_ORIGIN is set, patternx and
+    patterny hold the origin (x and y offsets into the pattern).
+    HARDWARE_PATTERN_SCREEN_ORIGIN may be defined additionally;
+    in that case, the following is true: patternx and patterny will
+    be the same for all "Subsequent" calls. You may only need to
+    program the origin in the first Subsequent call.
+
+ColorExpandFlags
+
+    This selects the restrictions for color expansion operations. The
+    flags are extended with a set of flags that is used to define
+    details about the hardware-specific implementation of color
+    expansion, as performed by the low-level color expansion functions. 
+    The following extra flags are defined:
+
+    SCANLINE_NO_PAD
+    SCANLINE_PAD_BYTE
+    SCANLINE_PAD_DWORD
+
+	Defines the padding at the end of a scanline of monochrome
+	data, which indicates the number of bits that is ignored by the
+	graphics chip at the end of each scanline in multi-scanline
+	color-expansion operations from the CPU to the screen. DWORD
+        padding is preferred. These flags do not apply to screen-to-screen
+        color expansion. Currently, not defining SCANLINE_PAD_DWORD will
+        result in non-optimized and limited use of CPU-to-screen color
+        expansion.
+
+    CPU_TRANSFER_PAD_DWORD
+    CPU_TRANSFER_PAD_QWORD
+
+	Defines the total amount of data to be transferred in a
+        multi-scanline CPU-to-screen color-expansion operation. Most
+        chips pad to a DWORD boundary.
+
+    CPU_TRANSFER_BASE_FIXED
+
+	Indicates that the destination address for monochrome data for
+	CPU-to-screen color-expansion is a fixed address, rather than
+	a large range starting from the ColorExpandBase address.
+
+    ONLY_TRANSPARENCY_SUPPORTED
+
+	Indicates that the color expansion operations only work with
+	transparency (bit 0 pixels are not written).
+	
+    TRIPLE_BITS_24BPP
+
+	When enabled (must be in 24bpp mode), color expansion functions
+	are expected to require three times the amount of bits to be
+	transferred so that 24bpp grayscale colors can used with color
+	expansion in 8bpp coprocessor mode. Each bit is expanded to 3
+	bits when writing the monochrome data. When definining this
+        flag, also define RGB_EQUAL.
+
+    VIDEO_SOURCE_GRANULARITY_PIXEL
+    VIDEO_SOURCE_GRANULARITY_BYTE
+    VIDEO_SOURCE_GRANULARITY_DWORD
+
+	This indicates the granularity of the horizontal source location
+	specification for screen-to-screen color expansion operations.
+	It is either one pixel, 8 pixels (a byte), or 32 pixels (a 32-bit
+        word). If there's some kind of clipping mechanism available, pixel
+        granularity is usually possible.
+
+    BIT_ORDER_IN_BYTE_LSBFIRST
+    BIT_ORDER_IN_BYTE_MSBFIRST
+
+	This defines the order of bits within a byte. As far as X is
+	concerned, it's best when the lowest-order bit corresponds to
+	the leftmost pixel on the screen (this is the technically
+	superior format), but many chips only support the "wrong" bit
+	order (MSBFIRST).
+
+    LEFT_EDGE_CLIPPING
+
+	This indicates that CPU-to-screen color expansion operations
+	support the left-edge clipping parameter, which indicates
+	the number of pixels to skip at the left edge.
+
+    LEFT_EDGE_CLIPPING_NEGATIVE_X
+
+	This indicates that when the left-edge clipping parameter is
+        specified, the x coordinate is allowed to be negative (while
+        being on-screen when the parameter is actually added to it).
+        At the moment, this flag is a requirement for CPU-to-screen
+        color expansion acceleration of (large) stipples.
+
+    Note that the regular graphics operations flags for raster-op,
+    planemask and color restrictions are also valid. NO_TRANSPARENCY
+    indicates that color expansion does not support transparency.
+
+SetupForCPUToScreenColorExpand(bg, fg, rop, planemask)
+
+    Set up for CPU-to-screen color expansion operations. This is used
+    for writing bitmaps and text, and (not yet) stipples. When bg is
+    equal to -1, the background (bits that are 0) is transparent.
+
+SubsequentCPUToScreenColorExpand(x, y, w, h, skipleft)
+
+    Perform a CPU-to-screen color expansion operation. The monochrome
+    data will be transferred after this function has been called.
+    Sync() is called when the data has been transferred. The optional
+    skipleft parameter defines a number of pixels (0 - 7) to be skipped
+    at the left edge (at the start of each scanline).
+
+SetupForScreenToScreenColorExpand(bg, fg, rop, planemask)
+
+    Set up for screen-to-screen color expansion operations. This will
+    only be used when the storing of monochrome data in the pixmap (or
+    font) cache is implemented.
+
+SubsequentScreenToScreenColorExpand(srcx, srcy, x, y, w, h)
+
+    Perform a screen-to-screen color expansion operation. scrx is in
+    pixel units (8 corresponds to one byte offset).
+
+SetupForScanlineCPUToScreenColorExpand(x, y, w, bg, fg, rop, planemask)
+
+    Set up for a scanline-by-scanline color expansion operation from
+    the CPU to the screen. This is not of much use (except when a chip
+    is not compatible with supported methods of color expanding a whole
+    bitmap). It's not used currently.
+
+SubsequentScanlineCPUToScreenColorExpand()
+
+    Color expand a scanline from the CPU to the screen. Many chips
+    automatically add the pitch of the dislay to the destination
+    address after a scanline has been written so that it doesn't need
+    to be updated. Otherwise you'll need to keep track of the address.
+
+SetupForScanlineScreenToScreenColorExpand(x, y, w, h, bg, fg, rop, planemask)
+
+    Set up for a scanline-by-scanline color expansion operation from
+    the screen to the screen (top-down). This is typically used for
+    chips that don't have usable CPU-to-screen color expansion. It is
+    taken advantage of for bitmaps, text, and (not yet) stipples.
+
+SubsequentScanlineScreenToScreenColorExpand(srcaddr)
+
+    This performs color expansion of a scanline from the screen
+    (typically a scratch buffer) to the screen. To take advantage of
+    this operation, ScratchBufferAddr and ScratchBufferSize must be
+    defined (> 0), and either linear addressing must be used or
+    ScratchBufferBase must be defined. Being able to support
+    COP_FRAMEBUFFER_CONCURRENCY is a win here. The srcaddr is the
+    linear framebuffer address in (non-expanded) pixel units. The real
+    address is (srcaddr / 8). When TRIPLE_BITS_24BPP is defined,
+    srcaddr is in non-expanded 8bpp pixel units.
+
+    In addition, PingPongBuffers defines the number of alternating
+    buffers used. The default is two. Depending on the implementation
+    and size of framebuffer and coprocessor write buffers on the chip,
+    you might need more than two.
+
+CPUToScreenColorExpandBase
+
+    This address defines the base address for writing monochrome bitmap
+    data to when performing CPU-to-screen color expansion operations. 
+    When the CPU_TRANSFER_BASE_FIXED flag is not set and
+    CPUToScreenColorExpandRange is not defined, a large range is
+    assumed to be available (at least the number pixels in the virtual
+    screen / 8). For text operations this is probably never a problem.
+    At the moment hardware that has 64 bytes or so of transfer space is
+    unlucky. 32-bit access is always used.
+
+    If this is not defined, FramebufferBase will automatically be
+    used.
+
+CPUToScreenColorExpandRange
+
+    This defines the size of the "window" starting from the base
+    address for writing CPU-to-screen color-expand data. If this is
+    not defined or zero, the range is assumed to be large enough.
+    When it is greater than the width of the screen in pixels / 8,
+    the base address will be adjusted if necessary at the end of each
+    scanline. Currently, if it is smaller than that, the
+    CPU_TRANSFER_BASE_FIXED flag is set.
+
+    At the moment, the bottom line is that you need about 256 bytes
+    of transfer space to use CPU-to-screen color expansion (128 bytes
+    with a 1024 pixel screen width) with PCI-burst mode support.
+    However, "fixed-base" operation is supported.
+
+FramebufferBase
+
+    This is a pointer to the framebuffer. It is required by the
+    ScanlineScreenToScreenColorExpand, and is automatically
+    initialized. It should not be set up in a chip-specific driver.
+
+BitsPerPixel
+
+    This is the number of bits per pixel, stored here for convenience.
+    There's no need to initialize this from a driver.
+
+FramebufferWidth
+
+    The is the width of the framebuffer in pixels, stored here for
+    convenience. There's no need to initialize this from a driver.
+
+ScratchBufferAddr
+ScratchBufferSize
+
+    This specifies the linear address in bytes and size of the scratch
+    buffer used for ScanlineScreenToScreenColorExpand operations.
+
+ScratchBufferBase
+
+    This is a pointer to the mapped video memory of the scratch buffer.
+    When not defined, the scratch buffer is assumed to be at the
+    specified offset (ScratchBufferAddr) into a linear framebuffer.
+    This field should only be initialized when using
+    ScanlineScreenToScreenColorExpand with a non-linear framebuffer,
+    in which case it should be noted that it is totally independent
+    from ScratchBufferAddr.
+
+PingPongBuffers
+
+    This field defines the number of alternating buffers used in the
+    scratch buffer for ScanlineScreenToScreenColorExpand. The default
+    is two. Depending on the implementation and size of framebuffer and
+    coprocessor write buffers on the chip, you might need more than
+    two.
+
+ErrorTermBits
+
+    Indicates the number of bits of precision for the Bresenham line
+    error terms. The absolute values of the of the terms are guaranteed
+    to be in the range [0, 2 ^ ErrorTermBits - 1]. If your registers
+    have 14 significant bits, you would probably use 13 here because of
+    the sign bit.
+
+ServerInfoRec
+
+    This is a pointer to the XFree86 server InfoRec. It must be defined.
+    The InitPixmapCache function initializes it for compatibility with
+    earlier versions of XAA. The SVGA server initializes it
+    automatically.
+
+PixmapCacheMemoryStart
+PixmapCacheMemoryEnd
+
+   These values must be defined if the pixmap cache is enabled. The
+   InitPixmapCache function initializes them, for compatibility with
+   earlier versions of XAA.
+
+
+1.6	Commonly Used Parameters
+
+This section clarifies the format of some of the commonly used
+parameters in the low-level functions (as described above).
+
+Coordinates ("x", "y") are pixel coordinates unless otherwise noted.
+
+The width and height ("w", "h") define the size of the area involved in
+pixel units.
+
+Colors (named "color", "bg" or "fg") are simple pixel values. They are
+not "replicated" over the 32-bit integer argument. So for example in
+8bpp mode, bits 0-7 of the value represent the pixel value, and the
+rest of the bits is zero. If your chip requires a "replicated" 32-bit
+pixel value (4 duplicated pixels for 8bpp), you will have to do that in
+your low-level functions implementation.
+
+The planemask is a mask that defines what bits in the pixel value
+are to be modified on the screen. Again, this value cannot be assumed
+to be "replicated" to 32-bit in 8bpp and 16bpp modes.
+
+The raster-op ("rop") is one of the 16 raster-operations that X
+defines:
+
+    #define GXclear			0x0	/* 0 */
+    #define GXand			0x1	/* src AND dst */
+    #define GXandReverse		0x2	/* src AND NOT dst */
+    #define GXcopy			0x3	/* src */
+    #define GXandInverted		0x4	/* NOT src AND dst */
+    #define GXnoop			0x5	/* dst */
+    #define GXxor			0x6	/* src XOR dst */
+    #define GXor			0x7	/* src OR dst */
+    #define GXnor			0x8	/* NOT src AND NOT dst */
+    #define GXequiv			0x9	/* NOT src XOR dst */
+    #define GXinvert			0xa	/* NOT dst */
+    #define GXorReverse			0xb	/* src OR NOT dst */
+    #define GXcopyInverted		0xc	/* NOT src */
+    #define GXorInverted		0xd	/* NOT src OR dst */
+    #define GXnand			0xe	/* NOT src OR NOT dst */
+    #define GXset			0xf	/* 1 */
+
+For each graphics operation you can define that only GXcopy is supported
+by setting the GXCOPY_ONLY flag in the flags for that particular
+operation. Similarly, NO_PLANEMASK indicates that the plane mask is
+not supported.
+
+
+1.5	The best strategy
+
+Start with simple filled solid rectangles and screen-to-screen copies
+(BitBLT). Those two functions alone will accelerate the vast majority
+of graphic operations requested. The sample driver can be used as a
+starting point.
+
+Next you might want to look at color expansion (CPUToScreen, or if
+that can't be done, ScanlineScreenToScreen), BresenhamLine or
+TwoPointLine, and Fill8x8Pattern/ColorExpand8x8Pattern.
+
+The relative win of seperately implementing functions that are already
+accelerated with solid filled rectangles varies, but it can make a
+difference since just using rectangle fills has some overhead. You may
+be able to make better use of features of the graphics chip, and better
+exploit CPU/graphics concurrency, although this already done by the
+generic code for some operations (such as filled polygons and arcs).
+
+
+2	Acceleration hooks
+
+Many operations can be "hooked" at a higher level, instead of just
+defining the low-level functions. This can be useful for existing code
+or operations for which there are no adequate low-level functions. What
+follow is a description of most of the functions that can be hooked.
+
+[This isn't complete]
+
+2.1	Filled Rectangles
+
+Rectangles can be filled with a single source color, or with three
+different types of repeating pattern:
+
+    Stipple: a transparent bitmap pattern where 1's correspond to the
+    foreground color.
+
+    Opaque stipple: a bitmap pattern where 0's correspond to the
+    background color and 1's to the foreground color.
+
+    Tile: an image pattern that can have full pixel depth.
+
+2.1.1	Solid Filled Rectangles
+
+Solid filled rectangles are a very common operation. Apart from
+a regular solid fill, special raster ops are often used, for example
+for inverting the destination.
+
+To define a simple function for drawing one filled rectangle that will
+be used for many kinds of operation, use this:
+
+    xf86AccelInfoRec.SetupForFillRectSolid = MySetupForFillRectSolid;
+    xf86AccelInfoRec.SubsequentFillRectSolid = MySubsequentFillRectSolid;
+
+If you accelerate solid filled rectangles, and have a complete
+replacement for PolyFillRect that handles clipping, do this:
+
+    xf86GCInfoRec.PolyFillRectSolid = MyPolyFillRect;
+
+If you don't handle clipping, but do have a replacement for accelerated
+solid filled rectangles, do this:
+
+    xf86GCInfoRec.PolyFillRectSolid = xf86PolyFillRect;
+    xf86AccelInfoRec.FillRectSolid = MyFillRectSolid;
+
+In all cases, the following flags can be set in
+xfGCInfoRec.FillRectSolidFlags:
+
+    GXCOPY_ONLY		    Only the raster-op GXcopy is supported.
+    NO_PLANEMASK            No special planemask is supported.
+    RGB_EQUAL		    Only a foreground color with same values
+			    for red, green and blue is accepted.
+
+2.1.2	Tiled Filled Rectangles
+
+If you have the required low-level functions and enable PIXMAP_CACHE,
+the pixmap cache will be used to draw tiles. For tiles, you just need
+ScreenToScreenCopy.
+
+If you accelerate tiled filled rectangles, and have a complete
+replacement for PolyFillRect that handles clipping, do this:
+
+    xf86GCInfoRec.PolyFillRectTiled = MyPolyFillRect;
+
+If you don't handle clipping, but do have accelerated tiled filled
+rectangles, do this:
+
+    xf86GCInfoRec.PolyFillRectTiled = xf86PolyFillRect;
+    xf86AccelInfoRec.FillRectTiled = MyFillRectTiled;
+
+In both cases, the following flags can be set in
+xfGCInfoRec.FillRectTiledFlags:
+
+    GXCOPY_ONLY		    Only the raster-op GXcopy is supported.
+    NO_PLANEMASK            No special planemask is supported.
+
+2.1.3	Stippled Filled Rectangles
+
+If you have the required low-level functions and enable PIXMAP_CACHE,
+the pixmap cache will be used to draw stipples. For stipples, you just need
+ScreenToScreenCopy with support for transparency.
+
+If you accelerate stippled filled rectangles, and have a complete
+replacement for PolyFillRect that handles clipping, do this:
+
+    xf86GCInfoRec.PolyFillRectStippled = MyPolyFillRect;
+
+If you don't handle clipping, but do have accelerated stippled filled
+rectangles, do this:
+
+    xf86GCInfoRec.PolyFillRectStippled = xf86PolyFillRect;
+    xf86AccelInfoRec.FillRectStippled = MyFillRectStippled;
+
+In both cases, the following flags can be set in
+xfGCInfoRec.FillRectStippledFlags:
+
+    GXCOPY_ONLY		    Only the raster-op GXcopy is supported.
+    NO_PLANEMASK            No special planemask is supported.
+
+2.1.4	Opaque Stippled Filled Rectangles
+
+If you have the required low-level functions and enable PIXMAP_CACHE,
+the pixmap cache will be used to draw stipples. For stipples, you just need
+ScreenToScreenCopy.
+
+If you accelerate opaque filled rectangles, and have a complete
+replacement for PolyFillRect that handles clipping, do this:
+
+    xf86GCInfoRec.PolyFillRectOpaqueStippled = MyPolyFillRect;
+
+If you don't handle clipping, but do have accelerated opaque filled
+rectangles, do this:
+
+    xf86GCInfoRec.PolyFillRectOpaqueStippled = xf86PolyFillRect;
+    xf86AccelInfoRec.FillRectOpaqueStippled = MyFillRectOpaqueStippled;
+
+In both cases, the following flags can be set in
+xf86GCInfoRec.FillRectOpaqueStippledFlags:
+
+    GXCOPY_ONLY		    Only the raster-op GXcopy is supported.
+    NO_PLANEMASK            No special planemask is supported.
+
+2.2	Filled Spans
+
+Filled spans can be used for many purposes, mostly filled areas
+of different shapes. The fill style can be solid (by far the most
+useful), tiled, stippled and opaque stippled.
+
+If you accelerate solid filled spans, and have a complete
+replacement for FillSpansSolid that handles clipping, do this:
+
+    xf86GCInfoRec.FillSpansSolid = MyFillSpanstSolid;
+
+And similarly for other fill styles:
+
+    xf86GCInfoRec.FillSpansTiled = MyFillSpanstTiled;
+    xf86GCInfoRec.FillSpansStippled = MyFillSpanstStippled;
+    xf86GCInfoRec.FillSpansOpaqueStippled = MyFillSpanstOpaqueStippled;
+
+If you don't handle clipping, but do have a function for drawing solid
+filled spans, do this:
+
+    xf86GCInfoRec.FillSpansSolid = xf86FillSpans;
+    xf86AccelInfoRec.FillSpansSolid = MyFillSpansSolid;
+
+In all cases, the following flags can be set in
+xfGCInfoRec.FillSpansSolidFlags (and similarly for for other fill styles):
+
+    GXCOPY_ONLY		    Only the raster-op GXcopy is supported.
+    NO_PLANEMASK            No special planemask is supported.
+    RGB_EQUAL		    Only a foreground color with same values
+			    for red, green and blue is accepted.
+
+2.3	Filled Arcs
+
+If you accelerate filled solid arcs, and have a complete replacement
+for PolyFillArc that handles clipping, do this:
+
+    xf86GCInfoRec.PolyFillArc = MyPolyFillArc;
+
+The following flags can be set in xf86GCInfoRec.PolyFillArcFlags:
+
+    GXCOPY_ONLY		    Only the raster-op GXcopy is supported.
+    NO_PLANEMASK            No special planemask is supported.
+
+If you have a function for accelerated solid horizontal spans, it will
+automatically be taken advantage of for filled arcs.
+
+2.4	Text
+
+There are two kinds of text, transparent text (the background is not
+written), and image text (the background is filled with the background
+color).
+
+There are also two types of font. Terminal-emulator fonts, which have
+characters that are all the same size, and non-terminal emulator fonts,
+which have characters of varying size.
+
+In the case of image text with a non-terminal emulator font, the filled
+background corresponds to the bounding box of the text image.
+
+2.4.1	Transparent Text
+
+If you accelerate transparent text strings, and have a complete replacement
+for PolyGlyphBlt that handles clipping, do this if you accelerate
+terminal-emulator fonts:
+
+    xf86GCInfoRec.PolyGlyphBltTE = MyPolyGlyphBltTE;
+
+And if you also support non-terminal emulator fonts:
+
+    xf8GCInfoRec.PolyGlyphBltNonTE = MyPolyGlyphBltNonTE;
+
+And if you also support non-terminal emulator fonts:
+
+    xf8GCInfoRec.PolyGlyphBltNonTE = MyPolyGlyphBltNonTE;
+
+If you don't handle clipping, but do have accelerated transparent text:
+
+    xf86GCInfoRec.PolyGlyphBltTE = xf86PolyGlyphBltTE;
+    xf86AccelInfoRec.PolyTextTE = MyPolyTextTE;
+
+And similarly for non-terminal emulator fonts:
+
+    xf86GCInfoRec.PolyGlyphBltNonTE = xf86PolyGlyphBltNonTE;
+    xf86AccelInfoRec.PolyTextNonTE = MyPolyTextNonTE;
+
+2.4.2	Image text
+
+If you accelerate image text strings, and have a complete replacement
+for ImageGlyphBlt that handles clipping, do this if you accelerate
+terminal-emulator fonts:
+
+    xf86GCInfoRec.ImageGlyphBltTE = MyImageGlyphBltTE;
+
+And if you also support non-terminal emulator fonts:
+
+    xf8GCInfoRec.ImageGlyphBltNonTE = MyImageGlyphBltNonTE;
+
+If you don't handle clipping, but do have accelerated transparent text:
+
+    xf86GCInfoRec.ImageGlyphBltTE = xf86ImageGlyphBltTE;
+    xf86AccelInfoRec.ImageTextTE = MyImageTextTE;
+
+And similarly for non-terminal emulator fonts:
+
+    xf86GCInfoRec.ImageGlyphBltNonTE = xf86ImageGlyphBltNonTE;
+    xf86AccelInfoRec.ImageTextNonTE = MyImageTextNonTE;
+
+2.5	CopyArea
+
+Screen-to-screen area copies (BitBLTs) are extremely useful. It's vital
+for smooth scrolling and dragging of windows. Unaccelerated, this
+operation is often slow because of the slowness of read operations
+from the framebuffer. This function can also be used to great effect
+for caching mechanisms for patterns and fonts, when support for it
+is added.
+
+If you accelerate screen-to-screen area copies (BitBLTs), and have a
+complete replacement for CopyArea that handles clipping, do this:
+
+    xf8GCInfoRec.CopyArea = MyCopyArea;
+
+If you don't handle clipping, but do have an accelerated CopyArea:
+
+    xf86GCInfoRec.CopyArea = xf86CopyArea;
+    xf86AccelInfoRec.ScreenToScreenBitBlt = MyScreenToScreenBitBlt;
+
+In all cases, the following flags can be set in
+xfGCInfoRec.CopyAreaFlags:
+
+    GXCOPY_ONLY		    Only the raster-op GXcopy is supported.
+    NO_PLANEMASK            No special planemask is supported.
+    NO_TRANSPARENCY         Transparency color compare is not supported.
+
+
+3.	Opportunities For Improvement
+
+- The graphics operation flags aren't consistent. There should be
+  seperate flags indicating the restrictions for the lower-level
+  functions.
+
+- VT-switching awareness has not been extensively tested, and the
+  current implement has a few rough edges.
+
+- Solid tile fill may be faster with cfb in some cases (if the chip
+  doesn't have much video memory bandwidth to play with and the PCI
+  bus bandwidth is decent).
+
+- Having a function for clipped filled spans that clips on the fly. This
+  doesn't exist yet anywhere in the source tree. This would be a minor
+  speed up for things like clipped filled polygons and arcs, and wide
+  lines.
+
+- Having the pixmap cache store stipples in monochrome format, and using
+  color expansion features of the graphics chip to replicate them. This
+  is more efficient since less video memory bandwidth is required for
+  the cached pattern source. Not all chips support this kind of operation
+  easily, especially w.r.t. clipping of the leftmost edge (the first pixel
+  to be drawn may start at some bit of the leftmost video memory byte), and
+  defining the location of the monochrome pattern in video memory can be
+  a little complex.
+
+- Taking more advantage of built-in (8x8) chip pattern registers. This
+  works OK now, but things not implemented include detection of
+  tiles that have only two colors so that they can be done with
+  color-expand 8x8 pattern fill, and interleaving schemes allowing 16
+  and 32 pixel high patterns to be done using the hardware pattern. Also
+  some chips support 16x8 and 32x8 pattern fill at 8bpp by using 16bpp
+  or 32bpp pattern fill. Currently, support for chips that require the
+  pattern to be aligned on a 64-pixel boundary is missing in most cases,
+  which in practice means the 8x8 pattern is not usable for many chips.
+
+- Font-caching (useful for configurations where it's not possible to use
+  color expansion for text, and for certain fonts). Non-"terminal emulator"
+  fonts is certainly a weak area of XAA.
+
+- Complete implementation of non-terminal emulator font text acceleration
+  using color expansion (the code is in place, but causes problems).
+
+- Generic hardware-cursor code (this sounds very useful to me), including
+  Harald Koenig's support for real-time software/hardware cursor switching.
+
+- More complete 24bpp-in-8bpp-mode support. Missing is full implementation
+  of color expansion schemes to allow 24bpp fills in 8bpp mode in two
+  passes.
+
+- The Pentium optimized text bitmap functions exist only for 6 and 8-pixel
+  wide fonts. BTW, on a Cyrix 6x86 the Pentium-optimized 6-wide function
+  seems to cause a 2% performance decrease.
+
+- Accelerated stipples using direct color expansion would definitely be
+  worthwhile.  The lowest-level function is in place (but untested). It
+  would take care of cases where the font cache cannot be used (such as
+  24bpp, lack of transparency color compare for transparent stipples,
+  lack of off-screen video memory), or when color expansion is faster
+  (generally on video memory bandwidth-starved configurations).
+
+3.1	More Concurrency?
+
+More concurrency between graphics and CPU processing sounds very
+attractive. This can be implemented by not "syncing" when leaving the
+graphic drawing code, but instead allowing graphics commands to
+continue while X is doing its request processing, or even during
+context switching or when the client is running. The ever larger PCI
+write buffers help to make this a very nice optimization. This requires
+awareness of coprocessor activity at several levels in the server code
+(for example, at any point where something is read or written to the
+video card).
+
+There are variations between chipsets that affect how easily they would
+support such a scheme. The best behaviour is what I would call "in
+order execution" of coprocessor commands and simple CPU writes to the
+framebuffer. That is, if you send some graphics coprocessor commands to
+the chip, and then write something to the framebuffer, it is guaranteed
+that the framebuffer writes will only happen when the graphics commands
+have been completed. This avoids, for example, having to check for
+coprocessor activity each time something is drawn with a "dumb"
+framebuffer function. I think that PCI write buffers on the motherboard
+generally follow this behaviour, but graphics chips generally do not.
+
+Of course, reading or querying anything from the graphics card is
+something you will want to avoid, since in most cases this will result
+in the CPU being stalled until all the PCI and on-chip write buffers
+are flushed and processed. Chips that require frequent querying or do
+not allow concurrent coprocessor execution and CPU framebuffer access
+will take much less benefit.
+
+A somewhat wild way to test this kind of scheme is to simply not define
+the BACKGROUND_OPERATIONS flag, but despite that not do any syncing
+in the graphics primitives. Without BACKGROUND_OPERATIONS set, the XAA
+code almost never calls Sync itself. Someone (inadvertently) tried
+this on an ET6000, and it seemed to measurably increase
+performance. This is of course hazardous and prone to lock-ups etc.
+
+
+4.	Comparison Of Chip-specific Implementations
+
+
+4.1	Current Chip-specific Implementations
+
+ARK Logic
+
+    Uses BACKGROUND_OPERATIONS and COP_FRAMEBUFFER_CONCURRENCY. The
+    latter is vital for high-performance color expansion, since the
+    ARK chips don't appear to have CPU-to-screen color expansion.
+    There's no need to "sync" during a batch of accelerator commands;
+    the ARK chips seem to have "PCI-Retry" support.
+
+    Screen locations are programmed as pixel addresses. The ARK chip
+    also supports coordinates, but that restricts the possible
+    framebuffer widths and I don't think it would be faster.
+
+    FillRectSolid is provided. At 24bpp, it uses 8bpp coprocessor mode
+    which leads to RGB_EQUAL and NO_PLANEMASK restrictions. 
+    ScreenToScreenCopy is supported, again restrictions at 24bpp:
+    NO_PLANEMASK and NO_TRANSPARENCY. BresenhamLine is very
+    straightforward.
+
+    Fill8x8Pattern is supported; the ARK chip requires the pattern to
+    be aligned on a 64-pixel boundary and the address modulo 64 seems
+    to indicate the vertical offset (y origin) (HARDWARE_PATTERN_MOD_
+    64_OFFSET). The latter means the pattern can actually be used (when
+    the framebuffer width is a multiple of 64), despite the limited
+    support for 64-pixel pattern alignment in XAA.  The ARK chips don't
+    seem to have support for a monochrome pattern.
+
+    Color expansion is implemented using ScanlineScreenToScreen-
+    ColorExpand (24bpp: RGB_EQUAL, NO_PLANEMASK), which is pretty fast
+    thanks to COP_FRAMEBUFFER_CONCURRENCY.
+    Color expansion flags are VIDEO_SOURCE_GRANULARITY_PIXEL and
+    BIT_ORDER_IN_BYTE_LSBFIRST. At 24bpp, TRIPLE_BITS_24BPP would be
+    useful but is not yet supported by XAA.
+
+    ScreenToScreenColorExpand is provided for future use by XAA. One
+    thing that ARK chips can accelerate but is not yet provided by XAA
+    is styled (patterned) line drawing.
+
+Cirrus Logic GD5426/28/29/30/34/40/46 and 7543/48
+
+    Uses BACKGROUND_OPERATIONS. The driver is shared by a very wide
+    range of largely compatible chips, from the first-generation
+    accelerator CL-GD5426 to the recent CL-GD5446, which is the only
+    one to support COP_FRAMEBUFFER_CONCURRENCY and also doesn't need
+    "sync"-ing between coprocessor operations. Screen locations are
+    programmed as byte addresses (which makes the driver larger than,
+    for example, ARK). The driver is compiled twice, with programmed I/O
+    (required for earlier chips) and with memory-mapped I/O.
+
+    FillSolidRect is provided (NO_PLANEMASK, since the chips don't
+    support a planemask), and at 24bpp on a non-5436/46 uses 8bpp mode
+    in which case RGB_EQUAL is set.
+
+    ScreenToScreenCopy is supported (NO_PLANEMASK). A few chips
+    (5429/30/34) don't support transparency color compare at all
+    (NO_TRANSPARENCY), and none of the chips support it at pixel depths
+    greater than 16bpp.
+
+    For CPU-to-screen color expansion, chips earlier than the CL-GD5436
+    don't support DWORD padding of scanlines, so the XAA code isn't
+    usable for them. Instead, these chips use byte-padding-aware text
+    acceleration code from the old accelerated driver, and the
+    ScanlineScreenToScreenColorExpand method (which isn't very fast
+    on these chips) is provided for other things. NO_PLANEMASK.  The
+    5436/46 support 24bpp color expansion, but only with transparency
+    (ONLY_TRANSPARENCY_SUPPORTED); the others would benefit from
+    TRIPLE_BITS_24BPP. The bit order is BIT_ORDER_IN_BYTE_MSBFIRST. The
+    LEFT_EDGE_CLIPPING parameter (a value from 0 to 7) is supported for
+    CPU-to-screen color expansion. Screen-to-screen color expansion is
+    provided for future use. It requires the source to be aligned on a
+    DWORD boundary (VIDEO_SOURCE_GRANULARITY_DWORD).
+
+Matrox Millennium
+
+    BACKGROUND_OPERATIONS
+    24bpp: NO_PLANEMASK
+    FillRectSolid
+    ScreenToScreenCopy (NO_TRANSPARENCY)
+
+    Color expansion:
+    CPUToScreenColorExpand
+    SCANLINE_PAD_DWORD
+    CPU_TRANSFER_PAD_DWORD
+    BIT_ORDER_IN_BYTE_LSBFIRST
+    LEFT_EDGE_CLIPPING
+    ScreenToScreenColorExpand
+    VIDEO_SOURCE_GRANULARITY_PIXEL
+
+
+4.2	Chip-specific Performance
+
+This table is intended to help with determining what kinds of
+operations best suit a particular chip. It shows the results (in MB/s)
+for the low-level bandwidth benchmarks run at start-up. Because refresh
+is disabled at the time time benchmark is run, the result reflects the
+full DRAM bandwidth on DRAM-based cards (the dot clock doesn't really
+matter). For this reason, the comparison isn't really fair (biased against
+VRAM/WRAM and MDRAM). The virtual display width can have an influence.
+
+Chip	          ARK1000PV Trid9385  CLGD5434  TGUI9440  MGA-Mill  ET6000
+Memory            1MB DRAM  2MB DRAM  2MB DRAM  1MB DRAM  2MB WRAM  2MB MDRAM
+CPU               DX4/100   ?         DX4/100   AMK5/100  AMK5/100  6x86P150+
+Bus		  PCI 33MHz PCI       VLB 33MHz PCI 33MHz PCI 33MHz PCI 30MHz
+bpp, width        8bpp 1024 8bpp      8bpp 1024 8bpp      8bpp      8bpp
+-----------------------------------------------------------------------------
+framebuffer        43.95     15.89     32.76     44.23     44.48     61.40
+solid filled rect
+10x1                7.38      3.14      4.58      8.72     34.99     28.22
+40x40              85.82     89.93    120.34     62.60    369.84    143.84
+400x400           108.81    157.20    211.18     80.03   1618.11    264.35
+screen copy
+10x10		   24.77     11.26     20.49     18.53     28.14     24.22
+40x40		   38.81     43.90     41.68     32.11     89.27     70.57
+400x400		   46.70     68.59     54.47     34.14    126.88    194.23
+400x400 scroll       -         -       55.63     40.22       -      189.34
+8x8 pattern fill
+400x400		  105.16    116.08       -       80.02       -      264.34
+color expansion
+CPU to screen        -         -      116.25       -      261.03*      -
+scanl. scr-to-scr  71.75       -       80.64       -         -      187.25
+10x10 scr-to-scr   29.90       -       26.69     20.07       -         -
+
+Chip	          MGA-Mill  MGA-Mill  MGA-Mill  TGUI9680  ARK2000PV
+Memory            2MB WRAM  4MB WRAM  2MB WRAM  2MB DRAM  2MB EDO
+CPU               DX4/133   P133      P133                DX4/100  
+Bus		  PCI 33MHz PCI 33MHz PCI 33Mhz PCI       PCI 33MHz
+bpp, width        8bpp      8bpp 1024 8bpp 1152 8bpp 2048 8bpp 1024
+-------------------------------------------------------------------
+framebuffer        26.48     83.70     83.13     10.09     64.44   
+solid filled rect
+10x1               28.63     34.28     41.30      3.06      7.91   
+40x40             385.13    316.47    453.02     55.97    155.76   
+400x400          1656.93   1367.64   1942.59    145.16    244.35   
+screen copy
+10x10		   29.18     23.47     35.09     12.61     33.20   
+40x40		   81.52     74.55     99.92     35.38     78.80   
+400x400		  114.81    105.83    137.60     46.48     99.03   
+400x400 scroll       -         -         -       51.88    100.08   
+8x8 pattern fill
+400x400		     -         -         -       51.74    228.70   
+color expansion
+CPU to screen     211.11*   419.09*   416.23*      -         -     
+scanl. scr-to-scr    -         -         -         -      137.97   
+10x10 scr-to-scr     -         -         -       15.26     36.79   
+
+Chip		  ARK2000PV ARK2000PV MGA-Mill  CL-GD5426 CL-GD5446
+Memory		  2MB EDO   2MB EDO   2MB WRAM  1MB DRAM  2MB DRAM
+CPU		  6x86P150+ 6x86P166+ 6x86P166+ DX4/100   P133
+Bus		  PCI 30MHz PCI 33Mhz PCI 33MHz VLB 33MHz PCI 33Mhz
+bpp, width	  8bpp 1024 8bpp 1024 8bpp 1024 8bpp 1024 8bpp 1280
+-------------------------------------------------------------------
+framebuffer	   88.84    100.45     92.18     13.22     80.81
+solid filled rect
+10x1		   20.99     22.82     41.30      1.16     25.49
+40x40		  157.00    157.00    458.38     28.88    167.10
+400x400		  244.34    244.34   1961.74     41.74    218.02
+screen copy
+10x10	           33.22     33.23     35.09      5.35     34.39
+40x40		   78.81     78.81     99.93     15.83     77.71
+400x400		   99.13     99.02    137.87     20.98     97.03
+400x400 scroll	  100.09    100.09    664.02     21.18     98.55
+8x8 pattern fill
+400x400		  228.68    228.72       -       41.10    217.91
+color expansion
+CPU to screen	     -                730.52       -      221.10
+scanl. scr-to-scr 138.01    138.09       -       19.56       -   
+10x10 scr-to-scr   36.87     36.86     39.19      6.16     66.46
+
+(*) After this benchmark was taken, the color expansion benchmark was
+    changed to write a pattern including both colors instead of just the
+    background one, which is likely to affect the score.
+
+The 10x1 filled rectangles score tells a lot about the command overhead
+for small fills, which is important for operations that fill span-by-span.
+The 10x10 and 40x40 screencopy give an impression of pixmap cache
+efficiency, while the 10x10 score also indicates how a simple font cache
+would perform (compare with color expansion). The 10x10 screen-to-screen
+color expand score reflects a smarter kind of font cache.
+
+If your implementation seems weak at a particular kind of operation, maybe
+you are not doing it optimally and can improve it (usually by reducing
+the command overhead, for example by minimizing the number of graphics
+chip queries).
+
+
+5.	Development notes
+
+When adding a function to the GCInfoRec or AccelInfoRec, make sure to
+have a Makefile with dependencies (run make depend after doing make
+Makefile). If you don't, you're bound to get unexplainable core dumps.
+That also applies to SVGA drivers using the new interface; they should
+be recompiled after a new version of the generic acceleration code
+in installed.
+
+Header files:
+
+vgabpp.h	Declares the new ScreenInit functions for each depth.
+
+xf86xaa.h	General public definitions, including the GCInfoRec and
+		AccelInfoRec.
+
+xf86scrin.h	XAA screen initialization functions.
+
+xf86local.h	Declares functions local to the generic acceleration code.
+
+xf86gcmap.h	Maps names of some local functions to depth-specific
+		versions.
+
+xf86maploc.h	Declares local functions that are name-mapped depending on
+		the depth.
+
+vga256map.h	Maps the name of some cfb functions to their vga256
+		equivalents. This is used for the vga256 version of the
+		GC validation code.
+
+xf86pcache.h	Some declarations for the pixmap cache.
+
+xf86expblt.h	Declares monochrome data color-expansion blit functions
+		defined in xf86expblt.c
+
+
+6. Acknowledgements
+
+The Mach64 server by Kevin Martin has been used a base for some parts
+(notably pixmap caching), and the set of functions accelerated in the
+Mach64 server provided a baseline for what to implement first.

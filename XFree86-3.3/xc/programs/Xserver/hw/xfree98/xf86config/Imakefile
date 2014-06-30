@@ -1,0 +1,31 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/xf86config/Imakefile,v 3.6 1996/12/23 07:09:07 dawes Exp $
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/4 1996/10/19 18:31:19 kaleb $
+
+            SRCS = xf86config.c cards.c
+            OBJS = xf86config.o cards.o
+ LOCAL_LIBRARIES =
+         DEPLIBS =
+      CARDDBFILE = $(LIBDIR)/Cards
+         DEFINES = -DCARD_DATABASE_FILE='"$(CARDDBFILE)"' -DXFREE98_XKB
+
+AllTarget(ProgramTargetName(xf98config))
+
+LinkSourceFile(Cards,$(XF86SRC)/xf86config)
+LinkSourceFile(cards.c,$(XF86SRC)/xf86config)
+LinkSourceFile(cards.h,$(XF86SRC)/xf86config)
+LinkSourceFile(xf86conf.man,$(XF86SRC)/xf86config)
+LinkSourceFile(xf86config.c,$(XF86SRC)/xf86config)
+
+NormalProgramTarget(xf98config,$(OBJS),$(DEPLIBS),$(LOCAL_LIBRARIES),NullParameter)
+InstallProgram(xf98config,$(BINDIR))
+DependTarget()
+
+#ifndef DontInstallPC98Version
+InstallNonExecFile(Cards,$(LIBDIR))
+#endif
+InstallManPageLong(xf86conf,$(MANDIR),xf98config)

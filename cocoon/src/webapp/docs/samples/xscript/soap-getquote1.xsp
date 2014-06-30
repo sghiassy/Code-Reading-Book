@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+  Author: Ovidiu Predescu "ovidiu@cup.hp.com"
+
+  Date: October 9, 2001
+ -->
+
+<xsp:page
+  language="java"
+  xmlns:xsp="http://apache.org/xsp"
+  xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+  xmlns:xscript="http://apache.org/xsp/xscript/1.0"
+  xmlns:soap="http://apache.org/xsp/soap/3.0"
+  >
+  
+  <page>
+
+   <title>SOAP Stock Quote Example 1</title>
+
+   <content>
+
+   <xsp:logic>
+    String symbol = request.getParameter("symbol");
+
+    if (symbol == null || symbol.equals("")) {
+
+       <para>This page demonstrates the SOAP logicsheet for
+       Cocoon2. It accesses a SOAP service that provides stock quotes
+       and displays the result.</para>
+
+       <para>The SOAP result is placed in the generated page, and the
+       stock price is extracted from it using an external XSLT
+       stylesheet. Compare this approach with the one used in
+       <code>soap-getquote2.xsp</code>, which uses an internal XScript
+       stylesheet to extract the stock price.</para>
+
+       <para>Please enter the stock ticker: </para>
+       <form href="soap-getquote">
+         <input name="symbol" type="text" value="HWP"/>
+         <input value="Do it!" type="submit"/>
+       </form>
+    }
+    else {
+      <para>The stock price for <xsp:expr>symbol</xsp:expr> is 
+
+      <soap:call url="http://services.xmethods.net:80/soap">
+        <ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes">
+          <soap:enc/>
+          <symbol xsi:type="xsd:string" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:xsd="http://www.w3.org/1999/XMLSchema"><xsp-request:get-parameter name="symbol"/></symbol>
+        </ns1:getQuote>
+      </soap:call>
+
+      </para>
+
+      <form href="soap-getquote">
+        <input value="Back" type="submit"/>
+      </form>
+    }
+  </xsp:logic>
+
+  </content>
+
+  </page>
+</xsp:page>

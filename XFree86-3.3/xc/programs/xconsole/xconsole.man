@@ -1,0 +1,98 @@
+.\" $XConsortium: xconsole.man /main/10 1996/12/09 17:08:33 kaleb $
+.\" Copyright (c) 1994  X Consortium
+.\" 
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"), 
+.\" to deal in the Software without restriction, including without limitation 
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+.\" and/or sell copies of the Software, and to permit persons to whom the 
+.\" Software furnished to do so, subject to the following conditions:
+.\" 
+.\" The above copyright notice and this permission notice shall be included in
+.\" all copies or substantial portions of the Software.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL 
+.\" THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+.\" WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF 
+.\" OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+.\" SOFTWARE.
+.\" 
+.\" Except as contained in this notice, the name of the X Consortium shall not 
+.\" be used in advertising or otherwise to promote the sale, use or other 
+.\" dealing in this Software without prior written authorization from the 
+.\" X Consortium.
+.TH XCONSOLE 1 "Release 6.3" "X Version 11"
+.SH NAME
+xconsole \- monitor system console messages with X
+.SH SYNOPSIS
+.ta 8n
+\fBxconsole\fP	[-\fItoolkitoption\fP ...] [-file \fIfile-name\fP]
+[-notify] [-stripNonprint] [-daemon] [-verbose] [-exitOnFail]
+.SH DESCRIPTION
+The
+.I xconsole 
+program displays messages which are usually sent to /dev/console.
+.SH OPTIONS
+.I Xconsole
+accepts all of the standard X Toolkit command line options along with the 
+additional options listed below:
+.TP 8
+.B \-file \fIfile-name\fP
+To monitor some other device, use this option to specify the device name.
+This does not work on regular files as they are always ready to be read from.
+.TP 8
+.B \-notify \-nonotify
+When new data are received from the console and the notify option is set,
+the icon name of the application has " *" appended, so that it is evident
+even when the application is iconified.  \-notify is the default.
+.TP 8
+.B \-daemon
+This option causes
+.I xconsole
+to place itself in the background, using fork/exit.
+.TP 8
+.B \-verbose
+When set, this option directs
+.I xconsole
+to display an informative message in the first line of the text buffer.
+.TP 8
+.B \-exitOnFail
+When set, this option directs
+.I xconsole
+to exit when it is unable to redirect the console output.
+.SH X DEFAULTS
+This program uses the 
+.I Athena Text
+widget, look in the
+.I Athena Widget Set
+documentation for controlling it.
+.SH WIDGETS
+In order to specify resources, it is useful to know the hierarchy of
+the widgets which compose \fIxconsole\fR.  In the notation below,
+indentation indicates hierarchical structure.  The widget class name
+is given first, followed by the widget instance name.
+.sp
+.nf
+.TA .5i 
+.ta .5i 
+XConsole  xconsole
+	XConsole  text
+.fi
+.sp
+.SH ENVIRONMENT
+.PP
+.TP 8
+.B DISPLAY
+to get the default host and display number.
+.TP 8
+.B XENVIRONMENT
+to get the name of a resource file that overrides the global resources
+stored in the RESOURCE_MANAGER property.
+.SH FILES
+<XRoot>/lib/X11/app-defaults/XConsole - specifies required resources
+.SH "SEE ALSO"
+X(1), xrdb(1), Athena Text widget
+.SH AUTHOR
+Keith Packard (MIT X Consortium)

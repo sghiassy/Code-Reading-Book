@@ -1,0 +1,64 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:The Texturestore</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>The Texturestore</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>The Texturestore.</h4>
+DemoGL contains a basic texture management system called The Texturestore. Most OpenGL based applications
+use textures and because working with textures can be cumbersome when it comes to OpenGL, DemoGL offers a simple
+but powerful texture manangement system. 
+<p>
+Textures inside DemoGL are stored in textureobjects and have several properties like width, height, depth, bitdata,
+uploadable etc. Every texture loaded with the general texture loading function
+<a HREF="ref_functions_DEMOGL_TextureLoad.htm">DEMOGL_TextureLoad</a> (or for cubemaps: 
+<a HREF="ref_functions_DEMOGL_TextureCubeMapLoad.htm">DEMOGL_TextureCubeMapLoad</a>)
+or created using
+<a HREF="ref_functions_DEMOGL_TextureCreateFromBuffer.htm">DEMOGL_TextureCreateFromBuffer</a> or 
+<a HREF="ref_functions_DEMOGL_TextureCreateFromFBRegion.htm">DEMOGL_TextureCreateFromFBRegion</a> (or for cubemaps:
+<a HREF="ref_functions_DEMOGL_TextureCubeMapCreateDynamic.htm">DEMOGL_TextureCubeMapCreateDynamic</a>)
+is stored inside the texturestore with a textureobject. With DEMOGL_TextureLoad and DEMOGL_TextureCreateFromBuffer, 
+the actual bitdata, the colorfragments of the texture, are available in main memory and are stored with the 
+textureobject. Textures created with DEMOGL_TextureCreateFromFBRegion have their bitdata stored inside OpenGL and not in main memory.
+<p>
+When a developer wants to use a texture in OpenGL the texture has to be created in OpenGL and the texturedata has to be
+uploaded. When a texture is created in DemoGL it's not uploaded to OpenGL by default (except the textures created by
+DEMOGL_TextureCreateFromFBRegion). The developer can do this by calling
+<a HREF="ref_functions_DEMOGL_TextureUpload.htm">DEMOGL_TextureUpload</a>. When a texture is no longer needed at a
+given time, you can remove it from OpenGL (but keep it inside DemoGL's texture store!) by <b>Un</b>Uploading the texture
+using <a HREF="ref_functions_DEMOGL_TextureUnUpload.htm">DEMOGL_TextureUnUpload</a>. OpenGL contains some logic that
+it moves the textures currently uploaded to OpenGL to the videocard's main memory when needed, but in most cases
+this will not be done that good. Better is to decide which textures should be inside OpenGL at a given time and
+which textures shouldn't. This can be done easily by calling DEMOGL_TextureUpload and DEMOGL_TextureUnUpload.
+<p>
+The texturestore has more benefits, like sharing textures between effects. When a texture is created inside
+DemoGL, for example when the texture 'logo.jpg' was loaded using DEMOGL_TextureLoad, and another texture creation
+call is received for the same texturedata, thus another effect also loads logo.jpg, the caller that wants to load
+the same texturedata again will receive the same ID as the first caller received and a reference counter inside
+the textureobject is increased. When the first caller uploads
+the texture, and another effect does the same, the texture was already uploaded so this relatively slow operation
+will be avoided and instead an upload reference counter is increased inside the texture object. When then one of
+the referencing effectobjects UnUploads the texture, it's not really unuploaded, since more effects want it to
+be uploaded, but just the upload reference counter is decreased. This functionality is build in the texture store,
+so the developer using the texture functions in the DemoGL API will not notice anything, but just gets the best
+performance achievable.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 02-jun-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

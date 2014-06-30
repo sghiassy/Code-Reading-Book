@@ -1,0 +1,28 @@
+XCOMM $XFree86: xc/lib/Xdpms/Imakefile,v 1.1 1997/01/12 10:39:50 dawes Exp $
+#define DoNormalLib NormalLibXdpms
+#define DoSharedLib SharedLibXdpms
+#define DoDebugLib DebugLibXdpms
+#define DoProfileLib ProfileLibXdpms
+#define LibName Xdpms
+#define SoRev SOXDPMSREV
+#define LibHeaders NO
+
+#include <Threads.tmpl>
+
+#ifdef SharedXdpmsReqs
+REQUIREDLIBS = SharedXdpmsReqs
+#endif
+
+#if Malloc0ReturnsNull
+ALLOC_DEFINES = -DMALLOC_0_RETURNS_NULL
+#endif
+
+      DEFINES = $(ALLOC_DEFINES)
+     INCLUDES = -I$(XLIBSRC) -I$(EXTINCSRC)
+         SRCS = DPMS.c
+         OBJS = DPMS.o
+     LINTLIBS = $(LINTXLIB)
+
+#include <Library.tmpl>
+
+DependTarget()

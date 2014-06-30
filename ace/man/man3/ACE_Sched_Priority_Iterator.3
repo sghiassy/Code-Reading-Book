@@ -1,0 +1,119 @@
+.TH ACE_Sched_Priority_Iterator 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Sched_Priority_Iterator \- An iterator over the OS-defined scheduling priorities. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Sched_Params.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Sched_Priority_Iterator\fR (const \fBACE_Sched_Params::Policy\fR &policy, int scope = ACE_SCOPE_THREAD)"
+.br
+.RI "\fIInitialize the iterator, the arguments define the scheduling policy and scope for the priorities (see ACE_Sched_Param).\fR"
+.ti -1c
+.RI "\fB~ACE_Sched_Priority_Iterator\fR (void)"
+.br
+.RI "\fIDefault dtor.\fR"
+.ti -1c
+.RI "int \fBmore\fR (void) const"
+.br
+.RI "\fICheck if there are more priorities.\fR"
+.ti -1c
+.RI "int \fBpriority\fR (void) const"
+.br
+.RI "\fIReturn the current priority.\fR"
+.ti -1c
+.RI "void \fBnext\fR (void)"
+.br
+.RI "\fIMove to the next priority. The iteration is from lowest to highest importance.\fR"
+.ti -1c
+.RI "const \fBACE_Sched_Params::Policy\fR& \fBpolicy\fR (void) const"
+.br
+.RI "\fIAccessor for the scheduling policy over which we are iterating.\fR"
+.ti -1c
+.RI "int \fBscope\fR (void) const"
+.br
+.RI "\fIAccessor for the scheduling.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Sched_Params::Policy\fR \fBpolicy_\fR"
+.br
+.RI "\fIThe Scheduling policy (FIFO, RR, etc.) and scheduling scope (PROCESS, SYSTEM) we are iterating on.\fR"
+.ti -1c
+.RI "int \fBscope_\fR"
+.br
+.ti -1c
+.RI "int \fBpriority_\fR"
+.br
+.RI "\fIThe current priority.\fR"
+.ti -1c
+.RI "int \fBdone_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+An iterator over the OS-defined scheduling priorities.
+.PP
+.PP
+ The order of priorities (numeric value vs. importance) is OS dependant, it can be the case that the priorities are not even contigous. This class permits iteration over priorities using the iterator pattern. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Sched_Priority_Iterator::ACE_Sched_Priority_Iterator (const \fBACE_Sched_Params::Policy\fR & policy, int scope = ACE_SCOPE_THREAD)
+.PP
+Initialize the iterator, the arguments define the scheduling policy and scope for the priorities (see ACE_Sched_Param).
+.PP
+.SS ACE_Sched_Priority_Iterator::~ACE_Sched_Priority_Iterator (void)
+.PP
+Default dtor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Sched_Priority_Iterator::more (void) const
+.PP
+Check if there are more priorities.
+.PP
+.SS void ACE_Sched_Priority_Iterator::next (void)
+.PP
+Move to the next priority. The iteration is from lowest to highest importance.
+.PP
+.SS const \fBACE_Sched_Params::Policy\fR & ACE_Sched_Priority_Iterator::policy (void) const
+.PP
+Accessor for the scheduling policy over which we are iterating.
+.PP
+.SS int ACE_Sched_Priority_Iterator::priority (void) const
+.PP
+Return the current priority.
+.PP
+.SS int ACE_Sched_Priority_Iterator::scope (void) const
+.PP
+Accessor for the scheduling.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Sched_Priority_Iterator::done_\fC [private]\fR
+.PP
+This is set to 1 when there are no more priorities. Cannot easily compare against the highest priority on platforms were priorities are non-contigous or descending. 
+.SS \fBACE_Sched_Params::Policy\fR ACE_Sched_Priority_Iterator::policy_\fC [private]\fR
+.PP
+The Scheduling policy (FIFO, RR, etc.) and scheduling scope (PROCESS, SYSTEM) we are iterating on.
+.PP
+.SS int ACE_Sched_Priority_Iterator::priority_\fC [private]\fR
+.PP
+The current priority.
+.PP
+.SS int ACE_Sched_Priority_Iterator::scope_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

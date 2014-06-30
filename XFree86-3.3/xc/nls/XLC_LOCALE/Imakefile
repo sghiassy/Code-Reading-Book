@@ -1,0 +1,88 @@
+XCOMM $XConsortium: Imakefile /main/13 1996/11/19 10:35:28 kaleb $
+
+
+
+XCOMM $XFree86: xc/nls/XLC_LOCALE/Imakefile,v 1.5 1997/01/27 06:56:45 dawes Exp $
+
+  WCHAR32 = HasWChar32
+   TBLDIR = $(XLOCALEDIR)/tbl_data
+
+#ifndef Win32Architecture
+#ifndef OS2Architecture
+# define LTarget(name)							@@\
+all:: name.lt								@@\
+									@@\
+CppFileTarget(name.lt,name,-DWCHAR32=$(WCHAR32),NullParameter)		@@\
+									@@\
+all:: name.lt								@@\
+	MakeDir($(BUILDLIBDIR)/locale/name)				@@\
+	RemoveFile($(BUILDLIBDIR)/locale/name/XLC_LOCALE)		@@\
+	cd $(BUILDLIBDIR)/locale/name && $(LN) $(BUILDLIBTOP)/../../$(CURRENT_DIR)/name XLC_LOCALE @@\
+									@@\
+InstallNamedNonExec(name.lt,XLC_LOCALE,$(XLOCALEDIR)/name)
+#else
+XCOMM Why the hell don't make a more intelligent LinkFile?
+XCOMM os2.rules defines one for this purpose, maybe put a Unix/Win32 one in Imake.rules
+# define LTarget(name)							@@\
+all:: name.lt								@@\
+									@@\
+CppFileTarget(name.lt,name,-DWCHAR32=$(WCHAR32),NullParameter)		@@\
+									@@\
+all:: name.lt								@@\
+	MakeDir($(BUILDLIBDIR)/locale/name)				@@\
+	LinkFileSpecial($(BUILDLIBDIR)/locale/name,XLC_LOCALE,$(BUILDLIBTOP)/../../$(CURRENT_DIR)/name) @@\
+									@@\
+InstallNamedNonExec(name.lt,XLC_LOCALE,$(XLOCALEDIR)/name)
+#endif
+#else
+# define LTarget(name)							@@\
+all:: name.lt								@@\
+									@@\
+CppFileTarget(name.lt,name,-DWCHAR32=$(WCHAR32),NullParameter)		@@\
+									@@\
+all:: name.lt								@@\
+	MakeDir(Concat($(BUILDLIBDIR:/=\)\locale\,name))		@@\
+	RemoveFile(Concat($(BUILDLIBDIR:/=\)\locale\,name\XLC_LOCALE))	@@\
+	cd Concat($(BUILDLIBDIR:/=\)\locale\,name) && $(LN) Concat($(BUILDLIBTOP:/=\)\..\..\$(CURRENT_DIR:/=\)\,name) XLC_LOCALE @@\
+									@@\
+InstallNamedNonExec(name.lt,XLC_LOCALE,$(XLOCALEDIR)/name)
+#endif
+
+LTarget(C)
+LTarget(iso8859-1)
+LTarget(iso8859-2)
+LTarget(iso8859-3)
+LTarget(iso8859-4)
+LTarget(iso8859-5)
+LTarget(iso8859-6)
+LTarget(iso8859-7)
+LTarget(iso8859-8)
+LTarget(iso8859-9)
+LTarget(ja)
+LTarget(ja.JIS)
+LTarget(ja.SJIS)
+LTarget(ko)
+LTarget(zh)
+LTarget(zh_TW)
+LTarget(th_TH.TACTIS)
+LTarget(en_US.utf)
+LTarget(koi8-r)
+#ifdef UXPArchitecture
+LTarget(ja.U90)
+LTarget(ja.S90)
+#endif /* UXPArchitecture */
+
+InstallNonExecFile(tab8859_1,$(TBLDIR))
+InstallNonExecFile(tab8859_2,$(TBLDIR))
+InstallNonExecFile(tab8859_3,$(TBLDIR))
+InstallNonExecFile(tab8859_4,$(TBLDIR))
+InstallNonExecFile(tab8859_5,$(TBLDIR))
+InstallNonExecFile(tab8859_6,$(TBLDIR))
+InstallNonExecFile(tab8859_7,$(TBLDIR))
+InstallNonExecFile(tab8859_8,$(TBLDIR))
+InstallNonExecFile(tab8859_9,$(TBLDIR))
+InstallNonExecFile(jis0208,$(TBLDIR))
+InstallNonExecFile(ksc5601,$(TBLDIR))
+InstallNonExecFile(gb2312,$(TBLDIR))
+InstallNonExecFile(jis0201,$(TBLDIR))
+InstallNonExecFile(tabkoi8-r,$(TBLDIR))

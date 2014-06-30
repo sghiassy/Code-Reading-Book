@@ -1,0 +1,113 @@
+.TH ACE_Dirent 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Dirent \- Define a portable C++ directory-entry iterator based on the POSIX API. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Dirent.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Dirent\fR (void)"
+.br
+.RI "\fIDefault constructor.\fR"
+.ti -1c
+.RI "ACE_EXPLICIT \fBACE_Dirent\fR (const \fBACE_TCHAR\fR *dirname)"
+.br
+.RI "\fIConstructor calls <opendir>.\fR"
+.ti -1c
+.RI "int \fBopen\fR (const \fBACE_TCHAR\fR *filename)"
+.br
+.RI "\fIOpens the directory named by filename and associates a directory stream with it.\fR"
+.ti -1c
+.RI "\fB~ACE_Dirent\fR (void)"
+.br
+.RI "\fIDestructor calls <closedir>.\fR"
+.ti -1c
+.RI "void \fBclose\fR (void)"
+.br
+.RI "\fICloses the directory stream and frees the  structure.\fR"
+.ti -1c
+.RI "\fBdirent\fR* \fBread\fR (void)"
+.br
+.ti -1c
+.RI "int \fBread\fR (struct \fBdirent\fR *entry, struct \fBdirent\fR **result)"
+.br
+.ti -1c
+.RI "long \fBtell\fR (void)"
+.br
+.RI "\fIReturns the current location associated with the directory stream.\fR"
+.ti -1c
+.RI "void \fBseek\fR (long loc)"
+.br
+.ti -1c
+.RI "void \fBrewind\fR (void)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_DIR\fR* \fBdirp_\fR"
+.br
+.RI "\fIPointer to the directory stream.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Define a portable C++ directory-entry iterator based on the POSIX API.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Dirent::ACE_Dirent (void)
+.PP
+Default constructor.
+.PP
+.SS ACE_EXPLICIT ACE_Dirent::ACE_Dirent (const \fBACE_TCHAR\fR * dirname)
+.PP
+Constructor calls <opendir>.
+.PP
+.SS ACE_Dirent::~ACE_Dirent (void)
+.PP
+Destructor calls <closedir>.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Dirent::close (void)
+.PP
+Closes the directory stream and frees the  structure.
+.PP
+.SS int ACE_Dirent::open (const \fBACE_TCHAR\fR * filename)
+.PP
+Opens the directory named by filename and associates a directory stream with it.
+.PP
+.SS int ACE_Dirent::read (struct \fBdirent\fR * entry, struct \fBdirent\fR ** result)
+.PP
+Has the equivalent functionality as <readdir> except that an <entry> and <result> buffer must be supplied by the caller to store the result. 
+.SS \fBdirent\fR * ACE_Dirent::read (void)
+.PP
+Returns a pointer to a structure representing the directory entry at the current position in the directory stream to which dirp refers, and positions the directory stream at the next entry, except on read-only filesystems. It returns a NULL pointer upon reaching the end of the directory stream, or upon detecting an invalid location in the directory. <readdir> shall not return directory entries containing empty names. It is unspecified whether entries are returned for dot or dot-dot. The pointer returned by <readdir> points to data that may be overwritten by another call to <readdir> on the same directory stream. This data shall not be overwritten by another call to <readdir> on a different directory stream. <readdir> may buffer several directory entries per actual read operation; <readdir> marks for update the st_atime field of the directory each time the directory is actually read. 
+.SS void ACE_Dirent::rewind (void)
+.PP
+Resets the position of the directory stream to the beginning of the directory. It also causes the directory stream to refer to the current state of the corresponding directory, as a call to <opendir> would. 
+.SS void ACE_Dirent::seek (long loc)
+.PP
+Sets the position of the next <readdir> operation on the directory stream. The new position reverts to the position associated with the directory stream at the time the <telldir> operation that provides loc was performed. Values returned by <telldir> are good only for the lifetime of the  pointer from which they are derived. If the directory is closed and then reopened, the <telldir> value may be invalidated due to undetected directory compaction. It is safe to use a previous <telldir> value immediately after a call to <opendir> and before any calls to readdir. 
+.SS long ACE_Dirent::tell (void)
+.PP
+Returns the current location associated with the directory stream.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_DIR\fR * ACE_Dirent::dirp_\fC [private]\fR
+.PP
+Pointer to the directory stream.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,68 @@
+XCOMM $XConsortium: Imakefile /main/46 1996/09/28 17:13:12 rws $
+#include <Server.tmpl>
+
+SRCS1 =	sunInit.c \
+	sunCfb.c \
+	sunCfb24.c \
+	sunCursor.c \
+	sunFbs.c \
+	sunIo.c \
+	sunKbd.c \
+	sunMfb.c \
+	sunMouse.c\
+	sunGX.c \
+	sunKeyMap.c
+
+SRCS =	$(SRCS1) kbd_mode.c constype.c
+
+#ifdef i386Architecture
+OFILES = sunInit.o
+#else
+OFILES = sunInit.o sunInitMono.o sunInExMono.o sunInitMulti.o
+#endif
+
+OBJS = 	sunCfb.o \
+	sunCfb24.o \
+	sunCursor.o \
+	sunFbs.o \
+	sunIo.o \
+	sunKbd.o \
+	sunMfb.o \
+	sunMouse.o \
+	sunGX.o \
+	sunKeyMap.o
+
+   INCLUDES = -I. -I../.. -I../../mi -I../../mfb -I../../cfb -I../../cfb32 \
+	      -I../../include -I$(XINCLUDESRC) -I$(FONTINCSRC)
+   LINTLIBS = ../../dix/llib-ldix.ln ../../os/llib-los.ln \
+	      ../mfb/llib-lmfb.ln ../mi/llib-lmi.ln ../cfb/llib-lcfb.ln
+
+NormalLibraryObjectRule()
+
+all:: $(OFILES) kbd_mode constype
+
+lintlib:
+
+NormalLibraryTarget(sun,$(OBJS))
+NormalLintTarget($(SRCS1))
+
+#ifndef i386Architecture
+sunInExMono.o: $(ICONFIGFILES)
+ObjectFromSpecialSource(sunInExMono,../../mi/miinitext,$(EXT_DEFINES) -UPEXEXT)
+ObjectFromSpecialSource(sunInitMono,sunInit,-DSUNMAXDEPTH=1)
+ObjectFromSpecialSource(sunInitMulti,sunInit,-DSUNMAXDEPTH=32)
+#endif
+
+SingleProgramTarget(kbd_mode, kbd_mode.o,,)
+SingleProgramTarget(constype, constype.o,,)
+InstallProgram(kbd_mode,$(BINDIR))
+InstallProgram(constype,$(BINDIR))
+InstallManPage(kbd_mode,$(MANDIR))
+InstallManPage(constype,$(MANDIR))
+InstallManPage(Xsun,$(MANDIR))
+#ifndef i386Architecture
+InstallManPageAliases(Xsun,$(MANDIR),XsunMono)
+InstallManPageAliases(Xsun,$(MANDIR),Xsun24)
+#endif
+
+DependTarget()

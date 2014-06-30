@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+	  xmlns:esql="http://apache.org/cocoon/SQL/v2"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+  >
+  <!--
+       -->
+  <xsp:structure>
+    <xsp:include>java.util.Enumeration</xsp:include>
+  </xsp:structure>
+  
+  <page>
+    <title>edit-groups</title>
+    
+
+    <esql:connection>
+      <esql:pool>personnel</esql:pool>
+    
+      <xsp:logic>
+         String user = <xsp-request:get-parameter name="user.uid"/>;
+         if ( user == null ) {
+            user = <xsp-request:get-parameter name="user_groups.uid"/>;
+         }
+         int uid=-1;
+         if ( user != null ) {
+           try {
+             uid = Integer.parseInt(user);
+           } catch ( NumberFormatException e ) {
+             uid = -1;
+           }
+         }
+         String uname="";
+         String name="";
+         String firstname="";
+         if ( uid != -1 ) {
+           <esql:execute-query>
+             <esql:query>select * from user where uid=<esql:parameter><xsp:expr>uid</xsp:expr></esql:parameter></esql:query>
+             <esql:results>
+               <esql:row-results>
+                 <xsp:logic>
+                   uid=<esql:get-int column="uid"/>;
+                   uname=<esql:get-string column="uname"/>;
+                   name=<esql:get-string column="name"/>;
+            	   firstname=<esql:get-string column="firstname"/>;
+                 </xsp:logic>
+               </esql:row-results>
+             </esql:results>
+           </esql:execute-query>
+         }  
+      </xsp:logic>
+
+
+      <h1>Edit User's Groups</h1>
+      <table cellpadding="2" cellspacing="2" border="0">
+        <tbody>
+          <form>
+            <tr>
+              <td valign="Top" align="Right">uname
+            </td>
+            <td valign="Top">
+              <input type="text" name="user.uname">
+                <xsp:attribute name="value"><xsp:expr>uname</xsp:expr></xsp:attribute>
+              </input>
+            </td>
+            <td>
+            </td>
+          </tr>
+          <tr>
+            <td valign="Top" align="Right">firstname, name</td>
+            <td>
+              <input type="text" name="user.firstname">
+                <xsp:attribute name="value"><xsp:expr>firstname</xsp:expr></xsp:attribute>
+              </input>,
+              <input type="text" name="user.name">
+                <xsp:attribute name="value"><xsp:expr>name</xsp:expr></xsp:attribute>
+              </input>
+            </td>
+            <td>
+              <input type="hidden" name="user.uid">
+                <xsp:attribute name="value"><xsp:expr>uid</xsp:expr></xsp:attribute>
+              </input>
+              <input type="submit" name="upd-user" value="update"/>
+            </td>
+          </tr>
+        </form>
+        <tr>
+          <td valign="Top">
+          </td>
+          <td valign="Top" align="right">
+            <form>
+              <table border="1">
+                <tbody>
+                  <tr>
+                    <td>
+                      <table border="0">
+                        <tbody>
+                          <tr>
+                            <td>current groups</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <select multiple="1" name="user_groups.gid" size="7">
+                                <esql:execute-query>
+                                  <esql:query>select gid, gname from user_groups, groups where user_groups.gid = groups.gid and uid=<esql:parameter type="int"><xsp:expr>uid</xsp:expr></esql:parameter> order by gname</esql:query>
+                                  <esql:results>
+                                    <esql:row-results>
+                                      <option>			        
+                                        <xsp:attribute name="value"><esql:get-string column="gid"/></xsp:attribute>
+                                        <esql:get-string column="gname"/>
+                                      </option>
+                                    </esql:row-results>
+                                  </esql:results>
+                                </esql:execute-query>
+                              </select>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td valign="Top">
+                              <input type="hidden" name="user_groups.uid">
+                                <xsp:attribute name="value"><xsp:expr>uid</xsp:expr></xsp:attribute>
+                              </input>
+                              <input type="submit" name="remove-groups" value="remove"/>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </form>
+          </td>
+          <td valign="Top" align="left">
+            <form>
+              <table border="1">
+                <tbody>
+                  <tr>
+                    <td>
+                      <table border="0">
+                        <tbody>
+                          <tr>
+                            <td>available groups</td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <select name="user_groups.gid" multiple="1" size="7">
+                                <esql:execute-query>
+                                  <esql:query>select gid, gname from groups where gid not in (select gid from user_groups where uid=<esql:parameter type="int"><xsp:expr>uid</xsp:expr></esql:parameter>) order by gname</esql:query>
+                                  <esql:results>
+                                    <esql:row-results>
+                                      <option>			        
+                                        <xsp:attribute name="value"><esql:get-string column="gid"/></xsp:attribute>
+                                        <esql:get-string column="gname"/>
+                                      </option>
+                                    </esql:row-results>
+                                  </esql:results>
+                                </esql:execute-query>
+                              </select>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td valign="Top">
+                              <input type="hidden" name="user_groups.uid">
+                                <xsp:attribute name="value"><xsp:expr>uid</xsp:expr></xsp:attribute>
+                              </input>
+                              <input type="submit" name="add-groups" value="add"/></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div align="Right"><form action="user-list"><input value="back to list" type="submit"/></form></div>
+
+    </esql:connection>
+
+    <hr/>
+
+    <p><h3>Request Attributes</h3></p>
+    <p>
+      <table border="0">
+        <tbody>
+          <xsp:logic>{
+             Enumeration e=request.getAttributeNames();
+             while ( e.hasMoreElements() ) {
+                 String attribute = (String) e.nextElement();
+                 Object value = request.getAttribute(attribute);
+                 <tr>
+                   <td align="right"><xsp:expr>attribute</xsp:expr></td>
+                   <td>="<xsp:expr>value</xsp:expr>"</td>
+                 </tr>
+             }
+          }</xsp:logic>
+        </tbody>
+      </table>
+    </p>
+
+    <hr/>
+
+    <p><h3>Request Parameters</h3></p>
+    <p>
+      <table border="0">
+        <tbody>
+          <xsp:logic>{
+               Enumeration e=request.getParameterNames();
+               while ( e.hasMoreElements() ) {
+                   String attribute = (String) e.nextElement();
+                   Object[] value = request.getParameterValues(attribute);
+                   for (int i=0; i &lt; value.length; i++) {
+                      <tr>
+                        <td align="right"><xsp:expr>attribute</xsp:expr>[<xsp:expr>i</xsp:expr>]</td>
+                        <td>="<xsp:expr>value[i]</xsp:expr>"</td>
+                      </tr>
+                   }
+               }
+          }</xsp:logic>
+        </tbody>
+      </table>
+    </p>
+
+    <hr/>
+
+  </page>
+
+</xsp:page>

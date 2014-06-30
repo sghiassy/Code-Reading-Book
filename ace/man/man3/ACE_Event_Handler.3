@@ -1,0 +1,255 @@
+.TH ACE_Event_Handler 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Event_Handler \- Provides an abstract interface for handling various types of I/O, timer, and signal events. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Event_Handler.h>\fR
+.PP
+Inherited by \fBACE_Async_Timer_Queue_Adapter\fR, \fBACE_MMAP_Memory_Pool\fR, \fBACE_Name_Proxy\fR, \fBACE_Proactor_Impl\fR, \fBACE_Process_Manager\fR\fC [protected]\fR, \fBACE_Reactor_Notify\fR, \fBACE_Service_Object\fR, \fBACE_Shared_Memory_Pool\fR, \fBACE_Sig_Adapter\fR, \fBACE_Test_and_Set\fR, and \fBACE_Wakeup_All_Threads_Handler\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum { \fBLO_PRIORITY\fR = 0, \fBHI_PRIORITY\fR = 10, \fBNULL_MASK\fR = 0, \fBREAD_MASK\fR = (1 << 0), \fBWRITE_MASK\fR = (1 << 1), \fBEXCEPT_MASK\fR = (1 << 2), \fBACCEPT_MASK\fR = (1 << 3), \fBCONNECT_MASK\fR = (1 << 4), \fBTIMER_MASK\fR = (1 << 5), \fBQOS_MASK\fR = (1 << 6), \fBGROUP_QOS_MASK\fR = (1 << 7), \fBSIGNAL_MASK\fR = (1 << 8), \fBALL_EVENTS_MASK\fR = READ_MASK |                      WRITE_MASK |                      EXCEPT_MASK |                      ACCEPT_MASK |                      CONNECT_MASK |                      TIMER_MASK |                      QOS_MASK |                      GROUP_QOS_MASK |                      SIGNAL_MASK, \fBRWE_MASK\fR = READ_MASK |               WRITE_MASK |               EXCEPT_MASK, \fBDONT_CALL\fR = (1 << 9) }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_Event_Handler\fR (void)"
+.br
+.RI "\fIDestructor is virtual to enable proper cleanup.\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIGet the I/O handle. Set the I/O handle.\fR"
+.ti -1c
+.RI "virtual void \fBset_handle\fR (ACE_HANDLE)"
+.br
+.ti -1c
+.RI "virtual int \fBpriority\fR (void) const"
+.br
+.RI "\fIGet the priority of the Event_Handler. Set the priority of the Event_Handler.\fR"
+.ti -1c
+.RI "virtual void \fBpriority\fR (int priority)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_input\fR (ACE_HANDLE fd = ACE_INVALID_HANDLE)"
+.br
+.RI "\fICalled when input events occur (e.g., connection or data).\fR"
+.ti -1c
+.RI "virtual int \fBhandle_output\fR (ACE_HANDLE fd = ACE_INVALID_HANDLE)"
+.br
+.RI "\fICalled when output events are possible (e.g., when flow control abates or non-blocking connection completes).\fR"
+.ti -1c
+.RI "virtual int \fBhandle_exception\fR (ACE_HANDLE fd = ACE_INVALID_HANDLE)"
+.br
+.RI "\fICalled when an exceptional events occur (e.g., SIGURG).\fR"
+.ti -1c
+.RI "virtual int \fBhandle_timeout\fR (const \fBACE_Time_Value\fR &current_time, const void *act = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_exit\fR (\fBACE_Process\fR *)"
+.br
+.RI "\fICalled when a process exits.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_close\fR (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR close_mask)"
+.br
+.RI "\fICalled when a <handle_*()> method returns -1 or when the <remove_handler> method is called on an . The <close_mask> indicates which event has triggered the <handle_close> method callback on a particular <handle>.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_signal\fR (int signum, \fBsiginfo_t\fR * = 0, \fBucontext_t\fR * = 0)"
+.br
+.RI "\fICalled when object is signaled by OS (either via UNIX signals or when a Win32 object becomes signaled).\fR"
+.ti -1c
+.RI "virtual int \fBresume_handler\fR (void)"
+.br
+.RI "\fICalled to figure out whether the handler needs to resumed by the reactor or the application can take care of it. The default value of 0 would be returned which would allow the reactor to take care of resumption of the handler. The application can return a value more than zero and decide to resume the handler themseleves.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_qos\fR (ACE_HANDLE = ACE_INVALID_HANDLE)"
+.br
+.ti -1c
+.RI "virtual int \fBhandle_group_qos\fR (ACE_HANDLE = ACE_INVALID_HANDLE)"
+.br
+.ti -1c
+.RI "virtual void \fBreactor\fR (\fBACE_Reactor\fR *reactor)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Reactor\fR* \fBreactor\fR (void) const"
+.br
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void* \fBread_adapter\fR (void *event_handler)"
+.br
+.ti -1c
+.RI "int \fBregister_stdin_handler\fR (ACE_Event_Handler *eh, \fBACE_Reactor\fR *reactor, \fBACE_Thread_Manager\fR *thr_mgr, int flags = THR_DETACHED)"
+.br
+.ti -1c
+.RI "int \fBremove_stdin_handler\fR (\fBACE_Reactor\fR *reactor, \fBACE_Thread_Manager\fR *thr_mgr)"
+.br
+.RI "\fIPerforms the inverse of the <register_stdin_handler> method.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Event_Handler\fR (\fBACE_Reactor\fR * = 0, int priority = ACE_Event_Handler::LO_PRIORITY)"
+.br
+.RI "\fIForce ACE_Event_Handler to be an abstract base class.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBpriority_\fR"
+.br
+.RI "\fIPriority of this Event_Handler.\fR"
+.ti -1c
+.RI "\fBACE_Reactor\fR* \fBreactor_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Provides an abstract interface for handling various types of I/O, timer, and signal events.
+.PP
+.PP
+ Subclasses read/write input/output on an I/O descriptor, handle an exception raised on an I/O descriptor, handle a timer's expiration, or handle a signal. 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS anonymous enum
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fILO_PRIORITY\fR \fR
+.TP
+\fB\fIHI_PRIORITY\fR \fR
+.TP
+\fB\fINULL_MASK\fR \fR
+.TP
+\fB\fIREAD_MASK\fR \fR
+.TP
+\fB\fIWRITE_MASK\fR \fR
+.TP
+\fB\fIEXCEPT_MASK\fR \fR
+.TP
+\fB\fIACCEPT_MASK\fR \fR
+.TP
+\fB\fICONNECT_MASK\fR \fR
+.TP
+\fB\fITIMER_MASK\fR \fR
+.TP
+\fB\fIQOS_MASK\fR \fR
+.TP
+\fB\fIGROUP_QOS_MASK\fR \fR
+.TP
+\fB\fISIGNAL_MASK\fR \fR
+.TP
+\fB\fIALL_EVENTS_MASK\fR \fR
+.TP
+\fB\fIRWE_MASK\fR \fR
+.TP
+\fB\fIDONT_CALL\fR \fR
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Event_Handler::~ACE_Event_Handler (void)\fC [virtual]\fR
+.PP
+Destructor is virtual to enable proper cleanup.
+.PP
+.SS ACE_Event_Handler::ACE_Event_Handler (\fBACE_Reactor\fR * = 0, int priority = ACE_Event_Handler::LO_PRIORITY)\fC [protected]\fR
+.PP
+Force ACE_Event_Handler to be an abstract base class.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS ACE_HANDLE ACE_Event_Handler::get_handle (void) const\fC [virtual]\fR
+.PP
+Get the I/O handle. Set the I/O handle.
+.PP
+Reimplemented in \fBACE_Acceptor\fR, \fBACE_Strategy_Acceptor\fR, \fBACE_Oneshot_Acceptor\fR, \fBACE_Name_Proxy\fR, \fBACE_POSIX_Proactor\fR, \fBACE_Proactor_Impl\fR, \fBACE_Service_Manager\fR, \fBACE_Svc_Handler\fR, \fBACE_WFMO_Reactor_Notify\fR, and \fBACE_WIN32_Proactor\fR.
+.SS int ACE_Event_Handler::handle_close (ACE_HANDLE handle, \fBACE_Reactor_Mask\fR close_mask)\fC [virtual]\fR
+.PP
+Called when a <handle_*()> method returns -1 or when the <remove_handler> method is called on an . The <close_mask> indicates which event has triggered the <handle_close> method callback on a particular <handle>.
+.PP
+Reimplemented in \fBACE_Acceptor\fR, \fBACE_Strategy_Acceptor\fR, \fBACE_Oneshot_Acceptor\fR, \fBACE_Connector\fR, \fBACE_Service_Manager\fR, \fBACE_Svc_Handler\fR, and \fBACE_WIN32_Proactor\fR.
+.SS int ACE_Event_Handler::handle_exception (ACE_HANDLE fd = ACE_INVALID_HANDLE)\fC [virtual]\fR
+.PP
+Called when an exceptional events occur (e.g., SIGURG).
+.PP
+Reimplemented in \fBACE_Connector\fR.
+.SS int ACE_Event_Handler::handle_exit (\fBACE_Process\fR *)\fC [virtual]\fR
+.PP
+Called when a process exits.
+.PP
+.SS virtual int ACE_Event_Handler::handle_group_qos (ACE_HANDLE = ACE_INVALID_HANDLE)\fC [virtual]\fR
+.PP
+.SS int ACE_Event_Handler::handle_input (ACE_HANDLE fd = ACE_INVALID_HANDLE)\fC [virtual]\fR
+.PP
+Called when input events occur (e.g., connection or data).
+.PP
+Reimplemented in \fBACE_Acceptor\fR, \fBACE_Oneshot_Acceptor\fR, \fBACE_Connector\fR, \fBACE_Select_Reactor_Notify\fR, and \fBACE_Service_Manager\fR.
+.SS int ACE_Event_Handler::handle_output (ACE_HANDLE fd = ACE_INVALID_HANDLE)\fC [virtual]\fR
+.PP
+Called when output events are possible (e.g., when flow control abates or non-blocking connection completes).
+.PP
+Reimplemented in \fBACE_Connector\fR.
+.SS virtual int ACE_Event_Handler::handle_qos (ACE_HANDLE = ACE_INVALID_HANDLE)\fC [virtual]\fR
+.PP
+.SS int ACE_Event_Handler::handle_signal (int signum, \fBsiginfo_t\fR * = 0, \fBucontext_t\fR * = 0)\fC [virtual]\fR
+.PP
+Called when object is signaled by OS (either via UNIX signals or when a Win32 object becomes signaled).
+.PP
+Reimplemented in \fBACE_Strategy_Acceptor\fR, \fBACE_Shared_Memory_Pool\fR, \fBACE_MMAP_Memory_Pool\fR, \fBACE_Process_Manager\fR, \fBACE_Service_Manager\fR, \fBACE_Sig_Adapter\fR, \fBACE_Test_and_Set\fR, \fBACE_Async_Timer_Queue_Adapter\fR, \fBACE_Wakeup_All_Threads_Handler\fR, \fBACE_WFMO_Reactor_Notify\fR, and \fBACE_WIN32_Proactor\fR.
+.SS int ACE_Event_Handler::handle_timeout (const \fBACE_Time_Value\fR & tv, const void * arg = 0)\fC [virtual]\fR
+.PP
+Called when timer expires. <current_time> represents the current time that the <Event_Handler> was selected for timeout dispatching and  is the asynchronous completion token that was passed in when <schedule_timer> was invoked. 
+.PP
+Reimplemented in \fBACE_Oneshot_Acceptor\fR, \fBACE_Connector\fR, \fBACE_Logging_Strategy\fR, \fBACE_Svc_Handler\fR, and \fBACE_Buffered_Svc_Handler\fR.
+.SS virtual void ACE_Event_Handler::priority (int priority)\fC [virtual]\fR
+.PP
+.SS int ACE_Event_Handler::priority (void) const\fC [virtual]\fR
+.PP
+Get the priority of the Event_Handler. Set the priority of the Event_Handler.
+.PP
+.SS virtual \fBACE_Reactor\fR* ACE_Event_Handler::reactor (void) const\fC [virtual]\fR
+.PP
+.SS virtual void ACE_Event_Handler::reactor (\fBACE_Reactor\fR * reactor)\fC [virtual]\fR
+.PP
+.SS void * ACE_Event_Handler::read_adapter (void * event_handler)\fC [static]\fR
+.PP
+Used to read from non-socket ACE_HANDLEs in our own thread to work around Win32 limitations that don't allow us to <select> on non-sockets (such as ACE_STDIN). This is commonly used in situations where the Reactor is used to demultiplex read events on ACE_STDIN on UNIX. Note that <event_handler> must be a subclass of . If the <get_handle> method of this event handler returns  we default to reading from ACE_STDIN. 
+.SS int ACE_Event_Handler::register_stdin_handler (ACE_Event_Handler * eh, \fBACE_Reactor\fR * reactor, \fBACE_Thread_Manager\fR * thr_mgr, int flags = THR_DETACHED)\fC [static]\fR
+.PP
+Abstracts away from the differences between Win32 and \fBACE\fR with respect to reading from ACE_STDIN (which is non-<select>'able on Win32. 
+.SS int ACE_Event_Handler::remove_stdin_handler (\fBACE_Reactor\fR * reactor, \fBACE_Thread_Manager\fR * thr_mgr)\fC [static]\fR
+.PP
+Performs the inverse of the <register_stdin_handler> method.
+.PP
+.SS int ACE_Event_Handler::resume_handler (void)\fC [virtual]\fR
+.PP
+Called to figure out whether the handler needs to resumed by the reactor or the application can take care of it. The default value of 0 would be returned which would allow the reactor to take care of resumption of the handler. The application can return a value more than zero and decide to resume the handler themseleves.
+.PP
+.SS virtual void ACE_Event_Handler::set_handle (ACE_HANDLE)\fC [virtual]\fR
+.PP
+Reimplemented in \fBACE_Svc_Handler\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS int ACE_Event_Handler::priority_\fC [private]\fR
+.PP
+Priority of this Event_Handler.
+.PP
+.SS \fBACE_Reactor\fR * ACE_Event_Handler::reactor_\fC [private]\fR
+.PP
+Reimplemented in \fBACE_Name_Proxy\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

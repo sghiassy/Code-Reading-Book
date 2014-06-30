@@ -1,0 +1,161 @@
+<!-- A "project" describes a set of targets that may be requested
+     when Ant is executed.  The "default" attribute defines the
+     target which is executed if no specific target is requested,
+     and the "basedir" attribute defines the current working directory
+     from which Ant executes the requested task.  This is normally
+     set to the current working directory.
+-->
+
+
+<project name="My Project" default="compile" basedir=".">
+
+
+<!-- Property Definitions
+
+     Each of the following properties are used by convention in this
+     build file.  The values specified can be overridden at run time by
+     adding a "-Dname=value" argument to the command line that invokes Ant.
+     This technique is normally used to copy the values of the ANT_HOME
+     and CATALINA_HOME environment variables into the "ant.home" and
+     "tomcat.home" properties, which are normally not defined explicitly.
+
+     app.name          Base name of this application, used to
+                       construct filenames and directories.
+
+     deploy.home       The name of the directory into which the
+                       deployment hierarchy will be created.
+                       Normally, this will be the name of a
+                       subdirectory under $CATALINA_HOME/webapps.
+
+     dist.home	       The name of the base directory in which
+                       distribution files are created.
+
+     dist.src          The name of the distribution JAR file
+                       containing the application source code,
+                       to be stored in the "dist.home" directory.
+                       This filename should end with ".jar".
+
+     dist.war          The name of the Web ARchive (WAR) file
+                       containing our deployable application.
+                       This filename should end with ".war".
+
+     javadoc.home      The name of the base directory in which
+                       the JavaDoc documentation for this application
+                       is generated.
+
+     tomcat.home       The name of the base directory in which
+                       Tomcat has been installed.  This value is
+                       normally set automatically from the value
+                       of the CATALINA_HOME environment variable.
+
+     In the example below, the application being developed will be deployed
+     to a subdirectory named "myapp", and will therefore be accessible at:
+
+       http://localhost:8080/myapp
+-->
+
+  <property name="app.name"       value="myapp"/>
+  <property name="deploy.home"    value="${tomcat.home}/webapps/${app.name}"/>
+  <property name="dist.home"      value="${deploy.home}"/>
+  <property name="dist.src"       value="${app.name}.jar"/>
+  <property name="dist.war"       value="${app.name}.war"/>
+  <property name="javadoc.home"   value="${deploy.home}/javadoc"/>
+
+
+<!-- The "prepare" target is used to construct the deployment home
+     directory structure (if necessary), and to copy in static files
+     as required.  In the example below, Ant is instructed to create
+     the deployment directory, copy the contents of the "web/" source
+     hierarchy, and set up the WEB-INF subdirectory appropriately.
+-->
+
+  <target name="prepare">
+    <mkdir  dir="${deploy.home}"/>
+    <copy todir="${deploy.home}">
+      <fileset dir="web"/>
+    </copy>
+    <mkdir  dir="${deploy.home}/WEB-INF"/>
+    <copy  file="etc/web.xml" tofile="${deploy.home}/WEB-INF/web.xml"/>
+    <mkdir  dir="${deploy.home}/WEB-INF/classes"/>
+    <mkdir  dir="${deploy.home}/WEB-INF/lib"/>
+    <copy todir="${deploy.home}/WEB-INF/lib">
+      <fileset dir="lib"/>
+    </copy>
+    <mkdir  dir="${javadoc.home}"/>
+  </target>
+
+
+<!-- The "clean" target removes the deployment home directory structure,
+     so that the next time the "compile" target is requested, it will need
+     to compile everything from scratch.
+-->
+
+  <target name="clean">
+    <delete dir="${deploy.home}"/>
+  </target>
+
+
+<!-- The "compile" target is used to compile (or recompile) the Java classes
+     that make up this web application.  The recommended source code directory
+     structure makes this very easy because the <javac> task automatically
+     works its way down a source code hierarchy and compiles any class that
+     has not yet been compiled, or where the source file is newer than the
+     class file.
+
+     Feel free to adjust the compilation option parameters (debug,
+     optimize, and deprecation) to suit your requirements.  It is also
+     possible to base them on properties, so that you can adjust this
+     behavior at runtime.
+
+     The "compile" task depends on the "prepare" task, so the deployment
+     home directory structure will be created if needed the first time.
+-->
+
+  <target name="compile" depends="prepare">
+    <javac srcdir="src" destdir="${deploy.home}/WEB-INF/classes"
+           classpath="${deploy.home}/WEB-INF/classes"
+           debug="on" optimize="off" deprecation="off"/>
+    <copy   todir="${deploy.home}/WEB-INF/classes">
+      <fileset dir="src" includes="**/*.properties"/>
+    </copy>
+  </target>
+
+
+<!-- The "javadoc" target is used to create the Javadoc API documentation
+     for the Java classes in this web application.  It is assumed that
+     this documentation is included in the deployed application, so the
+     example below generates the Javadoc HTML files in a subdirectory under
+     the deployment home directory.  Feel free to customize the options for
+     the JavaDoc task, after consulting the Ant documentation.
+-->
+
+  <target name="javadoc" depends="prepare">
+    <javadoc sourcepath="src" packagenames="*"
+                destdir="${javadoc.home}"/>
+  </target>
+
+
+<!-- The "all" target rebuilds everything by executing the "clean"
+     target first, which forces the "compile" target to compile all
+     source code instead of just the files that have been changed.
+-->
+
+  <target name="all" depends="clean,prepare,compile,javadoc"/>
+
+
+<!-- The "dist" target builds the distribution Web ARchive (WAR) file
+     for this application, suitable for distribution to sites that wish
+     to install your application.  It also creates a JAR file containing
+     the source code for this application, if you wish to distribute
+     that separately.
+-->
+
+  <target name="dist" depends="prepare,compile">
+    <jar jarfile="${dist.home}/${dist.src}"
+         basedir="."/>
+    <jar jarfile="${dist.home}/${dist.war}"
+         basedir="${deploy.home}"/>
+  </target>
+
+
+</project>

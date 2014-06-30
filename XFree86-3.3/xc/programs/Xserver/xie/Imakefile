@@ -1,0 +1,72 @@
+XCOMM $XConsortium: Imakefile,v 1.3 93/11/07 10:56:36 rws Exp $
+XCOMM $XFree86: xc/programs/Xserver/XIE/Imakefile,v 3.3.2.1 1997/05/03 09:44:43 dawes Exp $
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+#if !XieDynamicModule
+     SUBDIRS = dixie mixie
+
+MakeSubdirs($(SUBDIRS))
+#else
+#if HasGnuMake
+   SUBDIRS_1 = dixie/export dixie/import dixie/process dixie/request \
+		mixie/control mixie/export mixie/fax mixie/import \
+		mixie/jpeg mixie/process
+   SUBDIRS_2 = dixie mixie
+     SUBDIRS = $(SUBDIRS_1) $(SUBDIRS_2)
+#else
+     SUBDIRS = dixie/export dixie/import dixie/process dixie/request \
+		mixie/control mixie/export mixie/fax mixie/import \
+		mixie/jpeg mixie/process dixie mixie
+#endif
+
+DONES = \
+	dixie/export/DONE \
+	dixie/import/DONE \
+	dixie/process/DONE \
+	dixie/request/DONE \
+	mixie/control/DONE \
+	mixie/export/DONE \
+	mixie/fax/DONE \
+	mixie/import/DONE \
+	mixie/jpeg/DONE \
+	mixie/process/DONE
+
+OBJS = \
+	dixie/export/?*.o \
+	dixie/import/?*.o \
+	dixie/process/?*.o \
+	dixie/request/?*.o \
+	mixie/control/?*.o \
+	mixie/export/?*.o \
+	mixie/fax/?*.o \
+	mixie/import/?*.o \
+	mixie/jpeg/?*.o \
+	mixie/process/?*.o
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS_1)
+
+$(SUBDIRS_2): $(DONES)
+	@echo "making all in $(CURRENT_DIR)/$@..."
+	@MakeNamedTargetSubdir($@,PassCDebugFlags,all)
+
+#endif
+
+#ifndef SCO325
+REQUIREDLIBS = -lm
+#endif
+
+SharedDepModuleTarget(xie.so,$(SUBDIRS) $(DONES),$(OBJS))
+InstallDynamicModule(xie.so,$(MODULEDIR))
+#if HasGnuMake
+ForceSubdirs($(SUBDIRS_1))
+#else
+ForceSubdirs($(SUBDIRS))
+#endif
+#endif
+
+DependSubdirs($(SUBDIRS))
+MakeLintLibSubdirs($(SUBDIRS))
+LintSubdirs($(SUBDIRS))

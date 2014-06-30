@@ -1,0 +1,117 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/vga16/ibm/Imakefile,v 3.6 1996/12/23 07:08:11 dawes Exp $
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/7 1996/10/19 18:25:51 kaleb $
+
+#include <Server.tmpl>
+
+SRCS =	ppcArea.c ppcBitmap.c ppcBStore.c \
+	ppcClip.c ppcCpArea.c ppcCReduce.c \
+	ppcCurs.c ppcDepth.c ppcFillRct.c ppcWinFS.c \
+	ppcPixFS.c ppcGC.c ppcGetSp.c \
+	ppcImg.c ppcPixmap.c ppcPntWin.c \
+	ppcPolyPnt.c ppcPolyRec.c ppcPushPxl.c ppcQuery.c ppcRot.c \
+	ppcRslvC.c ppcSetSp.c ppcWindow.c emulOpStip.c \
+	emulRepAre.c emulTile.c \
+	vgaGC.c vgaBitBlt.c vgaImages.c \
+	vgaStipple.c vgaSolid.c offscreen.c \
+	mfbimggblt.c wm3.c \
+	mfbline.c mfbseg.c mfbhrzvert.c mfbbres.c mfbbresd.c \
+	ppcIO.c mfbfillarc.c mfbzerarc.c egc_asm.s
+
+OBJS =	ppcArea.o ppcBitmap.o ppcBStore.o \
+	ppcClip.o ppcCpArea.o ppcCReduce.o \
+	ppcCurs.o ppcDepth.o ppcFillRct.o ppcWinFS.o \
+	ppcPixFS.o ppcGC.o ppcGetSp.o \
+	ppcImg.o ppcPixmap.o ppcPntWin.o \
+	ppcPolyPnt.o ppcPolyRec.o ppcPushPxl.o ppcQuery.o ppcRot.o \
+	ppcRslvC.o ppcSetSp.o ppcWindow.o emulOpStip.o \
+	emulRepAre.o emulTile.o \
+	vgaGC.o vgaBitBlt.o vgaImages.o \
+	vgaStipple.o vgaSolid.o offscreen.o \
+	mfbimggblt.o wm3.o \
+	mfbline.o mfbseg.o mfbhrzvert.o mfbbres.o mfbbresd.o \
+	ppcIO.o mfbfillarc.o mfbzerarc.o egc_asm.o
+
+XCOMM This one is for an unbanked server.
+XCOMM *** DON'T forget to update the needmem calculation in vga.c! ***
+DEFINES = -DUSE_PORTABLE_FAST_LINES -DXF86VGA16 -DUNBANKED_VGA16 \
+	-DPC98 -DPC98_EGC
+XCOMM This one is for the banked server:
+XCOMM DEFINES = -DUSE_PORTABLE_FAST_LINES -DXF86VGA16
+
+INCLUDES = -I. -I$(SERVERSRC)/mi -I$(XF86SRC)/vga2/mfb.banked \
+		-I$(XF86SRC)/vga256/vga \
+		-I$(SERVERSRC)/mfb -I$(SERVERSRC)/include \
+		-I$(SERVERSRC)/cfb -I$(FONTINCSRC) -I$(XINCLUDESRC) \
+		-I$(XF98COMSRC) -I$(XF86OSSRC)
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+SubdirLibraryRule($(OBJS))
+
+LinkSourceFile(OScompiler.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(emulOpStip.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(emulRepAre.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(emulStip.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(emulTile.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ibmTrace.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(mfbbres.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(mfbbresd.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(mfbfillarc.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(mfbhrzvert.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(mfbimggblt.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(mfbline.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(mfbzerarc.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(offscreen.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppc.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcArea.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcBStore.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcBitMacs.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcBitmap.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcCReduce.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcClip.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcCpArea.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcCurs.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcDepth.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcFillRct.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcGC.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcGCstr.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcGetSp.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcIO.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcImg.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcPixFS.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcPixmap.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcPntWin.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcPolyPnt.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcPolyRec.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcPushPxl.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcQuery.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcRot.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcRslvC.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcScrn.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcSetSp.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcSpMcro.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcWinFS.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(ppcWindow.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vga16.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vgaBitBlt.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vgaGC.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vgaImages.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vgaReg.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vgaSolid.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vgaStipple.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(vgaVideo.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(wm0.h,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(wm3.c,$(XF86SRC)/vga16/ibm)
+LinkSourceFile(wm3.h,$(XF86SRC)/vga16/ibm)
+
+ObjectFromSpecialSource(mfbseg,mfbline,-DPOLYSEGMENT)
+
+#ifndef OS2Architecture
+DependTarget()
+#else
+depend::
+#endif

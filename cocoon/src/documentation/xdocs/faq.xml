@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V1.0//EN" "dtd/faq-v10.dtd">
+
+<faqs title="Frequently Asked Questions">
+<faq>
+  <question>
+    Why does nothing happen when I access 'http://localhost/cocoon/'?
+  </question>
+  <answer>
+    <p>
+      You might want to check a few things:
+    </p>
+    <ul>
+      <li>
+        is your server listening to port 80? if not, you have to call the right
+        port like in 'http://localhost:8080/cocoon/'. Note that Apache Tomcat
+        binds by default to port 8080, NOT 80.
+      </li>
+      <li>
+        did your servlet engine install the WAR file? you can check by making
+        sure the WAR file was unpacked or connecting to the administration tools
+        of your servlet engine.
+      </li>
+      <li>
+        did you restart the servlet engine? if not, do it.
+      </li>
+    </ul>
+  </answer>
+</faq>
+<faq>
+  <question>
+    Why does Cocoon take so long to start?
+  </question>
+  <answer>
+    <p>
+      Cocoon compiles sitemaps into java classes to increase runtime performance,
+      this is done only at startup and only if the sitemap file is modified, for 
+      all the other requests the compiled sitemap is executed. See question #7 
+      for information on how to pre-compile the sitemap and the XSP's.
+    </p>
+  </answer>
+</faq>
+<faq>
+  <question>
+    Why is cocoon.war so big?
+  </question>
+  <answer>
+    <p>
+      Cocoon.war includes all the libraries that it requires to run. They are 
+      several megabytes of Java classes and it also includes the JDK javac compiler
+      which must be present in the war file to allow page compilation without 
+      classloading problems.
+    </p>
+  </answer>
+</faq>
+<faq>
+  <question>
+    I get a java.lang.VerifyError when accessing 'http://localhost/cocoon/'.
+    What's wrong?
+  </question>
+  <answer>
+    <p>
+      Cocoon requires a JAXP 1.1 compliant parser. Recent servlet engines
+      (like Tomcat 3.2.1) use older xml parsers. You have to replace the xml
+      parser with a newer one (e.g. the Xerces 1.3.0).
+    </p>
+    <p>
+      For Tomcat 3.2.1 simply remove the jaxp.jar and the parser.jar from the
+      tomcat/lib directory and copy the xerces.jar to this directory and rename
+      it to parser.jar. Before you restart Tomcat make sure to remove the
+      tomcat/work directory beforehand.
+    </p>
+  </answer>
+</faq>
+<faq>
+  <question>
+    I'm still stuck, what do I do?
+  </question>
+  <answer>
+    <p>
+      Contact the Cocoon Users mail list (cocoon-users@xml.apache.org).
+      Please, do not contact developers directly for help since the user list are
+      normally much more responsive and users normally have more experience in
+      solving installation problems than developers do.
+    </p>
+    <p>
+      Cocoon has a log file that is stored in the context where you placed
+      Cocoon.  It is located in '{cocoon}/WEB-INF/logs/cocoon/log' where
+      {cocoon} is the context where Cocoon is installed.  Many times, the
+      information contained in that file will help others help you.
+    </p>
+  </answer>
+</faq>
+<faq>
+  <question>
+    When I try to use the Connection pooling code, I get the following exception:
+    "Could not get the datasource java.sql.SQLException: You cannot
+    get a Poolable before the pool is initialized".  What's going on?
+  </question>
+  <answer>
+    <p>
+      The most common reason for this exception is that the driver was not loaded.
+      Cocoon uses an initial parameter in the "web.xml" file to automatically load
+      classes on startup.  This way, the class is loaded only once and the server's
+      time is spent doing more productive things.  Make sure the following entry
+      is in your "web.xml" file:
+    </p>
+<source>
+  <![CDATA[
+<init-param>
+ <param-name>load-class</param-name>
+ <param-value>
+   <!-- comma or whitespace separated list of fully qualified class names
+       to load on startup.
+   -->
+   oracle.jdbc.driver.OracleDriver
+ </param-value>
+</init-param>
+  ]]>
+</source>
+    <p>
+      If the class is loaded correctly, and you are still getting this error, then there
+      is probably an error in your connection information.  The SQLException
+      above is thrown when there are no open connections to the database.
+    </p>
+  </answer>
+</faq>
+<faq>
+  <question>
+    What are the steps to pre-compile the sitemap and XSP's?
+  </question>
+  <answer>
+    <ul>
+      <li>Set the "work-directory" parameter in web.xml as follows:
+      </li>
+    </ul>
+<source>
+  <![CDATA[
+      <init-param>
+       <param-name>work-directory</param-name>
+       <param-value>WEB-INF/classes</param-value>
+      </init-param>
+  ]]>
+</source>
+    <ul>
+      <li>Set the auto-reload to false in your sitemap.xmap as follows:
+      </li>
+    </ul>
+<source>
+  <![CDATA[
+      <parameter name="auto-reload" value="false"/>
+  ]]>
+</source>
+    <ul>
+      <li>Use "-Dcompile.xsp=yes" in your build command line when you are
+        building your WAR file.
+      </li>
+    </ul>
+  </answer>
+</faq>
+<faq>
+ <question>
+   Cocoon won't start and I get a &quot;java.lang.NoSuchMethodError: org.apache.log.LogKit: method
+   createLogger(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/apache/log/Logger;
+   not found&quot; in my Servlet Container's log.
+ </question>
+ <answer>
+   <p>
+     You have an old set of libraries installed.  Copy the correct libraries from the
+     distribution.
+   </p>
+   <p>
+     Even better, if you build Cocoon with "build -Dinclude.webapp.libs webapp" then
+     Cocoon will create a complete WAR file for you with all necessary libraries.
+   </p>
+ </answer>
+</faq>
+<faq>
+ <question>
+   Cocoon still won't start, this time I get 
+javax.xml.transform.TransformerConfigurationException: Namespace not supported by SAXParser
+   in the Cocoon log file.
+ </question>
+ <answer>
+   <p>
+     This is a classloader issue with Tomcat and some other Servlet Engines.  Basically
+     it means that the Xerces library included with Cocoon is not being found.  The solution
+     is to place the Xerces library first in the classpath.
+   </p>
+ </answer>
+</faq>
+<faq>
+ <question>
+  Windows 95/98 tells me that I don't have enough environment- memory?
+ </question>
+ <answer>
+  <p>
+   This is another neat feature from DOS- times.
+   To increase environment-space add the following line to your
+   config.sys (and restart):
+   shell=c:\command.com /E:4096 /P
+  </p>
+ </answer>
+</faq>
+<faq>
+ <question>
+  How do i setup my own .roles file?
+ </question>
+ <answer>
+  <p>
+   In cocoon.xconf you can specify your my.roles file as follows:
+  </p>
+<source>
+  <![CDATA[
+   ...
+   <cocoon version="2.0" user-roles="WEB-INF/my.roles">
+   ...
+  ]]>
+</source>
+  <p>
+   And create a new file my.roles in WEB-INF directory with
+  </p>
+<source>
+  <![CDATA[
+   <?xml version="1.0"?>
+   <role-list>
+   <role name="org.apache.cocoon.components.jsp.JSPEngine"
+       shorthand="jsp-engine"
+       default-class="org.apache.cocoon.components.jsp.JSPEngineImplWLS"/>   
+   </role-list>
+  ]]>
+</source>
+ </answer>
+</faq>
+<faq>
+ <question>I get an error saying that "The sitemap handler's sitemap is not 
+   available". What can I do?
+</question>
+ <answer>
+   <p>
+   Check the Cocoon error log under WEB-INF/logs/error.log: the error
+   you are seeing is actually a consequence of something that went 
+   wrong in the Cocoon process. The root cause of the exception is
+   usually reported there.
+   </p>
+ </answer>
+</faq>
+<faq>
+ <question>I don't want to hand edit the sitemap.  Are there any
+   tools?</question>
+ <answer>
+   <p>Try <fork href="http://pollo.sourceforge.net/">this</fork>
+     by Bruno Dumon.</p>
+ </answer>
+</faq>
+<faq>
+ <question>How do I create some content which isn't directly visible to
+   everyone?</question>
+ <answer>
+   <p>Put the content in an internal pipeline...</p>
+   <source>
+     <![CDATA[
+<map:pipelines>
+ <map:pipeline internal-only="true">
+   <map:match pattern="int">
+     <map:generate src="docs/description.xml"/>
+     <map:serialize type="xml"/>
+   </map:match>
+ </map:pipeline>
+ <map:pipeline>
+   <map:match pattern="desc.html">
+     <map:generate src="cocoon:/int"/>
+     <map:transform src="stylesheets/description2html.xsl"/>
+     <map:serialize type="html"/>
+   </map:match>
+ </map:pipeline>
+</map:pipelines>
+     ]]>
+   </source>
+ </answer>
+</faq>
+<faq>
+ <question>How can I concatenate two xml files?</question>
+ <answer>
+   <source>
+     <![CDATA[
+<map:pipelines>
+ <map:pipeline internal-only="true">
+   <map:match pattern="one">
+     <map:generate src="docs/one.xml"/>
+     <map:serialize type="xml"/>
+   </map:match>
+   <map:match pattern="two">
+     <map:generate src="docs/two.xml"/>
+     <map:serialize type="xml"/>
+   </map:match>
+ </map:pipeline>
+ <map:pipeline>
+   <map:match pattern="desc.html">
+     <map:aggregate element="newRootElement">
+       <map:part src="cocoon:/one" element="firstXMLfile"/>
+       <map:part src="cocoon:/two" element="secondXMLfile"/>
+     </map:aggregate>
+     <map:transform src="stylesheets/merge2html.xsl"/>
+     <map:serialize type="html"/>
+   </map:match>
+ </map:pipeline>
+</map:pipelines>
+     ]]>
+   </source>
+   <p>Where the element attribute names are replaced with something more
+     meaningful!  Note that the map:part element attributes can be left off,
+     which results in the two parts being placed one immediately after the
+     other.</p>
+ </answer>
+</faq>
+<faq>
+ <question>I want to use the XXX matcher/serializer/selecter/etc but there's no
+   examples :(</question>
+ <answer>
+   <p>If you've checked the sample webapps which come with Cocoon, and you've
+     looked in the documentation, then check both the user and
+     dev archives.  If it hasn't been resolved before <strong>first</strong>
+     email the user group and, after a <strong>reasonable</strong> (ie 1 or 2
+     days) length of time (remember not everyone lives in your timezone) email
+     the dev group.</p>
+   <p>Please don't cross-post to both the user and dev groups - very few people
+     like getting bombarded!</p>
+   <p>Oh, and once you do get it working - how about documenting it and
+     contributing it back to the group?</p>
+ </answer>
+</faq>
+<faq>
+ <question>
+   The sql samples don't run.
+ </question>
+ <answer>
+   <p>
+     The sql samples are working when deploing the war file using the build system:
+       <code>
+./build.sh \
+   -Dinclude.webapp.libs=yes \
+   -Dinstall.war=path/to/tomcat/webapps install
+       </code>
+     This command will take care of the path inside the configuration file to the database resources.
+   </p>
+ </answer>
+</faq>
+<faq>
+ <question>
+   I've been able to run the database samples, but they don't run anymore.
+ </question>
+ <answer>
+   <p>
+    This happens when the servlet engine has been stopped abruptly (e.g. with ctrl-C).
+   </p>
+   <p>
+    Hsqldb - the database used by C2 samples - is a single-process engine that
+    locks the database by setting the "modified" entry in
+    "WEB-INF/db/cocoondb.properties" to the value "yes" while some JDBC
+    connections exist. 
+   </p>
+   <p>
+    With connection pooling, there's always some connections opened, and they're
+    not closed properly when you stop abruptly the servlet engine, so the database
+    stays in locked state and connections are refused at the next server startup.
+   </p>
+   <p>
+    To unlock the database, change manually "modified" to "no" in the "cocoondb.properties"
+    before restarting the server.
+   </p>
+ </answer>
+</faq>
+<faq>
+  <question>When I add an action to a pipeline Cocoon returns an
+  error.</question>
+  <answer>
+  <p>Before the action was added to the pipeline it worked fine. After
+  the change Cocoon seems not to find the file specified in the
+  variable that is returned by the matcher.</p>
+<source>
+<![CDATA[
+<map:match pattern="*">
+  <map:act type="validate-session">
+    <map:generate type="serverpages" src="{../1}.xsp"/>
+  </map:act>
+  <map:serialize/>
+</map:match>
+]]>
+</source>
+  <p>Please note in the above example the
+  "<em><code>../1</code></em>".</p> 
+  <p>Map objects returned from matchers, actions etc. are organised
+  <em>hierarchically</em>. Therefore they are not replaced by new ones
+  but older ones are still accessible through a path expression. Here
+  "<code>../1</code>" references key ("variable") "1" in the next to
+  last Map. </p>
+  </answer>
+</faq>
+<faq>
+ <question>How could I have my Cocoon app in an URI other than
+   &lt;you-server&gt;/cocoon/&lt;my-app&gt;?
+ </question>
+ <answer>
+   <note> This entry refers only to an Apache + Tomcat + Cocoon configuration,
+     and was tested under: Windows NT 4.0 + Apache 1.3.14 + Tomcat 3.2 + Cocoon
+     2.0b1.
+   </note>
+   <p>Test whether Tomcat passes everything under the /cocoon context to
+     Cocoon. This may be tested by pointing your browser at
+     &lt;your-server&gt;:8080/cocoon/xsp/simple, if a text page named
+     "A simple XSP page", everything's fine.
+   </p>
+   <p>Now, suppose:</p>
+   <ol>
+     <li>you have a Cocoon application named "foo" which works fine when
+       called with &lt;your-server&gt;:8080/cocoon/foo
+     </li>
+     <li>you want the "foo" app to be called from
+       &lt;your-server&gt;:8080/foo instead.
+     </li>
+   </ol>
+   <p>The idea is just to redirect the desidered URI (foo) to the one within
+     the cocoon context (cocoon/foo).
+   </p>
+   <p>Since this has to be done before the URI is processed by Tomcat, it is
+     just natural to use Apache for this. And, of course the user should not
+     notice the redirection.
+   </p>
+   <p>Apache has an handy feature called mod_rewrite which does just this: URI
+     rewriting (see the "URL Rewriting Guide" in the Apache user's guide for
+     details).
+   </p>
+   <p>First of all, you should instruct Apache to load the mod_rewrite, hence,
+     you should add (on a Windows system) this line to the httpf.conf:
+   </p>
+   <source>LoadModule rewrite_module modules/ApacheModuleRewrite.dll</source>
+   <p>(by the way, most probably, this line is already on the httpd.conf, you
+     just have to un-comment it).
+   </p>
+   <p>Add this line to httpd.conf in order to activate mod_rewrite:</p>
+   <source>RewriteEngine On</source>
+   <p>It is highly recommended to use the logging option of mod_rewrite, in
+     order to check the correctness of the URI rewriting; just add this lines
+     to the httpd.conf:</p>
+   <source>
+RewriteLog "C:/logs/rewrite.log"
+RewriteLogLevel 9
+   </source>
+   <p>The first line tells Apache to put the URI rewriting log in the
+     c:\logs\rewrite.log file (which happens to be on a Windows system, of
+     course). The second one tells Apache to record everything mod_rewrite
+     does, if you don't want to log anything, just set the RewriteLogLevel to
+     0.
+   </p>
+   <p>Now, it's time to do the URI rewriting trick:</p>
+   <source>RewriteRule foo/(.*) /cocoon/foo/$1 [PT]</source>
+   <p>This line instructs Apache to redirect everything under "foo" to
+     "cocoon/foo" and passes it on to other processing ("[PT]" option),
+     like mod_alias.
+   </p>
+   <p>Now, just restart Apache and point your browser to:</p>
+   <source>&lt;your-server&gt;:8080/foo/&lt;something&gt;...</source>
+   <p>it should work just fine.</p>
+ </answer>
+</faq>
+<faq>
+ <question>How could I have my Cocoon app in a directory other than
+   $TOMCAT_HOME/webapps/cocoon/&lt;my-app&gt;?
+ </question>
+ <answer>
+   <note>This entry refers only to an Apache + Tomcat + Cocoon configuration,
+     and was tested under: Windows NT 4.0 + Apache 1.3.14 + Tomcat 3.2 + Cocoon
+     2.0b1.
+   </note>
+   <p>Let's suppose the following:</p>
+   <ol>
+     <li>you have an application called "foo" which works perfectly when
+       located under the %TOMCAT_HOME%\webapps\cocoon\foo directory.
+     </li>
+     <li>you want it to be located under the "c:\foo" directory instead</li>
+   </ol>
+   <p>This could be done pretty easily twisting a little bit the sitemap. The
+     idea is to mount the sub-sitemap of the "foo" application on a specific
+     location on the file system, rather than under the deafult cocoon context.
+   </p>
+   <p>Here's the sitemap.xmap fragment used to do this:</p>
+   <source>
+   <![CDATA[
+<map:pipeline>
+ <map:match pattern="foo/**">
+  <map:mount uri-prefix="foo" src="file:///c:/foo/"/>
+ </map:match>
+</map:pipeline>
+   ]]>
+   </source>
+   <p>The "file:" type of source forces Cocoon to search the sub-sitemap under
+     the specified directory (which happens to be "c:\foo", since this is a
+     Windows system).
+   </p>
+   <p>Now, you just need to copy everything which was under the
+     webapps/cocoon/foo directory to the /foo directory, and it should work
+     graciously.
+   </p>
+ </answer>
+</faq>
+<faq>
+  <question>
+    How do i integrate Apache Server and Cocoon?
+  </question>
+  <answer>
+    <p>
+      You need to use mod_jk. Add the following line to <code>%APACHE_HOME%\conf\httpd.conf</code> 
+    </p>
+    <source>
+    JkMount /cocoon/* ajp12
+    </source>
+    <p>
+    along with other directives that are already listed in mod_jk.conf-auto
+    in the tomcat/conf directory. The the above directives can be added at the 
+    end of httpd.conf.
+    </p>
+  </answer>
+</faq>
+<faq>
+  <question>
+    How do i hide "cocoon" in the URL's once i integrate using mod_jk as shown above? 
+  </question>
+  <answer>
+    <p>
+    Basically to use <code>http://your.server.org/Foo/welcome</code> (as an example) instead of 
+    <code>http://your.server.org/cocoon/Foo/welcome</code>. You need the following two modifications:
+    </p>
+    <p>
+    Step #1: Add the following lies to to httpd.conf.
+    </p>
+    <source>
+<![CDATA[
+RewriteEngine On
+RewriteLog "/var/log/rewrite.log"
+RewriteLogLevel 0
+RewriteRule ^/Foo /cocoon/Foo/ [R]
+RewriteRule ^/Foo(.*) /cocoon/Foo$1 [R]
+]]>
+    </source>
+    <p>
+    The file rewrite.log does not have to be located in <code>/var/log</code>. For 
+    instance, under Windows NT other locations may be appropriate. The 
+    RewriteLogLevel should be set 3 for debug purposes. The third line is 
+    essentially a redirect, so that Foo becomee <code>/cocoon/Foo/</code> with the 
+    trailing <code>/</code>, without it the request would not map onto
+    </p>
+    <source>
+<![CDATA[
+<map:match pattern="">
+   <map:redirect-to uri="welcome" />
+</map:match>
+]]>
+    </source>
+    <p>
+    when you I request <code>http://your.server.org/Foo</code>.
+
+    Finally, the last RewriteRule could depend on the local settings.
+    The original suggestion by Luca was a single line entry (that replaces 
+    both RewriteRules above) according to:
+    </p>
+    <source>
+<![CDATA[
+RewriteRule Foo/(.*) /cocoon/Foo/$1 [PT]
+]]>
+    </source>
+    <note>
+    This did not work in my case (Slackware Linux with Apache1.3, 
+    tomcat3.2.2, Cocoon). Again, these RewriteRules may vary somewhat 
+    depending on the local settings. You may have to experiment a bit.
+    </note>
+    <p>
+    Step #2: Add to the sitemap.xmap in the cocoon directory.
+    </p>
+    <source>
+<![CDATA[
+<map:pipeline>
+    <map:match pattern="Foo/**">
+      <map:mount uri-prefix="Fru" src="/www/Foo/"
+                 check-reload="yes" reload-method="synchron"/>
+    </map:match>
+</map:pipeline>
+]]>
+    </source>
+    <p>
+    Here, <code>/www/Foo</code> is a some directory on the local file system where the 
+    xml, xsp, .., files of the application Foo live.
+    </p>
+    <note>
+    The src attribute may have to include "file://"
+    </note>
+  </answer>
+</faq>
+<faq>
+  <question>
+    How can I run Cocoon without X11. Why is a Display needed? 
+  </question>
+  <answer>
+    <p>
+    An Xserver is needed due to the batik library fop uses. batik uses
+    java's graphics code, which in turn requires the Xserver.      
+    If you don't have an xserver on your system, and can't set the DISPLAY
+    variable to one, then try out xvfb. xvfb gives you an 'in-memory'
+    xserver, which doesn't require any display hardware to run.
+    </p>
+    <source>
+<![CDATA[
+$> Xvfb :1 -screen 0 800x600x8 &
+$> export DISPLAY=:1
+$> $TOMCAT_HOME/bin/startup.sh -f server.xml
+]]>
+    </source>
+  </answer>
+</faq>
+<faq>
+  <question>
+  How do i debug Cocoon using JDK1.3+?
+  </question>
+  <answer>
+    <p>
+    With JDK1.3, you can set the TOMCAT_OPTS (for Tomcat 3.X) or CATALINA_OPTS 
+    (for Tomcat 4.X) as shown below (on Win2K) and then attach the debugger to
+    localhost:8000 using "<code>jdb -attach myhost:8000</code>" More information can be found at 
+    <link href="http://java.sun.com/j2se/1.3.0/docs/guide/jpda/conninv.html">JPDA - Connection and Invocation Details</link>.
+    </p>
+    <source>
+<![CDATA[
+set TOMCAT_OPTS=-classic -Xdebug -Xnoagent -Djava.compiler=NONE
+    -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000 
+]]>
+    </source>
+    <note>
+    This method is supposed to work under JBuilder4.0 as well.
+    </note>
+  </answer>
+</faq>
+<faq>
+  <question>
+  Where do i setup LogKit in Cocoon?
+  </question>
+  <answer>
+  <p>1. <code>{cocoon}/WEB-INF/logkit.xconf</code>:</p>
+    <p>Please refer to the Avalon Excalibur Documentation:
+    <link href="http://jakarta.apache.org/avalon/excalibur/logger.html">
+     Avalon Excalibur LogKit Management</link></p>
+  <p>2. <code>{cocoon}/WEB-INF/web.xml</code>:</p>
+    <p>Here you can change following paramters:</p>
+    <ul>
+      <li><code>logkit-config</code>: This parameter indicates the configuration 
+      file of the LogKit management</li>
+      <li><code>servlet-logger</code>: This parameter indicates the category id 
+      of the logger from the LogKit configuration used by the CocoonServlet.</li>
+      <li><code>cocoon-logger</code>: This parameter indicates the category id of the 
+      logger from the LogKit management configuration for the Cocoon engine.
+      This logger is used for all components described in the cocoon.xconf 
+      and sitemap.xmap file not having specified a logger with the 
+      logger="..." attribute in the component configuration file.</li>
+      <li><code>log-level</code>: This parameter indicates the log level to use 
+      throughout startup of the system. As soon as the logkit.xconf the setting 
+      of the logkit.xconf configuration is used instead! Only for startup and if 
+      the logkit.xconf is not readable/available this log level is of
+      importance.</li>
+    </ul>
+    <note>See inline comments in this files for further information!</note>
+  </answer>
+</faq>
+</faqs>

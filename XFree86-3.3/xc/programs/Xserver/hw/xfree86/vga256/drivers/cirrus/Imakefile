@@ -1,0 +1,91 @@
+XCOMM $XConsortium: Imakefile /main/11 1996/10/19 18:10:30 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/cirrus/Imakefile,v 3.19 1997/01/05 11:59:37 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = cir_driver.c cir_fill.c cir_blt.c cir_bltC.c cir_im.c cir_bank.s \
+       cir_imblt.s cir_colexp.c cirFillSt.c cir_teblt8.c \
+       cirFillRct.c cir_blitter.c cir_textblt.s cir_cursor.c \
+       cir_blitmm.c cir_immm.c cir_tebltmm.c cir_span.s cir_alloc.c \
+       /* cir_blt16.c */ cir_solid.c /* cir_line.c cir_seg.c cir_orect.c */ \
+       /* cir_orect16.c cir_orect32.c linearline.c cir_fillLG.c cir_blitLG.c */ \
+       cirrus_acl.c cirrus_aclm.c laguna_acl.c
+
+OBJS = cir_driver.o cir_fill.o cir_blt.o cir_bltC.o cir_im.o cir_bank.o \
+       cir_imblt.o cir_colexp.o cirFillSt.o cir_teblt8.o \
+       cirFillRct.o cir_blitter.o cir_textblt.o cir_cursor.o \
+       cir_blitmm.o cir_immm.o cir_tebltmm.o cir_span.o cir_alloc.o \
+       /* cir_blt16.o */ cir_solid.o /* cir_line.o cir_seg.o cir_orect.o */ \
+       /* cir_orect16.o cir_orect32.o linearline.o cir_fillLG.o cir_blitLG.o */ \
+       cirrus_acl.o cirrus_aclm.o laguna_acl.o
+
+DEFINES = -DPSZ=8
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+           -I$(SERVERSRC)/cfb -I../../vga -I../../../xaa \
+           -I$(FONTINCSRC) -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(cir_drv, $(OBJS))
+
+ObjectFromSpecialSource(cir_blitmm, cir_blitter, -DCIRRUS_MMIO)
+ObjectFromSpecialSource(cir_immm, cir_im, -DCIRRUS_MMIO)
+ObjectFromSpecialSource(cir_tebltmm, cir_teblt8, -DCIRRUS_MMIO)
+ObjectFromSpecialSource(cir_seg, cir_line, -DPOLYSEGMENT)
+ObjectFromSpecialSource(cir_orect16, cir_orect, -DPSZ=16)
+ObjectFromSpecialSource(cir_orect32, cir_orect, -DPSZ=32)
+
+ObjectFromSpecialSource(cirrus_aclm, cirrus_acl, -DMMIO)
+
+InstallLinkKitNonExecFile(cir_driver.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_driver.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_bank.s,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_fill.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_im.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_blt.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_bltC.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_imblt.s,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_textblt.s,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_span.s,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_colexp.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cirFillSt.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_solid.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_teblt8.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cirFillRct.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_cursor.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_blitter.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_blitLG.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_fillLG.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_alloc.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_blt16.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_line.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_orect.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cirBlitter.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_span.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_alloc.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cirBlitMM.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_blitLG.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cir_inline.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(cirrus_acl.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(laguna_acl.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(linearline.c,$(LINKKITDIR)/drivers/vga256/cirrus)
+InstallLinkKitNonExecFile(linearline.h,$(LINKKITDIR)/drivers/vga256/cirrus)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

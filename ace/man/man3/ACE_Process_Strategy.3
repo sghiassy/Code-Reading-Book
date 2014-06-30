@@ -1,0 +1,121 @@
+.TH ACE_Process_Strategy 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Process_Strategy \- Defines the interface for specifying a concurrency strategy for a <SVC_HANDLER> based on multiprocessing. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Strategies_T.h>\fR
+.PP
+Inherits \fBACE_Concurrency_Strategy< SVC_HANDLER >\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Process_Strategy\fR (size_t n_processes = 1, \fBACE_Event_Handler\fR *acceptor = 0, \fBACE_Reactor\fR * = 0, int avoid_zombies = 0)"
+.br
+.RI "\fIInitialize the strategy. If  is non-0 then set a flag to  to avoid zombies.\fR"
+.ti -1c
+.RI "virtual int \fBopen\fR (size_t n_processes = 1, \fBACE_Event_Handler\fR *acceptor = 0, \fBACE_Reactor\fR * = 0, int avoid_zombies = 0)"
+.br
+.RI "\fIInitialize the strategy. If  is non-0 then set a flag to  to avoid zombies.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Process_Strategy\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBactivate_svc_handler\fR (SVC_HANDLER *svc_handler, void *arg = 0)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> \fBinherited\fR"
+.br
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "size_t \fBn_processes_\fR"
+.br
+.RI "\fINumber of processes to spawn.\fR"
+.ti -1c
+.RI "\fBACE_Event_Handler\fR* \fBacceptor_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Reactor\fR* \fBreactor_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER>  template class ACE_Process_Strategy
+Defines the interface for specifying a concurrency strategy for a <SVC_HANDLER> based on multiprocessing.
+.PP
+.PP
+ This class provides a strategy that manages the creation of processes to handle requests from clients concurrently. It behaves as a "process factory", using  to fork threads "on-demand" to run the service specified by a user-supplied <SVC_HANDLER> in a separate process. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> typedef \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> ACE_Process_Strategy<SVC_HANDLER>::inherited\fC [protected]\fR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_Process_Strategy<SVC_HANDLER>::ACE_Process_Strategy<SVC_HANDLER> (size_t n_processes = 1, \fBACE_Event_Handler\fR * acceptor = 0, \fBACE_Reactor\fR * = 0, int avoid_zombies = 0)
+.PP
+Initialize the strategy. If  is non-0 then set a flag to  to avoid zombies.
+.PP
+.SS template<classSVC_HANDLER> virtual ACE_Process_Strategy<SVC_HANDLER>::~ACE_Process_Strategy<SVC_HANDLER> (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> int ACE_Process_Strategy<SVC_HANDLER>::activate_svc_handler (SVC_HANDLER * svc_handler, void * arg = 0)\fC [virtual]\fR
+.PP
+Activate the <svc_handler> with an appropriate concurrency strategy. This method activates the SVC_HANDLER by first forking and then calling the <open> method of the SVC_HANDLER in the child. 
+.PP
+Reimplemented from \fBACE_Concurrency_Strategy\fR.
+.SS template<classSVC_HANDLER> void ACE_Process_Strategy<SVC_HANDLER>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Concurrency_Strategy\fR.
+.SS template<classSVC_HANDLER> int ACE_Process_Strategy<SVC_HANDLER>::open (size_t n_processes = 1, \fBACE_Event_Handler\fR * acceptor = 0, \fBACE_Reactor\fR * = 0, int avoid_zombies = 0)\fC [virtual]\fR
+.PP
+Initialize the strategy. If  is non-0 then set a flag to  to avoid zombies.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER> ACE_Process_Strategy<SVC_HANDLER>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Concurrency_Strategy\fR.
+.SS template<classSVC_HANDLER> \fBACE_Event_Handler\fR * ACE_Process_Strategy<SVC_HANDLER>::acceptor_\fC [protected]\fR
+.PP
+This is the  in the parent is listening on. We need to make sure that we remove it from the Reactor and close it down in the child. 
+.SS template<classSVC_HANDLER> size_t ACE_Process_Strategy<SVC_HANDLER>::n_processes_\fC [protected]\fR
+.PP
+Number of processes to spawn.
+.PP
+.SS template<classSVC_HANDLER> \fBACE_Reactor\fR * ACE_Process_Strategy<SVC_HANDLER>::reactor_\fC [protected]\fR
+.PP
+This is the <Reactor> the child is using in conjunction with the . We need to remove the  from this <Reactor> in the child. 
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

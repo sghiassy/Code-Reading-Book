@@ -1,0 +1,170 @@
+<HTML>
+<HEAD><TITLE>Hypersonic SQL</TITLE></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<FONT FACE="Arial, Helvetica" SIZE="2">
+
+<H2>Operating modes</H2>
+<P>
+Hypersonic SQL has three operating modes:
+<UL>
+<LI>In-Memory (non-persistent, using the memory only)
+<LI>Standalone (with logging to disk, and maybe data written to disk)
+<LI>Client/Server (multiple computers/applications can access the same database)
+</UL>
+<P>
+<H3>In-Memory</H3>
+<P>
+<IMG SRC="images/modeInMemory.gif" ALT="In-Memory">
+<P>
+In the in-memory mode, all data (indexes and data records) are kept in 
+the main memory. That means the size of the database is limited by the 
+amount of available memory. Each (general) record will need about 500 
+bytes of memory. The reasons why Hypersonic SQL does support this mode are:
+<UL>
+<LI>It is much faster
+<LI>Memory is cheap
+<LI>It can be used in applets
+</UL>
+The mode is used by the demo applet. When the browser is closed, 
+all data is lost.
+<P>
+The JDBC URL (see also below) for the In-Memory mode is: 
+<FONT SIZE=3>
+<PRE>jdbc:hsqldb:.</PRE>
+</FONT>
+<P>
+<H3>Standalone</H3>
+<P>
+<IMG SRC="images/modeStandalone.gif" ALT="Standalone">
+<P>
+In the standalone mode, the changes to the database (currently the uncompressed 
+SQL statements) are written to disk. Tables can be created so that
+the records are stored on disk and only some records are cached in memory.
+This is done by creating tables using 'CREATE CACHED TABLE' instead
+of 'CREATE TABLE'. This allows to use big tables where the records 
+need too much space to fit into memory. Indexes of cached tables are also 
+saved to disk, so the size of the database is not limited by the main
+memory. Access to cached tables is slower than access to tables that are in memory.
+<P>
+Before closing the database an SQL script describing the current state of the 
+database is written to disk. The log file is then deleted. When starting Hypersonic 
+SQL the database is loaded from disk (the SQL script is executed). If the 
+database crashes (for example using Ctrl+C or power loss) no information is 
+lost. This is because the next time it is started, it recovers automatically 
+to the last state using the log file.
+<P>
+In this mode, only one application can access a database at a time. 
+To access the same database at the same time from multiple JVM or 
+computers the Client/Server version must be used.
+<P>
+The JDBC URL for the Standalone mode is: 
+<FONT SIZE=3>
+<PRE>jdbc:hsqldb:test</PRE>
+</FONT>
+where test is the database file name. Another example (Windows) is:
+<FONT SIZE=3>
+<PRE>jdbc:hsqldb:c:\db\test</PRE>
+</FONT>
+<P>
+<H3>Client / Server</H3>
+<P>
+<IMG SRC="images/modeClientServer.gif" ALT="Client / Server">
+<P>
+The database is not running in the same Virtual Machine as the
+application, but as a server in an own process or on a separate computer.
+This operating mode is similar to 'big' databases; except that Hypersonic 
+SQL supports also the standardized HTTP protocol for communication between 
+client and server. Like this it is possible to connect via Internet or 
+Intranet to the database. It is not necessary that the client computers 
+have access to the file system of the server. Because the HTTP protocol is 
+used, it is also possible to connect to the database through firewalls and 
+proxy servers.
+<P>
+There are three Client / Server version included in the download: 
+The Server, the WebServer and the Servlet.
+<P>
+<H4>Server</H4>
+<P>
+This version communicates with the client over TCP/IP and uses a proprietary
+protocol. There is a connection for each client. This is very fast, but 
+normally does not work over Internet (through to proxy servers and firewalls).
+<P>
+The JDBC URL is: 
+<FONT SIZE=3>
+<PRE>jdbc:hsqldb:hsqldb://hsqldbsrv</PRE>
+</FONT> where 'hsqldbsrv' is the computer name. To run more than one server on 
+one computer, different port numbers must be used: <FONT SIZE=3> 
+<PRE>jdbc:hsqldb:hsqldb://hsqldbsrv:9002</PRE>
+</FONT>
+The local computer is called 'localhost'.
+<P>
+<H4>WebServer</H4>
+<P>
+This is a small and simple web-server that can transfer files and also execute 
+queries against the database.
+<P>
+An example URL is: 
+<FONT SIZE=3>
+<PRE>jdbc:hsqldb:http://websrv</PRE>
+</FONT>
+<P>
+<H4>Servlet</H4>
+<P>
+The database is run inside a database Servlet. Servlets can be run on almost 
+any web-server now. The source code for the servlet is also included.  
+It is compatible to the Java Servlet API and tested with the jsdk 2.1.
+<P>
+The URL for the Servlet mode is the same as for the WebServer mode.
+<P>
+<H3>Combinations</H3>
+<P>
+All this modes can be combined in a single application. It is possible
+that a application uses for example all four modes at the same time, this
+are then four different databases. Here is some example code how this can
+be done:
+<P>
+<FONT SIZE=3>
+<PRE>
+c1=DriverManager.getConnection("jdbc:hsqldb:.","sa","");
+c2=DriverManager.getConnection("jdbc:hsqldb:test","sa","");
+c3=DriverManager.getConnection("jdbc:hsqldb:http://dbserver","sa","");
+c4=DriverManager.getConnection("jdbc:hsqldb:hsqldb://dbserver","sa","");
+</PRE>
+</FONT>
+<P>
+In this example are three connections opened: c1 for the in-memory
+database, c2 opens the local database 'test' and c3 connects
+to the computer 'dbserver' using the HTTP protocol. c4 connects
+also to dbserver, but using the faster Hypersonic SQL protocol.
+
+<H3>Comparison</H3>
+<P>
+Each mode has other features and negative and positive sides:
+<P>
+<IMG SRC="images/modeCompare.gif" ALT="Comparisation">
+<P>
+<UL>
+<LI>Transactions possible:<BR>
+Because the HTTP protocol is connection-less,
+for each query a new database connection is created. 
+The user name and password is sent for each query to
+the database, and a new connection (and also transaction,
+because each transaction is bound to its connection) is
+started. A workaround would be to use 'cookies', but
+currently this is not implemented.
+<LI>Database Performance Factor:<BR>
+Because the In-Memory mode does not access the file
+system, all queries are about 30% faster. This is because
+for the other modes, each INSERT/UPDATE/DELETE is saved
+to disk. SELECTs are for all modes (almost) the same.
+<LI>Transfer Time per Statement:<BR>
+Each statement must be sent to the server over TCP/IP
+and the result must be sent back to the client. The
+WebServer and the Servlet need much more time because
+for each statement a new connection must be created.
+Of course all this are only 'about' values.
+<LI>Run as Applet: This means works inside a web-browser
+by default. If the security for applets is relaxed, also
+the other modes can run as applet, but not by default.
+</UL>
+</FONT></BODY></HTML>

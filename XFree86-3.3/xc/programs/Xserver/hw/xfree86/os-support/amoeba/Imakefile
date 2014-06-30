@@ -1,0 +1,35 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/os-support/amoeba/Imakefile,v 3.1 1996/12/23 06:49:10 dawes Exp $
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/4 1996/09/28 17:23:26 rws $
+
+#include <Server.tmpl>
+
+#if AckToolset
+IOSRC = inout.s
+IOOBJ = inout.o
+#endif
+
+SRCS = am_init.c am_video.c am_io.c mapVT_noop.c ioperm_noop.c \
+	VTsw_noop.c $(IOSRC)
+OBJS = am_init.o am_video.o am_io.o mapVT_noop.o ioperm_noop.o \
+	VTsw_noop.o $(IOOBJ)
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I. -I$(SERVERSRC)/include \
+           -I$(XINCLUDESRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+ObjectFromSpecialSource(mapVT_noop,../shared/mapVT_noop,/**/)
+ObjectFromSpecialSource(ioperm_noop,../shared/ioperm_noop,/**/)
+ObjectFromSpecialSource(VTsw_noop,../shared/VTsw_noop,/**/)
+#if AckToolset
+ObjectFromSpecialAsmSource(inout,../shared/inout,/**/)
+#endif
+
+DependTarget()
+

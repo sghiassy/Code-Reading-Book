@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Views</title>
+  <version>0.1</version> 
+  <type>Overview document</type> 
+  <authors>
+    <person name="Christian Haul" email="haul@apache.org"/> 
+    <person name="Bernhard Huber" email="berni_huber@a1.net"/> 
+  </authors> 
+ </header> 
+ <body>
+  <s1 title="The Views">
+   <p>
+    Apache Cocoon provides "views" to resource.
+    Defining a pipeline in a sitemap specifies the different stages
+    of processing a resource. 
+    A view defines an exit point in the pipeline processing.
+   </p>
+   <p>
+    Views are yet another sitemap component. 
+    Unlike the rest, they
+    are othogonal to the resource and pipeline definitions. 
+    In the following I will not distinguish between resources and pipelines
+    because their differences are not relevant here. So, when I talk
+    about pipelines the said is valid for resources as well.
+   </p>
+   <p>
+    Basically, views let you specify exit points of your pipelines
+    that are taken whenever a particular view is requested. The
+    processing continues with the definitions in the requested view. The
+    advantage over selectors that could achieve the same is, that these
+    exit points are not necessarily declared for each pipeline
+    individually, but once per sitemap.
+   </p>
+
+   <s2 title="Motivation">
+    <p>
+     Implementing a semantic search feature is the main motivation
+     to offer views in Apache Cocoon.
+    </p>
+    <p>
+     A sitemap defines the URI space of a Cocoon application.
+     Apache Cocoon offers a fairly sophisticated URI space mapping mechanism.
+     Defining pipelines in a sitemap you define this mapping.
+     It's generally a mistake to map a file system 
+     (or a directory server, or a database repository) one-2-one
+     with the URI space, since it leads to easily broken links and potential
+     security issues. 
+    </p>
+    <p>
+     Browsers requests resources of this URI space. 
+     The response of a browser request is easy reenderable intended for presenting
+     to a human being. It may be augmented with navigation controls, and advertisment.
+     <br/>
+     An indexer of a search engines requests resources of this URI space, too.
+     In contrast to a browser an indexer is interested in the
+     bare content of a resource.
+    </p>
+    <p>
+     Views can access the original content of a resource.
+     
+     For example, you can now index a document resource, 
+     requesting the "content" view of the resource lacking the aggregation 
+     with navigation controls, and advertisments.
+     
+     You can now index the text inside a logo, if you are given the SVG content 
+     that generated the raster image. 
+     You can index the PDF content without having to implement a PDF parser since you
+     request the "content" view of the resource obtaining an easily
+     parsable XML file.
+    </p>
+   </s2>
+
+   <s2 title="Defining A View">
+    <p>
+     You declare a view in sitemap. The definition of a view
+     may define further processing steps. You are not allowed to
+     define a generator step for a view, as the content of a view
+     is xml content of a view's exit point.
+     The most simple view just serialzes the xml content to xml.
+    </p>
+    <p>
+     A view element is identified by its name, and its label. You
+     specify the name of a view by the attribute name, and it label either
+     by the attribute from-label, or by the attribute from-position.
+     The following list explains the attributes in more detail.
+    </p>
+    <ul>
+     <li>
+      The attribute name specifies the name of view. Each view must have a unique name.
+      If you request a view you have to specify the view name.
+     </li>
+     <li>
+       The attribute from-label defines a label name of a pipeline exit point. 
+       You can choose any name you like, as a label name, except "first", and "last".
+     </li>
+     <li>
+       The attribute from-position may have only following values "first", and "last".
+       The special label "first" is the pipeline exit point after the generator
+       processing stage. 
+       The special label "last" is the pipeline exit point
+       right before the serializer processing stage.
+       The labels "first", and "last" are set by the sitemanager automatically.
+      </li>
+    </ul>
+    <p>
+     The following example is a simple resource view, just serializing
+     the xml content of the view's exit point.
+    </p>
+    <source><![CDATA[
+<map:views>
+ <map:view name="content" from-label="content">
+ <map:serialize type="xml"/>
+</map:view>
+    ]]></source>
+    <p>
+     The next example performs an xslt transformation
+     before serializing to xml.
+    </p>
+    <source><![CDATA[
+<map:views>
+ <map:view name="dublin-core" from-label="dublin-core">
+ <map:transform src="stylesheets/document2dubline-core.xsl"/>
+ <map:serialize type="xml"/>
+</map:view>
+    ]]></source>
+    <p>
+     The last example defines a view specifying the position-from attribute "last",
+     and serializing to pdf, for a pdf-aware only indexer, or archiver.
+    </p>
+    <source><![CDATA[
+<map:views>
+ <map:view name="full-document-content" from-position="last">
+ <map:transform src="stylesheets/document2fo.xsl"/>
+ <map:serialize type="fo2pdf"/>
+</map:view>
+    ]]></source>
+   </s2>
+   <s2 title="Placing Labels">
+    <p>
+     You place labels to define a pipeline exit point.
+     A pipeline exit point may be shared by more than a single.
+    </p>
+    <p>
+     Defining a pipeline exit point you have to add an attribute 
+     "label" to an sitemap element. Following sitemap elements are label aware:
+    </p>
+    <table>
+     <tr><th>Sitemap Element</th><th>Description</th></tr>
+     <tr>
+      <td>map:generator</td>
+      <td>
+       A generator element is allowed to have a label, 
+       eg. <code><![CDATA[<map:generator name="foo" src="bar" label="content"/>]]></code>.
+       The xml content produced by the generator is passed to the requested view.
+       Moreover requesting a "first" view has the same effect as labelling the first
+       generator of pipeline.
+      </td>
+     </tr>
+     <tr>
+      <td>map:generate</td>
+      <td>
+       A generate element is allowed to have a label attribute, 
+       eg. <code><![CDATA[<map:generate type="foo" label="content"/>]]></code>.
+       The xml content produced by the generator is passed to the requested view.
+       Moreover requesting a "first" view has the same effect as labelling the first
+       generator of pipeline.
+      </td>
+     </tr>
+     <tr>
+      <td>map:transformer</td>
+      <td>
+       A transformer element is allowed to have a label attribute,
+       eg. <code><![CDATA[<map:transformer name="foo" src="bar" label="augmented-content"/>]]></code>.
+       The xml content produced by the transformer is passed to the requested view.
+      </td>
+     </tr>
+     <tr>
+      <td>map:transform</td>
+      <td>
+       A transform element is allowed to have a label attribute,
+       eg. <code><![CDATA[<map:transform type="foo" label="augmented-content"/>]]></code>.
+       The xml content produced by the transformer is passed to the requested view.
+      </td>
+     </tr>
+     <tr>
+      <td>map:aggregate</td>
+      <td>
+       An aggregte element is allowed to have a label attribute,
+       eg. <code><![CDATA[<map:aggregate element="foo" label="all-news"/>]]></code>.
+       The xml content produced by the aggregate is passed to the requested view.
+      </td>
+     </tr>
+     <tr>
+      <td>map:part</td>
+      <td>
+       A part element of an aggregate element is allowed to have a label attribute.
+       eg. <code><![CDATA[<map:part src="foo" label="news-only"/>]]></code>.
+       The xml content produced by the part only is passed to the requested view.
+      </td>
+     </tr>
+    </table>
+    
+    <p>
+     A label attribute may hold 1 or more label names, separated by comma or blank,
+     eg. <code><![CDATA[<map:generate src="foo" label="label1, label2"/>]]></code>.
+    </p>
+   </s2>
+   
+   <s2 title="Placing Labels Summary">
+    <p>
+     As described above you have a wide range of choice for placing labels.
+     You may even place labels to part elements, and to pipelines 
+     being the source of a labelled part element. The following paragraphs 
+     summarizes the some of the hot features.
+    </p>
+    <p>
+     You can use more that one label-value (label="content,link rdf")
+     separated by comma or blank.
+    </p>
+    <p>
+     The aggregate element can have a label attribute which acts
+     as on a generator, or transformer (all part elements are collected).
+    </p>
+    <p>
+     Part elements can have a label attribute. In this case only
+     those parts are collected which corresponds to the requested view.
+    </p>
+    <p>
+     If you refer to sources via the cocoon:/ protocol the requested view
+     will be propagated.
+    </p>
+
+    <note>
+     The element label is deprecated, and being not supported anymore.
+     Thus you have to rewrite your sitemap if you are using 
+     <code><![CDATA[<map:label name="foobar"/>]]></code>.
+    </note>
+    <p>
+     Rewrite your sitemap if you were using label elements, moving the label name
+     up to the previous xml producer.
+     For example rewrite your sitemap:
+    </p>
+    <source><![CDATA[
+...
+<map:generate src="foo"/>
+<map:transform type="bar"/>
+<map:label name="mylabel"/>
+<map:serialize/>
+...
+    ]]></source>
+    <p>
+     Having this sitemap:
+    </p>
+    <source><![CDATA[
+...
+<map:generate src="foo"/>
+<map:transform type="bar" label="mylabel"/>
+<map:serialize/>
+...
+    ]]></source>
+   </s2>
+   <s2 title="View Processing"> 
+    <p>
+     The samples sitemap contains two view definitions. One of them
+     looks like the excerpt below.
+    </p>
+ 
+    <source><![CDATA[
+<map:views>
+ <map:view name="content" from-label="content">
+ <map:serialize type="xml"/>
+</map:view>
+    ]]></source>
+ 
+    <p>
+     It only defines what processing steps should be taken, after some
+     exit point labelled "content" is reached. In all this case just a 
+     serializer is used to further process the document.
+    </p>
+   </s2>
+   
+   <s2 title="Exit Points">
+    <p>
+     A look at the pipelines reveals no label "content". But a closer
+     look at the defined components show this:
+    </p>
+
+    <source><![CDATA[
+<map:components>
+
+ <map:generators default="file">
+  <map:generator name="file"        
+                 src="org.apache.cocoon.generation.FileGenerator"
+                 label="content"/>
+  <map:generator name="directory"   
+                 src="org.apache.cocoon.generation.DirectoryGenerator"
+                 label="content"/>
+  <map:generator name="serverpages" 
+                 src="org.apache.cocoon.generation.ServerPagesGenerator"
+                 label="content"/>
+  ...
+    ]]></source>
+
+    <p>
+     Here a number of generators are declared, each one has a label
+     attribute. Now, everytime one of these generators is used in a
+     pipeline, an exit point "content" is generated, just after the
+     generator has been executed.
+    </p>
+  
+    <p>
+     This is not limited to generators but every sitemap component can
+     be augmented with a view label.
+    </p>
+    
+    <p>
+     Two special labels exist: "first" and "last". These are
+     automatically declared for every pipeline, after the first component
+     and after the last respectively. This is used by the second view in
+     the samples sitemap.
+    </p>
+
+    <source><![CDATA[
+<map:view name="links" from-position="last">
+ <map:serialize type="links"/>
+</map:view>
+    ]]></source>
+
+    <p>
+     There is also another way to specify these exit points:
+     <code>&lt;map:label name="mylabel"&gt;</code>. Such a tag can be
+     embedded in a pipeline at any place.
+    </p>
+   </s2>
+  
+   <s2 title="Requesting A View">
+    <p>
+     The current way for Cocoon to access views is fixed as a special URI
+     query parameter <code>cocoon-view</code>.
+    </p>
+    <p>
+     For example querying the view <code>content</code> of the page:
+    </p>
+    <source>
+http://localhost:8080/cocoon/documents/index.html
+    </source>
+    <p>
+     You use following URL:
+    </p>
+    <source>
+http://localhost:8080/cocoon/documents/index.html?cocoon-view=content
+    </source>
+    <p>
+     Suggestions for further accessing views are:
+    </p>
+    <ul>
+     <li>
+      React on a "variant" HTTP header (nothing cocoon specific since the
+      concept could be impelemented later on by other publishing frameworks).
+     </li>
+     <li>
+      React on URI extension: for example <code>http://host/path/file.view</code>,
+      that is something that can be done by configuring the sitemaps manually.
+      (where <code>http://host/path/index</code> is the default resource,
+      and <code>index.content</code> is the XML view of the content).
+     </li>
+    </ul>
+   </s2>
+   <note>
+    Since views are orthogonal to pipelines, keep in mind to
+    remove any unwanted view from a deployed application.
+   </note>
+  </s1>
+</body>
+</document>

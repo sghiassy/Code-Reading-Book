@@ -1,0 +1,379 @@
+.TH ACE_Timer_Queue_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Timer_Queue_T \- Provides an interface to timers. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Timer_Queue_T.h>\fR
+.PP
+Inherited by \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Timer_Queue_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK> \fBITERATOR\fR"
+.br
+.RI "\fIType of Iterator.\fR"
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Queue_T\fR (FUNCTOR *upcall_functor = 0, \fBACE_Free_List\fR<\fBACE_Timer_Node_T\fR <TYPE> > *freelist = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Timer_Queue_T\fR (void)"
+.br
+.RI "\fIDestructor - make virtual for proper destruction of inherited classes.\fR"
+.ti -1c
+.RI "virtual int \fBis_empty\fR (void) const = 0"
+.br
+.RI "\fITrue if queue is empty, else false.\fR"
+.ti -1c
+.RI "virtual const \fBACE_Time_Value\fR& \fBearliest_time\fR (void) const = 0"
+.br
+.RI "\fIReturns the time of the earlier node in the Timer_Queue. Must be called on a non-empty queue.\fR"
+.ti -1c
+.RI "virtual long \fBschedule\fR (const TYPE &type, const void *act, const \fBACE_Time_Value\fR &delay, const \fBACE_Time_Value\fR &interval = \fBACE_Time_Value::zero\fR) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBreset_interval\fR (long timer_id, const \fBACE_Time_Value\fR &interval) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBcancel\fR (const TYPE &type, int dont_call_handle_close = 1) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBcancel\fR (long timer_id, const void **act = 0, int dont_call_handle_close = 1) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBexpire\fR (const \fBACE_Time_Value\fR &current_time)"
+.br
+.ti -1c
+.RI "int \fBdispatch_info\fR (const \fBACE_Time_Value\fR &current_time, \fBACE_Timer_Node_Dispatch_Info_T\fR<TYPE> &info)"
+.br
+.ti -1c
+.RI "int \fBexpire\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBgettimeofday\fR (void)"
+.br
+.ti -1c
+.RI "void \fBgettimeofday\fR (\fBACE_Time_Value\fR (*gettimeofday)(void))"
+.br
+.RI "\fIAllows applications to control how the timer queue gets the time of day.\fR"
+.ti -1c
+.RI "virtual \fBACE_Time_Value\fR* \fBcalculate_timeout\fR (\fBACE_Time_Value\fR *max)"
+.br
+.RI "\fIDetermine the next event to timeout. Returns <max> if there are no pending timers or if all pending timers are longer than max.\fR"
+.ti -1c
+.RI "virtual \fBACE_Time_Value\fR* \fBcalculate_timeout\fR (\fBACE_Time_Value\fR *max, \fBACE_Time_Value\fR *the_timeout)"
+.br
+.ti -1c
+.RI "void \fBtimer_skew\fR (const \fBACE_Time_Value\fR &skew)"
+.br
+.ti -1c
+.RI "const \fBACE_Time_Value\fR& \fBtimer_skew\fR (void) const"
+.br
+.ti -1c
+.RI "ACE_LOCK& \fBmutex\fR (void)"
+.br
+.RI "\fISynchronization variable used by the queue.\fR"
+.ti -1c
+.RI "FUNCTOR& \fBupcall_functor\fR (void)"
+.br
+.RI "\fIAccessor to the upcall functor.\fR"
+.ti -1c
+.RI "virtual \fBITERATOR\fR& \fBiter\fR (void) = 0"
+.br
+.RI "\fIReturns a pointer to this 's iterator.\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Node_T\fR<TYPE>* \fBremove_first\fR (void) = 0"
+.br
+.RI "\fIRemoves the earliest node from the queue and returns it.\fR"
+.ti -1c
+.RI "virtual void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of a object.\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Node_T\fR<TYPE>* \fBget_first\fR (void) = 0"
+.br
+.RI "\fIReads the earliest node from the queue and returns it.\fR"
+.ti -1c
+.RI "virtual void \fBreturn_node\fR (\fBACE_Timer_Node_T\fR<TYPE> *)"
+.br
+.RI "\fIMethod used to return a timer node to the queue's ownership after it is returned by a method like <remove_first>.\fR"
+.ti -1c
+.RI "void \fBupcall\fR (TYPE &type, const void *act, const \fBACE_Time_Value\fR &cur_time)"
+.br
+.RI "\fIThis method will call the <functor> with the <type>,  and <time>.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual void \fBreschedule\fR (\fBACE_Timer_Node_T\fR<TYPE> *) = 0"
+.br
+.RI "\fIReschedule an "interval" .\fR"
+.ti -1c
+.RI "virtual \fBACE_Timer_Node_T\fR<TYPE>* \fBalloc_node\fR (void)"
+.br
+.RI "\fIFactory method that allocates a new node.\fR"
+.ti -1c
+.RI "virtual void \fBfree_node\fR (\fBACE_Timer_Node_T\fR<TYPE> *)"
+.br
+.RI "\fIFactory method that frees a previously allocated node.\fR"
+.ti -1c
+.RI "int \fBdispatch_info_i\fR (const \fBACE_Time_Value\fR &current_time, \fBACE_Timer_Node_Dispatch_Info_T\fR<TYPE> &info)"
+.br
+.RI "\fINon-locking version of dispatch_info ().\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_LOCK \fBmutex_\fR"
+.br
+.RI "\fISynchronization variable for . NOTE: the right name would be lock_, but HP/C++ will choke on that!\fR"
+.ti -1c
+.RI "\fBACE_Free_List\fR<\fBACE_Timer_Node_T\fR<TYPE> >* \fBfree_list_\fR"
+.br
+.RI "\fIClass that implements a free list.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR (* \fBgettimeofday_\fR )(void)"
+.br
+.RI "\fIPointer to function that returns the current time of day.\fR"
+.ti -1c
+.RI "FUNCTOR* \fBupcall_functor_\fR"
+.br
+.RI "\fIUpcall functor.\fR"
+.ti -1c
+.RI "int \fBdelete_upcall_functor_\fR"
+.br
+.RI "\fITo delete or not to delete is the question?\fR"
+.ti -1c
+.RI "int \fBdelete_free_list_\fR"
+.br
+.RI "\fIFlag to delete only if the class created the <free_list_>.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Timer_Queue_T\fR (const ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK> &)"
+.br
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK> &)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBtimeout_\fR"
+.br
+.RI "\fIReturned by <calculate_timeout>.\fR"
+.ti -1c
+.RI "\fBACE_Time_Value\fR \fBtimer_skew_\fR"
+.br
+.RI "\fIAdjusts for timer skew in various clocks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class TYPE, class FUNCTOR, class ACE_LOCK>  template class ACE_Timer_Queue_T
+Provides an interface to timers.
+.PP
+.PP
+ This is an abstract base class that provides hook for implementing specialized policies such as  and . 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> typedef \fBACE_Timer_Queue_Iterator_T\fR<TYPE, FUNCTOR, ACE_LOCK> ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::ITERATOR
+.PP
+Type of Iterator.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK> (FUNCTOR * upcall_functor = 0, \fBACE_Free_List\fR< \fBACE_Timer_Node_T\fR< TYPE > >* freelist = 0)
+.PP
+Default constructor. <upcall_functor> is the instance of the FUNCTOR to be used by the queue. If <upcall_functor> is 0, Timer Queue will create a default FUNCTOR. <freelist> the freelist of timer nodes. If 0, then a default freelist will be created. 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::~ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK> (void)\fC [virtual]\fR
+.PP
+Destructor - make virtual for proper destruction of inherited classes.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK> (const ACE_Timer_Queue_T< TYPE,FUNCTOR,ACE_LOCK >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::alloc_node (void)\fC [protected, virtual]\fR
+.PP
+Factory method that allocates a new node.
+.PP
+Reimplemented in \fBACE_Timer_Heap_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Time_Value\fR * ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::calculate_timeout (\fBACE_Time_Value\fR * max, \fBACE_Time_Value\fR * the_timeout)\fC [virtual]\fR
+.PP
+Determine the next event to timeout. Returns <max> if there are no pending timers or if all pending timers are longer than max. <the_timeout> should be a pointer to storage for the timeout value, and this value is also returned. 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Time_Value\fR * ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::calculate_timeout (\fBACE_Time_Value\fR * max)\fC [virtual]\fR
+.PP
+Determine the next event to timeout. Returns <max> if there are no pending timers or if all pending timers are longer than max.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::cancel (long timer_id, const void ** act = 0, int dont_call_handle_close = 1)\fC [pure virtual]\fR
+.PP
+Cancel the single timer that matches the <timer_id> value (which was returned from the <schedule> method). If act is non-NULL then it will be set to point to the ``magic cookie'' argument passed in when the timer was registered. This makes it possible to free up the memory and avoid memory leaks. If <dont_call_handle_close> is 0 then the <functor> will be invoked, which typically calls the <handle_close> hook. Returns 1 if cancellation succeeded and 0 if the <timer_id> wasn't found. 
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::cancel (const TYPE & type, int dont_call_handle_close = 1)\fC [pure virtual]\fR
+.PP
+Cancel all timer associated with <type>. If <dont_call_handle_close> is 0 then the <functor> will be invoked, which typically invokes the <handle_close> hook. Returns number of timers cancelled. 
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::dispatch_info (const \fBACE_Time_Value\fR & current_time, \fBACE_Timer_Node_Dispatch_Info_T\fR< TYPE >& info)
+.PP
+Get the dispatch information for a timer whose value is <= <cur_time>. This does not account for <timer_skew>. Returns 1 if there is a node whose value <= <cur_time> else returns a 0. 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::dispatch_info_i (const \fBACE_Time_Value\fR & current_time, \fBACE_Timer_Node_Dispatch_Info_T\fR< TYPE >& info)\fC [protected]\fR
+.PP
+Non-locking version of dispatch_info ().
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::dump (void) const\fC [virtual]\fR
+.PP
+Dump the state of a object.
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> const \fBACE_Time_Value\fR & ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::earliest_time (void) const\fC [pure virtual]\fR
+.PP
+Returns the time of the earlier node in the Timer_Queue. Must be called on a non-empty queue.
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::expire (void)
+.PP
+Run the <functor> for all timers whose values are <= . Also accounts for <timer_skew>.
+.PP
+Depending on the resolution of the underlying OS the system calls like select()/poll() might return at time different than that is specified in the timeout. Suppose the OS guarantees a resolution of t ms. The timeline will look like
+.PP
+A B | | V V |-------------|-------------|-------------|-------------| t t t t t
+.PP
+If you specify a timeout value of A, then the timeout will not occur at A but at the next interval of the timer, which is later than that is expected. Similarly, if your timeout value is equal to B, then the timeout will occur at interval after B. Now depending upon the resolution of your timeouts and the accuracy of the timeouts needed for your application, you should set the value of <timer_skew>. In the above case, if you want the timeout A to fire no later than A, then you should specify your <timer_skew> to be A % t.
+.PP
+The timeout value should be specified via the macro ACE_TIMER_SKEW in your config.h file. The default value is zero.
+.PP
+Things get interesting if the t before the timeout value B is zero i.e your timeout is less than the interval. In that case, you are almost sure of not getting the desired timeout behaviour. Maybe you should look for a better OS :-)
+.PP
+Returns the number of timers canceled. 
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::expire (const \fBACE_Time_Value\fR & current_time)\fC [virtual]\fR
+.PP
+Run the <functor> for all timers whose values are <= <cur_time>. This does not account for <timer_skew>. Returns the number of timers canceled. 
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::free_node (\fBACE_Timer_Node_T\fR< TYPE >*)\fC [protected, virtual]\fR
+.PP
+Factory method that frees a previously allocated node.
+.PP
+Reimplemented in \fBACE_Timer_Heap_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::get_first (void)\fC [pure virtual]\fR
+.PP
+Reads the earliest node from the queue and returns it.
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::gettimeofday (\fBACE_Time_Value\fR(* gettimeofday)(void))
+.PP
+Allows applications to control how the timer queue gets the time of day.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Time_Value\fR ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::gettimeofday (void)
+.PP
+Returns the current time of day. This method allows different implementations of the timer queue to use special high resolution timers. 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::is_empty (void) const\fC [pure virtual]\fR
+.PP
+True if queue is empty, else false.
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBITERATOR\fR & ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::iter (void)\fC [pure virtual]\fR
+.PP
+Returns a pointer to this 's iterator.
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_LOCK & ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::mutex (void)
+.PP
+Synchronization variable used by the queue.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::operator= (const ACE_Timer_Queue_T< TYPE,FUNCTOR,ACE_LOCK >&)\fC [private]\fR
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Timer_Node_T\fR< TYPE >* ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::remove_first (void)\fC [pure virtual]\fR
+.PP
+Removes the earliest node from the queue and returns it.
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::reschedule (\fBACE_Timer_Node_T\fR< TYPE >*)\fC [protected, pure virtual]\fR
+.PP
+Reschedule an "interval" .
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::reset_interval (long timer_id, const \fBACE_Time_Value\fR & interval)\fC [pure virtual]\fR
+.PP
+Resets the interval of the timer represented by <timer_id> to <interval>, which is specified in relative time to the current <gettimeofday>. If <interval> is equal to , the timer will become a non-rescheduling timer. Returns 0 if successful, -1 if not. 
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::return_node (\fBACE_Timer_Node_T\fR< TYPE >*)\fC [virtual]\fR
+.PP
+Method used to return a timer node to the queue's ownership after it is returned by a method like <remove_first>.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> long ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::schedule (const TYPE & type, const void * act, const \fBACE_Time_Value\fR & delay, const \fBACE_Time_Value\fR & interval = \fBACE_Time_Value::zero\fR)\fC [pure virtual]\fR
+.PP
+Schedule <type> that will expire after <delay> amount of time, which is specified in absolute time. If it expires then  is passed in as the value to the <functor>. If <interval> is != to  then it is used to reschedule the <type> automatically, using relative time to the current <gettimeofday>. This method returns a <timer_id> that uniquely identifies the the <type> entry in an internal list. This <timer_id> can be used to cancel the timer before it expires. The cancellation ensures that <timer_ids> are unique up to values of greater than 2 billion timers. As long as timers don't stay around longer than this there should be no problems with accidentally deleting the wrong timer. Returns -1 on failure (which is guaranteed never to be a valid <timer_id>). 
+.PP
+Reimplemented in \fBACE_Timer_Hash_T\fR, \fBACE_Timer_Heap_T\fR, \fBACE_Timer_List_T\fR, and \fBACE_Timer_Wheel_T\fR.
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> const \fBACE_Time_Value\fR& ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::timer_skew (void) const
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::timer_skew (const \fBACE_Time_Value\fR & skew)
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> void ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::upcall (TYPE & type, const void * act, const \fBACE_Time_Value\fR & cur_time)
+.PP
+This method will call the <functor> with the <type>,  and <time>.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> FUNCTOR & ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::upcall_functor (void)
+.PP
+Accessor to the upcall functor.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::delete_free_list_\fC [protected]\fR
+.PP
+Flag to delete only if the class created the <free_list_>.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> int ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::delete_upcall_functor_\fC [protected]\fR
+.PP
+To delete or not to delete is the question?
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Free_List\fR< \fBACE_Timer_Node_T\fR< TYPE > >* ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::free_list_\fC [protected]\fR
+.PP
+Class that implements a free list.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Time_Value\fR(* ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::gettimeofday_)(void)\fC [protected]\fR
+.PP
+Pointer to function that returns the current time of day.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> ACE_LOCK ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::mutex_\fC [protected]\fR
+.PP
+Synchronization variable for . NOTE: the right name would be lock_, but HP/C++ will choke on that!
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Time_Value\fR ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::timeout_\fC [private]\fR
+.PP
+Returned by <calculate_timeout>.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> \fBACE_Time_Value\fR ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::timer_skew_\fC [private]\fR
+.PP
+Adjusts for timer skew in various clocks.
+.PP
+.SS template<classTYPE, classFUNCTOR, classACE_LOCK> FUNCTOR * ACE_Timer_Queue_T<TYPE, FUNCTOR, ACE_LOCK>::upcall_functor_\fC [protected]\fR
+.PP
+Upcall functor.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

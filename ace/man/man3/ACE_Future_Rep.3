@@ -1,0 +1,205 @@
+.TH ACE_Future_Rep 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Future_Rep \- ACE_Future_Rep<T>. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Future.h>\fR
+.PP
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Future_Observer\fR<T> \fBOBSERVER\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Unbounded_Set\fR<\fBOBSERVER\fR *> \fBOBSERVER_COLLECTION\fR"
+.br
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBset\fR (const T &r, \fBACE_Future\fR<T> &caller)"
+.br
+.ti -1c
+.RI "int \fBget\fR (T &value, \fBACE_Time_Value\fR *tv)"
+.br
+.RI "\fIWait up to <tv> time to get the <value>. Note that <tv> must be specified in absolute time rather than relative time.\fR"
+.ti -1c
+.RI "int \fBattach\fR (\fBACE_Future_Observer\fR<T> *observer, \fBACE_Future\fR<T> &caller)"
+.br
+.ti -1c
+.RI "int \fBdetach\fR (\fBACE_Future_Observer\fR<T> *observer)"
+.br
+.ti -1c
+.RI "\fBoperator T\fR ()"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "int \fBready\fR (void)"
+.br
+.RI "\fIIs result available?\fR"
+.ti -1c
+.RI "\fBACE_Future_Rep\fR (void)"
+.br
+.ti -1c
+.RI "\fB~ACE_Future_Rep\fR (void)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.ti -1c
+.RI "T* \fBvalue_\fR"
+.br
+.RI "\fIPointer to the result.\fR"
+.ti -1c
+.RI "int \fBref_count_\fR"
+.br
+.RI "\fIReference count.\fR"
+.ti -1c
+.RI "\fBOBSERVER_COLLECTION\fR \fBobserver_collection_\fR"
+.br
+.RI "\fIKeep a list of ACE_Future_Observers unread by client's reader thread.\fR"
+.ti -1c
+.RI "\fBACE_Thread_Mutex\fR \fBvalue_ready_mutex_\fR"
+.br
+.ti -1c
+.RI "\fBACE_Condition_Thread_Mutex\fR \fBvalue_ready_\fR"
+.br
+.in -1c
+.SS Static Private Methods
+
+.in +1c
+.ti -1c
+.RI "ACE_Future_Rep<T>* \fBcreate\fR (void)"
+.br
+.RI "\fICreate a ACE_Future_Rep<T> and initialize the reference count.\fR"
+.ti -1c
+.RI "ACE_Future_Rep<T>* \fBattach\fR (ACE_Future_Rep<T> *&rep)"
+.br
+.ti -1c
+.RI "void \fBdetach\fR (ACE_Future_Rep<T> *&rep)"
+.br
+.ti -1c
+.RI "void \fBassign\fR (ACE_Future_Rep<T> *&rep, ACE_Future_Rep<T> *new_rep)"
+.br
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Future< T >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Future_Rep
+ACE_Future_Rep<T>.
+.PP
+.PP
+ An ACE_Future_Rep<T> object encapsules a pointer to an object of class T which is the result of an asynchronous method invocation. It is pointed to by \fBACE_Future\fR<T> object[s] and only accessible through them. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classT> typedef \fBACE_Future_Observer\fR<T> ACE_Future_Rep<T>::OBSERVER\fC [private]\fR
+.PP
+.SS template<classT> typedef \fBACE_Unbounded_Set\fR<\fBOBSERVER\fR *> ACE_Future_Rep<T>::OBSERVER_COLLECTION\fC [private]\fR
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Future_Rep<T>::ACE_Future_Rep<T> (void)\fC [private]\fR
+.PP
+.SS template<classT> ACE_Future_Rep<T>::~ACE_Future_Rep<T> (void)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> void ACE_Future_Rep<T>::assign (ACE_Future_Rep< T >*& rep, ACE_Future_Rep< T >* new_rep)\fC [static, private]\fR
+.PP
+Decreases the rep's reference count and and deletes rep if there are no more references to rep. Then assigns new_rep to rep.
+.PP
+Precondition (rep != 0 && new_rep != 0) 
+.SS template<classT> ACE_Future_Rep< T >* ACE_Future_Rep<T>::attach (ACE_Future_Rep< T >*& rep)\fC [static, private]\fR
+.PP
+Increase the reference count and return argument. Uses the attribute "value_ready_mutex_" to synchronize reference count updating.
+.PP
+Precondition (rep != 0). 
+.SS template<classT> int ACE_Future_Rep<T>::attach (\fBACE_Future_Observer\fR< T >* observer, \fBACE_Future\fR< T >& caller)\fC [private]\fR
+.PP
+Attaches the specified observer to a subject (i.e. the ). The update method of the specified subject will be invoked with a copy of the written-to  as input when the result gets set.
+.PP
+Returns 0 if the observer is successfully attached, 1 if the observer is already attached, and -1 if failures occur. 
+.SS template<classT> ACE_Future_Rep< T >* ACE_Future_Rep<T>::create (void)\fC [static, private]\fR
+.PP
+Create a ACE_Future_Rep<T> and initialize the reference count.
+.PP
+.SS template<classT> void ACE_Future_Rep<T>::detach (ACE_Future_Rep< T >*& rep)\fC [static, private]\fR
+.PP
+Decreases the reference count and and deletes rep if there are no more references to rep.
+.PP
+Precondition (rep != 0) 
+.SS template<classT> int ACE_Future_Rep<T>::detach (\fBACE_Future_Observer\fR< T >* observer)\fC [private]\fR
+.PP
+Detaches the specified observer from a subject (i.e. the ). The update method of the specified subject will not be invoked when the s result gets set. Returns 1 if the specified observer was actually attached to the subject prior to this call and 0 if was not.
+.PP
+Returns 0 if the observer was successfully detached, and -1 if the observer was not attached in the first place. 
+.SS template<classT> void ACE_Future_Rep<T>::dump (void) const\fC [private]\fR
+.PP
+Dump the state of an object.
+.PP
+.SS template<classT> int ACE_Future_Rep<T>::get (T & value, \fBACE_Time_Value\fR * tv)\fC [private]\fR
+.PP
+Wait up to <tv> time to get the <value>. Note that <tv> must be specified in absolute time rather than relative time.
+.PP
+.SS template<classT> ACE_Future_Rep<T>::operator T ()\fC [private]\fR
+.PP
+Type conversion. will block forever until the result is available. Note that this method is going away in a subsequent release since it doesn't distinguish between failure results and success results (exceptions should be used, but they aren't portable...). The <get> method should be used instead since it separates the error value from the result, and also permits timeouts. 
+.SS template<classT> int ACE_Future_Rep<T>::ready (void)\fC [private]\fR
+.PP
+Is result available?
+.PP
+.SS template<classT> int ACE_Future_Rep<T>::set (const T & r, \fBACE_Future\fR< T >& caller)\fC [private]\fR
+.PP
+Set the result value. The specified <caller> represents the future that invoked this <set> method, which is used to notify the list of future observers. Returns 0 for success, -1 on error. This function only has an effect the first time it is called for the object. Subsequent calls return 0 (success) but have no effect. 
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> class \fBACE_Future\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Future_Rep<T>::ACE_ALLOC_HOOK_DECLARE\fC [private]\fR
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classT> \fBOBSERVER_COLLECTION\fR ACE_Future_Rep<T>::observer_collection_\fC [private]\fR
+.PP
+Keep a list of ACE_Future_Observers unread by client's reader thread.
+.PP
+.SS template<classT> int ACE_Future_Rep<T>::ref_count_\fC [private]\fR
+.PP
+Reference count.
+.PP
+.SS template<classT> T * ACE_Future_Rep<T>::value_\fC [private]\fR
+.PP
+Pointer to the result.
+.PP
+.SS template<classT> \fBACE_Condition_Thread_Mutex\fR ACE_Future_Rep<T>::value_ready_\fC [private]\fR
+.PP
+.SS template<classT> \fBACE_Thread_Mutex\fR ACE_Future_Rep<T>::value_ready_mutex_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

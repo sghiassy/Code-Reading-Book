@@ -1,0 +1,191 @@
+.\" $XFree86: xc/programs/Xserver/hw/xfree86/XF86_VGA16.man,v 3.22.2.1 1997/05/21 15:02:22 dawes Exp $
+.TH XF86_VGA16 1 "Version 3.3"  "XFree86"
+.SH NAME
+XF86_VGA16 - 4 bit non-accelerated X Window System server for UNIX on
+x86 platforms
+.SH SYNOPSIS
+.B XF86_VGA16
+[:displaynumber] [ option ] ...
+.SH DESCRIPTION
+.I XF86_VGA16
+is a 4-bit color server for VGA cards.  The default root visual for this
+server is StaticColor.  It also includes support for
+the non-VGA monochrome cards described in the \fIXF86_Mono(1)\fP manual
+page.  It may be run in a dual-headed configuration.
+.PP
+.SH CONFIGURATIONS
+.PP
+The
+.I XF86_VGA16
+server supports the following popular SVGA chipsets in 16-colour mode.
+.RS .5i
+.TP 4
+ATI:
+18800, 18800-1, 28800-2, 28800-4, 28800-5, 28800-6, 68800-3, 68800-6, 68800AX,
+68800LX, 88800GX-C, 88800GX-D, 88800GX-E, 88800GX-F, 88800CX, 264CT, 264ET,
+264VT, 264VT2, 264GT
+.TP 4
+Tseng:
+ET4000
+.TP 4
+Trident:
+TVGA8800CS, TVGA8900B, TVGA8900C, TVGA8900CL, TVGA9000
+.TP 4
+Cirrus:
+CL6410, CL6412, CL6420, CL6440
+.TP 4
+Oak:
+OTI067, OTI077, OTI087
+.RE
+.PP
+Additionally it
+supports generic VGA cards.
+.PP
+.I XF86_VGA16
+does not support the accelerated functions of the supported chipsets.
+.SH OPTIONS
+In addition to the normal server options described in the \fIXserver(1)\fP
+manual page, \fIXF86_VGA16\fP accepts some more command line switches,
+as described in the 
+.I XFree86(1) 
+manpage.
+.SH SETUP
+.I XFree86
+uses a configuration file called \fBXF86Config\fP for its initial setup.  
+See the 
+.I XF86Config(4/5) 
+manpage for general details. Here only the
+.I XF86_VGA16
+specific parts are explained.
+.PP
+The \fBDriver\fP entry in the \fBScreen\fP section of the XF86Config file
+should be set to \fBvga16\fP.  To run in dual-headed configuration, there
+should also be a \fBScreen\fP section with the \fBDriver\fP entry set to
+\fBmono\fP.
+.PP
+Entries for the \fBDevice\fP section in the XF86Config file include:
+.br
+.ne 3i
+.TP 8
+.B chipset \fI"name"\fP
+specifies a chipset so the correct driver can be used.  Possible chipsets
+are:
+.sp
+.RS 1.5i
+.TP 4
+ATI:
+ati (see README.ati for additional recoginzed names)
+.TP 4
+Tseng:
+et4000, et4000w32, et4000w32i, et4000w32p
+.TP 4
+Trident:
+tvga8800cs, tvga8900b, tvga8900c, tvga8900cl, tvga9000
+.TP 4
+Cirrus:
+cl6410, cl6412, cl6420, cl6440
+.TP 4
+Oak:
+oti067, oti077, oti087
+.TP 4
+Generic VGA:
+generic 
+.RE
+.TP 8
+.B Option \fI"optionstring"\fP
+allows the user to select certain options provided by the drivers.  Currently 
+the following strings are recognized:
+.sp
+\fBlegend\fP - for Sigma Legend ET4000-based boards.  This option enables
+a special clock-selection algorithm used on Legend boards, and MUST be
+specified for these boards to function correctly.
+.ig
+.sp
+\fBswap_hibit\fP - for Western Digital/PVGA1 chipsets.  Some Western Digital
+based boards require the high-order clock-select lead to be inverted.  It
+is not possible for the server to determine this information at run-time.
+If the 9th clock in the list of clocks detected by the server is less than
+30Mhz, this option likely needs to be set.
+..
+.sp
+\fBhibit_low\fP, \fBhibit_high\fP - for Tseng ET4000 chipsets.  With
+some ET4000 cards, the server has difficulty getting the state of the
+high-order clocks select bit right when started from a high-resolution text
+mode.  These options allow the correct initial state of that bit to be
+specified.  To find out what the correct initial state is, start the server
+from an 80x25 text mode.  This option is only needed if the clocks reported
+by the server when started from a high-resolution text mode differ from
+those reported when it is started from an 80x25 text mode.
+.sp
+\fBclkdiv2\fP - for all chipsets using a set of discrete clocks (i.e. not
+using a programmable ClockChip or a ClockProg). With this option enabled,
+the VGA driver can also use all the clocks mentionned in the clocks line
+divided by 2, presenting the server with twice as many clocks to choose
+from, especially in the low- and mid-range. This is useful for creating very
+low resolution modes like 320x200, because the lowest available clock on
+many cards (25.175 MHz) is too high to create a standard 320x200 mode. A few
+VGA chips don't support this option, causing a distorted screen.
+.ig
+.sp
+\fB8clocks\fP - for the PVGA1 chipset the default is 4 clocks.  Some
+cards with this chipset may support 8 clocks.  Specifying this option
+will allow the driver to detect and use the extra clocks.
+.sp
+\fB16clocks\fP - for Trident TVGA8900B and 8900C chipsets.  Some newer boards
+using 8900B and 8900C chipsets actually support 16 clocks rather than the
+standard 8 clocks.  Such boards will have a "TCK9002" or "TCK9004" chip
+on them.  Specifying this option will allow the driver to detect and use
+the extra 8 clocks.
+..
+.sp
+\fBpower_saver\fP - This option enables the server
+to use the power saving features of VESA DPMS compatible monitors.
+The suspend level is currently not supported.
+Refer to the \fIXF86Config(4/5)\fP
+manual page for details of how to set the timeouts for the different levels
+of operation.  This option is experimental.
+.ig
+intern_disp (use internal display for laptops -- WD90C2x)
+extern_disp (use external display for laptops -- WD90C2x)
+..
+.PP
+Note that \fIXFree86\fP has some internal capabilities to determine
+what hardware
+it is running on. Thus normally the keywords \fIchipset\fP, \fIclocks\fP,
+and \fIvideoram\fP don't have to be specified.  But there
+may be occasions when this autodetection mechanism fails, (for example, too
+high of load on the machine when you start the server).  For cases like this,
+one should first run \fIXF86_VGA16\fP on an unloaded machine, look at the
+results of the autodetection (that are printed out during server startup)
+and then explicitly specify these parameters in the configuration file.
+\fBIt is recommended that all parameters, especially Clock values,
+be specified in the XF86Config file.\fP
+.SH FILES
+.TP 30
+<XRoot>/bin/XF86_VGA16
+The 16 colour X server
+.TP 30
+/etc/XF86Config
+Server configuration file
+.TP 30
+<XRoot>/lib/X11/XF86Config
+Server configuration file
+.LP
+Note: <XRoot> refers to the root of the X11 install tree.
+.SH "SEE ALSO"
+X(1), Xserver(1), XFree86(1), XF86Config(4/5), XF86_Mono(1), xf86config(1),
+xvidtune(1), xdm(1), xinit(1)
+.SH CONTACT INFO
+\fIXFree86\fP source is available from the FTP server
+\fIftp.XFree86.org\fP.  Send email to
+\fIXFree86@XFree86.org\fP for details.
+.SH AUTHORS
+.PP
+The primary developer of this server is
+.PP
+Gertjan Akkerman,  \fIakkerman@dutiba.twi.tudelft.nl\fP
+.PP
+See also the
+.I XFree86(1)
+manual page.
+.\" $XConsortium: XF86_VGA16.man /main/14 1996/12/09 17:33:18 kaleb $

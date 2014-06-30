@@ -1,0 +1,345 @@
+.TH ACE_Naming_Context 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Naming_Context \- Maintaining accesses Name Server Databases. Allows to add NameBindings, change them, remove them and resolve NameBindings. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Naming_Context.h>\fR
+.PP
+Inherits \fBACE_Service_Object\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "enum \fBContext_Scope_Type\fR { \fBPROC_LOCAL\fR, \fBNODE_LOCAL\fR, \fBNET_LOCAL\fR }"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Naming_Context\fR (void)"
+.br
+.RI "\fI"Do-nothing" constructor.\fR"
+.ti -1c
+.RI "\fBACE_Naming_Context\fR (\fBContext_Scope_Type\fR scope_in, int light = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (\fBContext_Scope_Type\fR scope_in = ACE_Naming_Context::PROC_LOCAL, int light = 0)"
+.br
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIDeletes the instance of Name Space. Must be called before switching name spaces.\fR"
+.ti -1c
+.RI "int \fBclose_down\fR (void)"
+.br
+.RI "\fIRelease all resources. Gets called by destructor and fini.\fR"
+.ti -1c
+.RI "\fB~ACE_Naming_Context\fR (void)"
+.br
+.RI "\fIdestructor, do some cleanup :TBD: last dtor should "compress" file.\fR"
+.ti -1c
+.RI "virtual int \fBinit\fR (int argc, \fBACE_TCHAR\fR *argv[])"
+.br
+.RI "\fIInitialize name options and naming context when dynamically linked.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fIClose down the test when dynamically unlinked.\fR"
+.ti -1c
+.RI "virtual int \fBinfo\fR (char **strp, size_t length) const"
+.br
+.RI "\fIReturns information about this context.\fR"
+.ti -1c
+.RI "\fBACE_Name_Options\fR* \fBname_options\fR (void)"
+.br
+.RI "\fIReturns the \fBACE_Name_Options\fR associated with the Naming_Context.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const \fBACE_WString\fR &name_in, const \fBACE_WString\fR &value_in, const char *type_in = "")"
+.br
+.RI "\fIBind a new name to a naming context (Wide character strings).\fR"
+.ti -1c
+.RI "int \fBbind\fR (const char *name_in, const char *value_in, const char *type_in = "")"
+.br
+.RI "\fIBind a new name to a naming context ( character strings).\fR"
+.ti -1c
+.RI "int \fBrebind\fR (const \fBACE_WString\fR &name_in, const \fBACE_WString\fR &value_in, const char *type_in = "")"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const char *name_in, const char *value_in, const char *type_in = "")"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const \fBACE_WString\fR &name_in)"
+.br
+.RI "\fIDelete a name from a ACE_Naming_Context (Wide charcter strings Interface).\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const char *name_in)"
+.br
+.RI "\fIDelete a name from a ACE_Naming_Context (character strings interface).\fR"
+.ti -1c
+.RI "int \fBresolve\fR (const \fBACE_WString\fR &name_in, \fBACE_WString\fR &value_out, char *&type_out)"
+.br
+.RI "\fIGet value and type of a given name binding (Wide chars). The caller is responsible for deleting both <value_out> and <type_out>!\fR"
+.ti -1c
+.RI "int \fBresolve\fR (const char *name_in, \fBACE_WString\fR &value_out, char *&type_out)"
+.br
+.ti -1c
+.RI "int \fBresolve\fR (const char *name_in, char *&value_out, char *&type_out)"
+.br
+.RI "\fIGet value and type of a given name binding ( chars ). The caller is responsible for deleting both <value_out> and <type_out>!\fR"
+.ti -1c
+.RI "int \fBlist_names\fR (\fBACE_PWSTRING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in)"
+.br
+.RI "\fIGet a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string.\fR"
+.ti -1c
+.RI "int \fBlist_names\fR (\fBACE_PWSTRING_SET\fR &set_out, const char *pattern_in)"
+.br
+.RI "\fIGet a set of names matching a specified pattern (chars). Matching means the names must begin with the pattern string.\fR"
+.ti -1c
+.RI "int \fBlist_values\fR (\fBACE_PWSTRING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in)"
+.br
+.RI "\fIGet a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string.\fR"
+.ti -1c
+.RI "int \fBlist_values\fR (\fBACE_PWSTRING_SET\fR &set_out, const char *pattern_in)"
+.br
+.RI "\fIGet a set of values matching a specified pattern (chars). Matching means the values must begin with the pattern string.\fR"
+.ti -1c
+.RI "int \fBlist_types\fR (\fBACE_PWSTRING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in)"
+.br
+.RI "\fIGet a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string.\fR"
+.ti -1c
+.RI "int \fBlist_types\fR (\fBACE_PWSTRING_SET\fR &set_out, const char *pattern_in)"
+.br
+.RI "\fIGet a set of types matching a specified pattern (chars). Matching means the types must begin with the pattern string.\fR"
+.ti -1c
+.RI "virtual int \fBlist_name_entries\fR (\fBACE_BINDING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_name_entries\fR (\fBACE_BINDING_SET\fR &set_out, const char *pattern_in)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_value_entries\fR (\fBACE_BINDING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_value_entries\fR (\fBACE_BINDING_SET\fR &set_out, const char *pattern_in)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_type_entries\fR (\fBACE_BINDING_SET\fR &set_out, const \fBACE_WString\fR &pattern_in)"
+.br
+.ti -1c
+.RI "virtual int \fBlist_type_entries\fR (\fBACE_BINDING_SET\fR &set_out, const char *pattern_in)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void)"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBlocal\fR (void)"
+.br
+.RI "\fI1 if we're on the same local machine as the name server, else 0.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Name_Options\fR* \fBname_options_\fR"
+.br
+.RI "\fIKeep track of the options such as database name etc per Naming Context.\fR"
+.ti -1c
+.RI "\fBACE_Name_Space\fR* \fBname_space_\fR"
+.br
+.RI "\fIName space (can be either local or remote) dynamically bound.\fR"
+.ti -1c
+.RI "\fBACE_TCHAR\fR \fBhostname_\fR [MAXHOSTNAMELEN + 1]"
+.br
+.RI "\fIHolds the local hostname.\fR"
+.ti -1c
+.RI "const \fBACE_TCHAR\fR* \fBnetnameserver_host_\fR"
+.br
+.RI "\fIHolds name of net name server.\fR"
+.ti -1c
+.RI "int \fBnetnameserver_port_\fR"
+.br
+.RI "\fIHolds port number of the net name server.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Maintaining accesses Name Server Databases. Allows to add NameBindings, change them, remove them and resolve NameBindings.
+.PP
+.PP
+ Manages a Naming Service . That represents a persistent string to string mapping for different scopes. The scope of a ACE_Naming_Context may be either local for the calling process (Note : A process is hereby not identified by it's pid, but by it's argv[0]. So different processes (in UNIX syntax) may access the same NameBindings), global for all processes running on one host or global for all processes on the net (that know the address of the net name server socket). Strings may be plain character strings or Wide character strings. A Name Binding consists of a name string (that's the key), a value string and an optional type string (no wide chars). 
+.PP
+.SH MEMBER ENUMERATION DOCUMENTATION
+.PP 
+.SS enum ACE_Naming_Context::Context_Scope_Type
+.PP
+\fBEnumeration values:\fR
+.in +1c
+.TP
+\fB\fIPROC_LOCAL\fR \fRName lookup is local to the process.
+.TP
+\fB\fINODE_LOCAL\fR \fRName lookup is local to the node (host).
+.TP
+\fB\fINET_LOCAL\fR \fRName lookup is local to the (sub)network.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Naming_Context::ACE_Naming_Context (void)
+.PP
+"Do-nothing" constructor.
+.PP
+.SS ACE_Naming_Context::ACE_Naming_Context (\fBContext_Scope_Type\fR scope_in, int light = 0)
+.PP
+Specifies the scope of this namespace, opens and memory-maps the associated file (if accessible) or contacts the dedicated name server process for NET_LOCAL namespace. Note that <light> specifies whether or not we want to use ACE_Lite_MMap_Memory_Pool. By default we use ACE_MMap_Memory_Pool. 
+.SS ACE_Naming_Context::~ACE_Naming_Context (void)
+.PP
+destructor, do some cleanup :TBD: last dtor should "compress" file.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_Naming_Context::bind (const char * name_in, const char * value_in, const char * type_in = "")
+.PP
+Bind a new name to a naming context ( character strings).
+.PP
+.SS int ACE_Naming_Context::bind (const \fBACE_WString\fR & name_in, const \fBACE_WString\fR & value_in, const char * type_in = "")
+.PP
+Bind a new name to a naming context (Wide character strings).
+.PP
+.SS int ACE_Naming_Context::close (void)
+.PP
+Deletes the instance of Name Space. Must be called before switching name spaces.
+.PP
+.SS int ACE_Naming_Context::close_down (void)
+.PP
+Release all resources. Gets called by destructor and fini.
+.PP
+.SS void ACE_Naming_Context::dump (void)
+.PP
+Dump the state of the object.
+.PP
+.SS int ACE_Naming_Context::fini (void)\fC [virtual]\fR
+.PP
+Close down the test when dynamically unlinked.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS int ACE_Naming_Context::info (char ** strp, size_t length) const\fC [virtual]\fR
+.PP
+Returns information about this context.
+.PP
+.SS int ACE_Naming_Context::init (int argc, \fBACE_TCHAR\fR * argv[])\fC [virtual]\fR
+.PP
+Initialize name options and naming context when dynamically linked.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS int ACE_Naming_Context::list_name_entries (\fBACE_BINDING_SET\fR & set_out, const char * pattern_in)\fC [virtual]\fR
+.PP
+Get a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.SS int ACE_Naming_Context::list_name_entries (\fBACE_BINDING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)\fC [virtual]\fR
+.PP
+Get a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.SS int ACE_Naming_Context::list_names (\fBACE_PWSTRING_SET\fR & set_out, const char * pattern_in)
+.PP
+Get a set of names matching a specified pattern (chars). Matching means the names must begin with the pattern string.
+.PP
+.SS int ACE_Naming_Context::list_names (\fBACE_PWSTRING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)
+.PP
+Get a set of names matching a specified pattern (wchars). Matching means the names must begin with the pattern string.
+.PP
+.SS int ACE_Naming_Context::list_type_entries (\fBACE_BINDING_SET\fR & set_out, const char * pattern_in)\fC [virtual]\fR
+.PP
+Get a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.SS int ACE_Naming_Context::list_type_entries (\fBACE_BINDING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)\fC [virtual]\fR
+.PP
+Get a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.SS int ACE_Naming_Context::list_types (\fBACE_PWSTRING_SET\fR & set_out, const char * pattern_in)
+.PP
+Get a set of types matching a specified pattern (chars). Matching means the types must begin with the pattern string.
+.PP
+.SS int ACE_Naming_Context::list_types (\fBACE_PWSTRING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)
+.PP
+Get a set of types matching a specified pattern (wchars). Matching means the types must begin with the pattern string.
+.PP
+.SS int ACE_Naming_Context::list_value_entries (\fBACE_BINDING_SET\fR & set_out, const char * pattern_in)\fC [virtual]\fR
+.PP
+Get a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.SS int ACE_Naming_Context::list_value_entries (\fBACE_BINDING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)\fC [virtual]\fR
+.PP
+Get a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string. Returns the complete binding associated each pattern match. 
+.SS int ACE_Naming_Context::list_values (\fBACE_PWSTRING_SET\fR & set_out, const char * pattern_in)
+.PP
+Get a set of values matching a specified pattern (chars). Matching means the values must begin with the pattern string.
+.PP
+.SS int ACE_Naming_Context::list_values (\fBACE_PWSTRING_SET\fR & set_out, const \fBACE_WString\fR & pattern_in)
+.PP
+Get a set of values matching a specified pattern (wchars). Matching means the values must begin with the pattern string.
+.PP
+.SS int ACE_Naming_Context::local (void)\fC [private]\fR
+.PP
+1 if we're on the same local machine as the name server, else 0.
+.PP
+.SS \fBACE_Name_Options\fR * ACE_Naming_Context::name_options (void)
+.PP
+Returns the \fBACE_Name_Options\fR associated with the Naming_Context.
+.PP
+.SS int ACE_Naming_Context::open (\fBContext_Scope_Type\fR scope_in = ACE_Naming_Context::PROC_LOCAL, int light = 0)
+.PP
+Specifies the scope of this namespace, opens and memory-maps the associated file (if accessible) or contacts the dedicated name server process for NET_LOCAL namespace. Note that <light> specifies whether or not we want to use ACE_Lite_MMap_Memory_Pool. By default we use ACE_MMap_Memory_Pool. 
+.SS int ACE_Naming_Context::rebind (const char * name_in, const char * value_in, const char * type_in = "")
+.PP
+Overwrite the value or type of an existing name in a ACE_Naming_Context or bind a new name to the context, if it didn't exist yet. ( charcter strings interface) 
+.SS int ACE_Naming_Context::rebind (const \fBACE_WString\fR & name_in, const \fBACE_WString\fR & value_in, const char * type_in = "")
+.PP
+Overwrite the value or type of an existing name in a ACE_Naming_Context or bind a new name to the context, if it didn't exist yet. (Wide charcter strings interface). 
+.SS int ACE_Naming_Context::resolve (const char * name_in, char *& value_out, char *& type_out)
+.PP
+Get value and type of a given name binding ( chars ). The caller is responsible for deleting both <value_out> and <type_out>!
+.PP
+.SS int ACE_Naming_Context::resolve (const char * name_in, \fBACE_WString\fR & value_out, char *& type_out)
+.PP
+Get value and type of a given name binding (Wide chars output). The caller is responsible for deleting both <value_out> and <type_out>! 
+.SS int ACE_Naming_Context::resolve (const \fBACE_WString\fR & name_in, \fBACE_WString\fR & value_out, char *& type_out)
+.PP
+Get value and type of a given name binding (Wide chars). The caller is responsible for deleting both <value_out> and <type_out>!
+.PP
+.SS int ACE_Naming_Context::unbind (const char * name_in)
+.PP
+Delete a name from a ACE_Naming_Context (character strings interface).
+.PP
+.SS int ACE_Naming_Context::unbind (const \fBACE_WString\fR & name_in)
+.PP
+Delete a name from a ACE_Naming_Context (Wide charcter strings Interface).
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_TCHAR\fR ACE_Naming_Context::hostname_[MAXHOSTNAMELEN+1]\fC [private]\fR
+.PP
+Holds the local hostname.
+.PP
+.SS \fBACE_Name_Options\fR * ACE_Naming_Context::name_options_\fC [private]\fR
+.PP
+Keep track of the options such as database name etc per Naming Context.
+.PP
+.SS \fBACE_Name_Space\fR * ACE_Naming_Context::name_space_\fC [private]\fR
+.PP
+Name space (can be either local or remote) dynamically bound.
+.PP
+.SS const \fBACE_TCHAR\fR * ACE_Naming_Context::netnameserver_host_\fC [private]\fR
+.PP
+Holds name of net name server.
+.PP
+.SS int ACE_Naming_Context::netnameserver_port_\fC [private]\fR
+.PP
+Holds port number of the net name server.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

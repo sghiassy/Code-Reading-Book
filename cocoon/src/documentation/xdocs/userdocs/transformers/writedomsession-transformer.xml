@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>Write DOM Session Transformer</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+			<person name="Sven Beauprez" email="Sven.Beauprez@the-ecorp.com"/>
+			<person name="Davanum Srinivas" email="dims@yahoo.com"/>
+		 </authors>
+		 <abstract>This document describes the write dom session transformer of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="Write DOM Session Transformer">
+			<p>Make a DOM object from SAX events and write it to the session.</p>
+			<ul>
+				<li>Name : writeDOMsession</li>
+				<li>Class: org.apache.cocoon.transformation.WriteDOMSessionTransformer</li>
+				<li>Cacheable: no.</li>
+			</ul>
+<p>
+If you only use the FilterTransformer in combination with the SQLTransformer, 
+you have to query the database each time the user wants to see another part of 
+the result. You can better store the result in the session after the first 
+request and retrieve the result from the session for the subsequent requests. 
+This can be done by using a selector, which checks if the data is available in 
+the session or not.
+</p>
+<p>
+WriteDOMSessionTransformer can build a DOM starting from a given element (which 
+will be the root of the DOM tree) and store it in the session. If you want to 
+store the result of a query, you have to add following to the sitemap:
+</p>
+    <source>
+     <![CDATA[
+      <map:transform type="writeDOMsession">
+        <map:parameter name="dom-name" value="DBresult"/>
+        <map:parameter name="dom-root-element" value="rowset"/>
+      </map:transform>
+     ]]>
+    </source>
+<p>
+The transformer will build a DOM tree with rowset as root element and will store 
+it in the session with the name "DBresult".
+</p>
+<p>
+Note: most of the times, it is not smart to keep the output XML of the 
+SQLTransformer in the session. Check if it is better to do the necessary 
+transformations first, so that you get a smaller DOM, and then put the result in 
+the session. You probably will be able to use the FilterTransformer on the 
+transformed XML also.
+</p>
+<p>
+The WriteDOMSessionTransformer is a standalone component, you don't need to use 
+it in combination with the SQLTransformer.
+</p>
+		</s1>
+	</body>
+</document>

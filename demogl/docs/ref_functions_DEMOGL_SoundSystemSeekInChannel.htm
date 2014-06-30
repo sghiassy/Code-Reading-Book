@@ -1,0 +1,89 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemSeekInChannel</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemPauseChannel</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemSeekInChannel</h4>
+<dd>DEMOGL_SoundSystemSeekInChannel moves the current position of a given channel in its sounddata to a new position and continues
+	play from there.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemSeekInChannel(
+	<b>const int</b> <i>iChannelCodeID</i>,
+	<b>const long</b> <i>lStartPos</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iChannelCodeID</i>
+	<dd>Specifies the ChannelCodeID of the channel which should be paused.
+	<dt><i>lStartPos</i>
+	<dd>Specifies the new position where to restart the play from. For channels playing DGL_SS_SAMPLEELEMENT sound elements, 
+		<i>lStartPos</i> is a position in bytes. For channels playing DGL_SS_MP3ELEMENT sound elements, <i>lStartPos</i> is
+		a new position in milliseconds from the start. For channels playing DGL_SS_MODELEMENT sound elements, <i>lStartPos</i>
+		is a new value calculated using the macro MAKELONG: MAKELONG(order,row). This will result in a longword with LOWORD=order in
+		the music module and HIWORD=row in that pattern. 
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns one of the following error codes:
+	<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Error code</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_CHANNELACTIONFAILED</td>
+			<td WIDTH="70%" VALIGN="TOP">The underlying sound library reported an error while processing the seek. Probably
+				the <i>lStartPos</i> parameter is not a valid value.</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_CHANNELNOTINUSE</td>
+			<td WIDTH="70%" VALIGN="TOP">The <i>iChannelCodeID</i> value is not found as an active channel.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_ILLEGALELEMENTTYPE</td>
+			<td WIDTH="70%" VALIGN="TOP">The channel specified is playing data belonging to an element of an unknown type.
+				This is caused by an implementation error. Should not happen.
+			</td>
+		</tr>
+		</table>	
+	<p>
+<dt><b>Remarks.</b>
+<dd>When <i>lStartPos</i> is set to a value beyond the scope of the data of the sound element, an error occures. Seeking in a DGL_SS_MP3ELEMENT
+	sound element will not be that accurate because MP3's work with frames and seeking can only be done by frames, so the best matching frame
+	is chosen as starting point internally.
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_SoundSystemChannelScriptID2ChannelCodeID.htm" target="main">DEMOGL_SoundSystemChannelScriptID2ChannelCodeID</a>,
+	<a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm" target="main">_SOUNDSYSTEM commands</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 18-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,141 @@
+.\" $XConsortium: Xhp.man /main/4 1996/12/09 17:32:35 kaleb $
+.\" Copyright (c) 1994  Hewlett-Packard Company
+.\" Copyright (c) 1994  X Consortium
+.\" 
+.\" Permission is hereby granted, free of charge, to any person obtaining a
+.\" copy of this software and associated documentation files (the "Software"), 
+.\" to deal in the Software without restriction, including without limitation 
+.\" the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+.\" and/or sell copies of the Software, and to permit persons to whom the 
+.\" Software furnished to do so, subject to the following conditions:
+.\" 
+.\" The above copyright notice and this permission notice shall be included in
+.\" all copies or substantial portions of the Software.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL 
+.\" THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
+.\" WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF 
+.\" OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+.\" SOFTWARE.
+.\" 
+.\" Except as contained in this notice, the name of the X Consortium shall not 
+.\" be used in advertising or otherwise to promote the sale, use or other 
+.\" dealing in this Software without prior written authorization from the 
+.\" X Consortium.
+.\"
+.\" HEWLETT-PACKARD MAKES NO WARRANTY OF ANY KIND WITH REGARD TO THIS SOFWARE, 
+.\" INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY 
+.\" AND FITNESS FOR A PARTICULAR PURPOSE.  Hewlett-Packard shall not be liable 
+.\" for errors contained herein or direct, indirect, special, incidental or
+.\" consequential damages in connection with the furnishing, performance, or 
+.\" use of this material.
+.TH Xhp 1 "Release 6.3" "X Version 11"
+.SH NAME
+Xhp \- cfb-based X window system server for Hewlett-Packard workstations
+.SH SYNOPSIS
+.PP
+This cfb-based X server implementation is contributed by Hewlett-Packard
+as a sample implementation for HP workstations.  Its performance on HP
+workstations will be inferior to the product X servers available from
+Hewlett-Packard.  Not all graphics display devices available from 
+Hewlett-Packard are supported by this implementation.
+.PP
+.SH "SUPPORTED GRAPHICS DEVICES"
+.PP
+Please refer to the HP catalog or to the apropriate data sheets
+for the displays.  The data that follows relates the use of the 
+product names with their official HP product numbers.
+.PP
+The following graphics display devices are supported by this implementation:
+.sp
+.TP
+.I HPA4070A
+This graphics device, known as "HCRX", is a 1280x1024 color device that has 
+8 planes.
+.TP
+.I HPA4071A
+This graphics device, known as "HCRX24", is a 1280x1024 color device that has
+24 planes.  It is optionally available with a hardware accelerator, in which
+case the product number is HPA4071A_Z.
+.TP
+.I HPA1659A
+This graphics device, known as "CRX", is a 1280x1024 color device that has 
+8 planes.
+.TP
+.I HPA1439A
+This graphics device, known as "CRX24", is a 1280x1024 color device that has
+24 planes.  It is optionally available with a hardware accelerator.
+.TP
+.I HPA1924A
+This graphics device, known as "GRX" is a 1280x1024 grayscale device that has
+8 planes.
+.TP
+.I HPA2269A
+This graphics device, known as "Dual CRX" is a 1280x1024 color device that has
+8 planes.  It implements support for two displays on a single graphics card.
+.TP
+.I HP710C
+This graphics device is the internal graphics support optionally available on 
+the HP9000s710 SPU.  It supports 1280x1024 color displays and has 8 planes.
+.TP
+.I HP710G
+This graphics device is the internal graphics support optionally available on 
+the HP9000s710 SPU.  It supports 1280x1024 grayscale displays and has 8 planes.
+.TP
+.I HP710L
+This graphics device is the internal graphics support optionally available on 
+the HP9000s710 SPU.  It supports 1024x768 color displays and has 8 planes.
+.TP
+.I HP712
+This graphics device is the internal graphics support available on 
+the HP9000s712 SPU.  It supports 640x480, 1024x768 or 1280x1024 color displays 
+and has 8 planes.
+.PP
+.SH "MULTIPLE SCREEN SUPPORT"
+.PP
+This Xhp X11 sample server supports multiple physical screens connected to a 
+single X server.  To use this feature, you must have an SPU that allows
+the installation of  a second graphics display card.  The file 
+$(LIBDIR)/X*screens is read by the X11 server 
+to determine information about the system screen configuration.
+You must modify this file to add information for the second graphics display.
+.sp
+$(LIBDIR) is /usr/X11R6/lib/X11 by default.
+.sp
+For a complete description of the X*screens file, refer to the HP-UX manuals, 
+or view the sample file in $(LIBDIR).
+.SH "24 PLANE SUPPORT FOR HCRX24 AND CRX24"
+.PP
+This Xhp X11 sample server supports two modes for the HCRX24 and CRX24 display
+hardware:  8 plane and 24 plane, with 8 plane being the default.
+To run the server in 24 plane mode, you must add a depth parameter to
+the X*screens file.  For example:
+.sp
+/dev/crt  depth 24
+.sp
+.PP
+In depth 24 mode, the default visual type is DirectColor.
+.PP
+.SH "KEYMAP FILE"
+.PP
+This Xhp server loads a keymap that is appropriate for the attached keyboard 
+from the XHPKeymaps file, which resides in $(LIBDIR).  The XHPKeymaps file
+supplied with this Xhp server is a minimal file that supports US English, 
+French, Spanish, German, and Japanese JIS keyboards.  If you have some other 
+keyboard, the appropriate keymap may not be contained in the XHPKeymaps file.  
+In this case, if you have access to the Hewlett-Packard product X server, you 
+can copy its keymap file (found in /usr/lib/X11/XHPKeymaps) to $(LIBDIR).
+.SH "FAST SCROLLING OPTION"
+.PP
+Since scrolling speed is especially slow on this server compared
+to HP's product server, we have supplied fast scrolling support,
+using a .o to link into the server.  Using HP's fast scrolling
+is optional.  To enable the fast scrolling, set the token
+"HPFastScrolling" to TRUE in the config/hp.cf file.  If you want
+to use the CFB scrolling module, simply remove the define in
+config/hp.cf, remake the Makefiles, and recompile.
+.SH TRADEMARKS
+.PP
+X Window System is a trademark of X Consortium, Inc.

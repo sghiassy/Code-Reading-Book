@@ -1,0 +1,47 @@
+XCOMM $XConsortium: Imakefile /main/6 1995/12/07 21:15:34 gildea $
+XCOMM $XFree86: xc/programs/Xserver/XIE/mixie/Imakefile,v 3.6.4.1 1997/05/03 09:44:48 dawes Exp $
+#include <Server.tmpl>
+
+#if BuildDIS
+SUBDIRS = control fax import process export
+OBJS = control/?*.o fax/?*.o import/?*.o process/?*.o export/?*.o 
+DONES = control/DONE fax/DONE import/DONE process/DONE export/DONE 
+#else
+SUBDIRS = control fax import jpeg process export
+OBJS = control/?*.o fax/?*.o import/?*.o jpeg/?*.o process/?*.o export/?*.o 
+DONES = control/DONE fax/DONE import/DONE jpeg/DONE process/DONE export/DONE 
+#endif
+
+#if !XieDynamicModule
+#define	IHaveSubdirs
+
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS) $(OBJS) $(DONES))
+#endif
+#endif
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)
+#endif
+
+#ifdef OS2Architecture
+all:: DONE
+	cp $(OBJS) .
+
+NormalDepLibraryTarget(mixie,$(SUBDIRS) $(DONES),?*.o)
+#else
+NormalDepLibraryTarget(mixie,$(SUBDIRS) $(DONES),$(OBJS))
+#endif
+
+#if !XieDynamicModule
+ForceSubdirs($(SUBDIRS))
+
+DependSubdirs($(SUBDIRS))
+
+MakeLintLibSubdirs($(SUBDIRS))
+LintSubdirs($(SUBDIRS))
+#endif
+
+InstallLinkKitLibrary(mixie,$(LINKKITDIR)/lib)
+

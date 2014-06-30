@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>Filter Transformer</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+			<person name="Sven Beauprez" email="Sven.Beauprez@the-ecorp.com"/>
+			<person name="Davanum Srinivas" email="dims@yahoo.com"/>
+		 </authors>
+		 <abstract>This document describes the Filter transformer of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="Filter Transformer">
+			<p>The filter transformer can be used to let only an amount of elements 
+                     through in a given block.</p>
+			<ul>
+				<li>Name : filter</li>
+				<li>Class: org.apache.cocoon.transformation.FilterTransformer</li>
+				<li>Cacheable: no.</li>
+			</ul>
+<p>
+When you for example query a database and it returns too many rows too process at once, you 
+might want to take a block of elements, process this block and ignore the rest 
+for now. You can best compare it to a search on Google: they only return 10 
+results in one time, for more results you have to click on another block (page). 
+It wouldn't be wise to process more than 10 elements in the pipeline if you only 
+need to display 10 elements.
+</p>
+<p>
+Assume that a query returns 56 row elements (by using the SQLTransformer) and 
+that you only want to display the first 10 elements:
+</p>
+<p>
+Output XML from the SQLTransformer:
+</p>
+
+    <source>
+     <![CDATA[
+      <rowset nrofrows="56" name="test" 
+xmlns="http://apache.org/cocoon/SQL/2.0">
+        <row>
+          <!-- db record -->
+        </row>
+        <row>
+          <!-- db record -->
+        </row>
+        <row>
+          <!-- db record -->
+        </row>
+
+        ...
+
+        <row>
+          <!-- db record -->
+        </row>
+      </rowset>
+     ]]>
+    </source>
+
+<p>
+By adding following lines to the sitemap, just under the SQLTransformer, you 
+restrict the results to 10 elements in the first block:
+</p>
+
+    <source>
+     <![CDATA[
+      <map:transform type="filter">
+        <map:parameter name="element-name" value="row"/>
+        <map:parameter name="count" value="10"/>
+        <map:parameter name="blocknr" value="1"/>
+      </map:transform>
+     ]]>
+    </source>
+
+<p>
+output XML:
+</p>
+
+    <source>
+     <![CDATA[
+      <rowset nrofrows="56" name="test" 
+xmlns="http://apache.org/cocoon/SQL/2.0">
+        <block id="1">
+          <row>
+            <!-- db record -->
+          </row>
+
+          <!-- total of 10 rows -->
+
+          <row>
+            <!-- db record -->
+          </row>
+        </block>
+        <block id="2"/>
+        <block id="3"/>
+        <block id="4"/>
+        <block id="5"/>
+        <block id="6"/>
+      </rowset>
+     ]]>
+    </source>
+
+<p>
+To make it more dynamically, put something like {reqCount} and {reqBlock} in the 
+values for count and blocknr respectively. These can be parameters from the 
+request and they can be passed to the sitemap with an action.
+</p>
+<p>
+The FilterTransformer is a standalone component, you don't need to use it in 
+combination with the SQLTransformer.
+</p>
+		</s1>
+	</body>
+</document>

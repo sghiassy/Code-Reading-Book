@@ -1,0 +1,33 @@
+Release notes for OpenCL 0.7.6
+(more recent ones are at the beginning, those at the bottom are
+ probably out of date by now)
+
+--
+The CBC_wPadding modes have been removed. Here is what to change:
+   CBC_wPadding_Encryption<CIPHER> -> CBC_Encryption<CIPHER, PKCSPadding>
+   CBC_wPadding_Decryption<CIPHER> -> CBC_Decryption<CIPHER, PKCSPadding>
+
+Unfortunately neither typedefs nor defines can handle this change so you
+might as well just go ahead and replace them.
+
+modes.h was split into several files; I figured that while I was breaking
+everyone's code anyway, I should go ahead and do all the other
+non-backwards-compatible things I had been wanting to do.
+
+--
+For gcc 2.95.x: you need to add -fpermissive to the LANG_FLAGS in order to
+build the code using 64-bit contants (Tiger, SHARK, etc). Those versions of gcc
+were somewhat more pedantic than they needed to be.
+
+--
+If you get strange errors related to templates with KAI C++ at link time,
+rm -rf build/checks/*, add --one_per to CHECK_FLAGS, and rebuild (this seems
+to be specific to version 4; it's not needed for 3.4).
+
+--
+If you're using KAI C++, it's useful to edit the makefile and add in some
+backend optimizations. For example, if you're using gcc as your backend,
+--backed -fomit-frame-pointer can help quite a bit, though OTOH --backend -O3
+seems to hurt the code. YMMV. (WARNING: enabling -fomit-frame-pointer seems to
+cause randpool.cpp to be miscompiled; calling random on a Randpool object will
+hang from some reason - very strange).

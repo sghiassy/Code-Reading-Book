@@ -1,0 +1,350 @@
+<html>
+<head>
+<title>The 'Context' Component</title>
+</head>
+<body bgcolor="white">
+
+<div align="center">
+<h1>The <u>Context</u> Component</h1>
+<br>
+<a href="#Introduction">[Introduction]</a>
+<a href="#Common Attributes">[Common Attributes]</a>
+<a href="#Standard Implementation Attributes">[Standard Implementation Attributes]</a>
+<a href="#Utility Components">[Utility Components]</a>
+<a href="#Special Features">[Special Features]</a>
+</br>
+</div>
+
+
+<a name="Introduction"></a>
+<h2>Introduction</h2>
+
+<p>A <strong>Context</strong> component represents an individual web
+application that is running within a particular <a href="host.html">Host</a>.
+Such a web application is based on a directory whose organization is described
+in the Servlet API Specification, version 2.2 -- including the web application
+deployment descriptor file, found in <code>"WEB-INF/web.xml"</code>.</p>
+
+<p>The web application used to process a particular request is selected by
+Catalina based on matching the longest possible prefix of the request URI
+against the <em>context path</em> of each defined Context.  Once selected, that
+Context will select an appropriate servlet to process the incoming request,
+according to the servlet mappings defined in the web application deployment
+descriptor, based on the request mapping rules that are also found in the
+servlet specification.</p>
+
+<p>You may define as many <strong>Context</strong> components as you wish,
+nested within a <a href="host.html">Host</a> component in the
+<code>conf/server.xml</code> file.  Each such Context must have a unique
+context path, defined by the <code>path</code> attribute.  In addition,
+you <strong>must</strong> define a context with a path equal to a zero-length
+string, which becomes the default web application to process requests when a
+different context cannot be matched.  There are also special features of the
+<a href="host.html#Special Features">Host</a> configuration that enable
+automatic creation of <strong>Context</strong> components without having
+to explicitly mention them.</p>
+
+<p>Request processing <a href="valve.html">Valves</a> that are nested
+here will be executed for every request received for processing by this
+web application.</p>
+
+<br>
+
+
+<a name="Common Attributes"></a>
+<h2>Common Attributes</h2>
+
+<p>All implementations of the <strong>Context</strong> component support the
+following attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>className</code></td>
+    <td>Java class name of the implementation to use.  This class must
+        implement the <code>org.apache.catalina.Context</code> interface.  If
+        no class name is specified, the standard implementation will be
+        used (<code>org.apache.catalina.core.StandardContext</code>).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>cookies</code></td>
+    <td>
+      Set to <code>true</code> if you want cookies to be used for session
+      identifier communication (if supported by the client).  Set to
+      <code>false</code> if you want to skip even trying session id cookies,
+      and rely only on URL rewriting.  If not specified, the default value is
+      <code>true</code>.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>crossContext</code></td>
+    <td>
+      Set to <code>true</code> of you want calls from within this application
+      to <code>ServletContext.getContext()</code> to successfully return the
+      <code>ServletContext</code> for other web applications running in this
+      host.  Set to <code>false</code> in security conscious environments, so
+      that <code>getContext()</code> calls will return <code>null</code>.  The
+      default value is <code>false</code>.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>docBase</code></td>
+    <td>
+      The "document base" directory for this web application.  This is the
+      pathname of a directory that contains the static resources (such as
+      HTML pages and images) for this application, plus a WEB-INF subdirectory
+      containing the "web.xml" deployment descriptor and other configuration
+      information.  You may specify an absolute pathname to this directory,
+      or a pathname that is relative to the "application base" for the
+      <a href="host.html">Host</a> within which this application is defined.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>path</code></td>
+    <td>
+      The context path for this web application, which is matched against
+      the beginning of a request URI to select the appropriate application.
+      All of the context paths within a particular
+      <a href="host.html">Host</a> must be unique.  In addition, you must
+      specify a <b>Context</b> with a <code>path</code> equal to a zero-length
+      string, which will become the default context for this Host.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>reloadable</code></td>
+    <td>
+      Set this attribute to <code>true</code> if you wish to have Catalina
+      check the classes in <code>WEB-INF/classes</code> and
+      <code>WEB-INF/lib</code> for modification, and automatically reload
+      this application if a change is detected.  This feature is very useful
+      during development; however, it requires significant runtime overhead
+      so it is not recommended for production deployment scenarios.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>wrapperClass</code></td>
+    <td>
+      Java class name of the <code>org.apache.catalina.Wrapper</code>
+      implementation class that will be used for servlets managed by this
+      Context.  If not specified, the standard value
+      (<code>org.apache.catalina.core.StandardWrapper</code>) will be used.
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>useNaming</code></td>
+    <td>      
+      Set this attribute to <code>true</code> if you wish to have Catalina
+      enable JNDI.  Default is <code>true</code>.
+    </td>     
+  </tr>
+
+  <tr>
+    <td><code>override</code></td>
+    <td>              
+      Set this attribute to <code>true</code> if you wish to over ride
+      the DefaultContext configuration.  Default is <code>false</code>.
+    </td>        
+  </tr>
+
+</table>
+
+<br>
+
+<a name="Standard Implementation Attributes"></a>
+<h2>Standard Implementation Attributes</h2>
+
+<p>The standard implementation of the <strong>Context</strong> component
+also supports the following attributes:</p>
+
+<table border="1" width="100%">
+
+  <tr>
+    <th width="15%">Attribute</th>
+    <th width="85%">Description</th>
+  </tr>
+
+  <tr>
+    <td><code>debug</code></td>
+    <td>
+      The level of debugging detail logged by this <strong>Context</strong>
+      to the associated Logger, with higher numbers generating more detailed
+      output.  If not specified, the debugging detail level will be set to
+      zero (0).
+    </td>
+  </tr>
+
+  <tr>
+    <td><code>workDir</code></td>
+    <td>
+      Pathname to a scratch directory to be provided by this Context for
+      temporary read-write use by servlets within this application.  The
+      corresponding directory will be made visible as a servlet context
+      attribute (of type <code>java.io.File</code>) with the standard name
+      assigned by the Servlet API Specification, version 2.2
+      (<code>javax.servlet.context.tempdir</code>).  If not specified, a
+      suitable directory underneath Catalina's home directory will be
+      assigned automatically.
+    </td>
+  </tr>
+
+</table>
+
+<br>
+
+<a name="Utility Components"></a>
+<h2>Utility Components</h2>
+
+<p>You can attach one or more of the following utility components by nesting
+a corresponding declaration inside your <strong>Context</strong> element.
+</p>
+
+<ul>
+  <li><a href="loader.html">Loader</a> - Configure a class loader associated
+      with this <strong>Context</strong>.
+  <li><a href="logger.html">Logger</a> - Configure a logger that will receive
+      all log messages from this <strong>Context</strong>.</li>
+  <li><a href="manager.html">Manager</a> - Configure a session manager
+      for the sessions associated with this <strong>Context</strong>.</li>
+  <li><a href="realm.html">Realm</a> - Configure a realm that will allow your
+      database of users, and their associated roles, to be unique to this
+      particular web application.</li>
+  <li><a href="resources.html">Resources</a> - Configure access to the static
+      resources associated with this <strong>Context</strong></li>
+</ul>
+
+<br>
+
+<a name="Special Features"></a>
+<h2>Special Features</h2>
+
+<h3>Access Logs</h3>
+
+<p>When you run a web server, one of the output files normally generated is
+an <i>access log</i>, which generates one line of information, in a standard
+format, for each HTTP request that was received, and responded to, by the
+web server.  Catalina includes an optional <a href="valve.html">Valve</a>
+implementation that can create access logs in the same standard format
+created by web servers, or in any custom format desired.</p>
+
+<p>You can ask Catalina to create an access log for all requests to this
+web application, by nesting an element like this inside your
+<strong>Context</strong> element:</p>
+<pre>
+
+    &lt;Context path="/myapp" ...&gt;
+      ...
+      &lt;Valve className="org.apache.catalina.valves.AccessLogValve"
+             prefix="myapp_access_log." suffix=".txt"
+             pattern="common"/&gt;
+      ...
+    &lt;/Context&gt;
+
+</pre>
+
+<p>See <a href="valve.html#AccessLogValve">Access Log Valve</a> for more
+information on the configuration options that are supported.</p>
+
+<h3>Automatic Context Configuration</h3>
+
+<p>If you use the standard <strong>Context</strong> implementation, the
+following configuration occurs automatically when Catalina is started, or
+whenever this web application is restarted.  No special configuration is
+necessary to enable this activity.</p>
+<ul>
+<li>If you have not declared your own <a href="loader.html">Loader</a>
+    to be installed, an instance of the standard Loader implementation class
+    (<code>org.apache.catalina.loader.WebappLoader</code>) will be
+    installed and configured.</li>
+<li>If you have not declared your own <a href="manager.html">Manager</a>
+    to be installed, an instance of the standard Manager implementation class
+    (<code>org.apache.catalina.session.StandardManager</code>) will be
+    installed and configured.</li>
+<li>If you have not declared your own <a href="resources.html">Resources</a>
+    to be installed, an instance of the standard Resources implementation class
+    (<code>org.apache.catalina.resources.StandardResources</code>) will be
+    installed and configured.</li>
+<li>The web application properties for this application will be defaulted
+    from the <code>conf/web.xml</code> file.  This deployment descriptor can
+    therefore be used to establish defaults for servlet mappings (such as the
+    JSP servlet) and MIME types for all applications running in Catalina.</li>
+<li>The web application properties for this application will then be
+    customized from the <code>WEB-INF/web.xml</code> file for this application,
+    if it exists.  Such configuration information supplements that provided by
+    the system-wide defaults described in the previous point.</li>
+<li>If your web application has specified any security constraints, and you
+    have not installed any Valves that implement the <code>Authenticator</code>
+    interface, a standard <code>Authenticator</code> Valve will be installed,
+    based on the selected &lt;auth-method&gt; you have specified.</li>
+</ul>
+
+<p>NOTE:  The automatic context configuration steps described above are applied
+both to contexts specifically listed in the <code>conf/server.xml</code> file,
+as well as contexts automatically created by the owning
+<a href="host.html">Host</a> component.</p>
+
+<h3>Lifecycle Listeners</h3>
+
+<p>If you have implemented a Java object that needs to know when this
+<strong>Context</strong> is started or stopped, you can declare it by nesting a
+<code>&lt;Listener&gt;</code> element inside the <code>&lt;Context&gt;</code>
+element.  The class you specify in the <code>className</code> attribute
+of this Listener must implement the
+<code>org.apache.catalina.LifecycleListener</code> interface, and it will be
+notified about the occurrence of the corresponding lifecycle events.</p>
+
+<p>Configuration for such a listener might look like this:</p>
+<pre>
+
+    &lt;Context path="/myapp" ...&gt;
+      ...
+      &lt;Listener className="com.mycompany.MyAppListener"/&gt;
+      ...
+    &lt;/Context&gt;
+
+</pre>
+
+<h3>Request Filters</h3>
+
+<p>You can ask Catalina to check the IP address, or host name, of an
+incoming request for this web application
+against a list of "accept" and "deny" filters, which are
+defined using the Regular Expression syntax supported by the jakarta-regexp
+regular expression library system.  Requests that come from remote locations
+that are not accepted will be rejected with an HTTP "Forbidden" error.
+Example filter declarations:</p>
+<pre>
+
+    &lt;Context path="/myapp" ...&gt;
+      ...
+      &lt;Valve className="org.apache.catalina.valves.RemoteHostValve"
+             allow="*.mycompany.com,www.yourcompany.com"/&gt;
+      &lt;Valve className="org.apache.catalina.valves.RemoteAddrValve"
+             deny="192.168.1.*"
+      ...
+    &lt;/Context&gt;
+
+</pre>
+
+<p>See <a href="valve.html#RemoteAddressFilter">Remote Address Filter</a> or
+<a href="valve.html#RemoteHostFilter">Remote Host Filter</a> for more
+information on the syntax of these filters, and the logic that is applied
+when they are executed.</p>
+
+<br>
+
+
+</body>
+</html>

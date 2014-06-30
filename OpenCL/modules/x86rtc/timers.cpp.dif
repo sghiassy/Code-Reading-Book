@@ -1,0 +1,17 @@
+*** ../../src/timers.cpp	Sun Jun  3 05:39:48 2001
+--- timers.cpp	Sun Jun 10 07:05:57 2001
+***************
+*** 19,23 ****
+  u64bit system_clock()
+     {
+!    return std::clock();
+     }
+  
+--- 19,25 ----
+  u64bit system_clock()
+     {
+!    u64bit rtc;
+!    asm volatile("RDTSC" : "=A" (rtc));
+!    return rtc;
+     }
+  

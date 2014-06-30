@@ -1,0 +1,213 @@
+.TH ACE_Based_Pointer_Basic 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Based_Pointer_Basic \- A proxy that keeps track of the relative offset of a "pointer" from its base address. This class makes it possible to transparently use "pointers" in shared memory as easily as programming with pointers to local memory. In particular, we don't need to ensure that the base addresses of all the pointers are mapped into separate processes at the same absolute memory base address. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Based_Pointer_T.h>\fR
+.PP
+Inherited by \fBACE_Based_Pointer\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Based_Pointer_Basic\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Based_Pointer_Basic\fR (CONCRETE *initial)"
+.br
+.ti -1c
+.RI "\fBACE_Based_Pointer_Basic\fR (const ACE_Based_Pointer_Basic<CONCRETE> &)"
+.br
+.RI "\fICopy constructor.\fR"
+.ti -1c
+.RI "\fBACE_Based_Pointer_Basic\fR (const void *base_addr, int o)"
+.br
+.RI "\fIConstructor for know base address. <o> is only used to resolve overload ambiguity.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (CONCRETE *from)"
+.br
+.RI "\fIPseudo-assignment operator.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Based_Pointer_Basic<CONCRETE> &)"
+.br
+.RI "\fIPseudo-assignment operator.\fR"
+.ti -1c
+.RI "CONCRETE \fBoperator *\fR (void) const"
+.br
+.RI "\fIDereference operator.\fR"
+.ti -1c
+.RI "int \fBoperator<\fR (const ACE_Based_Pointer_Basic<CONCRETE> &) const"
+.br
+.RI "\fILess than operator.\fR"
+.ti -1c
+.RI "int \fBoperator<=\fR (const ACE_Based_Pointer_Basic<CONCRETE> &) const"
+.br
+.RI "\fILess than or equal operator.\fR"
+.ti -1c
+.RI "int \fBoperator>\fR (const ACE_Based_Pointer_Basic<CONCRETE> &) const"
+.br
+.RI "\fIGreater than operator.\fR"
+.ti -1c
+.RI "int \fBoperator>=\fR (const ACE_Based_Pointer_Basic<CONCRETE> &) const"
+.br
+.RI "\fIGreater than or equal operator.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_Based_Pointer_Basic<CONCRETE> &) const"
+.br
+.RI "\fIEquality operator.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_Based_Pointer_Basic<CONCRETE> &) const"
+.br
+.RI "\fIInequality operator.\fR"
+.ti -1c
+.RI "CONCRETE \fBoperator[]\fR (int index) const"
+.br
+.RI "\fISubscript operator.\fR"
+.ti -1c
+.RI "void \fBoperator+=\fR (int index)"
+.br
+.RI "\fIIncrement operator.\fR"
+.ti -1c
+.RI "\fBoperator CONCRETE *\fR () const"
+.br
+.RI "\fIReturns the underlying memory address of the smart pointer.\fR"
+.ti -1c
+.RI "CONCRETE* \fBaddr\fR (void) const"
+.br
+.RI "\fIReturns the underlying memory address of the smart pointer.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of the object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "long \fBtarget_\fR"
+.br
+.ti -1c
+.RI "long \fBbase_offset_\fR"
+.br
+.RI "\fIKeep track of our offset from the base pointer.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class CONCRETE>  template class ACE_Based_Pointer_Basic
+A proxy that keeps track of the relative offset of a "pointer" from its base address. This class makes it possible to transparently use "pointers" in shared memory as easily as programming with pointers to local memory. In particular, we don't need to ensure that the base addresses of all the pointers are mapped into separate processes at the same absolute memory base address.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classCONCRETE> ACE_Based_Pointer_Basic<CONCRETE>::ACE_Based_Pointer_Basic<CONCRETE> (void)
+.PP
+This constructor initializes the <base_offset_> by asking the  Singleton for the base address of the memory region within which it is instantiated. Two results are possible:
+.PP
+1. An  has stored a base address/size pair and the new based-pointer instance is located between the base address and the base address + size - 1. In this case, the repository returns the base address.
+.PP
+2. No suitable address/size pair was found. The repository assumes an address in the regular (not mapped) virtual address space of the process and returns 0. In this case, the based-pointer uses its address as an offset to it's base address 0. 
+.SS template<classCONCRETE> ACE_Based_Pointer_Basic<CONCRETE>::ACE_Based_Pointer_Basic<CONCRETE> (CONCRETE * initial)
+.PP
+Initialize this object using the <initial> pointer. This constructor initializes the <base_offset_> by asking the  Singleton for the base address of the memory region within which it is instantiated. Three results are possible:
+.PP
+1. An  has stored a base address/size pair and the new based-pointer instance is located between the base address and the base address + size - 1. In this case, the repository returns the base address.
+.PP
+2. No suitable address/size pair was found. The repository assumes an address in the regular (not mapped) virtual address space of the process and returns 0. In this case, the based-pointer uses its address as an offset to its base address 0.
+.PP
+3. If <initial> is 0 then set the value of <target_> to -1, which indicates a "NULL" pointer. 
+.SS template<classCONCRETE> ACE_Based_Pointer_Basic<CONCRETE>::ACE_Based_Pointer_Basic<CONCRETE> (const ACE_Based_Pointer_Basic< CONCRETE >&)
+.PP
+Copy constructor.
+.PP
+.SS template<classCONCRETE> ACE_Based_Pointer_Basic<CONCRETE>::ACE_Based_Pointer_Basic<CONCRETE> (const void * base_addr, int o)
+.PP
+Constructor for know base address. <o> is only used to resolve overload ambiguity.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classCONCRETE> CONCRETE * ACE_Based_Pointer_Basic<CONCRETE>::addr (void) const
+.PP
+Returns the underlying memory address of the smart pointer.
+.PP
+.SS template<classCONCRETE> void ACE_Based_Pointer_Basic<CONCRETE>::dump (void) const
+.PP
+Dump the state of the object.
+.PP
+.SS template<classCONCRETE> CONCRETE ACE_Based_Pointer_Basic<CONCRETE>::operator * (void) const
+.PP
+Dereference operator.
+.PP
+.SS template<classCONCRETE> ACE_Based_Pointer_Basic<CONCRETE>::operator CONCRETE * () const
+.PP
+Returns the underlying memory address of the smart pointer.
+.PP
+.SS template<classCONCRETE> int ACE_Based_Pointer_Basic<CONCRETE>::operator!= (const ACE_Based_Pointer_Basic< CONCRETE >&) const
+.PP
+Inequality operator.
+.PP
+.SS template<classCONCRETE> void ACE_Based_Pointer_Basic<CONCRETE>::operator+= (int index)
+.PP
+Increment operator.
+.PP
+.SS template<classCONCRETE> int ACE_Based_Pointer_Basic<CONCRETE>::operator< (const ACE_Based_Pointer_Basic< CONCRETE >&) const
+.PP
+Less than operator.
+.PP
+.SS template<classCONCRETE> int ACE_Based_Pointer_Basic<CONCRETE>::operator<= (const ACE_Based_Pointer_Basic< CONCRETE >&) const
+.PP
+Less than or equal operator.
+.PP
+.SS template<classCONCRETE> void ACE_Based_Pointer_Basic<CONCRETE>::operator= (const ACE_Based_Pointer_Basic< CONCRETE >&)
+.PP
+Pseudo-assignment operator.
+.PP
+.SS template<classCONCRETE> void ACE_Based_Pointer_Basic<CONCRETE>::operator= (CONCRETE * from)
+.PP
+Pseudo-assignment operator.
+.PP
+Reimplemented in \fBACE_Based_Pointer\fR.
+.SS template<classCONCRETE> int ACE_Based_Pointer_Basic<CONCRETE>::operator== (const ACE_Based_Pointer_Basic< CONCRETE >&) const
+.PP
+Equality operator.
+.PP
+.SS template<classCONCRETE> int ACE_Based_Pointer_Basic<CONCRETE>::operator> (const ACE_Based_Pointer_Basic< CONCRETE >&) const
+.PP
+Greater than operator.
+.PP
+.SS template<classCONCRETE> int ACE_Based_Pointer_Basic<CONCRETE>::operator>= (const ACE_Based_Pointer_Basic< CONCRETE >&) const
+.PP
+Greater than or equal operator.
+.PP
+.SS template<classCONCRETE> CONCRETE ACE_Based_Pointer_Basic<CONCRETE>::operator[] (int index) const
+.PP
+Subscript operator.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classCONCRETE> ACE_Based_Pointer_Basic<CONCRETE>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classCONCRETE> long ACE_Based_Pointer_Basic<CONCRETE>::base_offset_\fC [protected]\fR
+.PP
+Keep track of our offset from the base pointer.
+.PP
+.SS template<classCONCRETE> long ACE_Based_Pointer_Basic<CONCRETE>::target_\fC [protected]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

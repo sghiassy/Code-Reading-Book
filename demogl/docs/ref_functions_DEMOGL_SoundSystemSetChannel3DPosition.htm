@@ -1,0 +1,99 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemSetChannel3DPosition</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemSetChannel3DPosition</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemSetChannel3DPosition</h4>
+<dd>DEMOGL_SoundSystemChannelSet3DAttributes sets the position of the given channel in 3D space, inclusive its orientation. This position
+	is then used to calculate how the sound produced by the given channel is received by the global listener, which position can be set by
+	<a HREF="ref_functions_DEMOGL_SoundSystemSetListener3DPosition.htm" target="main">DEMOGL_SoundSystemSetListener3DPosition</a>
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemSetChannel3DPosition(
+	<b>const int</b> <i>iChannelCodeID</i>,
+	<b><a HREF="ref_structures_SSoundChannel3DPosition.htm" target="main">SSoundChannel3DPosition</a> * const</b> <i>p3DPosition</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iChannelCodeID</i>
+	<dd>Specifies the ChannelCodeID of the channel which 3D attributes should be set.
+	<dt><i>p3DPosition</i>
+	<dd>Pointer to filled <a HREF="ref_structures_SSoundChannel3DPosition.htm" target="main">SSoundChannel3DPosition</a> structure with
+		the 3D position, orientation and soundspeed to apply to the channel with ChannelCodeID <i>iChannelCodeID</i>
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns one of the following error codes:
+	<p>
+		<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+		<tr>
+			<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Error code</b></td>
+			<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Description</b></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_CHANNELACTIONFAILED</td>
+			<td WIDTH="70%" VALIGN="TOP">The underlying sound library reported an error while applying the 3D position to the channel or
+				the element which owns the sound data the given channel is playing is loaded without 3D enabled, 
+				see <a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a></td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_CHANNELNOTINUSE</td>
+			<td WIDTH="70%" VALIGN="TOP">The <i>iChannelCodeID</i> value is not found as an active channel.
+			</td>
+		</tr>
+		<tr>
+			<td WIDTH="30%" VALIGN="TOP">DGL_SS_ERR_ILLEGALELEMENTTYPE</td>
+			<td WIDTH="70%" VALIGN="TOP">The channel specified is playing data belonging to an element of an unknown type.
+				This is caused by an implementation error. Should not happen.
+			</td>
+		</tr>
+		</table>	
+	<p>
+<dt><b>Remarks.</b>
+<dd>Only the channel with the codeID <i>iChannelCodeID</i> is affected with the 3D position, not the element, because sound elements
+	don't have a position because they're not playing, the sound <i>channel</i> plays the sound the sound element contains. You can
+	position this channel, which is in fact the sound producer, in 3D space using <b>DEMOGL_SoundSystemSetChannel3DPosition</b>.
+	Keep in mind that allthough <a HREF="ref_structures_SSoundChannel3DPosition.htm" target="main">SSoundChannel3DPosition</a> contains
+	a velocity parameter, this is only for the doppler calculations. When you want to create a moving sound source, you have to
+	update the 3D position of the sound channel acting as the sound source, every frame.
+	<p>
+	<b>NOTE:</b> There is just <i>one</i> &nbsp;listener position in the sound system, because that's the way the underlying sound library
+	works. This way, you have to keep in mind that two or more effects visible at the same time with total different scenes have to use the
+	same global listener position for their 3D enabled sound channels. It will be odd at first, but it's the same way OpenGL works: there
+	is no camera, the frustum is always at (0,0,0) looking at the negative Z, the world is moved/rotated so it looks as if the 'camera' is
+	rotated/moved. Updating the global listener position in more than one effect in one frame is useless: only the last one will have any
+	effect.
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm" target="main">DEMOGL_SoundSystemLoadElement</a>,
+	<a HREF="ref_functions_DEMOGL_SoundSystemSetListener3DPosition.htm" target="main">DEMOGL_SoundSystemSetListener3DPosition</a>,
+	<a HREF="ref_structures_SSoundChannel3DPosition.htm" target="main">SSoundChannel3DPosition</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 18-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,55 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/mach8/Imakefile,v 3.6 1997/01/05 11:54:04 dawes Exp $
+
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/5 1996/09/28 17:21:24 rws $
+
+#include <Server.tmpl>
+
+SRCS = 	mach8.c mach8cmap.c mach8gc.c mach8fs.c mach8ss.c \
+	mach8gs.c mach8win.c mach8init.c mach8im.c mach8bstor.c \
+	mach8scrin.c mach8blt.c mach8plypt.c \
+	mach8line.c mach8seg.c mach8frect.c mach8text.c \
+	mach8font.c mach8fcach.c \
+	mach8dsln.c mach8dssg.c mach8ddln.c mach8ddsg.c \
+	mach8imwrt.s mach8imrd.s mach8imfl.s mach8imst.s \
+	mach8imwrd.s mach8imrdd.s mach8imfld.s mach8imstd.s \
+	mach8gtimg.c mach8fc.c mach8bc.c
+
+OBJS = 	mach8.o mach8cmap.o mach8gc.o mach8fs.o mach8ss.o \
+	mach8gs.o mach8win.o mach8init.o mach8im.o mach8bstor.o \
+	mach8scrin.o mach8blt.o mach8plypt.o \
+	mach8line.o mach8seg.o mach8frect.o mach8text.o \
+	mach8font.o mach8fcach.o \
+	mach8dsln.o mach8dssg.o mach8ddln.o mach8ddsg.o \
+	mach8imwrt.o mach8imrd.o mach8imfl.o mach8imst.o \
+	mach8imwrd.o mach8imrdd.o mach8imfld.o mach8imstd.o \
+	mach8gtimg.o mach8fc.o mach8bc.o
+
+DEFINES = -DPSZ=8
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) -I. \
+	   -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+           -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) -I$(FONTINCSRC) -I../cache
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(mach8,$(OBJS))
+
+InstallLinkKitLibrary(mach8,$(LINKKITDIR)/drivers)
+
+ObjectFromSpecialSource(mach8ddln,mach8dsln,-DMach8DoubleDash)
+ObjectFromSpecialSource(mach8ddsg,mach8dssg,-DMach8DoubleDash)
+ObjectFromSpecialAsmSource(mach8imfld,mach8imfl,-DDRAM_VERSION)
+ObjectFromSpecialAsmSource(mach8imrdd,mach8imrd,-DDRAM_VERSION)
+ObjectFromSpecialAsmSource(mach8imstd,mach8imst,-DDRAM_VERSION)
+ObjectFromSpecialAsmSource(mach8imwrd,mach8imwrt,-DDRAM_VERSION)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

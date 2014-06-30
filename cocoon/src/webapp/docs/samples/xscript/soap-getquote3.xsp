@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+  Author: Ovidiu Predescu "ovidiu@cup.hp.com"
+
+  Date: October 9, 2001
+ -->
+
+<xsp:page
+  language="java"
+  xmlns:xsp="http://apache.org/xsp"
+  xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+  xmlns:xscript="http://apache.org/xsp/xscript/1.0"
+  xmlns:soap="http://apache.org/xsp/soap/3.0"
+  >
+  
+  <page>
+
+   <title>SOAP Stock Quote Example 3</title>
+
+   <content>
+
+   <xsp:logic>
+    String symbol = request.getParameter("symbol");
+
+    if (symbol == null || symbol.equals("")) {
+
+       <para>This page demonstrates the SOAP logicsheet for
+       Cocoon2. It accesses a SOAP service that provides stock quotes
+       and displays the result.</para>
+
+       <para>This is yet another example of the XScript and SOAP
+       logicsheets. This sample is very similar with
+       <code>soap-getquote2.xsp</code>, except that the stylesheet is
+       defined in an external file.
+       </para>
+
+       <para>Please enter the stock ticker: </para>
+       <form href="soap-getquote">
+         <input name="symbol" type="text" value="HWP"/>
+         <input value="Do it!" type="submit"/>
+       </form>
+    }
+    else {
+      <para>The stock price for <xsp:expr>symbol</xsp:expr> is 
+
+    <xscript:variable name="soap-result">
+      <soap:call url="http://services.xmethods.net:80/soap">
+        <ns1:getQuote xmlns:ns1="urn:xmethods-delayed-quotes">
+          <soap:enc/>
+          <symbol xsi:type="xsd:string" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" xmlns:xsd="http://www.w3.org/1999/XMLSchema"><xsp-request:get-parameter name="symbol"/></symbol>
+        </ns1:getQuote>
+      </soap:call>
+    </xscript:variable>
+
+    <xscript:variable name="stylesheet"
+                      href="docs/samples/xscript/soap-getquote3.xsl"/>
+
+    <xscript:transform name="soap-result" stylesheet="stylesheet"/>
+
+      </para>
+
+      <form href="soap-getquote">
+        <input value="Back" type="submit"/>
+      </form>
+    }
+  </xsp:logic>
+
+  </content>
+
+  </page>
+</xsp:page>

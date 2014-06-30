@@ -1,0 +1,99 @@
+<!ENTITY % jsp.body "
+(#PCDATA
+|jsp:directive.page
+|jsp:directive.include
+|jsp:directive.taglib
+|jsp:scriptlet
+|jsp:declaration
+|jsp:expression
+|jsp:include
+|jsp:forward
+|jsp:useBean
+|jsp:setProperty
+|jsp:getProperty
+|jsp:plugin
+|jsp:fallback
+|jsp:params
+|jsp:param
+|ttl:uno)*
+">
+
+<!ENTITY % anycontent "CDATA">
+<!ELEMENT jsp:useBean %jsp.body;>
+<!ATTLIST jsp:useBean
+id ID #REQUIRED
+class CDATA #REQUIRED
+scope (page|session|request|application) "page">
+
+<!ELEMENT jsp:setProperty EMPTY>
+<!ATTLIST jsp:setProperty
+name IDREF #REQUIRED
+property CDATA #REQUIRED
+value CDATA #IMPLIED
+param CDATA #IMPLIED>
+
+<!ELEMENT jsp:getProperty EMPTY>
+<!ATTLIST jsp:getProperty
+name IDREF #REQUIRED
+property CDATA #REQUIRED>
+
+<!ELEMENT jsp:directive.taglib EMPTY>
+<!ATTLIST jsp:directive.taglib
+    uri        CDATA    #REQUIRED
+    prefix  CDATA    #REQUIRED
+>
+
+<!ELEMENT jsp:include (jsp:param*)>
+<!ATTLIST jsp:include
+flush (true|false) "false"
+page CDATA #REQUIRED>
+
+<!ELEMENT jsp:forward (jsp:param*)>
+<!ATTLIST jsp:forward
+page CDATA #REQUIRED>
+
+<!ELEMENT jsp:scriptlet (#PCDATA)>
+<!ELEMENT jsp:declaration (#PCDATA)>
+<!ELEMENT jsp:expression (#PCDATA)>
+
+<!ELEMENT jsp:directive.page EMPTY>
+<!ATTLIST jsp:directive.page
+language CDATA "java"
+extends CDATA #IMPLIED
+contentType CDATA "text/html; ISO-8859-1"
+import CDATA #IMPLIED
+session (true|false) "true"
+buffer CDATA "8kb"
+autoFlush (true|false) "true"
+isThreadSafe (true|false) "true"
+info CDATA #IMPLIED
+errorPage CDATA #IMPLIED
+isErrorPage (true|false) "false">
+
+<!ELEMENT jsp:directive.include EMPTY>
+<!ATTLIST jsp:directive.include
+file CDATA #REQUIRED>
+
+<!ELEMENT jsp:param EMPTY>
+<!ATTLIST jsp:param
+    name        CDATA         #REQUIRED
+    value       CDATA         #REQUIRED
+>
+
+<!ELEMENT jsp:plugin (jsp:params?, jsp:fallback?)>
+<!ATTLIST jsp:plugin
+	type	(bean|applet)	#REQUIRED
+	code	CDATA		#IMPLIED
+	codebase CDATA	#IMPLIED
+	name  NMTOKEN  #IMPLIED
+	width CDATA  #IMPLIED
+	height CDATA #IMPLIED
+>
+
+<!ELEMENT jsp:params (jsp:param+)>
+
+<!ELEMENT jsp:fallback (ANY)>
+
+<!ELEMENT jsp:root %jsp.body;>
+<!ATTLIST jsp:root
+xmlns:jsp CDATA #FIXED "http://java.sun.com/products/jsp/dtd/jsp_1_0.dtd">

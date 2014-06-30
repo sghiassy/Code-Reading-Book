@@ -1,0 +1,90 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Using:Adding a custom screensaver parameter dialog</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Using::<b>Adding a custom screensaver parameter dialog</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Adding a custom screensaver parameter dialog.</h4>
+When implementing a screensaver application the way as described in <a HREF="using_simplescreensaver.htm">Creating a simple screensaver</a>, 
+every time the user selects 'settings' or 'configure' to configure the screensaver, the DemoGL startup dialog appears, allowing only
+runtime display and soundsystem parameters to be changed. This is due to the fact that when the screensaver is started in the
+configure mode by Windows (the iSaverExecType member of the <a HREF="ref_structures_SScreenSaverCLParams.htm">SSCreenSaverCLParams</a> is
+DGL_SSAVERET_CONFIG) and you just pass RUNTYPE_SAVER_CONFIG as runtype to DemoGL without doing anything, DemoGL will pop up the startup
+dialog, as shown in the <a HREF="using_simplescreensaver.htm">Creating a simple screensaver</a> example.
+<p>
+Most screensavers however are customizable, like how many objects are on screen or which colorschemes etc etc, or better: <i>should be</i>
+customizable. DemoGL allows you to create as customizable screensavers as you can imagine, by just using the standard DemoGL library.
+Examine the codesnippet below, taken from the <a HREF="using_simplescreensaver.htm">Creating a simple screensaver</a> example:
+<pre>
+	// ... other code
+	
+	// Parse commandline for screensaver exectype.
+	// lpCmdLine is a parameter of WinMain()
+	pSSCLParams=DEMOGL_ParseScreenSaverCL(lpCmdLine);
+
+	// Determine the runtype, using the parsed commandline
+	// parameters.	
+	switch(pSSCLParams-&gt;iSaverExecType)
+	{
+		case DGL_SSAVERET_CONFIG:
+		{
+			/////////////////////////
+			// Insert your own configwindow initialisation and 
+			// start up code HERE. 
+			/////////////////////////
+			iRunType=RUNTYPE_SAVER_CONFIG;
+		}; break;
+		
+		// ... other code
+	}
+
+	// we've now gathered enough information to run this application
+	// as a screensaver. Start the application as we did in the 
+	// application, now passing the iRunType variable
+	DEMOGL_AppRun(hInstance, &amp;sdStartupDatValues, &quot;DemoGL Example&quot;,
+		false,0,0,iRunType);
+
+	// ... other code
+}
+</pre>
+The snippet marks the place where a custom dialog creation call can be placed, namely just below the 'case DGL_SSAVERET_CONFIG'
+statement. The place is logical, because a screensaver application can be run in different modes: 'configuration', which
+means the user clicked on 'settings' or 'configure', and no screensaver code should be executed, 'preview', which is
+the tiny window on the screensaver tab in Display properties or 'normal', which is the normal screensaver execution
+mode: run until the mouse moves or a key is pressed.
+<p>
+The custom dialog should pop up when the user clicks 'settings' or 'configure', thus when the screensaver (i.e. the
+screensaver application using DemoGL) is executed in 'configuration' mode. That dialog then, can have a button which
+will call <a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a> passing RUNTYPE_SAVER_CONFIG as the runtype
+to let the user configure the runtime display and soundsystem parameters. When the user clicks 'Save' in the 
+DemoGL startup dialog, DEMOGL_AppRun() will return to the callerfunction, for example the custom dialog message handler.
+<p>
+Because screensavers are started by the operating system, the settings configured by the user should be stored where
+the screensaver application can retrieve them from when it is executed in 'normal' mode. The best place for this
+is the windows registry, but any other solution would do, as long as the screensaver application is able to read the 
+settings, like how many objects an effectobject should display. The settings configurable by the startup dialog of DemoGL
+are already saved in the registry automatically so a developer should just focus on where and how to store the screensaver
+specific settings. A good place in the registry is the hive (registry key) where DemoGL saves screensaver specific 
+data: HKCU/Software/DemoGL/Screensaver/<i>Application title</i>/AppData. Application title is the title specified
+in the m_sDemoName member of the <a HREF="ref_structures_SStartupDat.htm">SStartupDat</a> structure, which is passed
+to DEMOGL_AppRun.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 12-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

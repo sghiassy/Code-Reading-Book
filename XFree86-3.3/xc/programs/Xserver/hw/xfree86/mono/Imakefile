@@ -1,0 +1,43 @@
+XCOMM $XConsortium: Imakefile /main/10 1996/10/19 18:05:31 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/mono/Imakefile,v 3.6.2.1 1997/05/03 09:47:03 dawes Exp $
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+SUBDIRS = mono drivers mfb.banked
+
+SRCS = mono/?*.c mfb.banked/?*.c
+OBJS = mono/?*.o mfb.banked/?*.o
+
+DONES = mono/DONE mfb.banked/DONE
+
+INCLUDES = -Imono -I../common -I../os-support -I$(SERVERSRC)/include \
+           -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(XINCLUDESRC)
+
+MONODRIVERS = XF86MonoDrivers
+
+#if HasParallelMake
+MakeMutex($(SUBDIRS) $(OBJS) $(DONES))
+#endif
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)
+#endif
+
+NormalDepLibraryTarget(mono,$(SUBDIRS) $(DONES),$(OBJS))
+
+ConfigTargetNoDepend(monoConf,$(ICONFIGFILES),confmono.SHsuf,$(MONODRIVERS))
+
+NormalLibraryObjectRule()
+
+ForceSubdirs($(SUBDIRS))
+
+InstallLinkKitLibrary(mono,$(LINKKITDIR)/drivers)
+InstallLinkKitNonExecFile(confmono.SHsuf,$(LINKKITDIR))
+
+DependSubdirs($(SUBDIRS))

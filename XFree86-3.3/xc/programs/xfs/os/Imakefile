@@ -1,0 +1,43 @@
+XCOMM $XConsortium: Imakefile /main/17 1995/12/19 16:35:21 mor $
+XCOMM $XFree86: xc/programs/xfs/os/Imakefile,v 3.3 1996/10/17 15:23:22 dawes Exp $
+#undef ServerDefines
+#include <Server.tmpl>
+
+#ifdef OS2Architecture
+SRCS1 = os2_stubs.c
+OBJS1 = os2_stubs.o
+LinkSourceFile(os2_stubs.c,../../Xserver/hw/xfree86/os-support/os2)
+SpecialCObjectRule(os2_stubs,$(ICONFIGFILES),-DOS2NULLSELECT)
+#endif
+
+SRCS =	connection.c waitfor.c io.c utils.c osinit.c \
+	config.c access.c osglue.c error.c $(SRCS1)
+OBJS =  connection.o waitfor.o io.o utils.o osinit.o \
+	config.o access.o osglue.o error.o $(OBJS1)
+
+INCLUDES = -I../include -I$(FONTINCSRC)
+
+CONN_DEFINES = ConnectionFlags -DFONT_t -DTRANS_SERVER -DTRANS_REOPEN
+
+#if HasBSD44Sockets
+SOCK_DEFINES = -DBSD44SOCKETS
+#endif
+
+/* ERROR_DEFINES = -DUSE_SYSLOG */
+
+OS_DEFINES = ServerOSDefines
+
+NormalLibraryObjectRule()
+NormalLibraryTarget(os,$(OBJS))
+
+SpecialCObjectRule(connection,$(ICONFIGFILES),$(CONN_DEFINES) $(SIGNAL_DEFINES) $(SOCK_DEFINES) $(OS_DEFINES))
+
+SpecialCObjectRule(io,$(ICONFIGFILES),$(CONN_DEFINES))
+
+SpecialCObjectRule(waitfor,$(ICONFIGFILES),$(CONN_DEFINES))
+
+SpecialCObjectRule(error,$(ICONFIGFILES),$(ERROR_DEFINES))
+
+SpecialCObjectRule(osglue,$(ICONFIGFILES),$(CONN_DEFINES) $(OS_DEFINES))
+
+DependTarget()

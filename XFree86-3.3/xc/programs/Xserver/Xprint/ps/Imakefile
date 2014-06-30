@@ -1,0 +1,44 @@
+XCOMM $XConsortium: Imakefile /main/2 1996/11/16 15:24:20 rws $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/Xprint/ps/Imakefile,v 1.1.1.1.2.1 1997/05/11 05:04:16 dawes Exp $
+
+#include <Server.tmpl>
+
+SRCS1 =	PsInit.c PsPrint.c PsGC.c PsMisc.c PsSpans.c PsArea.c PsPixel.c \
+        PsLine.c PsPolygon.c PsArc.c PsText.c PsWindow.c PsFonts.c \
+        PsAttr.c PsAttVal.c PsColor.c PsPixmap.c psout.c
+
+OBJS1 = PsInit.o PsPrint.o PsGC.o PsMisc.o PsSpans.o PsArea.o PsPixel.o \
+        PsLine.o PsPolygon.o PsArc.o PsText.o PsWindow.o PsFonts.o \
+        PsAttr.o PsAttVal.o PsColor.o PsPixmap.o psout.o
+
+SRCS =	$(SRCS1)
+
+OBJS = $(OBJS1)
+
+XCOMM DEFINES = -DPIXPRIV
+
+   INCLUDES = -I. \
+	      -I../../cfb \
+	      -I../$(TOP) \
+	      -I../../include -I.. -I$(TOP)/include \
+	      -I$(EXTINCSRC) -I$(FONTINCSRC) \
+              -I$(FONTLIBSRC)/include \
+	      -I../../mi -I../../mfb
+
+   LINTLIBS = $(TOP)/server/dix/llib-ldix.ln $(TOP)/server/os/llib-los.ln \
+	      $(TOP)/server/ddx/mfb/llib-lmfb.ln \
+	      $(TOP)/server/ddx/mi/llib-lmi.ln \
+	      $(TOP)/server/ddx/cfb/llib-lcfb.ln
+
+NormalLibraryObjectRule()
+
+NormalLibraryTarget(ps,$(OBJS))
+NormalLintTarget($(SRCS1) $(SRCS2))
+
+InstallLinkKitLibrary(ps,$(LINKKITDIR)/lib)
+
+DependTarget()

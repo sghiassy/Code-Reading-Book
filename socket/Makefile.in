@@ -1,0 +1,111 @@
+VERSION = 1.11
+
+# Places to install libraries, binaries, etc.
+prefix     = @prefix@
+bindir     = $(prefix)/bin
+libdir     = $(prefix)/lib
+includedir = $(prefix)/include
+
+# For some losing Unix makes.
+SHELL = /bin/sh
+@SET_MAKE@
+
+# The C and C++ compilers to use.
+CC         = @CC@
+CXX        = @CXX@
+
+# Various programs used in compilation and running of the programs.
+RANLIB     = @RANLIB@
+MAKEDEPEND = @MAKEDEPEND@ @CXX_INCLUDE_PATH@ -D__cplusplus
+
+# Compilation and linking flags.
+CFLAGS            = @CFLAGS@
+CXXFLAGS          = @CXXFLAGS@
+LDFLAGS           = @LDFLAGS@
+
+CXXFLAGS_EXTRA    = -I.
+CXXFLAGS_ALL      = $(CXXFLAGS) $(CXXFLAGS_EXTRA)
+
+SOCKETXX_HFILES = sockstream.h sockinet.h sockunix.h pipestream.h \
+        Fork.h protocol.h echo.h smtp.h ftp.h sig.h
+
+SOCKETXX_CFILES = sockstream.C sockinet.C sockunix.C pipestream.C \
+        Fork.C protocol.C echo.C smtp.C ftp.C sig.C
+
+CONFIG_FILES = configure configure.in Makefile.in local.h acconfig.h \
+	config.h.in
+
+DOC_FILES = socket++.ps socket++.texi README
+
+DIST_FILES = $(SOCKETXX_HFILES) \
+	$(SOCKETXX_CFILES) \
+	$(CONFIG_FILES) \
+	$(DOC_FILES)
+
+SOCKETXX_OFILES = $(SOCKETXX_CFILES:.C=.o)
+
+all: libsocket++.a
+
+libsocket++.a: $(SOCKETXX_OFILES)
+	-rm -f $@
+	$(AR) cq $@ $(SOCKETXX_OFILES)
+	$(RANLIB) $@
+
+.SUFFIXES: .o .C
+
+.C.o:
+	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS_ALL) $< -o $@
+
+.PHONY: depend
+depend:
+	$(MAKEDEPEND) $(SOCKETXX_CFILES)
+
+configure: configure.in config.h.in
+	autoconf
+
+config.h.in: configure.in
+	-rm -f $@
+	$(MAKE) distclean
+	autoheader configure.in > config.h.in
+
+install: uninstall
+	mkdir -p $(libdir)
+	cp libsocket++.a $(libdir)/libsocket++.a && \
+	   $(RANLIB) $(libdir)/libsocket++.a
+	mkdir -p $(includedir)
+	cp $(SOCKETXX_HFILES) $(includedir) && \
+	   cd $(includedir) && \
+	   chmod 444 $(SOCKETXX_HFILES)
+
+uninstall:
+	-rm -f $(libdir)/libsocket++.a
+	cd $(includedir) && rm -f $(SOCKETXX_HFILES)
+
+clean:
+	-rm -f libsocket++.a *.o *~ *.bak core
+
+distclean: clean
+	-rm -f config.log config.cache config.status config.h Makefile
+	(cd ./test; $(MAKE) -f Makefile.in distclean)
+
+update-version:
+	for i in $(DIST_FILES); \
+	do \
+	  sed -e "s/Version: [0-9a-zA-Z]* [0-9.]*/Version: `date +%d%h%y` $(VERSION)/g" $$i > TMP$$i; \
+	  mv TMP$$i $$i; \
+	done
+	chmod 755 configure
+	(cd ./test; $(MAKE) -f Makefile.in VERSION=$(VERSION) update-version)
+
+socketdir = socket++-$(VERSION)
+dist: 
+	/bin/rm -rf $(socketdir)
+	mkdir $(socketdir)
+	for f in $(DIST_FILES); \
+	do \
+	 (cd $(socketdir); ln -s ../$$f $$f); \
+	done
+	(cd ./test; $(MAKE) -f Makefile.in VERSION=$(VERSION) distcopy)
+	tar chf - $(socketdir) | gzip -c > $(socketdir).tar.gz
+	/bin/rm -rf $(socketdir)
+

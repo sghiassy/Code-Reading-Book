@@ -1,0 +1,170 @@
+.TH ACE_Guard 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Guard \- This data structure is meant to be used within a method or function... It performs automatic aquisition and release of a parameterized synchronization object . 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Synch_T.h>\fR
+.PP
+Inherited by \fBACE_Read_Guard\fR, and \fBACE_Write_Guard\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Guard\fR (ACE_LOCK &l)"
+.br
+.ti -1c
+.RI "\fBACE_Guard\fR (ACE_LOCK &l, int block)"
+.br
+.RI "\fIImplicitly and automatically acquire (or try to acquire) the lock. If <block> is non-0 then  the , else <tryacquire> it.\fR"
+.ti -1c
+.RI "\fBACE_Guard\fR (ACE_LOCK &l, int block, int become_owner)"
+.br
+.RI "\fIInitialise the guard without implicitly acquiring the lock. The <become_owner> parameter indicates whether the guard should release the lock implicitly on destruction. The <block> parameter is ignored and is used here to disambiguate with the preceding constructor.\fR"
+.ti -1c
+.RI "\fB~ACE_Guard\fR (void)"
+.br
+.RI "\fIImplicitly release the lock.\fR"
+.ti -1c
+.RI "int \fBacquire\fR (void)"
+.br
+.RI "\fIExplicitly acquire the lock.\fR"
+.ti -1c
+.RI "int \fBtryacquire\fR (void)"
+.br
+.RI "\fIConditionally acquire the lock (i.e., won't block).\fR"
+.ti -1c
+.RI "int \fBrelease\fR (void)"
+.br
+.RI "\fIExplicitly release the lock, but only if it is held!\fR"
+.ti -1c
+.RI "void \fBdisown\fR (void)"
+.br
+.RI "\fIRelinquish ownership of the lock so that it is not released implicitly in the destructor.\fR"
+.ti -1c
+.RI "int \fBlocked\fR (void) const"
+.br
+.RI "\fI1 if locked, 0 if couldn't acquire the lock (errno will contain the reason for this).\fR"
+.ti -1c
+.RI "int \fBremove\fR (void)"
+.br
+.RI "\fIExplicitly remove the lock.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Guard\fR (ACE_LOCK *lock)"
+.br
+.RI "\fIHelper, meant for subclass only.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_LOCK* \fBlock_\fR"
+.br
+.RI "\fIPointer to the ACE_LOCK we're guarding.\fR"
+.ti -1c
+.RI "int \fBowner_\fR"
+.br
+.RI "\fIKeeps track of whether we acquired the lock or failed.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Guard<ACE_LOCK> &)"
+.br
+.ti -1c
+.RI "\fBACE_Guard\fR (const ACE_Guard<ACE_LOCK> &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class ACE_LOCK>  template class ACE_Guard
+This data structure is meant to be used within a method or function... It performs automatic aquisition and release of a parameterized synchronization object .
+.PP
+.PP
+ The  class given as an actual parameter must provide at the very least the , <tryacquire>, <release>, and <remove> methods. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK> ACE_Guard<ACE_LOCK>::ACE_Guard<ACE_LOCK> (ACE_LOCK & l)
+.PP
+.SS template<classACE_LOCK> ACE_Guard<ACE_LOCK>::ACE_Guard<ACE_LOCK> (ACE_LOCK & l, int block)
+.PP
+Implicitly and automatically acquire (or try to acquire) the lock. If <block> is non-0 then  the , else <tryacquire> it.
+.PP
+.SS template<classACE_LOCK> ACE_Guard<ACE_LOCK>::ACE_Guard<ACE_LOCK> (ACE_LOCK & l, int block, int become_owner)
+.PP
+Initialise the guard without implicitly acquiring the lock. The <become_owner> parameter indicates whether the guard should release the lock implicitly on destruction. The <block> parameter is ignored and is used here to disambiguate with the preceding constructor.
+.PP
+.SS template<classACE_LOCK> ACE_Guard<ACE_LOCK>::~ACE_Guard<ACE_LOCK> (void)
+.PP
+Implicitly release the lock.
+.PP
+.SS template<classACE_LOCK> ACE_Guard<ACE_LOCK>::ACE_Guard<ACE_LOCK> (ACE_LOCK * lock)\fC [inline, protected]\fR
+.PP
+Helper, meant for subclass only.
+.PP
+.SS template<classACE_LOCK> ACE_Guard<ACE_LOCK>::ACE_Guard<ACE_LOCK> (const ACE_Guard< ACE_LOCK >&)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK> int ACE_Guard<ACE_LOCK>::acquire (void)
+.PP
+Explicitly acquire the lock.
+.PP
+Reimplemented in \fBACE_Write_Guard\fR, and \fBACE_Read_Guard\fR.
+.SS template<classACE_LOCK> void ACE_Guard<ACE_LOCK>::disown (void)
+.PP
+Relinquish ownership of the lock so that it is not released implicitly in the destructor.
+.PP
+.SS template<classACE_LOCK> void ACE_Guard<ACE_LOCK>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_Write_Guard\fR, and \fBACE_Read_Guard\fR.
+.SS template<classACE_LOCK> int ACE_Guard<ACE_LOCK>::locked (void) const
+.PP
+1 if locked, 0 if couldn't acquire the lock (errno will contain the reason for this).
+.PP
+.SS template<classACE_LOCK> void ACE_Guard<ACE_LOCK>::operator= (const ACE_Guard< ACE_LOCK >&)\fC [private]\fR
+.PP
+.SS template<classACE_LOCK> int ACE_Guard<ACE_LOCK>::release (void)
+.PP
+Explicitly release the lock, but only if it is held!
+.PP
+.SS template<classACE_LOCK> int ACE_Guard<ACE_LOCK>::remove (void)
+.PP
+Explicitly remove the lock.
+.PP
+.SS template<classACE_LOCK> int ACE_Guard<ACE_LOCK>::tryacquire (void)
+.PP
+Conditionally acquire the lock (i.e., won't block).
+.PP
+Reimplemented in \fBACE_Write_Guard\fR, and \fBACE_Read_Guard\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classACE_LOCK> ACE_LOCK * ACE_Guard<ACE_LOCK>::lock_\fC [protected]\fR
+.PP
+Pointer to the ACE_LOCK we're guarding.
+.PP
+.SS template<classACE_LOCK> int ACE_Guard<ACE_LOCK>::owner_\fC [protected]\fR
+.PP
+Keeps track of whether we acquired the lock or failed.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

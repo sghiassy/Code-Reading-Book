@@ -1,0 +1,669 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes V1.0//EN" "src/documentation/xdocs/dtd/changes-v10.dtd">
+
+<!--
+  History of Cocoon changes
+  $Id: changes.xml,v 1.84 2002/01/30 17:59:40 froehlich Exp $
+-->
+
+<changes title="History of Changes">
+
+ <devs>
+  <!-- in strict alphabetical order -->
+  <person name="Donald Ball" email="balld@apache.org" id="DB"/>
+  <person name="Ross Burton" email="rossb@apache.org" id="RB"/>
+  <person name="David Crossley" email="crossley@apache.org" id="DC"/>
+  <person name="Gerhard Froehlich" email="g-froehlich@gmx.de" id="GF"/>
+  <person name="Pierpaolo Fumagalli" email="pier@apache.org" id="PF"/>
+  <person name="Vadim Gritsenko" email="vgritsenko@apache.org" id="VG"/>
+  <person name="Christian Haul" email="haul@apache.org" id="CH"/>
+  <person name="Berin Loritsch" email="bloritsch@apache.org" id="BL"/>
+  <person name="Stefano Mazzocchi" email="stefano@apache.org" id="SM"/>
+  <person name="Giacomo Pati" email="Giacomo.Pati@pwr.ch" id="GP"/>
+  <person name="Ovidiu Predescu" email="ovidiu@cup.hp.com" id="OP"/>
+  <person name="Gianugo Rabellino" email="gianugo@apache.org" id="GR"/>
+  <person name="Ricardo Rocha" email="ricardo@apache.org" id="RR"/>
+  <person name="Paul Russell" email="prussell@apache.org" id="PR"/>
+  <person name="Davanum Srinivas" email="dims@yahoo.com" id="DM"/>
+  <person name="Sylvain Wallez" email="sylvain@apache.org" id="SW"/>
+  <person name="Carsten Ziegeler" email="cziegeler@apache.org" id="CZ"/>
+ </devs>
+
+ <release version="2.0.1" date="January 31 2002">
+  <action dev="SW" type="update" due-to="Stephan Michels" due-to-email="stephan@vern.chem.tu-berlin.de">
+    The FragmentExtractorTransformer is now configurable to extract any fragment
+    identified by an element name and namespace URI, and no more limited to
+    SVG images only.
+  </action>
+  <action dev="VG" type="fix">
+    XSP engine now correctly works with dynamically generated sources
+    with last modification date of 0, and it is correctly reloaded on Cocoon
+    reload.
+  </action>
+  <action dev="VG" type="update">
+    Logicsheets are resolved using instance of url factory source resolver 
+    (URLFactorySourceResolver), and not the current request resolver (which
+    is temporary object).
+  </action>
+  <action dev="VG" type="update">
+    Improve Lucene indexing. Only one Lucene document is created for one 
+    Cocoon resource. Document consists from 'body' field with all the text,
+    'element' field for every &lt;element&gt;, and 'element@attribute' for 
+    every attribute of the &lt;element&gt;.
+  </action>
+  <action dev="GF" type="fix">
+   Fixed performance issues in the Store implementation:
+   (1) removed the FilesystemQueueImpl, one thread less now, (2) changed swapping 
+   alghorithm in the MRUMemoryStore towards less serialization, (3) Cache entries
+   will be saved to the filesystem, when the System is shutdown cleanly, (4) fixed
+   bug submitted by Peter Hargreaves [pdh@totalise.co.uk] in StoreJanitor
+   (GC hangs in endless loop).
+  </action>
+  <action dev="VG" type="update">
+    Serializers do not write namespace attributes for prefixes starting with
+    xml anymore (these are reserved by XML spec).
+  </action>
+  <action dev="GF" type="update">
+   Removed Event Cache and Stream Cache. For all possible Caching Piplines there
+   is only one Store implementation behind.
+  </action>
+  <action dev="GF" type="update">
+   Added new log targets. (1) access.log, (2) core.log, (3) error.log and
+   (4) sitemap.log.
+  </action>
+  <action dev="VG" type="update">
+    Perform substitution in the sitemap only when it is required (improves
+    performace).
+  </action>
+  <action dev="VG" type="add">
+    Additions to sitemap syntax: (1) allow all elements at root level, not 
+    only matchers, (2) perform some validation checks, (3) perform attribute
+    substitution on all attributes except @type and @label.
+  </action>
+  <action dev="DC" type="add">
+    Added &quot;List of Docs&quot; which automatically generates a list
+    of all Cocoon documentation by aggregating each xdocs/**/book.xml
+  </action>
+  <action dev="DC" type="fix" fixes-bug="5060">
+    The Catalog Entity Resolver is now fully operational on all platforms
+    in both the webapp context and the commandline context of build docs.
+    The verbosity level is now set low - if you want to see messages, then
+    raise the verbosity via cocoon.xconf or CatalogManager.properties
+  </action>
+  <action dev="CZ" type="update">
+    Separated the jars into core and optional. For compiling only the
+    core jars are necessary. However, the sample webapp still needs some
+    optional jars.
+  </action>
+  <action dev="VG" type="add">
+    Added matchers: 
+    RegexpHeaderMatcher, RegexpRequestAttributeMatcher,
+    RegexpRequestParameterMatcher, RegexpSessionAttributeMatcher,
+    RequestAttributeMatcher, SessionAttributeMatcher,
+    WildcardHostMatcher, WildcardRequestAttributeMatcher.
+  </action>
+  <action dev="BL" type="fix" fixes-bug="5791">
+    Address issue about how RegexpURIMatcher matches the "" pattern.
+    Because it is so different from WildcardURIMatcher, the "" pattern
+    is rewritten as "^$" which matches an empty string.  The event is
+    logged, along with the hint that if you really want to match
+    everything, the pattern ".*" works as advertised.
+  </action>
+  <action dev="BL" type="update">
+    Fix command line generation so that a broken link was not a fatal
+    error, and processing will continue after the link is reported as
+    bad.
+  </action>
+  <action dev="BL" type="add">
+    Add ability to serialize all broken links to a file when running in
+    command line mode.  This helps debug sites.
+  </action>
+  <action dev="VG" type="update">
+    Rename some of the matchers/serializers (new added, old deprecated):
+    RequestSelector to RequestParameterSelector,
+    RequestParamMatcher to RequestParameterMatcher,
+    WildcardParameterValueMatcher to WildcardRequestParameterMatcher,
+    RegexpTargetHostMatcher to RegexpHostMatcher.
+  </action>
+  <action dev="VG" type="update">
+    Wap serializer renamed to wml serializer in the sitemap shipped with
+    Cocoon, to be consistent with the names of other serializers.
+  </action>
+  <action dev="CZ" type="update">
+    FilterTransformer is now Cacheable.
+  </action>
+  <action dev="CZ" type="update">
+    Added CACHE_VALIDITY singleton object to NOPCacheValidity and changed all
+    components to use constant instead of creating new instances each time.
+  </action>
+  <action dev="VG" type="fix">
+    Fix lifecycle related bugs in i18n transformer. Now transformers handles
+    only lifecycle of resource bundle factory, which handles lifecycle of all
+    resource bundles.
+  </action>
+  <action dev="CZ" type="add">
+    Added special lifecycle interface for Cocoon components: RequestLifecycle.   
+    A component marked by this interface has the lifecycle of one request,
+    so looking up the role twice during the same request results in the same
+    component.
+  </action>
+  <action dev="SW" type="update">
+    The "namespace-prefixes" feature is no more set on parsers. It can be set if
+    needed in the configuration.
+  </action>
+  <action dev="VG" type="add">
+    Added ability to use XPath expressions to query XML:DB collections using
+    XML:DB pseudo protocol. URL should be in form:
+    xmldb:dbxml://host:port/db/collection/#/xpath
+  </action>
+  <action dev="VG" type="add">
+    Enabled XML:DB support (generators and pseudo protocol) by default.
+  </action>
+  <action dev="VG" type="fix" fixes-bug="4239">
+    JSPEngine returns result in UTF-8 charset.
+  </action>
+  <action dev="CH" type="add">
+    Changed invokation syntax of sitemap resources. Now &lt;call resource/&gt;
+    is used instead of &lt;redirect-to resource/&gt;. Affects only resources,
+    other redirections still use "old" syntax. New syntax does not take "target"
+    attribute but allows to set arbitrary parameters by using
+    &lt;map-parameter/&gt; Always creates new map while old syntax only did
+    when "target" was present. Old syntax still available but deprecated.
+  </action>
+  <action dev="VG" type="fix" due-to="Eisert, Wolfram" due-to-email="Wolfram.Eisert@Dresdner-Bank.com">
+    XSP page were called twice if used as a source of XSLT stylesheet due to multiple calls to 
+    Source.getInputSource() in XSLProcessorImpl.
+  </action>
+  <action dev="VG" type="update">
+    Changed default upload directory from "image-dir" to "upload-dir".
+  </action>
+  <action dev="VG" type="add" due-to="MIYABE Tatsuhiko" due-to-email="miyabe@jzf.co.jp">
+    RequestGenerator accepts container-encoding and form-encoding parameters.
+  </action>
+  <action dev="CZ" type="update">
+    Added support for configurable URLFactories.
+  </action>
+  <action dev="SW" type="fix">
+    Made the cache work again by updating cocoon.roles, sitemap.roles and making EventPipeline
+    and StreamPipeline implement Recomposable instead of just Composable.
+  </action>
+  <action dev="GR" type="add">
+    Added the XML:DB pseudo protocol
+  </action>
+  <action dev="SW" type="add">
+    Status generator outputs a detailed description of what's in the cache. Patch submitted by
+    Sebastien Koechlin [skoechlin@ivision.fr]
+  </action>
+  <action dev="CZ" type="update">
+    Applied patch adding advanced error handling to SQLTransformer plus escape-string element
+    from Peter Seiderer [Peter.Seiderer@ciselant.de]
+  </action>
+  <action dev="CZ" type="update">
+    The JaxpParser is now poolable and configurable.
+  </action>
+  <action dev="SW" type="update">
+    The sitemap engine is now a regular component available through Processor.ROLE. This allows
+    alternative implementations of Processors (e.g. interpreted sitemap, flowmap, statemap) to
+    be plugged through cocoon.xconf. Note : to ensure compatibility with existing cocoon.xconf
+    files, the shorthand for the Processor role is "sitemap".
+  </action>
+  <action dev="CZ" type="update">
+    Added support for configurable SourceFactories.
+    Patch submitted by Gianugo Rabellino [gianugo@rabellino.it].
+  </action>
+  <action dev="CZ" type="add">
+    Added RTF serialization of XSL-FO documents (requires jfor).
+    Patch submitted by Bertrand Delacretaz [bdelacretaz@codeconsult.ch].
+    Applied patch for the SQLTransformer to output namespaces for the
+    generated elements. Patch submitted by Per-Olof Nor謠[pelle@alma.nu].
+  </action>
+  <action dev="SW" type="add">
+   New ServerPagesAction and associated "action" and "capture" logicsheets
+   that allow actions to be written in XSP and parts of the generated XML
+   to be captured in XMLFragment or DOM objects.
+  </action>
+ </release>
+ <release version="2.0" date="November 29, 2001">
+  <action dev="CZ" type="update">
+    Restructured build system. A new ant task (SitemapToolTask) adds entries
+    of optional components to the sitemap. Warnings for not available
+    optional components are printed out.
+  </action>
+  <action dev="GP" type="update">
+    Made the concept of views work as proposed in the original proposal. There
+    is now the possibility to attach a label attribute with multiple values separated
+    by blanks or commas to the following elements: map:generator, map:transformer,
+    map:generate, map:transform, map:aggregate and map:part.
+  </action>
+  <action dev="CZ" type="update">
+    Applied patch for session-info for TraxTransformer from J&ouml;rn Heid
+    [heid@fh-heilbronn.de].
+  </action>
+  <action dev="CZ" type="update">
+    Applied patch for the SQLTransformer to output namespaces for the
+    generated elements. Patch submitted by Per-Olof Nor謠[pelle@alma.nu].
+  </action>
+  <action dev="OP" type="update">
+    Applied patch for incremental XSLT processing from J&ouml;rn Heid
+    [heid@fh-heilbronn.de].
+  </action>
+ </release>
+ <release version="2.0rc2" date="November 7, 2001">
+  <action dev="SW" type="add">
+    Deprecation of CodeFactory in preparation of the tree traversal implementation of the sitemap.
+    All factory-based matchers have been rewritten using the new PreparableMatcher interface, and
+    all factory-based selectors have been rewritten as regular implementations of Selector.
+    For patterns whose syntax uses '{' like regexp, sitemap substitution can be avoided by escaping the
+    brace character (example : "pat\{2}ern" will match "pattern").
+  </action>
+  <action dev="SW" type="fix">
+    Reduce exception nesting in case of sitemap setup errors, and display all nested exceptions
+    in the error page (avoids searching the logs for the failure cause).
+  </action>
+  <action dev="SW" type="update">
+    Added attribute management methods to environment Context and its implementations.
+  </action>
+  <action dev="SW" type="update">
+    Updated TraxTransformer and XSLTProcessor to allow simultaneous use of several
+    TRAX processors (e.g. xalan and saxon) in a controlled way. 
+  </action>
+  <action dev="CZ" type="fix">
+    Updated session handling of commandline interface and fixed
+    parameter handling.
+  </action>
+  <action dev="CZ" type="fix">
+    Fixed missing prefix in elements generated by the directory and image
+    directory generator.
+  </action>
+  <action dev="CZ" type="fix">
+   Throw exception for internal requests instead of using the error handler and
+   fixed component handling in subsitemaps when invoked internally. Components only
+   defined in a subsitemap were not found as for internal requests the parent
+   component manager was used.
+  </action>
+  <action dev="CZ" type="update">
+    When Cocoon is reloaded, the logkit configuration is now also reloading. 
+    This enables changing the logkit settings during runtime.
+  </action>
+  <action dev="CZ" type="update">
+    The documentation build system now uses Cocoon itself to generate the
+    html documentation.
+  </action>
+  <action dev="CZ" type="fix">
+    Applied NPE fix in certain conditions in ServerPagesGenerator.
+    Submitted by: Ovidiu Predescu [ovidiu@cup.hp.com] 
+  </action>
+  <action dev="CZ" type="fix">
+    Applied NPE fix for MRUMemoryStore Submitted by: Ovidiu Predescu [ovidiu@cup.hp.com] 
+  </action>
+  <action dev="CZ" type="fix">
+    Fixed (hopefully) dependency to the http environment in StreamGenerator.
+  </action>
+  <action dev="CZ" type="fix">
+    Optional setting of the lexical-handler for XMLReader. This patch allows to use 
+    Crimson instead of Xerces. Submitted by: Ovidiu Predescu [ovidiu@cup.hp.com] 
+  </action>
+  <action dev="CZ" type="update">
+    Added xml compiler and interpreter to cocoon.xconf 
+  </action>
+  <action dev="CZ" type="fix">
+    Applied Patch for entity catalogs: accept parameters from xconf.
+    Submitted by: David Crossley [crossley@indexgeo.com.au] 
+  </action>
+  <action dev="CZ" type="fix">
+    Applied fix for missing "User-Agent" header in BrowserSelectorFactory.
+    Submitted by: Joerg Henne [j.henne@levigo.de] 
+  </action>
+  <action dev="CZ" type="fix">
+    Enhanced Command Line Interface by adding background attribute to ExtendedXLinkPipe
+    and fixing bugs: "mailto:" and "news:" are now ignored for traversing and links
+    containing anchors are handled properly
+  </action>
+  <action dev="CZ" type="update">
+    Applied patch for default value support for RequestParamAction.
+    Submitted by: Sergio Carvalho [sergio.carvalho@acm.org] 
+  </action>
+  <action dev="CZ" type="fix">
+    Applied fix for a bug in the WriteDOMSessionTransformer for handling xml documents
+    with namespaces correctly. Submitted by: Greg Weinger [gweinger@itmedicine.net] 
+  </action>
+ </release>
+ <release version="2.0rc1" date="September 24, 2001">
+  <action dev="SW" type="add">
+   New "capture" logicsheet that allows parts of XSP-generated XML to be captured
+   as XMLFragment or DOM objects.
+  </action>
+   <action dev="GP" type="add">
+   Added LogKit management functionality.
+  </action>
+  <action dev="SW" type="add">
+   Removed ThreadSafe from the Action interfaces : the decision to be ThreadSafe
+   is left to each implementation. Consequently, existing actions now explictly
+   implement ThreadSafe.
+  </action>
+  <action dev="CZ" type="add">
+   Redesigned the handling of the cocoon: protocol. Removed the pushURI
+   and popURI methods. It is now possible to load cocoon: resources
+   parallel in several tasks.
+  </action>
+  <action dev="VG" type="fix" fixes-bug="2737">
+   Fixed package name generation for subsitemap components and external components.
+  </action>
+  <action dev="VG" type="add">
+   Added ability to specify custom 404 error page for pipelines using
+   map:handle-errors element with attribute type="404".
+  </action>
+  <action dev="VG" type="fix">
+   Catch NoClassDefFoundError and throw ResourceNotFoundException
+   if XSP was requested with different case.
+  </action>
+  <action dev="SW" type="add">
+   New log formatter outputs the caller class and request URI in the log file. 
+  </action>
+  <action dev="CZ" type="add">
+   Added patch by Stuart Roebuck (stuart.roebuck@adolos.com)
+   fixing the byte handling of the ImageDirectoryGenerator.
+  </action>
+  <action dev="DM" type="add">
+   Added capability to resolve external XML entities using an entity resolver.
+   See the documentation for "Entity Catalogs".
+  </action>
+ </release>
+ <release version="2.0b2" date="July 23, 2001">
+  <action dev="CZ" type="add">
+    When a resource is not found (ResourceNotFoundException) the
+    servlet sets only the status 404 and doesn't write to the output.    
+  </action>
+  <action dev="SW" type="add">
+    In http environment, reset the response if it hasn't been committed
+    before executing the handle-errors pipeline.
+  </action>
+  <action dev="CZ" type="add">
+    Added reloading of jar files. When cocoon is reloaded by specifying
+    cocoon-reload parameter, the class-path is new build and used.
+  </action>
+  <action dev="CZ" type="add">
+    Added caching of cocoon: urls.
+  </action>
+  <action dev="CZ" type="add">
+    Redirects are handled when the cocoon: url points to a redirect in 
+    the sitemaps.
+  </action>
+  <action dev="CZ" type="fix">
+    Fixed proper setting of content length for pdf and images.
+  </action>
+  <action dev="VG" type="fix">
+    Fixed parsing and reporting of Java compilation errors using Javac
+    and Jikes compilers.
+  </action>
+  <action dev="VG" type="add" due-to="John Morrison" due-to-email="John.Morrison@uk.experian.com">
+    Added documentation on libraries used in Cocoon.
+  </action>
+  <action dev="CZ" type="add">
+    Redesigned the source handling and added the source handler
+    and source factory components.
+  </action>
+  <action dev="CZ" type="add">
+    Added the cocoon: protocol to access pipelines. cocoon:/ resolves
+    to the current sitemap and cocoon:// to the root sitemap.
+  </action>
+  <action dev="VG" type="fix">
+    Offline site generation now allows recursive links and
+    works for site of any complexity (limited by capabilities of your
+    filesystem).
+  </action>
+  <action dev="CZ" type="add">
+    Removed XInclude/CIncludeSAXConnectors and added LoggingSAXConnector.
+  </action>
+  <action dev="CZ" type="add">
+    Added CIncludeTransformer.
+  </action>
+  <action dev="BL" type="fix" fixes-bug="2182">
+    Fixed the sub-sitemap issue experienced after a code merge
+    between 2.0 and 2.1
+  </action>
+  <action dev="BL" type="add">
+    Added the automatic announcement generation utility from
+    Avalon.
+  </action>
+  <action dev="BL" type="fix" fixes-bug="2172">
+    Fixed typo that created an element &lt;xsp-request:get-user/&gt;
+    instead of &lt;xsp-request:get-host/&gt; in XSPRequestHelper.
+  </action>
+  <action dev="BL" type="fix" fixes-bug="2166">
+    Made sure the _static_ classes did not inherit from each other,
+    and made all calls to XSPObjectHelper that handled XML elements
+    explicitly call with URI and PREFIX as parameters to the methods.
+  </action>
+  <action dev="BL" type="fix" fixes-bug="2142">
+    Applied fix to URLFactoryImpl donated by wangtun@staff.yam.com.
+  </action>
+  <action dev="BL" type="add">
+    Added support for fine-grained pool size control for Excalibur Component
+    Architecture.
+  </action>
+  <action dev="BL" type="fix">
+    Fixed component release errors in ContentAggregator (thanks to Vadim
+    Gritsenko for the patch).  Also fixed potential race conditions in
+    the ComponentManager architecture in Avalon Excalibur.
+  </action>
+  <action dev="GP" type="add">
+   Integrated new StreamGenerator from Kinga Dziembowski &lt;kingadziembowska@msn.com&gt;
+   Documentation is available in the webapp/docs/samples/stream/ReadMeAdd.txt (not yet converted to xdocs)
+  </action>
+  <action dev="CZ" type="update">
+   Fixed ClassCastException in CommandLineEnvironment.
+   Added Redirector interface to the CommandLineEnvironment to avoid class cast exceptions
+  </action>
+  <action dev="CZ" type="update">
+   Fixed NPE in browser detection.
+   Applied patch to the BrowserImpl. from Ovidiu Predescu (ovidiu@cup.hp.com). It
+   fixes a NPE if the browser is not described.
+  </action>
+  <action dev="CZ" type="update">
+   The TraxTransformer resolves now the uri used inside a stylesheet (e.g. xsl:include).
+   Applied the patch from Rick Tessner (rick@myra.com).
+  </action>
+  <action dev="CZ" type="update">
+   SQLTransformer is now recycled properly.
+   Applied patch from Ovidiu Predescu (ovidiu@cup.hp.com).
+  </action>
+ </release>
+ <release version="Cocoon 2.0b1" date="June 7, 2001">
+  <action dev="CZ" type="update">
+   Removed setContentHandler and setLexicalHandler from the XMLProducer interface.
+  </action>
+  <action dev="CZ" type="add">
+   The sitemap components now use the new SourceResolver to resolve
+   resources instead of the old EntityResolver approach.
+  </action>
+  <action dev="GP" type="add">
+   Added a internal-only attribute to the map:pipeline element to protect them
+   from being accessed by normal user request. The only way to access them by
+   use of the src attribute of the map:part element or the xinclude:href of
+   the XIncludeSAXConnector which implements transparent xinclude capability
+  </action>
+  <action dev="GP" type="add">
+   Added a prefix attribute to both map:aggregate and map:part to have a
+   namespace prefix available.
+  </action>
+  <action dev="GP" type="add">
+   Added an optional strip-root attribute to the map:part element of the
+   map:aggregate element to indicate that the aggregator should strip off
+   the root element of the aggregated content. The values can be "yes" or "true"
+   to strip off and anything else to not.
+  </action>
+  <action dev="GP" type="update">
+   Made element attribute of map:part element in map:aggregate element optional
+  </action>
+  <action dev="GP" type="add">
+   Also added substitution for test/pattern attribute.
+  </action>
+  <action dev="GP" type="add">
+   Implementation of content aggregation at sitemap level.
+  </action>
+  <action dev="GP" type="add">
+   Enable a parallel calling path into the sitemap for internal requests
+   of resource.
+  </action>
+  <action dev="GP" type="fix">
+   Added missing methods on CommandLineRequest.
+  </action>
+  <action dev="CZ" type="update">
+   Finished cleanup of the environment. We are now as independant of
+   the javax.servlet package as possible.
+  </action>
+  <action dev="CZ" type="add">
+   Creating wrappers for Session and Cookie.
+   The creation of these wrapper classes allow us to be independent
+   of the javax.servlet classes.
+  </action>
+  <action dev="CZ" type="add">
+    Added reload-method and check-reload configuration attributes for
+    the sitemap to allow asynchron/synchron sitemap reloading.
+  </action>
+  <action dev="CZ" type="add">
+    Added initial caching algorithm for StreamPipelines. The caching system
+    is pluggable and offers caching of the whole response.
+  </action>
+  <action dev="CZ" type="add">
+    Added initial caching algorithm for EventPipelines. The caching system
+    is pluggable and includes caching of generators and transformers.
+  </action>
+  <action dev="BL" type="remove">
+    Moved ComponentManagement infrastructure to Avalon where more eyes
+    can keep it working well, and it can benefit more people.
+  </action>
+  <action dev="GP" type="update">
+    Decoupled the RoleUtils class from the component management system.
+    Implemented RoleInfo proposed by Ricardo Rocha
+  </action>
+  <action dev="GP" type="update">
+    Split up ResourcePipeline into the Component EventPipeline and StreamPipeline
+    and put them in the components package.
+    it.
+  </action>
+  <action dev="RB" type="update">
+    Added a TranscoderFactory for Batik, and updated the SVG Serializer to use
+    it.
+  </action>
+  <action dev="PR" type="add">
+    Added support for SAXConnectors. This is the first stage in the
+    implementation of content aggregation. SAXConnectors could also
+    be used for profiling and pipeline logging.
+  </action>
+  <action dev="BL" type="add">
+    Added form to database Actions.  Using these Actions, you can quickly
+    generate a webapp that functions in _very_ little time.
+  </action>
+  <action dev="DM" type="update">
+    Added command line code generation and compilation of XSP's and the Sitemap.
+  </action>
+  <action dev="DM" type="update">
+    Eliminated dependency on Xalan. Updated sitemap.xsl and the Extension functions to
+    work both on Xalan and SAXON. SAXON should work from version 6.2.2 onwards.
+  </action>
+  <action dev="DM" type="update">
+    Eliminated dependency on Xerces for the serializers by using TRaX Serializers.
+  </action>
+ </release>
+ <release version="Cocoon 2.0a3" date="March 2001">
+  <action dev="BL" type="update">
+    Made Cocoon load classpath independent of Servlet Engine Classpath
+    Attribute.
+  </action>
+  <action dev="BL" type="update">
+    Changed the Xerces Specific code in the parser to JAXP 1.1 code.
+    The JAXP 1.1 code will work with any compliant parser.  Unfortunately
+    we still need Xerces for the serializers.
+  </action>
+  <action dev="BL" type="update">
+    Put meat on the Action Framework for the ManageEmployees form.
+  </action>
+  <action dev="RB" type="update"> 
+   SVG serializer now uses Batik.
+  </action>
+  <action dev="BL" type="add">
+    I did a first stab at importing the util logicsheet from Cocoon 1.8.1.
+  </action>
+  <action dev="BL" type="add">
+    I added some simple forms that make use of the xsp-request and esql
+    logicsheets.
+  </action>
+  <action dev="BL" type="update">
+    Clean up a lot of classloader issues.  RepositoryClassLoader is quicker and
+    more stable accross installations.  ClassUtils takes care of getting resources.
+  </action>
+  <action dev="BL" type="update">
+    Updated avalonapi to implement hierarchical logging, and added many more
+    log entries to get a handle on where the problems lay.
+  </action>
+  <action dev="DB" type="add">
+   added esql logicsheet to c2
+  </action>
+  <action dev="DB" type="fix">
+   patched xsp generator to use proper namespace for automatic text elements
+  </action>
+  <action dev="BL" type="update">
+    Updated Cocoon to be Avalon 3.0a4 compliant.  Introduced ComponentManager and
+    ComponentSelector patterns correctly in code.  Updated sitemap to create
+    Configuration trees directly.
+  </action>
+  <action dev="RB" type="add"> 
+   Added a more complete SVG serializer.
+  </action>
+  <action dev="SM" type="update">
+   Distribution cleanup and creation of a decent live demo, also to test the new sitemap.
+  </action>
+  <action dev="GP" type="update">
+   Major update to implement the new compiled sitemap subsystem.
+  </action>
+  <action dev="DB" type="update">
+   Patched XSLTFilter to pass request parameters into stylesheet like cocoon1
+  </action>
+  <action dev="DB" type="add">
+   Added ImageDirectoryGenerator - this oughta be pluggable though, so other file types can have extra attributes added easily
+  </action>
+  <action dev="SM" type="add"> 
+   Improved the samples and the webapp sitemap.
+  </action>
+  <action dev="SM" type="update"> 
+   Cleaned build system in order to be friendly to ASF-wide bcocoonuild procedures.
+  </action>
+  <action dev="SM" type="update"> 
+   Updated installation section (JServ no longer supported).
+  </action>
+  <action dev="SM" type="update"> 
+   Updated Xerces and FOP to latest versions.
+  </action>
+  <action dev="SM" type="fix"> 
+   Patched for final SAX2 compatibility.
+  </action>
+  <action dev="SM" type="update" due-to="Sven K&uuml;nzler" due-to-email="svenk@tzi.org"> 
+   Improved installation documentation.
+  </action>
+  <action dev="DB" type="add" due-to="Zvi" due-to-email="thezvi@ifrance.com">
+   Patched SQLFilter so VJ++ was happy
+  </action>
+  <action dev="DB" type="add">
+   Officially added XincludeFilter
+  </action>
+  <action dev="DB" type="add">
+   Officially added SQLFilter
+  </action>
+  <action dev="SM" type="add" due-to="Sebastien Sahuc" due-to-email="ssahuc@imediation.com"> 
+   Fixed order of filters that was backwards.
+  </action>
+  <action dev="GP" type="add">
+   Fixed typo in DirectoryGenerator.
+  </action>
+  <action dev="SM" type="add">
+   Distribution cleanup, early documentation.
+  </action>
+  <action dev="PF" type="add">
+   Initial code implementation.
+  </action>
+ </release>
+
+</changes>

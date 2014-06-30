@@ -1,0 +1,60 @@
+XCOMM $XConsortium: Imakefile /main/11 1996/12/02 10:18:28 lehors $
+XCOMM $XFree86: xc/programs/Xserver/PEX5/Imakefile,v 3.2.2.1 1997/05/03 09:44:39 dawes Exp $
+
+#include <Server.tmpl>
+
+#define IHaveSubdirs
+
+#ifndef PexDipexCDebugFlags
+#define PexDipexCDebugFlags ServerCDebugFlags 
+#endif
+
+ CDEBUGFLAGS = PexDipexCDebugFlags
+
+#ifndef Win32Architecture
+     SUBDIRS = dipex/dispatch dipex/swap dipex/objects ddpex/mi/level1 \
+               ddpex/mi/level2 ddpex/mi/level3 ddpex/mi/level4 \
+               ddpex/mi/shared ospex
+#else
+     SUBDIRS = dipex ddpex ospex
+#endif
+
+#if PexDynamicModule
+
+OBJS = \
+	dipex/dispatch/?*.o \
+	dipex/swap/?*.o \
+	dipex/objects/?*.o \
+	ddpex/mi/level1/?*.o \
+	ddpex/mi/level2/?*.o \
+	ddpex/mi/level3/?*.o \
+	ddpex/mi/level4/?*.o \
+	ddpex/mi/shared/?*.o \
+	ospex/?*.o
+
+DONES = \
+	dipex/dispatch/DONE \
+	dipex/swap/DONE \
+	dipex/objects/DONE \
+	ddpex/mi/level1/DONE \
+	ddpex/mi/level2/DONE \
+	ddpex/mi/level3/DONE \
+	ddpex/mi/level4/DONE \
+	ddpex/mi/shared/DONE \
+	ospex/DONE
+
+#if HasGnuMake
+$(DONES): $(SUBDIRS)
+#endif
+
+SharedDepModuleTarget(pex5.so,$(SUBDIRS) $(DONES),$(OBJS))
+InstallDynamicModule(pex5.so,$(MODULEDIR))
+ForceSubdirs($(SUBDIRS))
+
+#else
+MakeSubdirs($(SUBDIRS)) 
+#endif
+
+DependSubdirs($(SUBDIRS))
+MakeLintLibSubdirs($(SUBDIRS))
+LintSubdirs($(SUBDIRS))

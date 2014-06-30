@@ -1,0 +1,38 @@
+XCOMM $XConsortium: Imakefile /main/7 1996/10/25 21:24:20 kaleb $
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree98/accel/s3pwskb/drivers/s3_generic/Imakefile,v 3.7 1996/12/23 07:06:30 dawes Exp $
+
+
+
+#include <Server.tmpl>
+
+SRCS = s3_generic.c
+
+OBJS = s3_generic.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I../.. -I$(XF86COMSRC) -I$(XF86HWSRC) \
+	   -I$(XF86OSSRC) -I$(SERVERSRC)/mi \
+           -I$(XF86SRC)/vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC) \
+	   -I$(XF86SRC)/accel/cache
+#endif
+
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+all:: s3_generic.o
+
+#if !XF86LinkKit
+LinkSourceFile(s3_generic.c,$(XF86SRC)/accel/s3/drivers/s3_generic)
+#endif
+
+InstallLinkKitNonExecFile(s3_generic.c,$(XF98LINKKITDIR)/drivers98/s3pwskb/s3_generic)
+InstallLinkKitNonExecFile(Imakefile,$(XF98LINKKITDIR)/drivers98/s3pwskb/s3_generic)
+
+DependTarget()
+

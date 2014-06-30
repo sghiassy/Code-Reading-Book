@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+ <header>
+  <title>Entity resolution with catalogs</title>
+  <subtitle>Resolve external entities to local or other resources</subtitle>
+  <version>1.5</version> 
+  <type>Technical document</type> 
+  <authors>
+   <person name="David Crossley" email="crossley@indexgeo.com.au"/>
+  </authors>
+ </header>
+
+ <body>
+ <s1 title="Introduction">
+  <p>
+   Apache Cocoon has the capability to utilise an entity resolution mechanism. 
+   External entities (e.g. Document Type Definitions (DTDs), character entity
+   sets, XML sub-documents) are resources that are declared by an XML instance
+   document - they exist as separate objects. An entity catalog assists with
+   entity management and the resolution of entities to accessible resources.
+   It also reduces the necessity for expensive and failure-prone network
+   retrieval of the required resources.
+  </p>
+ </s1>
+
+ <s1 title="Overview">
+  <p>
+   "Entities" represent the physical structure of an XML instance document,
+   whereas "elements" represent the logical structure. The complete entity
+   structure of the document defines which pieces need to be incorporated, so
+   as to build the final document. Those entities are objects from some
+   accessible place, e.g. local file system, local network, remote network,
+   generated from a database. Example entities are: DTDs, XML sub-documents,
+   sets of character entities to represent symbols and other glyphs, image
+   files.
+  </p>
+
+  <p>
+   So how are you going to define the accessible location of all those pieces?
+   How will you ensure that those resources are reliably available? Entity
+   resolution catalogs to the rescue. These are simple standards-based
+   plain-text files to map public identifiers and system identifiers to local
+   or other resources.
+  </p>
+
+  <p>
+   Do you wonder why we cannot use the sitemap to resolve these resources?
+   This is because the resolution of all entities that compose the XML
+   document is under the direct control of the guts of the parser and the XML
+   structure. The parser has no choice - it must incorporate all of the defined    pieces. If it cannot retrieve them, then it is broken and reports an error.
+  </p>
+
+  <p>
+   With the powerful catalog support there are no such problems. This document
+   provides the following sections to explain Cocoon capability for
+   resolving entities ...
+  </p>
+
+  <ul>
+   <li>
+    <link href="#background">Background</link>
+    - explains the need, explains some terminology, describes the solution
+   </li>
+   <li>
+    <link href="#demo1">Demonstration #1</link>
+     - explains a remote resource and how it gets resolved
+   </li>
+   <li>
+    <link href="#cat">Catalogs overview</link>
+     - briefly explains how catalogs resolve entity declarations
+   </li>
+   <li>
+    <link href="#demo2">Demonstration #2</link>
+     - explains more detailed need and use of catalogs
+     and shows catalogs in action
+   </li>
+   <li>
+    <link href="#default">Default configuration</link>
+     - explains the default automated configuration
+   </li>
+   <li>
+    <link href="#config">Local configuration</link>
+     - explains how to extend the default configuration for your local
+     system requirements and provides an example
+   </li>
+   <li>
+    <link href="#imp">Implementation notes</link>
+     - describes how support for catalogs is added to Cocoon
+   </li>
+   <li>
+    <link href="#dev">Development notes</link>
+     - some minor issues need to be addressed
+   </li>
+   <li>
+    <link href="#notes">Other notes</link>
+     - assorted dot-points
+   </li>
+   <li>
+    <link href="#summ">Summary</link>
+   </li>
+   <li>
+    <link href="#info">Further information</link>
+     - links to some useful resources
+   </li>
+  </ul>
+ </s1>
+
+ <anchor id="background"/>
+ <s1 title="Background">
+  <p>
+   The following article eloquently describes the need for all parsers and
+   XML frameworks to be capable of utilising entity resolvers.
+   "<link href="http://www.arbortext.com/Think_Tank/XML_Resources/Issue_Three/issue_three.html">If You Can Name It, You Can Claim It!</link>"
+   by Norman Walsh. Please read that document, then return here to apply
+   entity catalogs to Cocoon.
+  </p>
+
+  <p>
+   (Note: That article (and Java classes) evolved to become the Sun
+   <code>resolver.zip</code> Java package that has been added to Cocoon
+   - a more recent version of the article is available with the Sun download
+   (see below). The API javadocs for <code>resolver</code> have further information.
+   However, you do not need to know the gory details to understand catalogs
+   and configure them.)
+  </p>
+ </s1>
+
+ <anchor id="demo1"/>
+ <s1 title="Demonstration #1">
+  <p>
+   This snippet from an XML instance shows the Document Type Declaration.
+   Notice that it declares its ruleset, the Document Type Definition (DTD),
+   as an external entity. Notice also that the resource is network-based.
+  </p>
+
+<source><![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD Simplified DocBook XML V4.1.2.5//EN"
+  "http://www.oasis-open.org/docbook/xml/simple/4.1.2.5/sdocbook.dtd"
+<article>
+ ... content goes here
+</article>
+]]></source>
+
+  <p>
+   Now consider what will happen when Cocoon tries to process this XML
+   instance. Whether you have set validation=yes or not, the parser will
+   still want to resolve all of the entities that are required by the XML
+   instance (i.e. the DTD and any other entities that the DTD might declare).
+   So it will happily trundle across the network to get them. It will do this
+   every time that the document is processed. This is obviously a needless
+   overhead. Worse still, what happens if that host is down or the network is
+   congested. Additionally, if your Cocoon is an off-line server then it is
+   always broken because it cannot retrieve the network-based resources.
+  </p>
+ </s1>
+
+ <anchor id="cat"/>
+ <s1 title="Catalogs overview">
+  <p>
+   As the Walsh document explained, the secrets to entity resolution are the
+   public identifiers, system identifiers, and the catalog to map between them.
+   Here we provide an overview and show an example catalog which we will then
+   use with the <link href="#demo2">Demonstration #2</link> below.
+  </p>
+
+  <s2 title="External entity declarations">
+   <p>
+    To define an external entity in an XML instance document, you must 
+    provide an external declaration consisting of at least a
+    <strong>system identifier</strong> and optionally a 
+    <strong>public identifier</strong>. The system identifier defines the
+    physical location of the external entity. The public identifier is a
+    unique symbolic name that can be used to map to a certain physical location.
+    Note that if you provide both a public and a system identifier, then the
+    public identifier is listed first and the system identifier is not 
+    preceded by the keyword <code>SYSTEM</code>.
+    Here are four separate examples ...
+   </p>
+
+<source><![CDATA[
+<!ENTITY pic SYSTEM "images/pic.gif" NDATA gif>
+<!ENTITY % ISOnum PUBLIC
+  "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML" "ISOnum.pen">
+<!DOCTYPE document SYSTEM "dtd/document-v10.dtd">
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1//EN"
+  "http://www.oasis-open.org/docbook/xml/4.1/docbookx.dtd">
+]]></source>
+
+  <p>
+   (In your XML instance document, or DTD, you would include those entities
+   like this ... <code>%ISOnum;</code>)
+  </p>
+
+  <p>
+   None of those system identifiers looks reliable or easily managed.
+   Use a catalog to make them so.
+  </p>
+  </s2>
+
+  <s2 title="Simple example catalog">
+   <p>
+    The <code>catalog</code> maps public identifiers to their corresponding
+    physical locations. The catalog entries in an OASIS catalog are a simple
+    whitespace-delimited format.
+    (The <link href="#info">specification</link> fully defines the format.) 
+    There about a dozen different types of catalog entry - two important
+    ones are:
+   </p>
+
+   <ul>
+    <li><strong>PUBLIC</strong> <code>publicId systemId</code>
+     <br/>- maps the public identifier <code>publicId</code> to the system
+     identifier <code>systemId</code>
+    </li>
+    <li><strong>SYSTEM</strong> <code>systemId otherSystemId</code>
+     <br/>- maps the system identifier <code>systemId</code> to the alternate
+     system identifier <code>otherSystemId</code>
+    </li>
+   </ul>
+
+<source><![CDATA[
+-- this is the default OASIS catalog for Apache Cocoon --
+
+OVERRIDE YES
+
+-- ISO public identifiers for sets of character entities --
+PUBLIC "ISO 8879-1986//ENTITIES Added Latin 1//EN//XML"
+       "ISOlat1.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Added Latin 1//EN//XML"
+       "ISOlat1.pen"
+PUBLIC "ISO 9573-15:1993//ENTITIES Greek Letters//EN//XML"
+       "ISOgrk1.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Publishing//EN//XML"
+       "ISOpub.pen"
+PUBLIC "ISO 8879:1986//ENTITIES General Technical//EN//XML"
+       "ISOtech.pen"
+PUBLIC "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+       "ISOnum.pen"
+
+-- these entries are used for the catalog-demo sample application --
+OVERRIDE NO
+PUBLIC "-//Arbortext//TEXT Test Override//EN"
+       "catalog-demo/override.xml"
+OVERRIDE YES
+PUBLIC "-//Arbortext//TEXT Test Public Identifier//EN"
+       "catalog-demo/testpub.xml"
+SYSTEM "urn:x-arbortext:test-system-identifier"
+       "catalog-demo/testsys.xml"
+PUBLIC "-//Indexgeo//DTD Catalog Demo v1.0//EN"
+       "catalog-demo/catalog-demo-v10.dtd"
+-- end of entries for the catalog-demo sample application --
+]]></source>
+
+   <p>
+    System identifiers can use full pathnames, filenames, relative pathnames,
+    or URLs - in fact, any method that will define and deliver the actual
+    physical entity. If it is just a filename or a relative pathname, then the 
+    Catalog Resolver will look for the resource relative to the location of
+    the catalog.
+   </p>
+
+   <p>
+    When the parser needs to load a declared entity, then it first consults
+    the Catalog Resolver to get a possible mapping to an alternate system
+    identifier. If there is no mapping for an identifier in the catalogs
+    (or in any sub-ordinate catalogs), then Cocoon will carry on to
+    retrieve the resource using the original declared system identifier.
+   </p>
+  </s2>
+ </s1>
+
+ <anchor id="demo2"/>
+ <s1 title="Demonstration #2">
+
+  <p>
+   See catalogs in action with the 
+   <link href="../../overview.html#samples">Cocoon Samples</link> ...
+   <link href="samples/catalog-demo">catalog-demo</link>. The demonstration
+   intends to be self-documenting. The top-level XML instance describes its
+   role, and each included external entity reports how it came into being.
+   This example builds upon the example provided by the Walsh article.
+   (Tip: To see the error message that would result from not using a catalog,
+   simply rename the default <code>catalog</code> file before starting
+   Cocoon.)
+  </p>
+
+<note>TODO: ensure that the link to samples works OK in the various documentation situations (i.e. static site, local docs build)</note>
+
+  <p>Here is the source for the top-level XML instance document
+   <code>test.xml</code> ...
+  </p>
+
+<source><![CDATA[
+<?xml version="1.0"?>
+<!DOCTYPE catalog-demo PUBLIC "-//Indexgeo//DTD Catalog Demo v1.0//EN"
+  "http://www.indexgeo.com.au/dtd/catalog-demo-v10.dtd"
+[
+ <!ENTITY testpub PUBLIC "-//Arbortext//TEXT Test Public Identifier//EN"
+   "bogus-system-identifier.xml">
+ <!ENTITY testsys SYSTEM "urn:x-arbortext:test-system-identifier">
+ <!ENTITY testovr PUBLIC "-//Arbortext//TEXT Test Override//EN"
+   "testovr.xml">
+ <!ENTITY % ISOnum PUBLIC
+   "ISO 8879:1986//ENTITIES Numeric and Special Graphic//EN//XML"
+   "ISOnum.pen">
+ %ISOnum;
+ <!ENTITY note "Note:">
+]>
+
+<catalog-demo>
+ <section>
+  <para>This sample application demonstrates the use of catalogs for
+   entity resolution. &note; see the Apache Cocoon documentation
+   <link href="/cocoon/documents/catalog.html">Entity resolution with
+   catalogs</link> for the full background and explanation, and the XML
+   source of this document (test.xml).
+  </para>
+
+  <para>This top-level XML instance document is test.xml - it declares
+   three other XML sub-documents as external entities and then includes
+   them in the sections below. The real system identifiers will be looked
+   up in the catalog, to resolve the actual location of the resource.
+  </para>
+
+  <para>The Document Type Definition (DTD) is declared using both a public
+   identifier and a system identifier. The system identifier for the DTD is
+   a network-based resource (which is deliberately non-existent). However,
+   the catalog overrides that remote DTD to instead use a copy from the
+   local filesystem at the location defined by the catalog entry. Note that
+   it is via the use of a public identifier that we gain this power.
+  </para>
+
+  <para>The internal DTD subset of the top-level document instance goes on
+   to declare the three external sub-document entities using various means.
+   It also declares and includes the ISOnum set of character entities,
+   so that we can use entities like &amp;frac12; (to represent &frac12;).
+   Finally the internal DTD subset declares an internal general entity
+   for &quot;note&quot;.
+  </para>
+ </section>
+
+ <section>
+  <para>testpub ... this entity is declared with a PUBLIC identifier and a
+   bogus system identifier (which will be overridden by the catalog)
+  </para>
+  &testpub;
+ </section>
+
+ <section>
+  <para>testsys ... this entity is declared with a SYSTEM identifier
+   (which will be resolved by the catalog)
+  </para>
+  &testsys;
+ </section>
+
+ <section>
+  <para>testovr ... is declared with a PUBLIC identifier and a system
+   identifier (the catalog is set to not override this one, so the
+   declared system identifier is used)
+  </para>
+  &testovr;
+ </section>
+
+</catalog-demo>
+]]></source>
+
+  <p>
+   Here is the source for one of the included sub-document external entities
+   <code>testpub.xml</code> ...
+  </p>
+
+<source><![CDATA[
+<para>&note; This paragraph is automatically included from the
+ testpub.xml external file.
+ The entity declaration deliberately used a non-existent file
+ as the system identifier. The catalog then used the declared
+ public identifer to resolve to a specific location on the local
+ filesystem.
+</para>
+]]></source>
+ </s1>
+
+ <anchor id="default"/>
+ <s1 title="Default configuration">
+  <p>
+   A default catalog and some base entities (e.g. ISO*.pen character
+   entity sets) are included in the Cocoon distribution at 
+   <code>webapps/cocoon/resources/entities/</code>
+   - the default catalog is automatically loaded when Cocoon starts.
+  </p>
+
+  <p>
+   If you suspect problems, then you can raise the level of the
+   <code>verbosity</code> property (to 2 or 3) and watch the messages going
+   to standard output when Cocoon starts and operates. You would also do
+   this to detect any misconfiguration of your own catalogs.
+  </p>
+ </s1>
+
+ <anchor id="config"/>
+ <s1 title="Local configuration">
+   <p>You can extend the default configuration to include local catalogs
+    for site-specific requirements. This is achieved via various means.
+   </p>
+
+  <s2 title="Using cocoon.xconf">
+   <p>Parameters (properties) for the resolver component can be specified
+    in the <code>cocoon.xconf</code> configuration file.
+    See the detailed internal notes - here is a precis.
+   </p>
+
+   <ul>
+    <li><code>catalog</code>
+     ... The main catalog file. Its path name is relative to the
+     Cocoon context directory.
+    </li>
+    <li><code>local-catalog</code>
+     ... The full filesystem pathname to a single local catalog file.
+    </li>
+    <li><code>verbosity</code>
+     ... The level of messages from the resolver
+     (loading catalogs, identifier resolution, etc.).
+     It value may range from 0 (no messages), to 10 detailed log messages.
+    </li>
+   </ul>
+  </s2>
+
+  <s2 title="Using CatalogManager.properties">
+   <p>An annotated <code>CatalogManager.properties</code> file is included
+    with the distribution - modify it to suit your needs. You can add your
+    own local catalogs using the <code>catalogs</code> property.
+    (See the notes inside the properties file).
+   </p>
+
+   <p>
+    The build process will automatically copy the properties file from
+<code>$COCOON_HOME/webapp/resources/entities/CatalogManager.properties</code>
+    to
+<code>$TOMCAT_HOME/webapps/cocoon/WEB-INF/classes/CatalogManager.properties</code>
+    thereby making it available to the Java classpath.
+   </p>
+
+   <p>
+    If you see an error message going to STDOUT when Cocoon starts 
+    (<code>Cannot find CatalogManager.properties</code>) then this means that
+    the properties file is not available to the Java classpath. Note that this
+    does not mean that entity resolution is disabled, rather that no local
+    configuration is being effected. Therefore no local catalogs will be
+    loaded and no entity resolution messages will be received (verbosity
+    level is zero by default).
+   </p>
+
+   <p>
+    That may truly be the intention, and not just a configuration mistake.
+    You can still use <code>cocoon.xconf</code> to effect your local
+    configuration.
+   </p>
+  </s2>
+
+  <s2 title="Resolver directives inside your catalog file">
+   <p>
+    The actual "catalog" files have a powerful set of directives. 
+    For example, the <strong>CATALOG</strong> directive facilitates the
+    inclusion of a sub-ordinate catalog. The list of resources below will
+    lead to <link href="#info">further information</link> about catalog usage.
+   </p>
+  </s2>
+
+  <s2 title="Example local configuration for Simplified DocBook">
+  <p>
+   We use the Simplified DocBook XML DTD for some of our documentation.
+   Here are the few steps that we followed to configure Cocoon to be able
+   to process our XML instances.
+  </p>
+
+  <ul>
+   <li>
+    downloaded a recent copy of the Simplified DocBook DTD distribution
+    and unpacked it at
+    <code>/usr/local/sgml/docbook/simple/</code>
+   </li>
+   <li>
+    created a catalog file at 
+    <code>/usr/local/sgml/docbook/simple/sdocbook.cat</code>
+    with a single entry for the Simplified DocBook XML DTD
+   </li>
+   <li>
+    added the parameter (<code>local-catalog</code>) to the
+    <code>cocoon.xconf</code>
+    (using the full pathname to the <code>sdocbook.cat</code> catalog).
+   </li>
+  </ul>
+
+<source><![CDATA[
+-- Catalog file (sdocbook.cat) for Simplified DocBook --
+-- See www.oasis-open.org/docbook/ --
+
+-- Driver file for the Simplified DocBook XML DTD --
+PUBLIC "-//OASIS//DTD Simplified DocBook XML V4.1.2.5//EN"
+       "sdocbook.dtd"
+
+-- end of catalog file for Simplified DocBook --
+]]></source>
+
+  <p>
+   We could similarly configure Cocoon for the full DocBook XML DTD and
+   related entities. In fact, the DocBook distribution already contains a
+   catalog file. We need only append the pathname to our <code>catalogs</code>
+   property.
+  </p>
+
+  <p>
+   There are a few important starting points for 
+   <link href="#info">further information</link> about using and configuring
+   the DocBook DTDs.
+  </p>
+
+  </s2>
+ </s1>
+
+ <anchor id="imp"/>
+ <s1 title="Implementation notes">
+  <p>
+   The SAX <code>Parser</code> interface provides an <code>entityResolver</code>
+   hook to allow an application to resolve the external entities. The Sun
+   Microsystems Java code "<code>com.sun.resolver</code>" provides a
+   <strong>Catalog Resolver</strong>. This is incorporated into Cocoon via
+   <code>org.apache.cocoon.components.resolver</code> 
+  </p>
+
+  <p>
+   <link href="#default">Default configuration</link> is achieved via
+   <code>org.apache.cocoon.components.resolver.ResolverImpl.java</code> 
+   which initialises the catalog resolver and loads a default system catalog.
+   The <code>ResolverImpl.java</code> enables <link href="#config">local
+   configuration</link> by applying properties from the
+   <code>CatalogManager.properties</code> file and then further configuration
+   from <code>cocoon.xconf</code> parameters.
+  </p>
+ </s1>
+
+ <anchor id="dev"/>
+ <s1 title="Development notes">
+
+  <p>
+   Assistance is required with the following outstanding development issues ...
+  </p>
+
+  <ul>
+   <li>5) ? What other default entities need to be shipped with the Cocoon
+    distribution? We already have some character entity sets (ISO*.pen).
+    Probably also need the documentation DTDs.
+   </li>
+   <li>7)
+   </li>
+  </ul>
+
+  <p>
+   Some core Cocoon FIXME notes can be now be addressed by catalog ...
+  </p>
+
+  <ul>
+   <li>the first FIXME note in document-1.0.dtd re how to include
+    entities without hardwiring
+   </li>
+   <li>there are various other hard-coded pathnames to XML resources
+   </li>
+   <li>this needs further investigation after basic catalog support is
+    fully settled
+   </li>
+  </ul>
+
+ </s1>
+
+ <anchor id="notes"/>
+ <s1 title="Other notes">
+
+  <ul>
+   <li>OASIS Catalogs (TR 9401:1995 Entity Management) are plain-text files 
+    with a simple delimited format. There is also a new standard being
+    developed for XML Catalogs, using an xml-based structured plain-text file
+    (gee :-). Links to both standards are provided below. Both catalog formats
+    can be currently used with this entity resolver. However, the latter 
+    standard is not yet settled. OASIS TR9401 catalogs will suffice.
+   </li>
+   <li>There has been a recent flood of XML tools - unfortunately, many do not
+    implement entity resolution (other than by brute-force retrieval), so
+    those tools are crippled and cannot be used for serious XML processing.
+    Please ensure that you choose 
+    <link href="http://www.oasis-open.org/cover/">proper XML tools</link>
+    for the preparation and validation of your XML instance documents.
+   </li>
+   <li>The default catalog that is shipped with the Cocoon distribution is
+    deliberately basic. You will need to supplement it with your own catalog
+    devised to suit your particular needs.
+   </li>
+  </ul>
+ </s1>
+
+ <anchor id="summ"/>
+ <s1 title="Summary">
+  <p>
+   Most XML documents that we would want to serve with Cocoon are already
+   in existence in another information system. The XML document instances have
+   a declaration of their DTD Document Type Definition as an external file.
+   This external DTD also includes entity sets such as ISOnum, ISOlat1, etc.
+   Also the DTD declaration has a Formal Public Identifier and a System
+   Identifier which points to a remote URL. These XML instance documents cannot
+   be altered to make workaround solutions like
+   <code>../dtd/document-1.0.dtd</code>
+  </p>
+
+  <p>
+   Entity management is effected by providing a standards-based mechanism to
+   resolve public identifiers and system identifiers to local filenames or
+   other identifiers or even to other remote network resources. So references
+   to external DTDs, sets of character entities such as mathematical symbols,
+   fragments of XML documents, complete sub-documents, non-xml data chunks
+   (like images), etc. can all be centrally managed and resolved locally.
+  </p>
+ </s1>
+
+ <anchor id="info"/>
+ <s1 title="Further information">
+  <p>
+   Here are some links to documents which extol entity management:
+  </p>
+
+  <ul>
+   <li><link href="http://www.oasis-open.org/committees/entity/">OASIS Entity
+    Resolution Technical Committee</link> - see especially the
+    <link href="http://www.oasis-open.org/specs/a401.html">specification for
+    OASIS Catalogs</link> (TR 9401:1995 Entity Management)
+    and the 
+    <link href="http://www.oasis-open.org/committees/entity/spec.html">specification for XML Catalogs</link>
+   </li>
+   <li><link href="http://www.oasis-open.org/cover/topics.html#entities">SGML/XML Special Topics: Entity Sets and Entity Management</link>
+    at the
+    <link href="http://www.oasis-open.org/cover/">XML Cover Pages</link></li>
+   <li><link href="http://www.oasis-open.org/cover/topics.html#fpi-fsi">SGML/XML
+    Special Topics: Catalogs, Formal Public Identifiers, Formal System
+    Identifiers</link>
+    at the
+    <link href="http://www.oasis-open.org/cover/">XML Cover Pages</link></li>
+   <li>Arbortext column by Norman Walsh
+    <link href="http://www.arbortext.com/Think_Tank/think_tank.html">Standard
+    Deviations from Norm</link>
+    <br/> - Issue Three: 
+    <link href="http://www.arbortext.com/Think_Tank/XML_Resources/Issue_Three/issue_three.html">If You Can Name It, You Can Claim It!</link></li>
+   <li>
+    <link href="http://www.sun.com/xml/developers/resolver/">XML Entity and
+     URI Resolvers Java classes</link> (from Sun Microsystems) and evolution
+     of the Arbortext article.
+   </li>
+   <li>XML-Deviant article 2000-11-29
+    <link href="http://www.xml.com/pub/a/2000/11/29/deviant.html">What's in
+     a Name?</link></li>
+   <li><link href="http://www.oasis-open.org/docbook/">DocBook</link>:
+     <link href="http://www.docbook.org/">The Definitive Guide</link>
+     - Section 2.3 Public Identifiers, System Identifiers, and Catalog Files
+   </li>
+   <li>OASIS is the <link href="http://www.oasis-open.org/docbook/">official
+    home</link> of the DocBook DTDs
+    (see also <link href="http://docbook.sourceforge.net/">DocBook Open
+    Repository</link> project at SourceForge)
+   </li>
+   <li>Organization for the Advancement of Structured Information Standards
+    (<link href="http://www.oasis-open.org/">OASIS</link>)</li>
+  </ul>
+ </s1>
+
+ </body>
+</document>

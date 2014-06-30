@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "dtd/document-v10.dtd">
+
+<document>
+
+  <header>
+    <title>Apache Cocoon Emotional Landscapes</title>
+    <subtitle>why you can't afford to miss Apache Cocoon</subtitle>
+    <authors>
+      <person name="Stefano Mazzocchi" email="stefano@apache.org"/>
+    </authors>
+  </header>
+
+  <body>
+
+    <s1 title="Introduction">
+
+<p>
+Everybody talks about XML. XML here, XML there. All application servers
+support XML, everybody wants to do B2B using XML, web services using
+XML, even databases using XML.
+</p>
+
+<p>
+Should you care about it? Given the amount of hype, you can't afford to
+go around ignoring the argument, would be like ignoring the world wide
+web 10 years ago: a clear mistake. But why is this so for XML? What is
+this "magic" that XML seems to have to solve my problems? Isn't this
+another hype to change once again the IT infrastructure that you spent
+so much time implementing and fixing in the last few years? Isn't
+another way to spill money out of your pockets?
+</p>
+
+<p>
+If you ever asked yourself one of the above questions, this paper is for
+you. You won't find singing-and-dancing marketing crap, you won't find
+boring and useless feature lists, you won't find the usual acronym
+bombing or those good looking vaporware schemas that connect your
+databases to your coffee machines via CORBA or stuff like that.
+</p>
+
+<p>
+I'll explain you what the Cocoon project is about and what we are
+doing to solve the problems that we encountered in our web engineering
+experiences, but from an executive perspective, yes, because we all had
+the problems of managing a web site, dealing with our colleagues, rushing
+to the graphical guru to have the little GIF with the new title, or
+calling the web administrator at night because the database is returning
+errors without reasons.
+</p>
+
+<p>
+I was frustrated of seeing the best and most clever information
+technology ever invented (the web) ruined by the lack of engineering
+practices, tortured by those "let's-reinvent-the-wheel-once-again"
+craftmen that were great at doing their jobs as individuals but that
+couldn't scale and imposed a growth saturation to the whole project.
+</p>
+
+<p>
+There had to be a better way of doing things.
+</p>
+
+    </s1>
+
+
+    <s1 title="Personal Experience">
+
+<p>
+In 1998, I volunteered to create the documentation infrastructure for
+the java.apache.org project, which is composed by a bunch of different
+codebases, maintained by a bunch of different people, with different
+skills, different geographical locations and different degree of will
+and time to dedicate to the documentation effort.
+</p>
+
+<p>
+I designed the site look (which still remains the same), I designed the
+guidelines for HTML creation (which had to run on *all* HTML browsers
+that ever existed: tell that to your graphic designers and look at their
+faces!), I wrote the scripts to regenerate the site automatically taking
+documentation out of each project, and kicked butts around if they
+weren't following the guidelines.
+</p>
+
+<p>
+But pretty soon I realized no matter how great and well designed the
+system was, HTML was a problem: it was *not* designed for those kind of
+things. I looked at the main page (http://java.apache.org/) from the
+browser and you could clearly identify the areas of the screen: sidebar,
+topbar, news, status. But if you opened the HTML, boom: a nightmare or
+table tags and nesting and small little tricks to make the HTML appear
+the same on every browser.
+</p>
+
+<p>
+So I looked around for alternative technologies, but *all* of them were
+trying to add more complexity at the GUI level (Microsoft Frontpage,
+Macromedia Dreamweaver, Adobe GoLive, etc...) hoping to "hide" the
+design problems of HTML under a thick layer of WYSIWYG looks.
+</p>
+
+<p>
+What you see is what you get.
+</p>
+
+<p>
+But what you see is all you've got.
+</p>
+
+<p>
+How can you tell your web server to "extract" the information from the
+sitebar? How can you have the news feeds out of a complex HTML page?
+</p>
+
+<p>
+Damn, it's easy for a human reader: just look at the page and it's very
+easy to distinguish between a sidebar, a banner, a news and a stock
+quote. Why is it so hard for a machine?
+</p>
+
+    </s1>
+
+    <s1 title="The HTML Model">
+
+<p>
+HTML is a language that tells your browser how to "draw" things on its
+window. An image here, a letter there, a color down here. Nothing more.
+The browser doesn't have the "higher level" notion of "sidebar": it
+lacks the ability to perform "semantic analysis" on the HTML content.
+</p>
+
+<p>
+Semantic analysis? Yeah, it's the kind of thing the human brain is
+simply great at doing, while computer programs simply suck big time.
+</p>
+
+<p>
+So, with HTML, we went a step up and created a highly visual and
+appealing web of HTML content, but we went two steps back by removing
+all the higher level semantic information from the content itself.
+</p>
+
+<p>
+Ok, let's make an example... I think most of you have seen an HTML
+page... if not, here is an example:
+</p>
+
+<source><![CDATA[
+ <html>
+  <body>
+   <p>Hi, I'm an HTML page</p>
+   <p align="center">Written by Stefano</p>
+  </body>
+ </html>
+]]></source>
+
+<p>
+which says to the browser:
+</p>
+
+<ul>
+ <li>I'm a HTML page</li>
+ <li>I have a body</li>
+ <li>I have a paragraph</li>
+ <li>I contain the sentence "Hi, I'm an HTML page."</li>
+ <li>I contain the sentence "Written by Stefano"</li>
+</ul>
+
+<p>
+Suppose you are a chinese guy that doesn't understand our alphabet, try
+to answer the following question:
+</p>
+
+<p>
+ who wrote the page?
+</p>
+
+<p>
+You can't perform semantic analysis, you are as blind as a web browser.
+The only thing you can do is draw it on the screen since this is what
+you were programmed to do. In other words, your semantic capacity is
+fixed to the drawing capabilities and a few other things (like linking),
+thus limited.
+</p>
+
+    </s1>
+
+    <s1 title="Semantic Markup">
+
+<p>
+Suppose I send you this page:
+</p>
+
+<source><![CDATA[
+ <page>
+  <author>sflkjoiuer</author>
+  <content>
+   <para>sofikdjflksj</para>
+  </content>
+ </page>
+]]></source>
+
+<p>
+now, who wrote the page? easy, you say, "sflkjoiuer" did. Good, but now
+I send you
+</p>
+
+<source><![CDATA[
+ <dlkj>
+  <ruijfl>sofikdjflksj</ruijfl>
+  <wijlkjf>
+    <oamkfkj>sflkjoiuer</oamkfkj>
+  </wijlkjf>
+ </dlkj>
+]]></source>
+
+<p>
+tell me, who wrote the page? You could guess by comparing the structure,
+but how do you know the two structures reflect the same semantic
+information?
+</p>
+
+<p>
+The above two pages are both XML documents.
+</p>
+
+<p>
+Are they going to help you? Are they doing to simplify your work? Are
+they going to simplify your problems?
+</p>
+
+<p>
+At this point, clearly not so, rather the opposite.
+</p>
+
+<p>
+So, I'm sure you are wondering, why did I spend the last two years
+writing an XML publishing framework? At the end of this paper, you'll be
+able to answer this question alone, so let's keep going.
+</p>
+
+
+    </s1>
+
+    <s1 title="The XML Language">
+
+<p>
+XML is most of the times referred to as the "eXtensible Markup Language"
+specification. A fairly small yet complex specification that indicates
+how to write languages. It's a syntax. Nothing fancy at all. So
+</p>
+
+<source><![CDATA[
+ <hello></hello>
+]]></source>
+
+<p>
+is correct, while
+</p>
+
+<source><![CDATA[
+ <hello></hi>
+]]></source>
+
+<p>
+is not, but
+</p>
+
+<source><![CDATA[
+ <hello><hi/></hello>
+]]></source>
+
+<p>
+is correct. That's more or less it.
+</p>
+
+<p>
+XML is the ASCII for the new millenium, it's a step forward from ASCII
+or UNICODE (the international extension to ASCII that includes all
+characters from all modern languages), it defined a "lingua franca" for
+textual languages.
+</p>
+
+<p>
+Ok, great, so now instead of having one uniform language with visual
+semantics (HTML) we have a babel of languages each with its own
+semantics. How this can possibly help me?
+</p>
+
+    </s1>
+
+    <s1 title="XML Transformations">
+
+<p>
+This was the point where I was more or less two years ago for
+java.apache.org: I could use XML and define my own semantics with
+<![CDATA[<sidebar>]]>, <![CDATA[<news>]]>, <![CDATA[<status>]]> 
+and all that and I'm sure people would have
+found those XML documents much easier to write (since the XML syntax is
+very similar to the HTML one and very user friendly)... but I would have
+moved from "all browsers" to "no browser".
+</p>
+
+<p>
+And having a documentation that nobody can browse is totally useless.
+</p>
+
+<p>
+The turning point was the creation of the XSL specification which
+included a way to "transform" an XML page into something else. (it's
+more complex than this, but I'll skip the technical details).
+</p>
+
+<p>
+So now you have:
+</p>
+
+<source><![CDATA[
+ XML page ---(transformation)--> HTML page
+                    ^
+                    |
+          transformation rules
+]]></source>
+
+<p>
+that allowed me to write my pages in XML, create my "graphics" as
+transformation rules and generate HTML pages on the fly directly from my
+web server.
+</p>
+
+<p>
+Apache Cocoon 1.0 did exactly this.
+</p>
+
+    </s1>
+
+    <s1 title="The Model Evolves">
+
+<p>
+If XML is a lingua franca, it means that XML software can work on almost
+anything without caring about what it is. So, if a cell phone requests
+the page, Cocoon just has to change transformation rules and send the
+WAP page to the phone. Or, if you want a nice PDF to printout your
+monthly report, you change the transformation rules and Cocoon creates
+the PDF for you, or the VRML, or the VoiceML, or your own proprietary
+B2B markup.
+</p>
+
+<p>
+Anything without changing the basic architecture that is simply based on
+the simple "angle bracket" XML syntax.
+</p>
+
+    </s1>
+
+    <s1 title="Separation of Concerns (SoC)">
+
+<p>
+Cocoon was not the first product to perform server side XML
+transformations, nor will be the last one (in a few years, these
+solutions will be the rule rather than the exception). What is the
+"plus" that the Cocoon project adds?
+</p>
+
+<p>
+I believe the most important Cocoon feature is SoC-based design.
+</p>
+
+<p>
+SoC is something that you've always been aware of: not everybody is
+equal, not everybody performs the same job with the same ability.
+</p>
+
+<p>
+It can be observed that separating people with common skills in
+different working groups increases productivity and reduces management
+costs, but only if the groups do not overlap and have clear "contracts"
+that define their operability and their concerns.
+</p>
+
+<p>
+For a web publishing system, the Cocoon project uses what we call the
+"pyramid of contacts" which outlines four major concern areas and five
+contracts between them. Here is the picture:
+</p>
+
+<figure src="images/pyramid-model.gif"
+        alt="The Cocoon Pyramid Model of Contracts"
+        width="313" height="159"/>
+
+<p>
+Cocoon is "engineered" to provide you a way to isolate these four
+concern areas using just those 5 contracts, removing the contract
+between style and logic that has been bugging web site development since
+the beginning of the web.
+</p>
+
+<p>
+Why? because programmers and graphic people have very different skills
+and work habits... so, instead of creating GUIs to hide the things that
+can be harmful (like graphic to programmers or logic to designers),
+Cocoon allows you to separate the things into different files, allowing
+you to "seal" your working groups into separate virtual rooms connected
+with the other rooms only by those "pipes" (the contracts), that you
+give them from the management area.
+</p>
+
+<p>
+Let's have an example:
+</p>
+
+<source><![CDATA[
+ <page>
+  <content>
+   <para>Today is <dynamic:today/></para>
+  </content>
+ </page>
+]]></source>
+
+      <p>
+	is written by the content writers and you give them the
+	"contract" that states that the tag
+	<![CDATA[<dynamic:today/>]]> prints out the time of the day
+	when included in the page. Content writers don't care (nor
+	should) about what language has been used for that, nor they
+	can mess up with the programming logic that generates the
+	content since it's stored in another part of the system they
+	don't have access to.
+      </p>
+
+<p>
+So <![CDATA[<dynamic:today/>]]> is the "logic - content" contract.
+</p>
+
+<p>
+At the same time, the structure of the page is given as a contract to
+the graphic designers who have to come up with the transformation rules
+that transform this structure in a language that the browser can
+understand (HTML, for example).
+</p>
+
+<p>
+So, the page structure is the "content - style" contract.
+</p>
+
+<p>
+As long as these contract don't change, the three areas can work in a
+completely parallel way without saturating the human resources used to
+manage them: costs decrease because time to market is reduced and
+maintenance costs is decreased because errors do not propagate out of
+the concern areas.
+</p>
+
+<p>
+For example, you can tell your designers to come up with a "Xmas look"
+for your web site, without even telling the other people: just switch
+the XMas transformation rules at XMas morning and you're done.... just
+imagine how painful it would be to do this on your web site today.
+</p>
+
+<p>
+With the Cocoon architecture all this is a couple of line changes away.
+</p>
+
+    </s1>
+
+    <s1 title="The Cocoon innovations">
+
+<p>
+The technologies defined in the XML model are the base of everything,
+but many technologies and solutions were designed specifically for the
+Cocoon project:
+</p>
+
+<ul>
+ <li>the XSP language (eXtensible Server Pages)</li>
+ <li>the sitemap concept</li>
+ <li>the resource view concept</li>
+</ul>
+
+    </s1>
+
+    <s1 title="The XSP Language">
+
+<p>
+There were no technologies that allowed us to create the kind of
+"content - logic" separation outlined above, so we specified it. We used
+the JSP page compilation model as a starting point, but we designed XSP
+to be totally abstracted from programming language used.
+</p>
+
+<p>
+This means that you can implement the tags using your favorite language,
+without having to force your programmers to use a specific programming
+language. At the time of writing, only the Java programming language is
+implemented (being Cocoon written in Java), but it's easy to picture
+development of other language hooks for XSP once Cocoon receives more
+attention.
+</p>
+
+<p>
+Anyway, thanks to complete separation of concerns, the changes in the
+logic concern area don't impact the other areas and allow more
+flexibility in the human resource used in the project since programming
+languages will be easily interchanged and XSP is not connected to a
+particular implementation (the AxKit project implemented XSP directly in
+Perl)
+</p>
+
+    </s1>
+
+    <s1 title="The Sitemap Concept">
+
+<p>
+XSP allowed us to complete the second contract, but we have three more
+to go and all of them start from the site management area.
+</p>
+
+<p>
+Site managers are responsible for controlling the resources that are
+hosted on the site. A "resource" is not a file stored on a file system
+but the view of the data connected to a particular web address.
+</p>
+
+<p>
+For example, 
+</p>
+
+<source><![CDATA[
+ http://your.intranet.com/calendar/today
+]]></source>
+
+<p>
+is a "resource" but could be dynamically generated by information stored
+on your corporate database.
+</p>
+
+<p>
+The sitemap allows site administrators to "compose" the modules that
+collaborate to create a particular resource and connect them to the
+particular resource address. For example,
+</p>
+
+
+<source><![CDATA[
+ <match pattern="/calendar/today">
+  <generate type="calendar" src="today"/>
+  <transform src="transformation/calendar2html"/>
+  <serialize type="html"/>
+ </match>
+]]></source>
+
+<p>
+or, supposing you want to connect with your Palm to the calendar or with
+Acrobat for printing:
+</p>
+
+<source><![CDATA[
+  <match pattern="/calendar/today">
+    <generate type="calendar" src="today"/>
+    <select type="browser">
+      <when test="palm">
+        <transform src="transformation/calendar2palm"/>
+        <serialize type="palm"/>
+      </when>
+      <when test="acrobat">
+        <transform src="transformation/calendar2pdf"/>
+        <serialize type="pdf"/>
+      </when>
+      <otherwise>
+        <transform src="transformation/calendar2html"/>
+        <serialize type="html"/>
+      </otherwise>
+    </select>
+  </match>
+]]></source>
+
+      <p>
+	Yes, it's that simple, the above is a real working example. Given the
+	right logic components and transformation rules, the site
+	administrators do just that: compose the modules to create web
+	sites and web applications.
+      </p>
+
+      <p>
+	Of course, there are situations where the logic involved in the
+	componentization is much more complex than this, but the sitemap concept
+	allows to finish the implementation of the five contracts without
+	overlapping between the concern areas.
+      </p>
+
+    </s1>
+
+    <s1 title="The Resource View concept">
+
+      <p>
+	The third big innovation of the Cocoon project is the notion of
+	"resource views". It's kind of an abstract concept so I'd like
+	to start with an example to explain the problem.
+      </p>
+
+      <p>
+	A big XML myth is that a web of XML content would be easier to
+	searching and index given the uniform syntax.
+      </p>
+
+      <p>
+	This is simply dead wrong.
+      </p>
+
+      <p>
+	As one of the first examples clearly showed, there is no way
+	for a search engine to perform semantic analysis on something
+	like
+      </p>
+
+<source><![CDATA[
+ <dlkj>
+  <ruijfl>sofikdjflksj</ruijfl>
+  <wijlkjf>
+    <oamkfkj>sflkjoiuer</oamkfkj>
+  </wijlkjf>
+ </dlkj>
+]]></source>
+
+<p>
+the only useful thing would be to ask for all the web resources where
+"sofikdjflksj" is included into "ruijfl" tags... but if you think at the
+possible huge babel of XML languages that might appear in the next
+decades, this is a clear problem.
+</p>
+
+<p>
+The RDF (resource description framework) model (the RDF and RDFSchema specs) 
+is an effort that aims to reduce this problem by creating uniform semantics 
+to "describe" any kind of information. For example, it could allow the author 
+of this weird markup to indicate that
+</p>
+
+<source><![CDATA[
+ <ruijfl>
+]]></source>
+
+<p>
+inherits the semantic meanings of <![CDATA[<author>]]>,. So, if you search for
+"sofikdjflksj" as an <![CDATA[<author>]]>, it will be able to search between
+<![CDATA[<ruijfl>]]> as well.
+</p>
+
+<p>
+It will be a happy day when there will be enough RDF information on the
+web to allow such semantic-rich searching, it will correctly be a much
+better web for search and retrieval of information.
+</p>
+
+<p>
+The problem is that all other publishing systems except Cocoon "hide"
+this information inside the system, there is no standard way to "ask"
+for the original RDF-ized semantic content of the requested resource.
+</p>
+
+<p>
+There is no way to ask for a particular "view" of the resource.
+</p>
+
+<p>
+In Cocoon you can define "views" for each resource or group of
+resources: you can ask for the "content" view, or for the "schema" view
+(that returns you the structure of the document and the information to
+validate it), the "link" view that returns you the pages that are
+connected to this particular resource and so on.
+</p>
+
+<p>
+Resource views are a particular type of HTTP variants, but targeted for
+the yet-to-be-possible semantic indexing of content.
+</p>
+
+<p>
+Cocoon itself uses the view for its batch mode: it performs as a crawler
+and saves a snapshot of the site on disk, useful for creating offline
+documentation or CD-ROM snapshots of dynamic web sites.
+</p>
+
+    </s1>
+
+    <s1 title="Cocoon present">
+
+<p>
+The Cocoon project is currently discussing new features such as "content
+aggregation" that would simplify the creation of portal-like sites where
+content is aggregated from different sources into the same page.
+</p>
+
+<p>
+At the time of writing, the design has yet to solidify.
+</p>
+
+    </s1>
+    <s1 title="Cocoon future">
+
+<p>
+In the future, Cocoon will provide local semantic searching capabilities
+allowing you to gain immediate advantage of the time invested in
+creating highly semantic content for your site.
+</p>
+
+<p>
+I believe this is the only way to convince people to invest time and
+resources into creating a better content model for their local
+information. We still don't have any idea on how this will happen or how
+it will work, but I believe the Cocoon project has a major role in the
+promotion of the next web generation and semantic searching is a big
+part of it.
+</p>
+
+<p>
+We'll do whatever it takes to help the semantic web to exist.
+</p>
+
+<p>
+A further future goal is to allow Cocoon to exchange semantic indexing
+information in a Peer2Peer way to create a decentralized semantic search
+engine... (even if there are big protocol scalability problems to
+solve). Consider this high steam vaporware, but I believe that it will
+make perfect sense to decentralize information searching capabilities to
+avoid both central point of failure and central points of censorship in
+the future.
+</p>
+
+    </s1>
+
+    <s1 title="Final words">
+
+<p>
+If you reached this far by reading all sections, I was successful in
+getting your attention and I think you are able to both understand the
+importance of the Cocoon Project and distinguish most of the marketing
+hype that surrounds XML and friends.
+</p>
+
+<p>
+Just like you shouldn't care if somebody offers you a software that is
+"ASCII compliant" or "ASCII based", you shouldn't care about "XML
+compliant" or "XML based": it doesn't mean anything.
+</p>
+
+<p>
+Cocoon uses XML as a core piece of its framework, but improves the model
+to give you the tools you need and is designed to be flexible enough to
+follow your needs as well as paradigm shifts that will happen in the
+future.
+</p>
+
+    </s1>
+
+    <s1 title="Bibliography">
+
+      <ul>
+	<li>W3C - Technical Reports - <link href="http://www.w3.org/TR/">http://www.w3.org/TR/</link></li>
+	<li>Tim Berners-Lee - Web Design Issues - <link href="http://www.w3.org/DesignIssues/">http://www.w3.org/DesignIssues/</link></li>
+	<li>Tim Berners-Lee - Good URIs don't change -  <link href="http://www.w3.org/Provider/Style/URI">http://www.w3.org/Provider/Style/URI</link></li>
+	<li>Jakob Nielsen - URL as UI -  <link href="http://www.useit.com/alertbox/990321.html">http://www.useit.com/alertbox/990321.html</link></li>
+	<li>Roy Fielding at alt. - HTTP/1.1 (RFC 2616) -  <link href="ftp://ftp.isi.edu/in-notes/rfc2616.txt">ftp://ftp.isi.edu/in-notes/rfc2616.txt</link></li>
+      </ul>
+
+    </s1>
+
+    <s1 title="Legal">
+
+      <p>
+	Copyright (c) 2000 Stefano Mazzocchi. All rights reserved.
+      </p>
+
+      <p>
+	Permission to distribute this paper in any form is granted provided it
+	is not modified in any part. For further permissions contact the author
+	at the email address &lt;stefano@apache.org&gt;.
+      </p>
+    </s1>
+
+  </body>
+</document>

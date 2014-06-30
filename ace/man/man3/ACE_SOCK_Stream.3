@@ -1,0 +1,197 @@
+.TH ACE_SOCK_Stream 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_SOCK_Stream \- Defines the methods in the  abstraction. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <SOCK_Stream.h>\fR
+.PP
+Inherits \fBACE_SOCK_IO\fR.
+.PP
+Inherited by \fBACE_LSOCK_Stream\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_INET_Addr\fR \fBPEER_ADDR\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_SOCK_Stream\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_SOCK_Stream\fR (ACE_HANDLE h)"
+.br
+.RI "\fIConstructor (sets the underlying  with <h>).\fR"
+.ti -1c
+.RI "\fB~ACE_SOCK_Stream\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n\fR (void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fITry to recv exactly <len> bytes into <buf> from the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_n\fR (void *buf, size_t len, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fITry to recv exactly <len> bytes into <buf> from the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBrecvv_n\fR (\fBiovec\fR iov[], size_t iovcnt, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fIReceive an <\fBiovec\fR> of size <iovcnt> from the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (const void *buf, size_t len, int flags, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fITry to send exactly <len> bytes from <buf> to the connection socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (const void *buf, size_t len, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fITry to send exactly <len> bytes from <buf> to the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_n\fR (const \fBACE_Message_Block\fR *message_block, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fISend all the <message_block>s chained through their <next> and <cont> pointers. This call uses the underlying OS gather-write operation to reduce the domain-crossing penalty.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsendv_n\fR (const \fBiovec\fR iov[], size_t iovcnt, const \fBACE_Time_Value\fR *timeout = 0, size_t *bytes_transferred = 0) const"
+.br
+.RI "\fISend an <\fBiovec\fR> of size <iovcnt> to the connected socket.\fR"
+.ti -1c
+.RI "\fBssize_t\fR \fBsend_urg\fR (const void *ptr, size_t len = sizeof (char), const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBrecv_urg\fR (void *ptr, size_t len = sizeof (char), const \fBACE_Time_Value\fR *timeout = 0) const"
+.br
+.ti -1c
+.RI "int \fBclose_reader\fR (void)"
+.br
+.RI "\fIClose down the reader.\fR"
+.ti -1c
+.RI "int \fBclose_writer\fR (void)"
+.br
+.RI "\fIClose down the writer.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the methods in the  abstraction.
+.PP
+.PP
+ This adds additional wrapper methods atop the  class.
+.PP
+<buf> is the buffer to write from or receive into. <len> is the number of bytes to transfer. The <timeout> parameter in the following methods indicates how long to blocking trying to transfer data. If <timeout> == 0, then the call behaves as a normal send/recv call, i.e., for blocking sockets, the call will block until action is possible; for non-blocking sockets, EWOULDBLOCK will be returned if no action is immediately possible. If <timeout> != 0, the call will wait for data to arrive no longer than the relative time specified in *<timeout>. The "_n()" I/O methods keep looping until all the data has been transferred. These methods also work for sockets in non-blocking mode i.e., they keep looping on EWOULDBLOCK. <timeout> is used to make sure we keep making progress, i.e., the same timeout value is used for every I/O operation in the loop and the timeout is not counted down. The return values for the "*_n()" methods match the return values from the non "_n()" methods and are specified as follows:
+.TP
+On complete transfer, the number of bytes transferred is returned.
+.TP
+On timeout, -1 is returned, errno == ETIME.
+.TP
+On error, -1 is returned, errno is set to appropriate error.
+.TP
+On EOF, 0 is returned, errno is irrelevant.On partial transfers, i.e., if any data is transferred before timeout/error/EOF, <bytes_transferred> will contain the number of bytes transferred. Methods with <\fBiovec\fR> parameter are I/O vector variants of the I/O operations. Methods with the extra <flags> argument will always result in <send> getting called. Methods without the extra <flags> argument will result in <send> getting called on Win32 platforms, and <write> getting called on non-Win32 platforms. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_INET_Addr\fR ACE_SOCK_Stream::PEER_ADDR
+.PP
+Reimplemented in \fBACE_LSOCK_Stream\fR.
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Stream::ACE_SOCK_Stream (void)
+.PP
+Constructor.
+.PP
+.SS ACE_SOCK_Stream::ACE_SOCK_Stream (ACE_HANDLE h)
+.PP
+Constructor (sets the underlying  with <h>).
+.PP
+.SS ACE_SOCK_Stream::~ACE_SOCK_Stream (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_SOCK_Stream::close (void)
+.PP
+Close down the socket (we need this to make things work correctly on Win32, which requires use to do a <close_writer> before doing the close to avoid losing data). 
+.PP
+Reimplemented from \fBACE_SOCK\fR.
+.SS int ACE_SOCK_Stream::close_reader (void)
+.PP
+Close down the reader.
+.PP
+.SS int ACE_SOCK_Stream::close_writer (void)
+.PP
+Close down the writer.
+.PP
+.SS void ACE_SOCK_Stream::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_SOCK_IO\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Stream\fR.
+.SS \fBssize_t\fR ACE_SOCK_Stream::recv_n (void * buf, size_t len, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Try to recv exactly <len> bytes into <buf> from the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::recv_n (void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Try to recv exactly <len> bytes into <buf> from the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::recv_urg (void * ptr, size_t len = sizeof (char), const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::recvv_n (\fBiovec\fR iov[], size_t iovcnt, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Receive an <\fBiovec\fR> of size <iovcnt> from the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::send_n (const \fBACE_Message_Block\fR * message_block, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Send all the <message_block>s chained through their <next> and <cont> pointers. This call uses the underlying OS gather-write operation to reduce the domain-crossing penalty.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::send_n (const void * buf, size_t len, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Try to send exactly <len> bytes from <buf> to the connected socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::send_n (const void * buf, size_t len, int flags, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Try to send exactly <len> bytes from <buf> to the connection socket.
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::send_urg (const void * ptr, size_t len = sizeof (char), const \fBACE_Time_Value\fR * timeout = 0) const
+.PP
+.SS \fBssize_t\fR ACE_SOCK_Stream::sendv_n (const \fBiovec\fR iov[], size_t iovcnt, const \fBACE_Time_Value\fR * timeout = 0, size_t * bytes_transferred = 0) const
+.PP
+Send an <\fBiovec\fR> of size <iovcnt> to the connected socket.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_SOCK_Stream::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_SOCK_IO\fR.
+.PP
+Reimplemented in \fBACE_LSOCK_Stream\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

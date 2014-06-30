@@ -1,0 +1,123 @@
+.TH ACE_WChar_Codeset_Translator 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_WChar_Codeset_Translator \- Codeset translation routines common to both Output and Input CDR streams. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <CDR_Stream.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBread_wchar\fR (\fBACE_InputCDR\fR&, \fBACE_CDR::WChar\fR&) = 0"
+.br
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBread_wstring\fR (\fBACE_InputCDR\fR&, \fBACE_CDR::WChar\fR *&) = 0"
+.br
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBread_wchar_array\fR (\fBACE_InputCDR\fR&, const \fBACE_CDR::WChar\fR*, \fBACE_CDR::ULong\fR) = 0"
+.br
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBwrite_wchar\fR (\fBACE_OutputCDR\fR&, \fBACE_CDR::WChar\fR) = 0"
+.br
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBwrite_wstring\fR (\fBACE_OutputCDR\fR&, \fBACE_CDR::ULong\fR, const \fBACE_CDR::WChar\fR*) = 0"
+.br
+.ti -1c
+.RI "virtual \fBACE_CDR::Boolean\fR \fBwrite_wchar_array\fR (\fBACE_OutputCDR\fR&, const \fBACE_CDR::WChar\fR*, \fBACE_CDR::ULong\fR) = 0"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_1\fR (\fBACE_InputCDR\fR& input, \fBACE_CDR::Octet\fR *x)"
+.br
+.RI "\fIChildren have access to low-level routines because they cannot use read_char or something similar (it would recurse).\fR"
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_2\fR (\fBACE_InputCDR\fR& input, \fBACE_CDR::UShort\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_4\fR (\fBACE_InputCDR\fR& input, \fBACE_CDR::ULong\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_1\fR (\fBACE_OutputCDR\fR& output, const \fBACE_CDR::Octet\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_2\fR (\fBACE_OutputCDR\fR& output, const \fBACE_CDR::UShort\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_4\fR (\fBACE_OutputCDR\fR& output, const \fBACE_CDR::ULong\fR *x)"
+.br
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBread_array\fR (\fBACE_InputCDR\fR& input, void* x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)"
+.br
+.RI "\fIEfficiently read <length> elements of size <size> each from  into <x>; the data must be aligned to .\fR"
+.ti -1c
+.RI "\fBACE_CDR::Boolean\fR \fBwrite_array\fR (\fBACE_OutputCDR\fR& output, const void *x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)"
+.br
+.ti -1c
+.RI "int \fBadjust\fR (\fBACE_OutputCDR\fR& out, size_t size, size_t align, char *&buf)"
+.br
+.ti -1c
+.RI "void \fBgood_bit\fR (\fBACE_OutputCDR\fR& out, int bit)"
+.br
+.RI "\fIUsed by derived classes to set errors in the CDR stream.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Codeset translation routines common to both Output and Input CDR streams.
+.PP
+.PP
+ This class is a base class for defining codeset translation routines to handle the character set translations required by both CDR Input streams and CDR Output streams. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS int ACE_WChar_Codeset_Translator::adjust (\fBACE_OutputCDR\fR & out, size_t size, size_t align, char *& buf)\fC [protected]\fR
+.PP
+Exposes the stream implementation of , this is useful in many cases to minimize memory allocations during marshaling. On success <buf> will contain a contiguous area in the CDR stream that can hold <size> bytes aligned to . Results 
+.SS void ACE_WChar_Codeset_Translator::good_bit (\fBACE_OutputCDR\fR & out, int bit)\fC [protected]\fR
+.PP
+Used by derived classes to set errors in the CDR stream.
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::read_1 (\fBACE_InputCDR\fR & input, \fBACE_CDR::Octet\fR * x)\fC [protected]\fR
+.PP
+Children have access to low-level routines because they cannot use read_char or something similar (it would recurse).
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::read_2 (\fBACE_InputCDR\fR & input, \fBACE_CDR::UShort\fR * x)\fC [protected]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::read_4 (\fBACE_InputCDR\fR & input, \fBACE_CDR::ULong\fR * x)\fC [protected]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::read_array (\fBACE_InputCDR\fR & input, void * x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)\fC [protected]\fR
+.PP
+Efficiently read <length> elements of size <size> each from  into <x>; the data must be aligned to .
+.PP
+.SS virtual \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::read_wchar (\fBACE_InputCDR\fR &, \fBACE_CDR::WChar\fR &)\fC [pure virtual]\fR
+.PP
+.SS virtual \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::read_wchar_array (\fBACE_InputCDR\fR &, const \fBACE_CDR::WChar\fR *, \fBACE_CDR::ULong\fR)\fC [pure virtual]\fR
+.PP
+.SS virtual \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::read_wstring (\fBACE_InputCDR\fR &, \fBACE_CDR::WChar\fR *&)\fC [pure virtual]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::write_1 (\fBACE_OutputCDR\fR & output, const \fBACE_CDR::Octet\fR * x)\fC [protected]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::write_2 (\fBACE_OutputCDR\fR & output, const \fBACE_CDR::UShort\fR * x)\fC [protected]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::write_4 (\fBACE_OutputCDR\fR & output, const \fBACE_CDR::ULong\fR * x)\fC [protected]\fR
+.PP
+.SS \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::write_array (\fBACE_OutputCDR\fR & output, const void * x, size_t size, size_t align, \fBACE_CDR::ULong\fR length)\fC [protected]\fR
+.PP
+Efficiently write <length> elements of size <size> from <x> into <output>. Before inserting the elements enough padding is added to ensure that the elements will be aligned to  in the stream. 
+.SS virtual \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::write_wchar (\fBACE_OutputCDR\fR &, \fBACE_CDR::WChar\fR)\fC [pure virtual]\fR
+.PP
+.SS virtual \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::write_wchar_array (\fBACE_OutputCDR\fR &, const \fBACE_CDR::WChar\fR *, \fBACE_CDR::ULong\fR)\fC [pure virtual]\fR
+.PP
+.SS virtual \fBACE_CDR::Boolean\fR ACE_WChar_Codeset_Translator::write_wstring (\fBACE_OutputCDR\fR &, \fBACE_CDR::ULong\fR, const \fBACE_CDR::WChar\fR *)\fC [pure virtual]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

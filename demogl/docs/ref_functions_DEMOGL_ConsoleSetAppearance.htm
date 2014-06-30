@@ -1,0 +1,118 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_ConsoleSetAppearance</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_ConsoleSetAppearance</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_ConsoleSetAppearance</h4>
+<dd>DEMOGL_ConsoleSetAppearance sets the width in characters per line and height in lines visible of the system console and the
+	debug overlay.
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_ConsoleSetAppearance(
+	<b>const int</b> <i>iAmCharsPerLine</i>, 
+	<b>const int</b> <i>iAmLinesInBuffer</i>,
+	<b>const int</b> <i>iAmLinesOnScreen</i>, 
+	<b>const int</b> <i>iAmLinesInDebugInfo</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>iAmCharsPerLine</i>
+	<dd>Specifies the amount of characters per line. This value is used for the console buffer, the console screen and the debug
+		info overlay. The value of <i>iAmCharsPerLine</i> will determine the width portion of the visible characters on screen.
+	<dt><i>iAmLinesInBuffer</i>
+	<dd>Specifies the amount of lines in the console buffer. The system console uses a cyclic buffer to store all contents of the
+		system console. The visible window moves through this buffer, wrapping around the end of the buffer to start at the beginning.
+	<dt><i>iAmLinesOnScreen</i>
+	<dd>Specifies the amount of lines displayed inside the system console. This value is the summation of the amount of lines in
+		the header(4), the input lines(2) and the amount of lines from the console buffer to show inside the system console.
+		The value of <i>iAmLinesOnScreen</i> will determine the height portion of the visible characters on screen.
+	<dt><i>iAmLinesInDebugInfo</i>
+	<dd>Specifies how many lines of the console buffer are visible in the debug info overlay. This value is the summation of the
+		amount of lines in the timebar(1), the input lines(2) and the amount of lines from the console buffer to show inside the
+		debug info overlay.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns <i>SYS_NOK</i>.
+	<p>
+<dt><b>Remarks.</b>
+<dd>This routine should be called before <a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a>. When this routine is called during
+	a running application, thus from an effectclass, the current contents of the console buffer is lost. The system console and the debug
+	info overlay use a default font, stored in two textures, <b>fnt_cnl.bmp</b> and <b>fnt_cnr.bmp</b>, stored in the systex directory of
+	the rootdirectory your application reads from (which can be a datafile or a directory). These fonts are rendered using OpenGL quads
+	and as texture the character inside the fonttexture. To do this reasonably fast, vertex arrays are used, which are fixed sized to
+	avoid reallocating them each frame. By setting the width of a line on screen and the height in lines on screen these vertex arrays
+	are allocated and prepared. The console contents buffer, a cyclic buffer, is also created using the values specified with this
+	function. 
+	<p>
+	There are minimum values defined for the parameters of this function. If one or more of the parameters conflicts with these
+	minimum values, <b>DEMOGL_ConsoleSetAppearance</b> will fail.
+	<p>
+	<table BORDER="1" WIDTH="80%" cellpadding="4" cellspacing="1">
+	<tr>
+		<td BGCOLOR="#e8e8e8" WIDTH="30%"><b>Parameter</b></td>
+		<td BGCOLOR="#e8e8e8" WIDTH="70%"><b>Minimum/maximum value</b></td>
+	</tr>
+	<tr>
+		<td WIDTH="30%" VALIGN="TOP"><i>iAmCharsPerLine</i></td>
+		<td WIDTH="70%" VALIGN="TOP">Minimum: 60.<br>Maximum: limited by available RAM.</td>
+	</tr>
+	<tr>
+		<td WIDTH="30%" VALIGN="TOP"><i>iAmLinesInBuffer</i></td>
+		<td WIDTH="70%" VALIGN="TOP">Minimim: 2.<br> Maximum: limited by available RAM.</td>
+	</tr>
+	<tr>
+		<td WIDTH="30%" VALIGN="TOP"><i>iAmLinesOnScreen</i></td>
+		<td WIDTH="70%" VALIGN="TOP">Mimimum: 7.<br> Maximum: &lt;= (<i>iAmLinesInBuffer</i> + 7)</td>
+	</tr>
+	<tr>
+		<td WIDTH="30%" VALIGN="TOP"><i>iAmLinesInDebugInfo</i></td>
+		<td WIDTH="70%" VALIGN="TOP">
+			Minimum: 0.<br>Maximum: &lt;= (<i>iAmLinesOnScreen</i> - 4) and &lt; <i>iAmLinesInBuffer</i>
+		</td>
+	</tr>
+	</table>
+	<br CLEAR="ALL">
+	These values, together with the default values used by DemoGL when you don't call <b>DEMOGL_ConsoleSetAppearance</b>
+	before you call <a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a>, are specified in brief in
+	<a HREF="ref_definitionsanddefaults.htm" target="main">Definitions and defaults</a>.
+	<p>
+<dt><b>Example.</b>
+<dd><pre>
+int		iResult;
+
+// Specify a 80x24 screen, 8 lines in the debug info overlay, 
+// and a 150 line console buffer.
+iResult = DEMOGL_ConsoleSetAppearance(80,150,24,8);
+	</pre>
+	<p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd>
+	<a HREF="ref_functions_DEMOGL_AppRun.htm">DEMOGL_AppRun</a>, <a HREF="ref_definitionsanddefaults.htm" target="main">Definitions and defaults</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 20-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

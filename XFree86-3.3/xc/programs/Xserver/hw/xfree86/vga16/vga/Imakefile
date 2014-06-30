@@ -1,0 +1,47 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:26:10 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/vga/Imakefile,v 3.5 1996/12/23 06:54:05 dawes Exp $
+
+#include <Server.tmpl>
+
+#ifdef i386Architecture
+VGABANKSRCS = vgaBank.s
+VGABANKOBJS = vgaBank.o
+#else
+VGABANKSRCS = vgaBankc.c
+VGABANKOBJS = vgaBankc.o
+#endif
+
+SRCS = 	vgaHW.c vga.c vgaCmap.c $(VGABANKSRCS) vgaPCI.c
+
+OBJS = 	vgaHW.o vga.o vgaCmap.o $(VGABANKOBJS) vgaPCI.o
+
+INCLUDES = -I$(XF86COMSRC) -I$(XF86OSSRC) -I$(XF86HWSRC) \
+	   -I$(XF86SRC)/vga256/vga -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi \
+	   -I$(SERVERSRC)/cfb -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+
+SubdirLibraryRule($(OBJS))
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+#if DirtyStartup
+STARTUPDEFINES = -DDIRTY_STARTUP
+#endif
+
+DEFINES = -DXF86VGA16 $(STARTUPDEFINES)
+
+LinkSourceFile(vga.c,../../vga256/vga)
+LinkSourceFile(vgaHW.c,../../vga256/vga)
+LinkSourceFile(vgaCmap.c,../../vga256/vga)
+#ifdef i386Architecture
+LinkSourceFile(vgaBank.s,../../vga256/vga)
+#else
+LinkSourceFile(vgaBankc.c,../../vga256/vga)
+#endif
+LinkSourceFile(vgaPCI.c,../../vga256/vga)
+
+DependTarget()

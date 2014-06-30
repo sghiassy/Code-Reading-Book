@@ -1,0 +1,2255 @@
+#!/bin/bash
+# $XFree86: xc/programs/Xserver/hw/xfree86/etc/BM-Lynx.shar,v 3.3.2.1 1997/05/12 12:52:33 hohndel Exp $
+# This is a shell archive (produced by GNU sharutils 4.1).
+# To extract the files from this archive, save it to some FILE, remove
+# everything before the `!/bin/bash' line above, then type `bash FILE'.
+#
+# Made on 1996-07-16 11:54 MET DST by <tm@systrix.de>.
+# Source directory was `/export/home/tm/MICE'.
+#
+# Existing files will *not* be overwritten unless `-c' is specified.
+#
+# $XConsortium: BM-Lynx.shar /main/5 1996/10/19 18:04:56 kaleb $
+#
+# This shar contains:
+# length mode       name
+# ------ ---------- ------------------------------------------
+#   2459 -rw-r--r-- README.Mouse
+#   4329 -rw-r--r-- usr/include/busmouse.h
+#    751 -rw-r--r-- sys/devices/bmouseinfo.c
+#    145 -rw-r--r-- sys/dheaders/bmouseinfo.h
+#    759 -rw-r--r-- sys/drivers/bmouse/Makefile
+#   5357 -rw-r--r-- sys/drivers/bmouse/atixlmouse.c
+#   2908 -rw-r----- sys/drivers/bmouse/bmouse.h
+#   2135 -rw-r--r-- sys/drivers/bmouse/inline.h
+#   6236 -rw-r--r-- sys/drivers/bmouse/logibmouse.c
+#   3222 -rw-r--r-- sys/drivers/bmouse/mouse.c
+#   6202 -rw-r--r-- sys/drivers/bmouse/msbmouse.c
+#   8843 -rw-r--r-- sys/drivers/bmouse/ps2mouse.c
+#    244 -rw-r--r-- sys/lynx.os/bmouse.cfg
+#
+touch -am 1231235999 $$.touch >/dev/null 2>&1
+if test ! -f 1231235999 && test -f $$.touch; then
+  shar_touch=touch
+else
+  shar_touch=:
+  echo
+  echo 'WARNING: not restoring timestamps.  Consider getting and'
+  echo "installing GNU \`touch', distributed in GNU File Utilities..."
+  echo
+fi
+rm -f 1231235999 $$.touch
+#
+# ============= README.Mouse ==============
+if test -f 'README.Mouse' && test X"$1" != X"-c"; then
+  echo 'x - skipping README.Mouse (file already exists)'
+else
+  echo 'x - extracting README.Mouse (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'README.Mouse' &&
+PS/2 and Bus mouse driver for LynxOS AT
+=======================================
+X
+This package includes LynxOS AT device drivers for PC pointing devices
+which are not connected to the serial port. These include devices
+connected to the PC's auxiliary keyboard port (aka PS/2 mouse) and
+others ususally connected to a separate ISA adapter board (so called
+Bus mice).
+X
+The drivers are a port from Linux and were developed and tested using
+X
+X	- LynxOS AT V2.2, V2.2.1, V2.3, V2.4 and V2.5
+X	- several Notebook computers with PS/2 mouse interface
+X	- Microsoft Inport Mouse
+X	- ATI Graphics Vantage graphics card with ATI mouse port
+X
+- Package Installation
+X
+1. As super-user (root) unpack the tar file (or the shar archive for XFree86)
+X
+X   # cd /
+X   # tar xvf BMOUSE.tar
+X
+2. Edit /sys/devices/bmouseinfo.c according tou your hardware. If you
+X   don't have a PS/2 mouse port you must uncomment the
+X
+X	/*
+X	 * #define DONT_HAVE_PS2
+X	 */
+X
+X   macro definition (this is because a PS/2 mouse port cannot be
+X   probed at startup time). You may also have to edit the
+X   initialization of the mouseinfo array according to the I/O port and
+X   IRQ used by your mouse adapter card. Bus mice usually use either
+X   I/O port 0x23c or 0x238, PS/2 devices always use I/O port 0x60. The
+X   IRQ number is usually configured by jumpers or by MS-DOS software
+X   for Bus mice, PS/2 mice usually use IRQ 12.
+X
+3. Compile bmouseinfo.o
+X
+X   # cd /sys/devices
+X   # make bmouseinfo.o
+X   On LynxOS versions earlier than 2.5.0:
+X   # libr rv /sys/devlib.a bmouseinfo.o
+X   Others:
+X   # ar rv /sys/lib/devices.a bmouseinfo.o
+X   # ranlib /sys/lib/devices.a
+X
+4. Compile driver
+X
+X   # cd /sys/drivers/bmouse
+X   On LynxOS versions earlier than 2.5.0:
+X   # make install-2.4.0
+X   Others:
+X   # make install
+X
+5. Generate new kernel
+X
+X   Edit /sys/lynx.os/CONFIG.TBL to include the Bus mouse driver. Add a
+X   line containing
+X
+X	I:bmouse.cfg
+X
+X   to the end of the CONFIG.TBL file. You may now generate and install
+X   a new kernel and reboot the machine using
+X
+X   # cd /sys/lynx.os
+X   On LynxOS versions after 2.4.0:
+X   # mv bmouse.cfg ../cfg
+X
+X   # make install
+X   # reboot -N
+X
+6. Test Mouse driver
+X
+X   After the system rebooted you may test the driver using one of the
+X   following commands:
+X
+X      # od -x /dev/bmouseps2		for a PS/2 mouse
+X      # od -x /dev/bmousems		for a Microsoft Inport Bus mouse
+X      # od -x /dev/bmouseatixl		for a ATI/XL bus mouse
+X      # od -x /dev/bmousemslogitec	for a Logitec bus mouse
+X
+SHAR_EOF
+  $shar_touch -am 0716115396 'README.Mouse' &&
+  chmod 0644 'README.Mouse' ||
+  echo 'restore of README.Mouse failed'
+  shar_count="`wc -c < 'README.Mouse'`"
+  test 2459 -eq "$shar_count" ||
+    echo "README.Mouse: original size 2459, current size $shar_count"
+fi
+# ============= usr/include/busmouse.h ==============
+if test ! -d 'usr'; then
+  echo 'x - creating directory usr'
+  mkdir 'usr'
+fi
+if test ! -d 'usr/include'; then
+  echo 'x - creating directory usr/include'
+  mkdir 'usr/include'
+fi
+if test -f 'usr/include/busmouse.h' && test X"$1" != X"-c"; then
+  echo 'x - skipping usr/include/busmouse.h (file already exists)'
+else
+  echo 'x - extracting usr/include/busmouse.h (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'usr/include/busmouse.h' &&
+#ifndef _LINUX_BUSMOUSE_H
+#define _LINUX_BUSMOUSE_H
+X
+/*
+X * linux/include/linux/mouse.h: header file for Logitech Bus Mouse driver
+X * by James Banks
+X *
+X * based on information gleamed from various mouse drivers on the net
+X *
+X * Heavily modified by David giller (rafetmad@oxy.edu)
+X *
+X * Minor modifications for Linux 0.96c-pl1 by Nathan Laredo
+X * gt7080a@prism.gatech.edu (13JUL92)
+X *
+X * Microsoft BusMouse support by Teemu Rantanen (tvr@cs.hut.fi) (02AUG92)
+X *
+X * Microsoft Bus Mouse support modified by Derrick Cole (cole@concert.net)
+X *    8/28/92
+X *
+X * Microsoft Bus Mouse support folded into 0.97pl4 code
+X *    by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)
+X * Changes:  Logitech and Microsoft support in the same kernel.
+X *           Defined new constants in busmouse.h for MS mice.
+X *           Added int mse_busmouse_type to distinguish busmouse types
+X *           Added a couple of new functions to handle differences in using
+X *             MS vs. Logitech (where the int variable wasn't appropriate).
+X *
+X */
+X
+#define MOUSE_IRQ		5
+#define LOGITECH_BUSMOUSE       0   /* Minor device # for Logitech  */
+#define MICROSOFT_BUSMOUSE      2   /* Minor device # for Microsoft */
+X
+/*--------- LOGITECH BUSMOUSE ITEMS -------------*/
+X
+#define	MSE_DATA_PORT(p)	(p)
+#define	MSE_SIGNATURE_PORT(p)	(p+1)
+#define	MSE_CONTROL_PORT(p)	(p+2)
+#define MSE_INTERRUPT_PORT(p)	(p+2)
+#define	MSE_CONFIG_PORT(p)	(p+3)
+X
+#define	MSE_ENABLE_INTERRUPTS	0x00
+#define	MSE_DISABLE_INTERRUPTS	0x10
+X
+#define	MSE_READ_X_LOW		0x80
+#define	MSE_READ_X_HIGH		0xa0
+#define	MSE_READ_Y_LOW		0xc0
+#define	MSE_READ_Y_HIGH		0xe0
+X
+/* Magic number used to check if the mouse exists */
+#define MSE_CONFIG_BYTE		0x91
+#define MSE_DEFAULT_MODE	0x90
+#define MSE_SIGNATURE_BYTE	0xa5
+X
+/* useful Logitech Mouse macros */
+X
+#define MSE_INT_OFF(p)	outb(MSE_DISABLE_INTERRUPTS, MSE_CONTROL_PORT(p))
+#define MSE_INT_ON(p)	outb(MSE_ENABLE_INTERRUPTS, MSE_CONTROL_PORT(p))
+X
+/*--------- MICROSOFT BUSMOUSE ITEMS -------------*/
+X
+#define	MS_MSE_CONTROL_PORT(p)		(p)
+#define	MS_MSE_DATA_PORT(p)		(p+1)
+#define	MS_MSE_SIGNATURE_PORT(p)	(p+2)
+#define	MS_MSE_CONFIG_PORT		(p+3)
+X
+#define	MS_MSE_ENABLE_INTERRUPTS	0x11
+#define	MS_MSE_DISABLE_INTERRUPTS	0x10
+X
+#define	MS_MSE_READ_BUTTONS             0x00
+#define	MS_MSE_READ_X		        0x01
+#define	MS_MSE_READ_Y                   0x02
+X
+#define MS_MSE_START                    0x80
+#define MS_MSE_COMMAND_MODE             0x07
+X
+/* useful microsoft busmouse macros */
+X
+#define MS_MSE_INT_OFF(p) {outb(MS_MSE_COMMAND_MODE, MS_MSE_CONTROL_PORT(p)); \
+X			    outb(MS_MSE_DISABLE_INTERRUPTS, MS_MSE_DATA_PORT(p));}
+#define MS_MSE_INT_ON(p)  {outb(MS_MSE_COMMAND_MODE, MS_MSE_CONTROL_PORT(p)); \
+X			    outb(MS_MSE_ENABLE_INTERRUPTS, MS_MSE_DATA_PORT(p));}
+X
+/*--------- ATI/XL BUSMOUSE ITEMS -------------*/
+X
+#define	ATIXL_MSE_DATA_PORT(p)		(p+1)
+#define	ATIXL_MSE_SIGNATURE_PORT(p)	(p+2)
+#define	ATIXL_MSE_CONTROL_PORT(p)	(p)
+X
+#define	ATIXL_MSE_READ_BUTTONS		0x00
+#define	ATIXL_MSE_READ_X		0x01
+#define	ATIXL_MSE_READ_Y		0x02
+X
+/* Some nice ATI XL macros */
+X
+/* Select IR7, HOLD UPDATES (INT ENABLED), save X,Y */
+#define ATIXL_MSE_DISABLE_UPDATE(p) { outb( 0x07, ATIXL_MSE_CONTROL_PORT(p) ); \
+X	outb( (0x20 | inb( ATIXL_MSE_DATA_PORT(p) )), ATIXL_MSE_DATA_PORT(p) ); }
+X
+/* Select IR7, Enable updates (INT ENABLED) */
+#define ATIXL_MSE_ENABLE_UPDATE(p) { outb( 0x07, ATIXL_MSE_CONTROL_PORT(p) ); \
+X	 outb( (0xdf & inb( ATIXL_MSE_DATA_PORT(p) )), ATIXL_MSE_DATA_PORT(p) ); }
+X
+/* Select IR7 - Mode Register, NO INTERRUPTS */
+#define ATIXL_MSE_INT_OFF(p) { outb( 0x07, ATIXL_MSE_CONTROL_PORT(p) ); \
+X	outb( (0xe7 & inb( ATIXL_MSE_DATA_PORT(p) )), ATIXL_MSE_DATA_PORT(p) ); }
+X
+/* Select IR7 - Mode Register, DATA INTERRUPTS ENABLED */
+#define ATIXL_MSE_INT_ON(p) { outb( 0x07, ATIXL_MSE_CONTROL_PORT(p) ); \
+X	outb( (0x08 | inb( ATIXL_MSE_DATA_PORT(p) )), ATIXL_MSE_DATA_PORT(p) ); }
+X
+X 
+struct mouse_status
+{
+X	unsigned char	buttons;
+X	unsigned char	latch_buttons;
+X	int		dx;
+X	int		dy;	
+X	int 		present;
+X	int		ready;
+X	int		active;
+#ifdef Lynx
+X	int		wait;
+#else
+X	struct wait_queue *wait;
+#endif
+};
+X
+/* Function Prototypes */
+#ifdef __STDC__
+extern long mouse_init(long);
+#else
+extern long mouse_init();
+#endif
+X
+#define BUSMOUSE_MINOR	0
+#define PS2MOUSE_MINOR	1
+#define MSMOUSE_MINOR	2
+#define ATIMOUSE_MINOR	3
+X
+#define NUM_MICE	4
+X
+#endif
+X
+SHAR_EOF
+  $shar_touch -am 0623101295 'usr/include/busmouse.h' &&
+  chmod 0644 'usr/include/busmouse.h' ||
+  echo 'restore of usr/include/busmouse.h failed'
+  shar_count="`wc -c < 'usr/include/busmouse.h'`"
+  test 4329 -eq "$shar_count" ||
+    echo "usr/include/busmouse.h: original size 4329, current size $shar_count"
+fi
+# ============= sys/devices/bmouseinfo.c ==============
+if test ! -d 'sys'; then
+  echo 'x - creating directory sys'
+  mkdir 'sys'
+fi
+if test ! -d 'sys/devices'; then
+  echo 'x - creating directory sys/devices'
+  mkdir 'sys/devices'
+fi
+if test -f 'sys/devices/bmouseinfo.c' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/devices/bmouseinfo.c (file already exists)'
+else
+  echo 'x - extracting sys/devices/bmouseinfo.c (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/devices/bmouseinfo.c' &&
+#include <busmouse.h>
+X
+#ifdef DLDD
+#include "bmouseinfo.h"
+#else
+#include "../dheaders/bmouseinfo.h"
+#endif
+X
+/* 1. all devices but PS/2 are probed automatically
+X * 2. resource definitions must match hardware settings
+X *      primary setting  usually	I/O 0x23c
+X *      secondary setting  usually 	I/O 0x238
+X * 3. PS/2 (aux) device cannot be probed, if you do
+X *    not have such a device uncomment the
+X *    #define DONT_HAVE_PS2 below
+X */ 
+X
+/*
+X * #define DONT_HAVE_PS2
+X */
+X
+struct mouseinfo	mouseinfo[NUM_MICE] =
+{
+X	{ 32 + 9, 0x23c },	/* LOGITECH bus mouse	*/
+#ifdef DONT_HAVE_PS2
+X	{ 0, 0 },		/* PS/2 mouse		*/
+#else
+X	{ 32 + 12, 0x60 },	/* PS/2 mouse		*/
+#endif
+X	{ 32 + 9, 0x23c },	/* MICROSOFT bus mouse	*/
+X	{ 32 + 9, 0x23c },	/* ATI/XL inport	*/
+};
+SHAR_EOF
+  $shar_touch -am 0711152595 'sys/devices/bmouseinfo.c' &&
+  chmod 0644 'sys/devices/bmouseinfo.c' ||
+  echo 'restore of sys/devices/bmouseinfo.c failed'
+  shar_count="`wc -c < 'sys/devices/bmouseinfo.c'`"
+  test 751 -eq "$shar_count" ||
+    echo "sys/devices/bmouseinfo.c: original size 751, current size $shar_count"
+fi
+# ============= sys/dheaders/bmouseinfo.h ==============
+if test ! -d 'sys/dheaders'; then
+  echo 'x - creating directory sys/dheaders'
+  mkdir 'sys/dheaders'
+fi
+if test -f 'sys/dheaders/bmouseinfo.h' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/dheaders/bmouseinfo.h (file already exists)'
+else
+  echo 'x - extracting sys/dheaders/bmouseinfo.h (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/dheaders/bmouseinfo.h' &&
+#ifndef _mouseinfo_h
+#define _mouseinfo_h
+X
+/* generic info structure for mouse drivers */
+X
+struct mouseinfo
+{
+X	int	vector;
+X	int	port;
+};
+X
+#endif
+SHAR_EOF
+  $shar_touch -am 0623101295 'sys/dheaders/bmouseinfo.h' &&
+  chmod 0644 'sys/dheaders/bmouseinfo.h' ||
+  echo 'restore of sys/dheaders/bmouseinfo.h failed'
+  shar_count="`wc -c < 'sys/dheaders/bmouseinfo.h'`"
+  test 145 -eq "$shar_count" ||
+    echo "sys/dheaders/bmouseinfo.h: original size 145, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/Makefile ==============
+if test ! -d 'sys/drivers'; then
+  echo 'x - creating directory sys/drivers'
+  mkdir 'sys/drivers'
+fi
+if test ! -d 'sys/drivers/bmouse'; then
+  echo 'x - creating directory sys/drivers/bmouse'
+  mkdir 'sys/drivers/bmouse'
+fi
+if test -f 'sys/drivers/bmouse/Makefile' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/Makefile (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/Makefile (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/Makefile' &&
+#
+#    Makefile for bmouse driver
+#
+X
+CC=/bin/gcc
+CFLAGS=-O  -I. 
+X
+DRIVERS=mouse.o msbmouse.o logibmouse.o atixlmouse.o ps2mouse.o
+X
+all : mousedrvr.o
+X
+clean :
+X	rm -f *.o *~ *.bak core
+X
+mousedrvr.o : $(DRIVERS)
+X	/bin/ld -r -o mousedrvr.o $(DRIVERS)
+X
+install-2.4.0: mousedrvr.o
+X	libr rv ../../drivlib.a mousedrvr.o
+X
+install: mousedrvr.o
+X	ar rv ../../lib/drivers.a mousedrvr.o
+X	ranlib ../../lib/drivers.a
+X
+depend :
+X	makedepend *.c
+X
+ps2mouse.o :
+X	if [ "`uname -r`" = "2.4.0" ]; then \
+X	make _ps2mouse.o NEW_GCC=/cygnus/94q4-lynxos-x86/bin/gcc; \
+X	else \
+X	make _ps2mouse.o NEW_GCC=/bin/gcc; \
+X	fi; \
+X	ln -s _ps2mouse.o ps2mouse.o
+X
+_ps2mouse.o : ps2mouse.c
+X	$(NEW_GCC) -c $(CFLAGS) ps2mouse.c -o _ps2mouse.o
+X
+X
+# DO NOT DELETE THIS LINE -- make depend depends on it.
+SHAR_EOF
+  $shar_touch -am 0716115396 'sys/drivers/bmouse/Makefile' &&
+  chmod 0644 'sys/drivers/bmouse/Makefile' ||
+  echo 'restore of sys/drivers/bmouse/Makefile failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/Makefile'`"
+  test 759 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/Makefile: original size 759, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/atixlmouse.c ==============
+if test -f 'sys/drivers/bmouse/atixlmouse.c' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/atixlmouse.c (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/atixlmouse.c (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/atixlmouse.c' &&
+/* this LynxOS driver relies heavily on a Linux driver, see below
+X * for copyrights and credits.
+X *
+X * LynxOS work by:
+X *
+X * Thomas Mueller
+X * SYSTRIX CS GmbH, Hindenburgring 31, 89077 Ulm (Germany)
+X * tm@systrix.de, lynx@systrix.de
+X *
+X * September 1994
+X */
+X
+/*
+X * ATI XL Bus Mouse Driver for Linux
+X * by Bob Harris (rth@sparta.com)
+X *
+X * Uses VFS interface for linux 0.98 (01OCT92)
+X *
+X * Modified by Chris Colohan (colohan@eecg.toronto.edu)
+X *
+X * version 0.3
+X */
+X
+#include <conf.h>
+#include <kernel.h>
+#include <file.h>
+#include <errno.h>
+#include <signal.h>
+#include <io.h>
+#include "inline.h"
+X
+#include <busmouse.h>
+X
+#ifdef DLDD
+#include "bmouseinfo.h"
+#else
+#include "../../dheaders/bmouseinfo.h"
+#endif
+X
+struct stuff
+{
+X	int	port;		/* i/o port address		*/
+X	int	vector;		/* interrupt vector + 32	*/
+X
+X	int	*sel_sem;	/* select semaphore		*/
+X
+X	struct mouse_status mouse;	/* mouse/driver status	*/
+};
+X
+static void ati_mou_interrupt(s)
+struct stuff *s;
+{
+X        char dx, dy;
+X	unsigned char buttons;
+X
+X	ATIXL_MSE_DISABLE_UPDATE(s->port);
+X	 /* Select IR1 - X movement */
+X	outb(ATIXL_MSE_READ_X, ATIXL_MSE_CONTROL_PORT(s->port));
+X	dx = inb(ATIXL_MSE_DATA_PORT(s->port));
+X	 /* Select IR2 - Y movement */
+X	outb(ATIXL_MSE_READ_Y, ATIXL_MSE_CONTROL_PORT(s->port));
+X	dy = inb(ATIXL_MSE_DATA_PORT(s->port));
+X	 /* Select IR0 - Button Status */
+X	outb(ATIXL_MSE_READ_BUTTONS, ATIXL_MSE_CONTROL_PORT(s->port));
+X	buttons = inb(ATIXL_MSE_DATA_PORT(s->port));
+X	if (dx != 0 || dy != 0 || buttons != s->mouse.latch_buttons)
+X	{
+X		s->mouse.latch_buttons |= buttons;
+X		s->mouse.dx += dx;
+X		s->mouse.dy += dy;
+X		s->mouse.ready = 1;
+X		if (s->sel_sem)
+X			ssignal(s->sel_sem);
+X		ssignal(&s->mouse.wait);
+X	}
+X	ATIXL_MSE_ENABLE_UPDATE(s->port);
+}
+X
+static struct mouse_status *ati_mou_init(s)
+struct stuff *s;
+{
+X	static struct mouse_status mouse;
+X	unsigned char a,b,c;
+X
+X	a = inb(ATIXL_MSE_SIGNATURE_PORT(s->port));	/* Get signature */
+X	b = inb(ATIXL_MSE_SIGNATURE_PORT(s->port));
+X	c = inb(ATIXL_MSE_SIGNATURE_PORT(s->port));
+X	if (!(a != b && a == c))
+X	{
+X		mouse.present = 0;
+X		return NULL;
+X	}
+X	/* Reset the Inport device */
+X	outb(0x80, ATIXL_MSE_CONTROL_PORT(s->port));
+X	/* Select Internal Register 7 */
+X	outb(0x07, ATIXL_MSE_CONTROL_PORT(s->port));
+X	/* Data Interrupts 8+, 1=30hz, 2=50hz, 3=100hz, 4=200hz rate */
+X	outb(0x0a, ATIXL_MSE_DATA_PORT(s->port));
+X	mouse.present = 1;
+X	mouse.active = 0;
+X	mouse.ready = 0;
+X	mouse.buttons = mouse.latch_buttons = 0;
+X	mouse.dx = mouse.dy = 0;
+X	mouse.wait = 0;
+X	return &mouse;
+}
+X
+static char *ati_mou_install(info)
+struct mouseinfo	*info;
+{
+X	extern char	*sysbrk();
+X	struct stuff	*s;
+X	struct mouse_status *mouse;
+X
+X	s = (struct stuff *) sysbrk((long)sizeof(struct stuff));
+X	if (!s)
+X	{
+X		pseterr(ENOMEM);
+X		return (char *)SYSERR;
+X	}
+X	bzero(s, sizeof(struct stuff));
+X	s->port = info->port;
+X	s->vector = info->vector;
+X	if ((mouse = ati_mou_init(s)) == NULL)
+X	{
+X		cprintf("ATI Inport Bus mouse *not* detected.\n");
+X		pseterr(ENXIO);
+X		return (char *) SYSERR;
+X	}
+X	s->mouse = *mouse;
+X	cprintf("ATI Inport Bus mouse detected and installed.\n");
+X	return (char *) s;
+}
+X
+static ati_mou_uninstall(s)
+struct stuff	*s;
+{
+X	sysfree(s, (long) sizeof(struct stuff));
+X	return OK;
+}
+X
+static ati_mou_open(s, d, f)
+struct stuff	*s;
+int		d;
+struct file	*f;
+{
+X	if (s->mouse.present == 0)
+X	{
+X		pseterr(ENXIO);
+X		return SYSERR;
+X	}
+X	if (s->mouse.active)
+X	{
+X		pseterr(EBUSY);
+X		return SYSERR;
+X	}
+X	s->mouse.active = 1;
+X	s->mouse.ready = s->mouse.dx = s->mouse.dy = 0;	
+X	s->mouse.buttons = s->mouse.latch_buttons = 0;
+X	s->mouse.wait = 0;
+X	iointset(s->vector, ati_mou_interrupt, s);
+X	ATIXL_MSE_INT_ON(s->port);	
+X	return OK;
+}
+X
+static ati_mou_close(s, f)
+struct stuff	*s;
+struct file	*f;
+{
+X	ATIXL_MSE_INT_OFF(s->port);
+X	s->mouse.active = s->mouse.ready = 0; 
+X	iointclr(s->vector);
+X	return OK;
+}
+X
+static ati_mou_select(s, f, which, ffs)
+struct stuff	*s;
+struct file	*f;
+struct sel	*ffs;
+{
+X	if (which == SREAD)
+X	{
+X		ffs->iosem = &s->mouse.wait;
+X		ffs->sel_sem = &s->sel_sem;
+X	}
+X	return OK;
+}
+X
+static ati_mou_inval(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	pseterr(EINVAL);
+X	return SYSERR;
+}
+X
+static ati_mou_read(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	int i, dx, dy;
+X
+X	if (count < 3)
+X	{
+X		pseterr(EINVAL);
+X		return SYSERR;
+X	}
+X	if (f->access_mode & FNDELAY)
+X	{
+X		if (!s->mouse.ready)
+X		{
+X			pseterr(EAGAIN);
+X			return SYSERR;
+X		}
+X	}
+X	else
+X		swait(&s->mouse.wait, SEM_SIGABORT);
+X
+X	ATIXL_MSE_DISABLE_UPDATE(s->port);
+X	/* Allowed ints to occur during data gathering - shouldn't hurt */
+X	buffer[0] = (~s->mouse.latch_buttons & 7) | 0x80;
+X	if (s->mouse.dx < -127)
+X		s->mouse.dx = -127;
+X	if (s->mouse.dx > 127)
+X		s->mouse.dx =  127;
+X	buffer[1] = s->mouse.dx;
+X	if (s->mouse.dy < -127)
+X		s->mouse.dy = -127;
+X	if (s->mouse.dy > 127)
+X		s->mouse.dy =  127;
+X	buffer[2] = s->mouse.dy;
+X	bzero(buffer + 3, count - 3);
+X	s->mouse.dx = 0;
+X	s->mouse.dy = 0;
+X	s->mouse.latch_buttons = s->mouse.buttons;
+X	s->mouse.ready = 0;
+X	s->mouse.wait = 0;
+X	ATIXL_MSE_ENABLE_UPDATE(s->port);
+X
+X	return count;
+}
+X
+#include <dldd.h>
+X
+static struct dldd entry_points =
+{
+X	ati_mou_open,		/* OPEN */
+X	ati_mou_close,		/* CLOSE */
+X	ati_mou_read,		/* READ	*/
+X	ati_mou_inval,		/* WRITE */
+X	ati_mou_select,		/* SELECT */
+X	ati_mou_inval, 		/* IOCTL */
+X	ati_mou_install,	/* INSTALL */
+X	ati_mou_uninstall,	/* UNINSTALL */
+};
+X
+struct dldd *ati_entry_points = &entry_points;
+SHAR_EOF
+  $shar_touch -am 0623101295 'sys/drivers/bmouse/atixlmouse.c' &&
+  chmod 0644 'sys/drivers/bmouse/atixlmouse.c' ||
+  echo 'restore of sys/drivers/bmouse/atixlmouse.c failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/atixlmouse.c'`"
+  test 5357 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/atixlmouse.c: original size 5357, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/bmouse.h ==============
+if test -f 'sys/drivers/bmouse/bmouse.h' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/bmouse.h (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/bmouse.h (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/bmouse.h' &&
+/*
+X * Copyrighted as an unpublished work.
+X * (c) Copyright 1987 INTERACTIVE Systems Corporation
+X * All rights reserved.
+X *
+X * RESTRICTED RIGHTS
+X *
+X * These programs are supplied under a license.  They may be used,
+X * disclosed, and/or copied only as permitted under such license
+X * agreement.  Any copy must contain the above copyright notice and
+X * this restricted rights notice.  Use, copying, and/or disclosure
+X * of the programs is strictly prohibited unless otherwise provided
+X * in the license agreement.
+X *
+X */
+X
+X
+/* Definitions for Microsoft Mouse */
+X
+/* Base I/O addresses for primary and secondary InPort */
+#define MOUSE1  0x23c
+#define MOUSE2  0x238
+X
+/* Offsets of I/O registers from base */
+#define ADDRREG 0       /* Address register */
+#define DATAREG 1       /* Data register */
+#define IDENTREG 2      /* Identification register */
+#define TESTREG 3       /* Test register */
+X
+/* Address register definitions */
+#define REGSEL  7       /* Mask for register select bits */
+#define MSTATUS 0       /* Select mouse status register */
+#define DATA1   1       /* Select data register 1 */
+#define DATA2   2       /* Select data register 2 */
+#define DATA3   3       /* Select data register 3 */
+#define DATA4   4       /* Select data register 4 */
+#define ISTATUS 5       /* Select interface status register */
+#define ICNTRL  6       /* Select interface control register */
+#define MODE    7       /* Select mode register */
+#define TESTEN  0x40    /* Enable test register */
+#define RESET   0x80    /* Reset InPort chip */
+X
+/* Identification register definitions */
+#define SIGN    0xde    /* InPort chip signature */
+#define VERS(x) (((x)>>4)&15)   /* InPort chip version number */
+#define REV(x)  ((x)&15)        /* InPort chip revision number */
+X
+/* Mouse status register definitions */
+#define BUTSTATMASK     7
+#define BUT3STAT        1
+#define BUT2STAT        2
+#define BUT1STAT        4
+#define BUTCHNGMASK     0x38
+#define BUT3CHNG        8
+#define BUT2CHNG        0x10
+#define BUT1CHNG        0x20
+#define MOVEMENT        0x40
+#define PACKETDONE      0x80
+X
+/* Interface status/control register definitions */
+#define SW3     1
+#define SW2     2
+#define SW1     4
+#define XA      0x10
+#define XB      0x20
+#define YA      0x40
+#define YB      0x80
+X
+/* Mode register definitions */
+#define RATEMASK        7
+#define HZ0NOINTR       0
+#define HZ30            1
+#define HZ50            2
+#define HZ100           3
+#define HZ200           4
+#define HZ0INTR         6
+#define HZEXT           7
+#define DATAINT         8
+#define TIMERINT        0x10
+#define HOLD            0x20
+#define MODEMASK        0xc0
+#define QUADMODE        0
+#define SYNCHMODE       0x40
+#define ASYNMODE        0x80
+#define DIRMODE         0xc0
+X
+struct mouseinfo
+{       unsigned char status;
+X	char xmotion, ymotion;
+};
+X
+/* Ioctl definitions */
+#define MOUSEIOC        ('M'<<8)
+#define MOUSEIOCREAD    (MOUSEIOC|60)
+X
+SHAR_EOF
+  $shar_touch -am 0623101295 'sys/drivers/bmouse/bmouse.h' &&
+  chmod 0640 'sys/drivers/bmouse/bmouse.h' ||
+  echo 'restore of sys/drivers/bmouse/bmouse.h failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/bmouse.h'`"
+  test 2908 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/bmouse.h: original size 2908, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/inline.h ==============
+if test -f 'sys/drivers/bmouse/inline.h' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/inline.h (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/inline.h (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/inline.h' &&
+X
+#ifndef _COMPILER_H
+#define _COMPILER_H
+X
+#ifdef Lynx
+#define GCCUSESGAS 
+#endif
+X
+#ifndef __STDC__
+# ifdef signed
+#  undef signed
+# endif
+# ifdef volatile
+#  undef volatile
+# endif
+# ifdef const
+#  undef const
+# endif
+# define signed /**/
+# ifdef __GNUC__
+#  define volatile __volatile__
+#  define const __const__
+# else
+#  define const /**/
+# endif /* __GNUC__ */
+#endif /* !__STDC__ */
+X
+X
+#ifdef __GNUC__
+X
+#ifdef GCCUSESGAS
+X
+/*
+X * If gcc uses gas rather than the native assembler, the syntax of these
+X * inlines has to be different.		DHD
+X */
+X
+static __inline__ void
+outb(val, port)
+short port;
+char val;
+{
+X   __asm__ __volatile__("outb %0,%1" : :"a" (val), "d" (port));
+}
+X
+X
+static __inline__ void
+outw(val, port)
+short port;
+short val;
+{
+X   __asm__ __volatile__("outw %0,%1" : :"a" (val), "d" (port));
+}
+X
+static __inline__ unsigned int
+inb(port)
+short port;
+{
+X   unsigned char ret;
+X   __asm__ __volatile__("inb %1,%0" :
+X       "=a" (ret) :
+X       "d" (port));
+X   return ret;
+}
+X
+static __inline__ unsigned int
+inw(port)
+short port;
+{
+X   unsigned short ret;
+X   __asm__ __volatile__("inw %1,%0" :
+X       "=a" (ret) :
+X       "d" (port));
+X   return ret;
+}
+X
+#else	/* GCCUSESGAS */
+X
+static __inline__ void
+outb(val, port)
+X     short port;
+X     char val;
+{
+X  __asm__ __volatile__("out%B0 (%1)" : :"a" (val), "d" (port));
+}
+X
+static __inline__ void
+outw(val, port)
+X     short port;
+X     short val;
+{
+X  __asm__ __volatile__("out%W0 (%1)" : :"a" (val), "d" (port));
+}
+X
+static __inline__ unsigned int
+inb(port)
+X     short port;
+{
+X  unsigned char ret;
+X  __asm__ __volatile__("in%B0 (%1)" :
+X		   "=a" (ret) :
+X		   "d" (port));
+X  return ret;
+}
+X
+static __inline__ unsigned int
+inw(port)
+X     short port;
+{
+X  unsigned short ret;
+X  __asm__ __volatile__("in%W0 (%1)" :
+X		   "=a" (ret) :
+X		   "d" (port));
+X  return ret;
+}
+X
+#endif /* GCCUSESGAS */
+X
+#else /* __GNUC__ */
+X
+/* what an idiocy, first param value, then port ?!?!?@?!@? */
+X
+static void outb(value, port)
+{
+X	asm
+X	{
+X		mov		EDX,port[EBP]
+X		mov		EAX,value[EBP]
+X		out		DX,AL
+X	}
+}
+X
+static int inb(port)
+{
+X	asm
+X	{
+X		mov		EDX,port[EBP]
+X		in		AL,DX
+X		and		EAX,0xff
+X	}
+}
+X
+#endif
+X
+#endif /* _COMPILER_H */
+X
+SHAR_EOF
+  $shar_touch -am 0623101295 'sys/drivers/bmouse/inline.h' &&
+  chmod 0644 'sys/drivers/bmouse/inline.h' ||
+  echo 'restore of sys/drivers/bmouse/inline.h failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/inline.h'`"
+  test 2135 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/inline.h: original size 2135, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/logibmouse.c ==============
+if test -f 'sys/drivers/bmouse/logibmouse.c' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/logibmouse.c (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/logibmouse.c (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/logibmouse.c' &&
+/* this LynxOS driver relies heavily on a Linux driver, see below
+X * for copyrights and credits.
+X *
+X * LynxOS work by:
+X *
+X * Thomas Mueller
+X * SYSTRIX CS GmbH, Hindenburgring 31, 89077 Ulm (Germany)
+X * tm@systrix.de, lynx@systrix.de
+X *
+X * September 1994
+X */
+X
+/*
+X * Logitech Bus Mouse Driver for Linux
+X * by James Banks
+X *
+X * Mods by Matthew Dillon
+X *   calls verify_area()
+X *   tracks better when X is busy or paging
+X *
+X * Heavily modified by David Giller
+X *   changed from queue- to counter- driven
+X *   hacked out a (probably incorrect) mouse_select
+X *
+X * Modified again by Nathan Laredo to interface with
+X *   0.96c-pl1 IRQ handling changes (13JUL92)
+X *   didn't bother touching select code.
+X *
+X * Modified the select() code blindly to conform to the VFS
+X *   requirements. 92.07.14 - Linus. Somebody should test it out.
+X *
+X * Modified by Johan Myreen to make room for other mice (9AUG92)
+X *   removed assignment chr_fops[10] = &mouse_fops; see mouse.c
+X *   renamed mouse_fops => bus_mouse_fops, made bus_mouse_fops public.
+X *   renamed this file mouse.c => busmouse.c
+X */
+X
+#include <conf.h>
+#include <kernel.h>
+#include <file.h>
+#include <errno.h>
+#include <signal.h>
+#include <io.h>
+#include "inline.h"
+X
+#include <busmouse.h>
+X
+#ifdef DLDD
+#include "bmouseinfo.h"
+#else
+#include "../../dheaders/bmouseinfo.h"
+#endif
+X
+struct stuff
+{
+X	int	port;		/* i/o port address		*/
+X	int	vector;		/* interrupt vector + 32	*/
+X
+X	int	*sel_sem;	/* select semaphore		*/
+X
+X	struct mouse_status mouse;	/* mouse/driver status	*/
+};
+X
+static void logi_mou_interrupt(s)
+struct stuff *s;
+{
+X        char dx, dy;
+X	unsigned char buttons;
+X
+X	MSE_INT_OFF(s->port);
+X	outb(MSE_READ_X_LOW, MSE_CONTROL_PORT(s->port));
+X	dx = (inb(MSE_DATA_PORT(s->port)) & 0xf);
+X	outb(MSE_READ_X_HIGH, MSE_CONTROL_PORT(s->port));
+X	dx |= (inb(MSE_DATA_PORT(s->port)) & 0xf) << 4;
+X	outb(MSE_READ_Y_LOW, MSE_CONTROL_PORT(s->port));
+X	dy = (inb(MSE_DATA_PORT(s->port)) & 0xf);
+X	outb(MSE_READ_Y_HIGH, MSE_CONTROL_PORT(s->port));
+X	buttons = inb(MSE_DATA_PORT(s->port));
+X	dy |= (buttons & 0xf) << 4;
+X	buttons = ((buttons >> 5) & 0x07);
+X	if (dx != 0 || dy != 0 || buttons != s->mouse.buttons)
+X	{
+X		s->mouse.buttons = buttons;
+X		s->mouse.dx += dx;
+X		s->mouse.dy -= dy;
+X		s->mouse.ready = 1;
+X
+X		/*
+X		 * keep dx/dy reasonable, but still able to track when X (or
+X		 * whatever) must page or is busy (i.e. long waits between
+X		 * reads)
+X		 */
+X		if (s->mouse.dx < -2048)
+X			s->mouse.dx = -2048;
+X		if (s->mouse.dx >  2048)
+X			s->mouse.dx =  2048;
+X
+X		if (s->mouse.dy < -2048)
+X			s->mouse.dy = -2048;
+X		if (s->mouse.dy >  2048)
+X			s->mouse.dy =  2048;
+X
+X		if (s->sel_sem)
+X			ssignal(s->sel_sem);
+X		ssignal(&s->mouse.wait);
+X	}
+X	MSE_INT_ON(s->port);
+}
+X
+static struct mouse_status *logi_mou_init(s)
+struct stuff *s;
+{
+X	static struct mouse_status mouse;
+X	int i;
+X
+X	outb(MSE_CONFIG_BYTE, MSE_CONFIG_PORT(s->port));
+X	outb(MSE_SIGNATURE_BYTE, MSE_SIGNATURE_PORT(s->port));
+X	for (i = 0; i < 800000; i++)
+X		/* busy loop */;
+X	if (inb(MSE_SIGNATURE_PORT(s->port)) != MSE_SIGNATURE_BYTE)
+X	{
+X		mouse.present = 0;
+X		return NULL;
+X	}
+X	outb(MSE_DEFAULT_MODE, MSE_CONFIG_PORT(s->port));
+X	MSE_INT_OFF(s->port);
+X	mouse.present = 1;
+X	mouse.active = 0;
+X	mouse.ready = 0;
+X	mouse.buttons = 0x87;
+X	mouse.dx = 0;
+X	mouse.dy = 0;
+X	mouse.wait = NULL;
+X	return &mouse;
+}
+X
+static char *logi_mou_install(info)
+struct mouseinfo	*info;
+{
+X	extern char	*sysbrk();
+X	struct stuff	*s;
+X	struct mouse_status *mouse;
+X
+X	s = (struct stuff *) sysbrk((long)sizeof(struct stuff));
+X	if (!s)
+X	{
+X		pseterr(ENOMEM);
+X		return (char *)SYSERR;
+X	}
+X	bzero(s, sizeof(struct stuff));
+X	s->port = info->port;
+X	s->vector = info->vector;
+X	if ((mouse = logi_mou_init(s)) == NULL)
+X	{
+X		cprintf("Logitech Bus mouse *not* detected.\n");
+X		pseterr(ENXIO);
+X		return (char *) SYSERR;
+X	}
+X	s->mouse = *mouse;
+X	cprintf("Logitech Bus mouse detected and installed.\n");
+X	return (char *) s;
+}
+X
+static logi_mou_uninstall(s)
+struct stuff	*s;
+{
+X	sysfree(s, (long) sizeof(struct stuff));
+X	return OK;
+}
+X
+static logi_mou_open(s, d, f)
+struct stuff	*s;
+int		d;
+struct file	*f;
+{
+X	if (s->mouse.present == 0)
+X	{
+X		pseterr(ENXIO);
+X		return SYSERR;
+X	}
+X	if (s->mouse.active)
+X	{
+X		pseterr(EBUSY);
+X		return SYSERR;
+X	}
+X	s->mouse.active = 1;
+X	s->mouse.ready = s->mouse.dx = s->mouse.dy = 0;	
+X	s->mouse.buttons = 0x87;
+X	s->mouse.wait = 0;
+X	iointset(s->vector, logi_mou_interrupt, s);
+X	MSE_INT_ON(s->port);	
+X	return OK;
+}
+X
+static logi_mou_close(s, f)
+struct stuff	*s;
+struct file	*f;
+{
+X	MSE_INT_OFF(s->port);
+X	s->mouse.active = s->mouse.ready = 0; 
+X	iointclr(s->vector);
+X	return OK;
+}
+X
+static logi_mou_select(s, f, which, ffs)
+struct stuff	*s;
+struct file	*f;
+struct sel	*ffs;
+{
+X	if (which == SREAD)
+X	{
+X		ffs->iosem = &s->mouse.wait;
+X		ffs->sel_sem = &s->sel_sem;
+X	}
+X	return OK;
+}
+X
+static logi_mou_inval(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	pseterr(EINVAL);
+X	return SYSERR;
+}
+X
+static logi_mou_read(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	int i, dx, dy, buttons;
+X
+X	if (count < 3)
+X	{
+X		pseterr(EINVAL);
+X		return SYSERR;
+X	}
+X	if (f->access_mode & FNDELAY)
+X	{
+X		if (!s->mouse.ready)
+X		{
+X			pseterr(EAGAIN);
+X			return SYSERR;
+X		}
+X	}
+X	else
+X		swait(&s->mouse.wait, SEM_SIGABORT);
+X
+X	/*
+X	 * Obtain the current mouse parameters and limit as appropriate for
+X	 * the return data format.  Interrupts are only disabled while 
+X	 * obtaining the parameters, NOT during the puts_fs_byte() calls,
+X	 * so paging in put_fs_byte() does not effect mouse tracking.
+X	 */
+X
+X	MSE_INT_OFF(s->port);
+X	dx = s->mouse.dx;
+X	dy = s->mouse.dy;
+X	if (dx < -127)
+X	    dx = -127;
+X	if (dx > 127)
+X	    dx = 127;
+X	if (dy < -127)
+X	    dy = -127;
+X	if (dy > 127)
+X	    dy = 127;
+X	buttons = s->mouse.buttons;
+X	s->mouse.dx -= dx;
+X	s->mouse.dy -= dy;
+X	s->mouse.ready = 0;
+X	sreset(&s->mouse.wait);
+X	MSE_INT_ON(s->port);
+X
+X	buffer[0] = buttons | 0x80;
+X	buffer[1] = dx;
+X	buffer[2] = dy;
+X	bzero(buffer + 3, count - 3);
+X	return count;
+}
+X
+#include <dldd.h>
+X
+static struct dldd entry_points =
+{
+X	logi_mou_open,		/* OPEN */
+X	logi_mou_close,		/* CLOSE */
+X	logi_mou_read,		/* READ	*/
+X	logi_mou_inval,		/* WRITE */
+X	logi_mou_select,	/* SELECT */
+X	logi_mou_inval, 	/* IOCTL */
+X	logi_mou_install,	/* INSTALL */
+X	logi_mou_uninstall,	/* UNINSTALL */
+};
+X
+struct dldd *logi_entry_points = &entry_points;
+SHAR_EOF
+  $shar_touch -am 0623101295 'sys/drivers/bmouse/logibmouse.c' &&
+  chmod 0644 'sys/drivers/bmouse/logibmouse.c' ||
+  echo 'restore of sys/drivers/bmouse/logibmouse.c failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/logibmouse.c'`"
+  test 6236 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/logibmouse.c: original size 6236, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/mouse.c ==============
+if test -f 'sys/drivers/bmouse/mouse.c' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/mouse.c (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/mouse.c (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/mouse.c' &&
+/* LynxOS bus and ps/2 mouse driver
+X * one driver for all pointer devices
+X *
+X * Thomas Mueller
+X * SYSTRIX CS GmbH, Hindenburgring 31, 89077 Ulm (Germany)
+X * tm@systrix.de, lynx@systrix.de
+X *
+X * September 1994
+X */
+X
+X
+#include <conf.h>
+#include <kernel.h>
+#include <file.h>
+#include <errno.h>
+#include <signal.h>
+#include <io.h>
+#include <dldd.h>
+X
+#include <busmouse.h>
+#ifdef DLDD
+#include "bmouseinfo.h"
+#else
+#include "../../dheaders/bmouseinfo.h"
+#endif
+X
+#define CHCK_MINOR(d)					\
+X	minor_dev = minor(d);				\
+X	if (minor_dev < 0 || minor_dev > NUM_MICE)	\
+X	{ pseterr(ENXIO); return SYSERR; }		\
+X	else
+X	
+extern struct dldd	*ms_entry_points;
+extern struct dldd	*ps2_entry_points;
+extern struct dldd	*ati_entry_points;
+extern struct dldd	*logi_entry_points;
+X
+struct stuff
+{
+X	struct dldd	*drv_funcs[NUM_MICE];
+X	char		*stuff_ptr[NUM_MICE];
+};
+X
+char *mou_install(info)
+struct mouseinfo	*info;		/* Array for 4 drivers */
+{
+X	extern char	*sysbrk();
+X	struct stuff	*s;
+X	char		*p;
+X	int		i;
+X	int		inited = 0;
+X
+X	s = (struct stuff *) sysbrk((long)sizeof(struct stuff));
+X	if (!s)
+X	{
+X		pseterr(ENOMEM);
+X		return (char *)SYSERR;
+X	}
+X	bzero(s, sizeof(struct stuff));
+X
+X	s->drv_funcs[BUSMOUSE_MINOR] = logi_entry_points;
+X	s->drv_funcs[PS2MOUSE_MINOR] = ps2_entry_points;
+X	s->drv_funcs[MSMOUSE_MINOR]  = ms_entry_points;
+X	s->drv_funcs[ATIMOUSE_MINOR] = ati_entry_points;
+X	for (i = 0; i < NUM_MICE; i++)
+X	{
+X		p = (*s->drv_funcs[i]->dldd_install)(&info[i]);
+X		if (p != (char *) SYSERR)
+X		{
+X			++inited;
+X			s->stuff_ptr[i] = p;
+X		}
+X	}
+X		
+X	return (char *) s;
+}
+X
+mou_uninstall(s)
+struct stuff	*s;
+{
+X	int	i;
+X
+X	for (i = 0; i < NUM_MICE; i++)
+X		(*s->drv_funcs[i]->dldd_uninstall)(s->stuff_ptr[i]);
+X	sysfree(s, (long) sizeof(struct stuff));
+X	return OK;
+}
+X
+mou_open(s, dev, f)
+struct stuff	*s;
+int		dev;
+struct file	*f;
+{
+X	int	minor_dev;
+X
+X	CHCK_MINOR(dev);
+X	return (*s->drv_funcs[minor_dev]->dldd_open)(s->stuff_ptr[minor_dev], dev, f);
+}
+X
+mou_close(s, f)
+struct stuff	*s;
+struct file	*f;
+{
+X	int	minor_dev;
+X
+X	CHCK_MINOR(f->dev);
+X	return (*s->drv_funcs[minor_dev]->dldd_close)(s->stuff_ptr[minor_dev], f);
+}
+X
+mou_select(s, f, which, ffs)
+struct stuff	*s;
+struct file	*f;
+struct sel	*ffs;
+{
+X	int	minor_dev;
+X
+X	CHCK_MINOR(f->dev);
+X	return (*s->drv_funcs[minor_dev]->dldd_select)(s->stuff_ptr[minor_dev], f, which, ffs);
+}
+X
+mou_write(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	int	minor_dev;
+X
+X	CHCK_MINOR(f->dev);
+X	return (*s->drv_funcs[minor_dev]->dldd_write)(s->stuff_ptr[minor_dev], f, buffer, count);
+}
+X
+mou_read(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	int	minor_dev;
+X
+X	CHCK_MINOR(f->dev);
+X	return (*s->drv_funcs[minor_dev]->dldd_read)(s->stuff_ptr[minor_dev], f, buffer, count);
+}
+X
+mou_ioctl(s, f, cmd, arg)
+struct stuff	*s;
+struct file	*f;
+unsigned int	cmd;
+unsigned int	arg;
+{
+X	int	minor_dev;
+X
+X	CHCK_MINOR(f->dev);
+X	return (*s->drv_funcs[minor_dev]->dldd_ioctl)(s->stuff_ptr[minor_dev], f, cmd, arg);
+}
+X
+#ifdef DLDD
+#include <dldd.h>
+X
+static struct dldd entry_points =
+{
+X	mou_open,		/* OPEN */
+X	mou_close,		/* CLOSE */
+X	mou_read,		/* READ	*/
+X	mou_write,		/* WRITE */
+X	mou_select,		/* SELECT */
+X	mou_ioctl, 		/* IOCTL */
+X	mou_install,		/* INSTALL */
+X	mou_uninstall,		/* UNINSTALL */
+};
+#endif
+SHAR_EOF
+  $shar_touch -am 0623101295 'sys/drivers/bmouse/mouse.c' &&
+  chmod 0644 'sys/drivers/bmouse/mouse.c' ||
+  echo 'restore of sys/drivers/bmouse/mouse.c failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/mouse.c'`"
+  test 3222 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/mouse.c: original size 3222, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/msbmouse.c ==============
+if test -f 'sys/drivers/bmouse/msbmouse.c' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/msbmouse.c (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/msbmouse.c (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/msbmouse.c' &&
+/* this LynxOS driver relies heavily on a Linux driver, see below
+X * for copyrights and credits.
+X *
+X * LynxOS work by:
+X *
+X * Thomas Mueller
+X * SYSTRIX CS GmbH, Hindenburgring 31, 89077 Ulm (Germany)
+X * tm@systrix.de, lynx@systrix.de
+X *
+X * September 1994
+X */
+X
+/*
+X * Microsoft busmouse driver based on Logitech driver (see busmouse.c)
+X *
+X * Microsoft BusMouse support by Teemu Rantanen (tvr@cs.hut.fi) (02AUG92)
+X *
+X * Microsoft Bus Mouse support modified by Derrick Cole (cole@concert.net)
+X *    8/28/92
+X *
+X * Microsoft Bus Mouse support folded into 0.97pl4 code
+X *    by Peter Cervasio (pete%q106fm.uucp@wupost.wustl.edu) (08SEP92)
+X * Changes:  Logitech and Microsoft support in the same kernel.
+X *           Defined new constants in busmouse.h for MS mice.
+X *           Added int mse_busmouse_type to distinguish busmouse types
+X *           Added a couple of new functions to handle differences in using
+X *             MS vs. Logitech (where the int variable wasn't appropriate).
+X *
+X * Modified by Peter Cervasio (address above) (26SEP92)
+X * Changes:  Included code to (properly?) detect when a Microsoft mouse is
+X *           really attached to the machine.  Don't know what this does to
+X *           Logitech bus mice, but all it does is read ports.
+X *
+X * Modified by Christoph Niemann (niemann@rubdv15.etdv.ruhr-uni-bochum.de)
+X * Changes:  Better interrupt-handler (like in busmouse.c).
+X *	     Some changes to reduce code-size.
+X *	     Changed dectection code to use inb_p() instead of doing empty
+X *	     loops to delay i/o.
+X *
+X * version 0.3a
+X */
+X
+#include <conf.h>
+#include <kernel.h>
+#include <file.h>
+#include <errno.h>
+#include <signal.h>
+#include <io.h>
+#include "inline.h"
+X
+#include <busmouse.h>
+X
+#ifdef DLDD
+#include "bmouseinfo.h"
+#else
+#include "../../dheaders/bmouseinfo.h"
+#endif
+X
+struct stuff
+{
+X	int	port;		/* i/o port address		*/
+X	int	vector;		/* interrupt vector + 32	*/
+X
+X	int	*sel_sem;	/* select semaphore		*/
+X
+X	struct mouse_status mouse;	/* mouse/driver status	*/
+};
+X
+static void ms_mou_interrupt(s)
+struct stuff *s;
+{
+X        char dx, dy;
+X	unsigned char buttons;
+X
+X	outb(MS_MSE_COMMAND_MODE, MS_MSE_CONTROL_PORT(s->port));
+X	outb((inb(MS_MSE_DATA_PORT(s->port)) | 0x20), MS_MSE_DATA_PORT(s->port));
+X
+X	outb(MS_MSE_READ_X, MS_MSE_CONTROL_PORT(s->port));
+X	dx = inb(MS_MSE_DATA_PORT(s->port));
+X
+X	outb(MS_MSE_READ_Y, MS_MSE_CONTROL_PORT(s->port));
+X	dy = inb(MS_MSE_DATA_PORT(s->port));
+X
+X	outb(MS_MSE_READ_BUTTONS, MS_MSE_CONTROL_PORT(s->port));
+X	buttons = ~(inb(MS_MSE_DATA_PORT(s->port))) & 0x07;
+X
+X	outb(MS_MSE_COMMAND_MODE, MS_MSE_CONTROL_PORT(s->port));
+X	outb((inb(MS_MSE_DATA_PORT(s->port)) & 0xdf), MS_MSE_DATA_PORT(s->port));
+X
+X	if (   dx != 0 || dy != 0
+X	    || buttons != s->mouse.buttons || ((~buttons) & 0x07))
+X	{
+X		s->mouse.buttons = buttons;
+X		s->mouse.dx += dx;
+X		s->mouse.dy += dy;
+X		s->mouse.ready = 1;
+X		if (s->sel_sem)
+X			ssignal(s->sel_sem);
+X		ssignal(&s->mouse.wait);
+X	}
+}
+X
+static struct mouse_status *ms_mou_init(s)
+struct stuff *s;
+{
+X	static struct mouse_status mouse;
+X	int mse_byte, i;
+X
+X	mouse.present = mouse.active = mouse.ready = 0;
+X	mouse.buttons = 0x80;
+X	mouse.dx = mouse.dy = 0;
+X	mouse.wait = 0;
+X	if (inb(MS_MSE_SIGNATURE_PORT(s->port)) == 0xde)
+X	{
+X		mse_byte = inb(MS_MSE_SIGNATURE_PORT(s->port));
+X
+X		for (i = 0; i < 4; i++) {
+X			if (inb(MS_MSE_SIGNATURE_PORT(s->port)) == 0xde) {
+X				if (inb(MS_MSE_SIGNATURE_PORT(s->port)) == mse_byte)
+X					mouse.present = 1;
+X				else
+X					mouse.present = 0;
+X			} else
+X				mouse.present = 0;
+X		}
+X	}
+X	if (mouse.present == 0)
+X		return NULL;
+X	MS_MSE_INT_OFF(s->port);
+X	return &mouse;
+}
+X
+static char *ms_mou_install(info)
+struct mouseinfo	*info;
+{
+X	extern char	*sysbrk();
+X	struct stuff	*s;
+X	struct mouse_status *mouse;
+X
+X	s = (struct stuff *) sysbrk((long)sizeof(struct stuff));
+X	if (!s)
+X	{
+X		pseterr(ENOMEM);
+X		return (char *)SYSERR;
+X	}
+X	bzero(s, sizeof(struct stuff));
+X	s->port = info->port;
+X	s->vector = info->vector;
+X	if ((mouse = ms_mou_init(s)) == NULL)
+X	{
+X		cprintf("Microsoft BusMouse *not* detected.\n");
+X		pseterr(ENXIO);
+X		return (char *) SYSERR;
+X	}
+X	s->mouse = *mouse;
+X	cprintf("Microsoft BusMouse detected and installed.\n");
+X	return (char *) s;
+}
+X
+static ms_mou_uninstall(s)
+struct stuff	*s;
+{
+X	sysfree(s, (long) sizeof(struct stuff));
+X	return OK;
+}
+X
+static ms_mou_open(s, d, f)
+struct stuff	*s;
+int		d;
+struct file	*f;
+{
+X	if (s->mouse.present == 0)
+X	{
+X		pseterr(ENXIO);
+X		return SYSERR;
+X	}
+X	if (s->mouse.active)
+X	{
+X		pseterr(EBUSY);
+X		return SYSERR;
+X	}
+X	s->mouse.active = 1;
+X	s->mouse.ready = s->mouse.dx = s->mouse.dy = 0;	
+X	s->mouse.buttons = 0x80;
+X	s->mouse.wait = 0;
+X	iointset(s->vector, ms_mou_interrupt, s);
+X	outb(MS_MSE_START, MS_MSE_CONTROL_PORT(s->port));
+X	MS_MSE_INT_ON(s->port);	
+X	return OK;
+}
+X
+static ms_mou_close(s, f)
+struct stuff	*s;
+struct file	*f;
+{
+X	MS_MSE_INT_OFF(s->port);
+X	s->mouse.active = s->mouse.ready = 0; 
+X	iointclr(s->vector);
+X	return OK;
+}
+X
+static ms_mou_select(s, f, which, ffs)
+struct stuff	*s;
+struct file	*f;
+struct sel	*ffs;
+{
+X	if (which == SREAD)
+X	{
+X		ffs->iosem = &s->mouse.wait;
+X		ffs->sel_sem = &s->sel_sem;
+X	}
+X	return OK;
+}
+X
+static ms_mou_inval(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	pseterr(EINVAL);
+X	return SYSERR;
+}
+X
+static ms_mou_read(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	int i, dx, dy;
+X
+X	if (count < 3)
+X	{
+X		pseterr(EINVAL);
+X		return SYSERR;
+X	}
+X	if (f->access_mode & FNDELAY)
+X	{
+X		if (!s->mouse.ready)
+X		{
+X			pseterr(EAGAIN);
+X			return SYSERR;
+X		}
+X	}
+X	else
+X		swait(&s->mouse.wait, SEM_SIGABORT);
+X	
+X	buffer[0] = s->mouse.buttons | 0x80;
+X	dx = s->mouse.dx < -127 ?
+X		-127 : (s->mouse.dx > 127 ?  127 :  s->mouse.dx);
+X	dy = s->mouse.dy < -127 ?
+X		127 : (s->mouse.dy > 127 ? -127 : -s->mouse.dy);
+X	buffer[1] = dx;
+X	buffer[2] = dy;
+X	bzero(buffer + 3, count - 3);
+X
+X	s->mouse.dx -= dx;
+X	s->mouse.dy += dy;
+X	s->mouse.ready = 0;
+X	sreset(&s->mouse.wait);
+X	return count;
+}
+X
+#include <dldd.h>
+X
+static struct dldd entry_points =
+{
+X	ms_mou_open,		/* OPEN */
+X	ms_mou_close,		/* CLOSE */
+X	ms_mou_read,		/* READ	*/
+X	ms_mou_inval,		/* WRITE */
+X	ms_mou_select,		/* SELECT */
+X	ms_mou_inval, 		/* IOCTL */
+X	ms_mou_install,		/* INSTALL */
+X	ms_mou_uninstall,	/* UNINSTALL */
+};
+X
+struct dldd *ms_entry_points = &entry_points;
+SHAR_EOF
+  $shar_touch -am 0623101295 'sys/drivers/bmouse/msbmouse.c' &&
+  chmod 0644 'sys/drivers/bmouse/msbmouse.c' ||
+  echo 'restore of sys/drivers/bmouse/msbmouse.c failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/msbmouse.c'`"
+  test 6202 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/msbmouse.c: original size 6202, current size $shar_count"
+fi
+# ============= sys/drivers/bmouse/ps2mouse.c ==============
+if test -f 'sys/drivers/bmouse/ps2mouse.c' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/drivers/bmouse/ps2mouse.c (file already exists)'
+else
+  echo 'x - extracting sys/drivers/bmouse/ps2mouse.c (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/drivers/bmouse/ps2mouse.c' &&
+/* this LynxOS driver relies heavily on a Linux driver, see below
+X * for copyrights and credits.
+X *
+X * LynxOS work by:
+X *
+X * Thomas Mueller
+X * SYSTRIX CS GmbH, Hindenburgring 31, 89077 Ulm (Germany)
+X * tm@systrix.de, lynx@systrix.de
+X *
+X * September 1994
+X */
+X
+/*
+X * linux/kernel/chr_drv/psaux.c
+X *
+X * Driver for PS/2 type mouse by Johan Myreen.
+X *
+X * Supports pointing devices attached to a PS/2 type
+X * Keyboard and Auxiliary Device Controller.
+X */
+#include <conf.h>
+#include <kernel.h>
+#include <file.h>
+#include <errno.h>
+#include <signal.h>
+#include <io.h>
+#include "inline.h"
+X
+#include <busmouse.h>
+X
+#ifdef DLDD
+#include "bmouseinfo.h"
+#else
+#include "../../dheaders/bmouseinfo.h"
+#endif
+X
+/* aux controller ports */
+#define AUX_INPUT_PORT(p)	(p)	/* Aux device output buffer */
+#define AUX_OUTPUT_PORT(p)	(p)	/* Aux device input buffer */
+#define AUX_COMMAND(p)		(p+4)	/* Aux device command buffer */
+#define AUX_STATUS(p)		(p+4)	/* Aux device status reg */
+X
+/* aux controller status bits */
+#define AUX_OBUF_FULL	0x21		/* output buffer (from device) full */
+#define AUX_IBUF_FULL	0x02		/* input buffer (to device) full */
+X
+/* aux controller commands */
+#define AUX_CMD_WRITE	0x60		/* value to write to controller */
+#define AUX_MAGIC_WRITE	0xd4		/* value to send aux device data */
+X
+#define AUX_INTS_ON	0x47		/* enable controller interrupts */
+#define AUX_INTS_OFF	0x65		/* disable controller interrupts */
+X
+#define AUX_DISABLE	0xa7		/* disable aux */
+#define AUX_ENABLE	0xa8		/* enable aux */
+X
+/* aux device commands */
+#define AUX_SET_RES	0xe8		/* set resolution */
+#define AUX_SET_SCALE11	0xe6		/* set 1:1 scaling */
+#define AUX_SET_SCALE21	0xe7		/* set 2:1 scaling */
+#define AUX_GET_SCALE	0xe9		/* get scaling factor */
+#define AUX_SET_STREAM	0xea		/* set stream mode */
+#define AUX_SET_SAMPLE	0xf3		/* set sample rate */
+#define AUX_ENABLE_DEV	0xf4		/* enable aux device */
+#define AUX_DISABLE_DEV	0xf5		/* disable aux device */
+#define AUX_RESET	0xff		/* reset aux device */
+X
+#define MAX_RETRIES	60		/* some aux operations take long time*/
+#define AUX_IRQ		12
+#define AUX_BUF_SIZE	2048
+X
+struct aux_queue
+{
+X	unsigned long head;
+X	unsigned long tail;
+X	unsigned char buf[AUX_BUF_SIZE];
+X	int           sema;
+};
+X
+struct stuff
+{
+X	int	port;		/* i/o port address		*/
+X	int	vector;		/* interrupt vector + 32	*/
+X
+X	int	*sel_sem;	/* select semaphore		*/
+X
+X	struct mouse_status mouse;	/* mouse/driver status	*/
+X	struct aux_queue	q;
+};
+X
+static int ps2_mou_interrupt();
+static int _poll_status();
+#define poll_status(s)	_poll_status(s,0)
+#define ppoll_status(s)	_poll_status(s,1)
+static void _aux_write_cmd();
+#define aux_write_cmd(s,x)	_aux_write_cmd(s,x,0)
+#define paux_write_cmd(s,x)	_aux_write_cmd(s,x,1)
+X
+/*
+X * Write to aux device
+X */
+static void aux_write_dev(s, val)
+struct stuff *s;
+{
+X	poll_status(s);
+X	outb(AUX_MAGIC_WRITE,AUX_COMMAND(s->port));	/* write magic cookie */
+X	poll_status(s);
+X	outb(val,AUX_OUTPUT_PORT(s->port));	/* write data */
+}
+X
+X
+/*
+X * Write aux device command
+X */
+X
+static void _aux_write_cmd(s, val, poll)
+struct stuff *s;
+{
+X	_poll_status(s, poll);
+X	outb(AUX_CMD_WRITE,AUX_COMMAND(s->port));
+X	_poll_status(s, poll);
+X	outb(val,AUX_OUTPUT_PORT(s->port));
+}
+X
+static int _poll_status(s, poll)
+struct stuff *s;
+{
+X	extern int	ssignal();
+X
+X	static int to;
+X	int retries = 0;
+X
+X	while ((inb(AUX_STATUS(s->port)) & 0x03) && retries++ < 2*MAX_RETRIES)
+X	{
+X		if (inb(AUX_STATUS(s->port)) & 0x01)
+X			inb(AUX_INPUT_PORT(s->port));
+X		if (poll)
+X		{
+X			int	i;
+X
+X			for (i = 0; i < 40000; i++)
+X				;
+X		}
+X		else
+X		{
+X			to = 0;
+X			if (timeout(ssignal, &to, 5) > 0)
+X				swait(&to, SEM_SIGIGNORE);
+X		}
+X	}
+X	return !(retries==2*MAX_RETRIES);
+}
+X
+X
+static struct mouse_status *ps2_mou_init(s)
+struct stuff *s;
+{
+X	static struct mouse_status mouse;
+X
+X	mouse.present = mouse.active = mouse.ready = 0;
+X	mouse.buttons = 0x80;
+X	mouse.dx = mouse.dy = 0;
+X	mouse.wait = 0;
+#if 0
+X	if (inb(MS_MSE_SIGNATURE_PORT(s->port)) == 0xde)
+X	{
+X		mse_byte = inb(MS_MSE_SIGNATURE_PORT(s->port));
+X
+X		for (i = 0; i < 4; i++) {
+X			if (inb(MS_MSE_SIGNATURE_PORT(s->port)) == 0xde) {
+X				if (inb(MS_MSE_SIGNATURE_PORT(s->port)) == mse_byte)
+X					mouse.present = 1;
+X				else
+X					mouse.present = 0;
+X			} else
+X				mouse.present = 0;
+X		}
+X	}
+#else
+X	mouse.present = 1;
+#endif
+X	if (mouse.present == 0)
+X		return NULL;
+#if 0
+X	MS_MSE_INT_OFF(s->port);
+#endif
+X	return &mouse;
+}
+X
+X
+static char *ps2_mou_install(info)
+struct mouseinfo	*info;
+{
+X	extern char	*sysbrk();
+X	struct stuff	*s;
+X	struct mouse_status *mouse;
+X
+X	if (!info->vector || !info->port)
+X	{
+X		pseterr(ENODEV);
+X		return (char *) SYSERR;
+X	}
+X	s = (struct stuff *) sysbrk((long)sizeof(struct stuff));
+X	if (!s)
+X	{
+X		pseterr(ENOMEM);
+X		return (char *)SYSERR;
+X	}
+X	bzero(s, sizeof(struct stuff));
+X	s->port = info->port;
+X	s->vector = info->vector;
+X	if ((mouse = ps2_mou_init(s)) == NULL)
+X	{
+X		cprintf("PS/2 Mouse port *not* detected.\n");
+X		pseterr(ENXIO);
+X		return (char *) SYSERR;
+X	}
+X	s->mouse = *mouse;
+X	cprintf("PS/2 Mouse detected and installed.\n");
+X
+X	ppoll_status(s);
+X	outb(AUX_DISABLE,AUX_COMMAND(s->port));	/* Disable Aux device */
+X	paux_write_cmd(s, AUX_INTS_OFF);	/* disable controller ints */
+X
+X	return (char *) s;
+}
+X
+static ps2_mou_uninstall(s)
+struct stuff	*s;
+{
+X	sysfree(s, (long) sizeof(struct stuff));
+X	return OK;
+}
+X
+static ps2_mou_open(s, d, f)
+struct stuff	*s;
+int		d;
+struct file	*f;
+{
+X	if (s->mouse.present == 0)
+X	{
+X		pseterr(ENXIO);
+X		return SYSERR;
+X	}
+X	if (s->mouse.active)
+X	{
+X		pseterr(EBUSY);
+X		return SYSERR;
+X	}
+X	if (!poll_status(s))
+X	{
+X		pseterr(EBUSY);
+X		return SYSERR;
+X	}
+X
+X	s->mouse.active = 1;
+X	s->mouse.ready = s->mouse.dx = s->mouse.dy = 0;	
+X	s->mouse.buttons = 0x80;
+X	s->mouse.wait = 0;
+X	s->q.head = s->q.tail = 0;  /* Flush input queue */
+X	s->q.sema = 0;
+X	s->sel_sem = NULL;
+X
+X	iointset(s->vector, ps2_mou_interrupt, s);
+#if 0
+X	outb(MS_MSE_START, MS_MSE_CONTROL_PORT(s->port));
+X	MS_MSE_INT_ON(s->port);	
+#endif
+X	aux_write_dev(s, AUX_ENABLE_DEV);	/* enable aux device */
+X	aux_write_cmd(s, AUX_INTS_ON);		/* enable controller ints */
+X	poll_status(s);
+X	outb(AUX_ENABLE,AUX_COMMAND(s->port));	/* Enable Aux */
+X
+X	return OK;
+}
+X
+static ps2_mou_close(s, f)
+struct stuff	*s;
+struct file	*f;
+{
+#if 0
+X	MS_MSE_INT_OFF(s->port);
+#endif
+X	aux_write_dev(s, AUX_DISABLE_DEV);	/* disable aux device */
+X	poll_status(s);
+X	outb(AUX_DISABLE,AUX_COMMAND(s->port));	/* Disable Aux device */
+X	aux_write_cmd(s, AUX_INTS_OFF);		/* disable controller ints */
+X
+X	s->mouse.active = s->mouse.ready = 0; 
+X	iointclr(s->vector);
+X	return OK;
+}
+X
+static ps2_mou_select(s, f, which, ffs)
+struct stuff	*s;
+struct file	*f;
+struct sel	*ffs;
+{
+X	if (which == SREAD)
+X	{
+X		ffs->iosem = &s->q.sema;
+X		ffs->sel_sem = &s->sel_sem;
+X	}
+X	return OK;
+}
+X
+static ps2_mou_inval(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	pseterr(EINVAL);
+X	return SYSERR;
+}
+X
+/*
+X * Interrupt from the auxiliary device: a character
+X * is waiting in the keyboard/aux controller.
+X */
+X
+static int ps2_mou_interrupt(s)
+struct stuff *s;
+{
+X	int	ps;
+X	int	head, tail;
+X
+X	disable(ps);
+X	tail = s->q.tail ? (s->q.tail - 1) : (AUX_BUF_SIZE - 1);
+X	head = s->q.head;
+X	s->q.buf[head] = inb(AUX_INPUT_PORT(s->port));
+X	if (head != tail)
+X	{
+X		s->q.head = (head + 1) & (AUX_BUF_SIZE - 1);
+X		ssignal(&s->q.sema);
+X		if (s->sel_sem)
+X			ssignal(s->sel_sem);
+X	}
+X	restore(ps);
+}
+X
+static unsigned int get_from_queue(queue)
+struct aux_queue *queue;
+{
+X	int	ps;
+X	unsigned int result;
+X	unsigned long flags;
+X
+X	disable(ps);
+X	result = queue->buf[queue->tail];
+X	queue->tail = (queue->tail + 1) & (AUX_BUF_SIZE-1);
+X	restore(ps);
+X	return result;
+}
+X
+X
+static int queue_empty(queue)
+struct aux_queue *queue;
+{
+X	int	ps;
+X	unsigned int result;
+X
+X	disable(ps);
+X	result = queue->head == queue->tail;
+X	restore(ps);
+X	return result;
+}
+X
+static ps2_mou_read(s, f, buffer, count)
+struct stuff	*s;
+struct file	*f;
+char	*buffer;
+{
+X	int	i;
+X
+X	if (queue_empty(&s->q) && (f->access_mode & FNDELAY))
+X	{
+X		pseterr(EAGAIN);
+X		return SYSERR;
+X	}
+X
+X	i = 0;
+#if 0
+X	if (minor(f->dev) == 1)
+X	{
+X		/* compatibility mode for our jurassic X386 
+X		 * X Server mouse interface
+X		 */
+X		int	ps;
+X
+X		if (count < 3)
+X			return 0;
+X
+X		disable(ps);
+X		if (s->q.sema >= 3)
+X		{
+X			swait(&s->q.sema, SEM_SIGABORT);
+X			*buffer++ = get_from_queue(&s->q);
+X			swait(&s->q.sema, SEM_SIGABORT);
+X			*buffer++ = get_from_queue(&s->q);
+X			swait(&s->q.sema, SEM_SIGABORT);
+X			*buffer++ = get_from_queue(&s->q);
+X			i = 3;
+X		}
+X		restore(ps);
+X		return i;
+X	}
+#endif
+X
+X	do
+X	{
+X		swait(&s->q.sema, SEM_SIGABORT);
+X		*buffer++ = get_from_queue(&s->q);
+X		i++;
+X	}
+X	while (i < count &&  !queue_empty(&s->q));
+X	return i;
+}
+X
+#include <dldd.h>
+X
+static struct dldd entry_points =
+{
+X	ps2_mou_open,		/* OPEN */
+X	ps2_mou_close,		/* CLOSE */
+X	ps2_mou_read,		/* READ	*/
+X	ps2_mou_inval,		/* WRITE */
+X	ps2_mou_select,		/* SELECT */
+X	ps2_mou_inval, 		/* IOCTL */
+X	ps2_mou_install,	/* INSTALL */
+X	ps2_mou_uninstall,	/* UNINSTALL */
+};
+X
+struct dldd *ps2_entry_points = &entry_points;
+SHAR_EOF
+  $shar_touch -am 0711143395 'sys/drivers/bmouse/ps2mouse.c' &&
+  chmod 0644 'sys/drivers/bmouse/ps2mouse.c' ||
+  echo 'restore of sys/drivers/bmouse/ps2mouse.c failed'
+  shar_count="`wc -c < 'sys/drivers/bmouse/ps2mouse.c'`"
+  test 8843 -eq "$shar_count" ||
+    echo "sys/drivers/bmouse/ps2mouse.c: original size 8843, current size $shar_count"
+fi
+# ============= sys/lynx.os/bmouse.cfg ==============
+if test ! -d 'sys/lynx.os'; then
+  echo 'x - creating directory sys/lynx.os'
+  mkdir 'sys/lynx.os'
+fi
+if test -f 'sys/lynx.os/bmouse.cfg' && test X"$1" != X"-c"; then
+  echo 'x - skipping sys/lynx.os/bmouse.cfg (file already exists)'
+else
+  echo 'x - extracting sys/lynx.os/bmouse.cfg (text)'
+  sed 's/^X//' << 'SHAR_EOF' > 'sys/lynx.os/bmouse.cfg' &&
+#
+#	PS/2 and other Bus mice
+#
+C:mouse: \
+X	:mou_open:mou_close:mou_read:mou_write: \
+X	:mou_select:mou_ioctl:mou_install:mou_uninstall
+#
+D:Mouse devices:mouseinfo::
+N:bmouselogitec:0:0666
+N:bmouseps2:1:0666
+N:bmousems:2:0666
+N:bmouseatixl:3:0666
+SHAR_EOF
+  $shar_touch -am 0711152595 'sys/lynx.os/bmouse.cfg' &&
+  chmod 0644 'sys/lynx.os/bmouse.cfg' ||
+  echo 'restore of sys/lynx.os/bmouse.cfg failed'
+  shar_count="`wc -c < 'sys/lynx.os/bmouse.cfg'`"
+  test 244 -eq "$shar_count" ||
+    echo "sys/lynx.os/bmouse.cfg: original size 244, current size $shar_count"
+fi
+exit 0

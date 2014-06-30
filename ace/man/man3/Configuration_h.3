@@ -1,0 +1,154 @@
+.TH Configuration_h 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+Configuration_h \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include "ace/pre.h"\fR
+.br
+\fC#include "ace/ACE.h"\fR
+.br
+\fC#include "ace/SString.h"\fR
+.br
+\fC#include "ace/Hash_Map_With_Allocator_T.h"\fR
+.br
+\fC#include "ace/Malloc.h"\fR
+.br
+\fC#include "ace/post.h"\fR
+.br
+
+.SS Compounds
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Configuration\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Configuration_ExtId\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Configuration_Heap\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Configuration_Section_IntId\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Configuration_Section_Key\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Configuration_Section_Key_Heap\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Configuration_Value_IntId\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Configuration_Win32Registry\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Section_Key_Internal\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Section_Key_Win32\fR"
+.br
+.in -1c
+.SS Defines
+
+.in +1c
+.ti -1c
+.RI "#define \fBACE_CONFIG_SECTION_INDEX\fR  "Config_Section_Index""
+.br
+.ti -1c
+.RI "#define \fBACE_DEFAULT_CONFIG_SECTION_SIZE\fR  16"
+.br
+.in -1c
+.SS Typedefs
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Allocator_Adapter\fR<\fBACE_Malloc\fR <ACE_MMAP_MEMORY_POOL, ACE_SYNCH_MUTEX> > \fBPERSISTENT_ALLOCATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Allocator_Adapter\fR<\fBACE_Malloc\fR <ACE_LOCAL_MEMORY_POOL, ACE_SYNCH_MUTEX> > \fBHEAP_ALLOCATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_With_Allocator\fR<\fBACE_Configuration_ExtId\fR, int> \fBSUBSECTION_MAP\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Manager_Ex\fR<\fBACE_Configuration_ExtId\fR, int, \fBACE_Hash\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Equal_To\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Null_Mutex\fR> \fBSUBSECTION_HASH\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Entry\fR<\fBACE_Configuration_ExtId\fR, int> \fBSUBSECTION_ENTRY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_With_Allocator\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Value_IntId\fR> \fBVALUE_MAP\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Manager_Ex\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Value_IntId\fR, \fBACE_Hash\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Equal_To\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Null_Mutex\fR> \fBVALUE_HASH\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Entry\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Value_IntId\fR> \fBVALUE_ENTRY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_With_Allocator\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Section_IntId\fR> \fBSECTION_MAP\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Manager_Ex\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Section_IntId\fR, \fBACE_Hash\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Equal_To\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Null_Mutex\fR> \fBSECTION_HASH\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Entry\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Section_IntId\fR> \fBSECTION_ENTRY\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+.PP
+\fBConfiguration.h\fR,v 4.30 2001/09/30 14:57:48 schmidt Exp
+.PP
+\fBAuthor(s): \fR
+.in +1c
+ Chris Hafey <chafey@stentor.com>
+.PP
+The \fBACE\fR configuration API provides a portable abstraction for program configuration similar to the Microsoft Windows registry.  The API supports a tree based hierarchy of configuration sections. Each  section contains other sections or values. Values may contain string,  unsigned integer and binary data.
+.PP
+Note: these classes are not thread safe, if multiple threads use these classes, you are responsible for serializing access.
+.PP
+For examples of using this class, see: 1) The test code in ACE_Wrappers/test 2) wxConfigViewer, a Windows like Registry Editor for \fBACE_Configuration\fR 3) TAO's IFR, it makes extensive use of \fBACE_Configuration\fR
+.PP
+\fB\fBTodo: \fR\fR
+.in +1c
+Templatize this class with an ACE_LOCK to provide thread safety
+.PP
+.SH DEFINE DOCUMENTATION
+.PP 
+.SS #define ACE_CONFIG_SECTION_INDEX  "Config_Section_Index"
+.PP
+.SS #define ACE_DEFAULT_CONFIG_SECTION_SIZE  16
+.PP
+.SH TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_Allocator_Adapter\fR<\fBACE_Malloc\fR <ACE_LOCAL_MEMORY_POOL, ACE_SYNCH_MUTEX> > HEAP_ALLOCATOR
+.PP
+.SS typedef \fBACE_Allocator_Adapter\fR<\fBACE_Malloc\fR <ACE_MMAP_MEMORY_POOL, ACE_SYNCH_MUTEX> > PERSISTENT_ALLOCATOR
+.PP
+.SS typedef \fBACE_Hash_Map_Entry\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Section_IntId\fR> SECTION_ENTRY
+.PP
+.SS typedef \fBACE_Hash_Map_Manager_Ex\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Section_IntId\fR, \fBACE_Hash\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Equal_To\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Null_Mutex\fR> SECTION_HASH
+.PP
+.SS typedef \fBACE_Hash_Map_With_Allocator\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Section_IntId\fR> SECTION_MAP
+.PP
+.SS typedef \fBACE_Hash_Map_Entry\fR<\fBACE_Configuration_ExtId\fR, int> SUBSECTION_ENTRY
+.PP
+.SS typedef \fBACE_Hash_Map_Manager_Ex\fR<\fBACE_Configuration_ExtId\fR, int, \fBACE_Hash\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Equal_To\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Null_Mutex\fR> SUBSECTION_HASH
+.PP
+.SS typedef \fBACE_Hash_Map_With_Allocator\fR<\fBACE_Configuration_ExtId\fR, int> SUBSECTION_MAP
+.PP
+.SS typedef \fBACE_Hash_Map_Entry\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Value_IntId\fR> VALUE_ENTRY
+.PP
+.SS typedef \fBACE_Hash_Map_Manager_Ex\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Value_IntId\fR, \fBACE_Hash\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Equal_To\fR<\fBACE_Configuration_ExtId\fR>, \fBACE_Null_Mutex\fR> VALUE_HASH
+.PP
+.SS typedef \fBACE_Hash_Map_With_Allocator\fR<\fBACE_Configuration_ExtId\fR, \fBACE_Configuration_Value_IntId\fR> VALUE_MAP
+.PP
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

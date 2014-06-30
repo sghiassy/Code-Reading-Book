@@ -1,0 +1,72 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Functions:DEMOGL_SoundSystemSetListener3DPosition</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::Functions::<b>DEMOGL_SoundSystemSetListener3DPosition</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<dl>
+<dt><h4>DEMOGL_SoundSystemSetListener3DPosition</h4>
+<dd>DEMOGL_SoundSystemSetListener3DPosition sets the position of the global listener, i.e. the user watching the application, in 3D space, 
+	inclusive its orientation. This way, the sound logic can calculate how the active sound channels will be heared by the 'user' at the 
+	global listeners position. There is one global listener position defined for all active channels. You can't have multiple listeners
+	for different 3D setups in different effects running at the same time.</a>
+	<p>
+	<pre>
+<b>int</b>
+DEMOGL_SoundSystemSetListener3DPosition(
+	<b><a HREF="ref_structures_SListener3DPosition.htm" target="main">SListener3DPosition</a> * const</b> <i>p3DPosition</i>
+);
+	</pre>
+<dt><b>Parameters.</b>
+<dd><dl>
+	<dt><i>p3DPosition</i>
+	<dd>Pointer to filled <a HREF="ref_structures_SListener3DPosition.htm" target="main">SListener3DPosition</a> structure with
+		the 3D position, orientation and velocity to apply to the 3D position of the listener, i.e. the camera.
+	</dl>
+<p>
+<dt><b>Return values.</b>
+<dd>If the function succeeds, it returns <i>SYS_OK</i>.<br>
+	If the function fails, it returns <i>SYS_NOK</i>.
+	<p>
+<dt><b>Remarks.</b>
+<dd>The position of the global listener is important for the sound logic
+	to calculate the actually sound behaviour of all the active channels when those sounds arrive at the spot where the global listener
+	is, if these channels are playing sound from elements which are loaded with 3D enabled. Channels playing sound data that
+	is owned by elements which are loaded with 3D disabled, are not affected by the position of the global listener. When you want to
+	make a moving global listener, and let the sound logic be able to update the current position to make the sounds appear correctly
+	you should call <b>DEMOGL_SoundSystemSetListener3DPosition</b> each frame, but only once per frame, not from each running effect, because
+	there is just one global listener.
+	<p>
+	<b>NOTE:</b> There is just <i>one</i> &nbsp;listener position in the sound system, because that's the way the underlying sound library
+	works. This way, you have to keep in mind that two or more effects visible at the same time with total different scenes have to use the
+	same global listener position for their 3D enabled sound channels. It will be odd at first, but it's the same way OpenGL works: there
+	is no camera, the frustum is always at (0,0,0) looking at the negative Z, the world is moved/rotated so it looks as if the 'camera' is
+	rotated/moved. Updating the global listener position in more than one effect in one frame is useless: only the last one will have any
+	effect.
+<p>
+<dt><b>Example.</b>
+<dd><p>
+<dt><b>Requirements.</b>
+<dd>DemoGL v1.3 (build 0112 or higher)
+	<p>
+<dt><b>See also.</b>
+<dd><a HREF="ref_structures_SListener3DPosition.htm" target="main">SListener3DPosition</a>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 18-jan-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

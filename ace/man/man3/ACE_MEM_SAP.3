@@ -1,0 +1,166 @@
+.TH ACE_MEM_SAP 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_MEM_SAP \- Defines the methods of shared memory management for shared memory transport. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <MEM_SAP.h>\fR
+.PP
+Inherited by \fBACE_MT_MEM_IO\fR, and \fBACE_Reactive_MEM_IO\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Malloc_T\fR<ACE_MMAP_MEMORY_POOL, \fBACE_Process_Mutex\fR, \fBACE_PI_Control_Block\fR> \fBMALLOC_TYPE\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_MMAP_Memory_Pool_Options\fR \fBMALLOC_OPTIONS\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual \fB~ACE_MEM_SAP\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "virtual int \fBinit\fR (ACE_HANDLE handle, const \fBACE_TCHAR\fR *name, \fBMALLOC_OPTIONS\fR *options) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBfini\fR ()"
+.br
+.ti -1c
+.RI "virtual int \fBrecv_buf\fR (\fBACE_MEM_SAP_Node\fR *&buf, int flags, const \fBACE_Time_Value\fR *timeout) = 0"
+.br
+.ti -1c
+.RI "virtual int \fBsend_buf\fR (\fBACE_MEM_SAP_Node\fR *buf, int flags, const \fBACE_Time_Value\fR *timeout) = 0"
+.br
+.ti -1c
+.RI "\fBACE_MEM_SAP_Node\fR* \fBacquire_buffer\fR (const \fBssize_t\fR size)"
+.br
+.RI "\fIrequest a buffer of size <size>. Return 0 if the <shm_malloc_> is not initialized.\fR"
+.ti -1c
+.RI "int \fBrelease_buffer\fR (\fBACE_MEM_SAP_Node\fR *buf)"
+.br
+.RI "\fIrelease a buffer pointed by <buf>. Return -1 if the <shm_malloc_> is not initialized.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBcreate_shm_malloc\fR (const \fBACE_TCHAR\fR *name, \fBMALLOC_OPTIONS\fR *options)"
+.br
+.ti -1c
+.RI "int \fBclose_shm_malloc\fR (void)"
+.br
+.RI "\fIClose down the share memory pool. Clean up the mmap file if we are the last one using it.\fR"
+.ti -1c
+.RI "\fBACE_MEM_SAP\fR (void)"
+.br
+.RI "\fIConstructor. Prevent this class from being instantiated.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "ACE_HANDLE \fBhandle_\fR"
+.br
+.ti -1c
+.RI "\fBMALLOC_TYPE\fR* \fBshm_malloc_\fR"
+.br
+.RI "\fIData exchange channel.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the methods of shared memory management for shared memory transport.
+.PP
+@Class ACE_MEM_SAP 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS typedef \fBACE_MMAP_Memory_Pool_Options\fR ACE_MEM_SAP::MALLOC_OPTIONS
+.PP
+.SS typedef \fBACE_Malloc_T\fR<ACE_MMAP_MEMORY_POOL, \fBACE_Process_Mutex\fR, \fBACE_PI_Control_Block\fR> ACE_MEM_SAP::MALLOC_TYPE
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_MEM_SAP::~ACE_MEM_SAP (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS ACE_MEM_SAP::ACE_MEM_SAP (void)\fC [protected]\fR
+.PP
+Constructor. Prevent this class from being instantiated.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS \fBACE_MEM_SAP_Node\fR * ACE_MEM_SAP::acquire_buffer (const \fBssize_t\fR size)
+.PP
+request a buffer of size <size>. Return 0 if the <shm_malloc_> is not initialized.
+.PP
+.SS int ACE_MEM_SAP::close_shm_malloc (void)\fC [protected]\fR
+.PP
+Close down the share memory pool. Clean up the mmap file if we are the last one using it.
+.PP
+.SS int ACE_MEM_SAP::create_shm_malloc (const \fBACE_TCHAR\fR * name, \fBMALLOC_OPTIONS\fR * options)\fC [protected]\fR
+.PP
+Create a new shm_malloc object. Return 0 if succeed and -1 otherwise. This method should only be called from an acceptor class that wants to create a new memory pool for inter process communication. 
+.SS void ACE_MEM_SAP::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS int ACE_MEM_SAP::fini ()\fC [virtual]\fR
+.PP
+Finalizing the MEM_SAP object. This method doesn't invoke the <remove> method. 
+.SS int ACE_MEM_SAP::init (ACE_HANDLE handle, const \fBACE_TCHAR\fR * name, \fBMALLOC_OPTIONS\fR * options)\fC [pure virtual]\fR
+.PP
+Initialize the MEM_SAP object. 
+.PP
+Reimplemented in \fBACE_Reactive_MEM_IO\fR, and \fBACE_MT_MEM_IO\fR.
+.SS int ACE_MEM_SAP::recv_buf (\fBACE_MEM_SAP_Node\fR *& buf, int flags, const \fBACE_Time_Value\fR * timeout)\fC [pure virtual]\fR
+.PP
+Fetch location of next available data into <recv_buffer_>. As this operation read the address of the data off the socket using \fBACE::recv\fR, <timeout> only applies to \fBACE::recv\fR. 
+.PP
+Reimplemented in \fBACE_Reactive_MEM_IO\fR, and \fBACE_MT_MEM_IO\fR.
+.SS int ACE_MEM_SAP::release_buffer (\fBACE_MEM_SAP_Node\fR * buf)
+.PP
+release a buffer pointed by <buf>. Return -1 if the <shm_malloc_> is not initialized.
+.PP
+.SS int ACE_MEM_SAP::send_buf (\fBACE_MEM_SAP_Node\fR * buf, int flags, const \fBACE_Time_Value\fR * timeout)\fC [pure virtual]\fR
+.PP
+Wait to to <timeout> amount of time to send <buf>. If <send> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes sent is returned. 
+.PP
+Reimplemented in \fBACE_Reactive_MEM_IO\fR, and \fBACE_MT_MEM_IO\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_MEM_SAP::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS ACE_HANDLE ACE_MEM_SAP::handle_\fC [protected]\fR
+.PP
+.SS \fBMALLOC_TYPE\fR * ACE_MEM_SAP::shm_malloc_\fC [protected]\fR
+.PP
+Data exchange channel.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

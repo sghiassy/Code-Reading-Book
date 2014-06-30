@@ -1,0 +1,387 @@
+                  Apache Tomcat Version 4.0 Beta 2
+                  =================================
+                            Release Notes
+                            =============
+
+$Id: RELEASE-NOTES-4.0-B2.txt,v 1.6 2001/03/31 00:00:08 craigmcc Exp $
+
+
+============
+INTRODUCTION:
+============
+
+
+This document describes the changes that have been made in the current
+beta release of Apache Tomcat, relative to the previous release.
+
+Bug reports should be entered at the interim bug reporting system for
+Jakarta projects at:
+
+        http://nagoya.apache.org/bugzilla/
+
+Please use project codes "Catalina" and "Jasper" for servlet-related and
+JSP-related bug reports, respectively.
+
+
+------------------------
+Important Security Notes:
+------------------------
+
+This release includes fixes for two security vulnerabilities that have been
+reported against Tomcat 4.0 beta 1:
+
+* A "cross site scripting" vulnerability would cause the enclosed JavaScript
+  code to be executed (on the client) with a URL like:
+
+  http://localhost:8080/<SCRIPT>alert(document.cookie)</SCRIPT).xyz
+
+* Incorrect URL decoding of the request URI would cause JSP page source code
+  to be displayed, and/or security constraints to be bypassed, for URLs like:
+
+  http://localhost:8080/examples/jsp/snp/snoop.js%70
+
+
+============
+NEW FEATURES:
+============
+
+
+---------------------
+Catalina New Features:
+---------------------
+
+Default WEB.XML File:  Add MIME type mappings for WAP related content types.
+
+WebdavServlet:  Add a Microsoft-specific header in response to an OPTIONS
+request, mirroring what mod_dav is doing.
+
+Valve API:  Change the API for Valves so that it properly implements the
+"inversion of control" design pattern, and is more similar to the API design
+pattern implemented by javax.servlet.Filter.
+
+JNDI Naming Context:  Implement a JNDI naming context for use by applications
+(for the <env-entry> and <resource-ref> elements) and by Catalina (for access
+to static resources of the web application).
+
+Security Manager:  Web applications are now run under a security manager,
+providing fine-grained control over what web apps can do.
+
+Web Application Archives:  You can now configure Tomcat 4.0 to run web
+applications directly from a WAR file, instead of having to expand them.
+
+Default Context Configuration:  You can now specify a default set of
+configuration directives for contexts that are not explicitly defined.
+
+Servlet API Changes:  Implement the servlet API changes that have been
+approved by the JSR-053 Expert Group, and will appear in the next release
+of the specification.
+
+Resource Factory for javax.mail.Session Objects:  You can now use the
+<resource-ref> element in a web.xml file (and the corresponding resource
+configuration in server.xml) to create javax.mail.Session objects automatically
+without having to specify your own factory.
+
+
+-------------------
+Jasper New Features:
+-------------------
+
+Security Manager:  Adapt Jasper to the new feature of running web applications
+under a security manager.
+
+Per-Page Class Loader:  Each JSP page is now run in its own class loader.  This
+eliminates the requirement to kludge the class name in the class file itself.
+This change also improves the performance of JSP pages.
+
+Session Persisence:  Implement a PersistentManager that can swap sessions out
+of memory, as well as save them persistently.
+
+XML Parser Class Loader:  Load the XML parser used by by Jasper from a separate
+class loader, which eliminates most cases of "package sealing violation" errors
+when a web application wishes to use Xerces.  See the "KNOWN ISSUES" section
+for more information on this topic.
+
+Run From WAR File:  Jasper has been modified so that it should be possible to
+run web applications using JSP pages directly from an unpacked WAR file (or
+any other repository that provides appropriate URL stream handlers).
+
+JSP API Changes:  Implement the JSP API changes that have been approved by
+the JSR-053 Expert Group, and will appear in the next release of the
+specification.
+
+
+--------------------
+Webapps New Features:
+--------------------
+
+CompressionFilter:  A new example Filter implementation that performs
+on-the-fly GZIP compression (if the client supports it, and if the response
+is larger than a configurable size).  See the source file
+"/WEB-INF/classes/compressionFilters/CompressionFilter.java" in the example
+application.
+
+Manager Application:  The manager application has been enhanced to return the
+status of each web application (running or stopped) and the number of current
+active sessions, in the list command.  You can also request a list of the
+session information for all active sessions.
+
+Server Side Includes:  Initial implementation of a pre-installed servlet that
+performs server-side include processing on *.shtml files (except for #exec).
+
+
+==========================
+BUG FIXES AND IMPROVEMENTS:
+==========================
+
+
+------------------
+Catalina Bug Fixes:
+------------------
+
+DefaultServlet:  Return dates on directory listings in GMT format.
+
+WebdavServlet:  When a PROPFIND is done on a collection which has an encoded
+URI, the href elements being returned were incorrect.
+
+HttpConnector:  Make sure that Tomcat will bind to only one IP address when
+a hostname is specified.
+
+AccessLogValve:  Fix potential for incorrectly named log files.
+
+ResponseBase:  setBufferSize() should throw IllegalStateException if any
+output has been written, *or* the response has been committed.
+
+StandardClassLoader:  Fix a NullPointerException when the manifest file
+is missing.
+
+HttpRequestBase:  Don't try to read parameters if the stream has already
+been opened.
+
+WebdavServlet:  Make the DAV collection enumeration code more robust.
+
+FileResources:  Fix rare NullPointerExceptions when File.list() returns null.
+
+DefaultServlet:  Fix inclusion problem by catching the IllegalStateException
+which can be thrown by the servlet container.
+
+WebdavServlet:  Update PROPFIND to use streaming.
+
+ApplicationContext:  Return null from HttpServletRequest.getPathTranslated()
+and ServletContext.getRealPath() if current resources are not filesystem based.
+
+HttpResponseBase:  Correct isEncodeable() to correctly assume a default port
+of 443 for https, rather than always assuming the default port is 80.
+
+Catalina:  The shutdown process now looks up "127.0.0.1" instead of
+"localhost" when checking for a valid shutdown source.
+
+DefaultServlet:  Encode unsafe characters in the generated hyperlinks.
+
+HttpRequestBase:  Improve internationalization support when decoding parameters
+in a POST request.
+
+DefaultServlet:  Encode and decode paths using UTF-8, and change the encoding
+name to UTF8 (UTF-8 is not present in early Java2 versions).
+
+WebdavServlet:  Rewrite display names in PROPFIND responses.
+
+DefaultServlet:  Fix more i18n issues with the directory browser.
+
+HttpResponseBase:  Return a status report for every status except 200/304,
+emulating Apache 1.3.x behavior as closely as possible.  Don't add a
+"Content-Length: 0" when status is 304.
+
+HttpSession:  Fix a NullPointerException.
+
+HttpRequestImpl:  Perform header name comparisons in lower case.
+
+JDBCRealm:  Trim whitespace on reads from the database.
+
+ApplicationDispatcher:  Change the propogation method for exceptions thrown
+by included or forwarded-to servlets.
+
+StandardManager/StandardSession:  Remove "final" declaration so these classes
+can be subclassed.
+
+StandardServer:  Correct the loop control for validating a reversed IP address.
+
+Bootstrap:  Do not add jndi.jar to the classpath if it is already available
+via the system classloader (i.e. a JDK 1.3 environment).
+
+StandardContext:  Fix an initialization problem when listeners and filters
+couldn't be loaded if they were in a JAR file, or if they were in
+/WEB-INF/classes and at least one JAR file was present in /WEB-INF/lib.
+
+AccessLogValve:  Do not resolve host names by default.
+
+HttpRequestStream:  Fix handling of unsigned bytes.
+
+StandardWrapperValve:  Correctly report the actual exception that occurred
+to the error page, as well as the other request attributes.
+
+HttpRequestStream:  Fix a chunking bug.
+
+ApplicationContext:  Fix a Watchdog failure on GetResource_1Test.
+
+Bootstrap:  Add the classes directory last for class loaders.
+
+HttpResponseImpl:  Do not necessarily close the connection if the status
+is >= 400.
+
+HttpResponseImpl:  Only set content length to zero if it is not an error.
+
+BasicAuthenticator/DigestAuthenticator:  Do not set content length to zero.
+
+ResponseStream:  Correctly support an offset on the write() method.
+
+DefaultServlet:  Set the content length when doing a single ranged request,
+which fixes problems with the HTTP seek feature.
+
+HttpResponseImpl/HttpResponseStream:  Allow chunking on status 206.
+
+DefaultServlet:  POST should be treated like GET.
+
+FormAuthenticator:  Restore correct operation of formn based login.
+
+HttpResopnseStream:  An end chunk could be printed in the middle of a
+response if write(byte[] b, int off, int len) was called with len = 0.
+
+HttpConnector:  If an accept exception occurs, close and reopen the
+server socket.
+
+HttpProcessor:  Don't log interrupted I/O exceptions unless debug > 1.
+
+StandardWrapper:  Modify the special case treatment of loading the Jasper
+servlet so that it works when you use <jsp-file>, as well as for the usual
+declaration of the JSP servlet.
+
+DefaultServlet:  Make most methods protected instead of private, to ease
+subclassing.
+
+EjbFactory:  Correct lookups of object factories for <ejb-link>.
+
+Configuration Documentation:  Added configuration documentation details for the
+<Logger>, <Realm>, and <Valve> elements.
+
+DirContextURLStreamHandler: Fix NullPointerExceptions that occurred during
+openStream() operations under some circumstances.
+
+ApplicationContext:  Add support for immutable servlet context attributes
+(i.e. you cannot remove or replace them), and apply this to the class loader
+and class path passed to Jasper.
+
+DefaultServlet:  Add query parameters before sending a redirect.
+
+JDBCRealm: Correct password digest encoding so that it is compatible with the
+techniques used in Tomcat 3.x.
+
+StandardContext:  Create JNDI entries for EJB references, resource references,
+and resource environment references in the "java:comp/env" context (as the
+J2EE spec requires), rather than "java:comp".
+
+Deployer:  Deployment semantics have been modified so that directories unpacked
+as part of deployment will not be arbitrarily removed at undeployment time.
+
+HttpRequestBase:  Correct implementation of isUserInRole() so that it properly
+respects role name aliases defined with <security-role-ref> elements.
+
+Bootstrap:  Rearrange the order in which repositories are added when Catalina
+classloaders are created so that the "classes" directory (for a given class
+loader) always overrides any JAR files in the corresponding "lib" directory.
+This is consistent with the way web application class loaders are defined.
+
+HttpResponseBase:  Fix NullPointerException thrown when establishing a new
+session when the client has disabled cookies.
+
+ResponseBase:  Fix problems that surfaced with IE5.5 when there is an error
+in a JSP file that was included with <jsp:include ... flush="true"/>.
+
+RequestUtil:  Fix a compilation problem with Jikes.
+
+
+----------------
+Jasper Bug Fixes:
+----------------
+
+JspParseEventListener:  Fix a potential race condition on _jspx_init().
+
+JspServlet:  Normalize the path (and use File.toURL()) to make sure the
+URL is valid.
+
+Parser:  It is up to the tag implementation to process the body of a
+tagdependent tag.
+
+BodyContentImpl:  Remove buffer allocation and array copy to improve
+performance.
+
+ParserController:  JSPC did not work well under Windows since the file
+separator character was assumed to be "/".
+
+SimplePool:  Fix a race condition.
+
+JspCompiler:  Avoid generating NullPointerExceptions when the resource
+does not exist.
+
+JspEngineContext:  Correct bad classpaths generated from non-file: URLs.
+
+JspParseEventListener:  Handle the empty element case.  Among other things,
+this allows Jasper to run correctly when using Xerces 1.3.0 instead of the
+JAXP 1.1 reference implementation, if this is desired.
+
+ParseXJspSaxHandler:  Correctly deal with <jsp:params> elements inside a
+<jsp:plugin> element when parsing a JSP page in XML syntax.
+
+
+============================
+KNOWN ISSUES IN THIS RELEASE:
+============================
+
+------------------------------------------
+Redeploying From a Web Application Archive:
+------------------------------------------
+
+If you attempt to undeploy, then redeploy, an application from the same
+web application archive file URL (where the URL refers to an actual WAR
+file, not to a directory), the redeploy will fail with error "zip file is
+closed".  There appears to be a problem in the JDK's JarURLConnection class
+where JAR files are cached, even after they are closed, so that a request
+for a connection to the same URL returns the previous JarFile object instead
+of a new one.  As a workaround, you should do one of the following:
+* Change the URL of the web application archive each time you redeploy.
+* Deploy from an unpacked directory (on the same server) instead of from
+  a WAR file (this is often more convenient in a development environment
+  anyway).
+
+--------------------------
+Tomcat 4.0 and XML Parsers:
+--------------------------
+
+Previous versions of Tomcat 4.0 exposed the XML parser used by Jasper (the
+JAXP/1.1 reference implementation) to web applications.  This is no longer
+the case, because Jasper loads its parser with a new class loader instead.
+Keep the following points in mind when considering how to use XML parsers
+in Tomcat 4.0 and your web applications:
+
+* If you wish to make the JAXP/1.1 RI XML parser available to all web
+  applications, simply move the "jaxp.jar" and "crimson.jar" files from
+  the "$TOMCAT_HOME/jasper" directory to the "$TOMCAT_HOME/lib" directory.
+
+* If you wish to make another XML parser that is JAXP/1.1-compatible
+  available to all web applications, install that parser into the
+  "$TOMCAT_HOME/lib" directory and remove "jaxp.jar" and "crimson.jar"
+  from the "$TOMCAT_HOME/jasper" directory.  It has been reported that
+  Xerces 1.3.1 can be used in this fashion, but 2.x alpha releases
+  can not be.
+
+* If you wish to use an XML parser (such as Xerces) in the WEB-INF/lib
+  directory of your web application, this should now be possible, because
+  of the modified JAXP 1.1 parser mentioned below.
+
+WARNING:  Tomcat 4.0 now ships with a modified version of the JAXP/1.1
+(Final) "jaxp.jar" and "crimson.jar" files in the "jasper" subdirectory.
+The "sealed" attribute has been removed from the manifest file for these
+two JARs, to avoid "package sealing violation" errors that were caused by
+them in a JDK 1.3 environment.  You MUST NOT replace these files with a
+different (or later) release of JAXP, unless that later release has had
+the sealed attribute removed, or you will encounter "package sealing violation"
+errors when trying to use a different XML parser in a web application.

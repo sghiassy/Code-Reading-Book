@@ -1,0 +1,43 @@
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/accel/mach64/Imakefile,v 3.6 1997/01/05 11:53:36 dawes Exp $
+
+
+
+
+
+
+XCOMM $XConsortium: Imakefile /main/5 1996/10/27 18:06:00 kaleb $
+
+#include <Server.tmpl>
+
+SRCS = ativga.c mach64.c mach64blt.c mach64bstor.c mach64cmap.c mach64curs.c \
+	mach64fcach.c mach64fifo.c mach64font.c mach64frect.c mach64fs.c \
+	mach64gc.c mach64im.c mach64init.c mach64line.c mach64orect.c \
+	mach64pcach.c mach64pntwn.c mach64scrin.c mach64seg.c mach64text.c \
+	mach64util.c mach64win.c vgaHW.c
+
+OBJS = ativga.o mach64.o mach64blt.o mach64bstor.o mach64cmap.o mach64curs.o \
+	mach64fcach.o mach64fifo.o mach64font.o mach64frect.o mach64fs.o \
+	mach64gc.o mach64im.o mach64init.o mach64line.o mach64orect.o \
+	mach64pcach.o mach64pntwn.o mach64scrin.o mach64seg.o mach64text.o \
+	mach64util.o mach64win.o vgaHW.o
+
+INCLUDES = -I$(XF86COMSRC) -I. -I$(XF86SRC)/vga256/vga \
+	   -I$(SERVERSRC)/mfb -I$(SERVERSRC)/mi -I$(SERVERSRC)/include \
+           -I$(SERVERSRC)/cfb -I$(XINCLUDESRC) -I$(FONTSRC)/include \
+	   -I$(FONTINCSRC) -I$(XF86OSSRC) -I$(XF86HWSRC)
+
+DEFINES = -DMACH64_SERVER -DPSZ=8
+
+NormalLibraryObjectRule()
+
+NormalAsmObjectRule()
+
+NormalLibraryTarget(mach64,$(OBJS))
+
+LinkSourceFile(vgaHW.c,../../vga256/vga)
+
+InstallLinkKitLibrary(mach64,$(LINKKITDIR)/drivers)
+
+#ifndef OS2Architecture
+DependTarget()
+#endif

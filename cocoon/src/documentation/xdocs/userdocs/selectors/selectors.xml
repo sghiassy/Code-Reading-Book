@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>Selectors</title>
+		<version>0.9</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Carsten Ziegeler" email="cziegeler@apache.org"/>
+			<person name="Gianugo Rabellino" email="gianugo@rabellino.it"/>
+		 </authors>
+		 <abstract>This document describes all available selectors of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="Goal">
+			<p>
+      This document lists all available selectors of Apache Cocoon and
+      describes their purpose.
+      See also the concepts document
+      <link href="../concepts/matchers_selectors.html">Using and Implementing
+      Matchers and Selectors</link>.
+      </p>
+		 </s1>
+		 <s1 title="Overview">
+			<p>
+      Selectors in Apache Cocoon have a role similar to matchers 
+      while being more flexible. Like matchers they are designed
+      to test something against a part of the environment (the
+      request URI, headers, cookies and so on), but unlike matchers
+      they can be active decision driving components.
+      A matcher allows only for simple 
+      "yes/no" decisions: the match can be succesful or not, if it
+      is the pipeline is executed, if not it's simply ignored. 
+      Selectors go a step further allowing for more complex
+      use cases, where there is need for a decision to be
+      made according to a multiple chance scenario. In short you can 
+      think of matchers as an "if" statement, while selectors have all
+      the power of an "if-else if-else" or "switch-case" construct.
+      The selector syntax is similar will be familiar to people
+      using the XSLT <code>&lt;xsl:test&gt;</code> statement.
+      </p>
+      <p>
+      As an example consider the typical scenario where a page has to
+      be rendered in different way according to the browser being 
+      used. There are plenty of browsers out there so expressing this
+      need as a set of matchers might become ankward and counterintuitive. 
+      Using the BrowserSelector, which checks a given pattern
+      against the user-agent header, it's easy to deploy a consistent 
+      and readable setup:
+      </p>
+<source>
+<![CDATA[
+<map:match pattern="docs/*.html">
+  <map:generate src="xdocs/{1}.xml"/>
+ 
+  <map:select type="browser">
+    <map:when test="netscape">
+      <map:transform src="stylesheets/netscape.xsl" />
+    </map:when>
+    <map:when test="explorer">
+      <map:transform src="stylesheets/ie.xsl" />
+    </map:when>
+    <map:when test="lynx">
+      <map:transform src="stylesheets/text-based.xsl" />
+    </map:when>
+    <map:otherwise>
+      <map:transform src="stylesheets/html.xsl" />
+    </map:otherwise>
+  </map:select>
+
+  <map:serialize/>
+</map:match>
+]]>
+</source>
+      
+		 </s1>
+		 <s1 title="The Selectors in Cocoon">
+			<p>
+      These are the available Selectors in Cocoon:
+      </p>
+			<ul>
+				<li><strong>BrowserSelector</strong>: matches the value of the "test"
+        parameter against the HTTP User-Agent header, allowing to 
+        recognize the browser being used;</li>
+        
+				<li><strong>CodeSelector</strong>: matches a snippet of Java code
+        given as the "test" parameter against the environment;</li>
+
+				<li><strong>HostSelector</strong>: matches the "test" parameter value
+        against the Host request header</li>
+
+				<li><strong>ParameterSelector</strong>: matches the string specified
+        in the "test" parameter against a specified Cocoon internal
+        (e.g. sitemap) parameter;</li>
+
+				<li><strong>HeaderSelector</strong>: same as the Parameter selector,
+        but matches against the request headers;</li>
+
+				<li><strong>RequestSelector</strong>: again, same as the Parameter selector,
+        but matches against the Request parameters;</li>
+
+				<li><strong>SessionSelector</strong>: finally, this selector is used as
+        the Parameter selector to match against an arbitrary session
+        attribute;</li>
+
+			</ul>
+		</s1>
+	</body>
+</document>

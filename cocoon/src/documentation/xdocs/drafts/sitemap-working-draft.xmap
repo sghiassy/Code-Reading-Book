@@ -1,0 +1,600 @@
+<?xml version="1.0"?>
+
+<!-- =============== Cocoon Sitemap Working Draft ============================
+
+ Copyright (C) 2000 The Apache Software Foundation. All rights reserved.
+ 
+ Redistribution of this document is permitted provided that the following 
+ conditions are met:
+ 
+ 1. Redistributions must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+
+ 2. This document is referred to and considered only as "working draft".
+ 
+ 3. Any software implementation inspired by this document must indicate
+    in its documentation: 
+
+     "inspired by research and development on behalf of the 
+      Apache Software Foundation"
+ 
+ 4. The names "Cocoon" and  "Apache Software Foundation"  must not be used to
+    endorse  or promote  products inspired  from this  document without  prior
+    written permission. For written permission, please contact
+    apache@apache.org.
+ 
+ 5. Products  derived from this document may not  be called "Cocoon", nor may
+    "Cocoon" nor "Apache" appear in their name, without prior written
+    permission  of the Apache Software Foundation.
+ 
+ THIS DOCUMENT IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+ INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+ FITNESS  FOR A PARTICULAR  PURPOSE ARE  DISCLAIMED.  IN NO  EVENT SHALL  THE
+ APACHE SOFTWARE  FOUNDATION  OR ITS CONTRIBUTORS  BE LIABLE FOR  ANY DIRECT,
+ INDIRECT, INCIDENTAL, SPECIAL,  EXEMPLARY, OR CONSEQUENTIAL  DAMAGES (INCLU-
+ DING, BUT NOT LIMITED TO, PROCUREMENT  OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ OF USE, DATA, OR  PROFITS; OR BUSINESS  INTERRUPTION)  HOWEVER CAUSED AND ON
+ ANY  THEORY OF LIABILITY,  WHETHER  IN CONTRACT,  STRICT LIABILITY,  OR TORT
+ (INCLUDING  NEGLIGENCE OR  OTHERWISE) ARISING IN  ANY WAY OUT OF THE  USE OF
+ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ 
+ This document  consists of voluntary contributions made  by many individuals
+ on  behalf of the Apache Software  Foundation. For more information on the 
+ Apache Software Foundation, please see <http://www.apache.org/>.
+
+==============================================================================
+
+This document contains an example used as a working draft for 
+Cocoon architects to test and understand the issues associated with 
+sitemaps and XML publishing in general. It must be considered as a working 
+draft and may be updated at any time.
+
+This document is based on ideas and design patterns inspired by Stefano 
+Mazzocchi <stefano@apache.org> and Pierpaolo Fumagalli <pier@apache.org>
+but grew as a collaborative effort to provide a solid foundation of
+design patterns and usability guidelines to the Cocoon Publishing 
+Framework.
+
+The goal of the sitemap is to allow non-programmers to create web sites
+and web applications built from logic components and XML documents.
+
+It finds inspiration from both Apache's httpd.conf/.htaccess files as well
+as from Servlet API 2.2 WAR archives. It uses concepts such as Cascading
+from W3C CSS, as well as declarative approaches integrated into the W3C 
+XSLT language. It also uses some element/attribute equivalence patterns
+used in W3C RDF.
+
+The following goals were identified as engineering constraints:
+
+ - minimal verbosity is of maximum importance.
+ - the schema should be sufficiently expressive to allow learning by
+   examples.
+ - sitemap authoring should not require assistive tools, but be
+   sufficiently future-compatible to allow them.
+ - sitemaps must scale along with the site and should not impose growth
+   limitation to the site as a whole nor limit its administration with size
+   increase.
+ - sitemaps should contain all the information required to Cocoon to
+   generate all the requests it receives.
+ - sitemaps should contain information for both dynamic operation as
+   well as offline static generation.
+ - uri mapping should be powerful enough to allow every possible mapping
+   need.
+ - basic web-serving functionalities (redirection, error pages,
+   resource authorisation) should be provided.
+ - sitemaps should not limit Cocoon's intrinsic modular extensibility.
+ - resources must be matched with all possible state variables, not
+   only with URI (http parameters, enviornment variables, server
+   parameters, time, etc...).
+ - sitemaps should embed the notion of "semantic resources" to be
+   future-compatible with sematic crawling and indexing.
+ - sitemaps should be flexible enough to allow a complete web site to
+   be built with Cocoon.
+ - sitemaps should include the notion of "multi-dimensional resource views"
+   even if HTTP doesn't provide them explicitly.
+ - sitemaps should include the ability to provide resource creation tracing 
+   and error handling.
+
+  The default namespaces are used mainly for versioning, instead of using 
+  attributes such as version="1.0" which could create confusion. People are 
+  used to writing URIs with no spelling mistakes, while versioning could be 
+  used for their own sitemap versions and this might break operation.
+  
+  The versioning schema will be "major.minor" where major will be increased
+  by one each time a new release breaks back compatibility, while minor
+  is increased each time a change has been made that doesn't create
+  back incompatible problems.
+
+  The syntax
+    
+      <xxx map:value="yyy">
+      
+  is completely equivalent to
+    
+      <xxx>yyy</xxx>
+      
+  throughout the entire sitemap.
+
+============================================================================ -->
+ 
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+             xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance"
+             xsi:schemaLocation="sitemap-working-draft.xsd">
+<!--         xsi:schemaLocation="http://apache.org/cocoon/sitemap/1.0/schema"> -->
+
+<!-- =========================== Components ================================ --> 
+
+ <map:components>
+
+   <!-- 
+       Generators generate XML content as SAX events and initialize the 
+       pipeline processing.
+   -->
+  <map:generators default="parser">
+   <map:generator name="parser" src="class:///org.apache.cocoon.generation.FileGenerator" label="content"/>
+   <map:generator name="dir"    src="file:///home/mystuff/java/MyDirGenerator.class"     label="content"/>
+   <map:generator name="serverpages"    src="class:///org.apache.cocoon.generation.XSPGenerator" label="content">
+    ...
+   </map:generator>
+  </map:generators>
+
+   <!-- 
+       Transformers transform SAX events in SAX events.
+   -->
+  <map:transformers default="xslt">
+   <map:transformer name="xslt" src="class:///org.apache.cocoon.transformation.XSLTTransformer">
+    <compile-stylesheets map:value="true"/>
+   </map:transformer>
+   <map:transformer name="xinclude" src="class:///org.apache.cocoon.transformation.XIncludeTransformer" label="content"/>
+   <map:transformer name="schema" src="class:///org.apache.cocoon.transformation.SchemaLoader"/>
+   <map:transformer name="rdf" src="class:///org.apache.cocoon.transformation.RDFizer"/>
+  </map:transformers>
+ 
+   <!--  
+       Readers generate and serialize directly from a resource in binary or char streams for  
+       final client consumption. 
+   --> 
+  <map:readers default="binary">
+   <map:reader name="binary" mime-type="image/svg" src="class:///org.apache.cocoon.reading.BinaryReader"/> 
+  </map:readers> 
+ 
+   <!--  
+       Serializers serialize SAX events in binary or char streams for  
+       final client consumption. 
+   --> 
+  <map:serializers default="html">
+   <map:serializer name="html" mime-type="text/html" src="class:///org.apache.cocoon.serialization.HTMLSerializer">
+    <doctype-public map:value="-//W3C//DTD HTML 4.0 Transitional//EN"/>
+    <doctype-system map:value="http://www.w3.org/TR/REC-html40/loose.dtd"/>
+    <preserve-space map:value="true"/>
+    <encoding map:value="UTF-8"/>
+    <indent tab="8">1</indent>
+    <colors>
+     <foreground map:value="white"/>
+     <borders>
+      <left map:value="blue"/>
+      <right>red</right>
+     </borders>
+     <text>black</text>
+     <lines>
+      <left map:value="cyan"/>
+      <right>orange</right>
+     </lines>
+     <background>green</background>
+    </colors>
+    <map:param name="foo" value="bar"/>
+    <map:param name="baz">foobar</map:param>
+    <line-width map:value="120"/>
+   </map:serializer>
+
+   <map:serializer name="wap" mime-type="text/vnd.wap.wml" src="class:///org.apache.cocoon.serialization.XMLSerializer">
+    <doctype-public>-//WAPFORUM//DTD WML 1.1//EN</doctype-public>
+    <doctype-system>http://www.wapforum.org/DTD/wml_1.1.xml</doctype-system>
+    <encoding>UTF-8</encoding>
+   </map:serializer>
+
+   <map:serializer name="svg2jpg" mime-type="image/jpg" src="class:///org.apache.cocoon.serialization.SVGSerializer">
+    <format map:value="jpg"/>
+    <compression-level>80%</compression-level>
+   </map:serializer>
+
+   <map:serializer name="svg2png" mime-type="image/png" src="class:///org.apache.cocoon.serialization.SVGSerializer">
+    <format>png</format>
+    <color-depth map:value="24"/>
+   </map:serializer>
+  </map:serializers>
+  
+   <!-- 
+       Selectors are classes that contain programming logic that perform
+       boolean evaluation based on enviornment state during the call (state
+       includes request parameters, machine state as well as any other
+       accessible information)
+       
+       Selectors can only respond with true/false when called.
+   -->
+  <map:selectors default="browser">
+   <map:selector name="load" src="class:///org.apache.cocoon.selection.MachineLoadSelector">
+    ...
+   </map:selector>
+
+   <map:selector name="user" src="class:///org.apache.cocoon.selection.AuthenticationSelector">
+    ...
+   </map:selector>
+
+   <map:selector name="ip-filter" src="class:///org.apache.cocoon.selection.IPFilterSelector">
+    ...
+   </map:selector>
+
+   <map:selector name="browser" factory="org.apache.cocoon.selection.BrowserSelectorFactory">
+    ...
+   </map:selector>
+  </map:selectors>
+
+   <!--
+       Matchers are classes that are able to test if the request parameters
+       match the given pattern and, if this is the case, they are able to
+       return a Map of tokens that resulted from the matching or any
+       depending on the matcher own logic (this is up to the matcher implementation).
+   -->
+  <map:matchers default="uri-wildcard">
+   <map:matcher name="uri-wildcard" src="org.apache.cocoon.matching.WildcardURIMatcher">
+    ...
+   </map:matcher>
+
+   <map:matcher name="uri-regexp" factory="org.apache.cocoon.matching.RegexpURIMatcherFactory">
+    ...
+   </map:matcher>
+
+   <map:matcher name="browser" src="org.apache.cocoon.matching.BrowserMatcher">
+    <foo value="bar">baz</foo>
+    <lines>
+     <left>red</left>
+     <right>white</right>
+    </lines>
+   </map:matcher>
+  </map:matchers>
+
+   <!--
+       Action are classes that are able to modify the underlying application model and
+       are meant as extensions to the sitemap functionality. They get access to the
+       objectModel containing all objects that make up a request. An Action can return 
+       a Map of tokens that resulted from the processing logic (this is up to the action
+       implementation). An Action is references in the pipeline section with the type 
+       attribute as it is with all the other sitemap components.
+   -->
+  <map:actions>
+   <map:action name="session-validator" src="org.apache.cocoon.acting.SessionValidationAction">
+    ...
+   </map:action>
+
+   <map:action name="db-adder"    src="org.apache.cocoon.acting.DBAddingAction">
+    <db-connection>postgresql-connection</db-connection>
+   </map:action>
+
+   <map:action name="db-modifier" src="org.apache.cocoon.acting.DBModifyingAction"/>
+    <db-connection>postgresql-connection</db-connection>
+   </map:action>
+
+   <map:action name="db-delete"   src="org.apache.cocoon.acting.DBDeletingAction"/>
+    <db-connection>postgresql-connection</db-connection>
+   </map:action>
+
+   <map:action name="form-dispatcher" src="org.apache.cocoon.acting.FormDispatcherAction"/>
+    <layout-description>somewhere/layout-employee-app</layout-description>
+   </map:action>
+
+  </map:actions>
+
+ </map:components>
+
+<!-- =========================== Views =================================== -->
+
+ <!--
+     the <view> element introduces the notion of multi-dimensional resource
+     views which are an extension to the HTTP paradigm of web resources. Views
+     do not increase sitemap functionality, but allow substantial verbosity
+     reduction and should help users in the creation of complex sitemaps that
+     are able to produce different views of the resource they handle for each
+     "aspect" requested.
+
+     Views can be pictured as generator-less pipelines which use, as a generator,
+     the result of another pipeline from the "label" they indicate or from the
+     position (first/last) in the pipeline.
+
+     Labels can be seen as non-standard exit points from the normal pipelines
+     and "first" identifies the position right after the generator while "last
+     indentifies the position right before the serializer.
+
+     Both generators and transformers are allowed to attach a default label to
+     them. If no <label> element is explicitly indicated, the sitemap handler
+     will scan for default labels attached to the components, starting from the
+     serializer and going backward, until it finds a component to start.
+     If none is found, the generator is assumed to be the view generator.
+  -->
+ <map:views>
+
+  <map:view name="content" from-position="first">
+   <map:serialize type="xml"/>
+  </map:view>
+
+  <map:view name="schema" from-label="content">
+   <map:transform type="schema"/>
+   <map:serialize type="xml"/>
+  </map:view>
+
+  <map:view name="semantics" from-label="content">
+   <map:transform type="rdf"/>
+   <map:serialize type="xml"/>
+  </map:view>
+
+  <map:view name="hyperlinks" from-position="last">
+   <map:transform src="./stylesheets/xlink-filter.xsl"/>
+   <map:serialize type="xml"/>
+  </map:view>
+
+ </map:views>
+
+<!-- =========================== Resources ================================= -->
+
+ <!--
+     the <resource> element is used as a placeholder for pipelines
+     that are used several times inside the document. This element
+     is redundant and its functionality is not directly related
+     to the sitemap, but could be cloned by the use of internal
+     XInclude, for example
+
+         <xinclude:include href="#xpointer(resource[@name='Access refused'])"/>
+
+     but given the usability constraints and very specific operation
+     it is much easier to include such an element instead of forcing
+     the use of xinclude/xpointer.
+ -->
+ <map:resources>
+
+  <map:resource name="Access refused">
+   <map:generate src="./error-pages/restricted.xml"/>
+   <map:transform src="./stylesheets/general-browser.xsl"/>
+   <map:serialize status-code="401"/>
+  </map:resource>
+
+ </map:resources>
+
+<!-- ========================== Action Sets ================================ -->
+
+ <!--
+     the <action-set> element is used as a collection of related actions
+     that are used either several times inside the pipelines or in conjuction
+     with form actions which are selected by the sitemap for processing.
+     These action-sets are referenced in the pipeline section by using a
+     set attribute instead of a type attribute.
+     All the tokens returned by the individual actions in a action-set are
+     collected by the sitemap engine into one big map which can be used as
+     replacements in src attributes from generators/transformers.
+ -->
+ <map:action-sets>
+
+  <!--
+      The following action-set defines:
+      a) a "session-validator" action which will be executed whenever this
+         action-set is referenced in a pipeline.
+      b) several "db-*" action which have a additional action attribute which the
+         sitemap engine uses as a value to compare against the action value supplied
+         from the Environment object. Every action with a matching action value will
+         be processed.
+      c) a "form-dispatcher" action which will tell the sitemap which is the
+         next resource to display (usually used for the generator in charge).
+  -->
+  <map:action-set name="employee-form">
+   <map:act type="session-validator"/>
+   <map:act type="db-adder"    action="Add"/>
+   <map:act type="db-modifier" action="Update"/>
+   <map:act type="db-deleter"  action="Delete"/>
+   <map:act type="form-dispatcher"/>
+  </map:action-set>
+
+ </map:action-sets>
+
+<!-- =========================== Pipelines ================================= -->
+
+ <map:pipelines>
+  <map:pipeline>
+
+   <!--
+       Mount points allow sitemaps to be cascaded and site management
+       workload to be parallelized. 
+     --> 
+   <map:match pattern="cocoon/*"> 
+    <map:mount uri-prefix="cocoon/{1}" check-reload="yes"
+      src="cvs:pserver:anonymous@xml.apache.org://home/cvs/cocoon/xdocs/{1}"/> 
+   </map:match> 
+   
+   <map:match pattern="bugs/*"> 
+    <map:mount uri-prefix="bugs/{1}" check-reload="true"
+      src="jar://apps/bugs.cocoon#{1}"/> 
+   </map:match> 
+
+   <map:match pattern="dist/*"> 
+    <map:mount uri-prefix="dist/{1}" check-reload="false"  src="./dist/{1}"/> 
+   </map:match>
+
+   <map:match pattern="faq/*"> 
+    <map:mount uri-prefix="faq/{1}" check-reload="no"
+      src="jar://apps/faq-o-matic.cocoon#{1}"/> 
+   </map:match> 
+
+   <map:match type="uri-regexp" pattern="^/xerces-(j|c|p)/(.*)$">
+    <map:mount uri-prefix="/xerces-{1}/{2}"
+      src="cvs:pserver:anonymous@xml.apache.org://home/cvs/xerces-{1}/xdocs/{2}"/>
+   </map:match>
+
+   <map:handle-errors> 
+    <map:serialize type="html"/>   
+   </map:handle-errors> 
+    
+  </map:pipeline> 
+   
+  <map:pipeline>
+ 
+   <!-- 
+        Matchers declarative dispatch the requests to the pipelines that
+        match some of their parameters
+     -->
+   <map:match pattern="cocoon/dist/*"> 
+    <map:select type="ip-filter">
+     <map:when test="allowsAddress()">
+      <!--
+          the <redirect-to> element is used to redirect one requested URI 
+          to another. This is somewhat equivalent to URI rewriting.
+        -->
+      <map:redirect-to uri="dist/cocoon/{1}"/>
+     </map:when>
+     <map:otherwise>
+      <map:redirect-to resource="Access refused"/>
+     </map:otherwise>
+    </map:select>
+   </map:match>
+   
+   <!-- 
+        When no "type" attribute is present, the sitemap intepreter will use the
+        default one, this allows a very compact and user friendly syntax as the
+        one below 
+     -->
+   <map:match pattern="printer-friendly/*">
+    <map:generate src="{1}.xml"/>
+    <map:transform src="./stylesheet/printer-friendly.xsl"/>
+    <map:serialize/>
+   </map:match>
+
+   <map:match pattern="images/logo">
+    <map:select>
+     <map:when test="accepts('image/svg')">
+      <!-- 
+         the <map:read> element is used to read the src directly without 
+         applying any processing. This is mostly useful when clients
+         are capable of handling XML content directly.
+        -->
+      <map:read src="./images/logo.svg"/>
+     </map:when>
+     <map:otherwise>
+      <map:generate src="./images/logo.svg"/>
+      <map:select>
+       <map:when test="accepts('image/png')">
+        <map:serialize type="svg2png"/>
+       </map:when>
+       <map:otherwise>
+        <map:serialize type="svg2jpg"/>
+       </map:otherwise>
+      </map:select>
+     </map:otherwise>
+    </map:select>
+   </map:match>
+  
+   <map:match pattern="restricted/*">
+    <map:select type="user">
+     <map:when test="is('administrator')">
+      <map:generate src="./restricted/{1}"/>
+      <map:transform src="./stylesheets/restricted.xsl"/>
+      <map:serialize/>
+     </map:when>
+     <map:otherwise>
+      <map:redirect-to resource="Access refused"/>
+     </map:otherwise>
+    </map:select>
+   </map:match>
+
+   <!--
+       Example to show the notion of pipeline labels for view generation.
+     -->
+   <map:match pattern="labelled/*">
+    <map:label name="links">
+     <map:label name="content">
+      <map:generate src="./slides/{1}"/>
+     </map:label>
+     <map:transform src="./filters/add-navigation-links.xsl"/>
+    </map:label>
+    <map:transform src="./stylesheet/slides2html.xsl"/>
+    <map:serialize/>
+   </map:match>
+
+   <!--
+       Complex example to show how some xpath-like syntax is used to get access
+       to the pattern tokens generated by the matchers.
+     -->
+   <map:match pattern="nested-matchers/*">
+    <map:match type="browser" pattern="name('Mozilla ?\\?*')">
+     <map:mount uri-prefix="nested-matchers/{1}"
+       src="file:///home/www/mozilla-{1}-{2}/{../1}"/>
+    </map:match>
+   </map:match>
+
+   <map:match type="uri-regexp" pattern="([0-9]{4})/([0-9]{2})/([0-9]{2})/">
+    <!--
+         Here we implement the ability to indicate semantic information
+         on the processed URI. This is mostly used to avoid to encode
+         URI specific information in the XSP since the sitemap maintainer
+         is the only one responsible to manage the URI space. This removes
+         a URI contract between the XSP writer and the URI space manager,
+         moving it to parameter names which normally change less frequently.
+    -->
+    <map:param name="year" value="{1}"/>
+    <map:param name="month" value="{2}"/>
+    <map:param name="day" value="{3}"/>
+
+    <map:generate type="serverpages" src="./dailynews.xsp"/>
+    <map:transform src="./stylesheet/{1}/news.xsl"/>
+    <map:serialize/>
+   </map:match>
+
+   <!--
+       Here we show the use of action-sets. The scenario used is a form
+       generated which enables the visitor to add, modify and delete entries
+       in an employee database
+   -->
+   <map:match pattern="form/employee">
+    <map:act set="employee-form">
+     <map:generate src="forms/{next-form}.xml"/>
+     <map:transform src="forms2html.xsl"/>
+     <map:serialize/>
+    </map:act>
+   </map:match>
+
+
+   <map:match pattern="*">
+    <map:generate src="{1}.xml"/>
+    <map:select type="load">
+     <map:when test="greaterThen('2.5')">
+      <map:transform src="./stylesheet/low-graphics.xsl"/>
+     </map:when>
+     <map:otherwise>
+      <map:select>
+       <map:when test="is('Mozilla5')">
+        <map:transform src="./stylesheet/xul-enabled.xsl"/>
+       </map:when>
+       <map:otherwise>
+        <map:transform src="./stylesheet/general-browser.xsl"/>
+       </map:otherwise>
+      </map:select>
+     </map:otherwise>
+    </map:select>
+    <map:serialize/>
+   </map:match>
+ 
+   <map:handle-errors>
+    <map:select>
+     <map:when test="accepts('text/vnd.wap.wml')">
+      <map:transform src="./styles/Pipeline2WML.xsl"/>
+      <map:serialize type="wap"/>
+     </map:when>
+     <map:otherwise>
+      <map:transform src="./styles/Pipeline2HTML.xsl"/>
+      <map:serialize/>
+     </map:otherwise>
+    </map:select>
+   </map:handle-errors>
+  
+  </map:pipeline>
+ </map:pipelines>
+    
+</map:sitemap>
+
+<!-- end of file -->

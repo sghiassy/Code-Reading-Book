@@ -1,0 +1,25 @@
+*** ../../src/timers.cpp	Sun Jun  3 05:39:48 2001
+--- timers.cpp	Sat Jun  9 10:50:26 2001
+***************
+*** 5,8 ****
+--- 5,9 ----
+  
+  #include <ctime>
++ #include <sys/time.h>
+  #include <opencl/util.h>
+  
+***************
+*** 19,23 ****
+  u64bit system_clock()
+     {
+!    return std::clock();
+     }
+  
+--- 20,26 ----
+  u64bit system_clock()
+     {
+!    struct timeval tv;
+!    gettimeofday(&tv, 0);
+!    return tv.tv_usec;
+     }
+  

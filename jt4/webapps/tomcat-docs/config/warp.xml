@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!DOCTYPE document [
+  <!ENTITY project SYSTEM "project.xml">
+]>
+<document>
+
+  &project;
+
+  <properties>
+    <author email="craigmcc@apache.org">Craig R. McClanahan</author>
+    <title>The WARP Connector</title>
+  </properties>
+
+<body>
+
+
+<section name="Introduction">
+
+  <p>The <strong>WARP Connector</strong> element represents a
+  <strong>Connector</strong> component that communicates with a web
+  connector via the <code>WARP</code> protocol.  This is used for cases
+  where you wish to invisibly integrate Tomcat 4 into an existing (or new)
+  Apache installation, and you want Apache to handle the static content
+  contained in the web application, and/or utilize Apache's SSL
+  processing.  In many application environments, this will result in
+  better overall performance than running your applications under
+  Tomcat stand-alone using the
+  <a href="http11.html">HTTP/1.1 Connector</a>.  However, the only way
+  to know for sure whether it will provide better performance for
+  <strong>your</strong> application is to try it both ways.</p>
+
+  <p><strong>FIXME</strong> - general description of what happens at server
+  startup time when you have the WARP Connector configured.</p>
+
+</section>
+
+
+<section name="Attributes">
+
+  <subsection name="Common Attributes">
+
+  <p>All implementations of <strong>Connector</strong>
+  support the following attributes:</p>
+
+  <attributes>
+
+    <attribute name="className" required="true">
+      <p>Java class name of the implementation to use.  This class must
+      implement the <code>org.apache.catalina.Connector</code> interface.
+      You must specify the standard value defined below.</p>
+    </attribute>
+
+    <attribute name="enableLookups" required="false">
+      <p>Set to <code>true</code> if you want calls to
+      <code>request.getRemoteHost()</code> to perform DNS lookups in
+      order to return the actual host name of the remote client.  Set
+      to <code>false</code> to skip the DNS lookup and return the IP
+      address in String form instead (thereby improving performance).
+      By default, DNS lookups are enabled.</p>
+    </attribute>
+
+    <attribute name="redirectPort" required="false">
+      <p>If this <strong>Connector</strong> is supporting non-SSL
+      requests, and a request is received for which a matching
+      <code>&lt;security-constraint&gt;</code> requires SSL transport,
+      Catalina will automatically redirect the request to the port
+      number specified here.</p>
+    </attribute>
+
+    <attribute name="scheme" required="false">
+      <p>Set this attribute to the name of the protocol you wish to have
+      returned by calls to <code>request.getScheme()</code>.  For
+      example, you would set this attribute to "<code>https</code>"
+      for an SSL Connector.  The default value is "<code>http</code>".
+      See <a href="#SSL Support">SSL Support</a> for more information.</p>
+    </attribute>
+
+    <attribute name="secure" required="false">
+      <p>Set this attribute to <code>true</code> if you wish to have
+      calls to <code>request.isSecure()</code> to return <code>true</code>
+      for requests received by this Connector (you would want this on an
+      SSL Connector).  The default value is <code>false</code>.</p>
+    </attribute>
+
+  </attributes>
+
+  <p><strong>FIXME</strong> - Update the above descriptions for anything
+  that the WARP Connector delegates to Apache.</p>
+
+  </subsection>
+
+  <subsection name="Standard Implementation">
+
+  <p>The standard implementation of <strong>WARP Connector</strong> is
+  <strong>org.apache.catalina.connector.warp.WarpConnector</strong>.
+  It supports the following additional attributes (in addition to the
+  common attributes listed above):</p>
+
+  <attributes/>
+
+  <p><strong>FIXME</strong> - Document any additional configuration attributes
+  supported by the WARP connector.</p>
+
+  </subsection>
+
+</section>
+
+
+<section name="Nested Components">
+
+  <p><strong>FIXME</strong> - Document any use of a nested <code>Factory</code>
+  element for communicating with <code>mod_webapp</code> over SSL.</p>
+
+</section>
+
+
+<section name="Special Features">
+
+  <p><strong>FIXME</strong> - Document any special features supported by the
+  WARP Connector.</p>
+
+</section>
+
+
+</body>
+
+</document>

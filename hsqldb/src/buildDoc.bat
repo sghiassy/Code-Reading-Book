@@ -1,0 +1,1 @@
+javadoc -package -noindex -nohelp -d ..\doc\src org.hsqldb

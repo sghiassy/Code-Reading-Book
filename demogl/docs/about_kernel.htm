@@ -1,0 +1,65 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:The system kernel</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>The system kernel</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>The system kernel.</h4>
+For developers using the DemoGL system, it's important to know how DemoGL schedules effects, TLE's, 
+Windows messages, music files etc. DemoGL is in fact a simple Operating System. It has a bootphase, where
+all the initialisation is done, a run phase, where the execution of tasks is done, and a shutdown phase,
+where the clean-up of all resources claimed is done. DemoGL uses a simple 'kernel' with a message handler,
+an effect executor, a TLE executor and a controlling routine which is the heart of the little kernel. 
+<p>
+This kernel is in effect when the system is booted up and execution of the application is started. It runs
+in one Windows thread, the main application thread. One 'cycle' of the kernel excists of the following steps:
+<ul>
+	<li>Grab and handle all queued Windows messages
+	<li>Get new time from the high resolution timer
+	<li>Execute all TLE's that have to be executed on the current new time
+	<li>Execute all effects on all visible layers: call the RenderFrame() or RenderFrameEx() methods of
+		all effectobjects currently placed on visible layers (see
+</ul>
+The length of the cycle depends on the execution time of these 4 steps. Windows message handlers are most of
+the time really quick and, depending on the length of the previous cycle, the amount of Windows messages
+stored in the queue is pretty small. The time calculation routine is always taking the same amount of
+time and this is too small to mention. The biggest parts of the time a cycle takes to complete are the
+time the TLE's get executed and the time all effects currently running on visible layers take to complete.
+This can be important to know, because if a developer schedules a CPU intensive multi-layer part together with
+a serie of TLE's that can be CPU intensive (for example a serie of PREPARE TLE's that load and upload texturedata
+or calculate geometry), the TLE execution will enlarge the cycle time and thus the framerate of the application.
+In fact, if the developer schedules some TLE's that will take, say, 400ms on an average system, the cycle time
+when these TLE's get executed will be at least 400ms long, which can make an application to stutter for a moment.
+<p>
+Plan the TLE execution wisely, thus if the TLE's don't have to be executed on the same timespot, place them on
+different timespots. A frame most of the time costs less than 50ms (20 fps), so you can easily place TLE's on
+50ms boundaries from eachother.
+<p>
+The TLE execution isn't placed in a separate thread, while the music/sound engine is running in a separate thread,
+because some TLE's will force DemoGL to call effectobject methods. Because OpenGL requires a rendercontext per thread,
+executing OpenGL related code in a different thread than where the mainwindow is running in, will not have effect
+in OpenGL related code that is running in the mainwindow thread (the main thread): uploading a texture in a different
+thread will fail, because the different thread doesn't have a rendercontext. It's possible to create a second
+rendercontext just for TLE's and let the display driver merge the two, but some videocard ICD's will not give the
+desired results, the reason why DemoGL will do the TLE execution in the same thread as the mainwindow and the effectobjects
+are running in.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

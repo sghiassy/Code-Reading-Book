@@ -1,0 +1,74 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:The soundsystem</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>The soundsystem</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>The soundsystem.</h4>
+DemoGL contains an advanced soundsystem that is capable of playing MP3's, .WAV files and MOD/MTM/S3M/IT/XM files using 2D, 3D
+and EAX logic at the same time. The soundsystem of v1.3 is modeled around BASS v0.9, written by Ian Luck. DemoGL provides
+both in its API and in scriptcommands an easy way to play sounds and music. 
+<p>
+The basis of soundsystem are sound elements and sound channels, in short: elements and channels. Elements are blocks of data
+containing MP3, .WAV or MOD (MOD/MTM/S3M/IT/XM) data. These elements are played through channels, thus the channels are in fact
+the playing versions of the elements: elements contain the data played and channels play that data through the sound card. Starting
+the play of an element (in short: starting an element) will result in the creation of a channel that will take care of the playing
+of that element's data. Because these two items are separated, setting channel properties only affects the channel, not the element.
+<p>
+Elements can be one of three types: MP3 element, SAMPLE element (.wav) or MOD element (MOD/MTM/S3M/IT/XM). Because BASS is used to
+perform the playback of the elements, the soundsystem has to work with certain limitations of the BASS library. One of these limitations
+is that an element of type DGL_SS_MP3ELEMENT (an MP3 element) or type DGL_SS_MODELEMENT (a MOD element, element contains data stored in
+one of the following formats: XM/IT/S3M/MTM or MOD) can be started on as much as one channel, so when an element is already started
+and already playing on a channel and its started again, the currently playing channel is stopped and the new started channel is doing
+the playback of the element. DGL_SS_SAMPLEELEMENT (a Sample element, element contains data stored in the .wav format) elements can
+be started on as much channels as you like, each can have different properties like 3D parameters or EAX parameters, volume, panning,
+frequencies etc.
+<p>
+Elements have two ID's to identify them: an ElementCodeID and an ElementScriptID. The ElementCodeID is used internally in DemoGL to 
+identify elements and is used by soundsystem related functions in the DemoGL API. Because ElementCodeID's are generated at runtime, 
+they are not usable in the script which is created before application execution. Therefor DemoGL supports also an ElementScriptID. This 
+is an ID that is used in the script to identify sound elements when specifying script commands. The DemoGL API supplies support for 
+ElementScriptID's to make it possible to convert ElementScriptID's into ElementCodeID's so for example an element can be used from 
+code using the faster ElementCodeID when it's created n the script using an ElementScriptID. When an element is loaded from code, DemoGL
+wants the developer to specify an ElementScriptID so it can be referenced by a TLE. It's recommended to use ElementCodeID's when
+interacting with elements from code and not the ElementScriptID's because internally DemoGL has to convert the ElementScriptID to an
+ElementCodeID at runtime. The same thing is done for channels: a channel has two ID's: the ChannelScriptID and the ChannelCodeID. When
+an element is started using a TLE, the channel that is created gets the ChannelScriptID specified in the command in the TLE. The channel
+is then usable from code using that ChannelScriptID, or better: the ChannelCodeID of that channel, which is retrieved by converting the
+ChannelScriptID to a ChannelCodeID. See the soundsystem related API functions in the DemoGL Reference manual 
+for more details about CodeID's and ScriptID's plus the <a HREF="ref_scriptsyntax_SOUNDSYSTEM.htm">_SOUNDSYSTEM script syntax</a>.
+<p>
+Working with sound in your application begins by loading the sounddata into sound elements. This can be done using a TLE in the script
+or an API call from code. As soon as the element is created it is ready to be started. However, DemoGL will only start elements from the
+start of the application, thus from timespot=0 or higher. When the element is started using a TLE in the script of an API call from code,
+DemoGL will use the properties of the element to set several properties of the channel created. This way, a developer can set channel
+related properties for all channels the element will be played on. After the channel is created, its properties can be changed using
+TLE's from the script or API calls from code. 
+<p>
+Not all functionality of the soundsystem related API functions is also available for TLE's. This is done because some functionality
+is based on runtime information or information that is easily generated at runtime but hard to determine when creating the script. 
+Among those functionality are 3D positioning and 3D property settings of channels and elements, the 3D position of the listener
+(see for a discussion about the 3D position of the listener
+<a HREF="ref_functions_DEMOGL_SoundSystemSetListener3DPosition.htm">DEMOGL_SoundSystemSetListener3DPosition</a> in the DemoGL Reference manual)
+and MOD element synchronisation functionality. 
+
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,91 @@
+.\" $XConsortium: appres.man /main/14 1996/12/09 17:06:25 kaleb $
+.\" Copyright (c) 1993, 1994  X Consortium
+.\" 
+.\" Permission is hereby granted, free of charge, to any person obtaining
+.\" a copy of this software and associated documentation files (the
+.\" "Software"), to deal in the Software without restriction, including
+.\" without limitation the rights to use, copy, modify, merge, publish,
+.\" distribute, sublicense, and/or sell copies of the Software, and to
+.\" permit persons to whom the Software is furnished to do so, subject to
+.\" the following conditions:
+.\" 
+.\" The above copyright notice and this permission notice shall be included
+.\" in all copies or substantial portions of the Software.
+.\" 
+.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+.\" OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+.\" MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+.\" IN NO EVENT SHALL THE X CONSORTIUM BE LIABLE FOR ANY CLAIM, DAMAGES OR
+.\" OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+.\" ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+.\" OTHER DEALINGS IN THE SOFTWARE.
+.\" 
+.\" Except as contained in this notice, the name of the X Consortium shall
+.\" not be used in advertising or otherwise to promote the sale, use or
+.\" other dealings in this Software without prior written authorization
+.\" from the X Consortium.
+.TH APPRES 1 "Release 6.3" "X Version 11"
+.SH NAME
+appres \- list X application resource database
+.SH SYNOPSIS
+.B "appres"
+[[class [instance]] [\-1] [toolkitoptions] 
+.SH DESCRIPTION
+.PP
+The \fIappres\fP program prints the resources seen by an application
+(or subhierarchy of an application) with the specified \fIclass\fP and
+\fIinstance\fP names.  It can be used to determine which
+resources a particular program will load.  For example,
+.sp 1
+.in +.5i
+.nf
+% appres  XTerm
+.fi
+.in -.5i
+.sp 1
+will list the resources that any \fIxterm\fP program will load.
+If no application class is specified, the class \fI-AppResTest-\fP is used.
+.PP
+To match a particular instance name, specify an instance name
+explicitly after the class name, or use the normal Xt toolkit option.
+For example,
+.sp 1
+.in +.5i
+.nf
+% appres  XTerm  myxterm
+.fi
+.in -.5i
+or
+.in +.5i
+.nf
+% appres  XTerm  \-name  myxterm
+.fi
+.in -.5i
+.PP
+To list resources that match a subhierarchy of an application, specify
+hierarchical class and instance names.  The number of class and instance
+components must be equal, and the instance name should not be
+specified with a toolkit option.  For example,
+.sp 1
+.in +.5i
+.nf
+% appres  Xman.TopLevelShell.Form  xman.topBox.form
+.fi
+.in -.5i
+.sp 1
+will list the resources of widgets of \fIxman\fP topBox hierarchy.
+To list just the resources matching a specific level in the hierarcy,
+use the \-1 option.  For example,
+.sp 1
+.in +.5i
+.nf
+% appres  XTerm.VT100  xterm.vt100  \-1
+.fi
+.in -.5i
+.sp 1
+will list the resources matching the \fIxterm\fP vt100 widget.
+.SH "SEE ALSO"
+.PP
+X(1), xrdb(1), listres(1)
+.SH AUTHOR
+Jim Fulton, MIT X Consortium

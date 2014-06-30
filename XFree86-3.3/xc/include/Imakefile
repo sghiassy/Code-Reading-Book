@@ -1,0 +1,52 @@
+XCOMM $XConsortium: Imakefile /main/92 1996/11/30 10:09:25 lehors $
+XCOMM $XFree86: xc/include/Imakefile,v 3.9 1996/12/23 05:58:06 dawes Exp $
+#define IHaveSubdirs
+#define PassCDebugFlags /**/
+
+SUBDIRS = bitmaps extensions fonts
+
+#ifdef Win32Architecture
+EXTRA_HEADERS = Xw32defs.h Xwinsock.h
+#endif
+
+HEADERS = DECkeysym.h \
+	Sunkeysym.h \
+	X.h \
+	XWDFile.h \
+	Xalloca.h \
+	Xatom.h \
+	Xfuncproto.h \
+	Xfuncs.h \
+	Xmd.h \
+	Xos.h \
+	Xos_r.h \
+	Xosdefs.h \
+	Xpoll.h \
+	Xproto.h \
+	Xprotostr.h \
+	Xthreads.h \
+	ap_keysym.h \
+	keysym.h \
+	keysymdef.h \
+	$(EXTRA_HEADERS)
+
+all::
+
+BuildIncludes($(HEADERS),X11,..)
+
+InstallMultipleFlags($(HEADERS),$(INCDIR)/X11,$(INSTINCFLAGS))
+MakeSubdirs($(SUBDIRS))
+
+InstallLinkKitNonExecFile(X.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xalloca.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xfuncproto.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xfuncs.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xmd.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xos.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xosdefs.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xproto.h,$(LINKKITDIR)/include/X11)
+InstallLinkKitNonExecFile(Xprotostr.h,$(LINKKITDIR)/include/X11)
+
+depend::
+
+clean::

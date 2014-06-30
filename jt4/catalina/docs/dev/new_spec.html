@@ -1,0 +1,88 @@
+<html>
+<head>
+<title>Implementation of New Servlet 2.3 Features</title>
+</head>
+<body bgcolor="white">
+
+<a href="README.html">Home</a>
+
+<p>This document summarizes the current implementation state of the new
+features of the Servlet 2.3 draft specification in Catalina.  To give a
+quick synopsis of the completion state of each new feature, we're
+using a "how would you like your steak" metaphor.  Apologies to all the
+vegetarians out there!</p>
+
+<h2>Application Events [Medium Well]</h2>
+
+<p>You can now register event listeners in the web.xml file that receive
+notification when the following events occur:</p>
+<ul>
+<li>Application startup</li>
+<li>Application shutdown</li>
+<li>New, replaced, or removed application (servlet context) attributes</li>
+<li>Session created</li>
+<li>Session invalidated or timed out</li>
+<li>New, replaced, or removed session attributes</li>
+
+<p>Application listener functionality has been added to Catalina, and seems to
+work fairly well.  There are two listeners in the "examples" web application
+that simply log things with ServletContext.log() to show that they were
+reached.</p>
+
+<h2>Servlet Filters [Medium Rare]</h2>
+
+<p>You can now register Filters in the web.xml file that are the application
+level analogue to Valves in the Catalina core.  Filters have the following
+general features:</p>
+<ul>
+<li>Filters can be mapped to either URL patterns or particular servlets</li>
+<li>Filters can pre-process and post-process requests and responses</li>
+<li>Filters can wrap the request and/or response objects that are passed on
+    (so you can do content type transformations, for example)</li>
+<li>Filters can respond to a request and return, instead of passing the request
+    on (for example, you can do authentication challenges at the app level)
+    </li>
+
+<p>Related to this, servlets can now do the same sort of wrapping when they
+pass arguments to a RequestDispatcher.  Previously, you were required to
+pass the original request and response objects received from the container.</p>
+
+<p>Servlet filter functionality has been added to Catalina, and lightly tested,
+although wrapping has not been thoroughly tested yet.  There is a filter in
+the "examples" application that is set up as both path mapped and servlet
+mapped to the invoker servlet ("/servlet/*"), which stores a request attribute
+that is passed on to the servlet that is ultimately executed.</p>
+
+<h2>Dependencies on Installed Extensions [Raw]</h2>
+
+<p>Web applications, or the JAR files in the WEB-INF/lib directory, can now
+declare their dependence on particular versions of external libraries that
+may be provided by the container as shared extensions.  No work has been
+done to implement this capability in Catalina yet.</p>
+
+<h2>Internationalization Fixes [Medium Rare]</h2>
+
+<p>Catalina now supports mapping Locales to character sets, and the new
+setCharacterEncoding() method on ServletRequest.  Much more testing and
+enhancement is needed in this area.</p>
+
+<h2>Web Application Classloader [Medium Well]</h2>
+
+<p>Section 9.6.2 of the Servlet Spec draft describes requirements and
+suggestions related to the classloader provided to a web application.
+These requirments are currently followed in Catalina.</p>
+
+<h2>DTD for Servlet 2.3 Application Deployment Descriptor [Medium]</h2>
+
+<p>An unofficial version of the DTD for parsing web.xml files is included in
+Catalina (in the source repository it is at "catalina/src/conf/web_23.dtd").
+It will be replaced by the official version when published.</p>
+
+
+<br>
+<div align="center"><hr width="75%"><font size="2">
+$Id: new_spec.html,v 1.2 2001/01/14 04:26:11 craigmcc Exp $
+</font></div>
+
+</body>
+</html>

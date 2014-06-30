@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+
+  <!-- ========================= Components ============================== -->
+
+  <map:components>
+    <!-- most components are inherited from parent sitemap -->
+    <!-- just make sure that defaults suit our needs -->
+
+    <map:generators default="file"/>
+
+    <map:transformers default="xslt"/>
+
+    <map:readers default="resource"/>
+
+    <map:serializers default="html"/>
+
+    <map:selectors default="browser"/>
+
+    <map:matchers default="wildcard"/>
+
+    <map:actions>
+       <!-- these action are in addition to the ones inherited -->
+       <map:action name="mod-db-add" src="org.apache.cocoon.acting.ModularDatabaseAddAction">
+   	 <descriptor>context://mount/mod-db/database.xml</descriptor>
+   	 <throw-exception>false</throw-exception>
+	 <!-- shall we throw an exception in addition to rolling back
+	      the transaction when encountering an error during
+	      database ops? 
+	 -->
+   	 <!-- <mode name="auto" src="org.apache.cocoon.acting.ModularDatabaseAccess.IfxSerialAutoIncrementHelper"/> -->
+   	 <mode name="auto" src="org.apache.cocoon.acting.ModularDatabaseAccess.HsqlIdentityAutoIncrementHelper"/>
+   	 <mode name="request" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestParameterHelper"/>
+   	 <mode name="attribute" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestAttributeHelper"/>
+   	 <output name="request" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestAttributeOutputHelper"/>
+       </map:action>
+       <map:action name="mod-db-del" src="org.apache.cocoon.acting.ModularDatabaseDeleteAction">
+   	 <descriptor>context://mount/mod-db/database.xml</descriptor>
+   	 <throw-exception>false</throw-exception>
+	 <!--
+	    It doesn't make sense to declare AutoIncrementHelpers for
+	    this action, but until component handling is removed from
+	    ModularDatabaseAction and done e.g. in sitemap,
+	    ModularDatabaseAction will complain if such a helper is
+	    missing. 
+	 -->
+   	 <!-- <mode name="auto" src="org.apache.cocoon.acting.ModularDatabaseAccess.IfxSerialAutoIncrementHelper"/> -->
+   	 <mode name="auto" src="org.apache.cocoon.acting.ModularDatabaseAccess.HsqlIdentityAutoIncrementHelper"/>
+   	 <mode name="request" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestParameterHelper"/>
+   	 <mode name="attribute" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestAttributeHelper"/>
+   	 <output name="request" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestAttributeOutputHelper"/>
+       </map:action>
+       <map:action name="mod-db-upd" src="org.apache.cocoon.acting.ModularDatabaseUpdateAction">
+   	 <descriptor>context://mount/mod-db/database.xml</descriptor>
+   	 <throw-exception>false</throw-exception>
+	 <!--
+	    It doesn't make sense to declare AutoIncrementHelpers for
+	    this action, but until component handling is removed from
+	    ModularDatabaseAction and done e.g. in sitemap,
+	    ModularDatabaseAction will complain if such a helper is
+	    missing. 
+	 -->
+   	 <!-- <mode name="auto" src="org.apache.cocoon.acting.ModularDatabaseAccess.IfxSerialAutoIncrementHelper"/> -->
+   	 <mode name="auto" src="org.apache.cocoon.acting.ModularDatabaseAccess.HsqlIdentityAutoIncrementHelper"/>
+   	 <mode name="request" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestParameterHelper"/>
+   	 <mode name="attribute" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestAttributeHelper"/>
+   	 <output name="request" src="org.apache.cocoon.acting.ModularDatabaseAccess.RequestAttributeOutputHelper"/>
+       </map:action>
+       <map:action name="req-params" src="org.apache.cocoon.acting.RequestParameterExistsAction"/>
+    </map:actions>
+
+  </map:components>
+
+
+  <!-- ======================= Views ================================= -->
+
+  <map:views>
+    <map:view name="content" from-label="content">
+      <map:serialize type="xml" mime-type="text/plain"/>
+    </map:view>
+  </map:views>
+
+  <!-- ======================= Pipelines ================================= -->
+
+  <map:pipelines>
+    <map:pipeline>
+
+   <!-- ========================== Modular DB ================================= -->
+
+       <map:match pattern="">
+          <map:redirect-to uri="user-list"/>
+       </map:match>
+
+
+       <map:match pattern="*">
+
+          <!--
+	     First, the logic to do all the database operations. Note,
+	     that we do no parameter validation here, just see if some
+	     parameters are present. For a real application, you'd
+	     want to check their values as well. Note too, that in a
+	     more complex setup you'd want to use an action set for
+	     this rather than spell it out everywhere.
+	  -->
+
+          <!-- ______________________________ inserts ______________________________ -->
+
+          <!-- add new groups to a user's groups -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="add-groups user_groups.uid user_groups.gid"/>
+  	     <map:act type="mod-db-add">
+  	  	<map:parameter name="table-set" value="user_groups"/>
+  	     </map:act>
+  	  </map:act>
+
+          <!-- add onw new group -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="add-group groups.gname"/>
+  	     <map:act type="mod-db-add">
+  	  	<map:parameter name="table-set" value="groups"/>
+  	     </map:act>
+  	  </map:act>
+     
+          <!-- add one new user -->
+	  <!-- Actually, this one is not used anymore. The one below
+	       works well when no groups are supplied.
+	   -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="add-user user.name user.firstname user.uname"/>
+  	     <map:act type="mod-db-add">
+  	  	<map:parameter name="table-set" value="user"/>
+  	     </map:act>
+  	  </map:act>
+     
+          <!-- add one new user plus groups -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="add-user-groups user.name user.firstname user.uname"/>
+  	     <map:act type="mod-db-add">
+  	  	<map:parameter name="table-set" value="user+groups"/>
+  	     </map:act>
+  	  </map:act>
+     
+          <!-- ______________________________ updates ______________________________ -->
+
+          <!-- update one user -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="upd-user user.uid user.name user.firstname user.uname"/>
+  	     <map:act type="mod-db-upd">
+  	  	<map:parameter name="table-set" value="user"/>
+  	     </map:act>
+  	  </map:act>
+     
+
+          <!-- update one group -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="upd-group groups.gid groups.gname"/>
+  	     <map:act type="mod-db-upd">
+  	  	<map:parameter name="table-set" value="groups"/>
+  	     </map:act>
+  	  </map:act>
+     
+          <!-- ______________________________ deletes ______________________________ -->
+
+          <!-- delete one user -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="del-user user.uid"/>
+  	     <map:act type="mod-db-del">
+  	  	<map:parameter name="table-set" value="user"/>
+  	     </map:act>
+  	  </map:act>
+
+          <!-- delete one group -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="del-group groups.gid"/>
+  	     <map:act type="mod-db-del">
+  	  	<map:parameter name="table-set" value="groups"/>
+  	     </map:act>
+  	  </map:act>
+     
+          <!-- delete groups from a user's groups -->
+  	  <map:act type="req-params">
+  	     <map:parameter name="parameters" value="remove-groups user_groups.uid user_groups.gid"/>
+  	     <map:act type="mod-db-del">
+  	  	<map:parameter name="table-set" value="user_groups"/>
+  	     </map:act>
+  	  </map:act>
+
+          <!-- ______________________________ content  ______________________________ -->
+
+  	  <map:generate type="serverpages" src="{1}.xsp"/>
+	  <map:transform src="context://stylesheets/dynamic-page2html.xsl">
+	     <map:parameter name="view-source" value="{1}.xsp"/>
+	  </map:transform>
+  	  <map:transform src="stupid.xsl"/>
+  	  <map:serialize/>
+
+       </map:match>
+
+    </map:pipeline>
+  </map:pipelines>
+
+</map:sitemap>

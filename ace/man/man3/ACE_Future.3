@@ -1,0 +1,220 @@
+.TH ACE_Future 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Future \- This class implements a ``single write, multiple read'' pattern that can be used to return results from asynchronous method invocations. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Future.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Future\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_Future\fR (const ACE_Future<T> &r)"
+.br
+.RI "\fICopy constructor binds <this> and <r> to the same . An  is created if necessary.\fR"
+.ti -1c
+.RI "\fBACE_Future\fR (const T &r)"
+.br
+.RI "\fIConstructor that initialises an  to point to the result <r> immediately.\fR"
+.ti -1c
+.RI "\fB~ACE_Future\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Future<T> &r)"
+.br
+.RI "\fIAssignment operator that binds <this> and <r> to the same . An  is created if necessary.\fR"
+.ti -1c
+.RI "int \fBcancel\fR (const T &r)"
+.br
+.RI "\fICancel an  and assign the value <r>. It is used if a client does not want to wait for <T> to be produced.\fR"
+.ti -1c
+.RI "int \fBcancel\fR (void)"
+.br
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_Future<T> &r) const"
+.br
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_Future<T> &r) const"
+.br
+.RI "\fIInequality operator, which is the opposite of equality.\fR"
+.ti -1c
+.RI "int \fBset\fR (const T &r)"
+.br
+.ti -1c
+.RI "int \fBget\fR (T &value, \fBACE_Time_Value\fR *tv = 0)"
+.br
+.RI "\fIWait up to <tv> time to get the <value>. Note that <tv> must be specified in absolute time rather than relative time.\fR"
+.ti -1c
+.RI "\fBoperator T\fR ()"
+.br
+.ti -1c
+.RI "int \fBready\fR (void)"
+.br
+.RI "\fICheck if the result is available.\fR"
+.ti -1c
+.RI "int \fBattach\fR (\fBACE_Future_Observer\fR<T> *observer)"
+.br
+.ti -1c
+.RI "int \fBdetach\fR (\fBACE_Future_Observer\fR<T> *observer)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "\fBACE_Future_Rep\fR<T>* \fBget_rep\fR (void)"
+.br
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Types
+
+.in +1c
+.ti -1c
+.RI "typedef \fBACE_Future_Rep\fR<T> \fBFUTURE_REP\fR"
+.br
+.RI "\fIProtect operations on the <Future>.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void* \fBoperator new\fR (size_t nbytes)"
+.br
+.RI "\fIDo not allow new operator.\fR"
+.ti -1c
+.RI "void \fBoperator delete\fR (void *)"
+.br
+.RI "\fIDo not allow delete operator.\fR"
+.ti -1c
+.RI "void \fBoperator &\fR ()"
+.br
+.RI "\fIDo not allow address-of operator.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBFUTURE_REP\fR* \fBfuture_rep_\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class T>  template class ACE_Future
+This class implements a ``single write, multiple read'' pattern that can be used to return results from asynchronous method invocations.
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classT> typedef \fBACE_Future_Rep\fR<T> ACE_Future<T>::FUTURE_REP\fC [private]\fR
+.PP
+Protect operations on the <Future>.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Future<T>::ACE_Future<T> (void)
+.PP
+Constructor.
+.PP
+.SS template<classT> ACE_Future<T>::ACE_Future<T> (const ACE_Future< T >& r)
+.PP
+Copy constructor binds <this> and <r> to the same . An  is created if necessary.
+.PP
+.SS template<classT> ACE_Future<T>::ACE_Future<T> (const T & r)
+.PP
+Constructor that initialises an  to point to the result <r> immediately.
+.PP
+.SS template<classT> ACE_Future<T>::~ACE_Future<T> (void)
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classT> int ACE_Future<T>::attach (\fBACE_Future_Observer\fR< T >* observer)
+.PP
+Attaches the specified observer to a subject (i.e. the ). The update method of the specified subject will be invoked with a copy of the associated  as input when the result gets set. If the result is already set when this method gets invoked, then the update method of the specified subject will be invoked immediately.
+.PP
+Returns 0 if the observer is successfully attached, 1 if the observer is already attached, and -1 if failures occur. 
+.SS template<classT> int ACE_Future<T>::cancel (void)
+.PP
+Cancel an . Put the future into its initial state. Returns 0 on succes and -1 on failure. It is now possible to reuse the ACE_Future<T>. But remember, the ACE_Future<T> is now bound to a new \fBACE_Future_Rep\fR<T>. 
+.SS template<classT> int ACE_Future<T>::cancel (const T & r)
+.PP
+Cancel an  and assign the value <r>. It is used if a client does not want to wait for <T> to be produced.
+.PP
+.SS template<classT> int ACE_Future<T>::detach (\fBACE_Future_Observer\fR< T >* observer)
+.PP
+Detaches the specified observer from a subject (i.e. the ). The update method of the specified subject will not be invoked when the  result gets set. Returns 1 if the specified observer was actually attached to the subject prior to this call and 0 if was not.
+.PP
+Returns 0 if the observer was successfully detached, and -1 if the observer was not attached in the first place. 
+.SS template<classT> void ACE_Future<T>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classT> int ACE_Future<T>::get (T & value, \fBACE_Time_Value\fR * tv = 0)
+.PP
+Wait up to <tv> time to get the <value>. Note that <tv> must be specified in absolute time rather than relative time.
+.PP
+.SS template<classT> \fBACE_Future_Rep\fR< T >* ACE_Future<T>::get_rep (void)
+.PP
+Get the underlying *. Note that this method should rarely, if ever, be used and that modifying the undlerlying * should be done with extreme caution. 
+.SS template<classT> void ACE_Future<T>::operator & ()\fC [private]\fR
+.PP
+Do not allow address-of operator.
+.PP
+.SS template<classT> ACE_Future<T>::operator T ()
+.PP
+Type conversion, which obtains the result of the asynchronous method invocation. Will block forever. Note that this method is going away in a subsequent release since it doesn't distinguish between failure results and success results (exceptions should be used, but they aren't portable...). The <get> method should be used instead since it separates the error value from the result, and also permits timeouts. 
+.SS template<classT> void ACE_Future<T>::operator delete (void *)\fC [private]\fR
+.PP
+Do not allow delete operator.
+.PP
+.SS template<classT> void * ACE_Future<T>::operator new (size_t nbytes)\fC [private]\fR
+.PP
+Do not allow new operator.
+.PP
+.SS template<classT> int ACE_Future<T>::operator!= (const ACE_Future< T >& r) const
+.PP
+Inequality operator, which is the opposite of equality.
+.PP
+.SS template<classT> void ACE_Future<T>::operator= (const ACE_Future< T >& r)
+.PP
+Assignment operator that binds <this> and <r> to the same . An  is created if necessary.
+.PP
+.SS template<classT> int ACE_Future<T>::operator== (const ACE_Future< T >& r) const
+.PP
+Equality operator that returns 1 if both ACE_Future<T> objects point to the same \fBACE_Future_Rep\fR<T> object. Attention: It also returns 1 if both objects have just been instantiated and not used yet. 
+.SS template<classT> int ACE_Future<T>::ready (void)
+.PP
+Check if the result is available.
+.PP
+.SS template<classT> int ACE_Future<T>::set (const T & r)
+.PP
+Make the result available. Is used by the server thread to give the result to all waiting clients. Returns 0 for success, -1 on failure. This function only has an effect the first time it is called for the object (actually, the first time the underlying \fBACE_Future_Rep\fR has a value assigned to it). Subsequent calls return 0 (success) but have no effect. 
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classT> ACE_Future<T>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classT> \fBFUTURE_REP\fR * ACE_Future<T>::future_rep_\fC [private]\fR
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

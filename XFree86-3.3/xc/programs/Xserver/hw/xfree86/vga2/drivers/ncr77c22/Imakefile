@@ -1,0 +1,36 @@
+XCOMM $XConsortium: Imakefile /main/6 1996/09/28 17:27:19 rws $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga2/drivers/ncr77c22/Imakefile,v 3.6 1996/12/23 06:54:47 dawes Exp $
+#include <Server.tmpl>
+
+SRCS = ncr_driver.c ncr_bank.s
+
+OBJS = ncr_driver.o ncr_bank.o
+
+#if XF86LinkKit
+INCLUDES = -I. -I../../../include -I../../../include/X11 -I../..
+#else
+INCLUDES = -I. -I$(XF86COMSRC) -I$(XF86HWSRC) -I$(XF86OSSRC) \
+           -I../../../vga256/vga -I$(SERVERSRC)/include -I$(XINCLUDESRC)
+#endif
+
+DEFINES = -DMONOVGA
+
+#if MakeHasPosixVariableSubstitutions
+SubdirLibraryRule($(OBJS))
+#endif
+NormalLibraryObjectRule()
+NormalAsmObjectRule()
+
+NormalRelocatableTarget(ncr_drv,$(OBJS))
+
+LinkSourceFile(ncr_driver.c,$(VGADRIVERSRC)/ncr77c22)
+LinkSourceFile(ncr_bank.s,$(VGADRIVERSRC)/ncr77c22)
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga2/ncr77c22)
+
+DependTarget()

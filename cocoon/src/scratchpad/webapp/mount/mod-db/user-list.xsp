@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<xsp:page
+          language="java"
+          xmlns:xsp="http://apache.org/xsp"
+	  xmlns:esql="http://apache.org/cocoon/SQL/v2"
+          xmlns:xsp-request="http://apache.org/xsp/request/2.0"
+  >
+  <!--
+       -->
+  <xsp:structure>
+    <xsp:include>java.util.Enumeration</xsp:include>
+  </xsp:structure>
+    
+  <page>
+    
+    <title>user-list</title>
+    
+    <content>
+        
+
+      <h1>Modular Database Actions</h1> 
+
+      <hr/> 
+
+      <p>The intention is to factor out those parts that are dependent on
+      the utilised DBMS as well as the methods used to obtain the values
+      and communicate results. Therefore three classes of adaptors
+      exist:</p>
+
+      <ol>
+        <li>Attribute Helpers read data from some source (e.g. the request
+            object or session attributes or whatever)</li> 
+
+        <li>Auto Increment Helpers determine the value of a key attribute
+            column in a database if it's is of auto increment type. This
+            could be by querying the database, reading from an arbitrary
+            source (e.g. request object) or just skipping the column when
+            inserting a row and querying the database afterwards. This
+            needs to be done e.g. for Informix's SERIAL or HSQLDB's
+            IDENTITY column types.</li>
+
+       <li>Output Helpers send the data to an arbitrary
+           destination. Again, this could be request attributes or
+           anything else. When the database transaction finishes, it is
+           signalled to them whether the transaction succeeded or
+           failed.</li>
+      </ol>
+      <hr/>
+
+      <h2>Current database content</h2>
+
+      <esql:connection>   	    
+        <esql:pool>personnel</esql:pool>
+           	  
+        <p>
+          <sqltbl>
+            <esql:execute-query>
+              <esql:query>select * from user order by name, firstname, uname, uid</esql:query>
+              <esql:results>
+                <esql:row-results>
+             	       
+                  <sqltblrow>
+                    <name>
+                      <esql:get-string column="name"/>
+                    </name>
+                    <firstname>
+                      <esql:get-string column="firstname"/>
+                    </firstname>
+                    <uname>
+                      <esql:get-string column="uname"/>
+                    </uname>
+                    <action>
+                      <form action="edit-groups">
+                        <input type="hidden" name="user.uid">
+                          <xsp:attribute name="value"><esql:get-string column="uid"/></xsp:attribute>
+                        </input>
+                        <input type="submit" name="edit-user" value="edit"/>
+                      </form>
+                      <form>
+                        <input type="hidden" name="user.uid">
+                          <xsp:attribute name="value"><esql:get-string column="uid"/></xsp:attribute>
+                        </input>
+                        <input type="submit" name="del-user" value="delete"/>
+                      </form>
+                    </action>
+                  </sqltblrow>
+             	       
+                </esql:row-results>
+              </esql:results>
+              <esql:error-results>
+                <error><esql:get-message/></error>
+              </esql:error-results>
+            </esql:execute-query>
+            <form method="Get">
+              <sqltblrow>
+                <name>
+                  <input type="text" name="user.name" size="20" maxsize="20">
+                    <xsp:attribute name="value"><!-- <xsp-request:get-parameter default="" name="user.name"/> --></xsp:attribute>
+                  </input>
+                </name>
+                <firstname>
+                  <input type="text" name="user.firstname" size="20" maxsize="20">
+                    <xsp:attribute name="value"><!-- <xsp-request:get-parameter default="" name="user.firstname"/> --></xsp:attribute>
+                  </input>
+                </firstname>
+                <uname>
+                  <input type="text" name="user.uname" size="20" maxsize="20">
+                    <xsp:attribute name="value"><!-- <xsp-request:get-parameter default="" name="user.uname"/> --></xsp:attribute>
+                  </input>
+                </uname>
+                <action>
+                  <select multiple="1" name="user_groups.gid" size="4">
+                    <esql:execute-query>
+                      <esql:query>select gid, gname from groups order by gname</esql:query>
+                      <esql:results>
+                        <esql:row-results>
+                          <option>			        
+                            <xsp:attribute name="value"><esql:get-string column="gid"/></xsp:attribute>
+                            <esql:get-string column="gname"/>
+                          </option>
+                        </esql:row-results>
+                      </esql:results>
+                    </esql:execute-query>
+                  </select>
+                  <input type="submit" name="add-user-groups" value="new user"/>
+                </action>
+              </sqltblrow>   
+            </form>
+          </sqltbl>
+        </p>
+
+        <p>
+          <sqltbl>
+            <esql:execute-query>
+              <esql:query>select * from groups order by gname</esql:query>
+              <esql:results>
+                <esql:row-results>
+                  <form>
+                    <sqltblrow>
+                      <gname>
+                        <input type="text" name="groups.gname">
+                          <xsp:attribute name="value"><esql:get-string column="gname"/></xsp:attribute>
+                        </input>
+                        <input type="hidden" name="groups.gid">
+                          <xsp:attribute name="value"><esql:get-string column="gid"/></xsp:attribute>
+                        </input>
+                        <input type="submit" name="upd-group" value="update"/>
+                        <input type="submit" name="del-group" value="delete"/>
+                      </gname>
+                    </sqltblrow>
+                  </form>
+                </esql:row-results>
+              </esql:results>
+              <esql:error-results>
+                <error><esql:get-message/></error>
+              </esql:error-results>
+            </esql:execute-query>
+            <sqltblrow>
+              <gname>
+                <form>
+                  <input type="text" name="groups.gname" size="20" maxsize="20">
+                    <xsp:attribute name="value"><!-- <xsp-request:get-parameter default="" name="groups.gname"/> --></xsp:attribute>
+                  </input>
+                  <input type="submit" name="add-group" value="new group"/>
+                </form>
+              </gname>
+            </sqltblrow>
+          </sqltbl>
+        </p>
+
+        <p>
+          <form>
+            <esql:execute-query>
+              <esql:query>select user.uid, user.uname, groups.gid, groups.gname from user, user_groups, groups where user.uid=user_groups.uid and user_groups.gid=groups.gid order by user.uname, groups.gname</esql:query>
+              <esql:results>
+                <sqltbl>
+                  <esql:row-results>
+                    <form action="edit-groups">
+                      <sqltblrow>
+                        <uname>
+                          <input type="hidden" name="user.uid">
+                            <xsp:attribute name="value"><esql:get-string column="uid"/></xsp:attribute>
+                          </input>
+                          <esql:get-string column="uname"/>
+                        </uname>
+                        <gname><esql:get-string column="gname"/></gname>
+                        <action>
+                          <input value="edit groups" type="submit"/>
+                        </action>
+                      </sqltblrow>
+                    </form>
+                  </esql:row-results>
+                </sqltbl>
+              </esql:results>
+              <esql:error-results>
+                <error><esql:get-message/></error>
+              </esql:error-results>
+            </esql:execute-query>
+          </form>
+        </p>
+      </esql:connection>
+       
+      <hr/>
+
+      <p><h3>Request Attributes</h3></p>
+      <p>
+        <table border="0">
+          <tbody>
+            <xsp:logic>{
+               Enumeration e=request.getAttributeNames();
+               while ( e.hasMoreElements() ) {
+                  String attribute = (String) e.nextElement();
+                  Object value = request.getAttribute(attribute);
+                  <tr>
+                    <td align="right"><xsp:expr>attribute</xsp:expr></td>
+                    <td>="<xsp:expr>value</xsp:expr>"</td>
+                  </tr>
+               }
+            }</xsp:logic>
+          </tbody>
+        </table>
+      </p>
+
+      <hr/>
+
+      <p><h3>Request Parameters</h3></p>
+      <p>
+        <table border="0">
+          <tbody>
+            <xsp:logic>{
+               Enumeration e=request.getParameterNames();
+               while ( e.hasMoreElements() ) {
+                  String attribute = (String) e.nextElement();
+                  Object[] value = request.getParameterValues(attribute);
+                  for (int i=0; i &lt; value.length; i++) {
+                     <tr>
+                       <td align="right"><xsp:expr>attribute</xsp:expr>[<xsp:expr>i</xsp:expr>]</td>
+                       <td>="<xsp:expr>value[i]</xsp:expr>"</td>
+                     </tr>
+                  }
+               }
+            }</xsp:logic>
+          </tbody>
+        </table><br/>
+      </p>
+
+      <hr/>
+      
+    </content>
+  </page>
+</xsp:page>
+

@@ -1,0 +1,158 @@
+# $XFree86: xc/programs/Xserver/hw/xfree86/SuperProbe/Makefile.std,v 3.11.2.3 1997/05/06 13:24:08 dawes Exp $
+
+
+
+
+
+# $XConsortium: Makefile.std /main/8 1996/10/27 11:04:00 kaleb $
+#
+# Installation parameters
+#
+BINDIR = /usr/local/bin
+MANDIR = /usr/share/man/man1
+OWNER = root
+GROUP = bin
+MODE = 4755
+
+#
+# OS-specific library
+#
+# SVR3 & SVR4
+#OS_DEF = -DSYSV
+#OS_DEF = -DSYSV -DSCO
+#OS_DEF = -DSYSV -DESIX
+#OS_DEF = -DSVR4 -Dsun
+OS_DEF = -DSYSV -DSVR4
+OS_SRC = OS_SYSV.c
+OS_OBJ = OS_SYSV.o
+# For Solarix x86 with ProWorks compiler only
+#IO_SRC = SolX86IO.s
+#IO_OBJ = SolX86IO.o
+# Linux
+#OS_DEF = -Dlinux -DGCCUSESGAS
+#OS_SRC = OS_Linux.c
+#OS_OBJ = OS_Linux.o
+# 386BSD
+#OS_DEF = -DCSRG_BASED -D__386BSD__ -DGCCUSESGAS $(CONS_DEF)
+#OS_SRC = OS_386BSD.c
+#OS_OBJ = OS_386BSD.o
+#CONS_DEF = -DPCCONS_SUPPORT
+# NetBSD
+#OS_DEF = -DCSRG_BASED -D__NetBSD__ -DGCCUSESGAS $(CONS_DEF)
+#OS_SRC = OS_386BSD.c
+#OS_OBJ = OS_386BSD.o
+#CONS_DEF = -DPCCONS_SUPPORT -DPCVT_SUPPORT
+# OpenBSD
+#OS_DEF = -DCSRG_BASED -D__OpenBSD__ -DGCCUSESGAS $(CONS_DEF)
+#OS_SRC = OS_386BSD.c
+#OS_OBJ = OS_386BSD.o
+#CONS_DEF = -DPCCONS_SUPPORT -DPCVT_SUPPORT
+# FreeBSD
+#OS_DEF = -DCSRG_BASED -D__FreeBSD__ -DGCCUSESGAS $(CONS_DEF)
+#OS_SRC = OS_386BSD.c
+#OS_OBJ = OS_386BSD.o
+#CONS_DEF = -DPCCONS_SUPPORT -DSYSCONS_SUPPORT -DPCVT_SUPPORT
+# BSD/386
+#OS_DEF = -DCSRG_BASED -D__bsdi__ -DGCCUSESGAS
+#OS_SRC = OS_386BSD.c
+#OS_OBJ = OS_386BSD.o
+# Minix
+#OS_DEF = -D_MINIX -D_POSIX_SOURCE
+#OS_SRC = OS_Minix.c
+#OS_OBJ = OS_Minix.o
+# Mach (BSD Tree)
+#OS_DEF = -DMACH386 -DGCCUSESGAS -I/usr/mach/include -I/usr/include
+#OS_SRC = OS_Mach.c
+#OS_OBJ = OS_Mach.o
+#OS_LIB = /usr/lib/libmach.a
+# Mach
+#OS_DEF = -DMACH386 -DGCCUSESGAS
+#OS_SRC = OS_Mach.c
+#OS_OBJ = OS_Mach.o
+#OS_LIB = /usr/misc/.mach/lib/libmach.a
+# OS/2 with EMX
+#OS_DEF = -D__EMX__ -DGCCUSESGAS
+#OS_SRC = OS_Os2.c
+#OS_OBJ = OS_Os2.o
+#OS_LIB = -lemxio
+# LynxOS
+#OS_DEF =
+#OS_SRC = OS_LynxOS.c
+#OS_OBJ = OS_LynxOS.o
+
+HDRS = Probe.h
+BASE_SRC = MDA.c Herc.c CGA.c VGA.c RamDac.c MemProbe.c PCI.c
+BASE_OBJ = MDA.o Herc.o CGA.o VGA.o RamDac.o MemProbe.o PCI.o
+SVGA_SRC = Tseng.c WD.c ChipsTech.c Video7.c Genoa.c Trident.c Oak.c \
+	   Cirrus.c Ahead.c ATI.c S3.c AL.c Yamaha.c NCR.c MX.c \
+	   RealTek.c Primus.c Compaq.c HMC.c UMC.c Weitek.c SiS.c \
+	   ARK.c Alliance.c Matrox.c SigmaDesigns.c
+SVGA_OBJ = Tseng.o WD.o ChipsTech.o Video7.o Genoa.o Trident.o Oak.o \
+	   Cirrus.o Ahead.o ATI.o S3.o AL.o Yamaha.o NCR.o MX.o \
+	   RealTek.o Primus.o Compaq.o HMC.o UMC.o Weitek.o SiS.o \
+	   ARK.o Alliance.o Matrox.o SigmaDesigns.o
+COPROC_SRC = 8514.c ATIMach.c I128.c GLINT.c
+COPROC_OBJ = 8514.o ATIMach.o I128.o GLINT.o
+SRCS = Main.c $(SVGA_SRC) $(COPROC_SRC) $(BASE_SRC) Print.c \
+       Utils.c $(OS_SRC) $(IO_SRC)
+OBJS = Main.o $(SVGA_OBJ) $(COPROC_OBJ) $(BASE_OBJ) Print.o \
+       Utils.o $(OS_OBJ) $(IO_OBJ)
+LIBS = $(OS_LIB)
+
+
+#PROG = SuperProbe.exe # OS/2
+PROG = SuperProbe
+
+# Options for gcc
+CC = gcc
+CCOPTS = -m486 -ansi -pedantic
+DEBUG_OR_OPT = -g -Wall
+#DEBUG_OR_OPT = -O2
+
+# Options for ProWorks compiler on Solaris 2.x
+#PROWORKSHOME = /opt/SUNWspro
+#CC = $(PROWORKSHOME)/bin/cc
+#AS = /usr/ccs/bin/as
+#CCOPTS = -Xa
+#DEBUG_OR_OPT = -g
+#DEBUG_OR_OPT = -O
+
+# Options for OS/2
+#CC= gcc
+#CCOPTS = -m486
+#LDFLAGS = -Zexe
+
+
+CFLAGS = $(CCOPTS) $(DEBUG_OR_OPT) $(OS_DEF)
+
+#
+# Assemblier -> object format rule (Solaris x86 ProWorks compiler only)
+# NOTE: AS must be defined to the assemblier to be used. Currently only
+#       the default assemblier supplied with Solaris/ProWorks is supported
+#
+.s.o:
+	$(RM) $@
+	$(AS) -o $*.o $*.s
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS) $(LIBS)
+
+$(OBJS): $(HDRS)
+Utils.o: AsmMacros.h
+Main.o: PatchLevel.h
+
+clean:
+	rm -f $(OBJS)
+
+clobber: clean
+	rm -f $(PROG)
+
+install: $(PROG)
+	rm -f $(BINDIR)/$(PROG)
+	cp $(PROG) $(BINDIR)
+	chown $(OWNER) $(BINDIR)/$(PROG)
+	chgrp $(GROUP) $(BINDIR)/$(PROG)
+	chmod  $(MODE) $(BINDIR)/$(PROG)
+	cp $(PROG).1 $(MANDIR)/$(PROG).1

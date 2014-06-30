@@ -1,0 +1,117 @@
+.TH ACE_Sig_Handlers 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Sig_Handlers \- This is an alternative signal handling dispatcher for \fBACE\fR. It allows a list of signal handlers to be registered for each signal. It also makes SA_RESTART the default mode. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Signal.h>\fR
+.PP
+Inherits \fBACE_Sig_Handler\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBregister_handler\fR (int signum, \fBACE_Event_Handler\fR *new_sh, \fBACE_Sig_Action\fR *new_disp = 0, \fBACE_Event_Handler\fR **old_sh = 0, \fBACE_Sig_Action\fR *old_disp = 0)"
+.br
+.ti -1c
+.RI "virtual int \fBremove_handler\fR (int signum, \fBACE_Sig_Action\fR *new_disp = 0, \fBACE_Sig_Action\fR *old_disp = 0, int sigkey = -1)"
+.br
+.ti -1c
+.RI "virtual \fBACE_Event_Handler\fR* \fBhandler\fR (int signum)"
+.br
+.RI "\fIReturn the head of the list of s associated with SIGNUM.\fR"
+.ti -1c
+.RI "virtual \fBACE_Event_Handler\fR* \fBhandler\fR (int signum, \fBACE_Event_Handler\fR *)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBdispatch\fR (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)"
+.br
+.in -1c
+.SS Static Private Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBsigkey_\fR"
+.br
+.ti -1c
+.RI "int \fBthird_party_sig_handler_\fR"
+.br
+.RI "\fIIf this is > 0 then a 3rd party library has registered a handler...\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+This is an alternative signal handling dispatcher for \fBACE\fR. It allows a list of signal handlers to be registered for each signal. It also makes SA_RESTART the default mode.
+.PP
+.PP
+ Using this class a program can register one or more \fBACE_Event_Handler\fR with the \fBACE_Sig_Handler\fR in order to handle a designated <signum>. When a signal occurs that corresponds to this <signum>, the <handle_signal> methods of all the registered ACE_Event_Handlers are invoked automatically. 
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Sig_Handlers::dispatch (int signum, \fBsiginfo_t\fR *, \fBucontext_t\fR *)\fC [static]\fR
+.PP
+Callback routine registered with sigaction(2) that dispatches the <handle_signal> method of all the pre-registered ACE_Event_Handlers for <signum> 
+.PP
+Reimplemented from \fBACE_Sig_Handler\fR.
+.SS void ACE_Sig_Handlers::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented from \fBACE_Sig_Handler\fR.
+.SS \fBACE_Event_Handler\fR * ACE_Sig_Handlers::handler (int signum, \fBACE_Event_Handler\fR *)\fC [virtual]\fR
+.PP
+Set a new  that is associated with SIGNUM at the head of the list of signals. Return the existing handler that was at the head. 
+.PP
+Reimplemented from \fBACE_Sig_Handler\fR.
+.SS \fBACE_Event_Handler\fR * ACE_Sig_Handlers::handler (int signum)\fC [virtual]\fR
+.PP
+Return the head of the list of s associated with SIGNUM.
+.PP
+Reimplemented from \fBACE_Sig_Handler\fR.
+.SS int ACE_Sig_Handlers::register_handler (int signum, \fBACE_Event_Handler\fR * new_sh, \fBACE_Sig_Action\fR * new_disp = 0, \fBACE_Event_Handler\fR ** old_sh = 0, \fBACE_Sig_Action\fR * old_disp = 0)\fC [virtual]\fR
+.PP
+Add a new \fBACE_Event_Handler\fR and a new sigaction associated with <signum>. Passes back the existing \fBACE_Event_Handler\fR and its sigaction if pointers are non-zero. Returns -1 on failure and a <sigkey> that is >= 0 on success. 
+.PP
+Reimplemented from \fBACE_Sig_Handler\fR.
+.SS int ACE_Sig_Handlers::remove_handler (int signum, \fBACE_Sig_Action\fR * new_disp = 0, \fBACE_Sig_Action\fR * old_disp = 0, int sigkey = -1)\fC [virtual]\fR
+.PP
+Remove an  currently associated with <signum>. We remove the handler if (1) its <sigkey> matches the <sigkey> passed as a parameter or (2) if we've been told to remove all the handlers, i.e., <sigkey> == -1. If a new disposition is given it is installed and the previous disposition is returned (if desired by the caller). Returns 0 on success and -1 if <signum> is invalid. 
+.PP
+Reimplemented from \fBACE_Sig_Handler\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Sig_Handlers::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented from \fBACE_Sig_Handler\fR.
+.SS int ACE_Sig_Handlers::sigkey_\fC [static, private]\fR
+.PP
+Keeps track of the id that uniquely identifies each registered signal handler. This id can be used to cancel a timer via the <remove_handler> method. 
+.SS int ACE_Sig_Handlers::third_party_sig_handler_\fC [static, private]\fR
+.PP
+If this is > 0 then a 3rd party library has registered a handler...
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

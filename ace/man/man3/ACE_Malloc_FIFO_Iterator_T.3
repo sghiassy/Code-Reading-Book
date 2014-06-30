@@ -1,0 +1,159 @@
+.TH ACE_Malloc_FIFO_Iterator_T 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Malloc_FIFO_Iterator_T \- FIFO iterator for names stored in Malloc'd memory. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Malloc_T.h>\fR
+.PP
+Inherited by \fBACE_Malloc_FIFO_Iterator\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef ACE_TYPENAME ACE_CB::ACE_Name_Node \fBNAME_NODE\fR"
+.br
+.ti -1c
+.RI "typedef ACE_TYPENAME ACE_CB::ACE_Malloc_Header \fBMALLOC_HEADER\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Malloc_FIFO_Iterator_T\fR (\fBACE_Malloc_T\fR<ACE_MEM_POOL_2, ACE_LOCK, ACE_CB> &malloc, const char *name = 0)"
+.br
+.RI "\fIif <name> = 0 it will iterate through everything else only through those entries whose <name> match.\fR"
+.ti -1c
+.RI "\fB~ACE_Malloc_FIFO_Iterator_T\fR (void)"
+.br
+.ti -1c
+.RI "int \fBdone\fR (void) const"
+.br
+.RI "\fIReturns 1 when all items have been seen, else 0.\fR"
+.ti -1c
+.RI "int \fBnext\fR (void *&next_entry)"
+.br
+.RI "\fIPass back the next <entry> in the set that hasn't yet been visited. Returns 0 when all items have been seen, else 1.\fR"
+.ti -1c
+.RI "int \fBnext\fR (void *&next_entry, const char *&name)"
+.br
+.ti -1c
+.RI "int \fBadvance\fR (void)"
+.br
+.RI "\fIMove forward by one element in the set. Returns 0 when all the items in the set have been seen, else 1.\fR"
+.ti -1c
+.RI "int \fBstart\fR (void)"
+.br
+.RI "\fIGo to the starting element that was inserted first. Returns 0 when there is no item in the set, else 1.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Malloc_T\fR<ACE_MEM_POOL_2, ACE_LOCK, ACE_CB>& \fBmalloc_\fR"
+.br
+.RI "\fIMalloc we are iterating over.\fR"
+.ti -1c
+.RI "\fBNAME_NODE\fR* \fBcurr_\fR"
+.br
+.RI "\fIKeeps track of how far we've advanced...\fR"
+.ti -1c
+.RI "\fBACE_Read_Guard\fR<ACE_LOCK> \fBguard_\fR"
+.br
+.RI "\fILock Malloc for the lifetime of the iterator.\fR"
+.ti -1c
+.RI "const char* \fBname_\fR"
+.br
+.RI "\fIName that we are searching for.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<ACE_MEM_POOL_1, class ACE_LOCK, class ACE_CB>  template class ACE_Malloc_FIFO_Iterator_T
+FIFO iterator for names stored in Malloc'd memory.
+.PP
+.PP
+ Does not support deletions while iteration is occurring. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> typedef ACE_TYPENAME ACE_CB::ACE_Malloc_Header ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::MALLOC_HEADER
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> typedef ACE_TYPENAME ACE_CB::ACE_Name_Node ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::NAME_NODE
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB> (\fBACE_Malloc_T\fR< ACE_MEM_POOL_2,ACE_LOCK,ACE_CB >& malloc, const char * name = 0)
+.PP
+if <name> = 0 it will iterate through everything else only through those entries whose <name> match.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::~ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB> (void)
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::advance (void)
+.PP
+Move forward by one element in the set. Returns 0 when all the items in the set have been seen, else 1.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::done (void) const
+.PP
+Returns 1 when all items have been seen, else 0.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> void ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::next (void *& next_entry, const char *& name)
+.PP
+Pass back the next <entry> (and the <name> associated with it) in the set that hasn't yet been visited. Returns 0 when all items have been seen, else 1. 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::next (void *& next_entry)
+.PP
+Pass back the next <entry> in the set that hasn't yet been visited. Returns 0 when all items have been seen, else 1.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> int ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::start (void)
+.PP
+Go to the starting element that was inserted first. Returns 0 when there is no item in the set, else 1.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> \fBNAME_NODE\fR * ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::curr_\fC [private]\fR
+.PP
+Keeps track of how far we've advanced...
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> \fBACE_Read_Guard\fR< ACE_LOCK > ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::guard_\fC [private]\fR
+.PP
+Lock Malloc for the lifetime of the iterator.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> \fBACE_Malloc_T\fR< ACE_MEM_POOL_2,ACE_LOCK,ACE_CB >& ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::malloc_\fC [private]\fR
+.PP
+Malloc we are iterating over.
+.PP
+.SS template<ACE_MEM_POOL_1, classACE_LOCK, classACE_CB> const char * ACE_Malloc_FIFO_Iterator_T<, ACE_LOCK, ACE_CB>::name_\fC [private]\fR
+.PP
+Name that we are searching for.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

@@ -1,0 +1,142 @@
+.TH ACE_Activation_Queue 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Activation_Queue \- Reifies a method into a request. Subclasses typically represent necessary state and behavior. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Activation_Queue.h>\fR
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Activation_Queue\fR (\fBACE_Message_Queue\fR<ACE_SYNCH> *new_queue = 0)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Activation_Queue\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "\fBACE_Method_Request\fR* \fBdequeue\fR (\fBACE_Time_Value\fR *tv = 0)"
+.br
+.RI "\fIDequeue the next available <Method_Request>.\fR"
+.ti -1c
+.RI "int \fBenqueue\fR (\fBACE_Method_Request\fR *new_method_request, \fBACE_Time_Value\fR *tv = 0)"
+.br
+.RI "\fIEnqueue the <Method_Request> in priority order. The priority is determined by the <priority> method of the <new_message_request>.\fR"
+.ti -1c
+.RI "int \fBmethod_count\fR (void) const"
+.br
+.RI "\fIGet the current number of method objects in the queue.\fR"
+.ti -1c
+.RI "int \fBis_empty\fR (void) const"
+.br
+.RI "\fIReturns 1 if the queue is empty, 0 otherwise.\fR"
+.ti -1c
+.RI "int \fBis_full\fR (void) const"
+.br
+.RI "\fIReturns 1 if the queue is full, 0 otherwise.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an request.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Message_Queue\fR<ACE_SYNCH>* \fBqueue_\fR"
+.br
+.RI "\fIStores the <Method_Requests>.\fR"
+.ti -1c
+.RI "int \fBdelete_queue_\fR"
+.br
+.RI "\fIKeeps track of whether we need to delete the queue.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBoperator=\fR (const ACE_Activation_Queue &)"
+.br
+.ti -1c
+.RI "\fBACE_Activation_Queue\fR (const ACE_Activation_Queue &)"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Reifies a method into a request. Subclasses typically represent necessary state and behavior.
+.PP
+.PP
+ A <Method_Request> is inserted in the , where it is subsequently removed by the <Scheduler>, which invokes its <call> method.. 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Activation_Queue::ACE_Activation_Queue (\fBACE_Message_Queue\fR< ACE_SYNCH >* new_queue = 0)
+.PP
+Constructor.
+.PP
+.SS ACE_Activation_Queue::~ACE_Activation_Queue (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SS ACE_Activation_Queue::ACE_Activation_Queue (const ACE_Activation_Queue &)\fC [private]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS \fBACE_Method_Request\fR * ACE_Activation_Queue::dequeue (\fBACE_Time_Value\fR * tv = 0)
+.PP
+Dequeue the next available <Method_Request>.
+.PP
+.SS void ACE_Activation_Queue::dump (void) const
+.PP
+Dump the state of an request.
+.PP
+.SS int ACE_Activation_Queue::enqueue (\fBACE_Method_Request\fR * new_method_request, \fBACE_Time_Value\fR * tv = 0)
+.PP
+Enqueue the <Method_Request> in priority order. The priority is determined by the <priority> method of the <new_message_request>.
+.PP
+.SS int ACE_Activation_Queue::is_empty (void) const
+.PP
+Returns 1 if the queue is empty, 0 otherwise.
+.PP
+.SS int ACE_Activation_Queue::is_full (void) const
+.PP
+Returns 1 if the queue is full, 0 otherwise.
+.PP
+.SS int ACE_Activation_Queue::method_count (void) const
+.PP
+Get the current number of method objects in the queue.
+.PP
+.SS void ACE_Activation_Queue::operator= (const ACE_Activation_Queue &)\fC [private]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Activation_Queue::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS int ACE_Activation_Queue::delete_queue_\fC [protected]\fR
+.PP
+Keeps track of whether we need to delete the queue.
+.PP
+.SS \fBACE_Message_Queue\fR< ACE_SYNCH >* ACE_Activation_Queue::queue_\fC [protected]\fR
+.PP
+Stores the <Method_Requests>.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

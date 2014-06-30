@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>&lt;jspc&gt;</title>
+</head>
+<body>
+<H1> JspC -- A Command Line JSP Compilation Tool </H1>
+<H3>$Id: jspc.html,v 1.4 2000/09/19 19:35:18 pierred Exp $</H3>
+
+<H2>OVERVIEW </H2>
+
+Even thought the primary focus of JSP is as a container run environment,
+sometimes it is useful to create a pure servlet out of the JSP page.
+JspC encapsulates the core JSP to servlet translation into a program
+that has no dependencies on a containing servlet engine and allows you
+to translate JSP pages into an equivalent Java servlet.
+
+<H2>GENERAL USE </H2>
+
+The most basic use of JspC is to compile a JSP page in place with the
+jsp page(s) as the arguments.  This will compile the page with the
+resulting java files placed in the directory JspC was called from.  The
+package will be determined from the directories that the JSP page lives
+in.  This will be relative to the web-app it live in (if it exists or is
+specified) or the default package.  The class name will be the name of
+the JSP page without the extension.
+
+<P>To override these default values you can use the <tt>-c</tt> and 
+<tt>-p</tt> options.  <tt>-c &lt;class name&gt;</tt> changes the name of 
+the class of the first compiled JSP page to the class specified.
+Subsequent JSP pages will not be affected by this option.  The 
+<tt>-p &lt;package name&gt;</tt> option sets the package name of all JSP 
+pages compiled by that invocation.  Web-Apps specified for translation 
+will not be affected by either of these options.</P>
+
+<P>The directory that the resulting java files will go into is specified by
+the <TT>-d &lt;dir&gt;</TT> and <tt>-dd &lt;dir&gt;</tt> options.  Both
+of these specify a directory that files will be written into.  When
+using <tt>-d</tt> the java files will be placed in package appropriate
+sub directories while with <tt>-dd</tt> all of the java files will be
+placed literally into the specified directory (without any subdirectory
+structure).</P>
+
+<P>The amount of command line output can be throttled by the <tt>-q</tt> and 
+the <tt>-v&lt;#&gt;</tt> options.  <tt>-q</tt> has the same effect as
+<tt>-v0</tt>, which is to turn off all but fatal error messages.  
+<tt>-v1</tt> builds on <tt>-v0</tt> and it will print out error messages, 
+<tt>-v2</tt> adds warnings, <tt>-v3</tt> adds informational messages
+that have no operational impact, and <tt>-v4</tt> adds various messages
+used in debugging JspC itself.</P>
+
+<P><tt>-ieplugin</tt> is used by the <tt>&lt;jsp:plugin&gt;</tt> tags.
+If the Java Plug-in COM Class-ID you want to use changes then it can be
+specified here.  This should not need to be altered.</P>
+
+<P>As an aid to makefiles, the <tt>-die[#]</tt> option will cause the
+JVM to exit with an error code if a fatal error occurs during the
+translation.   This can be caused by such things as an invalid JSP 
+or an unwritable destination.  There is an optional number that can be 
+specified to specify the specific exit code, but it defaults to 
+<tt>1</tt> if it is not specified or cannot be deciphered.</P>
+
+<P>The <tt>-mapped</tt> option will split the JSP text content into a
+one line per call format.  There are comments above and below the mapped
+write calls to localize where in the JSP file each line of text comes
+from.  This can lead to a minor performance degradation (but it is bound 
+by a linear complexity).  Without this options all adjacent writes are
+concatenated into a single write.</P>
+
+<H2>WEB-APP INTEGRATION</H2>
+<P>JspC is web-app aware.  The package names and all relative uri
+references in JSP elements are rooted to a web-app base that is either
+heuristically determined or specified by the user.<P>
+
+<P><tt>-uriroot &lt;dir&gt;</tt> specifies the root of the web 
+application.  This is where all absolute uris will be resolved from.  
+If it is not specified then the first JSP page will be used to derive 
+it.  To derive it each parent directory of the first JSP page is 
+searched for a <tt>WEB-INF</tt> directory, and the directory closest to 
+the JSP page that has one will be used.  If none can be found then the 
+directory JspC was called from will be used.  This only affects pages 
+translated from an explicitly declared JSP file.</P>
+
+<P><tt>-uribase &lt;uri&gt;</tt> is used to establish the uri context of
+relative URI references in the JSP pages.  If it does not exist then it
+is derived from the location of the file relative to the declared or 
+derived value of <tt>-uriroot</tt>.    This only affects pages 
+translated from an explicitly declared JSP file.</P>
+
+<P> The jsp files option of <tt>-webapp &lt;dir&gt;</tt> is used to
+specify that an entire web-app's JSP files are to be translated.  The
+value of <tt>-uriroot</tt> for that directory becomes the specified
+directory, and all relative uris are resolved against their position in
+the web app.  Currently specifying a war, jar, or zip file is not
+supported.  Each directory is recursively searched and any file with a 
+<tt>.jsp</tt> extension is parsed as though it is a JSP page.  These
+pages obey the <tt>-d</tt>, <tt>-dd</tt>, and <tt>-p</tt> options.
+
+<P>Appropriate entries for the <tt>web.xml</tt> file can be created via
+the <tt>-webinc &lt;file&gt;</tt> and <tt>-webxml &lt;file&gt;</tt>
+options.  All JSP files and web-apps parsed by the single invocation
+will have appropriate <tt>servlet</tt> and <tt>servlet-mapping</tt> 
+elements created for them.  The <tt>webinc</tt> creates only an XML
+fragment suitable for inclusion into an existing <tt>web.xml</tt> file,
+while the <tt>webxml</tt> option creates an entire file with the 
+appropriate headers and root elements suitable for use as a 
+<tt>web.xml</tt> file.</P>
+
+<H2>COMMAND LINE SUMMARY</H2>
+<pre>
+Usage: jspc &lt;options&gt; [--] &lt;jsp files&gt;
+where jsp files is any number of:
+    &lt;file&gt;         A file to be parsed as a jsp page
+    -webapp &lt;dir&gt;  A directory containing a web-app, all jsp pages
+                   will recursively be parsed
+where options include:
+    -q          Quite mode (same as -v0)
+    -v[#]       Verbose mode (optional number is level, default is 2)
+    -d &lt;dir&gt;    Output Directory
+    -dd &lt;dir&gt;   Literal Output Directory.  (package dirs will not be made)
+    -p &lt;name&gt;         Name of target package
+    -c &lt;name&gt;         Name of target class name
+                (only applies to first JSP page)
+    -mapped     Generate separate write() calls for each HTML line in the JSP
+    -die[#]     Generate an error return code (#) on fatal errors.
+                If the number is absent or unparsable it defaults to 1.
+    -uribase &lt;dir&gt;  The uri directory compilations should be relative to
+                    (Default is "/")
+    -uriroot &lt;dir&gt;  The root directory that uri files should be resolved
+                    against, (Default is the directory jspc is invoked from)
+    -webinc &lt;file&gt;  Creates partial servlet mappings for the -webapp option
+    -webxml &lt;file&gt;  Creates a complete web.xml when using the -webapp option.
+    -ieplugin &lt;clsid&gt;  Java Plugin classid for Internet Explorer
+    -sax2 &lt;driverclassname&gt; Driver class name for the SAX 2.0 parser to be used
+</pre>
+
+</body>
+</html>

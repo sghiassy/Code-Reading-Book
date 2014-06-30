@@ -1,0 +1,105 @@
+XCOMM $XConsortium: Imakefile /main/27 1996/12/16 11:37:06 lehors $
+
+XCOMM This isn't an option we must build a shared lib
+#define DoSharedLib YES
+
+#define LibHeaders NO
+#define LibName xrx
+#define SoRev SOXRXREV
+
+SharedLibReferences(xrx,xrx,$(RXSRC),SOXRXREV,6.3)
+
+          RXSRC = ../rx
+    RX_INCLUDES = -I$(RXSRC)
+
+#ifdef SGIArchitecture
+#if OSMajorVersion == 5 && OSMinorVersion < 3 || OSMajorVersion == 6 && OSMinorVersion < 2
+     XT_DEFINES = -DXUSE_XTREGISTERWINDOW
+#endif
+/* Even though we want to build the distribution with -n32, Navigator 3.0 
+ * binaries are still built on IRIX 5.2, which means we need to use the 
+ * old style object format. This is a hack because this Imakefile gets
+ * included too late to do this properly, that is to say that the
+ * CCOPTIONS in Imake.tmpl gets the -n32 options that we don't want,
+ * but the CCOPTIONS in Library.tmpl does get set correctly, and over-
+ * rides the value. So it works, but it's not pretty.
+ */
+#undef sgiCCOptions
+#define sgiCCOptions -xansi
+#ifdef Mips64Architecture
+     SHLIBLDFLAGS = -shared
+#endif
+               LD = ld
+#endif
+
+#ifdef SunArchitecture
+MOTIF_INCLUDES = -I/usr/dt/include
+#if OSMajorVersion < 5 || OSMajorVersion == 5 && OSMinorVersion < 6
+     XT_DEFINES = -DXUSE_XTREGISTERWINDOW
+#endif
+#endif
+
+#ifdef HPArchitecture
+# No clue when HP might ship R6
+     XT_DEFINES = -DXUSE_XTREGISTERWINDOW
+#endif
+
+#ifdef AlphaArchitecture
+#if OSMajorVersion < 4
+     XT_DEFINES = -DXUSE_XTREGISTERWINDOW
+#endif
+#endif
+
+#ifdef IBMArchitecture
+# No clue when IBM might ship R6
+     XT_DEFINES = -DXUSE_XTREGISTERWINDOW
+#endif
+
+ PLUGIN_DEFINES = -DXP_UNIX
+PLUGIN_INCLUDES = -I./include
+
+        DEFINES = StrcasecmpDefines -DNETSCAPE_PLUGIN $(PLUGIN_DEFINES) $(XT_DEFINES)
+       INCLUDES = -I. $(PLUGIN_INCLUDES) $(RX_INCLUDES) $(MOTIF_INCLUDES)
+
+    PARAMS_SRCS = PRead.c PParse.c BuildReq.c
+    PARAMS_OBJS = PRead.o PParse.o BuildReq.o
+
+     XMISC_SRCS = XUrls.c XAuth.c XDpyName.c Prefs.c
+     XMISC_OBJS = XUrls.o XAuth.o XDpyName.o Prefs.o
+
+           SRCS = Main.c SetWin.c PProcess.c NewNDest.c Global.c stubs.c \
+		$(PARAMS_SRCS) $(XMISC_SRCS)
+           OBJS = Main.o SetWin.o PProcess.o NewNDest.o Global.o stubs.o \
+		$(PARAMS_OBJS) $(XMISC_OBJS)
+
+XCOMM we need to link in the right libraries so it will work no matter
+XCOMM which libraries Netscape itself is using.
+#if !VendorHasX11R6_3libXext
+X11R6_3_EXTENSIONS = ../libxplugin/libxplugin.a
+#ifdef SunArchitecture
+PLUGIN_LDOPTIONS = -L/usr/dt/lib -L/usr/openwin/lib
+CCENVSETUP =
+#endif
+#else
+PLUGIN_LDOPTIONS = $(LDPRELIBS)
+#endif
+
+/* Sun and HP don't ship it yet, SGI has it inside libXt. */
+#ifdef AlphaArchitecture
+RXICELIB = $(ICELIB)
+#endif
+
+    REQUIREDLIBS =  $(X11R6_3_EXTENSIONS) $(PLUGIN_LDOPTIONS) -lXm $(RXICELIB) $(XTOOLONLYLIB) $(XLIB)
+
+#include <Library.tmpl>
+
+LinkFile(PRead.c,$(RXSRC)/PRead.c)
+LinkFile(PParse.c,$(RXSRC)/PParse.c)
+LinkFile(BuildReq.c,$(RXSRC)/BuildReq.c)
+LinkFile(XUrls.c,$(RXSRC)/XUrls.c)
+LinkFile(XAuth.c,$(RXSRC)/XAuth.c)
+LinkFile(XDpyName.c,$(RXSRC)/XDpyName.c)
+LinkFile(Prefs.c,$(RXSRC)/Prefs.c)
+
+DependTarget()
+InstallManPage(libxrx,$(MANDIR))

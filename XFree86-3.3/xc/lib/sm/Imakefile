@@ -1,0 +1,50 @@
+XCOMM $XConsortium: Imakefile /main/12 1996/12/04 10:22:18 lehors $
+
+#define DoNormalLib NormalLibSM
+#define DoSharedLib SharedLibSM
+#define DoDebugLib DebugLibSM
+#define DoProfileLib ProfileLibSM
+#define LibName SM
+#define SoRev SOSMREV
+#define IncSubdir X11
+#define IncSubSubdir SM
+
+#include <Threads.tmpl>
+
+#ifdef SharedSMReqs
+REQUIREDLIBS = SharedSMReqs
+#endif
+
+#if (SystemV || SystemV4) && !HasSockets
+CONN_DEFINES = -DTCPCONN -DICE_t
+#else
+CONN_DEFINES = ConnectionFlags -DICE_t
+#endif
+DEPEND_DEFINES = $(CONN_DEFINES)
+
+HEADERS = SM.h \
+          SMproto.h \
+          SMlib.h
+
+SRCS = sm_client.c \
+       sm_genid.c \
+       sm_manager.c \
+       sm_process.c \
+       sm_error.c \
+       sm_misc.c \
+       sm_auth.c
+
+OBJS = sm_client.o \
+       sm_genid.o \
+       sm_manager.o \
+       sm_process.o \
+       sm_error.o \
+       sm_misc.o \
+       sm_auth.o
+
+#include <Library.tmpl>
+
+SpecialCLibObjectRule(sm_manager,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES))
+SpecialCLibObjectRule(sm_genid,$(ICONFIGFILES),$(TRANS_INCLUDES) $(CONN_DEFINES))
+
+DependTarget()

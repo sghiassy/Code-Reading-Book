@@ -1,0 +1,40 @@
+XCOMM $XConsortium: Imakefile /main/9 1996/06/11 06:56:55 kaleb $
+
+
+
+
+
+XCOMM $XFree86: xc/programs/Xserver/hw/xfree86/vga16/drivers/Imakefile,v 3.10 1996/12/23 06:51:55 dawes Exp $
+#include <Server.tmpl>
+#define IHaveSubdirs
+
+SUBDIRS = XF86Vga16Drivers
+
+#ifndef OS2Architecture
+SRCS = */?*.c 
+
+OBJS = */?*_drv.o 
+#else
+SRCS = ati/?*.c cl64xx/?*.c et3000/?*.c et4000/?*.c generic/?*.c \
+       igs/?*.c ncr77c22/?*.c oak/?*.c tvga8900/?*.c sis/?*.c
+
+OBJS = ati/?*_drv.o cl64xx/?*_drv.o et3000/?*_drv.o et4000/?*_drv.o \
+       generic/?*_drv.o igs/?*_drv.o ncr77c22/?*_drv.o oak/?*_drv.o tvga8900/?*_drv.o \
+       sis/?*_drv.o
+#endif
+
+#if MakeHasPosixVariableSubstitutions
+DONES=$(SUBDIRS:%=%/DONE)
+NormalDepLibraryTarget(driver16,$(SUBDIRS) $(DONES),$(OBJS))
+#else
+NormalDepLibraryTarget(driver16,$(SUBDIRS),$(OBJS))
+#endif
+
+NormalLibraryObjectRule()
+
+ForceSubdirs($(SUBDIRS))
+
+DependSubdirs($(SUBDIRS))
+
+InstallLinkKitNonExecFile(Imakefile,$(LINKKITDIR)/drivers/vga16)
+

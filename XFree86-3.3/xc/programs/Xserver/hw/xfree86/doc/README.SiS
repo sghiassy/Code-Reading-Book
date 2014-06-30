@@ -1,0 +1,266 @@
+
+
+
+
+
+
+
+
+
+			   Information for SiS Users
+
+		      Xavier Ducoin (xavier@rd.lectra.fr)
+
+				16 January 1997
+
+
+
+1.  Introduction
+
+The driver was primarily written for the SiS86c201.  The driver has almost been
+completed, with many additional features.  These include
+
+   o Linear Addressing
+
+   o 8/15/16/24 bits per pixel
+
+   o Fully programmable clocks are supported
+
+   o H/W cursor support
+
+   o BitBLT acceleration of many operations
+
+   o XAA support (XFree86 Acceleration Architecture)
+
+
+2.  Supported chips
+
+      SiS 86c201
+	    (External hardware clock)
+
+      SiS 86c202, SiS 86c205
+	    (Internal clock synthesizer)
+
+Color expansion is not supported by the engine in 16M-color graphic mode.
+
+
+3.  XF86Config Options
+
+The following options are of particular interest for the SiS driver. Each of
+them must be specified in the `svga' driver section of the XF86Config file,
+within the Screen subsections of the depths to which they are applicable (you
+can enable options for all depths by specifying them in the Device section).
+
+      Option "noaccel"
+	    By default the XAA (XFree86 Acceleration Architecture) is used.
+	    This option will disable the use of the XAA and will enable the old
+	    BitBlt acceleration operations. (see below).
+
+      Option "hw_clocks"
+	    On chips 86c202 and later, the default is to use the programmable
+	    clock for all clocks. It is possible to use the fixed clocks
+
+
+ Information for SiS Users
+
+
+
+
+
+ Information for SiS Users
+
+
+
+	    supported by the chip instead of using this option (manufacturer
+	    dependent).
+
+      Option "sw_cursor", "hw_cursor"
+	    The default is for using the hardware cursor.
+
+      Option "no_linear"
+	    By default linear addressing is used on all chips.	However this
+	    might be broken in some implementations. It is possible to turn the
+	    linear addressing off with this option.  Note that H/W acceleration
+	    and 16/24bpp are only supported with linear addressing.
+
+      Option "no_bitblt"
+	    This option will disable the use of all the BitBLT engine.	It is
+	    useful for problems related to acceleration problems.  In general
+	    this will result in a reduced performance.
+
+      Option "no_imageblt"
+	    It is useful for problems related to image writing, and possible
+	    stipple acceleration problems. In general this will result in a
+	    reduced performance.
+
+
+4.  Modelines
+
+When constructing a modeline for use with the Sis driver you'll need to con-
+sider several points:
+
+   o H/W Acceleration.	The H/W cursor, and fill operations currently allocate
+     memory of the video ram for there own use.  If this is not available these
+     functions will automatically be disabled.
+
+   o Dot Clock
+
+
+5.  Troubleshooting
+
+With intensive generation there is a snow phenomenon on the screen.  Can't
+remove it even if I used the fifo low/high water mark dumped from W95.
+
+With intensive generation in 1024x768 65 Mhz sometimes some points (rubbish,
+fuzz... hard to explain) appear in memory, like memory violations or memory
+corruption.  It looks like an electronic refresh not well done or VClk too near
+the MClk.  I use the default Mclk set by BIOS.	It is hard to reproduce this
+problem (It can take one hour, two or more).  I can't reproduce this problem in
+1024x768 75 MHz or 1280x1024 110 MHz or 1152x900 95 MHz.
+
+     Generated from XFree86: xc/programs/Xserver/hw/xfree86/doc/sgml/SiS.sgml,v 3.3 1997/01/25 03:22:15 dawes Exp $
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Information for SiS Users
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				   CONTENTS
+
+
+
+1. Introduction  ............................................................ 1
+
+2. Supported chips  ......................................................... 1
+
+3. XF86Config Options  ...................................................... 1
+
+4. Modelines  ............................................................... 2
+
+5. Troubleshooting  ......................................................... 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+				       i
+
+
+
+$XFree86: xc/programs/Xserver/hw/xfree86/doc/README.SiS,v 3.5 1997/01/27 22:12:56 dawes Exp $

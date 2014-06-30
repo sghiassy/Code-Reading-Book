@@ -1,0 +1,203 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:Reference:Definitions</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::Reference::<b>Definitions and defaults</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>Definitions and defaults.</h4>
+Below are specified the definitions and defaults for all kind of small things, which are overlooked easily.
+Most of these definitions and details are already explained with the API or command specifications. Others
+are mentioned here for the first time. Trivial topics are excluded, only necessary info is included, which
+have to be known to make your DemoGL usage a succesful one. The topics are ordered per subject to make
+browsing as easy as possible.
+<p>
+<dl>
+<dt><hr size="1" width="80%" align="left">
+	<b>Registry related</b>
+<dd><p>
+	<ul>
+		<li><b>Hive where startup data is stored</b>
+			<dl>
+			<dt>
+			<dd><dl>
+				<dt>RunType is RUNTYPE_NORMAL:
+				<dd>HKCU/Software/DemoGL/Application/<i>Application title</i>/AppData
+				<dt>RunType is RUNTYPE_SAVER_*:
+				<dd>HKCU/Software/DemoGL/Screensaver/<i>Application title</i>/AppData
+				</dl>
+			</dl>
+			<p>
+		<li><b>Working directory for screensavers</b>. A key in the startup data hive
+			called <i>sWorkingDir</i>, should contain the working directory of the
+			screensaver application, when DemoGL runs in a RUNTYPE_SAVER_* RunType, so
+			DemoGL can find the needed datafiles. Custom screensaver installers should
+			fill this key. When the key is not found or is empty, DemoGL will try to
+			determine the working directory using the application execution path and will
+			assume the directory wherefrom the application is executed, is the working
+			directory.
+			<p>
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Soundsystem related</b>
+<dd><p>
+	<ul>
+		<li><b>Maximum amount of loadable sound elements</b>. 
+			DemoGL supports 4096 loaded sound elements at once. When there are 4096 sound elements
+			loaded, any call to <a HREF="ref_functions_DEMOGL_SoundSystemLoadElement.htm">DEMOGL_SoundSystemLoadElement</a> will
+			fail. To make room, free some sound elements not used that moment using 
+			<a HREF="ref_functions_DEMOGL_SoundSystemFreeElement.htm">DEMOGL_SoundSystemFreeElement</a>. If you need more than
+			4096 sound elements loaded at a given time, you should adjust the constant DGL_SS_AMLOADABLESOUNDELEMENTS
+			in the DemoGL sourcecode (dgl_dllsoundsystem.h) and recompile the DemoGL DLL. This is however not recommended because
+			it will degrade system performance.
+			<p>
+		<li><b>Maximum amount of concurrent playing sound channels</b>. 
+			DemoGL supports 2048 concurrent playing sound channels at once. When there are 2048 playing sound channels at once,
+			starting another sound element will fail. If you need more than	2048 sound channels playing concurrently at a given
+			time, you should adjust the constant DGL_SS_AMCHANNELS in the DemoGL sourcecode (dgl_dllsoundsystem.h) and recompile the DemoGL DLL.
+			This is however not recommended since it will degrade systemperformance.
+			<p>
+	</ul </UL>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Startup Dialog related</b>
+<dd><p>
+	<ul>
+		<li><b>Custom image on Startup Dialog</b>. DemoGL will look for the resource with
+			symbolID 140 in the application instance. This custom image should be 91 pixels
+			wide and 433 pixels high. Store the picture as a .bmp in the resource file of the
+			application.
+			<p>
+		<li><b>SStartupDat appliance</b>. DemoGL will first use the data passed in the SStartupDat
+			structure and will overrule these settings with the settings stored in the registry, if
+			found. The resulting set is then used to fill in the options available on the startup
+			dialog.
+			<p>
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Application Window related</b>
+<dd><p>
+	<ul>
+		<li><b>Application Icon</b>. DemoGL will look for the resource with the symbolID <b>110</b> (defined in resource.h most of
+			the time) in the application instance. This custom icon is then used as application icon. If no icon is used, 
+			DemoGL will use it's own DemoGL icon as application icon.
+			<p>
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Screensaver RunTypes related</b>
+<dd><p>
+	<ul>
+		<li><b>Screensaver name in windows</b>. When you want your screensaver application a decent name for
+			the screensaver tab's drop down box, add a string table resource to your application and give it
+			symbolID 1. The first entry in the string table should be the 'IDS_STR_DESCRIP' with value 1 and the
+			caption is the name of the screensaver in the dropdown box in Windows display properties.
+			<p>
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Console related</b>
+<dd><p>
+	<ul>
+		<li><b>Press F1 for help</b>. Press F1 for a little help-screen which keys will give which results.
+			Press 'Page Up' to scroll 1 page up, press 'Page Down' to scroll one page down, the 'up'-arrow
+			key will scroll one line up, the 'down'-arrow key will scroll one line down. 
+			<p>
+		<li><b>Commands on the input-prompt</b>. You can execute script commands from the input prompt, which is
+			activatable by pressing F5 (enable debugmode) and then F6 (enable input prompt). The syntax for
+			the commands executed on the input prompt is identical to the syntax used in the script, except
+			the commands on the input prompt get executed immediately so the commands shouldn't contain a 
+			timespot in front of the object name. For example: instead of 1000;_SYSTEM;END; you type: _SYSTEM;END;
+			<p>
+		<li><b>DemoGL system textures</b>. DemoGL uses a special directory for the textures needed for the console: 
+			<b>systex</b>. This directory is expected in the datafile rootdir (that is: 
+			inside the datafile) or in the data directory you use. If you remove this 
+			directory or simply do not include this directory in your datafile, DemoGL's 
+			console will be black and empty. If you include the systex directory in your 
+			datafile, also include the files that need to be there: <i>cnslbg.jpg</i>, which 
+			is the console background texture with size 256x256 pixels and 2 fonttextures, 
+			both .bmp files and of size 256x256 pixels. 
+			<p>
+		<li><b>Console font</b>. If you want to change the font, check the current fontfiles first. DemoGL 
+			doesn't support proportional fonts. Each character is 26x26 
+			pixels, placed in 32x32 pixels wide squares. The font is placed on a 512x256 
+			texture which is cut in half.
+			<p>
+		<li><b>Default appearance</b>. Default the console buffer contains 500 lines, the console window
+			itself shows 50 lines on screen, including header and inputprompt lines, and has 80 chars per line.
+			The debug overlay contains 9 lines by default: 1 for the timer and 8 for the console contents.
+			Change this by calling <a HREF="ref_functions_DEMOGL_ConsoleSetAppearance.htm">DEMOGL_ConsoleSetAppearance</a>.
+			<p>
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Supported platforms related</b>
+<dd><p>
+	<ul>
+		<li><b>Hardware</b>. All 3D cards are supported except voodoo1 and voodoo2. 
+			<p>
+		<li><b>Operating System</b>. DemoGL will run on Windows95/98/ME, Windows NT4, Windows2000 and all 'SE' and 
+			'OSR1/2/2.5' variants. No need for extra DLL's than the BASS dll (v0.8a or higher) supplied in the SDK.
+			<p>
+		<li><b>3D Api</b>. Only OpenGL 1.1 and higher is supported. DemoGL will likely fail to work correctly
+			with OpenGL v1.0. Current Windows' OpenGL version is v1.1.
+			<p>
+		<li><b>Compiler</b>. DemoGL is a C/C++ library and is only compiled for VC++ 5 and 6. Users of other compilers
+			should port the DemoGL sourcecode to their compiler platform. Users of VC++ v5.0 should use the
+			special import library DemoGL_DLLVC50.lib, available in the SDK.
+			<p>
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Distributing your application related</b>
+<dd><p>
+	<ul>
+		<li><b>What to distribute</b>. Distribute with your application, datafile(s) and own DLL's, the DemoGL
+			DLL (DemoGL_DLL.dll) and the BASS DLL (bass.dll, v0.8a or higher). 
+			<p>
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>OpenGL related</b>
+<dd><p>
+	<ul>
+		<li><b>Setup</b>. DemoGL sets the initial frustum to glFrustum(-1.0, 1.0, -0.75, 0.75, 1.0, 20.0); 
+			<p>
+		<li><b>OpenGL buffer clearing</b>. DemoGL doesn't clear any buffers, you should do this yourself, for 
+			example in an effect at layer 0.
+	</ul>
+	<p>
+<dt><hr size="1" width="80%" align="left">
+	<b>Data file related</b>
+<dd><p>
+	<ul>
+		<li><b>Format</b>. DemoGL's datafile format is ZIP. So you can use a normal ZIP file as the datafile to
+			load the actual files from.
+			<p>
+		<li><b>Directory specification</b>. DemoGL forces you to use '\' as directory delimiter, even if
+			the zip tools sometimes make you use '/'. So refering to a texture foo.jpg in the directory demotex
+			results in &quot;demotex\\foo.jpg&quot;, in every case. This way you can use datafiles and data directories
+			in a flexible way without recoding the pathnames in your code when you switch between datafile and
+			data directory loading.
+	</ul>
+	<p>
+</dl>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 01-jun-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

@@ -1,0 +1,35 @@
+XCOMM $XConsortium: Imakefile /main/5 1996/09/28 16:56:13 rws $
+XCOMM $XFree86: xc/programs/Xserver/XIE/mixie/import/Imakefile,v 3.2 1996/12/23 06:28:36 dawes Exp $
+XCOMM build device dependent machine independent import element objects
+#include <Server.tmpl>
+
+SRCS1 = mifax.c miclut.c micphoto.c midraw.c \
+        milut.c miphoto.c miuncomp.c
+
+OBJS1 = mifax.o miclut.o micphoto.o midraw.o \
+        milut.o miphoto.o miuncomp.o
+
+#if BuildDIS
+DEFINES = -DXIE_DIS
+#else
+SRCS2 = microi.c miroi.c miregion.c mijpeg.c 
+OBJS2 = microi.o miroi.o miregion.o mijpeg.o
+#endif
+
+       SRCS = $(SRCS1) $(SRCS2)
+
+       OBJS = $(OBJS1) $(OBJS2)
+
+   INCLUDES = -I../include -I../../include -I$(SERVERSRC)/include -I$(XINCLUDESRC) -I$(XINCLUDESRC)/extensions -I../jpeg
+   LINTLIBS = ../../dixie/export/llib-lexp.ln ../../dixie/import/llib-limp.ln \
+              ../../dixie/process/llib-lproc.ln ../../dixie/request/llib-lreq.ln \
+              ../control/llib-lctrl.ln ../export/llib-lmexp.ln ../fax/llib-lfax.ln \
+              ../import/llib-lmimp.ln ../jpeg/llib-ljpeg.ln ../process/llib-lmproc.ln
+
+#define DoSharedLib	XieDynamicModule
+#include <ServerLib.tmpl>
+SubdirLibraryRule($(OBJS))
+LintLibraryTarget(mimp,$(SRCS))
+NormalLintTarget($(SRCS))
+
+DependTarget()

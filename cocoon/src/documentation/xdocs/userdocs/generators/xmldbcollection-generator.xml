@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>XML:DB Collection Generator</title>
+		<version>0.1</version>
+		<type>Technical document</type>
+		<authors>
+			<person name="Gianugo Rabellino" email="gianugo@rabellino.it"/>
+		 </authors>
+		 <abstract>This document describes the XML:DB
+     Collection generator of Cocoon.</abstract>
+	</header>
+	<body>
+		<s1 title="XML:DB Collection Generator">
+			<p>
+        As for the filesystem there are two generators provided (a file
+        generator and a directory generator), so is for XML:DB, which 
+        can roughly be tought as an XML filesystem, where Collections
+        stand for directories and Resources stand for (XML) files.
+      </p>
+      <p>
+        This generator outputs a list of collections and resources
+        given a starting collection. It can be used together with
+        the XMLDBGeneratot, and coupled with the appropriate XSLT, 
+        to easily navigate any XML:DB compliant database. 
+      </p>
+      <ul>
+        <li>Name: xmldbcollection</li>
+        <li>Class: org.apache.cocoon.generation.XMLDBCollectionGenerator</li>
+        <li>Cacheable: no</li>
+      </ul>
+      <p>
+         The configuration is the same of the XMLDBGenerator: it needsi
+         a driver (a class name) and base URI. An example
+         configuration, based on the stock dbXML implementation, will look like 
+         this:
+      </p>
+      <source>
+      <![CDATA[
+<map:generator  name="xmldbcollection"  src="org.apache.cocoon.generation.XMLDBGenerator" label="content">
+  <driver>org.dbxml.client.xmldb.DatabaseImpl</driver>
+  <base>xmldb:dbxml:///db/</base>
+</map:generator>
+      ]]>
+      </source>
+      <p>
+         Note that the content of the "base" tag will be prepended to the 
+         requested resource. It's important to keep a trailing slash at the
+         end of the <code>base</code> tag.
+      </p>
+    </s1>
+	</body>
+</document>

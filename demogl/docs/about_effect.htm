@@ -1,0 +1,57 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="demogldocsv13.css">
+<title>DemoGL SDK:About:The CEffect class</title>
+</head>
+<body>
+<table WIDTH="100%" BORDER="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td bgColor="#e8e8e8">
+	DemoGL::About::<b>The CEffect class</b>
+	</td>
+</tr>
+</table>
+<br CLEAR="ALL">
+<h4>The CEffect class.</h4>
+One of the building blocks of DemoGL are the effect classes, stored in C++ classes derived from the base class <i>CEffect</i>.
+A normal audiovisual application, build without DemoGL, normally would have several routines to generate the different
+audiovisual effects. DemoGL applications are build up differently. A developer should think in schedulable 
+audiovisual effectblocks. These effectblocks are then implemented in C++ classes, derived from CEffect, the base class
+exported by the DemoGL system. DemoGL itself executes the application, so the application itself is <i>split</i> in
+effect classes which are ran by DemoGL when ordered to do so. The example from the <a href="about_whatisdemogl.htm">What is DemoGL</a>
+topic is in fact an application that can visualize 3 effects and has a 4rth 'effect' doing maintainance work. Programming
+the logic to visualize this in a normal application would probably result in a big for(;;) loop with a switch() statement
+when to call which subroutine to visualize the effects. The developer should recognize the blocks in the application
+and should understand how the application can be done using DemoGL: put the right blocks in effect classes and the
+rest should be cut away since DemoGL will handle the rest. 
+<p>
+A good way of doing this is to understand what should be done in each frame that should be rendered by the application.
+Focussing on the visualisation and audio aspects of each frame is all that should be done when developing an application
+with DemoGL: in frame X, which effects are visualising content and which soundstreams are hearable? in frame X+n, are
+some effects removed or changed or new ones visible or hearable? This will result in clear effect descriptions and
+sound descriptions. Don't be afraid to end up with say 20 or 30 different effects when you originally thought you
+would have only 4 or 5. With this list, you can decide which of these different effects will become a CEffect derived
+effect class and which will be created with different parameters but with the same logic of those effect classes.
+After that, merge the different soundstreams with the effectclasses, or create new effectclasses to produce sound
+effects if needed or use scriptcommands to start/stop soundeffects. 
+<p>
+When the CEffect derived classes are defined, implement the different CEffect methods and eventually new methods
+needed. A more in-depth detailed description of all the CEffect methods can be found in <a href="ref_classes_CEffect.htm">CEffect</a>,
+the DemoGL Reference manual description of CEffect.
+<p>
+Using these steps you'll end up with several classes of effectcode. Create instances (objects) of these classes, 
+<a href="ref_functions_DEMOGL_EffectRegister.htm">register</a> the effects with DemoGL and start/stop the effects using
+in code commands or a <a href="about_script.htm">script</a>. You'll soon notice that the amount of code you have to
+produce is solely the effectcode, which what's all about, most of the time.
+<p>
+<br>
+<!-- footer -->
+<center>
+<hr>
+<p class="SmallFontREF">
+	Last changed on 11-mar-2001<br><br>
+	©1999-2001 <a href="http://www.sd.nl" target="_blank">Solutions Design</a>
+</center>
+<br><br>
+</body>
+</html>

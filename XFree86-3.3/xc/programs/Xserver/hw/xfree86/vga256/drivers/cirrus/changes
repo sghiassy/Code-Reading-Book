@@ -1,0 +1,86 @@
+$XFree86: xc/programs/Xserver/hw/xfree86/vga256/drivers/cirrus/CHANGES,v 1.1.2.1 1997/05/10 09:10:20 hohndel Exp $
+
+
+
+
+
+Post-3.2A changes to the Cirrus driver.
+
+1. No longer use the legacy text color expansion functions for chips
+   that require byte-padding. Instead use XAA with CPU-to-screen color
+   expansion with byte-padding. This fixes a crash happening at 16bpp
+   with MMIO operation on these chips. There is no reason why the
+   optimized legacy functions couldn't be used though, the bug was in
+   the XAA set up.
+
+2. In addition, the indirect scanline screen-to-screen color expansion
+   is no longer used for these chips. The required scratch buffer in
+   in video memory is no longer allocated.
+
+3. Boldly enable the color expand 8x8 pattern fill, waiting for testing
+   results. Also enable pattern origin offset for the regular pattern.
+   Use the new-style pattern origin for the 5446, and the old-style
+   pattern origin for the 5430/40 and 5436.
+
+4. Add the LEFT_EDGE_CLIPPING_NEGATIVE_X color expansion parameter,
+   which has the effect of enabling acceleration of large stipples.
+
+5. Reorganize the code that checks whether a particular chip has a
+   certain BitBLT feature, eliminating excess code in the XAA
+   primitives.
+
+6. Correctly detect all possible DRAM configurations of the CL-GD5446.
+
+7. Correctly handle the hardware cursor at dot clocks > 85 MHz on the
+   CL-GD5436/46.
+
+8. Support DPMS bit setting for CL-GD7543/48 and Alpine-family chips.
+
+9. Fix the DAC setting for the CL-GD5446 for > 85 MHz dot clock modes.
+
+10. Add sync checks to Setup functions because XAA no longer guarantees
+    that BitBLT operations are finished when Setup function is called.
+
+11. Add preliminary support for the CL-GD7555 (not detected yet).
+
+**** Changes to 3.2As ****
+
+12. Fix HAVE_546X() macro for Laguna support. (corey)
+
+13. Add support for CL-GD5480. (corey)
+
+14. Disable Alpine XAA color expansion code enabled by (3).  Code was
+    locking machine.  THIS CODE SHOULD BE RE-ENABLED AND DEBUGGED!
+    (corey)
+
+15. Fix 32bpp Alpine mode bug. (corey)
+
+16. Overload {slow,med,fast}_dram options to set Rambus BCLK on Laguna
+    chips. (corey)
+
+17. Remove Sync()'s in laguna_acl.c, to take full advantage of XAA
+    delayed-sync mechanism. (corey)
+
+18. Removed unnecessary, dead, and/or dumb code in
+    cir_driver.c. (corey)
+
+19. Add clock values for 150MHz through 229MHz dot clocks. (corey)
+
+20. Set clock limits correctly for Laguna chips. (corey)
+
+21. Fix HW cursor location bug on CL-GD5465. (corey)
+
+    
+
+Testing goals:
+
+1. The monochrome hardware pattern support for the 5426/28/34 and 7543/48
+2. The monochrome hardware pattern support for the 5429/30/36/46.
+2. The regular hardware pattern support for the 5429/30/36/46.
+4. The regular hardware pattern support for the 5446.
+5. Byte-padded color expansion (text) on the CL-GD5426/28/29/30/34 and
+   7543/48.
+6. DRAM size detection for the CL-GD5446.
+7. Hardware cursor support at dot clocks > 85 MHz on the 5436/46.
+8. DPMS power saving for CL-GD7543 and 7548.
+9. DPMS power saving for Alpine-family chips.

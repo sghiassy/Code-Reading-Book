@@ -1,0 +1,111 @@
+.TH ACE_Throughput_Stats 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Throughput_Stats \- A simple class to make throughput and latency analysis. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Stats.h>\fR
+.PP
+Inherits \fBACE_Basic_Stats\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Throughput_Stats\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "void \fBsample\fR (\fBACE_UINT64\fR throughput, \fBACE_UINT64\fR latency)"
+.br
+.RI "\fIStore one sample.\fR"
+.ti -1c
+.RI "void \fBaccumulate\fR (const ACE_Throughput_Stats &throughput)"
+.br
+.RI "\fIUpdate the values to reflect the stats in 
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIthroughput.\fR\fR\fR"
+.ti -1c
+.RI "void \fBdump_results\fR (const \fBACE_TCHAR\fR* msg, ACE_UINT32 scale_factor)"
+.br
+.RI "\fIPrint down the stats.\fR"
+.in -1c
+.SS Static Public Methods
+
+.in +1c
+.ti -1c
+.RI "void \fBdump_throughput\fR (const \fBACE_TCHAR\fR *msg, ACE_UINT32 scale_factor, \fBACE_UINT64\fR elapsed_time, ACE_UINT32 samples_count)"
+.br
+.RI "\fIDump the average throughput stats.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_UINT64\fR \fBthroughput_last_\fR"
+.br
+.RI "\fIThe last throughput measurement.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+A simple class to make throughput and latency analysis.
+.PP
+Keep the relevant information to perform throughput and latency analysis, including:
+.TP
+Minimum, Average and Maximum latency
+.TP
+Jitter for the latency
+.TP
+Linear regression for throughput
+.TP
+Accumulate results from several samples to obtain aggregated results, across several threads or experiments.
+.PP
+\fB\fBTodo: \fR\fR
+.in +1c
+ The idea behind this class was to use linear regression to determine if the throughput was linear or exhibited jitter. Unfortunately it never worked quite right, so only average throughput is computed.  
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Throughput_Stats::ACE_Throughput_Stats (void)
+.PP
+Constructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Throughput_Stats::accumulate (const ACE_Throughput_Stats & throughput)
+.PP
+Update the values to reflect the stats in 
+.PP
+\fBParameters: \fR
+.in +1c
+.TP
+\fB\fIthroughput.\fR\fR
+.PP
+.SS void ACE_Throughput_Stats::dump_results (const \fBACE_TCHAR\fR * msg, ACE_UINT32 scale_factor)
+.PP
+Print down the stats.
+.PP
+.SS void ACE_Throughput_Stats::dump_throughput (const \fBACE_TCHAR\fR * msg, ACE_UINT32 scale_factor, \fBACE_UINT64\fR elapsed_time, ACE_UINT32 samples_count)\fC [static]\fR
+.PP
+Dump the average throughput stats.
+.PP
+.SS void ACE_Throughput_Stats::sample (\fBACE_UINT64\fR throughput, \fBACE_UINT64\fR latency)
+.PP
+Store one sample.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS \fBACE_UINT64\fR ACE_Throughput_Stats::throughput_last_\fC [private]\fR
+.PP
+The last throughput measurement.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

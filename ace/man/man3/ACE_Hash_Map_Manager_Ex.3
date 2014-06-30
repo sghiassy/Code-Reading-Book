@@ -1,0 +1,579 @@
+.TH ACE_Hash_Map_Manager_Ex 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Hash_Map_Manager_Ex \- Define a map abstraction that efficiently associates <EXT_ID>s with <INT_ID>s. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Hash_Map_Manager_T.h>\fR
+.PP
+Inherited by \fBACE_Hash_Map_Manager\fR.
+.PP
+.SS Public Types
+
+.in +1c
+.ti -1c
+.RI "typedef EXT_ID \fBKEY\fR"
+.br
+.ti -1c
+.RI "typedef INT_ID \fBVALUE\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> \fBENTRY\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Const_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBCONST_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Reverse_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBREVERSE_ITERATOR\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBiterator\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Const_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBconst_iterator\fR"
+.br
+.ti -1c
+.RI "typedef \fBACE_Hash_Map_Reverse_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBreverse_iterator\fR"
+.br
+.in -1c
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Hash_Map_Manager_Ex\fR (\fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a <Hash_Map_Manager_Ex> with default size.\fR"
+.ti -1c
+.RI "\fBACE_Hash_Map_Manager_Ex\fR (size_t size, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a <Hash_Map_Manager_Ex> with size <length>.\fR"
+.ti -1c
+.RI "int \fBopen\fR (size_t size = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR *alloc = 0)"
+.br
+.RI "\fIInitialize a <Hash_Map_Manager_Ex> with <size> elements.\fR"
+.ti -1c
+.RI "int \fBclose\fR (void)"
+.br
+.RI "\fIClose down a <Hash_Map_Manager_Ex> and release dynamically allocated resources.\fR"
+.ti -1c
+.RI "int \fBunbind_all\fR (void)"
+.br
+.RI "\fIRemoves all the entries in <Map_Manager_Ex>.\fR"
+.ti -1c
+.RI "\fB~ACE_Hash_Map_Manager_Ex\fR (void)"
+.br
+.RI "\fICleanup the <Hash_Map_Manager_Ex>.\fR"
+.ti -1c
+.RI "int \fBbind\fR (const EXT_ID &item, const INT_ID &int_id)"
+.br
+.ti -1c
+.RI "int \fBbind\fR (const EXT_ID &ext_id, const INT_ID &int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBtrybind\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.ti -1c
+.RI "int \fBtrybind\fR (const EXT_ID &ext_id, INT_ID &int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, INT_ID &old_int_id)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, INT_ID &old_int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, EXT_ID &old_ext_id, INT_ID &old_int_id)"
+.br
+.ti -1c
+.RI "int \fBrebind\fR (const EXT_ID &ext_id, const INT_ID &int_id, EXT_ID &old_ext_id, INT_ID &old_int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.ti -1c
+.RI "int \fBfind\fR (const EXT_ID &ext_id, INT_ID &int_id) const"
+.br
+.RI "\fILocate <ext_id> and pass out parameter via <int_id>. Return 0 if found, returns -1 if not found.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const EXT_ID &ext_id) const"
+.br
+.RI "\fIReturns 0 if the <ext_id> is in the mapping, otherwise -1.\fR"
+.ti -1c
+.RI "int \fBfind\fR (const EXT_ID &ext_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry) const"
+.br
+.RI "\fILocate <ext_id> and pass out parameter via <entry>. If found, return 0, returns -1 if not found.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (const EXT_ID &ext_id)"
+.br
+.ti -1c
+.RI "int \fBunbind\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.RI "\fIBreak any association of <ext_id>. Returns the value of <int_id> in case the caller needs to deallocate memory. Return 0 if the unbind was successfully, and returns -1 if failures occur.\fR"
+.ti -1c
+.RI "int \fBunbind\fR (\fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *entry)"
+.br
+.RI "\fIRemove entry from map. Return 0 if the unbind was successfully, and returns -1 if failures occur.\fR"
+.ti -1c
+.RI "size_t \fBcurrent_size\fR (void) const"
+.br
+.RI "\fIReturn the current size of the map.\fR"
+.ti -1c
+.RI "size_t \fBtotal_size\fR (void) const"
+.br
+.RI "\fIReturn the total size of the map.\fR"
+.ti -1c
+.RI "ACE_LOCK& \fBmutex\fR (void)"
+.br
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.ti -1c
+.RI "\fBACE_Hash_Map_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBbegin\fR (void)"
+.br
+.RI "\fIReturn forward iterator.\fR"
+.ti -1c
+.RI "\fBACE_Hash_Map_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBend\fR (void)"
+.br
+.ti -1c
+.RI "\fBACE_Hash_Map_Reverse_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBrbegin\fR (void)"
+.br
+.RI "\fIReturn reverse iterator.\fR"
+.ti -1c
+.RI "\fBACE_Hash_Map_Reverse_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> \fBrend\fR (void)"
+.br
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBequal\fR (const EXT_ID &id1, const EXT_ID &id2)"
+.br
+.RI "\fIReturns 1 if <id1> == <id2>, else 0. This is defined as a separate method to facilitate template specialization.\fR"
+.ti -1c
+.RI "u_long \fBhash\fR (const EXT_ID &ext_id)"
+.br
+.RI "\fICompute the hash value of the <ext_id>. This is defined as a separate method to facilitate template specialization.\fR"
+.ti -1c
+.RI "int \fBbind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id)"
+.br
+.RI "\fIPerforms bind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBbind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.RI "\fIPerforms bind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBtrybind_i\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.RI "\fIPerforms trybind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBtrybind_i\fR (const EXT_ID &ext_id, INT_ID &int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.RI "\fIPerforms trybind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBrebind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id)"
+.br
+.RI "\fIPerforms rebind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBrebind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.RI "\fIPerforms rebind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBrebind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id, INT_ID &old_int_id)"
+.br
+.RI "\fIPerforms rebind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBrebind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id, INT_ID &old_int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.RI "\fIPerforms rebind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBrebind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id, EXT_ID &old_ext_id, INT_ID &old_int_id)"
+.br
+.RI "\fIPerforms rebind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBrebind_i\fR (const EXT_ID &ext_id, const INT_ID &int_id, EXT_ID &old_ext_id, INT_ID &old_int_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.RI "\fIPerforms rebind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBfind_i\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.RI "\fIPerforms a find of <int_id> using <ext_id> as the key. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBfind_i\fR (const EXT_ID &ext_id)"
+.br
+.RI "\fIPerforms a find using <ext_id> as the key. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBfind_i\fR (const EXT_ID &ext_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry)"
+.br
+.RI "\fIPerforms a find using <ext_id> as the key. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBunbind_i\fR (const EXT_ID &ext_id, INT_ID &int_id)"
+.br
+.RI "\fIPerforms unbind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBunbind_i\fR (const EXT_ID &ext_id)"
+.br
+.RI "\fIPerforms unbind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBunbind_i\fR (\fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *entry)"
+.br
+.RI "\fIPerforms unbind. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBcreate_buckets\fR (size_t size)"
+.br
+.ti -1c
+.RI "int \fBclose_i\fR (void)"
+.br
+.RI "\fIClose down a <Map_Manager_Ex>. Must be called with locks held.\fR"
+.ti -1c
+.RI "int \fBunbind_all_i\fR (void)"
+.br
+.RI "\fIRemoves all the entries in <Map_Manager_Ex>. Must be called with locks held.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Allocator\fR* \fBallocator_\fR"
+.br
+.RI "\fIPointer to a memory allocator.\fR"
+.ti -1c
+.RI "ACE_LOCK \fBlock_\fR"
+.br
+.RI "\fISynchronization variable for the MT_SAFE .\fR"
+.ti -1c
+.RI "HASH_KEY \fBhash_key_\fR"
+.br
+.RI "\fIFunction object used for hashing keys.\fR"
+.ti -1c
+.RI "COMPARE_KEYS \fBcompare_keys_\fR"
+.br
+.RI "\fIFunction object used for comparing keys.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBshared_find\fR (const EXT_ID &ext_id, \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> *&entry, u_long &loc)"
+.br
+.RI "\fIReturns the  that corresponds to <ext_id>.\fR"
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID>* \fBtable_\fR"
+.br
+.ti -1c
+.RI "size_t \fBtotal_size_\fR"
+.br
+.RI "\fITotal size of the hash table.\fR"
+.ti -1c
+.RI "size_t \fBcur_size_\fR"
+.br
+.RI "\fICurrent number of entries in the table (note that this can be larger than <total_size_> due to the bucket chaining).\fR"
+.in -1c
+.SS Friends
+
+.in +1c
+.ti -1c
+.RI "class \fBACE_Hash_Map_Iterator_Base_Ex< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Hash_Map_Iterator_Ex< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Hash_Map_Const_Iterator_Base_Ex< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Hash_Map_Const_Iterator_Ex< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Hash_Map_Reverse_Iterator_Ex< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.ti -1c
+.RI "class \fBACE_Hash_Map_Bucket_Iterator< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK >\fR"
+.br
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class EXT_ID, class INT_ID, class HASH_KEY, class COMPARE_KEYS, class ACE_LOCK>  template class ACE_Hash_Map_Manager_Ex
+Define a map abstraction that efficiently associates <EXT_ID>s with <INT_ID>s.
+.PP
+.PP
+ This implementation of a map uses a hash table. Key hashing is achieved through the HASH_KEY object and key comparison is achieved through the COMPARE_KEYS object. This class uses an  to allocate memory. The user can make this a persistent class by providing an  with a persistable memory pool. 
+.PP
+.SH MEMBER TYPEDEF DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_Hash_Map_Const_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::CONST_ITERATOR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_Hash_Map_Entry\fR<EXT_ID, INT_ID> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::ENTRY
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_Hash_Map_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::ITERATOR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef EXT_ID ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::KEY
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_Hash_Map_Reverse_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::REVERSE_ITERATOR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef INT_ID ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::VALUE
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_Hash_Map_Const_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::const_iterator
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_Hash_Map_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::iterator
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> typedef \fBACE_Hash_Map_Reverse_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::reverse_iterator
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> (\fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a <Hash_Map_Manager_Ex> with default size.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> (size_t size, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a <Hash_Map_Manager_Ex> with size <length>.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::~ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> (void)
+.PP
+Cleanup the <Hash_Map_Manager_Ex>.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> \fBACE_Hash_Map_Iterator_Ex\fR< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK > ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::begin (void)
+.PP
+Return forward iterator.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::bind (const EXT_ID & ext_id, const INT_ID & int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal bind, except the map entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::bind (const EXT_ID & item, const INT_ID & int_id)
+.PP
+Associate <ext_id> with <int_id>. If <ext_id> is already in the map then the  is not changed. Returns 0 if a new entry is bound successfully, returns 1 if an attempt is made to bind an existing entry, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::bind_i (const EXT_ID & ext_id, const INT_ID & int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Performs bind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::bind_i (const EXT_ID & ext_id, const INT_ID & int_id)\fC [protected]\fR
+.PP
+Performs bind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::close (void)
+.PP
+Close down a <Hash_Map_Manager_Ex> and release dynamically allocated resources.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::close_i (void)\fC [protected]\fR
+.PP
+Close down a <Map_Manager_Ex>. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::create_buckets (size_t size)\fC [protected]\fR
+.PP
+Resize the map. Must be called with locks held. Note, that this method should never be called more than once or else all the hashing will get screwed up as the size will change. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> size_t ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::current_size (void) const
+.PP
+Return the current size of the map.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> void ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> \fBACE_Hash_Map_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::end (void)
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::equal (const EXT_ID & id1, const EXT_ID & id2)\fC [protected]\fR
+.PP
+Returns 1 if <id1> == <id2>, else 0. This is defined as a separate method to facilitate template specialization.
+.PP
+Reimplemented in \fBACE_Hash_Map_Manager\fR.
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::find (const EXT_ID & ext_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry) const
+.PP
+Locate <ext_id> and pass out parameter via <entry>. If found, return 0, returns -1 if not found.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::find (const EXT_ID & ext_id) const
+.PP
+Returns 0 if the <ext_id> is in the mapping, otherwise -1.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::find (const EXT_ID & ext_id, INT_ID & int_id) const
+.PP
+Locate <ext_id> and pass out parameter via <int_id>. Return 0 if found, returns -1 if not found.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::find_i (const EXT_ID & ext_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Performs a find using <ext_id> as the key. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::find_i (const EXT_ID & ext_id)\fC [protected]\fR
+.PP
+Performs a find using <ext_id> as the key. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::find_i (const EXT_ID & ext_id, INT_ID & int_id)\fC [protected]\fR
+.PP
+Performs a find of <int_id> using <ext_id> as the key. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> u_long ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::hash (const EXT_ID & ext_id)\fC [protected]\fR
+.PP
+Compute the hash value of the <ext_id>. This is defined as a separate method to facilitate template specialization.
+.PP
+Reimplemented in \fBACE_Hash_Map_Manager\fR.
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> ACE_LOCK & ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::mutex (void)
+.PP
+Returns a reference to the underlying . This makes it possible to acquire the lock explicitly, which can be useful in some cases if you instantiate the  with an  or , or if you need to guard the state of an iterator. NOTE: the right name would be <lock>, but HP/C++ will choke on that! 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::open (size_t size = ACE_DEFAULT_MAP_SIZE, \fBACE_Allocator\fR * alloc = 0)
+.PP
+Initialize a <Hash_Map_Manager_Ex> with <size> elements.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> \fBACE_Hash_Map_Reverse_Iterator_Ex\fR< EXT_ID,INT_ID,HASH_KEY,COMPARE_KEYS,ACE_LOCK > ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rbegin (void)
+.PP
+Return reverse iterator.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, EXT_ID & old_ext_id, INT_ID & old_int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal rebind, except the map entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, EXT_ID & old_ext_id, INT_ID & old_int_id)
+.PP
+Associate <ext_id> with <int_id>. If <ext_id> is not in the map then behaves just like <bind>. Otherwise, store the old values of <ext_id> and <int_id> into the "out" parameters and rebind the new parameters. This is very useful if you need to have an atomic way of updating  and you also need full control over memory allocation. Returns 0 if a new entry is bound successfully, returns 1 if an existing entry was rebound, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, INT_ID & old_int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal rebind, except the map entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, INT_ID & old_int_id)
+.PP
+Associate <ext_id> with <int_id>. If <ext_id> is not in the map then behaves just like <bind>. Otherwise, store the old value of <int_id> into the "out" parameter and rebind the new parameters. Returns 0 if a new entry is bound successfully, returns 1 if an existing entry was rebound, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal rebind, except the map entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind (const EXT_ID & ext_id, const INT_ID & int_id)
+.PP
+Reassociate <ext_id> with <int_id>. If <ext_id> is not in the map then behaves just like <bind>. Returns 0 if a new entry is bound successfully, returns 1 if an existing entry was rebound, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind_i (const EXT_ID & ext_id, const INT_ID & int_id, EXT_ID & old_ext_id, INT_ID & old_int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Performs rebind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind_i (const EXT_ID & ext_id, const INT_ID & int_id, EXT_ID & old_ext_id, INT_ID & old_int_id)\fC [protected]\fR
+.PP
+Performs rebind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind_i (const EXT_ID & ext_id, const INT_ID & int_id, INT_ID & old_int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Performs rebind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind_i (const EXT_ID & ext_id, const INT_ID & int_id, INT_ID & old_int_id)\fC [protected]\fR
+.PP
+Performs rebind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind_i (const EXT_ID & ext_id, const INT_ID & int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Performs rebind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rebind_i (const EXT_ID & ext_id, const INT_ID & int_id)\fC [protected]\fR
+.PP
+Performs rebind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> \fBACE_Hash_Map_Reverse_Iterator_Ex\fR<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK> ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::rend (void)
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::shared_find (const EXT_ID & ext_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry, u_long & loc)\fC [private]\fR
+.PP
+Returns the  that corresponds to <ext_id>.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> size_t ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::total_size (void) const
+.PP
+Return the total size of the map.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::trybind (const EXT_ID & ext_id, INT_ID & int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)
+.PP
+Same as a normal trybind, except the map entry is also passed back to the caller. The entry in this case will either be the newly created entry, or the existing one. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::trybind (const EXT_ID & ext_id, INT_ID & int_id)
+.PP
+Associate <ext_id> with <int_id> if and only if <ext_id> is not in the map. If <ext_id> is already in the map then the <int_id> parameter is assigned the existing value in the map. Returns 0 if a new entry is bound successfully, returns 1 if an attempt is made to bind an existing entry, and returns -1 if failures occur. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::trybind_i (const EXT_ID & ext_id, INT_ID & int_id, \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >*& entry)\fC [protected]\fR
+.PP
+Performs trybind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::trybind_i (const EXT_ID & ext_id, INT_ID & int_id)\fC [protected]\fR
+.PP
+Performs trybind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind (\fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >* entry)
+.PP
+Remove entry from map. Return 0 if the unbind was successfully, and returns -1 if failures occur.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind (const EXT_ID & ext_id, INT_ID & int_id)
+.PP
+Break any association of <ext_id>. Returns the value of <int_id> in case the caller needs to deallocate memory. Return 0 if the unbind was successfully, and returns -1 if failures occur.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind (const EXT_ID & ext_id)
+.PP
+Unbind (remove) the <ext_id> from the map. Don't return the <int_id> to the caller (this is useful for collections where the <int_id>s are *not* dynamically allocated...) 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind_all (void)
+.PP
+Removes all the entries in <Map_Manager_Ex>.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind_all_i (void)\fC [protected]\fR
+.PP
+Removes all the entries in <Map_Manager_Ex>. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind_i (\fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >* entry)\fC [protected]\fR
+.PP
+Performs unbind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind_i (const EXT_ID & ext_id)\fC [protected]\fR
+.PP
+Performs unbind. Must be called with locks held.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> int ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::unbind_i (const EXT_ID & ext_id, INT_ID & int_id)\fC [protected]\fR
+.PP
+Performs unbind. Must be called with locks held.
+.PP
+.SH FRIENDS AND RELATED FUNCTION DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_Hash_Map_Bucket_Iterator\fR\fC [friend]\fR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_Hash_Map_Const_Iterator_Base_Ex\fR\fC [friend]\fR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_Hash_Map_Const_Iterator_Ex\fR\fC [friend]\fR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_Hash_Map_Iterator_Base_Ex\fR\fC [friend]\fR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_Hash_Map_Iterator_Ex\fR\fC [friend]\fR
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> class \fBACE_Hash_Map_Reverse_Iterator_Ex\fR\fC [friend]\fR
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> \fBACE_Allocator\fR * ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::allocator_\fC [protected]\fR
+.PP
+Pointer to a memory allocator.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> COMPARE_KEYS ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::compare_keys_\fC [protected]\fR
+.PP
+Function object used for comparing keys.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> size_t ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::cur_size_\fC [private]\fR
+.PP
+Current number of entries in the table (note that this can be larger than <total_size_> due to the bucket chaining).
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> HASH_KEY ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::hash_key_\fC [protected]\fR
+.PP
+Function object used for hashing keys.
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> ACE_LOCK ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::lock_\fC [protected]\fR
+.PP
+Synchronization variable for the MT_SAFE .
+.PP
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> \fBACE_Hash_Map_Entry\fR< EXT_ID,INT_ID >* ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::table_\fC [private]\fR
+.PP
+Array of  *s, each of which points to an  that serves as the beginning of a linked list of <EXT_ID>s that hash to that bucket. 
+.SS template<classEXT_ID, classINT_ID, classHASH_KEY, classCOMPARE_KEYS, classACE_LOCK> size_t ACE_Hash_Map_Manager_Ex<EXT_ID, INT_ID, HASH_KEY, COMPARE_KEYS, ACE_LOCK>::total_size_\fC [private]\fR
+.PP
+Total size of the hash table.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

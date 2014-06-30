@@ -1,0 +1,184 @@
+.TH ACE_Addr 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Addr \- Defines the base class for the "address family independent" address format. 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Addr.h>\fR
+.PP
+Inherited by \fBACE_ATM_Addr\fR, \fBACE_DEV_Addr\fR, \fBACE_FILE_Addr\fR, \fBACE_INET_Addr\fR, \fBACE_MEM_Addr\fR, \fBACE_SPIPE_Addr\fR, and \fBACE_UNIX_Addr\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Addr\fR (int type = -1, int size = -1)"
+.br
+.RI "\fIInitializes instance variables.\fR"
+.ti -1c
+.RI "virtual \fB~ACE_Addr\fR (void)"
+.br
+.RI "\fIDestructor.\fR"
+.ti -1c
+.RI "int \fBget_size\fR (void) const"
+.br
+.RI "\fIReturn the size of the address.\fR"
+.ti -1c
+.RI "void \fBset_size\fR (int size)"
+.br
+.RI "\fISets the size of the address.\fR"
+.ti -1c
+.RI "int \fBget_type\fR (void) const"
+.br
+.RI "\fIGet the type of the address.\fR"
+.ti -1c
+.RI "void \fBset_type\fR (int type)"
+.br
+.RI "\fISet the type of the address.\fR"
+.ti -1c
+.RI "virtual void* \fBget_addr\fR (void) const"
+.br
+.RI "\fIReturn a pointer to the address.\fR"
+.ti -1c
+.RI "virtual void \fBset_addr\fR (void *, int len)"
+.br
+.RI "\fISet a pointer to the address.\fR"
+.ti -1c
+.RI "int \fBoperator==\fR (const ACE_Addr &sap) const"
+.br
+.RI "\fICheck for address equality.\fR"
+.ti -1c
+.RI "int \fBoperator!=\fR (const ACE_Addr &sap) const"
+.br
+.RI "\fICheck for address inequality.\fR"
+.ti -1c
+.RI "void \fBbase_set\fR (int type, int size)"
+.br
+.RI "\fIInitializes instance variables.\fR"
+.ti -1c
+.RI "virtual u_long \fBhash\fR (void) const"
+.br
+.RI "\fIReturns a hash value. This should be overwritten by a subclass that can produce a better hash value.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Static Public Attributes
+
+.in +1c
+.ti -1c
+.RI "const ACE_Addr \fBsap_any\fR"
+.br
+.RI "\fIWild-card address.\fR"
+.in -1c
+.SS Protected Attributes
+
+.in +1c
+.ti -1c
+.RI "int \fBaddr_type_\fR"
+.br
+.RI "\fIe.g., AF_UNIX, AF_INET, AF_SPIPE, etc.\fR"
+.ti -1c
+.RI "int \fBaddr_size_\fR"
+.br
+.RI "\fINumber of bytes in the address.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+Defines the base class for the "address family independent" address format.
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Addr::ACE_Addr (int type = -1, int size = -1)
+.PP
+Initializes instance variables.
+.PP
+.SS ACE_Addr::~ACE_Addr (void)\fC [virtual]\fR
+.PP
+Destructor.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS void ACE_Addr::base_set (int type, int size)
+.PP
+Initializes instance variables.
+.PP
+.SS void ACE_Addr::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+Reimplemented in \fBACE_ATM_Addr\fR, \fBACE_DEV_Addr\fR, \fBACE_FILE_Addr\fR, \fBACE_INET_Addr\fR, \fBACE_MEM_Addr\fR, \fBACE_SPIPE_Addr\fR, and \fBACE_UNIX_Addr\fR.
+.SS void * ACE_Addr::get_addr (void) const\fC [virtual]\fR
+.PP
+Return a pointer to the address.
+.PP
+Reimplemented in \fBACE_ATM_Addr\fR, \fBACE_DEV_Addr\fR, \fBACE_FILE_Addr\fR, \fBACE_INET_Addr\fR, \fBACE_MEM_Addr\fR, \fBACE_SPIPE_Addr\fR, and \fBACE_UNIX_Addr\fR.
+.SS int ACE_Addr::get_size (void) const
+.PP
+Return the size of the address.
+.PP
+.SS int ACE_Addr::get_type (void) const
+.PP
+Get the type of the address.
+.PP
+.SS u_long ACE_Addr::hash (void) const\fC [virtual]\fR
+.PP
+Returns a hash value. This should be overwritten by a subclass that can produce a better hash value.
+.PP
+Reimplemented in \fBACE_INET_Addr\fR, \fBACE_MEM_Addr\fR, and \fBACE_UNIX_Addr\fR.
+.SS int ACE_Addr::operator!= (const ACE_Addr & sap) const
+.PP
+Check for address inequality.
+.PP
+.SS int ACE_Addr::operator== (const ACE_Addr & sap) const
+.PP
+Check for address equality.
+.PP
+.SS void ACE_Addr::set_addr (void * addr, int len)\fC [virtual]\fR
+.PP
+Set a pointer to the address.
+.PP
+Reimplemented in \fBACE_ATM_Addr\fR, \fBACE_INET_Addr\fR, \fBACE_MEM_Addr\fR, \fBACE_SPIPE_Addr\fR, and \fBACE_UNIX_Addr\fR.
+.SS void ACE_Addr::set_size (int size)
+.PP
+Sets the size of the address.
+.PP
+.SS void ACE_Addr::set_type (int type)
+.PP
+Set the type of the address.
+.PP
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS ACE_Addr::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+Reimplemented in \fBACE_ATM_Addr\fR, \fBACE_DEV_Addr\fR, \fBACE_FILE_Addr\fR, \fBACE_INET_Addr\fR, \fBACE_MEM_Addr\fR, \fBACE_SPIPE_Addr\fR, and \fBACE_UNIX_Addr\fR.
+.SS int ACE_Addr::addr_size_\fC [protected]\fR
+.PP
+Number of bytes in the address.
+.PP
+.SS int ACE_Addr::addr_type_\fC [protected]\fR
+.PP
+e.g., AF_UNIX, AF_INET, AF_SPIPE, etc.
+.PP
+.SS const ACE_Addr ACE_Addr::sap_any\fC [static]\fR
+.PP
+Wild-card address.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

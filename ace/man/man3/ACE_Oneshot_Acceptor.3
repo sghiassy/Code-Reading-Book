@@ -1,0 +1,277 @@
+.TH ACE_Oneshot_Acceptor 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Oneshot_Acceptor \- Generic factory for passively connecting clients and creating exactly one service handler (SVC_HANDLER). 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <Acceptor.h>\fR
+.PP
+Inherits \fBACE_Service_Object\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Oneshot_Acceptor\fR (void)"
+.br
+.RI "\fIConstructor.\fR"
+.ti -1c
+.RI "\fBACE_Oneshot_Acceptor\fR (const ACE_PEER_ACCEPTOR_ADDR &local_addr, \fBACE_Reactor\fR *reactor = ACE_Reactor::instance (), \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> * = 0)"
+.br
+.ti -1c
+.RI "int \fBopen\fR (const ACE_PEER_ACCEPTOR_ADDR &, \fBACE_Reactor\fR *reactor = ACE_Reactor::instance (), \fBACE_Concurrency_Strategy\fR<SVC_HANDLER> * = 0)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Oneshot_Acceptor\fR (void)"
+.br
+.RI "\fIClose down the <Oneshot_Acceptor>.\fR"
+.ti -1c
+.RI "virtual int \fBaccept\fR (SVC_HANDLER * = 0, ACE_PEER_ACCEPTOR_ADDR *remote_addr = 0, const \fBACE_Synch_Options\fR &synch_options = \fBACE_Synch_Options::defaults\fR, int restart = 1, int reset_new_handle = 0)"
+.br
+.RI "\fICreate a <SVC_HANDLER>, accept the connection into the <SVC_HANDLER>, and activate the <SVC_HANDLER>.\fR"
+.ti -1c
+.RI "virtual int \fBcancel\fR (void)"
+.br
+.RI "\fICancel a oneshot acceptor that was started asynchronously.\fR"
+.ti -1c
+.RI "virtual \fBoperator ACE_PEER_ACCEPTOR &\fR () const"
+.br
+.RI "\fIReturn the underlying <PEER_ACCEPTOR> object.\fR"
+.ti -1c
+.RI "virtual ACE_PEER_ACCEPTOR& \fBacceptor\fR (void) const"
+.br
+.RI "\fIReturn the underlying <PEER_ACCEPTOR> object.\fR"
+.ti -1c
+.RI "virtual int \fBclose\fR (void)"
+.br
+.RI "\fIClose down the <Oneshot_Acceptor>.\fR"
+.ti -1c
+.RI "void \fBdump\fR (void) const"
+.br
+.RI "\fIDump the state of an object.\fR"
+.in -1c
+.SS Public Attributes
+
+.in +1c
+.ti -1c
+.RI "\fBACE_ALLOC_HOOK_DECLARE\fR"
+.br
+.RI "\fIDeclare the dynamic allocation hooks.\fR"
+.in -1c
+.SS Protected Methods
+
+.in +1c
+.ti -1c
+.RI "virtual int \fBactivate_svc_handler\fR (SVC_HANDLER *svc_handler)"
+.br
+.ti -1c
+.RI "int \fBshared_accept\fR (SVC_HANDLER *svc_handler, ACE_PEER_ACCEPTOR_ADDR *remote_addr, \fBACE_Time_Value\fR *timeout, int restart, int reset_new_handle)"
+.br
+.RI "\fIFactors out the code shared between the  and <handle_input> methods.\fR"
+.ti -1c
+.RI "virtual ACE_HANDLE \fBget_handle\fR (void) const"
+.br
+.RI "\fIReturns the listening acceptor's .\fR"
+.ti -1c
+.RI "virtual int \fBhandle_close\fR (ACE_HANDLE = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR = ACE_Event_Handler::ALL_EVENTS_MASK)"
+.br
+.RI "\fIPerform termination activities when <this> is removed from the <reactor>.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_input\fR (ACE_HANDLE)"
+.br
+.RI "\fIAccept one connection from a client and activates the SVC_HANDLER.\fR"
+.ti -1c
+.RI "virtual int \fBhandle_timeout\fR (const \fBACE_Time_Value\fR &tv, const void *arg)"
+.br
+.RI "\fICalled when an acceptor times out...\fR"
+.ti -1c
+.RI "virtual int \fBinit\fR (int argc, \fBACE_TCHAR\fR *argv[])"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBfini\fR (void)"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBinfo\fR (\fBACE_TCHAR\fR **, size_t) const"
+.br
+.RI "\fIDefault version returns address info in <buf>.\fR"
+.ti -1c
+.RI "virtual int \fBsuspend\fR (void)"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.ti -1c
+.RI "virtual int \fBresume\fR (void)"
+.br
+.RI "\fIDefault version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.\fR"
+.in -1c
+.SS Private Methods
+
+.in +1c
+.ti -1c
+.RI "int \fBregister_handler\fR (SVC_HANDLER *svc_handler, const \fBACE_Synch_Options\fR &options, int restart)"
+.br
+.in -1c
+.SS Private Attributes
+
+.in +1c
+.ti -1c
+.RI "SVC_HANDLER* \fBsvc_handler_\fR"
+.br
+.RI "\fIHold the svc_handler_ across asynchrony boundaries.\fR"
+.ti -1c
+.RI "int \fBrestart_\fR"
+.br
+.RI "\fIHold the restart flag across asynchrony boundaries.\fR"
+.ti -1c
+.RI "ACE_PEER_ACCEPTOR \fBpeer_acceptor_\fR"
+.br
+.RI "\fIFactory that establishes connections passively.\fR"
+.ti -1c
+.RI "\fBACE_Concurrency_Strategy\fR<SVC_HANDLER>* \fBconcurrency_strategy_\fR"
+.br
+.RI "\fIConcurrency strategy for an Acceptor.\fR"
+.ti -1c
+.RI "int \fBdelete_concurrency_strategy_\fR"
+.br
+.RI "\fI1 if Acceptor created the concurrency strategy and thus should delete it, else 0.\fR"
+.in -1c
+.SH DETAILED DESCRIPTION
+.PP 
+
+.SS template<class SVC_HANDLER, ACE_PEER_ACCEPTOR_1>  template class ACE_Oneshot_Acceptor
+Generic factory for passively connecting clients and creating exactly one service handler (SVC_HANDLER).
+.PP
+.PP
+ This class works similarly to the regular , with the following differences: 1. This class doesn't automagically register <this> with the  since it expects to have its  method called directly. However, it stashes the  pointer away in case it's needed later to finish accepting a connection asynchronously. 2. The class doesn't need an  (since the user supplies the SVC_HANDLER) or an  (since this class only accepts one connection and then removes all traces of itself from the  if it was registered for asynchronous accepts). 
+.PP
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Oneshot_Acceptor<SVC_HANDLER, >::ACE_Oneshot_Acceptor<SVC_HANDLER, > (void)
+.PP
+Constructor.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Oneshot_Acceptor<SVC_HANDLER, >::ACE_Oneshot_Acceptor<SVC_HANDLER, > (const ACE_PEER_ACCEPTOR_ADDR & local_addr, \fBACE_Reactor\fR * reactor = ACE_Reactor::instance (), \fBACE_Concurrency_Strategy\fR< SVC_HANDLER >* = 0)
+.PP
+Initialize the appropriate strategies for concurrency and then open the <peer_acceptor> at the designated <local_addr>. Note that unlike the  and , this method does NOT register <this> acceptor with the <reactor> at this point -- it just stashes the <reactor> away in case it's needed later. 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Oneshot_Acceptor<SVC_HANDLER, >::~ACE_Oneshot_Acceptor<SVC_HANDLER, > (void)\fC [virtual]\fR
+.PP
+Close down the <Oneshot_Acceptor>.
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::accept (SVC_HANDLER * = 0, ACE_PEER_ACCEPTOR_ADDR * remote_addr = 0, const \fBACE_Synch_Options\fR & synch_options = \fBACE_Synch_Options::defaults\fR, int restart = 1, int reset_new_handle = 0)\fC [virtual]\fR
+.PP
+Create a <SVC_HANDLER>, accept the connection into the <SVC_HANDLER>, and activate the <SVC_HANDLER>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_PEER_ACCEPTOR & ACE_Oneshot_Acceptor<SVC_HANDLER, >::acceptor (void) const\fC [virtual]\fR
+.PP
+Return the underlying <PEER_ACCEPTOR> object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::activate_svc_handler (SVC_HANDLER * svc_handler)\fC [protected, virtual]\fR
+.PP
+Bridge method for activating a <svc_handler> with the appropriate concurrency strategy. Default behavior is to activate the <SVC_HANDLER> as a "passive object." However, subclasses can override this strategy to do more sophisticated concurrency activations (such as creating the <SVC_HANDLER> as an "active object" via multi-threading or multi-processing). 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::cancel (void)\fC [virtual]\fR
+.PP
+Cancel a oneshot acceptor that was started asynchronously.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::close (void)\fC [virtual]\fR
+.PP
+Close down the <Oneshot_Acceptor>.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> void ACE_Oneshot_Acceptor<SVC_HANDLER, >::dump (void) const
+.PP
+Dump the state of an object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::fini (void)\fC [protected, virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_HANDLE ACE_Oneshot_Acceptor<SVC_HANDLER, >::get_handle (void) const\fC [protected, virtual]\fR
+.PP
+Returns the listening acceptor's .
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::handle_close (ACE_HANDLE handle = ACE_INVALID_HANDLE, \fBACE_Reactor_Mask\fR close_mask = ACE_Event_Handler::ALL_EVENTS_MASK)\fC [protected, virtual]\fR
+.PP
+Perform termination activities when <this> is removed from the <reactor>.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::handle_input (ACE_HANDLE fd)\fC [protected, virtual]\fR
+.PP
+Accept one connection from a client and activates the SVC_HANDLER.
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::handle_timeout (const \fBACE_Time_Value\fR & tv, const void * arg)\fC [protected, virtual]\fR
+.PP
+Called when an acceptor times out...
+.PP
+Reimplemented from \fBACE_Event_Handler\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::info (\fBACE_TCHAR\fR ** buf, size_t length) const\fC [protected, virtual]\fR
+.PP
+Default version returns address info in <buf>.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::init (int argc, \fBACE_TCHAR\fR * argv[])\fC [protected, virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Shared_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::open (const ACE_PEER_ACCEPTOR_ADDR &, \fBACE_Reactor\fR * reactor = ACE_Reactor::instance (), \fBACE_Concurrency_Strategy\fR< SVC_HANDLER >* = 0)
+.PP
+Initialize the appropriate strategies for concurrency and then open the <peer_acceptor> at the designated <local_addr>. Note that unlike the  and , this method does NOT register <this> acceptor with the <reactor> at this point -- it just stashes the <reactor> away in case it's needed later. 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Oneshot_Acceptor<SVC_HANDLER, >::operator ACE_PEER_ACCEPTOR & () const\fC [virtual]\fR
+.PP
+Return the underlying <PEER_ACCEPTOR> object.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::register_handler (SVC_HANDLER * svc_handler, const \fBACE_Synch_Options\fR & options, int restart)\fC [private]\fR
+.PP
+Insert ourselves into the  so that we can continue accepting this connection asynchronously. This method should NOT be called by developers directly. 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::resume (void)\fC [protected, virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Service_Object\fR.
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::shared_accept (SVC_HANDLER * svc_handler, ACE_PEER_ACCEPTOR_ADDR * remote_addr, \fBACE_Time_Value\fR * timeout, int restart, int reset_new_handle)\fC [protected]\fR
+.PP
+Factors out the code shared between the  and <handle_input> methods.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::suspend (void)\fC [protected, virtual]\fR
+.PP
+Default version does no work and returns -1. Must be overloaded by application developer to do anything meaningful.
+.PP
+Reimplemented from \fBACE_Service_Object\fR.
+.SH MEMBER DATA DOCUMENTATION
+.PP 
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_Oneshot_Acceptor<SVC_HANDLER, >::ACE_ALLOC_HOOK_DECLARE
+.PP
+Declare the dynamic allocation hooks.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> \fBACE_Concurrency_Strategy\fR< SVC_HANDLER >* ACE_Oneshot_Acceptor<SVC_HANDLER, >::concurrency_strategy_\fC [private]\fR
+.PP
+Concurrency strategy for an Acceptor.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::delete_concurrency_strategy_\fC [private]\fR
+.PP
+1 if Acceptor created the concurrency strategy and thus should delete it, else 0.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> ACE_PEER_ACCEPTOR ACE_Oneshot_Acceptor<SVC_HANDLER, >::peer_acceptor_\fC [private]\fR
+.PP
+Factory that establishes connections passively.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> int ACE_Oneshot_Acceptor<SVC_HANDLER, >::restart_\fC [private]\fR
+.PP
+Hold the restart flag across asynchrony boundaries.
+.PP
+.SS template<classSVC_HANDLER, ACE_PEER_ACCEPTOR_1> SVC_HANDLER * ACE_Oneshot_Acceptor<SVC_HANDLER, >::svc_handler_\fC [private]\fR
+.PP
+Hold the svc_handler_ across asynchrony boundaries.
+.PP
+
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

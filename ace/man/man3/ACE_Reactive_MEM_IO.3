@@ -1,0 +1,64 @@
+.TH ACE_Reactive_MEM_IO 3 "5 Oct 2001" "ACE" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+ACE_Reactive_MEM_IO \- 
+.SH SYNOPSIS
+.br
+.PP
+\fC#include <MEM_IO.h>\fR
+.PP
+Inherits \fBACE_MEM_SAP\fR.
+.PP
+.SS Public Methods
+
+.in +1c
+.ti -1c
+.RI "\fBACE_Reactive_MEM_IO\fR (void)"
+.br
+.ti -1c
+.RI "virtual \fB~ACE_Reactive_MEM_IO\fR (void)"
+.br
+.ti -1c
+.RI "virtual int \fBinit\fR (ACE_HANDLE handle, const \fBACE_TCHAR\fR *name, \fBMALLOC_OPTIONS\fR *options)"
+.br
+.ti -1c
+.RI "virtual int \fBrecv_buf\fR (\fBACE_MEM_SAP_Node\fR *&buf, int flags, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "virtual int \fBsend_buf\fR (\fBACE_MEM_SAP_Node\fR *buf, int flags, const \fBACE_Time_Value\fR *timeout)"
+.br
+.ti -1c
+.RI "\fBssize_t\fR \fBget_buf_len\fR (const off_t off, \fBACE_MEM_SAP_Node\fR *&buf)"
+.br
+.in -1c
+.SH CONSTRUCTOR & DESTRUCTOR DOCUMENTATION
+.PP 
+.SS ACE_Reactive_MEM_IO::ACE_Reactive_MEM_IO (void)
+.PP
+.SS virtual ACE_Reactive_MEM_IO::~ACE_Reactive_MEM_IO (void)\fC [virtual]\fR
+.PP
+.SH MEMBER FUNCTION DOCUMENTATION
+.PP 
+.SS \fBssize_t\fR ACE_Reactive_MEM_IO::get_buf_len (const off_t off, \fBACE_MEM_SAP_Node\fR *& buf)
+.PP
+Convert the buffer offset <off> to absolute address to <buf>. Return the size of valid information containing in the <buf>, -1 if <shm_malloc_> is not initialized. 
+.SS int ACE_Reactive_MEM_IO::init (ACE_HANDLE handle, const \fBACE_TCHAR\fR * name, \fBMALLOC_OPTIONS\fR * options)\fC [virtual]\fR
+.PP
+Initialize the MEM_SAP object. 
+.PP
+Reimplemented from \fBACE_MEM_SAP\fR.
+.SS int ACE_Reactive_MEM_IO::recv_buf (\fBACE_MEM_SAP_Node\fR *& buf, int flags, const \fBACE_Time_Value\fR * timeout)\fC [virtual]\fR
+.PP
+Fetch location of next available data into <recv_buffer_>. As this operation read the address of the data off the socket using \fBACE::recv\fR, <timeout> only applies to \fBACE::recv\fR. 
+.PP
+Reimplemented from \fBACE_MEM_SAP\fR.
+.SS int ACE_Reactive_MEM_IO::send_buf (\fBACE_MEM_SAP_Node\fR * buf, int flags, const \fBACE_Time_Value\fR * timeout)\fC [virtual]\fR
+.PP
+Wait to to <timeout> amount of time to send <buf>. If <send> times out a -1 is returned with <errno == ETIME>. If it succeeds the number of bytes sent is returned. 
+.PP
+Reimplemented from \fBACE_MEM_SAP\fR.
+
+.SH AUTHOR
+.PP 
+Generated automatically by Doxygen for ACE from the source code.

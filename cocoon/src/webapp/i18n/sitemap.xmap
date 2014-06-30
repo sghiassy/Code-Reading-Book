@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+	<!-- =========================== Components ================================ -->
+	<map:components>
+		<map:generators default="file"/>
+		<map:transformers default="xslt"/>
+		<map:readers default="resource"/>
+		<map:serializers default="html"/>
+		<map:selectors default="browser"/>
+		<map:matchers default="wildcard"/>
+
+	</map:components>
+	<!-- =========================== Pipelines ================================= -->
+	<map:pipelines>
+		<map:pipeline>
+			<map:match pattern="*.xml">
+				<map:generate src="{1}.xml"/>
+				<map:transform type="i18n"/>
+				<map:transform src="simple.xsl"/>
+				<map:serialize/>
+			</map:match>
+			<map:match pattern="*.xsp">
+				<map:generate type="serverpages" src="{1}.xsp"/>
+				<map:transform type="i18n"/>
+				<map:transform src="simple.xsl"/>
+				<map:serialize/>
+			</map:match>
+			
+			<map:handle-errors>
+				<map:transform src="../stylesheets/system/error2html.xsl"/>
+				<map:serialize status-code="500"/>
+			</map:handle-errors>
+		</map:pipeline>
+	</map:pipelines>
+</map:sitemap>
+<!-- end of file -->

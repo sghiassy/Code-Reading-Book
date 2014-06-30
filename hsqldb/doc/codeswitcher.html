@@ -1,0 +1,54 @@
+<HTML>
+<HEAD><TITLE>Hypersonic SQL</TITLE></HEAD>
+<BODY BGCOLOR=#FFFFFF>
+<H2>hsqldb v.1.61 Build Documentation</H2>
+
+<H3>Code Switcher</H3>
+CodeSwitcher is a tool to manage different version of Java source code. It helps 
+to compile hsqldb v.1.61 for different JDKs, and to switch between debug and runtime 
+version. It is something like a precompiler in C and C++, but it works directly 
+on the source code and does not create intermediate output and does not create 
+other files. 
+<P>
+It is possible to use the Code Switcher in batch operations where multiple 
+versions of an application are built. CodeSwitcher is (of course) a Java application.
+<P>
+CodeSwitcher reads the source code of a file, remove comments where appropriate
+and comment blocks that are not used for this version. This operation is
+done for all files of a defined directory, and all subdirectories.
+<P>
+This is an example source code before CodeSwitcher is used:
+<P>
+<PRE><code>
+      ...
+//#ifdef JAVA2
+      pProperties.store(out,"hsqldb database");
+//#else
+/*
+      pProperties.save(out,"hsqldb database");
+*/
+//#endif
+      ...
+</code></PRE>
+<P>
+The next step is to run CodeSwitcher. This is done using a command line:
+<P> <CODE>java org.hsqldb.util.CodeSwitcher . -JAVA2</CODE> 
+<P>
+The '.' means the program works on the current directory (all subdirectories
+are processes recursivly). '-JAVA2' means the code labeled with JAVA2
+must be switched off. And this is how the source code looks after 
+CodeSwitcher has processed this file:
+<P>
+<PRE><code>
+      ...
+//#ifdef JAVA2
+/*
+      pProperties.store(out,"hsqldb database");
+*/
+//#else
+      pProperties.save(out,"hsqldb database");
+//#endif
+      ...
+</code></PRE>
+<P> For detailed information on the command line options run 'java org.hsqldb.util.CodeSwitcher'. 
+</BODY></HTML>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V1.0//EN" "../dtd/document-v10.dtd">
+
+<document>
+	<header>
+		<title>cTwIG - Cocoon Two Idiots Guide - Basic XML/XSL Transformation</title>
+		<authors>
+			<person name="Jeremy Aston" email="jez@pigbite.com"/>
+		</authors>
+	</header>
+
+	<body>
+		<s1 title="Transformations">
+			<s2 title="Basic XML/XSL Transformation">
+				<p>IMHO the most basic thing you will want to do is perform an XSL transformation on an XML file.  A typical example of this is to render some XML as an HTML page using an XSL stylesheet.</p>
+				<p>Take the following XML file (<fork href="sample/transformations/basic01/basic01-01.xml">basic01-01.xml</fork>):</p>
+				<source><![CDATA[
+  <?xml version="1.0"?>
+  <page>
+    <title>Basic XML/XSL Transformation Example - BASIC01-01.XML</title>
+    <greeting>Hello World</greeting>
+  </page>
+				]]></source>
+				<p>And use the following XSL to transform it to some HTML (<fork href="sample/transformations/basic01/basic01-01.xsl">basic01-01.xsl</fork>):</p>
+				<source><![CDATA[
+  <?xml version="1.0"?>
+  <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+  <xsl:template match="page">
+    <html>
+      <head>
+        <title><xsl:value-of select="title"/></title>
+      </head>
+      <body>
+        <h1><xsl:value-of select="title"/></h1>
+        <p><xsl:value-of select="greeting"/></p>
+      </body>
+    </html>
+  </xsl:template>
+
+</xsl:stylesheet>
+				]]></source>
+
+				<p>Hopefully the basic XSL makes sense however the key to getting this served is to change setting in the sitemap.xmap file.  It is this file that determines what and how gets served.  The sitemap is very powerful and can be configured to do some very efficient things, however we will start with slightly longwinded but simple examples so the concepts are there to be built on.</p>
+				<p>You can add sections into sitemap.xmap file that comes with C2.  This has things called "pipelines" already set up.  To be able to see the result of transforming the above files together you just need to add the following code into the last "pipeline" section:</p>
+				<source><![CDATA[
+  <map:match pattern="ctwig/basic01-01.xml"> 
+    <map:generate type="file" src="ctwig/basic01-01.xml"/> 
+    <map:transform type="xslt" src="ctwig/basic01-01.xsl"/> 
+    <map:serialize/> 
+  </map:match>
+				]]></source>
+				<p>What this construct does is to tell C2 to do something when it recieves a request for <strong><code>ctwig/basic01-01.xml</code></strong>.  The "something" that C2 will do is pass the <strong><code>ctwig/basic01-01.xml</code></strong> file through a "file" generator.  This basically parses the XML.  The result parsed stream then gets transformed using <strong><code>ctwig/basic01-01.xsl</code></strong> and rendered.</p>
+				<p>Calling <fork href="http://localhost:8080/cocoon/ctwig/basic01-01.xml">http://localhost:8080/cocoon/ctwig/basic01-01.xml</fork> will result in a simple HTML page being rendered.</p>
+			</s2>
+			<s2 title="Simple Wildcards in the Sitemap File">
+				<p>The above sitemap map construct works but you can imagine the overhead if we had to add this code for every single XML/XSL transformation we wanted to do.  C2 makes things easier by allowing wildcards in the pattern matching argument.  If the above section is replaced with the following:</p>
+				<source><![CDATA[
+  <map:match pattern="ctwig/*.xml"> 
+    <map:generate type="file" src="ctwig/{1}.xml"/> 
+    <map:transform type="xslt" src="ctwig/{1}.xsl"/> 
+    <map:serialize/> 
+  </map:match>
+				]]></source>
+				<p>then C2 will substitutue the <strong><code>{1}</code></strong> meta-tag with the whatever is in the wildcard section of the request.  This means that is every XML file has a corresponding XSL file with the same filename (before the extension) then requesting the XML file will result in it being served.</p>
+				<p>This also allows us to do a kind of request re-writing function.  Take the following sitemap construct:</p>
+				<source><![CDATA[
+  <map:match pattern="ctwig/*.html"> 
+    <map:generate type="file" src="ctwig/{1}.xml"/> 
+    <map:transform type="xslt" src="ctwig/{1}.xsl"/> 
+    <map:serialize/> 
+  </map:match>
+				]]></source>
+				<p>This allows us to request an HTML file from the ctwig folder.  What will actually happen though is that C2 willtake the wildcard portion and use that to look for XML and XSL files with the same filename and use them to generate the response stream contents.  For example; <fork href="http://localhost:8080/cocoon/ctwig/basic01-01.html">http://localhost:8080/cocoon/ctwig/basic01-01.html</fork> will cause C2 to look for <strong><code>ctwig/basic01-01.xml</code></strong> and transform it with <strong><code>ctwig/basic01-01.xsl</code></strong> to produce the final page.</p>
+			</s2>
+			<s2 title="Using a Single XSL File">
+				<p>Consider a scenario where you have multiple XML files which are you wish to transform in a common fashion (for example into HTML).  If your XML has been designed well and follows a common DTD there is no reason why one XSL file can transform all the XML files.  Many of the C2 examples do this, using one, single, common XSL file for rendering all the examples to HTML and another for transforming them into a source code view.  This again is achieved using the sitemap file with a construct similar to the following:</p>
+				<source><![CDATA[
+  <map:match pattern="ctwig/*.html"> 
+    <map:generate type="file" src="ctwig/{1}.xml"/> 
+    <map:transform type="xslt" src="ctwig/file2html.xsl"/> 
+    <map:serialize/> 
+  </map:match>
+				]]></source>
+				<p>Here, a request for an HTML page will look for a corresponding XML file and transform it using <strong><code>ctwig/file2html.xsl</code></strong>.</p>
+			</s2>
+  <note>TODO: PROVIDE AN EXAMPLE.</note>
+		</s1>
+	</body>
+</document>
+
